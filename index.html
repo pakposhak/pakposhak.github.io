@@ -200,14 +200,15 @@
   <span>① Browse Brand Site</span>
   <span>→ ② Paste URLs Here</span>
   <span>→ ③ Review & Submit</span>
-  <span>→ ④ Delivered in 2–3 Weeks</span>
+  <span>→ ④ Pay</span>
+  <span>→ ⑤ Delivered in 2–3 Weeks</span>
 </div>
 
 <!-- VPN Notice Bar -->
 <div class="vpn-bar" id="vpnBar">
   <div class="vpn-bar-inner">
-    <span>🇵🇰 <strong>Brand links above go directly to Pakistan (.pk) sites</strong> — PKR prices load automatically, no VPN needed.</span>
-    <span style="font-size:0.75rem;color:#888">Still seeing USD? Use the PKR/USD toggle when entering your price, or browse with a paid VPN:</span>
+    <span style="font-size:0.85rem;font-weight:700;color:#3a2800">🇵🇰 Brand links go directly to Pakistan (.pk) sites — PKR prices load automatically, no VPN needed.</span>
+    <span style="font-size:0.8rem;font-weight:600;color:#5a4000">⚠️ Still seeing USD? Use the <strong>PKR/USD toggle</strong> when entering your price, or browse with a VPN:</span>
     <a class="vpn-link vpn-paid" href="https://surfshark.com" target="_blank">🔒 Surfshark — ~$2.30/mo</a>
     <button class="vpn-dismiss" onclick="document.getElementById('vpnBar').classList.add('hidden')" title="Dismiss">✕</button>
   </div>
@@ -285,27 +286,35 @@
         <div class="field">
           <label>Category <span style="color:#aaa;font-weight:400">(sets weight — see guide ↓)</span></label>
           <select id="det_category">
-            <option value="">Select category</option>
-            <optgroup label="☀️ Lawn / Summer / Everyday">
-              <option value="kurti_1pc">Kurti / Shirt – 1pc only</option>
-              <option value="shirt_dupatta_2pc">2-Piece – Shirt + Dupatta (no trouser)</option>
-              <option value="shirt_trouser_2pc">2-Piece Co-ord – Shirt + Trouser (no dupatta)</option>
-              <option value="lawn_3pc_unstitch">3-Piece Unstitched (shirt+dupatta+trouser fabric)</option>
-              <option value="pret_3pc">3-Piece Pret / Stitched</option>
+            <option value="">— Select category —</option>
+
+            <optgroup label="✅ STITCHED / PRET — Casual &amp; Everyday">
+              <option value="kurti_1pc">Kurti / Shirt – 1pc</option>
+              <option value="shirt_dupatta_2pc">2pc – Shirt + Dupatta</option>
+              <option value="shirt_trouser_2pc">2pc Co-ord – Shirt + Trouser</option>
+              <option value="pret_3pc">3pc Pret / Stitched Suit</option>
             </optgroup>
-            <optgroup label="❄️ Winter">
-              <option value="winter_2pc">Winter 2-Piece (karandi / khaddar / linen)</option>
-              <option value="winter_3pc">Winter 3-Piece (karandi / khaddar)</option>
+
+            <optgroup label="✅ STITCHED / PRET — Winter">
+              <option value="winter_2pc">Winter 2pc (karandi / khaddar / linen)</option>
+              <option value="winter_3pc">Winter 3pc (karandi / khaddar)</option>
             </optgroup>
-            <optgroup label="✨ Formal / Designer">
-              <option value="formal_emb_2pc">Formal Embroidered 2-Piece (chiffon/net)</option>
-              <option value="formal_emb_3pc">Formal Embroidered 3-Piece (chiffon/net)</option>
-              <option value="heavy_formal_3pc">Heavy Formal 3-Piece (organza / silk)</option>
+
+            <optgroup label="✅ STITCHED / PRET — Formal &amp; Designer">
+              <option value="formal_emb_2pc">Formal Embroidered 2pc (chiffon / net)</option>
+              <option value="formal_emb_3pc">Formal Embroidered 3pc (chiffon / net)</option>
+              <option value="heavy_formal_3pc">Heavy Formal 3pc (organza / silk)</option>
               <option value="bridal">Bridal / Velvet / Full Embroidery</option>
             </optgroup>
-            <optgroup label="➕ Separates">
+
+            <optgroup label="🧵 UN-STITCHED">
+              <option value="unstitch_2pc_dupatta">2pc Unstitched – Shirt + Dupatta fabric</option>
+              <option value="unstitch_2pc_trouser">2pc Unstitched – Shirt + Trouser fabric</option>
+              <option value="lawn_3pc_unstitch">3pc Unstitched – Shirt + Dupatta + Trouser fabric</option>
+            </optgroup>
+
+            <optgroup label="➕ SEPARATES">
               <option value="dupatta_only">Dupatta / Stole / Scarf only</option>
-              <option value="accessories">Accessories / Jewellery</option>
             </optgroup>
           </select>
           <div id="weightGuideToggle" style="font-size:0.68rem;color:#c9a96e;cursor:pointer;margin-top:4px;text-decoration:underline" onclick="toggleWeightGuide()">📦 How are weights estimated?</div>
@@ -315,11 +324,11 @@
               <tr style="color:#888;font-size:0.65rem"><th style="text-align:left;padding:2px 4px">Category</th><th style="text-align:right;padding:2px 4px">kg</th></tr>
               <tbody id="weightGuideBody"></tbody>
             </table>
-            <div style="margin-top:6px;color:#888">Includes ~20% packaging. Edit via admin panel (?admin). Confirmed at Karachi warehouse.</div>
+            <div style="margin-top:6px;color:#666">All weights are estimates and include bulk packaging allowance. In the event of a significant difference in actual weight, any excess charges will be refunded or an adjusted amount will be requested — communicated via WhatsApp before final payment.</div>
           </div>
         </div>
         <div class="field">
-          <label>Price (from product page)</label>
+          <label id="price_label">Price — PKR (from product page)</label>
           <div class="price-row">
             <input type="number" id="det_pkr" placeholder="e.g. 4500 PKR" min="0" oninput="updatePriceHint()"/>
             <div class="currency-toggle">
@@ -363,7 +372,7 @@
       <div class="rt-row"><span>Transaction Fee</span><span>৳ 100</span></div>
       <div class="rt-total"><span>ESTIMATED TOTAL</span><span id="rt-total">৳ —</span></div>
       <div class="rt-note">* Final confirmed price sent via WhatsApp before payment.</div>
-      <div class="rt-note" style="margin-top:6px;color:#f9a825">⚖️ Weight calculations are approximate. If actual weight differs significantly, a revised logistics charge will be communicated via WhatsApp before payment.</div>
+      <div class="rt-note" style="margin-top:6px;color:#f9a825">⚖️ All weights are estimates and include bulk packaging allowance. In the event of a significant difference in actual weight, any excess charges will be refunded or an adjusted amount will be requested — communicated via WhatsApp before final payment.</div>
     </div>
   </div>
 
@@ -571,14 +580,24 @@
   </div>
 </div>
 
-<!-- ADMIN PANEL — visible only via ?admin in URL -->
-<div id="adminPanel" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;
-  color:#fff;padding:16px 20px;z-index:999;border-top:3px solid #c9a96e;font-family:inherit">
-  <div style="max-width:500px;margin:0 auto">
-    <div style="font-size:0.7rem;letter-spacing:2px;color:#c9a96e;font-weight:700;margin-bottom:10px">
-      🔒 ADMIN — RATE SETTINGS (not visible to buyers)
+<!-- ADMIN PANEL — full-screen modal overlay -->
+<div id="adminPanel" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,0.7);z-index:999;overflow-y:auto;font-family:inherit;padding:20px 16px">
+  <div style="background:#1a1a2e;color:#fff;border-radius:14px;max-width:620px;margin:0 auto;
+    padding:24px 22px;border:2px solid #c9a96e;">
+
+    <!-- Header row -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+      <div style="font-size:0.75rem;letter-spacing:2px;color:#c9a96e;font-weight:700">
+        🔒 ADMIN PANEL — not visible to buyers
+      </div>
+      <button onclick="document.getElementById('adminPanel').style.display='none';document.body.style.overflow='';"
+        style="background:none;border:1px solid #555;color:#aaa;border-radius:6px;padding:4px 12px;
+        font-size:0.82rem;cursor:pointer">✕ Close</button>
     </div>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+
+    <!-- Rates row -->
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:8px">
       <div>
         <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">PKR → BDT Rate</label>
         <input id="adm_conv" type="number" step="0.01" placeholder="e.g. 0.42"
@@ -597,33 +616,34 @@
       <div>
         <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">Commission</label>
         <input type="text" value="1pc=20% · 2-3pc=18% · 4+pc=15%" readonly
-          style="width:160px;padding:8px 10px;border-radius:6px;border:none;font-size:0.78rem;background:#2e2e4e;color:#888"/>
+          style="width:180px;padding:8px 10px;border-radius:6px;border:none;font-size:0.78rem;background:#2e2e4e;color:#888"/>
       </div>
       <button id="saveRatesBtn" onclick="saveRates()"
         style="padding:8px 20px;background:#c9a96e;color:#1a1a2e;border:none;border-radius:6px;
-        font-weight:700;font-size:0.88rem;cursor:pointer;height:36px">
-        Save Rates
-      </button>
+        font-weight:700;font-size:0.88rem;cursor:pointer;height:36px">Save Rates</button>
     </div>
-    <div style="font-size:0.7rem;color:#666;margin-top:8px">
-      Rates saved in this browser. To update on a new device, visit <em>your-form-url<strong>?admin</strong></em> and save again.
+    <div style="font-size:0.7rem;color:#555;margin-bottom:20px">
+      Rates saved in this browser. On a new device visit <strong style="color:#888">?admin</strong> in the URL to set again.
     </div>
 
     <!-- Weight Chart Editor -->
-    <div style="margin-top:16px;border-top:1px solid #333;padding-top:14px">
-      <div style="font-size:0.7rem;letter-spacing:1.5px;color:#c9a96e;font-weight:700;margin-bottom:10px">
-        📦 WEIGHT CHART (kg per unit — edit &amp; save)
+    <div style="border-top:1px solid #333;padding-top:16px">
+      <div style="font-size:0.75rem;letter-spacing:1.5px;color:#c9a96e;font-weight:700;margin-bottom:12px">
+        📦 WEIGHT CHART — kg per unit (edit &amp; save)
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;max-width:600px" id="weightEditorGrid">
-        <!-- Populated by JS -->
+      <div id="weightEditorGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:4px 20px">
+        <!-- Populated by buildWeightEditor() -->
       </div>
-      <button onclick="saveWeights()"
-        style="margin-top:12px;padding:8px 20px;background:#c9a96e;color:#1a1a2e;border:none;border-radius:6px;font-weight:700;font-size:0.88rem;cursor:pointer"
-        id="saveWeightsBtn">Save Weights</button>
-      <button onclick="resetWeights()"
-        style="margin-top:12px;margin-left:8px;padding:8px 16px;background:transparent;color:#888;border:1px solid #555;border-radius:6px;font-size:0.82rem;cursor:pointer">
-        Reset to Defaults</button>
+      <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+        <button id="saveWeightsBtn" onclick="saveWeights()"
+          style="padding:9px 22px;background:#c9a96e;color:#1a1a2e;border:none;border-radius:6px;font-weight:700;font-size:0.88rem;cursor:pointer">
+          Save Weights</button>
+        <button onclick="resetWeights()"
+          style="padding:9px 16px;background:transparent;color:#888;border:1px solid #555;border-radius:6px;font-size:0.82rem;cursor:pointer">
+          Reset to Defaults</button>
+      </div>
     </div>
+
   </div>
 </div>
 
@@ -696,12 +716,13 @@
   function openAdminPanel(){
     const panel = document.getElementById('adminPanel');
     panel.style.display = 'block';
+    document.body.style.overflow = 'hidden';
     const r = getRates();
     document.getElementById('adm_conv').value    = r.CONV_RATE;
     document.getElementById('adm_log').value     = r.LOG_RATE;
     document.getElementById('adm_usd_pkr').value = parseFloat(localStorage.getItem('psb_usd_pkr') || '278');
     buildWeightEditor();
-    panel.scrollIntoView({ behavior: 'smooth' });
+    panel.scrollTop = 0;
   }
 
   (function(){
@@ -737,35 +758,42 @@
   // Keys match dropdown option values and detectCategory() returns.
   // Weights include ~20% packaging allowance.
   const DEFAULT_WEIGHTS = {
-    kurti_1pc         : 0.34,
-    shirt_dupatta_2pc : 0.46,
-    shirt_trouser_2pc : 0.58,
-    lawn_3pc_unstitch : 0.66,
-    pret_3pc          : 0.74,
-    winter_2pc        : 0.70,
-    winter_3pc        : 0.90,
-    formal_emb_2pc    : 0.86,
-    formal_emb_3pc    : 1.08,
-    heavy_formal_3pc  : 1.32,
-    bridal            : 2.00,
-    dupatta_only      : 0.22,
-    accessories       : 0.24,
+    kurti_1pc            : 0.34,
+    shirt_dupatta_2pc    : 0.46,
+    shirt_trouser_2pc    : 0.58,
+    pret_3pc             : 0.74,
+    winter_2pc           : 0.70,
+    winter_3pc           : 0.90,
+    formal_emb_2pc       : 0.86,
+    formal_emb_3pc       : 1.08,
+    heavy_formal_3pc     : 1.32,
+    bridal               : 2.00,
+    unstitch_2pc_dupatta : 0.42,
+    unstitch_2pc_trouser : 0.54,
+    lawn_3pc_unstitch    : 0.66,
+    dupatta_only         : 0.22,
   };
 
   const WEIGHT_LABELS = {
-    kurti_1pc         : 'Kurti / Shirt (1pc)',
-    shirt_dupatta_2pc : 'Shirt + Dupatta (2pc)',
-    shirt_trouser_2pc : 'Shirt + Trouser (2pc co-ord)',
-    lawn_3pc_unstitch : '3pc Unstitched',
-    pret_3pc          : '3pc Pret / Stitched',
-    winter_2pc        : 'Winter 2pc (karandi/khaddar)',
+    // Stitched / Pret — Casual
+    kurti_1pc         : 'Kurti / Shirt – 1pc',
+    shirt_dupatta_2pc : '2pc – Shirt + Dupatta',
+    shirt_trouser_2pc : '2pc Co-ord – Shirt + Trouser',
+    pret_3pc          : '3pc Pret / Stitched Suit',
+    // Stitched / Pret — Winter
+    winter_2pc        : 'Winter 2pc (karandi/khaddar/linen)',
     winter_3pc        : 'Winter 3pc (karandi/khaddar)',
-    formal_emb_2pc    : 'Formal Embroidered 2pc',
-    formal_emb_3pc    : 'Formal Embroidered 3pc',
+    // Stitched / Pret — Formal
+    formal_emb_2pc    : 'Formal Embroidered 2pc (chiffon/net)',
+    formal_emb_3pc    : 'Formal Embroidered 3pc (chiffon/net)',
     heavy_formal_3pc  : 'Heavy Formal 3pc (organza/silk)',
     bridal            : 'Bridal / Velvet / Full Embroidery',
-    dupatta_only      : 'Dupatta / Stole only',
-    accessories       : 'Accessories / Jewellery',
+    // Un-stitched
+    unstitch_2pc_dupatta : '2pc Unstitched – Shirt + Dupatta fabric',
+    unstitch_2pc_trouser : '2pc Unstitched – Shirt + Trouser fabric',
+    lawn_3pc_unstitch    : '3pc Unstitched – Shirt + Dupatta + Trouser fabric',
+    // Separates
+    dupatta_only      : 'Dupatta / Stole / Scarf only',
   };
 
   function getWeight(key){
@@ -816,7 +844,11 @@
     selectedCurrency = cur;
     document.getElementById('btn_pkr').classList.toggle('active', cur==='PKR');
     document.getElementById('btn_usd').classList.toggle('active', cur==='USD');
-    document.getElementById('det_pkr').placeholder = cur==='USD' ? 'e.g. 42 (USD)' : 'e.g. 4500 (PKR)';
+    document.getElementById('det_pkr').placeholder = cur==='USD' ? 'e.g. 42.00' : 'e.g. 4500';
+    const lbl = document.getElementById('price_label');
+    if(lbl) lbl.textContent = cur==='USD' ? 'Price — USD (from product page)' : 'Price — PKR (from product page)';
+    document.getElementById('det_pkr').value = '';
+    document.getElementById('priceHint').textContent = '';
     updatePriceHint();
   }
 
@@ -871,18 +903,32 @@
     let price = null, category = null, name = null, size = null;
     category = detectCategory(url);
 
+    // Helper: try multiple proxies for a URL
+    async function proxyFetch(targetUrl, timeoutMs){
+      const proxies = [
+        'https://api.allorigins.win/raw?url=' + encodeURIComponent(targetUrl),
+        'https://corsproxy.io/?' + encodeURIComponent(targetUrl),
+      ];
+      for(const proxy of proxies){
+        try{
+          const ctrl = new AbortController();
+          const t = setTimeout(()=>ctrl.abort(), timeoutMs||7000);
+          const res = await fetch(proxy, {signal:ctrl.signal});
+          clearTimeout(t);
+          if(res.ok) return res;
+        }catch(e){}
+      }
+      return null;
+    }
+
     // Step 1: Shopify variant API
     try{
       const u = new URL(url);
       const variantId = u.searchParams.get('variant');
       if(variantId){
         const varUrl = u.origin + '/variants/' + variantId + '.json';
-        const proxy = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(varUrl);
-        const ctrl = new AbortController();
-        const timer = setTimeout(()=>ctrl.abort(), 5000);
-        const res = await fetch(proxy, {signal: ctrl.signal});
-        clearTimeout(timer);
-        if(res.ok){
+        const res = await proxyFetch(varUrl, 5000);
+        if(res){
           const data = await res.json();
           const v = data.variant;
           if(v){
@@ -907,12 +953,8 @@
 
         if(handle && handle.length > 2){
           const productUrl = u.origin + '/products/' + handle + '.json';
-          const proxy = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(productUrl);
-          const ctrl = new AbortController();
-          const timer = setTimeout(()=>ctrl.abort(), 6000);
-          const res = await fetch(proxy, {signal: ctrl.signal});
-          clearTimeout(timer);
-          if(res.ok){
+          const res = await proxyFetch(productUrl, 8000);
+          if(res){
             const data = await res.json();
             const product = data.product;
             if(product){
@@ -940,20 +982,11 @@
 
     // Step 4: Page fetch fallback
     if(!price){
-      const proxies = [
-        'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
-        'https://corsproxy.io/?' + encodeURIComponent(url)
-      ];
       let html = null;
-      for(const proxy of proxies){
-        try{
-          const ctrl = new AbortController();
-          const timer = setTimeout(()=>ctrl.abort(), 7000);
-          const res = await fetch(proxy, {signal: ctrl.signal});
-          clearTimeout(timer);
-          if(res.ok){ html = await res.text(); break; }
-        }catch(e){}
-      }
+      try{
+        const res = await proxyFetch(url, 9000);
+        if(res) html = await res.text();
+      }catch(e){}
       if(html){
         const doc = new DOMParser().parseFromString(html, 'text/html');
         if(!price){
@@ -1029,13 +1062,17 @@
       return 'winter_2pc';
     }
     if(is3pc || (hasShirt && hasDupatta && hasTrouser)){
+      if(isUnstitched) return 'lawn_3pc_unstitch';
       return isPret ? 'pret_3pc' : 'lawn_3pc_unstitch';
+    }
+    if(is2pc && isUnstitched){
+      if(hasTrouser && !hasDupatta) return 'unstitch_2pc_trouser';
+      return 'unstitch_2pc_dupatta';
     }
     if((is2pc && hasTrouser && !hasDupatta) || /co[\-_]?ord|coord/.test(t)) return 'shirt_trouser_2pc';
     if(is2pc || (hasShirt && hasDupatta && !hasTrouser)) return 'shirt_dupatta_2pc';
     if(is1pc || (hasShirt && !hasTrouser && !hasDupatta && !is2pc && !is3pc)) return 'kurti_1pc';
     if(hasDupatta && !hasShirt) return 'dupatta_only';
-    if(/\b(accessor|jewel|bag|clutch|necklace|earring)\b/.test(t)) return 'accessories';
     if(isLawn || isUnstitched) return 'lawn_3pc_unstitch';
     if(isPret) return 'pret_3pc';
     return null;
@@ -1135,8 +1172,13 @@
     if(!url || !url.startsWith('http')){ return; }
 
     document.getElementById('detailPanel').classList.add('active');
+    document.getElementById('detUrlDisplay').textContent = url;
     document.getElementById('fetchStatus').textContent = '⏳ Fetching product info…';
     document.getElementById('fetchStatus').style.color = '#c9a96e';
+
+    // Immediately apply category from URL slug (no proxy needed)
+    const quickCat = detectCategory(url);
+    if(quickCat) document.getElementById('det_category').value = quickCat;
 
     // Auto-fill brand from hostname
     try{
@@ -1146,7 +1188,7 @@
         'limelight.pk':'Limelight','elan.pk':'Elan','baroque.com.pk':'Baroque',
         'farahtalibaziz.com.pk':'Farah Talib Aziz','baraekhanom.pk':'Barae Khanom',
         'crossstitch.pk':'Cross Stitch','laam.pk':'LAAM','generation.pk':'Generation',
-        'almirah.com.pk':'Almirah','gulahmedshop.com':'Gul Ahmed',
+        'almirah.com.pk':'Almirah','gulahmed.com':'Gul Ahmed','gulahmedshop.com':'Gul Ahmed',
         'alkaramstudio.com':'Alkaram','sanasafinaz.com':'Sana Safinaz',
         'nishatlinen.com':'Nishat Linen','bonanzasatrangi.com':'Bonanza Satrangi',
         'ethnc.com':'Ethnic','zarashahjahan.com':'Zara Shahjahan',
@@ -1176,6 +1218,7 @@
     }
 
     if(data.category){
+      // Only override if the quick-detect was empty or fetched name gave a better result
       document.getElementById('det_category').value = data.category;
     }
     if(data.size){
@@ -1332,8 +1375,8 @@
     if(_adminSeq === 'psb'){
       _adminSeq = '';
       const panel = document.getElementById('adminPanel');
-      if(panel.style.display === 'none') openAdminPanel();
-      else panel.style.display = 'none';
+      if(panel.style.display === 'none'){ openAdminPanel(); }
+      else { panel.style.display = 'none'; document.body.style.overflow = ''; }
     }
   });
 
