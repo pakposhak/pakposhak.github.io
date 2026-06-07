@@ -1337,20 +1337,24 @@
     try{
       const form = document.getElementById('hiddenForm');
       const fd   = new FormData(form);
-      const resp = await fetch(form.action, { method:'POST', body:fd, headers:{'Accept':'application/json'} });
-      if(resp.ok){
+
+      const res = await fetch(form.action, {method:'POST', body:fd, headers:{Accept:'application/json'}});
+      if(res.ok){
+        cart = [];
+        renderCart();
+        const link = document.getElementById('trackOrderLink');
+        if(link) link.href = 'tracking.html?id=' + orderId;
         document.getElementById('summaryOverlay').style.display = 'none';
-        const sc = document.getElementById('successScreen');
-        sc.style.display = 'block';
-        document.getElementById('orderRef').textContent = orderId;
-        // success-total not present in HTML, skip
         document.getElementById('mainContainer').style.display = 'none';
-        window.scrollTo({top:0, behavior:'smooth'});
+        document.getElementById('successScreen').style.display = 'block';
+        document.getElementById('orderRef').textContent = orderId;
       } else {
-        throw new Error('Server error');
+        alert('Order submission failed. Please try again or contact us on WhatsApp.');
+        btn.disabled = false;
+        btn.textContent = 'Confirm & Submit Order';
       }
-    }catch(err){
-      alert('Something went wrong. Please try again or contact us on WhatsApp.');
+    } catch(e){
+      alert('Network error. Please check your connection and try again.');
       btn.disabled = false;
       btn.textContent = 'Confirm & Submit Order';
     }
@@ -1361,7 +1365,7 @@
     renderCart();
     document.getElementById('urlInput').value = '';
     document.getElementById('detailPanel').classList.remove('active');
-        document.getElementById('buyerNotes').value = '';
+    document.getElementById('buyerNotes').value = '';
     document.getElementById('successScreen').style.display = 'none';
     document.getElementById('mainContainer').style.display = 'block';
     window.scrollTo({top: 0, behavior: 'smooth'});
