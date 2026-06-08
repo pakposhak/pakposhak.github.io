@@ -729,6 +729,7 @@
   <input type="hidden" name="item_count" id="hf_count"/>
   <input type="hidden" name="order_items" id="hf_items"/>
   <input type="hidden" name="cart_links" id="hf_cart_links"/>
+  <input type="hidden" name="cart_items_json" id="hf_cart_json"/>
   <input type="hidden" name="payment_info" value="bKash Payment: 01352018131 | bKash/Nagad/Upay/Rocket Send Money: 01851948690 | City Bank – Moors Attire A/C: 1324897775001 | UCBL – Moors Attire A/C: 7862141003465221"/>
 </form>
 
@@ -1204,6 +1205,15 @@
   // ── CART ────────────────────────────────────────────────────────────────
   let cart = [];
 
+  function toggleBrands(btn){
+    const el = document.getElementById('extraBrands');
+    const open = el.style.display === 'none' || el.style.display === '';
+    el.style.display = open ? 'flex' : 'none';
+    el.style.flexWrap = 'wrap';
+    el.style.gap = '8px';
+    btn.textContent = open ? '− Show fewer brands' : '+ Show all brands';
+  }
+
   function saveItem(){
     const url      = document.getElementById('urlInput').value.trim();
     const brand    = document.getElementById('det_brand').value.trim() || 'Pakistani Brand';
@@ -1220,7 +1230,9 @@
     const unitWeight = getWeight(category);
     const weight = unitWeight * qty;
 
-    cart.push({ url, brand, category, catLabel, pkr, enteredPrice, currency, size, qty, weight });
+    let variantId = '', domain = '';
+    try { const _u = new URL(url); variantId = _u.searchParams.get('variant') || ''; domain = _u.hostname; } catch(e){}
+    cart.push({ url, domain, variantId, brand, category, catLabel, pkr, enteredPrice, currency, size, qty, weight });
 
     document.getElementById('urlInput').value = '';
     document.getElementById('det_brand').value = '';
@@ -1461,6 +1473,16 @@
     document.getElementById('hf_count').value    = cart.length;
     document.getElementById('hf_items').value    = itemsSummary;
     document.getElementById('hf_cart_links').value = cartLinks;
+    document.getElementById('hf_cart_json').value = JSON.stringify(cart.map(i => ({
+      brand: i.brand,
+      domain: i.domain || (function(){ try{ return new URL(i.url).hostname; }catch(e){ return ''; } })(),
+      variantId: i.variantId || (function(){ try{ return new URL(i.url).searchParams.get('variant')||''; }catch(e){ return ''; } })(),
+      url: i.url,
+      catLabel: i.catLabel,
+      size: i.size || '',
+      qty: i.qty,
+      pkr: i.pkr
+    })));
 
     try{
       const form = document.getElementById('hiddenForm');
