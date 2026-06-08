@@ -324,7 +324,7 @@
               <tr style="color:#888;font-size:0.65rem"><th style="text-align:left;padding:2px 4px">Category</th><th style="text-align:right;padding:2px 4px">kg</th></tr>
               <tbody id="weightGuideBody"></tbody>
             </table>
-            <div style="margin-top:6px;color:#666">All weights are estimates and include bulk packaging allowance. In the event of a significant difference in actual weight, any excess charges will be refunded or an adjusted amount will be requested — communicated via WhatsApp before final payment.</div>
+            <div style="margin-top:6px;color:#666">All weights are estimates and include bulk packaging allowance. In the event of a significant difference in actual weight, any excess charges will be refunded or an adjusted amount will be requested — communicated via WhatsApp before final delivery.</div>
           </div>
         </div>
         <div class="field">
@@ -372,7 +372,7 @@
       <div class="rt-row"><span>Transaction Fee</span><span>৳ 100</span></div>
       <div class="rt-total"><span>ESTIMATED TOTAL</span><span id="rt-total">৳ —</span></div>
       <div class="rt-note">* Final confirmed price sent via WhatsApp before payment.</div>
-      <div class="rt-note" style="margin-top:6px;color:#f9a825">⚖️ All weights are estimates and include bulk packaging allowance. In the event of a significant difference in actual weight, any excess charges will be refunded or an adjusted amount will be requested — communicated via WhatsApp before final payment.</div>
+      <div class="rt-note" style="margin-top:6px;color:#f9a825">⚖️ All weights are estimates and include bulk packaging allowance. In the event of a significant difference in actual weight, any excess charges will be refunded or an adjusted amount will be requested — communicated via WhatsApp before final delivery.</div>
     </div>
   </div>
 
@@ -444,143 +444,154 @@
   <a id="trackOrderLink" href="tracking.html" style="display:inline-block;background:#f9a825;color:#1a1a2e;padding:10px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:0.95rem;margin-bottom:24px">📦 Track My Order</a>
 
   <!-- PAYMENT DETAILS -->
-  <div style="background:#1a1a2e;border-radius:14px;padding:20px 18px;text-align:left;max-width:360px;margin:0 auto">
-    <p style="font-size:0.95rem;font-weight:700;color:#f9a825;margin-bottom:14px;text-align:center">💳 Payment Details</p>
+  <div style="width:100%;max-width:700px;margin:0 auto;text-align:left">
+    <p style="font-size:0.95rem;font-weight:700;color:#f9a825;margin-bottom:6px;text-align:center">💳 Step 1 — Make Payment</p>
     <p style="font-size:0.75rem;color:#888;margin-bottom:14px;text-align:center">Send payment only after receiving your confirmed price quote on WhatsApp.</p>
 
-    <!-- bKash Payment -->
-    <div style="background:#e2136e18;border:1px solid #e2136e55;border-radius:10px;padding:12px 14px;margin-bottom:10px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-        <span style="font-size:1.2rem">🟣</span>
-        <span style="font-weight:700;color:#e2136e;font-size:0.9rem">bKash</span>
-        <span style="background:#e2136e;color:#fff;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">PAYMENT</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:1.05rem;font-weight:700;color:#eee;letter-spacing:0.5px">01352-018131</span>
-        <button onclick="copyNum('01352018131',this)" style="background:#e2136e22;border:1px solid #e2136e55;color:#e2136e;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
-      </div>
-    </div>
+    <!-- Mobile Wallets: 2-column grid -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:10px">
 
-    <!-- bKash Send Money -->
-    <div style="background:#e2136e10;border:1px solid #e2136e33;border-radius:10px;padding:12px 14px;margin-bottom:10px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-        <span style="font-size:1.2rem">🟣</span>
-        <span style="font-weight:700;color:#e2136e;font-size:0.9rem">bKash</span>
-        <span style="background:#333;color:#ccc;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">SEND MONEY</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:1.05rem;font-weight:700;color:#eee;letter-spacing:0.5px">01851-948690</span>
-        <button onclick="copyNum('01851948690',this)" style="background:#e2136e22;border:1px solid #e2136e55;color:#e2136e;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
-      </div>
-    </div>
-
-    <!-- Nagad -->
-    <div style="background:#f7941d15;border:1px solid #f7941d44;border-radius:10px;padding:12px 14px;margin-bottom:10px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-        <span style="font-size:1.2rem">🟠</span>
-        <span style="font-weight:700;color:#f7941d;font-size:0.9rem">Nagad</span>
-        <span style="background:#333;color:#ccc;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">SEND MONEY</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:1.05rem;font-weight:700;color:#eee;letter-spacing:0.5px">01851-948690</span>
-        <button onclick="copyNum('01851948690',this)" style="background:#f7941d22;border:1px solid #f7941d55;color:#f7941d;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
-      </div>
-    </div>
-
-    <!-- Upay -->
-    <div style="background:#6c3cff15;border:1px solid #6c3cff44;border-radius:10px;padding:12px 14px;margin-bottom:10px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-        <span style="font-size:1.2rem">🟤</span>
-        <span style="font-weight:700;color:#a87aff;font-size:0.9rem">Upay</span>
-        <span style="background:#333;color:#ccc;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">SEND MONEY</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:1.05rem;font-weight:700;color:#eee;letter-spacing:0.5px">01851-948690</span>
-        <button onclick="copyNum('01851948690',this)" style="background:#6c3cff22;border:1px solid #6c3cff55;color:#a87aff;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
-      </div>
-    </div>
-
-    <!-- Rocket -->
-    <div style="background:#8b189115;border:1px solid #8b189155;border-radius:10px;padding:12px 14px;margin-bottom:0">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-        <span style="font-size:1.2rem">🚀</span>
-        <span style="font-weight:700;color:#c060cc;font-size:0.9rem">Rocket</span>
-        <span style="background:#333;color:#ccc;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">SEND MONEY</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:1.05rem;font-weight:700;color:#eee;letter-spacing:0.5px">01851-948690</span>
-        <button onclick="copyNum('01851948690',this)" style="background:#8b189122;border:1px solid #8b189155;color:#c060cc;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
-      </div>
-    </div>
-
-    <!-- City Bank -->
-    <div style="background:#00529b15;border:1px solid #00529b44;border-radius:10px;padding:12px 14px;margin-top:10px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-        <span style="font-size:1.2rem">🏦</span>
-        <span style="font-weight:700;color:#4a9fd4;font-size:0.9rem">City Bank</span>
-        <span style="background:#333;color:#ccc;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">BANK TRANSFER</span>
-      </div>
-      <div style="font-size:0.78rem;color:#aaa;margin-bottom:4px">Account Name: <strong style="color:#eee">Moors Attire</strong></div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <div style="font-size:0.68rem;color:#888">A/C No</div>
-          <div style="font-size:1rem;font-weight:700;color:#eee;letter-spacing:0.5px">1324897775001</div>
+      <!-- bKash Payment -->
+      <div style="background:#1a1a2e;border:1px solid #e2136e55;border-radius:10px;padding:12px 14px">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+          <span>🟣</span>
+          <span style="font-weight:700;color:#e2136e;font-size:0.88rem">bKash</span>
+          <span style="background:#e2136e;color:#fff;font-size:0.6rem;padding:2px 6px;border-radius:8px;font-weight:600">PAYMENT</span>
         </div>
-        <button onclick="copyNum('1324897775001',this)" style="background:#00529b22;border:1px solid #00529b55;color:#4a9fd4;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
-      </div>
-    </div>
-
-    <!-- UCBL -->
-    <div style="background:#00529b15;border:1px solid #00529b44;border-radius:10px;padding:12px 14px;margin-top:10px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-        <span style="font-size:1.2rem">🏦</span>
-        <span style="font-weight:700;color:#4a9fd4;font-size:0.9rem">UCBL</span>
-        <span style="background:#333;color:#ccc;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">BANK TRANSFER</span>
-      </div>
-      <div style="font-size:0.78rem;color:#aaa;margin-bottom:4px">Account Name: <strong style="color:#eee">Moors Attire</strong></div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <div style="font-size:0.68rem;color:#888">A/C No</div>
-          <div style="font-size:1rem;font-weight:700;color:#eee;letter-spacing:0.5px">7862141003465221</div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:1rem;font-weight:700;color:#eee">01352-018131</span>
+          <button onclick="copyNum('01352018131',this)" style="background:#e2136e22;border:1px solid #e2136e55;color:#e2136e;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
         </div>
-        <button onclick="copyNum('7862141003465221',this)" style="background:#00529b22;border:1px solid #00529b55;color:#4a9fd4;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
       </div>
+
+      <!-- bKash Send Money -->
+      <div style="background:#1a1a2e;border:1px solid #e2136e33;border-radius:10px;padding:12px 14px">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+          <span>🟣</span>
+          <span style="font-weight:700;color:#e2136e;font-size:0.88rem">bKash</span>
+          <span style="background:#333;color:#ccc;font-size:0.6rem;padding:2px 6px;border-radius:8px;font-weight:600">SEND MONEY</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:1rem;font-weight:700;color:#eee">01851-948690</span>
+          <button onclick="copyNum('01851948690',this)" style="background:#e2136e22;border:1px solid #e2136e55;color:#e2136e;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
+        </div>
+      </div>
+
+      <!-- Nagad -->
+      <div style="background:#1a1a2e;border:1px solid #f7941d44;border-radius:10px;padding:12px 14px">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+          <span>🟠</span>
+          <span style="font-weight:700;color:#f7941d;font-size:0.88rem">Nagad</span>
+          <span style="background:#333;color:#ccc;font-size:0.6rem;padding:2px 6px;border-radius:8px;font-weight:600">SEND MONEY</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:1rem;font-weight:700;color:#eee">01851-948690</span>
+          <button onclick="copyNum('01851948690',this)" style="background:#f7941d22;border:1px solid #f7941d55;color:#f7941d;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
+        </div>
+      </div>
+
+      <!-- Upay -->
+      <div style="background:#1a1a2e;border:1px solid #6c3cff44;border-radius:10px;padding:12px 14px">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+          <span>🟤</span>
+          <span style="font-weight:700;color:#a87aff;font-size:0.88rem">Upay</span>
+          <span style="background:#333;color:#ccc;font-size:0.6rem;padding:2px 6px;border-radius:8px;font-weight:600">SEND MONEY</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:1rem;font-weight:700;color:#eee">01851-948690</span>
+          <button onclick="copyNum('01851948690',this)" style="background:#6c3cff22;border:1px solid #6c3cff55;color:#a87aff;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
+        </div>
+      </div>
+
+      <!-- Rocket -->
+      <div style="background:#1a1a2e;border:1px solid #8b189155;border-radius:10px;padding:12px 14px">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+          <span>🚀</span>
+          <span style="font-weight:700;color:#c060cc;font-size:0.88rem">Rocket</span>
+          <span style="background:#333;color:#ccc;font-size:0.6rem;padding:2px 6px;border-radius:8px;font-weight:600">SEND MONEY</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:1rem;font-weight:700;color:#eee">01851-948690</span>
+          <button onclick="copyNum('01851948690',this)" style="background:#8b189122;border:1px solid #8b189155;color:#c060cc;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
+        </div>
+      </div>
+
     </div>
 
-    <!-- Payment Confirmation -->
-    <div style="margin-top:16px;border-top:1px solid #333;padding-top:14px">
-      <p style="font-size:0.82rem;font-weight:700;color:#c9a96e;margin-bottom:4px;text-align:center">📸 Step 2 — Confirm Your Payment</p>
-      <p style="font-size:0.7rem;color:#888;margin-bottom:12px;text-align:center">Upload your payment screenshot so we can match and confirm faster.</p>
+    <!-- Bank Transfers: 2-column grid -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-bottom:16px">
 
-      <div style="background:#0f0f1a;border-radius:8px;padding:8px 12px;margin-bottom:12px;text-align:center">
-        <div style="font-size:0.65rem;color:#888;margin-bottom:3px">Always mention this Order ID when making payment:</div>
-        <div style="font-size:1.05rem;font-weight:700;color:#f9a825;letter-spacing:1px" id="receiptOrderRef"></div>
+      <!-- City Bank -->
+      <div style="background:#1a1a2e;border:1px solid #00529b44;border-radius:10px;padding:12px 14px">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+          <span>🏦</span>
+          <span style="font-weight:700;color:#4a9fd4;font-size:0.88rem">City Bank</span>
+          <span style="background:#333;color:#ccc;font-size:0.6rem;padding:2px 6px;border-radius:8px;font-weight:600">BANK TRANSFER</span>
+        </div>
+        <div style="font-size:0.75rem;color:#aaa;margin-bottom:4px">Moors Attire</div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:0.65rem;color:#888">A/C No</div>
+            <div style="font-size:0.95rem;font-weight:700;color:#eee">1324897775001</div>
+          </div>
+          <button onclick="copyNum('1324897775001',this)" style="background:#00529b22;border:1px solid #00529b55;color:#4a9fd4;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
+        </div>
       </div>
 
-      <div style="margin-bottom:10px">
+      <!-- UCBL -->
+      <div style="background:#1a1a2e;border:1px solid #00529b44;border-radius:10px;padding:12px 14px">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+          <span>🏦</span>
+          <span style="font-weight:700;color:#4a9fd4;font-size:0.88rem">UCBL</span>
+          <span style="background:#333;color:#ccc;font-size:0.6rem;padding:2px 6px;border-radius:8px;font-weight:600">BANK TRANSFER</span>
+        </div>
+        <div style="font-size:0.75rem;color:#aaa;margin-bottom:4px">Moors Attire</div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:0.65rem;color:#888">A/C No</div>
+            <div style="font-size:0.95rem;font-weight:700;color:#eee">7862141003465221</div>
+          </div>
+          <button onclick="copyNum('7862141003465221',this)" style="background:#00529b22;border:1px solid #00529b55;color:#4a9fd4;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PAYMENT CONFIRMATION (Step 2) — separate visible card -->
+  <div style="width:100%;max-width:700px;margin:16px auto 0;background:#1a1a2e;border:1px solid #c9a96e44;border-radius:14px;padding:20px;text-align:left">
+    <p style="font-size:0.88rem;font-weight:700;color:#c9a96e;margin-bottom:4px;text-align:center">📸 Step 2 — Confirm Your Payment</p>
+    <p style="font-size:0.72rem;color:#888;margin-bottom:14px;text-align:center">Upload your payment screenshot so we can match and confirm faster.</p>
+
+    <div style="background:#0f0f1a;border-radius:8px;padding:8px 12px;margin-bottom:14px;text-align:center">
+      <div style="font-size:0.65rem;color:#888;margin-bottom:3px">Always mention this Order ID when making payment:</div>
+      <div style="font-size:1.05rem;font-weight:700;color:#f9a825;letter-spacing:1px" id="receiptOrderRef"></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+      <div>
         <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:5px">Payment Screenshot *</label>
         <input type="file" id="receiptFile" accept="image/*"
-          style="width:100%;font-size:0.78rem;color:#ccc;background:#0f0f1a;border:1px dashed #444;border-radius:8px;padding:8px;cursor:pointer"/>
+          style="width:100%;font-size:0.76rem;color:#ccc;background:#0f0f1a;border:1px dashed #444;border-radius:8px;padding:8px;cursor:pointer;box-sizing:border-box"/>
       </div>
-
-      <div style="margin-bottom:12px">
+      <div>
         <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:5px">Transaction ID (optional)</label>
         <input type="text" id="receiptTxnId" placeholder="e.g. TXN8841234"
           style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid #333;background:#0f0f1a;color:#fff;font-size:0.85rem;box-sizing:border-box"/>
       </div>
+    </div>
 
+    <div style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center">
       <button onclick="submitReceipt()" id="receiptBtn"
-        style="width:100%;padding:11px;background:#c9a96e;color:#1a1a2e;border:none;border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer">
+        style="padding:11px;background:#c9a96e;color:#1a1a2e;border:none;border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer">
         ✓ Submit Payment Confirmation
       </button>
-      <div id="receiptStatus" style="font-size:0.74rem;color:#4caf50;margin-top:8px;text-align:center;min-height:16px"></div>
-
-      <div style="text-align:center;margin-top:10px;font-size:0.7rem;color:#555">— or send receipt directly on WhatsApp —</div>
       <a id="whatsappConfirmLink" href="https://wa.me/8801352018131" target="_blank"
-        style="display:block;text-align:center;margin-top:8px;padding:10px;background:#25d36618;border:1px solid #25d36644;color:#25d366;border-radius:8px;font-weight:600;font-size:0.82rem;text-decoration:none">
-        💬 Send Receipt via WhatsApp
+        style="display:block;text-align:center;padding:11px 14px;background:#25d36618;border:1px solid #25d36644;color:#25d366;border-radius:8px;font-weight:600;font-size:0.82rem;text-decoration:none;white-space:nowrap">
+        💬 WhatsApp
       </a>
     </div>
+    <div id="receiptStatus" style="font-size:0.74rem;color:#4caf50;margin-top:8px;text-align:center;min-height:16px"></div>
   </div>
 
   <p style="font-size:0.72rem;color:#555;margin-top:16px">Save your Order ID to track status anytime</p>
@@ -750,6 +761,28 @@
       TRANS_FEE : 100
     };
   }
+  function copyNum(num, btn){
+    if(navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(num).then(function(){
+        const orig = btn.textContent;
+        btn.textContent = '✓ Copied';
+        btn.style.opacity = '0.7';
+        setTimeout(function(){ btn.textContent = orig; btn.style.opacity = ''; }, 1800);
+      });
+    } else {
+      // Fallback for non-HTTPS
+      const el = document.createElement('textarea');
+      el.value = num; el.style.position='fixed'; el.style.opacity='0';
+      document.body.appendChild(el); el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      const orig = btn.textContent;
+      btn.textContent = '✓ Copied';
+      setTimeout(function(){ btn.textContent = orig; }, 1800);
+    }
+  }
+
+
 
   // --- REMEMBER ME (localStorage) ---
   function loadSavedDetails(){
