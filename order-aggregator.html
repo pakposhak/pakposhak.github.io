@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Per-Brand Order Aggregator – PakStyle BD</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0f0f1a;color:#eee;font-family:'Segoe UI',system-ui,sans-serif;padding:20px 14px;max-width:1000px;margin:0 auto;line-height:1.5}
+  h1{color:#c9a96e;font-size:1.4rem;letter-spacing:0.5px}
+  .sub{color:#888;font-size:0.85rem;margin:4px 0 18px}
+  textarea{width:100%;min-height:150px;background:#1a1a2e;border:1.5px solid #333;border-radius:10px;color:#eee;
+    font-family:ui-monospace,Menlo,Consolas,monospace;font-size:0.8rem;padding:12px;outline:none;resize:vertical}
+  textarea:focus{border-color:#c9a96e}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+  button{background:#c9a96e;color:#12122a;border:none;border-radius:8px;padding:10px 18px;font-weight:700;font-size:0.88rem;cursor:pointer;transition:opacity .15s}
+  button:hover{opacity:.85}
+  button.ghost{background:transparent;border:1.5px solid #555;color:#bbb}
+  .hint{font-size:0.74rem;color:#666}
+  .summary{background:#1a1a2e;border:1px solid #2a2a40;border-radius:10px;padding:14px 16px;margin:18px 0 8px;display:flex;gap:22px;flex-wrap:wrap}
+  .summary b{color:#c9a96e;font-size:1.25rem;display:block}
+  .summary span{font-size:0.72rem;color:#999;text-transform:uppercase;letter-spacing:1px}
+  .brand{background:#16162a;border:1px solid #2a2a40;border-radius:12px;margin-top:16px;overflow:hidden}
+  .brand-hdr{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
+    background:#12122a;padding:11px 16px;border-bottom:1px solid #2a2a40}
+  .brand-name{font-weight:700;color:#fff;font-size:1.02rem}
+  .brand-name .badge{background:#c9a96e;color:#12122a;border-radius:10px;padding:1px 9px;font-size:0.7rem;margin-left:8px;font-weight:700}
+  .brand-acts{display:flex;gap:6px}
+  .brand-acts button{padding:6px 12px;font-size:0.74rem}
+  table{width:100%;border-collapse:collapse;font-size:0.8rem}
+  th,td{text-align:left;padding:8px 12px;border-bottom:1px solid #23233a;vertical-align:top}
+  th{color:#888;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.5px;font-weight:600}
+  td a{color:#7ab8ff;text-decoration:none;word-break:break-all}
+  .sz{color:#c9a96e;font-weight:600;white-space:nowrap}
+  .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  tfoot td{font-weight:700;color:#fff;border-top:2px solid #2a2a40}
+  .err{color:#ff8a8a;font-size:0.8rem;margin-top:10px}
+  .empty{color:#666;text-align:center;padding:30px;font-size:0.9rem}
+  details{margin-top:8px}
+  summary{cursor:pointer;color:#999;font-size:0.78rem}
+  pre{background:#0c0c16;border:1px solid #23233a;border-radius:6px;padding:10px;font-size:0.72rem;color:#bbb;white-space:pre-wrap;margin-top:6px}
+</style>
+</head>
+<body>
+
+<h1>📦 Per-Brand Order Aggregator</h1>
+<div class="sub">Paste the <b>ITEMS</b> lines from one or many confirmed orders. They'll be grouped by brand, with duplicate products clubbed and quantities summed — ready to send to each brand / wholesaler.</div>
+
+<textarea id="input" placeholder="Paste order items here. Each line looks like:
+#1 Silya i Pret | Kurti / 1pc | Sizes: S×1, M×1, L×1 | Total qty: 3 | PKR 3,990 each | https://silayipret.com/products/kf14-printed-kaftaan-copy
+
+You can paste several orders at once — paste straight from your order emails."></textarea>
+
+<div class="row">
+  <button onclick="aggregate()">🔀 Group by Brand</button>
+  <button class="ghost" onclick="loadSample()">Load sample</button>
+  <button class="ghost" onclick="document.getElementById('input').value='';document.getElementById('out').innerHTML='';">Clear</button>
+  <span class="hint">Tip: copy the whole "ITEMS" block from each order email and paste — multiple orders are clubbed automatically.</span>
+</div>
+
+<div id="out"></div>
+
+<script>
+  // ── Brand fallback from hostname (mirrors the order form) ──────────────────
+  const BRAND_HOST = {
+    'silayipret.com':'Silayi Pret','pk.sapphireonline.pk':'Sapphire','sapphireonline.pk':'Sapphire',
+    'sapphire.pk':'Sapphire','crossstitch.pk':'Cross Stitch','generation.com.pk':'Generation',
+    'outfitters.com.pk':'Outfitters','beechtree.pk':'Beechtree','nureh.pk':'Nureh','alizeh.pk':'Alizeh',
+    'limelight.pk':'Limelight','laam.pk':'LAAM','almirah.com.pk':'Almirah','khaadi.com':'Khaadi',
+    'gulahmedshop.com':'Gul Ahmed','gulahmed.com':'Gul Ahmed','bonanzasatrangi.com':'Bonanza Satrangi',
+    'mariab.com':'Maria B','mariab.pk':'Maria B','sanasafinaz.com':'Sana Safinaz','nishatlinen.com':'Nishat Linen',
+    'pk.ethnc.com':'ETHNC','ethnc.com':'ETHNC','asimjofa.com':'Asim Jofa','edenrobe.com':'Edenrobe',
+    'junaidjamshed.com':'J. Junaid Jamshed','alkaramstudio.com':'Alkaram','jazmin.pk':'Jazmin'
+  };
+  function brandFromUrl(url){
+    try{ const h=new URL(url).hostname.replace(/^www\./,''); return BRAND_HOST[h] || h.split('.')[0].replace(/^\w/,c=>c.toUpperCase()); }
+    catch(e){ return 'Unknown'; }
+  }
+  function handleFromUrl(url){ const m=(url||'').match(/\/products\/([^/?#]+)/); return m?m[1]:url; }
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  // ── Parse one item line ────────────────────────────────────────────────────
+  function parseLine(line){
+    line=line.replace(/^#\d+\s*/,'').trim();
+    if(!line) return null;
+    const parts=line.split('|').map(s=>s.trim());
+    const url=(parts.find(p=>/^https?:\/\//.test(p))||'').trim();
+    if(!url) return null;
+    let brand=parts[0] && !/^https?:/.test(parts[0]) && !/^Sizes:|^Total qty:|PKR/i.test(parts[0]) ? parts[0] : '';
+    if(!brand || brand.length>40) brand=brandFromUrl(url);
+    const cat=(parts[1] && !/^Sizes:|^Total qty:|PKR|^https?:/i.test(parts[1])) ? parts[1] : '';
+    const szPart=parts.find(p=>/^Sizes:/i.test(p));
+    let sizes=[];
+    if(szPart){
+      sizes=szPart.replace(/^Sizes:/i,'').split(',').map(s=>{
+        const m=s.trim().match(/^(.+?)\s*[×x*]\s*(\d+)$/);
+        return m?{size:m[1].trim(),qty:parseInt(m[2])}:{size:s.trim(),qty:1};
+      }).filter(s=>s.size);
+    }
+    const qtyPart=parts.find(p=>/Total qty:/i.test(p));
+    let totalQty=qtyPart?parseInt(qtyPart.replace(/\D/g,'')):sizes.reduce((a,b)=>a+b.qty,0);
+    if(!sizes.length){ sizes=[{size:'—',qty:totalQty||1}]; }   // unstitched / no size
+    const pricePart=parts.find(p=>/PKR/i.test(p));
+    const pkr=pricePart?parseInt(pricePart.replace(/[^\d]/g,'')):0;
+    return {brand:brand.trim(), cat, url, handle:handleFromUrl(url), sizes, pkr};
+  }
+
+  // ── Aggregate ───────────────────────────────────────────────────────────────
+  function aggregate(){
+    const raw=document.getElementById('input').value;
+    const out=document.getElementById('out');
+    const lines=raw.split(/\r?\n/).map(l=>l.trim()).filter(l=>l && l.includes('http'));
+    const items=lines.map(parseLine).filter(Boolean);
+    if(!items.length){ out.innerHTML='<div class="err">No valid item lines found. Each line needs a product URL. Try "Load sample" to see the expected format.</div>'; return; }
+
+    // group by brand, then club by url
+    const brands={};
+    items.forEach(it=>{
+      const b=it.brand||'Unknown';
+      brands[b]=brands[b]||{};
+      const key=it.url;
+      if(!brands[b][key]) brands[b][key]={url:it.url,handle:it.handle,cat:it.cat,pkr:it.pkr,sizes:{}};
+      it.sizes.forEach(s=>{ brands[b][key].sizes[s.size]=(brands[b][key].sizes[s.size]||0)+s.qty; });
+      if(it.pkr) brands[b][key].pkr=it.pkr;
+    });
+
+    let gPieces=0,gValue=0,gProducts=0;
+    const brandNames=Object.keys(brands).sort();
+    let html='';
+    brandNames.forEach((b,bi)=>{
+      const prods=Object.values(brands[b]);
+      let bPieces=0,bValue=0;
+      const rows=prods.map(p=>{
+        const pieces=Object.values(p.sizes).reduce((a,c)=>a+c,0);
+        const szStr=Object.entries(p.sizes).map(([s,q])=>`${s}×${q}`).join(', ');
+        const lineVal=pieces*p.pkr;
+        bPieces+=pieces; bValue+=lineVal;
+        return {handle:p.handle,url:p.url,cat:p.cat,szStr,pieces,pkr:p.pkr,lineVal};
+      });
+      gPieces+=bPieces; gValue+=bValue; gProducts+=prods.length;
+      const bid='b'+bi;
+      html+=`<div class="brand">
+        <div class="brand-hdr">
+          <div class="brand-name">${esc(b)}<span class="badge">${prods.length} product${prods.length>1?'s':''} · ${bPieces} pcs</span></div>
+          <div class="brand-acts">
+            <button onclick="copyBrand('${bid}')">📋 Copy</button>
+            <button onclick="csvBrand('${bid}','${esc(b).replace(/[^a-z0-9]/gi,'_')}')">⬇ CSV</button>
+          </div>
+        </div>
+        <table id="${bid}"><thead><tr>
+          <th>#</th><th>Product (handle)</th><th>Category</th><th>Sizes × Qty</th><th class="num">Pcs</th><th class="num">PKR ea.</th><th class="num">Line PKR</th>
+        </tr></thead><tbody>`;
+      rows.forEach((r,i)=>{
+        html+=`<tr data-url="${esc(r.url)}" data-h="${esc(r.handle)}" data-cat="${esc(r.cat)}" data-sz="${esc(r.szStr)}" data-pcs="${r.pieces}" data-ea="${r.pkr}" data-line="${r.lineVal}">
+          <td>${i+1}</td>
+          <td><a href="${esc(r.url)}" target="_blank">${esc(r.handle)}</a></td>
+          <td>${esc(r.cat||'—')}</td>
+          <td class="sz">${esc(r.szStr)}</td>
+          <td class="num">${r.pieces}</td>
+          <td class="num">${r.pkr?r.pkr.toLocaleString():'—'}</td>
+          <td class="num">${r.lineVal?r.lineVal.toLocaleString():'—'}</td>
+        </tr>`;
+      });
+      html+=`</tbody><tfoot><tr><td colspan="4">Total — ${esc(b)}</td><td class="num">${bPieces}</td><td></td><td class="num">PKR ${bValue.toLocaleString()}</td></tr></tfoot></table></div>`;
+    });
+
+    const summary=`<div class="summary">
+      <div><b>${brandNames.length}</b><span>Brands</span></div>
+      <div><b>${gProducts}</b><span>Products</span></div>
+      <div><b>${gPieces}</b><span>Total pieces</span></div>
+      <div><b>PKR ${gValue.toLocaleString()}</b><span>Total value</span></div>
+    </div>`;
+    out.innerHTML=summary+html;
+  }
+
+  // ── Copy / CSV per brand ────────────────────────────────────────────────────
+  function brandRows(id){
+    return [...document.querySelectorAll('#'+id+' tbody tr')].map(tr=>({
+      handle:tr.dataset.h,url:tr.dataset.url,cat:tr.dataset.cat,sz:tr.dataset.sz,
+      pcs:tr.dataset.pcs,ea:tr.dataset.ea,line:tr.dataset.line
+    }));
+  }
+  function copyBrand(id){
+    const rows=brandRows(id);
+    const tsv=['Product\tCategory\tSizes×Qty\tPcs\tPKR ea\tLine PKR\tURL',
+      ...rows.map(r=>`${r.handle}\t${r.cat}\t${r.sz}\t${r.pcs}\t${r.ea}\t${r.line}\t${r.url}`)].join('\n');
+    navigator.clipboard.writeText(tsv).then(()=>flash(id,'Copied! Paste into Sheets/Excel or WhatsApp.'));
+  }
+  function csvBrand(id,name){
+    const rows=brandRows(id);
+    const csv=['Product,Category,Sizes x Qty,Pcs,PKR each,Line PKR,URL',
+      ...rows.map(r=>[r.handle,`"${r.cat}"`,`"${r.sz}"`,r.pcs,r.ea,r.line,r.url].join(','))].join('\n');
+    const blob=new Blob([csv],{type:'text/csv'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='order_'+name+'.csv';a.click();
+  }
+  function flash(id,msg){
+    const t=document.querySelector('#'+id).closest('.brand').querySelector('.brand-name');
+    const o=t.innerHTML; t.innerHTML=o+' <span style="color:#7CFC9A;font-size:0.75rem">✓ '+msg+'</span>';
+    setTimeout(()=>t.innerHTML=o,2500);
+  }
+
+  function loadSample(){
+    document.getElementById('input').value=
+`#1 Silya i Pret | Kurti / 1pc | Sizes: S×1, M×1, L×1 | Total qty: 3 | PKR 3,990 each | https://silayipret.com/products/kf14-printed-kaftaan-copy
+#2 Silya i Pret | Kurti / 1pc | Sizes: M×2 | Total qty: 2 | PKR 3,990 each | https://silayipret.com/products/kf14-printed-kaftaan-copy
+#3 Sapphire | 3pc Unstitched | Total qty: 1 | PKR 8,490 each | https://pk.sapphireonline.pk/products/sample-lawn-3pc
+#4 Maria B | Formal 3pc | Sizes: M×1, L×1 | Total qty: 2 | PKR 22,000 each | https://www.mariab.com/products/mbroidered-sample`;
+    aggregate();
+  }
+</script>
+</body>
+</html>
