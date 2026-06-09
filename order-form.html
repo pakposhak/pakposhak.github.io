@@ -1149,7 +1149,8 @@
 
   function createDraft(url){
     const brand = detectBrand(url);
-    const isPk  = /\.(pk|com\.pk)(\/|$)/.test(new URL(url).hostname + '/');
+    const _cdHost = new URL(url).hostname;
+    const isPk  = /\.(pk|com\.pk)(\/|$)/.test(_cdHost + '/') || _cdHost === 'pk.ethnc.com';
     const id    = draftIdCtr++;
     drafts[id]  = { currency: 'PKR', sizeCounter: 0 };
     document.getElementById('draftCards')
@@ -1634,6 +1635,11 @@
     const item = cart[idx];
     cart.splice(idx, 1);
     renderCart();
+    // Always return to step 1 so the draft card is visible
+    goToStep(1);
+    // Hide top URL input row — the draft panel handles adding more URLs
+    document.getElementById('urlInputRow').style.display = 'none';
+
     // Create a draft card from the old item
     const _host = new URL(item.url).hostname;
     const isPk  = /\.(pk|com\.pk)(\/|$)/.test(_host + '/') || _host === 'pk.ethnc.com';
@@ -1641,6 +1647,18 @@
     drafts[id] = { currency: 'PKR', sizeCounter: 0 };
     document.getElementById('draftsContainer').style.display = '';
     document.getElementById('draftCards').insertAdjacentHTML('beforeend', buildDraftCard(id, item.url, item.brand, isPk));
+
+    // Add a clear "editing" banner so the user knows this is their item being edited
+    const card = document.getElementById(`dc_${id}`);
+    card.style.cssText += ';border:2px solid #f9a825 !important;';
+    card.insertAdjacentHTML('afterbegin',
+      `<div style="background:#fff8e1;border-bottom:2px solid #f9a825;padding:9px 14px;
+         border-radius:10px 10px 0 0;margin:-1px -1px 0;font-size:0.82rem;font-weight:700;
+         color:#7a5800;display:flex;align-items:center;gap:8px">
+        ✏️ Editing item — change anything below, then click <span style="background:#f9a825;color:#1a1a2e;
+          padding:1px 8px;border-radius:5px;font-size:0.78rem">Save to Order List</span>
+      </div>`);
+
     // Fill in saved values
     document.getElementById(`dc_cat_${id}`).value = item.cat;
     onDraftCatChange(id);
@@ -1656,8 +1674,8 @@
       (item.sizes || [{size:'',qty:1}]).forEach(r => addDraftSizeRow(id, r.size, r.qty));
     }
     updateSaveAllBtn();
-    checkAddUrlLock(); // card is complete so buttons will re-enable
-    document.getElementById('draftsContainer').scrollIntoView({ behavior:'smooth', block:'nearest' });
+    checkAddUrlLock();
+    document.getElementById('draftsContainer').scrollIntoView({ behavior:'smooth', block:'start' });
   }
 
   function renderCart(){
