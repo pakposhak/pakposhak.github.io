@@ -72,7 +72,7 @@ From: **collectionmoors@gmail.com** · Business: **Moors Attire / PakStyle BD** 
 
 ## 4) Self-serve & instant channels (no email needed)
 - **Askani Group reseller** (covers Sapphire, Cross Stitch, Gul Ahmed, Asim Jofa, Qalamkar, Khas, Saya…): sign up free → https://askanigroup.com/reseller/ — **free, instant approval**.
-- **Bonanza Satrangi wholesale**: order directly from their wholesale collection → https://bonanzasatrangi.com/collections/wholesale-collection
+- **Bonanza Satrangi wholesale**: their self-serve wholesale page is currently empty — **contact direct**: `info@bonanzasatrangi.com` · `+92 21 111-244-266`
 - **Konjae wholesale**: https://wholesale.konjae.com/
 - **Markaz app**: WhatsApp-seller catalog (100k+ items) — install the Markaz app, browse, order in-app.
 
