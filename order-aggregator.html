@@ -52,11 +52,12 @@
 You can paste several orders at once — paste straight from your order emails."></textarea>
 
 <div class="row">
+  <button onclick="loadFromSheet()">🔄 Load paid orders from my sheet</button>
   <button onclick="aggregate()">🔀 Group by Brand</button>
   <button class="ghost" onclick="loadSample()">Load sample</button>
   <button class="ghost" onclick="document.getElementById('input').value='';document.getElementById('out').innerHTML='';">Clear</button>
-  <span class="hint">Tip: copy the whole "ITEMS" block from each order email and paste — multiple orders are clubbed automatically.</span>
 </div>
+<div class="hint" style="margin-top:6px">"Load paid orders" pulls every order marked <b>payment_received</b> from your tracking sheet (works for orders placed after the auto-logging update). Or paste the ITEMS block from any order email — multiple orders are clubbed automatically.</div>
 
 <div id="out"></div>
 
@@ -197,6 +198,38 @@ You can paste several orders at once — paste straight from your order emails."
     const t=document.querySelector('#'+id).closest('.brand').querySelector('.brand-name');
     const o=t.innerHTML; t.innerHTML=o+' <span style="color:#7CFC9A;font-size:0.75rem">✓ '+msg+'</span>';
     setTimeout(()=>t.innerHTML=o,2500);
+  }
+
+  // ── Auto-load paid orders from the tracking Google Sheet ──────────────────
+  const SHEET_CSV='https://docs.google.com/spreadsheets/d/16v2e7pxwMPimVkOTFKID3S4dI-mPexlzNgUT3zN0CM0/gviz/tq?tqx=out:csv&gid=0&headers=1';
+  function parseCSV(text){
+    const rows=[];let cur=[],val='',q=false;
+    for(let i=0;i<text.length;i++){const c=text[i];
+      if(q){ if(c==='"'){ if(text[i+1]==='"'){val+='"';i++;} else q=false; } else val+=c; }
+      else { if(c==='"')q=true; else if(c===','){cur.push(val);val='';} else if(c==='\n'){cur.push(val);rows.push(cur);cur=[];val='';} else if(c!=='\r')val+=c; }
+    }
+    if(val.length||cur.length){cur.push(val);rows.push(cur);}
+    return rows;
+  }
+  async function loadFromSheet(){
+    const out=document.getElementById('out');
+    out.innerHTML='<div class="empty">Loading paid orders from your sheet…</div>';
+    try{
+      const t=await fetch(SHEET_CSV+'&_='+Date.now()).then(r=>r.text());
+      const rows=parseCSV(t).filter(r=>r.length>1);
+      const hdr=rows[0].map(h=>h.trim().toLowerCase().replace(/\s+/g,'_'));
+      const ci=hdr.indexOf('order_id'), cs=hdr.indexOf('status'), ck=hdr.indexOf('order_items');
+      if(ck===-1){ out.innerHTML='<div class="err">Your sheet has no <b>order_items</b> column yet. New orders placed after the auto-logging update will appear here. For older orders, paste the ITEMS block from the order email above.</div>'; return; }
+      const paid=rows.slice(1).filter(r=>(r[cs]||'').trim().toLowerCase()==='payment_received' && (r[ck]||'').includes('http'));
+      if(!paid.length){ out.innerHTML='<div class="err">No paid orders with item data found yet. (Orders must be marked <b>payment_received</b> and placed after the auto-logging update.) Paste an order\'s ITEMS block above to aggregate it now.</div>'; return; }
+      const blob=paid.map(r=>r[ck]).join('\n');
+      document.getElementById('input').value=blob;
+      aggregate();
+      const banner=document.createElement('div');
+      banner.className='hint';banner.style.color='#7CFC9A';banner.style.margin='10px 0';
+      banner.textContent='✓ Loaded '+paid.length+' paid order(s) from your sheet.';
+      out.prepend(banner);
+    }catch(e){ out.innerHTML='<div class="err">Could not read the sheet ('+e.message+'). Make sure it is shared "Anyone with the link".</div>'; }
   }
 
   function loadSample(){

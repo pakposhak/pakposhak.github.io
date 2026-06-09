@@ -55,13 +55,22 @@ function doPost(e) {
 
 // ── NEW ORDER → append row + email owner ────────────────────────────────
 function handleNewOrder(data, sheet, today) {
+  // Ensure headers for the extra columns the aggregator reads (G,H,I)
+  var hdr = sheet.getRange(1, 1, 1, Math.max(9, sheet.getLastColumn())).getValues()[0];
+  function setHdr(col, name){ if (String(hdr[col-1] || '').trim() === '') sheet.getRange(1, col).setValue(name); }
+  setHdr(7, 'receipt_url'); setHdr(8, 'order_items'); setHdr(9, 'cart_links');
+
+  // Columns: order_id|buyer_name|whatsapp|status|status_date|notes|receipt_url|order_items|cart_links
   sheet.appendRow([
     data.order_id   || '',
     data.buyer_name || '',
     data.whatsapp   || '',
     'order_received',
     today,
-    'New order — awaiting payment'
+    'New order — awaiting payment',
+    '',
+    data.order_items || '',
+    data.cart_links  || ''
   ]);
 
   var subject = 'New PakStyle Order ' + (data.order_id || '') + ' — ' + (data.buyer_name || '');
