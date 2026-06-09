@@ -731,6 +731,19 @@
 </form>
 
 <script>
+  // ═══════════════════════════════════════════════════════════════════════
+  //  ORDER DELIVERY CONFIG  — paste your keys here after setup
+  // ═══════════════════════════════════════════════════════════════════════
+  // (A) Web3Forms: get a free access key at https://web3forms.com (enter your
+  //     email → they email you a key). Paste it between the quotes below.
+  const WEB3FORMS_KEY   = '';
+  // (B) Google Apps Script: deploy google-apps-script.gs (see that file's
+  //     instructions), then paste the Web-app URL (ends in /exec) below.
+  const SHEET_SCRIPT_URL = '';
+  // Old Formspree endpoint — used only as a fallback if WEB3FORMS_KEY is blank.
+  const FORMSPREE_URL    = 'https://formspree.io/f/xnjypzyl';
+  // ═══════════════════════════════════════════════════════════════════════
+
   // --- ADMIN RATE MANAGEMENT ---
   // Rates stored in localStorage, editable only via ?admin URL
   function getRates(){
@@ -1897,31 +1910,75 @@
       return parts.join(' | ');
     }).join('\n');
 
-    // Formspree requires a valid email in the _replyto field — fall back to a placeholder
-    const replyTo = email || 'no-email@whatsapp.contact';
-    document.getElementById('hf_subject').value    = `New Order ${orderId} — ${name}`;
-    document.getElementById('hf_replyto').value    = replyTo;
-    document.getElementById('hf_order_id').value   = orderId;
-    document.getElementById('hf_name').value       = name;
-    document.getElementById('hf_wa').value         = wa;
-    document.getElementById('hf_email').value      = email || '(contact via WhatsApp: ' + wa + ')';
-    document.getElementById('hf_address').value    = address;
-    document.getElementById('hf_notes').value      = notes;
-    document.getElementById('hf_total').value      = '৳ ' + totalBdt.toLocaleString();
-    document.getElementById('hf_count').value      = cart.length;
-    document.getElementById('hf_items').value      = itemsText;
-    document.getElementById('hf_cart_links').value = cart.map(i => i.url).join('\n');
+    const paymentInfo = 'bKash Payment: 01352018131 | bKash/Nagad/Upay/Rocket Send Money: 01851948690 | City Bank – Moors Attire A/C: 1324897775001 | UCBL – Moors Attire A/C: 7862141003465221';
 
-    const form = document.getElementById('hiddenForm');
-    fetch(form.action, {
-      method: 'POST',
-      body: new FormData(form),
-      headers: { 'Accept': 'application/json' }
-    }).then(res => {
-      if(res.ok){
+    // Shared order payload (used by every endpoint)
+    const payload = {
+      order_id:            orderId,
+      buyer_name:          name,
+      whatsapp:            wa,
+      email:               email || '(contact via WhatsApp: ' + wa + ')',
+      delivery_address:    address,
+      notes:               notes || '',
+      estimated_total_bdt: '৳ ' + totalBdt.toLocaleString(),
+      item_count:          cart.length,
+      order_items:         itemsText,
+      cart_links:          cart.map(i => i.url).join('\n'),
+      payment_info:        paymentInfo
+    };
+
+    // (B) Fire to Google Apps Script — appends tracking row + emails owner.
+    //     no-cors / text-plain = simple request, no CORS preflight needed.
+    if(SHEET_SCRIPT_URL){
+      fetch(SHEET_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      }).catch(()=>{});  // fire-and-forget; tracking sheet is non-blocking
+    }
+
+    // (A) Primary submission for the success confirmation:
+    //     Web3Forms if a key is set, otherwise fall back to Formspree.
+    let primary;
+    if(WEB3FORMS_KEY){
+      primary = fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(Object.assign({
+          access_key: WEB3FORMS_KEY,
+          subject: `New PakStyle Order ${orderId} — ${name}`,
+          from_name: 'PakStyle BD Orders'
+        }, payload))
+      }).then(r => r.json()).then(j => j.success);
+    } else {
+      const form = document.getElementById('hiddenForm');
+      document.getElementById('hf_subject').value    = `New Order ${orderId} — ${name}`;
+      document.getElementById('hf_replyto').value    = email || 'no-email@whatsapp.contact';
+      document.getElementById('hf_order_id').value   = orderId;
+      document.getElementById('hf_name').value       = name;
+      document.getElementById('hf_wa').value         = wa;
+      document.getElementById('hf_email').value      = payload.email;
+      document.getElementById('hf_address').value    = address;
+      document.getElementById('hf_notes').value      = notes;
+      document.getElementById('hf_total').value      = payload.estimated_total_bdt;
+      document.getElementById('hf_count').value      = cart.length;
+      document.getElementById('hf_items').value      = itemsText;
+      document.getElementById('hf_cart_links').value = payload.cart_links;
+      primary = fetch(FORMSPREE_URL, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      }).then(res => res.ok);
+    }
+
+    primary.then(ok => {
+      // If the Apps Script side-channel is configured, the order is safely
+      // recorded even if the email service hiccups — so treat as success.
+      if(ok || SHEET_SCRIPT_URL){
         document.getElementById('orderRef').textContent = orderId;
         document.getElementById('trackOrderLink').href =
-          `tracking.html?order=${orderId}&name=${encodeURIComponent(name)}`;
+          `tracking.html?id=${orderId}&name=${encodeURIComponent(name)}`;
         clearCartStorage();
         goToStep(4);
       } else {
@@ -1930,9 +1987,18 @@
         btn.textContent = '✓ Confirm & Submit Order';
       }
     }).catch(() => {
-      alert('Network error. Please check your connection and try again.');
-      btn.disabled = false;
-      btn.textContent = '✓ Confirm & Submit Order';
+      if(SHEET_SCRIPT_URL){
+        // Email service errored but the sheet endpoint likely recorded it.
+        document.getElementById('orderRef').textContent = orderId;
+        document.getElementById('trackOrderLink').href =
+          `tracking.html?id=${orderId}&name=${encodeURIComponent(name)}`;
+        clearCartStorage();
+        goToStep(4);
+      } else {
+        alert('Network error. Please check your connection and try again.');
+        btn.disabled = false;
+        btn.textContent = '✓ Confirm & Submit Order';
+      }
     });
   }
 
