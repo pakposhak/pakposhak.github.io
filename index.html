@@ -421,7 +421,7 @@
     </div>
     <div class="row-2">
       <div class="field">
-        <label>Email * <span style="color:#aaa;font-weight:400;font-size:0.75rem">(for order confirmation)</span></label>
+        <label>Email <span style="color:#aaa;font-weight:400;font-size:0.75rem">(optional)</span></label>
         <input type="email" id="buyerEmail" placeholder="your@email.com"/>
       </div>
       <div class="field">
@@ -1802,17 +1802,17 @@
     const address = document.getElementById('buyerAddress').value.trim();
     const emailOk = !email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     let valid = true;
-    if(!name){   document.getElementById('buyerName').style.borderColor='#c0392b';    valid=false; }
-    else         document.getElementById('buyerName').style.borderColor='';
-    if(!wa){     document.getElementById('buyerWA').style.borderColor='#c0392b';      valid=false; }
-    else         document.getElementById('buyerWA').style.borderColor='';
-    if(!email){  document.getElementById('buyerEmail').style.borderColor='#c0392b';   valid=false; }
-    else if(!emailOk){ document.getElementById('buyerEmail').style.borderColor='#c0392b'; valid=false; }
-    else         document.getElementById('buyerEmail').style.borderColor='';
+    if(!name){    document.getElementById('buyerName').style.borderColor='#c0392b';    valid=false; }
+    else          document.getElementById('buyerName').style.borderColor='';
+    if(!wa){      document.getElementById('buyerWA').style.borderColor='#c0392b';      valid=false; }
+    else          document.getElementById('buyerWA').style.borderColor='';
+    // Email is optional — only validate format if something was entered
+    if(email && !emailOk){ document.getElementById('buyerEmail').style.borderColor='#c0392b'; valid=false; }
+    else                   document.getElementById('buyerEmail').style.borderColor='';
     if(!address){ document.getElementById('buyerAddress').style.borderColor='#c0392b'; valid=false; }
     else          document.getElementById('buyerAddress').style.borderColor='';
     if(!valid){
-      alert('Please fill in all required fields.\nEmail is required for order confirmation.');
+      alert('Please fill in all required fields (Name, WhatsApp number, and Delivery Address).');
       return;
     }
     buildReviewSummary();
@@ -1897,12 +1897,14 @@
       return parts.join(' | ');
     }).join('\n');
 
+    // Formspree requires a valid email in the _replyto field — fall back to a placeholder
+    const replyTo = email || 'no-email@whatsapp.contact';
     document.getElementById('hf_subject').value    = `New Order ${orderId} — ${name}`;
-    document.getElementById('hf_replyto').value    = email || wa;
+    document.getElementById('hf_replyto').value    = replyTo;
     document.getElementById('hf_order_id').value   = orderId;
     document.getElementById('hf_name').value       = name;
     document.getElementById('hf_wa').value         = wa;
-    document.getElementById('hf_email').value      = email;
+    document.getElementById('hf_email').value      = email || '(contact via WhatsApp: ' + wa + ')';
     document.getElementById('hf_address').value    = address;
     document.getElementById('hf_notes').value      = notes;
     document.getElementById('hf_total').value      = '৳ ' + totalBdt.toLocaleString();
