@@ -801,7 +801,9 @@
     document.getElementById('savedIndicator').style.display = 'none';
   }
   loadSavedDetails();
-  loadCartFromStorage();
+  // NOTE: loadCartFromStorage() must run AFTER `let cart` is initialised —
+  // calling it here threw a (silently caught) TDZ error and the cart never
+  // restored after refresh. It is now called at the end of the script.
 
   // Show admin panel — via ?admin URL OR Ctrl+Shift+A keyboard shortcut
   function openAdminPanel(){
@@ -1036,7 +1038,8 @@
       // ── SELECT RELEVANT VARIANTS ──────────────────────────────────────────
       let vars = product.variants || [];
       let avail = vars.filter(v => v.available);
-      if(!avail.length) avail = vars;  // if all sold out, show anyway
+      const allSoldOut = vars.length > 0 && avail.length === 0;
+      if(allSoldOut) avail = vars;  // keep a price reference, but no size chips + warn below
 
       // For brands with type option: prefer stitched over unstitched
       if(typeKey){
@@ -1068,8 +1071,8 @@
         }
       }
 
-      // ── SIZES — show as clickable chips, not auto-filled rows ────────────
-      if(sizeKey && activeCat && !UNSTITCHED_CATS.has(activeCat)){
+      // ── SIZES — show as clickable chips (in-stock sizes only) ────────────
+      if(!allSoldOut && sizeKey && activeCat && !UNSTITCHED_CATS.has(activeCat)){
         const seen = new Set();
         const sizesToAdd = [];
         avail.forEach(v => {
@@ -1078,12 +1081,27 @@
         });
         if(sizesToAdd.length){
           showSizeChips(id, sizesToAdd);
+          // No size in the pasted link → warn: a highlighted size on the brand
+          // page does NOT mean it was selected; customer must tap one here.
+          if(!detectSizeFromUrl(url)){
+            const hint = document.querySelector(`#dc_szchips_${id} > div:first-child`);
+            if(hint){
+              hint.innerHTML = '⚠️ <b>Your link doesn\'t include a size.</b> Tap the size(s) you want below — a highlighted size on the brand\'s page does <u>not</u> mean it was selected.';
+              hint.style.cssText = 'font-size:0.75rem;font-weight:600;color:#7a4f00;background:#fff3cd;border:1px solid #e6a817;border-radius:6px;padding:6px 10px;margin-bottom:7px';
+            }
+          }
         }
+      }
+
+      if(allSoldOut){
+        setStatus('⛔ All sizes appear SOLD OUT on the brand site — please double-check the product page before ordering.', '#c0392b');
+        checkAddUrlLock();
+        return;  // keep the warning visible (no auto-hide)
       }
 
       const uniqSizes = sizeKey ? new Set(avail.map(v=>normSizeFull(v[sizeKey])).filter(Boolean)) : new Set();
       const refPrice  = Math.round(parseFloat((avail[0]||vars[0])?.price)||0);
-      setStatus(`✓ Fetched: ${product.product_type||'product'} · PKR ${refPrice.toLocaleString()}${uniqSizes.size?' · '+uniqSizes.size+' sizes available':''}`, '#2a7a32');
+      setStatus(`✓ Fetched: ${product.product_type||'product'} · PKR ${refPrice.toLocaleString()}${uniqSizes.size?' · '+uniqSizes.size+' sizes in stock':''}`, '#2a7a32');
       hideStatus();
       checkAddUrlLock();
 
@@ -1495,7 +1513,6 @@
     'rangrasiya.com':'Rang Rasiya',
     'bareezepk.com':'Bareeze',
     'armasclothing.com':'Armas',
-    'shopecs.com':'ECS',
     'ittehadtextiles.com':'Ittehad',
     'republicwomenswear.com':'Republic',
   };
@@ -1514,14 +1531,14 @@
     // ── Multi-department ──
     {n:'Sapphire',u:'https://pk.sapphireonline.pk',p:true,c:'md'},
     {n:'Khaadi',u:'https://pk.khaadi.com',p:true,c:'md'},
-    {n:'Alkaram Studio',u:'https://alkaramstudio.pk',p:true,c:'md'},
+    {n:'Alkaram Studio',u:'https://www.alkaramstudio.com',p:false,c:'md'},
     {n:'Almirah',u:'https://almirah.com.pk',p:true,c:'md'},
     {n:'Breakout',u:'https://breakout.com.pk',p:true,c:'md'},
     {n:'Diners',u:'https://diners.com.pk',p:true,c:'md'},
-    {n:'Edenrobe',u:'https://edenrobe.com/pk/',p:true,c:'md'},
+    {n:'Edenrobe',u:'https://edenrobe.com',p:false,c:'md'},
     {n:'Limelight',u:'https://www.limelight.pk',p:true,c:'md'},
     {n:'Outfitters',u:'https://outfitters.com.pk',p:true,c:'md'},
-    {n:'Zellbury',u:'https://zellbury.com.pk',p:true,c:'md'},
+    {n:'Zellbury',u:'https://zellbury.com',p:false,c:'md'},
     {n:'Bonanza Satrangi',u:'https://bonanzasatrangi.com',p:false,c:'md'},
     {n:'ChenOne',u:'https://chenone.com',p:false,c:'md'},
     {n:'Gul Ahmed',u:'https://gulahmedshop.com',p:false,c:'md'},
@@ -1530,35 +1547,33 @@
     {n:'MTJ (Tariq Jameel)',u:'https://mtjonline.com',p:false,c:'md'},
     {n:'Nishat Linen',u:'https://nishatlinen.com',p:false,c:'md'},
     // ── Women’s pret & unstitched ──
-    {n:'Agha Noor',u:'https://aghanoorofficial.com.pk',p:true,c:'w'},
+    {n:'Agha Noor',u:'https://aghanoorofficial.com',p:false,c:'w'},
     {n:'Alizeh',u:'https://alizeh.pk',p:true,c:'w'},
-    {n:'Armas',u:'https://armas.pk',p:true,c:'w'},
+    {n:'Armas',u:'https://armasclothing.com',p:false,c:'w'},
     {n:'Beechtree',u:'https://beechtree.pk',p:true,c:'w'},
-    {n:'Bin Ilyas',u:'https://binilyas.com.pk',p:true,c:'w'},
-    {n:'By The Way (BTW)',u:'https://btwonline.pk',p:true,c:'w'},
-    {n:'Charizma',u:'https://houseofcharizma.com.pk',p:true,c:'w'},
+    {n:'Bin Ilyas',u:'https://binilyas.com',p:false,c:'w'},
+    {n:'Charizma',u:'https://houseofcharizma.com',p:false,c:'w'},
     {n:'Chinyere',u:'https://chinyere.pk',p:true,c:'w'},
     {n:'Cross Stitch',u:'https://www.crossstitch.pk',p:true,c:'w'},
-    {n:'ECS',u:'https://shopecs.com.pk',p:true,c:'w'},
-    {n:'Ego',u:'https://wearego.com.pk',p:true,c:'w'},
+    {n:'Ego',u:'https://wearego.com',p:false,c:'w'},
     {n:'ETHNC',u:'https://pk.ethnc.com',p:true,c:'w'},
     {n:'Farasha',u:'https://farashaonline.pk',p:true,c:'w'},
     {n:'Generation',u:'https://generation.com.pk',p:true,c:'w'},
     {n:'Gulaal',u:'https://gulaal.pk',p:true,c:'w'},
-    {n:'Image',u:'https://image1993.com.pk',p:true,c:'w'},
+    {n:'Image',u:'https://image1993.com',p:false,c:'w'},
     {n:'Jazmin',u:'https://jazmin.pk',p:true,c:'w'},
     {n:'Kayseria',u:'https://kayseria.com.pk',p:true,c:'w'},
-    {n:'Kross Kulture',u:'https://krosskulture.com.pk',p:true,c:'w'},
+    {n:'Kross Kulture',u:'https://krosskulture.com',p:false,c:'w'},
     {n:'LAAM (multi-brand)',u:'https://laam.pk',p:true,c:'w'},
     {n:'Maria B',u:'https://mariab.pk',p:true,c:'w'},
     {n:'Motifz',u:'https://motifz.com.pk',p:true,c:'w'},
     {n:'Nureh',u:'https://nureh.pk',p:true,c:'w'},
-    {n:'Rang Ja',u:'https://rangja.com.pk',p:true,c:'w'},
+    {n:'Rang Ja',u:'https://myrangja.com',p:false,c:'w'},
     {n:'Ramsha',u:'https://ramsha.pk',p:true,c:'w'},
-    {n:'Salitex',u:'https://salitex.pk',p:true,c:'w'},
+    {n:'Salitex',u:'https://salitex.com',p:false,c:'w'},
     {n:'Sha Posh',u:'https://shaposh.pk',p:true,c:'w'},
     {n:'Silayi Pret',u:'https://silayipret.com',p:true,c:'w'},
-    {n:'Thredz',u:'https://thredz.com.pk',p:true,c:'w'},
+    {n:'Thredz',u:'https://www.thredzonline.com',p:false,c:'w'},
     {n:'Warda',u:'https://warda.com.pk',p:true,c:'w'},
     {n:'Zarif',u:'https://zarif.pk',p:true,c:'w'},
     {n:'Ittehad',u:'https://ittehadtextiles.com',p:false,c:'w'},
@@ -1568,10 +1583,10 @@
     {n:'Barae Khanom',u:'https://embellishedkurtas.com',p:false,c:'p'},
     {n:'Bareeze',u:'https://bareeze.com',p:false,c:'p'},
     {n:'Baroque',u:'https://baroque.com',p:false,c:'p'},
-    {n:'Crimson',u:'https://crimson.com',p:false,c:'p'},
-    {n:'Elan',u:'https://elan.com',p:false,c:'p'},
+    {n:'Crimson',u:'https://www.crimson.com.pk',p:true,c:'p'},
+    {n:'Elan',u:'https://elan.pk',p:true,c:'p'},
     {n:'Erum Khan',u:'https://erumkhancouture.com',p:false,c:'p'},
-    {n:'Faiza Saqlain',u:'https://faizasaqlain.com',p:false,c:'p'},
+    {n:'Faiza Saqlain',u:'https://www.faizasaqlain.pk',p:true,c:'p'},
     {n:'Farah Talib Aziz',u:'https://www.farahtalibaziz.com',p:false,c:'p'},
     {n:'Hussain Rehar',u:'https://hussainrehar.com',p:false,c:'p'},
     {n:'Mohsin Naveed Ranjha',u:'https://mohsinnaveedranjha.com',p:false,c:'p'},
@@ -1585,7 +1600,7 @@
     {n:'Suffuse by Sana Yasir',u:'https://suffuse.com',p:false,c:'p'},
     {n:'Tena Durrani',u:'https://tenadurrani.com',p:false,c:'p'},
     {n:'Threads & Motifs',u:'https://threadsandmotifs.com',p:false,c:'p'},
-    {n:'Zaha by Elan',u:'https://zaha.com',p:false,c:'p'},
+    {n:'Zaha by Elan',u:'https://www.zaha.pk',p:true,c:'p'},
     {n:'Zainab Chottani',u:'https://zainabchottani.com',p:false,c:'p'},
     {n:'Zara Shahjahan',u:'https://www.zarashahjahan.com',p:false,c:'p'},
     // ── Menswear & tailoring ──
@@ -1594,27 +1609,24 @@
     {n:'Furor (by Eden Robe)',u:'https://furorjeans.com',p:false,c:'m'},
     {n:'Republic Menswear (Omar Farooq)',u:'https://republicbespoke.com',p:false,c:'m'},
     {n:'Naushemian (Nauman Arfeen)',u:'https://naushemian.com',p:false,c:'m'},
-    {n:'Brumano',u:'https://brumano.com.pk',p:true,c:'m'},
-    {n:'Cambridge',u:'https://thecambridgeshop.com.pk',p:true,c:'m'},
+    {n:'Cambridge',u:'https://thecambridgeshop.com',p:false,c:'m'},
     {n:'Charcoal',u:'https://charcoal.com.pk',p:true,c:'m'},
     {n:'Cougar',u:'https://cougar.com.pk',p:true,c:'m'},
-    {n:'Deepak Perwani',u:'https://deepakperwani.pk',p:true,c:'m'},
-    {n:'Ismail Farid',u:'https://ismailfarid.pk',p:true,c:'m'},
+    {n:'Deepak Perwani',u:'https://www.deepakperwani.com',p:false,c:'m'},
+    {n:'Ismail Farid',u:'https://www.ismailfarid.com',p:false,c:'m'},
     {n:'Monark',u:'https://monark.com.pk',p:true,c:'m'},
-    {n:'Royal Tag',u:'https://royaltag.pk',p:true,c:'m'},
+    {n:'Royal Tag',u:'https://royaltag.com.pk',p:true,c:'m'},
     {n:'Savoir',u:'https://savoir.pk',p:true,c:'m'},
     {n:'Shahnameh',u:'https://shahnameh.pk',p:true,c:'m'},
-    {n:'Slayer',u:'https://slayer.pk',p:true,c:'m'},
     {n:'Uniworth',u:'https://uniworthshop.com',p:false,c:'m'},
     // ── Kids ──
-    {n:'Minnie Minors',u:'https://minnieminors.com.pk',p:true,c:'k'},
-    {n:'One Kids',u:'https://onepk.com.pk/pages/kids',p:true,c:'k'},
+    {n:'Minnie Minors',u:'https://www.minnieminors.com',p:false,c:'k'},
     {n:'Bachaa Party',u:'https://bachaaparty.com',p:false,c:'k'},
     {n:'Hopscotch',u:'https://ilovehopscotch.com',p:false,c:'k'},
     // ── Wholesale print / fabric ──
     {n:'Bin Saeed',u:'https://binsaeedfabric.com',p:false,c:'ws'},
     {n:'Tawakkal Fabrics',u:'https://tawakkalfabrics.co',p:false,c:'ws'},
-    {n:'Rang Rasiya',u:'https://www.rangrasiya.com',p:false,c:'ws'},
+    {n:'Rang Rasiya',u:'https://rangrasiya.com.pk',p:true,c:'ws'},
   ];
   // Feed every brand's hostname into BRAND_MAP so pasted URLs auto-detect the name
   BRANDS.forEach(b => {
@@ -2364,6 +2376,8 @@
     }
   }
 
+  // Restore any saved cart — must run last, after all consts above are initialised.
+  loadCartFromStorage();
 
 </script>
 </body>
