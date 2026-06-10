@@ -862,6 +862,7 @@
     heavy_formal_3pc  : 1.32,
     bridal            : 2.00,
     dupatta_only      : 0.22,
+    shawl             : 0.56,   // winter shawl 0.45 base + 25% buffer
     accessories       : 0.24,
     // ── Men (base × 1.20 packaging buffer, like the women's figures) ──
     mens_kurta        : 0.54,   // 0.45 +20%
@@ -885,6 +886,7 @@
     heavy_formal_3pc  : 'Heavy Formal 3pc (organza/silk)',
     bridal            : 'Bridal / Velvet / Full Embroidery',
     dupatta_only      : 'Dupatta / Stole only',
+    shawl             : 'Shawl (winter)',
     accessories       : 'Accessories / Jewellery',
     mens_kurta        : "Men's Kurta / Kameez (1pc)",
     mens_shalwar_kameez: "Men's Shalwar Kameez (2pc)",
@@ -937,7 +939,7 @@
   }
 
   // ── UNSTITCHED categories: no size field required ────────────────────────
-  const UNSTITCHED_CATS = new Set(['lawn_3pc_unstitch', 'dupatta_only', 'accessories', 'mens_unstitched']);
+  const UNSTITCHED_CATS = new Set(['lawn_3pc_unstitch', 'dupatta_only', 'shawl', 'accessories', 'mens_unstitched']);
   const MENS_CATS = new Set(['mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_suit','mens_sherwani','mens_unstitched']);
 
   // ── DRAFT CARD SYSTEM — each URL gets its own card ───────────────────────
@@ -973,6 +975,7 @@
     </optgroup>
     <optgroup label="➕ Separates">
       <option value="dupatta_only">Dupatta / Stole / Scarf only</option>
+      <option value="shawl">Shawl (winter)</option>
       <option value="accessories">Accessories / Jewellery</option>
     </optgroup>`;
 
@@ -985,6 +988,7 @@
     [/formal|chiffon|net[\s-]?embroi/i,                       'formal_emb_3pc'],
     [/winter|khaddar|karandi/i,                                'winter_3pc'],
     [/linen/i,                                                 'winter_2pc'],
+    [/shawl|pashmina|dhussa|loi|wrap/i,                         'shawl'],
     [/dupatta|stole|scarf/i,                                   'dupatta_only'],
     [/bag|purse|clutch|jewel|accessories/i,                    'accessories'],
     [/shalwar[\s-]?kameez|rtw|ready[\s-]?to[\s-]?wear/i,      'pret_3pc'],
@@ -1808,6 +1812,7 @@
       if(/kurta|shirt|polo/.test(s))                return 'mens_kurta';
       return '';   // let the live fetch refine it
     }
+    if(/shawl|pashmina|dhussa/.test(s) && !/shirt|kurti|suit|3.?pc|3.?piece/.test(s)) return 'shawl';
     if(/unstitch/.test(s))                          return 'lawn_3pc_unstitch';
     if(/dupatta|stole|scarf/.test(s) && !/shirt|kurti|suit/.test(s)) return 'dupatta_only';
     if(/accessories|jewel|earring|necklace|ring/.test(s)) return 'accessories';
@@ -1967,7 +1972,7 @@
     pret_3pc:'3pc Pret', winter_2pc:'Winter 2pc', winter_3pc:'Winter 3pc',
     formal_emb_2pc:'Formal 2pc', formal_emb_3pc:'Formal 3pc',
     heavy_formal_3pc:'Heavy Formal 3pc', bridal:'Bridal',
-    dupatta_only:'Dupatta / Stole', accessories:'Accessories',
+    dupatta_only:'Dupatta / Stole', shawl:'Shawl', accessories:'Accessories',
     mens_kurta:"Men's Kurta 1pc", mens_shalwar_kameez:"Men's Shalwar Kameez 2pc",
     mens_waistcoat:"Men's Waistcoat", mens_suit:"Men's Suit/Pant-Coat",
     mens_sherwani:"Men's Sherwani", mens_unstitched:"Men's Unstitched",
