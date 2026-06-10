@@ -294,7 +294,7 @@
   <div class="brand-section">
     <!-- Search bar with live dropdown -->
     <div class="brand-search-wrap">
-      <input id="brandSearch" class="brand-search" type="text" autocomplete="off" placeholder="🔍 Search 85+ Pakistani brands by name…"
+      <input id="brandSearch" class="brand-search" type="text" autocomplete="off" placeholder="🔍 Search 90+ Pakistani brands by name…"
         oninput="onBrandSearch()" onfocus="onBrandSearch()"/>
       <div id="brandDropdown" class="brand-dropdown"></div>
     </div>
@@ -1705,7 +1705,7 @@
          </a>`
       ).join('');
     }
-    dd.style.display='';
+    dd.style.display='block';   // must be explicit — CSS default is display:none
   }
   // Keyboard nav + close-on-outside-click for the dropdown
   document.addEventListener('keydown', e => {
