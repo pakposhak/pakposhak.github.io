@@ -1000,7 +1000,7 @@
 
       setStatus('🔍 Fetching product details from brand site…','#c9a96e');
       const ctrl = new AbortController();
-      const tid  = setTimeout(()=>ctrl.abort(), 9000);
+      const tid  = setTimeout(()=>ctrl.abort(), 14000); // PK-hosted sites can be slow
 
       // Prefer the storefront .js endpoint — it includes per-size stock
       // ("available"); the .json endpoint does NOT. Fall back to .json.
