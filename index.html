@@ -906,6 +906,11 @@
         <input id="adm_comm_4p" type="number" step="0.1" min="0" placeholder="15"
           style="width:80px;padding:8px 10px;border-radius:6px;border:none;font-size:0.9rem"/>
       </div>
+      <div style="flex-basis:100%">
+        <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">🇵🇰 Pakistan Price Relay URL <span style="color:#777">(PK-IP server — fetches real PKR prices when a brand geo-serves USD; leave empty if not set up)</span></label>
+        <input id="adm_relay" type="url" placeholder="e.g. https://relay.example.com"
+          style="width:100%;max-width:380px;padding:8px 10px;border-radius:6px;border:none;font-size:0.9rem"/>
+      </div>
       <button id="saveRatesBtn" onclick="saveRates()"
         style="padding:8px 20px;background:#c9a96e;color:#1a1a2e;border:none;border-radius:6px;
         font-weight:700;font-size:0.88rem;cursor:pointer;height:36px">
@@ -1033,6 +1038,7 @@
     document.getElementById('adm_comm_1').value   = parseFloat(localStorage.getItem('psb_comm_1')    || '20');
     document.getElementById('adm_comm_23').value  = parseFloat(localStorage.getItem('psb_comm_23')   || '18');
     document.getElementById('adm_comm_4p').value  = parseFloat(localStorage.getItem('psb_comm_4p')   || '15');
+    document.getElementById('adm_relay').value    = localStorage.getItem('psb_relay_url') || '';
     buildWeightEditor();
     panel.scrollIntoView({ behavior: 'smooth' });
   }
@@ -1064,6 +1070,10 @@
     if(c1  >= 0) localStorage.setItem('psb_comm_1',  c1);
     if(c23 >= 0) localStorage.setItem('psb_comm_23', c23);
     if(c4p >= 0) localStorage.setItem('psb_comm_4p', c4p);
+    const relayUrl = document.getElementById('adm_relay').value.trim();
+    if(relayUrl && !/^https:\/\//i.test(relayUrl)){ alert('Relay URL must start with https://'); return; }
+    if(relayUrl) localStorage.setItem('psb_relay_url', relayUrl);
+    else localStorage.removeItem('psb_relay_url');
     const btn = document.getElementById('saveRatesBtn');
     btn.textContent = '✓ Saved!';
     btn.style.background = '#2e7d32';
@@ -1351,6 +1361,46 @@
         product = (await res.json()).product;
         hasStockInfo = false;
       }
+
+      // ── CURRENCY VERIFICATION ─────────────────────────────────────────────
+      // Shopify Markets stores geo-price: a Bangladesh visitor gets USD, and
+      // those USD prices carry FX spread + international markup — NOT a simple
+      // conversion of the PKR price. /cart.js reports the currency Shopify is
+      // serving THIS session, so we know definitively rather than guessing.
+      // If it's not PKR, refetch the product through the Pakistan relay (a
+      // PK-IP server set in the admin panel) so the buyer always sees real
+      // PKR prices. With no relay, fail LOUD — never save a foreign price
+      // silently as PKR.
+      // pkrVia: 'direct' | 'relay' = confirmed PKR · 'unknown' = cart.js
+      // unreachable (non-Shopify / CORS) → fall back to old heuristic ·
+      // otherwise holds the foreign currency code, unresolved.
+      let pkrVia = 'unknown';
+      if(hasStockInfo){
+        let sessionCur = null;
+        try{
+          const rc = await fetch(`${u.origin}/cart.js?_psb=${Date.now()}`,
+            { signal: ctrl.signal, cache: 'no-store' });
+          if(rc.ok) sessionCur = (await rc.json()).currency || null;
+        }catch(err){ if(err.name === 'AbortError') throw err; }
+        if(sessionCur === 'PKR') pkrVia = 'direct';
+        else if(sessionCur){
+          pkrVia = sessionCur; // foreign — try the relay
+          const relay = (localStorage.getItem('psb_relay_url')||'').trim().replace(/\/+$/,'');
+          if(relay){
+            try{
+              setStatus(`🇵🇰 Brand served ${sessionCur} — fetching real PKR price via Pakistan relay…`,'#c9a96e');
+              const rr = await fetch(`${relay}/price?url=${encodeURIComponent(url)}`,
+                { signal: ctrl.signal, cache: 'no-store' });
+              if(rr.ok){
+                const rj = await rr.json();
+                if(rj && rj.currency === 'PKR' && rj.product){
+                  product = rj.product; hasStockInfo = true; pkrVia = 'relay';
+                }
+              }
+            }catch(err){ if(err.name === 'AbortError') throw err; }
+          }
+        }
+      }
       clearTimeout(tid);
       if(!product) throw new Error('empty');
       // .js endpoint reports money in paisa (×100); .json uses decimal strings
@@ -1411,14 +1461,21 @@
         const salePrice = moneyOf(refVar.price);
         const origPrice = moneyOf(refVar.compare_at_price);
         if(salePrice > 0){
-          // Auto-detect USD: non-PKR site with price < 600 is almost certainly USD
+          // Currency decision, in order of trust:
+          // 1. cart.js said PKR (direct or via relay) → definitively PKR.
+          // 2. cart.js said a foreign currency and the relay couldn't fix it
+          //    → treat as USD and warn LOUD below (price is inflated Markets
+          //    pricing, not a converted PKR price).
+          // 3. cart.js unreachable → old heuristic: non-.pk site + price<600.
           const isUsdSite = !/\.(pk|com\.pk)(\/|$)/.test(u.hostname + '/') && u.hostname !== 'pk.ethnc.com';
-          if(isUsdSite && salePrice < 600){
+          const knownPkr  = pkrVia === 'direct' || pkrVia === 'relay';
+          const isUsd     = !knownPkr && (pkrVia !== 'unknown' || (isUsdSite && salePrice < 600));
+          if(isUsd){
             setDraftCurrency(id, 'USD'); // switches toggle before we fill the price
           }
           const priceEl = document.getElementById(`dc_price_${id}`);
           if(priceEl){
-            priceEl.value = salePrice < 600 && isUsdSite
+            priceEl.value = isUsd
               ? salePrice.toFixed(2)        // keep decimals for USD
               : Math.round(salePrice);      // round for PKR
             updateDraftPriceHint(id);
@@ -1427,7 +1484,6 @@
           const cnote = document.getElementById(`dc_cnote_${id}`);
           if(cnote && origPrice > salePrice){
             const pct = Math.round((1 - salePrice / origPrice) * 100);
-            const isUsd = isUsdSite && salePrice < 600;
             const fmt = n => isUsd ? `$${n.toFixed(2)}` : `PKR ${Math.round(n).toLocaleString()}`;
             cnote.style.cssText = 'display:block;margin-top:5px;font-size:0.72rem;font-weight:700;padding:4px 9px;border-radius:6px;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.40);color:var(--gold)';
             cnote.textContent = `🏷️ ${pct}% off! Was ${fmt(origPrice)} → Sale ${fmt(salePrice)}`;
@@ -1516,7 +1572,18 @@
       const uniqSizes = multiSize ? new Set(sizesToAdd) : (sizeKey ? new Set(avail.map(v=>normSizeFull(v[sizeKey])).filter(Boolean)) : new Set());
       const refPrice  = Math.round(moneyOf((avail[0]||vars[0])?.price));
       const szWord    = hasStockInfo ? ' sizes in stock' : ' sizes found';
-      setStatus(`✓ Fetched: ${product.product_type||product.type||'product'} · PKR ${refPrice.toLocaleString()}${uniqSizes.size?' · '+uniqSizes.size+szWord:''}`, '#2a7a32');
+      const foreignCur = (pkrVia !== 'direct' && pkrVia !== 'relay' && pkrVia !== 'unknown') ? pkrVia : null;
+      if(foreignCur){
+        // Brand geo-priced this session in a foreign currency and the relay
+        // could not get the PKR price — fail LOUD, keep the warning visible.
+        setStatus(`⛔ Brand showed ${foreignCur}, not PKR! ${foreignCur} prices include international markup — the real PKR price is unknown. `
+          + `${(localStorage.getItem('psb_relay_url')||'').trim() ? 'Pakistan relay failed — check it is running.' : 'Set the Pakistan relay URL in Admin to fix this automatically.'} `
+          + `Verify the PKR price from Pakistan before ordering.`, '#ff7575');
+        checkAddUrlLock();
+        return;  // no auto-hide
+      }
+      const viaNote = pkrVia === 'relay' ? ' · 🇵🇰 PKR via relay' : '';
+      setStatus(`✓ Fetched: ${product.product_type||product.type||'product'} · PKR ${refPrice.toLocaleString()}${uniqSizes.size?' · '+uniqSizes.size+szWord:''}${viaNote}`, '#2a7a32');
       hideStatus();
       checkAddUrlLock();
 

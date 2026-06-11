@@ -1,0 +1,128 @@
+// PakStyle BD — Pakistan Price Relay
+// Runs on a Pakistan-IP VPS. The order form calls this when a brand geo-serves
+// a foreign currency (USD) to a Bangladesh buyer; because THIS server's IP is
+// Pakistani, Shopify serves it real PKR prices + stock.
+//
+// API:   GET /price?url=<full product URL>   → { ok, currency, product }
+//        GET /health                          → { ok: true }
+// product is the raw Shopify /products/{handle}.js JSON (paisa prices,
+// per-variant "available" flags) — same shape the form already parses.
+//
+// Zero dependencies — needs only Node.js 18+ (built-in fetch).
+// Run:   node relay-server.js          (listens on 127.0.0.1:8787)
+// Front with Caddy/Cloudflare for HTTPS — the form is served over HTTPS and
+// browsers block mixed-content HTTP calls.
+
+'use strict';
+const http = require('http');
+
+const PORT = process.env.PORT || 8787;
+const CACHE_TTL_MS = 10 * 60 * 1000;   // 10 min — fresh enough for stock/price
+const FETCH_TIMEOUT_MS = 15000;
+const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36';
+
+// Mirror of BRAND_MAP domains in order-form.html — the relay refuses any
+// other host so it can never be abused as an open proxy. Keep in sync when
+// adding brands to the form.
+const ALLOWED_HOSTS = [
+  'pk.sapphireonline.pk','sapphireonline.pk','crossstitch.pk','generation.com.pk',
+  'generation.pk','outfitters.com.pk','beechtree.pk','breakout.com.pk','diners.com.pk',
+  'monark.com.pk','shahnameh.pk','nureh.pk','alizeh.pk','jazmin.pk','limelight.pk',
+  'baraekhanom.pk','laam.pk','almirah.com.pk','khaadi.com','pk.khaadi.com',
+  'gulahmedshop.com','gulahmed.com','bonanzasatrangi.com','mariab.com','mariab.pk',
+  'sanasafinaz.com','nishatlinen.com','pk.ethnc.com','ethnc.com','asimjofa.com',
+  'baroque.com','baroque.com.pk','elan.com','elan.pk','farahtalibaziz.com',
+  'farahtalibaziz.com.pk','mtjonline.com','uniworthshop.com','edenrobe.com','mushq.com',
+  'afrozeh.com','zaha.com','crimson.com','mohsinnaveedranjha.com','faizasaqlain.com',
+  'zarashahjahan.com','junaidjamshed.com','alkaramstudio.com','alkaramstudio.pk',
+  'zellbury.com','houseofcharizma.com','houseofcharizma.com.pk','myrangja.com',
+  'rangja.com.pk','saadbinshahzad.com','sobianazir.net','silayipret.com',
+  'tawakkalfabrics.co','binsaeedfabric.com','binilyas.com','rangrasiya.com',
+  'bareezepk.com','armasclothing.com','ittehadtextiles.com','republicwomenswear.com',
+];
+
+function hostAllowed(hostname){
+  const h = hostname.replace(/^www\./,'').toLowerCase();
+  return ALLOWED_HOSTS.some(a => h === a || h.endsWith('.' + a));
+}
+
+const cache = new Map(); // key → { at, body }
+function cacheGet(key){
+  const e = cache.get(key);
+  if(e && Date.now() - e.at < CACHE_TTL_MS) return e.body;
+  cache.delete(key);
+  return null;
+}
+function cacheSet(key, body){
+  cache.set(key, { at: Date.now(), body });
+  if(cache.size > 500){ // bound memory
+    const oldest = [...cache.entries()].sort((a,b)=>a[1].at-b[1].at)[0];
+    if(oldest) cache.delete(oldest[0]);
+  }
+}
+
+async function fetchJson(url){
+  const ctrl = new AbortController();
+  const tid = setTimeout(() => ctrl.abort(), FETCH_TIMEOUT_MS);
+  try{
+    const r = await fetch(url, {
+      signal: ctrl.signal,
+      headers: { 'User-Agent': UA, 'Accept': 'application/json' },
+    });
+    if(!r.ok) throw new Error('upstream HTTP ' + r.status);
+    return await r.json();
+  } finally { clearTimeout(tid); }
+}
+
+function send(res, status, obj){
+  const body = JSON.stringify(obj);
+  res.writeHead(status, {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Access-Control-Allow-Origin': '*',
+    'Cache-Control': 'no-store',
+  });
+  res.end(body);
+}
+
+const server = http.createServer(async (req, res) => {
+  const u = new URL(req.url, 'http://localhost');
+
+  if(u.pathname === '/health') return send(res, 200, { ok: true });
+
+  if(u.pathname !== '/price' || req.method !== 'GET')
+    return send(res, 404, { ok: false, error: 'not found' });
+
+  const target = u.searchParams.get('url') || '';
+  let t;
+  try{ t = new URL(target); }
+  catch(e){ return send(res, 400, { ok: false, error: 'bad url' }); }
+
+  if(t.protocol !== 'https:' || !hostAllowed(t.hostname))
+    return send(res, 403, { ok: false, error: 'host not allowed' });
+
+  const m = t.pathname.match(/\/products\/([^/?#]+)/);
+  if(!m) return send(res, 400, { ok: false, error: 'not a product url' });
+  const handle = m[1];
+
+  const key = t.hostname + '/' + handle;
+  const hit = cacheGet(key);
+  if(hit) return send(res, 200, hit);
+
+  try{
+    // From this PK IP, Shopify serves the Pakistan market: PKR prices.
+    const product = await fetchJson(`${t.origin}/products/${handle}.js?_psbrelay=${Date.now()}`);
+    let currency = null;
+    try{ currency = (await fetchJson(`${t.origin}/cart.js`)).currency || null; }
+    catch(e){ /* currency stays null — form treats non-PKR as unresolved */ }
+    const body = { ok: true, currency, product };
+    cacheSet(key, body);
+    return send(res, 200, body);
+  }catch(e){
+    return send(res, 502, { ok: false, error: String(e.message || e) });
+  }
+});
+
+server.listen(PORT, '127.0.0.1', () => {
+  console.log(`PakStyle BD price relay listening on 127.0.0.1:${PORT}`);
+  console.log(`${ALLOWED_HOSTS.length} brand domains whitelisted`);
+});
