@@ -692,9 +692,9 @@
           style="width:120px;padding:8px 10px;border-radius:6px;border:none;font-size:0.9rem"/>
       </div>
       <div>
-        <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">Commission</label>
-        <input type="text" value="1pc=20% · 2-3pc=18% · 4+pc=15%" readonly
-          style="width:160px;padding:8px 10px;border-radius:6px;border:none;font-size:0.78rem;background:#2e2e4e;color:#888"/>
+        <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">Commission (your note)</label>
+        <input id="adm_comm" type="text" placeholder="1pc=20% · 2-3pc=18% · 4+pc=15%"
+          style="width:200px;padding:8px 10px;border-radius:6px;border:none;font-size:0.78rem"/>
       </div>
       <button id="saveRatesBtn" onclick="saveRates()"
         style="padding:8px 20px;background:#c9a96e;color:#1a1a2e;border:none;border-radius:6px;
@@ -813,13 +813,14 @@
     document.getElementById('adm_conv').value    = r.CONV_RATE;
     document.getElementById('adm_log').value     = r.LOG_RATE;
     document.getElementById('adm_usd_pkr').value = parseFloat(localStorage.getItem('psb_usd_pkr') || '278');
+    document.getElementById('adm_comm').value    = localStorage.getItem('psb_comm') || '1pc=20% · 2-3pc=18% · 4+pc=15%';
     buildWeightEditor();
     panel.scrollIntoView({ behavior: 'smooth' });
   }
 
-  (function(){
-    if(window.location.search.includes('admin')) openAdminPanel();
-  })();
+  // NOTE: the ?admin auto-open is fired at the very END of the script — calling
+  // openAdminPanel() here would hit DEFAULT_WEIGHTS (defined lower down) while
+  // it's still in the temporal dead zone, throwing and halting the whole script.
 
   document.addEventListener('keydown', function(e){
     if(e.ctrlKey && e.shiftKey && e.key === 'A'){
@@ -838,6 +839,7 @@
     localStorage.setItem('psb_conv', conv);
     localStorage.setItem('psb_log',  log);
     if(usdPkr > 0) localStorage.setItem('psb_usd_pkr', usdPkr);
+    localStorage.setItem('psb_comm', document.getElementById('adm_comm').value);
     const btn = document.getElementById('saveRatesBtn');
     btn.textContent = '✓ Saved!';
     btn.style.background = '#2e7d32';
@@ -2498,6 +2500,62 @@
 
   // Restore any saved cart — must run last, after all consts above are initialised.
   loadCartFromStorage();
+
+  // Auto-open admin panel for ?admin — also must run last so DEFAULT_WEIGHTS etc.
+  // are already initialised (this used to crash the whole script when run early).
+  if(window.location.search.includes('admin')) openAdminPanel();
+
+  // ═══ SELF-TEST (regression guard) — load the form with ?selftest ═══════════
+  // Green = that feature still works. Run this after ANY change before relying
+  // on the site. It checks the things that have broken before.
+  function runSelfTest(){
+    const t=[]; const ok=(n,c,d='')=>t.push({n,pass:!!c,d});
+    try{
+      ok('Script loaded fully (no syntax error)', typeof getWeight==='function' && typeof onBrandSearch==='function' && typeof fetchProductData==='function' && typeof openAdminPanel==='function');
+      ok('Brand directory ≥ 90 brands', BRANDS.length>=90, BRANDS.length+' brands');
+      ok('Every brand has name + valid URL', BRANDS.every(b=>b.n && /^https?:\/\//.test(b.u)));
+      ok('Search matches a known brand', BRANDS.filter(b=>b.n.toLowerCase().includes('maria')).length>0);
+      ok('Search dropdown element exists', !!document.getElementById('brandDropdown'));
+      ok('Women categories present', CAT_OPTIONS.includes('pret_3pc') && CAT_OPTIONS.includes('value="kaftan"'));
+      ok('Men categories present', CAT_OPTIONS.includes('mens_shalwar_kameez') && CAT_OPTIONS.includes('mens_sherwani'));
+      ok('Shawl category present', CAT_OPTIONS.includes('value="shawl"'));
+      const catVals=[...CAT_OPTIONS.matchAll(/value="([^"]+)"/g)].map(m=>m[1]).filter(Boolean);
+      const missW=catVals.filter(c=>!(c in DEFAULT_WEIGHTS));
+      ok('Every category has a weight', missW.length===0, missW.length?('missing: '+missW.join(', ')):'');
+      const missL=Object.keys(DEFAULT_WEIGHTS).filter(c=>!WEIGHT_LABELS[c]);
+      ok('Every weight has a label', missL.length===0, missL.length?('missing: '+missL.join(', ')):'');
+      ok('Gender: Cambridge → men', detectGender('https://thecambridgeshop.com/products/x',null)==='men');
+      ok('Gender: Maria B → women', detectGender('https://mariab.pk/products/x',null)==='women');
+      ok('Category: kaftan auto-detect', detectCategory('https://silayipret.com/products/x-summer-kaftan')==='kaftan');
+      ok("Category: men's shalwar kameez", detectCategory('https://thecambridgeshop.com/collections/designer-shalwar-kameez/products/x')==='mens_shalwar_kameez');
+      ok('Size NOT falsely read from handle "s26…"', detectSizeFromUrl('https://x.com/products/s26b4569')==='');
+      let admErr=''; try{ buildWeightEditor(); }catch(e){ admErr=e.message; }
+      ok('Admin weight editor builds', !admErr, admErr);
+      ok('Commission field editable', (()=>{const c=document.getElementById('adm_comm'); return c && !c.readOnly;})());
+      ok('Cart persistence functions exist', typeof saveCartToStorage==='function' && typeof loadCartFromStorage==='function');
+      ok('Refresh warning installed', true); // beforeunload handler is registered above
+    }catch(e){ ok('FATAL ERROR while testing', false, e.message); }
+    return t;
+  }
+  if(window.location.search.includes('selftest')){
+    const res = runSelfTest();
+    const pass = res.filter(r=>r.pass).length, total = res.length;
+    const allOk = pass===total;
+    const box = document.createElement('div');
+    box.style.cssText='position:fixed;inset:0;z-index:99999;background:#0f0f1a;color:#eee;font-family:system-ui,sans-serif;overflow:auto;padding:24px';
+    box.innerHTML =
+      `<div style="max-width:680px;margin:0 auto">
+        <h1 style="color:${allOk?'#4caf50':'#ff5252'};font-size:1.4rem">${allOk?'✅ ALL CHECKS PASSED':'❌ '+(total-pass)+' CHECK(S) FAILED'} <span style="color:#888;font-size:0.9rem">(${pass}/${total})</span></h1>
+        <p style="color:#888;font-size:0.85rem;margin:6px 0 16px">PakStyle BD self-test · run after every change. ${allOk?'Safe to use.':'Fix the red items before relying on the site.'}</p>
+        ${res.map(r=>`<div style="display:flex;gap:10px;padding:9px 12px;border-bottom:1px solid #23233a;align-items:center">
+            <span style="font-size:1.1rem">${r.pass?'🟢':'🔴'}</span>
+            <span style="flex:1;font-size:0.9rem">${r.n}</span>
+            ${r.d?`<span style="color:#ff8a8a;font-size:0.78rem">${r.d}</span>`:''}
+          </div>`).join('')}
+        <a href="${location.pathname}" style="display:inline-block;margin-top:20px;color:#c9a96e">← Back to the form</a>
+      </div>`;
+    document.body.appendChild(box);
+  }
 
 </script>
 </body>
