@@ -1037,7 +1037,11 @@
     dupatta_only      : 0.22,
     shawl             : 0.56,   // winter shawl 0.45 base + 25% buffer
     accessories       : 0.24,
-    // ── Men (base × 1.20 packaging buffer, like the women's figures) ──
+    // ── Men — Western / Casual (base × 1.20 packaging buffer) ──
+    mens_shirt        : 0.36,   // 0.30 base +20%
+    mens_trouser      : 0.54,   // 0.45 base +20%
+    mens_jeans        : 0.70,   // 0.58 base +20%
+    // ── Men — Traditional / Formal (base × 1.20 packaging buffer) ──
     mens_kurta        : 0.54,   // 0.45 +20%
     mens_shalwar_kameez: 0.86,  // 0.72 +20%
     mens_waistcoat    : 0.48,   // 0.40 +20%
@@ -1062,6 +1066,9 @@
     dupatta_only      : 'Dupatta / Stole only',
     shawl             : 'Shawl (winter)',
     accessories       : 'Accessories / Jewellery',
+    mens_shirt        : "Men's Shirt / Polo / T-Shirt (1pc)",
+    mens_trouser      : "Men's Trouser / Chinos / Cargo (1pc)",
+    mens_jeans        : "Men's Jeans / Denim (1pc)",
     mens_kurta        : "Men's Kurta / Kameez (1pc)",
     mens_shalwar_kameez: "Men's Shalwar Kameez (2pc)",
     mens_waistcoat    : "Men's Waistcoat",
@@ -1114,7 +1121,7 @@
 
   // ── UNSTITCHED categories: no size field required ────────────────────────
   const UNSTITCHED_CATS = new Set(['lawn_3pc_unstitch', 'dupatta_only', 'shawl', 'accessories', 'mens_unstitched']);
-  const MENS_CATS = new Set(['mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_suit','mens_sherwani','mens_unstitched']);
+  const MENS_CATS = new Set(['mens_shirt','mens_trouser','mens_jeans','mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_suit','mens_sherwani','mens_unstitched']);
 
   // ── DRAFT CARD SYSTEM — each URL gets its own card ───────────────────────
   let drafts      = {};  // id → {currency, sizeCounter}
@@ -1140,7 +1147,12 @@
       <option value="heavy_formal_3pc">Heavy Formal 3-Piece (organza/silk)</option>
       <option value="bridal">Bridal / Velvet / Full Embroidery</option>
     </optgroup>
-    <optgroup label="👔 MEN">
+    <optgroup label="👔 MEN — Western / Casual">
+      <option value="mens_shirt">Men's Shirt / Polo / T-Shirt (1pc)</option>
+      <option value="mens_trouser">Men's Trouser / Chinos / Cargo (1pc)</option>
+      <option value="mens_jeans">Men's Jeans / Denim (1pc)</option>
+    </optgroup>
+    <optgroup label="👔 MEN — Traditional / Formal">
       <option value="mens_kurta">Men's Kurta / Kameez (1pc)</option>
       <option value="mens_shalwar_kameez">Men's Shalwar Kameez (2pc)</option>
       <option value="mens_waistcoat">Men's Waistcoat</option>
@@ -1184,7 +1196,11 @@
     [/unstitch|fabric|suiting|wash[\s-]?n?[\s-]?wear|gabardine/i,'mens_unstitched'],
     [/pant[\s-]?coat|coat[\s-]?pant|blazer|2[\s-]?pc[\s-]?suit|formal[\s-]?suit|tuxedo|3[\s-]?pc[\s-]?suit/i,'mens_suit'],
     [/shalwar[\s-]?kameez|kameez[\s-]?shalwar|shalwar[\s-]?suit|kurta[\s-]?shalwar|kurta[\s-]?pajama/i,'mens_shalwar_kameez'],
-    [/kurta|kameez|shirt|polo|t[\s-]?shirt/i,                   'mens_kurta'],
+    [/jeans|denim/i,                                             'mens_jeans'],
+    [/trouser|chino|cargo[\s-]?pant/i,                           'mens_trouser'],
+    [/polo|t[\s-]?shirt/i,                                       'mens_shirt'],   // polo/tee → western shirt
+    [/kurta|kameez/i,                                            'mens_kurta'],
+    [/shirt/i,                                                   'mens_shirt'],   // plain "shirt" on western brand → shirt
     [/suit/i,                                                   'mens_shalwar_kameez'], // generic "suit" on a menswear page = shalwar suit
   ];
   function mapPtToCatMen(pt){ const s=(pt||'').toLowerCase(); for(const[re,c] of PT_CAT_MEN){ if(re.test(s)) return c; } return ''; }
@@ -1223,6 +1239,9 @@
     if(/^(XXXL|3XL|XXX L)$/.test(s))     return '3XL';
     // Numeric garment sizes (Generation, Khaadi etc. use 8/10/12/14/16…)
     if(/^\d{1,2}$/.test(s))             return s;
+    // Trouser/jeans waist sizes: "30", "32", "34" (already caught above as 2-digit)
+    // Waist × length: "28x30", "30x32", "32x34" — keep as-is
+    if(/^\d{2} ?[Xx×] ?\d{2}$/.test(s)) return s.replace(/ /g,'').toUpperCase();
     // Kids sizes like "8-9Y", "10Y", "2-3 YEARS"
     if(/^\d{1,2}( ?\d{1,2})? ?Y(EARS)?$/.test(s.replace(/-/g,' '))) return raw.trim();
     return null;
@@ -1236,7 +1255,11 @@
     try {
       const u = new URL(url);
       const m = u.pathname.match(/\/products\/([^/?#]+)/);
-      if(!m) return setStatus('ℹ️ Fill details manually — no /products/ path detected','#aaa');
+      if(!m){
+        if(/\/collections\//.test(u.pathname))
+          return setStatus('⚠️ This is a category/collection page — open the brand site, tap a specific product, then copy that product URL','#c9a96e');
+        return setStatus('ℹ️ Fill details manually — link doesn\'t point to a specific product','#aaa');
+      }
 
       setStatus('🔍 Fetching product details from brand site…','#c9a96e');
       const ctrl = new AbortController();
@@ -1340,7 +1363,12 @@
         // The product sells in garment sizes ⇒ it's stitched/RTW, even if the
         // URL said "lawn"/"fabric" and the category auto-detected as unstitched.
         if(catEl && UNSTITCHED_CATS.has(catEl.value)){
-          catEl.value = (gender === 'men') ? 'mens_shalwar_kameez' : 'pret_3pc';
+          if(gender === 'men'){
+            const mensFallback = mapPtToCatMen(ptStr) || mapPtToCatMen(product.title||'') || 'mens_shalwar_kameez';
+            catEl.value = mensFallback;
+          } else {
+            catEl.value = 'pret_3pc';
+          }
           onDraftCatChange(id);
         }
         {
@@ -1984,8 +2012,13 @@
       if(/waist.?coat|nehru.?jacket/.test(s))       return 'mens_waistcoat';
       if(/unstitch|fabric|wash.?n.?wear|gabardine/.test(s)) return 'mens_unstitched';
       if(/pant.?coat|coat.?pant|blazer|tuxedo/.test(s)) return 'mens_suit';
-      if(/shalwar|kameez|suit/.test(s))             return 'mens_shalwar_kameez';
-      if(/kurta|shirt|polo/.test(s))                return 'mens_kurta';
+      if(/shalwar|kameez/.test(s))                  return 'mens_shalwar_kameez';
+      if(/jeans|denim/.test(s))                     return 'mens_jeans';
+      if(/trouser|chino|cargo/.test(s))             return 'mens_trouser';
+      if(/polo|t-shirt|tshirt/.test(s))             return 'mens_shirt';
+      if(/kurta/.test(s))                           return 'mens_kurta';
+      if(/shirt/.test(s))                           return 'mens_shirt';
+      if(/suit/.test(s))                            return 'mens_shalwar_kameez';
       return '';   // let the live fetch refine it
     }
     if(/shawl|pashmina|dhussa/.test(s) && !/shirt|kurti|suit|3.?pc|3.?piece/.test(s)) return 'shawl';
@@ -2150,6 +2183,7 @@
     formal_emb_2pc:'Formal 2pc', formal_emb_3pc:'Formal 3pc',
     heavy_formal_3pc:'Heavy Formal 3pc', bridal:'Bridal',
     dupatta_only:'Dupatta / Stole', shawl:'Shawl', accessories:'Accessories',
+    mens_shirt:"Men's Shirt 1pc", mens_trouser:"Men's Trouser 1pc", mens_jeans:"Men's Jeans 1pc",
     mens_kurta:"Men's Kurta 1pc", mens_shalwar_kameez:"Men's Shalwar Kameez 2pc",
     mens_waistcoat:"Men's Waistcoat", mens_suit:"Men's Suit/Pant-Coat",
     mens_sherwani:"Men's Sherwani", mens_unstitched:"Men's Unstitched",
