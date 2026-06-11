@@ -40,6 +40,37 @@
     input::placeholder{color:var(--txt-muted)}
     select option{background:var(--raised);color:var(--txt)}
 
+    /* ── Install App pill ── */
+    #installPill{
+      position:fixed; left:50%; transform:translateX(-50%);
+      bottom:calc(78px + env(safe-area-inset-bottom,0px)); z-index:60;
+      display:flex; align-items:center; gap:7px;
+      background:linear-gradient(135deg,#f0c855,#c9a96e); color:#1a1206;
+      font-weight:700; font-size:0.95rem; font-family:inherit;
+      border:none; border-radius:30px; padding:11px 22px; cursor:pointer;
+      box-shadow:0 6px 22px rgba(201,169,110,0.45); animation:psbPillIn .35s ease;
+    }
+    #installPill:active{transform:translateX(-50%) scale(0.96)}
+    @keyframes psbPillIn{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1}}
+    /* iOS install sheet */
+    #iosInstallSheet{
+      position:fixed; inset:0; z-index:120; background:rgba(0,0,0,0.6);
+      display:flex; align-items:flex-end; justify-content:center;
+    }
+    #iosInstallSheet .ios-card{
+      background:var(--surface); border:1px solid var(--gold-bdr);
+      border-radius:18px 18px 0 0; width:100%; max-width:480px;
+      padding:22px 22px calc(28px + env(safe-area-inset-bottom,0px));
+      color:var(--txt); animation:psbPillIn .3s ease;
+    }
+    #iosInstallSheet .ios-title{font-size:1.15rem;font-weight:700;color:var(--gold);margin-bottom:8px}
+    #iosInstallSheet p{color:var(--txt-sec);margin-bottom:10px}
+    #iosInstallSheet ol{margin:0 0 16px 18px;line-height:1.9;color:var(--txt)}
+    #iosInstallSheet .ios-close{
+      width:100%; background:var(--gold); color:#1a1206; font-weight:700;
+      border:none; border-radius:12px; padding:13px; font-size:1rem; cursor:pointer;
+    }
+
     /* ── Sticky header ── */
     #appHeader{position:sticky;top:0;z-index:200;background:var(--surface);border-bottom:1px solid var(--bdr-med)}
     .hdr-inner{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;max-width:700px;margin:0 auto}
@@ -816,6 +847,25 @@
     <span class="icon">ℹ️</span><span>How To</span>
   </button>
 </nav>
+
+<!-- INSTALL APP — floating pill, hidden until installable (or iOS Safari) -->
+<button id="installPill" onclick="psbInstall()" style="display:none">
+  <span style="font-size:1.05rem">⬇️</span> Install App
+</button>
+
+<!-- iOS install instructions sheet -->
+<div id="iosInstallSheet" onclick="if(event.target===this)psbCloseIos()" style="display:none">
+  <div class="ios-card">
+    <div class="ios-title">Install PakStyle BD</div>
+    <p>To add this app to your iPhone home screen:</p>
+    <ol>
+      <li>Tap the <b>Share</b> button <span style="font-size:1.1rem">􀈂</span> at the bottom of Safari</li>
+      <li>Scroll down and tap <b>“Add to Home Screen”</b></li>
+      <li>Tap <b>Add</b> — the PB icon appears on your home screen</li>
+    </ol>
+    <button class="ios-close" onclick="psbCloseIos()">Got it</button>
+  </div>
+</div>
 
 <!-- ADMIN PANEL — visible only via ?admin in URL -->
 <div id="adminPanel" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;
@@ -3028,6 +3078,55 @@
       });
     });
   }
+
+  /* ── Install App button ──
+     Android/Chrome: capture beforeinstallprompt and show a one-tap install pill.
+     iOS/Safari: no install API exists — show a pill that opens manual instructions.
+     Hidden entirely when already running as an installed app. */
+  (function () {
+    var pill = document.getElementById('installPill');
+    if (!pill) return;
+    var deferred = null;
+
+    // Already installed / launched from home screen → never show.
+    var standalone = window.matchMedia('(display-mode: standalone)').matches ||
+                     window.navigator.standalone === true;
+    if (standalone) return;
+
+    var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+    var isSafari = isIOS && /safari/i.test(navigator.userAgent) && !/crios|fxios|edgios/i.test(navigator.userAgent);
+
+    window.addEventListener('beforeinstallprompt', function (e) {
+      e.preventDefault();      // stop Chrome's own mini-infobar
+      deferred = e;
+      pill.style.display = 'flex';   // show our button instead
+    });
+
+    window.addEventListener('appinstalled', function () {
+      deferred = null;
+      pill.style.display = 'none';
+    });
+
+    // iOS never fires beforeinstallprompt, so surface the pill manually.
+    if (isIOS && isSafari) pill.style.display = 'flex';
+
+    window.psbInstall = function () {
+      if (deferred) {                       // Android path
+        deferred.prompt();
+        deferred.userChoice.finally(function () {
+          deferred = null;
+          pill.style.display = 'none';
+        });
+      } else if (isIOS) {                    // iOS path
+        var sheet = document.getElementById('iosInstallSheet');
+        if (sheet) sheet.style.display = 'flex';
+      }
+    };
+    window.psbCloseIos = function () {
+      var sheet = document.getElementById('iosInstallSheet');
+      if (sheet) sheet.style.display = 'none';
+    };
+  })();
 </script>
 </body>
 </html>
