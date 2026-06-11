@@ -5,298 +5,295 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>PakStyle BD – Pakistani Fashion Delivered to Bangladesh</title>
   <meta name="description" content="Order authentic Pakistani lawn, pret & designer clothes. We purchase from Pakistan and deliver to your door in Bangladesh."/>
-  <meta name="theme-color" content="#1a1a2e"/>
+  <meta name="theme-color" content="#080E1C"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="PakStyle BD"/>
   <link rel="manifest" href="manifest.json"/>
   <link rel="apple-touch-icon" href="icon-192.png"/>
   <style>
+    /* ── Midnight Gold theme ── */
+    :root{
+      --bg:        #080E1C;
+      --surface:   #0F1929;
+      --raised:    #162035;
+      --input-bg:  #0A1320;
+      --gold:      #C9A96E;
+      --gold-dim:  rgba(201,169,110,0.18);
+      --gold-bdr:  rgba(201,169,110,0.30);
+      --gold-bdr2: rgba(201,169,110,0.50);
+      --txt:       #EEE4CE;
+      --txt-sec:   #A0B2C8;
+      --txt-muted: #5A6E84;
+      --bdr:       rgba(201,169,110,0.15);
+      --bdr-med:   rgba(201,169,110,0.25);
+    }
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Segoe UI',Arial,sans-serif;background:#f7f3ef;color:#2c2c2c;min-height:100vh;
-      padding-bottom:70px}
+    body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:70px}
+    input,select,textarea{color:var(--txt);background:var(--input-bg)}
+    input::placeholder{color:var(--txt-muted)}
+    select option{background:var(--raised);color:var(--txt)}
 
     /* ── Sticky header ── */
-    #appHeader{position:sticky;top:0;z-index:200;background:#1a1a2e;
-      border-bottom:1px solid rgba(201,169,110,0.25)}
-    .hdr-inner{display:flex;align-items:center;justify-content:space-between;
-      padding:12px 16px;max-width:700px;margin:0 auto}
+    #appHeader{position:sticky;top:0;z-index:200;background:var(--surface);border-bottom:1px solid var(--bdr-med)}
+    .hdr-inner{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;max-width:700px;margin:0 auto}
     .hdr-logo{display:flex;align-items:center;gap:10px}
     .hdr-logo-mark{font-size:1.5rem;line-height:1}
-    .hdr-brand{font-size:1.1rem;font-weight:700;color:#fff;letter-spacing:0.5px}
-    .hdr-tagline{font-size:0.65rem;color:#c9a96e;margin-top:1px;letter-spacing:0.3px}
-    .hdr-cart-btn{position:relative;background:rgba(201,169,110,0.12);border:1px solid rgba(201,169,110,0.35);
-      color:#c9a96e;border-radius:10px;padding:8px 14px;font-size:1rem;cursor:pointer;
-      display:flex;align-items:center;gap:6px;min-height:44px;min-width:44px;
-      transition:background 0.15s}
-    .hdr-cart-btn:hover{background:rgba(201,169,110,0.22)}
-    .hdr-cart-label{font-size:0.75rem;font-weight:700;color:#c9a96e}
-    .hdr-cart-badge{background:#e74c3c;color:#fff;border-radius:10px;padding:1px 7px;
-      font-size:0.68rem;font-weight:700;min-width:20px;text-align:center}
+    .hdr-brand{font-size:1.15rem;font-weight:700;color:var(--txt);letter-spacing:0.5px}
+    .hdr-tagline{font-size:0.65rem;color:var(--gold);margin-top:1px;letter-spacing:0.3px}
+    .hdr-cart-btn{position:relative;background:var(--gold-dim);border:1px solid var(--gold-bdr);
+      color:var(--gold);border-radius:10px;padding:8px 14px;font-size:1rem;cursor:pointer;
+      display:flex;align-items:center;gap:6px;min-height:44px;min-width:44px;transition:background 0.15s}
+    .hdr-cart-btn:hover{background:rgba(201,169,110,0.28)}
+    .hdr-cart-label{font-size:0.75rem;font-weight:700;color:var(--gold)}
+    .hdr-cart-badge{background:#c0392b;color:#fff;border-radius:10px;padding:1px 7px;font-size:0.68rem;font-weight:700;min-width:20px;text-align:center}
 
     /* ── How-it-works strip ── */
-    .hiw-strip{background:#c9a96e;padding:9px 16px;overflow-x:auto;
-      scrollbar-width:none;-webkit-overflow-scrolling:touch}
+    .hiw-strip{background:var(--gold);padding:9px 16px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
     .hiw-strip::-webkit-scrollbar{display:none}
-    .hiw-inner{display:flex;align-items:center;justify-content:center;gap:0;
-      min-width:max-content;margin:0 auto}
-    .hiw-step{display:flex;align-items:center;gap:5px;padding:0 10px;
-      font-size:0.72rem;font-weight:700;color:#1a1a2e;white-space:nowrap}
+    .hiw-inner{display:flex;align-items:center;justify-content:center;gap:0;min-width:max-content;margin:0 auto}
+    .hiw-step{display:flex;align-items:center;gap:5px;padding:0 10px;font-size:0.72rem;font-weight:700;color:#0A1628;white-space:nowrap}
     .hiw-step span.icon{font-size:1rem}
-    .hiw-arrow{color:#1a1a2e;opacity:0.45;font-size:0.9rem;flex-shrink:0}
+    .hiw-arrow{color:#0A1628;opacity:0.45;font-size:0.9rem;flex-shrink:0}
 
     /* ── Bottom navigation bar ── */
     .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:300;
-      background:#1a1a2e;border-top:1px solid rgba(201,169,110,0.25);
+      background:var(--surface);border-top:1px solid var(--bdr-med);
       display:flex;padding-bottom:env(safe-area-inset-bottom)}
     .bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
       gap:2px;padding:8px 4px 6px;background:none;border:none;cursor:pointer;
-      color:#888;font-size:0.6rem;font-weight:600;letter-spacing:0.3px;
+      color:var(--txt-muted);font-size:0.6rem;font-weight:600;letter-spacing:0.3px;
       min-height:54px;transition:color 0.15s;position:relative}
     .bnav-btn .icon{font-size:1.25rem;line-height:1}
-    .bnav-btn.active,.bnav-btn:hover{color:#c9a96e}
-    .bnav-badge{position:absolute;top:4px;right:calc(50% - 18px);background:#e74c3c;
-      color:#fff;border-radius:10px;padding:1px 5px;font-size:0.6rem;font-weight:700;
-      min-width:16px;text-align:center}
+    .bnav-btn.active,.bnav-btn:hover{color:var(--gold)}
+    .bnav-badge{position:absolute;top:4px;right:calc(50% - 18px);background:#c0392b;
+      color:#fff;border-radius:10px;padding:1px 5px;font-size:0.6rem;font-weight:700;min-width:16px;text-align:center}
 
-    /* ── Brand browsing tip banner ── */
     /* ── Brand launch bottom sheet ── */
-    #brandSheet{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.55)}
-    .bs-card{position:absolute;bottom:0;left:0;right:0;background:#fff;
+    #brandSheet{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.7)}
+    .bs-card{position:absolute;bottom:0;left:0;right:0;background:var(--raised);
       border-radius:20px 20px 0 0;padding:24px 20px;
       padding-bottom:calc(20px + env(safe-area-inset-bottom));
-      animation:slideUp 0.22s ease-out}
+      animation:slideUp 0.22s ease-out;border-top:1px solid var(--bdr-med)}
     @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-    .bs-brand-name{font-weight:700;font-size:1.05rem;color:#1a1a2e;margin-top:6px}
-    .bs-steps{background:#f7f3ef;border-radius:10px;padding:14px;margin:16px 0}
-    .bs-steps-title{font-size:0.78rem;font-weight:700;color:#888;margin-bottom:10px;
-      text-transform:uppercase;letter-spacing:0.5px}
-    .bs-step{display:flex;align-items:flex-start;gap:10px;font-size:0.84rem;
-      color:#333;margin-bottom:8px;line-height:1.4}
+    .bs-brand-name{font-weight:700;font-size:1.05rem;color:var(--gold);margin-top:6px}
+    .bs-steps{background:var(--input-bg);border-radius:10px;padding:14px;margin:16px 0;border:1px solid var(--bdr)}
+    .bs-steps-title{font-size:0.78rem;font-weight:700;color:var(--txt-muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px}
+    .bs-step{display:flex;align-items:flex-start;gap:10px;font-size:0.84rem;color:var(--txt-sec);margin-bottom:8px;line-height:1.4}
     .bs-step:last-child{margin-bottom:0}
-    .bs-num{background:#1a1a2e;color:#c9a96e;border-radius:50%;width:22px;height:22px;
-      display:flex;align-items:center;justify-content:center;font-size:0.7rem;
-      font-weight:700;flex-shrink:0;margin-top:1px}
-    .bs-open-btn{width:100%;padding:15px;background:#c9a96e;color:#1a1a2e;border:none;
-      border-radius:12px;font-weight:700;font-size:0.95rem;cursor:pointer;margin-bottom:10px;
-      transition:background 0.15s}
+    .bs-num{background:var(--gold);color:#0A1628;border-radius:50%;width:22px;height:22px;
+      display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0;margin-top:1px}
+    .bs-open-btn{width:100%;padding:15px;background:var(--gold);color:#0A1628;border:none;
+      border-radius:12px;font-weight:700;font-size:0.95rem;cursor:pointer;margin-bottom:10px;transition:background 0.15s}
     .bs-open-btn:hover{background:#b8934d}
-    .bs-cancel-btn{width:100%;padding:12px;background:#fff;color:#888;
-      border:1.5px solid #e0d5c8;border-radius:12px;font-size:0.88rem;cursor:pointer}
+    .bs-cancel-btn{width:100%;padding:12px;background:transparent;color:var(--txt-muted);
+      border:1.5px solid var(--bdr-med);border-radius:12px;font-size:0.88rem;cursor:pointer}
 
     /* VPN notice bar */
-    .vpn-bar{background:#fff8e7;border-bottom:2px solid #f0c040;padding:10px 16px;font-size:0.8rem;color:#5a4000}
+    .vpn-bar{background:#1A2A10;border-bottom:2px solid #4a8a20;padding:10px 16px;font-size:0.8rem;color:#a0d070}
     .vpn-bar-inner{max-width:700px;margin:0 auto;display:flex;align-items:center;flex-wrap:wrap;gap:8px}
-    .vpn-bar strong{color:#3a2800}
-    .vpn-link{display:inline-block;padding:4px 12px;border-radius:14px;font-size:0.75rem;font-weight:700;
-      text-decoration:none;transition:opacity 0.15s}
+    .vpn-bar strong{color:#c0f080}
+    .vpn-link{display:inline-block;padding:4px 12px;border-radius:14px;font-size:0.75rem;font-weight:700;text-decoration:none;transition:opacity 0.15s}
     .vpn-link:hover{opacity:0.85}
     .vpn-free{background:#25d366;color:#fff}
-    .vpn-paid{background:#1a1a2e;color:#c9a96e}
-    .vpn-dismiss{background:none;border:none;cursor:pointer;color:#aaa;font-size:1rem;margin-left:auto;padding:0 4px}
+    .vpn-paid{background:var(--gold);color:#0A1628}
+    .vpn-dismiss{background:none;border:none;cursor:pointer;color:var(--txt-muted);font-size:1rem;margin-left:auto;padding:0 4px}
     .vpn-bar.hidden{display:none}
 
     /* Price input with currency toggle */
     .price-row{display:flex;gap:0}
-    .price-row input{flex:1;padding:9px 12px;border:1.5px solid #d9cfc4;border-radius:6px 0 0 6px;
-      font-size:0.88rem;background:#fff;border-right:none}
-    .price-row input:focus{outline:none;border-color:#c9a96e}
-    .currency-toggle{display:flex;border:1.5px solid #d9cfc4;border-radius:0 6px 6px 0;overflow:hidden}
-    .currency-toggle button{padding:9px 10px;border:none;background:#f7f3ef;font-size:0.78rem;font-weight:700;
-      cursor:pointer;color:#888;transition:all 0.15s;white-space:nowrap}
-    .currency-toggle button.active{background:#c9a96e;color:#1a1a2e}
-    .currency-toggle button:hover:not(.active){background:#ede5d8}
+    .price-row input{flex:1;padding:9px 12px;border:1.5px solid var(--bdr-med);border-radius:6px 0 0 6px;
+      font-size:0.88rem;background:var(--input-bg);border-right:none;color:var(--txt)}
+    .price-row input:focus{outline:none;border-color:var(--gold)}
+    .currency-toggle{display:flex;border:1.5px solid var(--bdr-med);border-radius:0 6px 6px 0;overflow:hidden}
+    .currency-toggle button{padding:9px 10px;border:none;background:var(--input-bg);font-size:0.78rem;font-weight:700;
+      cursor:pointer;color:var(--txt-muted);transition:all 0.15s;white-space:nowrap}
+    .currency-toggle button.active{background:var(--gold);color:#0A1628}
+    .currency-toggle button:hover:not(.active){background:var(--raised)}
 
     /* Auto-fetch loading state */
-    .fetch-status{font-size:0.72rem;color:#c9a96e;margin-top:6px;min-height:16px}
-    .fetch-status.ok{color:#2e7d32}
-    .fetch-status.err{color:#aaa}
-    .field input.loading{background:#faf7f2;color:#aaa}
+    .fetch-status{font-size:0.72rem;color:var(--gold);margin-top:6px;min-height:16px}
+    .fetch-status.ok{color:#4caf50}
+    .fetch-status.err{color:var(--txt-muted)}
+    .field input.loading{background:var(--input-bg);color:var(--txt-muted)}
 
     /* Remember me / saved details */
     .saved-indicator{display:none;align-items:center;gap:8px;font-size:0.75rem;
-      background:#f0faf3;border:1px solid #a8dbb0;border-radius:6px;padding:7px 12px;margin-bottom:12px}
-    .saved-indicator span{color:#2e7d32;font-weight:600}
-    .saved-indicator button{background:none;border:none;color:#888;cursor:pointer;font-size:0.72rem;
-      text-decoration:underline;padding:0}
-    .remember-row{display:flex;align-items:center;gap:8px;margin-top:4px;font-size:0.8rem;color:#666}
-    .remember-row input[type=checkbox]{width:15px;height:15px;cursor:pointer;accent-color:#c9a96e}
+      background:#0D2010;border:1px solid #2a6030;border-radius:6px;padding:7px 12px;margin-bottom:12px}
+    .saved-indicator span{color:#4caf50;font-weight:600}
+    .saved-indicator button{background:none;border:none;color:var(--txt-muted);cursor:pointer;font-size:0.72rem;text-decoration:underline;padding:0}
+    .remember-row{display:flex;align-items:center;gap:8px;margin-top:4px;font-size:0.8rem;color:var(--txt-sec)}
+    .remember-row input[type=checkbox]{width:15px;height:15px;cursor:pointer;accent-color:var(--gold)}
 
     .container{max-width:700px;margin:0 auto;padding:24px 14px 70px}
 
     .section-label{font-size:0.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
-      color:#c9a96e;margin:28px 0 12px;border-bottom:1px solid #e0d5c8;padding-bottom:6px}
+      color:var(--gold);margin:28px 0 12px;border-bottom:1px solid var(--bdr-med);padding-bottom:6px}
 
     /* Brand chips */
     .brand-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
-    .brand-chip{padding:6px 14px;background:#fff;border:1.5px solid #d9cfc4;border-radius:20px;
-      font-size:0.78rem;font-weight:600;color:#444;cursor:pointer;text-decoration:none;
-      transition:all 0.15s}
-    .brand-chip:hover{background:#1a1a2e;color:#c9a96e;border-color:#1a1a2e}
+    .brand-chip{padding:6px 14px;background:var(--raised);border:1.5px solid var(--bdr-med);border-radius:20px;
+      font-size:0.78rem;font-weight:600;color:var(--txt-sec);cursor:pointer;text-decoration:none;transition:all 0.15s}
+    .brand-chip:hover{background:var(--gold-dim);color:var(--gold);border-color:var(--gold-bdr2)}
     .brand-chip span{font-size:0.65rem;opacity:0.6;margin-left:2px}
-    .brand-chip.pk-chip{border-color:#2ecc71;color:#1a5e2a}
-    .brand-chip.pk-chip:hover{background:#1a3a1a;color:#2ecc71;border-color:#2ecc71}
+    .brand-chip.pk-chip{border-color:rgba(46,204,113,0.4);color:#4caf50}
+    .brand-chip.pk-chip:hover{background:rgba(46,204,113,0.1);color:#4caf50;border-color:#2ecc71}
     .brand-group-hdr{width:100%;font-size:0.68rem;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;padding:6px 0 2px;margin-top:4px}
-    .brand-group-hdr.pkr{color:#2ecc71}
+    .brand-group-hdr.pkr{color:#4caf50}
     .brand-group-hdr.usd{color:#f9a825;margin-top:14px}
     /* Brand search + directory */
     .brand-search-wrap{position:relative;margin-bottom:8px}
-    .brand-search{width:100%;padding:12px 16px;border:1.5px solid #d9cfc4;border-radius:10px;font-size:0.92rem;
-      font-family:inherit;outline:none;background:#fff;transition:border-color .15s}
-    .brand-search:focus{border-color:#c9a96e;box-shadow:0 0 0 3px rgba(201,169,110,0.15)}
-    .brand-dropdown{display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:50;background:#fff;
-      border:1.5px solid #e0d5c8;border-radius:10px;box-shadow:0 8px 26px rgba(0,0,0,0.16);max-height:280px;overflow-y:auto}
+    .brand-search{width:100%;padding:12px 16px;border:1.5px solid var(--bdr-med);border-radius:10px;font-size:0.92rem;
+      font-family:inherit;outline:none;background:var(--input-bg);color:var(--txt);transition:border-color .15s}
+    .brand-search::placeholder{color:var(--txt-muted)}
+    .brand-search:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,169,110,0.12)}
+    .brand-dropdown{display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:50;background:var(--raised);
+      border:1.5px solid var(--bdr-med);border-radius:10px;max-height:280px;overflow-y:auto}
     .brand-dd-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 14px;cursor:pointer;
-      text-decoration:none;color:#1a1a2e;font-size:0.85rem;border-bottom:1px solid #f2ece4}
+      text-decoration:none;color:var(--txt);font-size:0.85rem;border-bottom:1px solid var(--bdr)}
     .brand-dd-item:last-child{border-bottom:none}
-    .brand-dd-item:hover,.brand-dd-item.active{background:#faf6f0}
+    .brand-dd-item:hover,.brand-dd-item.active{background:var(--gold-dim)}
     .brand-dd-item .cur{font-size:0.66rem;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap}
-    .brand-dd-item .cur.pkr{background:#e7f8ee;color:#1a7e3e}
-    .brand-dd-item .cur.usd{background:#fff3d6;color:#9a6a00}
-    .brand-dd-empty{padding:14px;text-align:center;color:#999;font-size:0.82rem}
-    .brand-legend{font-size:0.7rem;color:#888;margin:2px 0 12px}
-    .brand-cat{border:1px solid #ece5da;border-radius:10px;margin-bottom:8px;overflow:hidden;background:#fff}
+    .brand-dd-item .cur.pkr{background:rgba(46,204,113,0.15);color:#4caf50}
+    .brand-dd-item .cur.usd{background:rgba(249,168,37,0.15);color:#f9a825}
+    .brand-dd-empty{padding:14px;text-align:center;color:var(--txt-muted);font-size:0.82rem}
+    .brand-legend{font-size:0.7rem;color:var(--txt-muted);margin:2px 0 12px}
+    .brand-cat{border:1px solid var(--bdr);border-radius:10px;margin-bottom:8px;overflow:hidden;background:var(--surface)}
     .brand-cat-hdr{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 14px;cursor:pointer;
-      background:#faf7f2;font-weight:700;font-size:0.84rem;color:#1a1a2e;user-select:none}
-    .brand-cat-hdr:hover{background:#f4eee5}
-    .brand-cat-hdr .cnt{font-size:0.68rem;font-weight:600;color:#999}
-    .brand-cat-hdr .arr{transition:transform .2s;color:#c9a96e}
+      background:var(--raised);font-weight:700;font-size:0.84rem;color:var(--txt);user-select:none}
+    .brand-cat-hdr:hover{background:var(--gold-dim)}
+    .brand-cat-hdr .cnt{font-size:0.68rem;font-weight:600;color:var(--txt-muted)}
+    .brand-cat-hdr .arr{transition:transform .2s;color:var(--gold)}
     .brand-cat.open .brand-cat-hdr .arr{transform:rotate(90deg)}
     .brand-cat-body{display:none;flex-wrap:wrap;gap:7px;padding:12px 14px}
     .brand-cat.open .brand-cat-body{display:flex}
     .brand-cat-label{font-size:0.68rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
-      color:#aaa;margin:10px 0 5px;width:100%}
-    .show-more-btn{font-size:0.75rem;color:#c9a96e;background:none;border:none;cursor:pointer;
-      font-weight:600;padding:4px 0;text-decoration:underline}
+      color:var(--txt-muted);margin:10px 0 5px;width:100%}
+    .show-more-btn{font-size:0.75rem;color:var(--gold);background:none;border:none;cursor:pointer;font-weight:600;padding:4px 0;text-decoration:underline}
 
-    /* URL input area */
-    .url-input-box{background:#fff;border:2px solid #c9a96e;border-radius:10px;padding:18px;margin-bottom:6px}
-    .url-input-box label{font-size:0.78rem;font-weight:700;color:#444;display:block;margin-bottom:8px}
+    /* ── URL input area — most prominent element ── */
+    .url-input-box{background:var(--surface);border:2px solid var(--gold);border-radius:12px;padding:20px;margin-bottom:6px}
+    .url-input-box label{font-size:0.75rem;font-weight:700;color:var(--gold);display:block;margin-bottom:10px;
+      letter-spacing:1.5px;text-transform:uppercase}
     .url-row{display:flex;gap:10px}
-    .url-row input{flex:1;padding:11px 14px;border:1.5px solid #d9cfc4;border-radius:7px;font-size:0.9rem}
-    .url-row input:focus{outline:none;border-color:#c9a96e}
-    .add-btn{padding:11px 20px;background:#c9a96e;color:#1a1a2e;border:none;border-radius:7px;
+    .url-row input{flex:1;padding:12px 14px;border:1.5px solid var(--bdr-med);border-radius:7px;font-size:0.9rem;
+      background:var(--input-bg);color:var(--txt)}
+    .url-row input:focus{outline:none;border-color:var(--gold)}
+    .add-btn{padding:12px 22px;background:var(--gold);color:#0A1628;border:none;border-radius:7px;
       font-weight:700;font-size:0.88rem;cursor:pointer;white-space:nowrap;transition:background 0.15s}
     .add-btn:hover{background:#b8934d}
 
-    /* Item details panel (shown after URL added) */
-    .item-detail-panel{display:none;background:#f7f3ef;border:1.5px dashed #c9a96e;border-radius:8px;
-      padding:14px;margin-top:12px}
+    /* Item details panel */
+    .item-detail-panel{display:none;background:var(--raised);border:1.5px dashed var(--gold-bdr);border-radius:8px;padding:14px;margin-top:12px}
     .item-detail-panel.active{display:block}
-    .detected-brand{display:inline-block;background:#1a1a2e;color:#c9a96e;font-size:0.72rem;
-      font-weight:700;padding:3px 10px;border-radius:12px;margin-bottom:10px}
-    .det-url{font-size:0.72rem;color:#888;word-break:break-all;margin-bottom:10px}
+    .detected-brand{display:inline-block;background:var(--gold-dim);border:1px solid var(--gold-bdr);color:var(--gold);font-size:0.72rem;font-weight:700;padding:3px 10px;border-radius:12px;margin-bottom:10px}
+    .det-url{font-size:0.72rem;color:var(--txt-muted);word-break:break-all;margin-bottom:10px}
     .row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-    .field label{font-size:0.76rem;font-weight:600;color:#555;display:block;margin-bottom:4px}
-    .field input,.field select{width:100%;padding:9px 12px;border:1.5px solid #d9cfc4;border-radius:6px;
-      font-size:0.88rem;background:#fff}
-    .field input:focus,.field select:focus{outline:none;border-color:#c9a96e}
-    .save-item-btn{width:100%;margin-top:12px;padding:11px;background:#1a1a2e;color:#c9a96e;
+    .field label{font-size:0.76rem;font-weight:600;color:var(--txt-sec);display:block;margin-bottom:4px}
+    .field input,.field select{width:100%;padding:9px 12px;border:1.5px solid var(--bdr-med);border-radius:6px;
+      font-size:0.88rem;background:var(--input-bg);color:var(--txt)}
+    .field input:focus,.field select:focus{outline:none;border-color:var(--gold)}
+    .save-item-btn{width:100%;margin-top:12px;padding:11px;background:var(--gold);color:#0A1628;
       border:none;border-radius:7px;font-weight:700;font-size:0.88rem;cursor:pointer;transition:background 0.15s}
-    .save-item-btn:hover{background:#2e2e4e}
+    .save-item-btn:hover{background:#b8934d}
 
     /* Draft cards — one per URL */
-    .draft-card{background:#fff;border:1.5px solid #d9cfc4;border-radius:10px;padding:14px;margin-bottom:10px}
+    .draft-card{background:var(--surface);border:1.5px solid var(--bdr-med);border-radius:12px;padding:14px;margin-bottom:12px}
     .draft-card-hdr{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px}
-    .draft-card-hdr .url-text{font-size:0.69rem;color:#888;word-break:break-all;line-height:1.4}
+    .draft-card-hdr .url-text{font-size:0.69rem;color:var(--txt-muted);word-break:break-all;line-height:1.4}
     .draft-card-hdr .badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:3px}
-    .draft-badge-brand{font-size:0.7rem;font-weight:700;background:#1a1a2e;color:#c9a96e;border-radius:10px;padding:2px 8px}
-    .draft-badge-pk{font-size:0.68rem;font-weight:600;background:#e8f8ee;border:1px solid #a8dbb0;color:#1a5e2a;border-radius:10px;padding:2px 7px}
-    .draft-badge-com{font-size:0.68rem;font-weight:600;background:#fff8e7;border:1px solid #f0c040;color:#7a5000;border-radius:10px;padding:2px 7px}
-    .draft-remove{background:none;border:none;color:#ccc;cursor:pointer;font-size:1.1rem;padding:2px 4px;border-radius:4px;flex-shrink:0;margin-left:auto}
-    .draft-remove:hover{color:#e74c3c;background:#fff0f0}
-    .draft-divider{border:none;border-top:1px dashed #e0d5c8;margin:10px 0}
+    .draft-badge-brand{font-size:0.7rem;font-weight:700;background:var(--gold-dim);border:1px solid var(--gold-bdr);color:var(--gold);border-radius:10px;padding:2px 8px}
+    .draft-badge-pk{font-size:0.68rem;font-weight:600;background:rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.3);color:#4caf50;border-radius:10px;padding:2px 7px}
+    .draft-badge-com{font-size:0.68rem;font-weight:600;background:rgba(249,168,37,0.12);border:1px solid rgba(249,168,37,0.3);color:#f9a825;border-radius:10px;padding:2px 7px}
+    .draft-remove{background:none;border:none;color:var(--txt-muted);cursor:pointer;font-size:1.1rem;padding:2px 4px;border-radius:4px;flex-shrink:0;margin-left:auto}
+    .draft-remove:hover{color:#e74c3c}
+    .draft-divider{border:none;border-top:1px solid var(--bdr);margin:10px 0}
 
     /* Cart list */
-    .cart-empty{text-align:center;padding:28px;color:#aaa;font-size:0.85rem;
-      background:#fff;border-radius:8px;border:1.5px dashed #e0d5c8}
-    .cart-item{background:#fff;border:1.5px solid #e0d5c8;border-radius:8px;padding:14px;
+    .cart-empty{text-align:center;padding:28px;color:var(--txt-muted);font-size:0.85rem;
+      background:var(--surface);border-radius:8px;border:1.5px dashed var(--bdr-med)}
+    .cart-item{background:var(--surface);border:1.5px solid var(--bdr-med);border-radius:10px;padding:14px;
       margin-bottom:10px;display:flex;gap:12px;align-items:flex-start}
-    .item-num{background:#1a1a2e;color:#c9a96e;font-size:0.7rem;font-weight:700;
+    .item-num{background:var(--gold);color:#0A1628;font-size:0.7rem;font-weight:700;
       border-radius:4px;padding:3px 8px;white-space:nowrap;margin-top:2px}
     .item-info{flex:1;min-width:0}
-    .item-brand{font-size:0.75rem;font-weight:700;color:#1a1a2e;margin-bottom:2px}
-    .item-url{font-size:0.72rem;color:#888;word-break:break-all;margin-bottom:6px}
+    .item-brand{font-size:0.75rem;font-weight:700;color:var(--gold);margin-bottom:2px}
+    .item-url{font-size:0.72rem;color:var(--txt-muted);word-break:break-all;margin-bottom:6px}
     .item-tags{display:flex;flex-wrap:wrap;gap:5px}
-    .item-tag{background:#f7f3ef;border:1px solid #e0d5c8;border-radius:12px;
-      font-size:0.7rem;color:#555;padding:2px 9px}
-    .item-price{font-size:0.88rem;font-weight:700;color:#1a1a2e;white-space:nowrap;text-align:right}
-    .item-bdt{font-size:0.7rem;color:#c9a96e;white-space:nowrap}
-    .remove-item{background:none;border:none;color:#ccc;cursor:pointer;font-size:1rem;
-      padding:2px 5px;border-radius:4px;margin-left:4px}
-    .remove-item:hover{color:#e74c3c;background:#fff0f0}
+    .item-tag{background:var(--raised);border:1px solid var(--bdr);border-radius:12px;font-size:0.7rem;color:var(--txt-sec);padding:2px 9px}
+    .item-price{font-size:0.88rem;font-weight:700;color:var(--txt);white-space:nowrap;text-align:right}
+    .item-bdt{font-size:0.7rem;color:var(--gold);white-space:nowrap}
+    .remove-item{background:none;border:none;color:var(--txt-muted);cursor:pointer;font-size:1rem;padding:2px 5px;border-radius:4px;margin-left:4px}
+    .remove-item:hover{color:#e74c3c}
 
     /* Running total */
-    .running-total{background:#1a1a2e;color:#fff;border-radius:10px;padding:18px;margin-top:16px}
-    .rt-row{display:flex;justify-content:space-between;font-size:0.85rem;padding:5px 0;
-      border-bottom:1px solid #2e2e4e;color:#ccc}
+    .running-total{background:var(--input-bg);border:1px solid var(--bdr-med);border-radius:12px;padding:18px;margin-top:16px}
+    .rt-row{display:flex;justify-content:space-between;font-size:0.85rem;padding:6px 0;
+      border-bottom:1px solid var(--bdr);color:var(--txt-sec)}
     .rt-row:last-child{border:none}
-    .rt-total{display:flex;justify-content:space-between;font-size:1.05rem;font-weight:700;
-      padding:10px 0 4px;color:#c9a96e}
-    .rt-note{font-size:0.7rem;color:#666;text-align:center;margin-top:8px}
+    .rt-total{display:flex;justify-content:space-between;font-size:1.1rem;font-weight:700;
+      padding:10px 0 4px;color:var(--gold)}
+    .rt-note{font-size:0.7rem;color:var(--txt-muted);text-align:center;margin-top:8px}
 
     /* Personal details */
-    .details-form{background:#fff;border:1.5px solid #e0d5c8;border-radius:10px;padding:18px}
+    .details-form{background:var(--surface);border:1.5px solid var(--bdr-med);border-radius:12px;padding:18px}
     .details-form .field{margin-bottom:14px}
 
-    /* Summary modal */
-    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:100;
-      overflow-y:auto;padding:20px}
+    /* Summary / review box */
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;overflow-y:auto;padding:20px}
     .overlay.active{display:flex;align-items:flex-start;justify-content:center}
-    .summary-box{background:#fff;border-radius:12px;max-width:640px;width:100%;padding:28px;margin:auto}
-    .summary-box h2{font-size:1.1rem;color:#1a1a2e;margin-bottom:4px}
-    .summary-box p{font-size:0.8rem;color:#888;margin-bottom:20px}
-    .summary-item{display:flex;justify-content:space-between;align-items:flex-start;
-      padding:10px 0;border-bottom:1px solid #f0e8dc;gap:10px}
+    .summary-box{background:var(--raised);border:1px solid var(--bdr-med);border-radius:12px;max-width:640px;width:100%;padding:28px;margin:auto}
+    .summary-box h2{font-size:1.1rem;color:var(--gold);margin-bottom:4px}
+    .summary-box p{font-size:0.8rem;color:var(--txt-muted);margin-bottom:20px}
+    .summary-item{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--bdr);gap:10px}
     .summary-item:last-child{border:none}
     .si-left{flex:1}
-    .si-brand{font-size:0.75rem;font-weight:700;color:#1a1a2e}
-    .si-url{font-size:0.68rem;color:#aaa;word-break:break-all}
-    .si-tags{font-size:0.72rem;color:#888;margin-top:2px}
+    .si-brand{font-size:0.75rem;font-weight:700;color:var(--gold)}
+    .si-url{font-size:0.68rem;color:var(--txt-muted);word-break:break-all}
+    .si-tags{font-size:0.72rem;color:var(--txt-sec);margin-top:2px}
     .si-price{text-align:right;white-space:nowrap}
-    .si-bdt{font-size:0.9rem;font-weight:700;color:#1a1a2e}
-    .si-pkr{font-size:0.7rem;color:#aaa}
-    .summary-total-box{background:#f7f3ef;border-radius:8px;padding:14px;margin:18px 0}
-    .st-row{display:flex;justify-content:space-between;font-size:0.85rem;color:#555;padding:3px 0}
+    .si-bdt{font-size:0.9rem;font-weight:700;color:var(--txt)}
+    .si-pkr{font-size:0.7rem;color:var(--txt-muted)}
+    .summary-total-box{background:var(--input-bg);border:1px solid var(--bdr);border-radius:8px;padding:14px;margin:18px 0}
+    .st-row{display:flex;justify-content:space-between;font-size:0.85rem;color:var(--txt-sec);padding:3px 0}
     .st-total{display:flex;justify-content:space-between;font-size:1.1rem;font-weight:700;
-      color:#1a1a2e;padding:10px 0 4px;border-top:2px solid #e0d5c8;margin-top:6px}
-    .customer-summary{background:#fff8f0;border:1px solid #e0d5c8;border-radius:6px;
-      padding:12px;font-size:0.82rem;color:#555;margin-bottom:18px}
-    .customer-summary strong{color:#1a1a2e}
-    .confirm-btn{width:100%;padding:14px;background:#c9a96e;color:#1a1a2e;border:none;
+      color:var(--gold);padding:10px 0 4px;border-top:1px solid var(--bdr-med);margin-top:6px}
+    .customer-summary{background:var(--input-bg);border:1px solid var(--bdr);border-radius:6px;padding:12px;font-size:0.82rem;color:var(--txt-sec);margin-bottom:18px}
+    .customer-summary strong{color:var(--txt)}
+    .confirm-btn{width:100%;padding:14px;background:var(--gold);color:#0A1628;border:none;
       border-radius:8px;font-weight:700;font-size:0.95rem;cursor:pointer;transition:background 0.15s}
     .confirm-btn:hover{background:#b8934d}
-    .back-btn{width:100%;padding:11px;background:#fff;color:#888;border:1.5px solid #e0d5c8;
+    .back-btn{width:100%;padding:11px;background:transparent;color:var(--txt-muted);border:1.5px solid var(--bdr-med);
       border-radius:8px;font-weight:600;font-size:0.85rem;cursor:pointer;margin-top:8px}
 
-    .submit-btn{width:100%;padding:15px;background:#c9a96e;color:#1a1a2e;border:none;
+    .submit-btn{width:100%;padding:15px;background:var(--gold);color:#0A1628;border:none;
       border-radius:8px;font-size:0.95rem;font-weight:700;cursor:pointer;margin-top:20px;transition:background 0.15s}
     .submit-btn:hover{background:#b8934d}
-    .submit-btn:disabled{background:#ddd;color:#aaa;cursor:not-allowed}
+    .submit-btn:disabled{background:var(--raised);color:var(--txt-muted);cursor:not-allowed}
 
-    .review-btn{width:100%;padding:15px;background:#1a1a2e;color:#c9a96e;border:none;
-      border-radius:8px;font-size:0.95rem;font-weight:700;cursor:pointer;margin-top:20px;transition:background 0.15s}
-    .review-btn:hover{background:#2e2e4e}
+    .review-btn{width:100%;padding:15px;background:var(--gold-dim);border:1.5px solid var(--gold-bdr);color:var(--gold);
+      border-radius:8px;font-size:0.95rem;font-weight:700;cursor:pointer;margin-top:20px;transition:all 0.15s}
+    .review-btn:hover{background:rgba(201,169,110,0.28)}
 
     .success-screen{display:none;text-align:center;padding:40px 20px}
-    .success-screen h2{color:#1a1a2e;font-size:1.4rem;margin-bottom:10px}
-    .success-screen p{color:#666;font-size:0.88rem}
+    .success-screen h2{color:var(--gold);font-size:1.4rem;margin-bottom:10px}
+    .success-screen p{color:var(--txt-sec);font-size:0.88rem}
 
-    .wa-note{text-align:center;margin-top:14px;font-size:0.8rem;color:#888}
+    .wa-note{text-align:center;margin-top:14px;font-size:0.8rem;color:var(--txt-muted)}
     .wa-note a{color:#25d366;font-weight:600;text-decoration:none}
 
     /* ── Step indicator ── */
-    .steps-bar{background:#1a1a2e;display:flex;justify-content:center;align-items:center;padding:14px 16px;gap:0}
-    .step-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:default;opacity:0.38;transition:opacity 0.2s;min-width:60px}
+    .steps-bar{background:var(--surface);border-bottom:1px solid var(--bdr-med);display:flex;justify-content:center;align-items:center;padding:14px 16px;gap:0}
+    .step-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:default;opacity:0.35;transition:opacity 0.2s;min-width:60px}
     .step-item.active{opacity:1}
     .step-item.done{opacity:0.65;cursor:pointer}
     .step-item.done:hover{opacity:1}
-    .step-num{width:28px;height:28px;border-radius:50%;border:2px solid #c9a96e;color:#c9a96e;font-weight:700;font-size:0.8rem;display:flex;align-items:center;justify-content:center;background:#1a1a2e;transition:all 0.2s}
-    .step-item.active .step-num{background:#c9a96e;color:#1a1a2e}
+    .step-num{width:28px;height:28px;border-radius:50%;border:2px solid var(--gold-bdr);color:var(--gold);font-weight:700;font-size:0.8rem;display:flex;align-items:center;justify-content:center;background:transparent;transition:all 0.2s}
+    .step-item.active .step-num{background:var(--gold);color:#0A1628;border-color:var(--gold)}
     .step-item.done .step-num{background:#2a7a32;border-color:#2a7a32;color:#fff}
-    .step-lbl{font-size:0.6rem;color:#c9a96e;font-weight:600;letter-spacing:0.4px;text-align:center;white-space:nowrap}
-    .step-arrow{color:#444;font-size:1.4rem;padding:0 2px;padding-bottom:14px;line-height:1}
+    .step-lbl{font-size:0.6rem;color:var(--gold);font-weight:600;letter-spacing:0.4px;text-align:center;white-space:nowrap}
+    .step-arrow{color:var(--txt-muted);font-size:1.4rem;padding:0 2px;padding-bottom:14px;line-height:1}
 
     /* ── Step sections ── */
     .step-section{display:none}
@@ -304,17 +301,17 @@
 
     /* ── Navigation row ── */
     .nav-row{display:flex;gap:10px;margin-top:24px}
-    .btn-next{flex:1;padding:15px;background:#c9a96e;color:#1a1a2e;border:none;border-radius:8px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:background 0.15s}
+    .btn-next{flex:1;padding:15px;background:var(--gold);color:#0A1628;border:none;border-radius:8px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:background 0.15s}
     .btn-next:hover{background:#b8934d}
-    .btn-back{padding:15px 18px;background:#fff;color:#777;border:1.5px solid #e0d5c8;border-radius:8px;font-weight:600;font-size:0.85rem;cursor:pointer;white-space:nowrap}
-    .btn-back:hover{background:#f7f3ef}
-    .btn-confirm{flex:1;padding:15px;background:#1a1a2e;color:#c9a96e;border:none;border-radius:8px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:background 0.15s}
-    .btn-confirm:hover{background:#2e2e4e}
+    .btn-back{padding:15px 18px;background:transparent;color:var(--txt-muted);border:1.5px solid var(--bdr-med);border-radius:8px;font-weight:600;font-size:0.85rem;cursor:pointer;white-space:nowrap}
+    .btn-back:hover{background:var(--raised)}
+    .btn-confirm{flex:1;padding:15px;background:var(--gold-dim);border:1.5px solid var(--gold-bdr);color:var(--gold);border-radius:8px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.15s}
+    .btn-confirm:hover{background:rgba(201,169,110,0.28)}
 
-    /* ── Inline review box (replaces modal on step 3) ── */
-    .review-box{background:#fff;border:1.5px solid #e0d5c8;border-radius:12px;padding:24px;margin-top:8px}
-    .review-box h2{font-size:1.05rem;color:#1a1a2e;margin-bottom:4px}
-    .review-box>p{font-size:0.8rem;color:#888;margin-bottom:18px}
+    /* ── Inline review box ── */
+    .review-box{background:var(--surface);border:1.5px solid var(--bdr-med);border-radius:12px;padding:24px;margin-top:8px}
+    .review-box h2{font-size:1.05rem;color:var(--gold);margin-bottom:4px}
+    .review-box>p{font-size:0.8rem;color:var(--txt-muted);margin-bottom:18px}
 
     @media(max-width:480px){
       .row-2,.row-3{grid-template-columns:1fr}
@@ -378,7 +375,7 @@
 <div class="vpn-bar" id="vpnBar">
   <div class="vpn-bar-inner">
     <span>🇵🇰 <strong>Brand links go directly to Pakistan (.pk) sites</strong> — PKR prices load automatically, no VPN needed.</span>
-    <span style="font-size:0.75rem;color:#888">Still seeing USD? Use the PKR/USD toggle per item, or browse with a VPN:</span>
+    <span style="font-size:0.75rem;color:var(--txt-sec)">Still seeing USD? Use the PKR/USD toggle per item, or browse with a VPN:</span>
     <a class="vpn-link vpn-paid" href="https://surfshark.com" target="_blank">🔒 Surfshark — ~$2.30/mo</a>
     <button class="vpn-dismiss" onclick="document.getElementById('vpnBar').classList.add('hidden')" title="Dismiss">✕</button>
   </div>
@@ -415,18 +412,18 @@
       <div id="draftCards"></div>
 
       <!-- Add-another row — button disabled until last card is complete -->
-      <div id="addAnotherRow" style="margin-top:14px;padding-top:14px;border-top:1px dashed #e0d5c8">
-        <div id="addUrlLockHint" style="font-size:0.75rem;color:#c9a96e;background:#fffbf2;border:1px dashed #c9a96e;border-radius:7px;padding:7px 12px;margin-bottom:8px;text-align:center;display:none">
+      <div id="addAnotherRow" style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--bdr)">
+        <div id="addUrlLockHint" style="font-size:0.75rem;color:#c9a96e;background:var(--surface);border:1px dashed #c9a96e;border-radius:7px;padding:7px 12px;margin-bottom:8px;text-align:center;display:none">
           ⬆️ Complete Category, Price &amp; Size for the item above first
         </div>
-        <div style="font-size:0.77rem;font-weight:600;color:#555;margin-bottom:7px">
+        <div style="font-size:0.77rem;font-weight:600;color:var(--txt-sec);margin-bottom:7px">
           ➕ Add another product — paste its URL below:
         </div>
         <div class="url-row">
           <input type="url" id="panelUrlInput" placeholder="https://brand.com/products/another-product"
             onkeydown="if(event.key==='Enter'){event.preventDefault();addAnotherUrl()}"/>
           <button class="add-btn" id="addAnotherBtn" onclick="addAnotherUrl()" disabled
-            style="background:#ddd;color:#888;cursor:not-allowed">+ Add</button>
+            style="background:var(--raised);color:var(--txt-muted);cursor:not-allowed">+ Add</button>
         </div>
       </div>
 
@@ -506,7 +503,7 @@
     </div>
   </div>
 
-  <div style="display:flex;align-items:center;gap:8px;background:#fff8e7;border:1.5px solid #f0c040;border-radius:8px;padding:11px 16px;margin-top:16px;font-size:0.82rem;color:#5a4000">
+  <div style="display:flex;align-items:center;gap:8px;background:rgba(240,192,64,0.10);border:1.5px solid rgba(240,192,64,0.40);border-radius:8px;padding:11px 16px;margin-top:16px;font-size:0.82rem;color:#f0c855">
     <span style="font-size:1.1rem">🚚</span>
     <span><strong>Estimated Delivery: 2–3 Weeks</strong> from order confirmation to your door.</span>
   </div>
@@ -544,7 +541,7 @@
 
     <div class="customer-summary" id="customerSummary"></div>
 
-    <div style="background:#fff8ec;border:1px solid #f0c040;border-radius:7px;padding:9px 13px;font-size:0.75rem;color:#7a5000;margin-bottom:6px">
+    <div style="background:rgba(240,192,64,0.10);border:1px solid rgba(240,192,64,0.35);border-radius:7px;padding:9px 13px;font-size:0.75rem;color:#f0c855;margin-bottom:6px">
       ⚠️ Items are subject to availability. If anything goes out of stock, we'll contact you on WhatsApp before proceeding.
     </div>
   </div>
@@ -564,16 +561,16 @@
   <!-- Top banner -->
   <div style="text-align:center;margin-bottom:20px">
     <div style="font-size:2.6rem;line-height:1">✅</div>
-    <h2 style="color:#12122a;font-size:1.5rem;font-weight:700;margin-top:8px">Order Request Submitted!</h2>
-    <p style="margin-top:6px;color:#555;font-size:0.9rem">We'll confirm your price &amp; availability on <strong>WhatsApp within a few hours</strong>.</p>
+    <h2 style="color:var(--gold);font-size:1.5rem;font-weight:700;margin-top:8px">Order Request Submitted!</h2>
+    <p style="margin-top:6px;color:var(--txt-sec);font-size:0.9rem">We'll confirm your price &amp; availability on <strong>WhatsApp within a few hours</strong>.</p>
   </div>
 
   <!-- Stock notice — high contrast, readable -->
-  <div style="background:#fff3cd;border:2px solid #e6a817;border-radius:10px;padding:12px 18px;margin-bottom:20px;display:flex;align-items:flex-start;gap:12px">
+  <div style="background:rgba(230,168,23,0.10);border:2px solid rgba(230,168,23,0.40);border-radius:10px;padding:12px 18px;margin-bottom:20px;display:flex;align-items:flex-start;gap:12px">
     <span style="font-size:1.4rem;flex-shrink:0">⚠️</span>
     <div>
-      <div style="font-size:0.88rem;font-weight:700;color:#7a4f00;margin-bottom:2px">Stock Notice</div>
-      <div style="font-size:0.83rem;color:#5a3a00;line-height:1.5">Pakistani fashion items sell out fast. If anything goes out of stock before we place your order, we'll contact you on WhatsApp immediately and offer alternatives or a full refund.</div>
+      <div style="font-size:0.88rem;font-weight:700;color:#f0c855;margin-bottom:2px">Stock Notice</div>
+      <div style="font-size:0.83rem;color:var(--txt-sec);line-height:1.5">Pakistani fashion items sell out fast. If anything goes out of stock before we place your order, we'll contact you on WhatsApp immediately and offer alternatives or a full refund.</div>
     </div>
   </div>
 
@@ -588,15 +585,15 @@
 
   <!-- Payment section heading -->
   <div style="text-align:center;margin-bottom:16px">
-    <div style="font-size:1rem;font-weight:700;color:#12122a;letter-spacing:0.3px">💳 How to Pay</div>
-    <div style="font-size:0.8rem;color:#666;margin-top:4px">Send payment <strong>only after</strong> receiving your confirmed quote on WhatsApp</div>
+    <div style="font-size:1rem;font-weight:700;color:var(--gold);letter-spacing:0.3px">💳 How to Pay</div>
+    <div style="font-size:0.8rem;color:var(--txt-sec);margin-top:4px">Send payment <strong>only after</strong> receiving your confirmed quote on WhatsApp</div>
   </div>
 
   <!-- Payment grid — 2 columns on desktop, 1 on mobile -->
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:20px">
 
     <!-- bKash Payment -->
-    <div style="background:#fff;border:2px solid #e2136e;border-radius:12px;padding:14px 16px">
+    <div style="background:var(--raised);border:2px solid #e2136e;border-radius:12px;padding:14px 16px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <span style="font-size:1.4rem">🟣</span>
         <div>
@@ -604,105 +601,105 @@
           <div style="font-size:0.68rem;background:#e2136e;color:#fff;border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">PAYMENT</div>
         </div>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;background:#fef0f5;border-radius:8px;padding:8px 12px">
-        <span style="font-size:1.1rem;font-weight:700;color:#12122a;letter-spacing:1px">01352-018131</span>
+      <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(226,19,110,0.15);border-radius:8px;padding:8px 12px">
+        <span style="font-size:1.1rem;font-weight:700;color:var(--txt);letter-spacing:1px">01352-018131</span>
         <button onclick="copyNum('01352018131',this)" style="background:#e2136e;border:none;color:#fff;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
       </div>
     </div>
 
     <!-- bKash Send Money -->
-    <div style="background:#fff;border:2px solid #e2136e55;border-radius:12px;padding:14px 16px">
+    <div style="background:var(--raised);border:2px solid #e2136e55;border-radius:12px;padding:14px 16px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <span style="font-size:1.4rem">🟣</span>
         <div>
           <div style="font-weight:700;color:#e2136e;font-size:0.95rem">bKash</div>
-          <div style="font-size:0.68rem;background:#555;color:#fff;border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">SEND MONEY</div>
+          <div style="font-size:0.68rem;background:rgba(255,255,255,0.15);color:var(--txt-sec);border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">SEND MONEY</div>
         </div>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;background:#fef0f5;border-radius:8px;padding:8px 12px">
-        <span style="font-size:1.1rem;font-weight:700;color:#12122a;letter-spacing:1px">01851-948690</span>
+      <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(226,19,110,0.12);border-radius:8px;padding:8px 12px">
+        <span style="font-size:1.1rem;font-weight:700;color:var(--txt);letter-spacing:1px">01851-948690</span>
         <button onclick="copyNum('01851948690',this)" style="background:#e2136e;border:none;color:#fff;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
       </div>
     </div>
 
     <!-- Nagad -->
-    <div style="background:#fff;border:2px solid #f7941d88;border-radius:12px;padding:14px 16px">
+    <div style="background:var(--raised);border:2px solid #f7941d88;border-radius:12px;padding:14px 16px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <span style="font-size:1.4rem">🟠</span>
         <div>
           <div style="font-weight:700;color:#d4780a;font-size:0.95rem">Nagad</div>
-          <div style="font-size:0.68rem;background:#555;color:#fff;border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">SEND MONEY</div>
+          <div style="font-size:0.68rem;background:rgba(255,255,255,0.15);color:var(--txt-sec);border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">SEND MONEY</div>
         </div>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;background:#fff8f0;border-radius:8px;padding:8px 12px">
-        <span style="font-size:1.1rem;font-weight:700;color:#12122a;letter-spacing:1px">01851-948690</span>
+      <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(247,148,29,0.15);border-radius:8px;padding:8px 12px">
+        <span style="font-size:1.1rem;font-weight:700;color:var(--txt);letter-spacing:1px">01851-948690</span>
         <button onclick="copyNum('01851948690',this)" style="background:#f7941d;border:none;color:#fff;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
       </div>
     </div>
 
     <!-- Upay -->
-    <div style="background:#fff;border:2px solid #6c3cff66;border-radius:12px;padding:14px 16px">
+    <div style="background:var(--raised);border:2px solid #6c3cff66;border-radius:12px;padding:14px 16px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <span style="font-size:1.4rem">🔵</span>
         <div>
-          <div style="font-weight:700;color:#5a2dd4;font-size:0.95rem">Upay</div>
-          <div style="font-size:0.68rem;background:#555;color:#fff;border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">SEND MONEY</div>
+          <div style="font-weight:700;color:#8b6fff;font-size:0.95rem">Upay</div>
+          <div style="font-size:0.68rem;background:rgba(255,255,255,0.15);color:var(--txt-sec);border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">SEND MONEY</div>
         </div>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;background:#f5f0ff;border-radius:8px;padding:8px 12px">
-        <span style="font-size:1.1rem;font-weight:700;color:#12122a;letter-spacing:1px">01851-948690</span>
+      <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(108,60,255,0.15);border-radius:8px;padding:8px 12px">
+        <span style="font-size:1.1rem;font-weight:700;color:var(--txt);letter-spacing:1px">01851-948690</span>
         <button onclick="copyNum('01851948690',this)" style="background:#6c3cff;border:none;color:#fff;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
       </div>
     </div>
 
     <!-- Rocket -->
-    <div style="background:#fff;border:2px solid #8b189166;border-radius:12px;padding:14px 16px">
+    <div style="background:var(--raised);border:2px solid #8b189166;border-radius:12px;padding:14px 16px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <span style="font-size:1.4rem">🚀</span>
         <div>
-          <div style="font-weight:700;color:#8b1891;font-size:0.95rem">Rocket</div>
-          <div style="font-size:0.68rem;background:#555;color:#fff;border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">SEND MONEY</div>
+          <div style="font-weight:700;color:#c060d4;font-size:0.95rem">Rocket</div>
+          <div style="font-size:0.68rem;background:rgba(255,255,255,0.15);color:var(--txt-sec);border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">SEND MONEY</div>
         </div>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;background:#fdf0ff;border-radius:8px;padding:8px 12px">
-        <span style="font-size:1.1rem;font-weight:700;color:#12122a;letter-spacing:1px">01851-948690</span>
+      <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(139,24,145,0.15);border-radius:8px;padding:8px 12px">
+        <span style="font-size:1.1rem;font-weight:700;color:var(--txt);letter-spacing:1px">01851-948690</span>
         <button onclick="copyNum('01851948690',this)" style="background:#8b1891;border:none;color:#fff;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
       </div>
     </div>
 
     <!-- City Bank -->
-    <div style="background:#fff;border:2px solid #00529b66;border-radius:12px;padding:14px 16px">
+    <div style="background:var(--raised);border:2px solid #00529b66;border-radius:12px;padding:14px 16px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
         <span style="font-size:1.4rem">🏦</span>
         <div>
-          <div style="font-weight:700;color:#00529b;font-size:0.95rem">City Bank</div>
-          <div style="font-size:0.68rem;background:#555;color:#fff;border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">BANK TRANSFER</div>
+          <div style="font-weight:700;color:#4da6ff;font-size:0.95rem">City Bank</div>
+          <div style="font-size:0.68rem;background:rgba(255,255,255,0.15);color:var(--txt-sec);border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">BANK TRANSFER</div>
         </div>
       </div>
-      <div style="font-size:0.76rem;color:#555;margin-bottom:8px">Acc. Name: <strong style="color:#12122a">Moors Attire</strong></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;background:#f0f6ff;border-radius:8px;padding:8px 12px">
+      <div style="font-size:0.76rem;color:var(--txt-sec);margin-bottom:8px">Acc. Name: <strong style="color:var(--txt)">Moors Attire</strong></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(0,82,155,0.18);border-radius:8px;padding:8px 12px">
         <div>
-          <div style="font-size:0.65rem;color:#888;text-transform:uppercase;letter-spacing:0.5px">A/C No</div>
-          <div style="font-size:1rem;font-weight:700;color:#12122a;letter-spacing:0.5px">1324897775001</div>
+          <div style="font-size:0.65rem;color:var(--txt-muted);text-transform:uppercase;letter-spacing:0.5px">A/C No</div>
+          <div style="font-size:1rem;font-weight:700;color:var(--txt);letter-spacing:0.5px">1324897775001</div>
         </div>
         <button onclick="copyNum('1324897775001',this)" style="background:#00529b;border:none;color:#fff;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
       </div>
     </div>
 
     <!-- UCBL -->
-    <div style="background:#fff;border:2px solid #00529b66;border-radius:12px;padding:14px 16px">
+    <div style="background:var(--raised);border:2px solid #00529b66;border-radius:12px;padding:14px 16px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
         <span style="font-size:1.4rem">🏦</span>
         <div>
-          <div style="font-weight:700;color:#00529b;font-size:0.95rem">UCBL</div>
-          <div style="font-size:0.68rem;background:#555;color:#fff;border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">BANK TRANSFER</div>
+          <div style="font-weight:700;color:#4da6ff;font-size:0.95rem">UCBL</div>
+          <div style="font-size:0.68rem;background:rgba(255,255,255,0.15);color:var(--txt-sec);border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">BANK TRANSFER</div>
         </div>
       </div>
-      <div style="font-size:0.76rem;color:#555;margin-bottom:8px">Acc. Name: <strong style="color:#12122a">Moors Attire</strong></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;background:#f0f6ff;border-radius:8px;padding:8px 12px">
+      <div style="font-size:0.76rem;color:var(--txt-sec);margin-bottom:8px">Acc. Name: <strong style="color:var(--txt)">Moors Attire</strong></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(0,82,155,0.18);border-radius:8px;padding:8px 12px">
         <div>
-          <div style="font-size:0.65rem;color:#888;text-transform:uppercase;letter-spacing:0.5px">A/C No</div>
-          <div style="font-size:1rem;font-weight:700;color:#12122a;letter-spacing:0.5px">7862141003465221</div>
+          <div style="font-size:0.65rem;color:var(--txt-muted);text-transform:uppercase;letter-spacing:0.5px">A/C No</div>
+          <div style="font-size:1rem;font-weight:700;color:var(--txt);letter-spacing:0.5px">7862141003465221</div>
         </div>
         <button onclick="copyNum('7862141003465221',this)" style="background:#00529b;border:none;color:#fff;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
       </div>
@@ -711,9 +708,9 @@
   </div><!-- end payment grid -->
 
   <!-- ═══ PAYMENT CONFIRMATION — upload slip / message, saved to the order ═══ -->
-  <div id="payConfirmBox" style="background:#fff;border:2px solid #c9a96e;border-radius:14px;padding:18px 16px;margin-bottom:18px">
-    <div style="text-align:center;font-weight:700;color:#12122a;font-size:1.02rem">✅ Already Paid? Confirm Your Payment</div>
-    <div style="text-align:center;font-size:0.78rem;color:#666;margin:5px 0 14px">
+  <div id="payConfirmBox" style="background:var(--raised);border:2px solid var(--gold-bdr2);border-radius:14px;padding:18px 16px;margin-bottom:18px">
+    <div style="text-align:center;font-weight:700;color:var(--gold);font-size:1.02rem">✅ Already Paid? Confirm Your Payment</div>
+    <div style="text-align:center;font-size:0.78rem;color:var(--txt-sec);margin:5px 0 14px">
       Attach your payment slip or paste your transaction details — we'll save it against Order
       <span id="payConfirmOrderId" style="font-weight:700;color:#c9a96e">—</span>
     </div>
@@ -723,27 +720,27 @@
       <button type="button" id="payTabReceiptBtn" onclick="switchPayTab('receipt')"
         style="flex:1;padding:9px;border:none;border-radius:8px;font-size:0.82rem;font-weight:700;cursor:pointer;background:#12122a;color:#c9a96e">📷 Upload Receipt</button>
       <button type="button" id="payTabMsgBtn" onclick="switchPayTab('msg')"
-        style="flex:1;padding:9px;border:none;border-radius:8px;font-size:0.82rem;font-weight:700;cursor:pointer;background:#eee;color:#777">💬 Payment Message</button>
+        style="flex:1;padding:9px;border:none;border-radius:8px;font-size:0.82rem;font-weight:700;cursor:pointer;background:var(--surface);color:var(--txt-sec)">💬 Payment Message</button>
     </div>
 
     <!-- Receipt tab -->
     <div id="payTabReceipt">
-      <label for="payReceiptFile" style="display:block;text-align:center;border:2px dashed #c9a96e;border-radius:10px;padding:18px 10px;cursor:pointer;background:#fffdf8">
+      <label for="payReceiptFile" style="display:block;text-align:center;border:2px dashed var(--gold-bdr2);border-radius:10px;padding:18px 10px;cursor:pointer;background:var(--input-bg)">
         <div style="font-size:1.6rem">🧾</div>
-        <div style="font-size:0.84rem;font-weight:700;color:#12122a;margin-top:4px">Tap to choose your payment screenshot</div>
-        <div style="font-size:0.72rem;color:#999;margin-top:2px">bKash / Nagad / bank slip — JPG or PNG</div>
+        <div style="font-size:0.84rem;font-weight:700;color:var(--txt);margin-top:4px">Tap to choose your payment screenshot</div>
+        <div style="font-size:0.72rem;color:var(--txt-muted);margin-top:2px">bKash / Nagad / bank slip — JPG or PNG</div>
       </label>
       <input type="file" id="payReceiptFile" accept="image/*" onchange="previewReceipt()" style="display:none"/>
       <div id="payReceiptPreview" style="display:none;margin-top:10px;text-align:center">
-        <img id="payReceiptImg" style="max-width:100%;max-height:220px;border-radius:8px;border:1px solid #e0d5c8"/>
-        <div id="payReceiptName" style="font-size:0.72rem;color:#666;margin-top:5px"></div>
+        <img id="payReceiptImg" style="max-width:100%;max-height:220px;border-radius:8px;border:1px solid var(--bdr-med)"/>
+        <div id="payReceiptName" style="font-size:0.72rem;color:var(--txt-muted);margin-top:5px"></div>
       </div>
     </div>
 
     <!-- Message tab -->
     <div id="payTabMsg" style="display:none">
       <textarea id="payMessage" rows="4" placeholder="e.g. bKash TrxID 8N7X2K9P — sent ৳5,000 from 01XXXXXXXXX on 10 Jun"
-        style="width:100%;border:1.5px solid #d9cfc4;border-radius:8px;padding:10px 12px;font-size:0.88rem;font-family:inherit;resize:vertical"></textarea>
+        style="width:100%;border:1.5px solid var(--bdr-med);border-radius:8px;padding:10px 12px;font-size:0.88rem;font-family:inherit;resize:vertical;background:var(--input-bg);color:var(--txt)"></textarea>
     </div>
 
     <button type="button" onclick="submitPaymentConfirmation()" id="payConfirmBtn"
@@ -753,9 +750,9 @@
   </div>
 
   <!-- Footer row -->
-  <div style="text-align:center;padding:14px;background:#f5f0ea;border-radius:10px;margin-bottom:16px">
-    <div style="font-size:0.82rem;color:#444;font-weight:600">Submit your payment slip above — it's saved directly to your order, no need to message separately.</div>
-    <div style="font-size:0.76rem;color:#666;margin-top:4px">Save your Order ID above to track your order status anytime.</div>
+  <div style="text-align:center;padding:14px;background:var(--surface);border-radius:10px;margin-bottom:16px">
+    <div style="font-size:0.82rem;color:var(--txt-sec);font-weight:600">Submit your payment slip above — it's saved directly to your order, no need to message separately.</div>
+    <div style="font-size:0.76rem;color:var(--txt-muted);margin-top:4px">Save your Order ID above to track your order status anytime.</div>
   </div>
 
   <div style="text-align:center">
@@ -771,7 +768,7 @@
     <div style="text-align:center">
       <div style="font-size:2rem">🛍️</div>
       <div class="bs-brand-name" id="bsBrandName">Brand</div>
-      <div style="font-size:0.78rem;color:#888;margin-top:3px">How to add a product from this brand:</div>
+      <div style="font-size:0.78rem;color:var(--txt-muted);margin-top:3px">How to add a product from this brand:</div>
     </div>
     <div class="bs-steps">
       <div class="bs-steps-title">3 quick steps</div>
@@ -858,7 +855,7 @@
         Save Rates
       </button>
     </div>
-    <div style="font-size:0.7rem;color:#666;margin-top:8px">
+    <div style="font-size:0.7rem;color:var(--txt-muted);margin-top:8px">
       Rates saved in this browser. To update on a new device, visit <em>your-form-url<strong>?admin</strong></em> and save again.
     </div>
 
@@ -874,7 +871,7 @@
         style="margin-top:12px;padding:8px 20px;background:#c9a96e;color:#1a1a2e;border:none;border-radius:6px;font-weight:700;font-size:0.88rem;cursor:pointer"
         id="saveWeightsBtn">Save Weights</button>
       <button onclick="resetWeights()"
-        style="margin-top:12px;margin-left:8px;padding:8px 16px;background:transparent;color:#888;border:1px solid #555;border-radius:6px;font-size:0.82rem;cursor:pointer">
+        style="margin-top:12px;margin-left:8px;padding:8px 16px;background:transparent;color:var(--txt-muted);border:1px solid var(--bdr-med);border-radius:6px;font-size:0.82rem;cursor:pointer">
         Reset to Defaults</button>
     </div>
   </div>
@@ -1098,7 +1095,7 @@
         <span style="font-size:0.72rem;color:#ccc;flex:1">${WEIGHT_LABELS[key]}</span>
         <input type="number" step="0.01" min="0.01" id="wt_${key}" value="${val}"
           style="width:70px;padding:4px 6px;border-radius:5px;border:1px solid #444;background:#0f0f1a;color:#fff;font-size:0.82rem;text-align:right"/>
-        <span style="font-size:0.68rem;color:#666">kg</span>
+        <span style="font-size:0.68rem;color:var(--txt-muted)">kg</span>
       </div>`;
     }).join('');
   }
@@ -1363,7 +1360,7 @@
             const pct = Math.round((1 - salePrice / origPrice) * 100);
             const isUsd = isUsdSite && salePrice < 600;
             const fmt = n => isUsd ? `$${n.toFixed(2)}` : `PKR ${Math.round(n).toLocaleString()}`;
-            cnote.style.cssText = 'display:block;margin-top:5px;font-size:0.72rem;font-weight:700;padding:4px 9px;border-radius:6px;background:#fff0f4;border:1px solid #f5a0b0;color:#8b0000';
+            cnote.style.cssText = 'display:block;margin-top:5px;font-size:0.72rem;font-weight:700;padding:4px 9px;border-radius:6px;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.40);color:var(--gold)';
             cnote.textContent = `🏷️ ${pct}% off! Was ${fmt(origPrice)} → Sale ${fmt(salePrice)}`;
           }
           // (else keep the PKR/USD currency hint shown by showDraftCurrencyNote)
@@ -1410,7 +1407,7 @@
             const hint = document.querySelector(`#dc_szchips_${id} > div:first-child`);
             if(hint && !multiSize){
               hint.innerHTML = '⚠️ <b>Your link doesn\'t include a size.</b> Tap the size(s) you want below — a highlighted size on the brand\'s page does <u>not</u> mean it was selected.';
-              hint.style.cssText = 'font-size:0.75rem;font-weight:600;color:#7a4f00;background:#fff3cd;border:1px solid #e6a817;border-radius:6px;padding:6px 10px;margin-bottom:7px';
+              hint.style.cssText = 'font-size:0.75rem;font-weight:600;color:#f0c855;background:rgba(230,168,23,0.12);border:1px solid rgba(230,168,23,0.40);border-radius:6px;padding:6px 10px;margin-bottom:7px';
             }
           }
         }
@@ -1457,7 +1454,7 @@
         </button>
         <button class="draft-remove" onclick="removeDraft(${id})" title="Remove this URL">✕</button>
       </div>
-      <div id="dc_fetch_${id}" style="display:none;font-size:0.72rem;font-weight:600;padding:5px 10px;background:#fffbf2;border-radius:5px;margin-top:6px"></div>
+      <div id="dc_fetch_${id}" style="display:none;font-size:0.72rem;font-weight:600;padding:5px 10px;background:var(--surface);border-radius:5px;margin-top:6px"></div>
       <hr class="draft-divider"/>
       <div class="row-2">
         <div class="field">
@@ -1479,39 +1476,39 @@
         </div>
       </div>
       <!-- Sizes section — always visible, content changes with category -->
-      <div style="margin-top:12px;background:#f9f6f2;border-radius:7px;padding:10px 12px">
+      <div style="margin-top:12px;background:var(--raised);border-radius:7px;padding:10px 12px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
-          <label style="font-size:0.76rem;font-weight:600;color:#555">Sizes &amp; Quantities *
-            <span id="dc_sz_note_${id}" style="font-weight:400;color:#aaa;font-size:0.67rem;margin-left:4px">(same price for all adult sizes)</span>
+          <label style="font-size:0.76rem;font-weight:600;color:var(--txt-sec)">Sizes &amp; Quantities *
+            <span id="dc_sz_note_${id}" style="font-weight:400;color:var(--txt-muted);font-size:0.67rem;margin-left:4px">(same price for all adult sizes)</span>
           </label>
           <button type="button" id="dc_addsz_${id}" onclick="addDraftSizeRow(${id})"
             style="display:none;font-size:0.72rem;color:#c9a96e;background:none;border:1.5px solid #c9a96e;
             border-radius:12px;padding:3px 12px;cursor:pointer;font-weight:700">+ Add size</button>
         </div>
-        <div id="dc_sz_msg_${id}" style="font-size:0.78rem;color:#bbb;padding:4px 0">
+        <div id="dc_sz_msg_${id}" style="font-size:0.78rem;color:var(--txt-muted);padding:4px 0">
           ← Select a category first
         </div>
         <!-- Unstitched qty (shown instead of size rows for unstitched/accessories) -->
         <div id="dc_uqty_wrap_${id}" style="display:none;margin-top:4px">
           <div style="display:flex;align-items:center;gap:10px">
-            <label style="font-size:0.8rem;color:#555;font-weight:600">Quantity</label>
+            <label style="font-size:0.8rem;color:var(--txt-sec);font-weight:600">Quantity</label>
             <input type="number" id="dc_uqty_${id}" value="1" min="1" max="20"
               onchange="checkAddUrlLock()"
-              style="width:68px;padding:7px 8px;border:1.5px solid #d9cfc4;border-radius:6px;
+              style="width:68px;padding:7px 8px;border:1.5px solid var(--bdr-med);border-radius:6px;
                      font-size:0.9rem;text-align:center;font-weight:700"/>
-            <span style="font-size:0.78rem;color:#888">piece(s)</span>
+            <span style="font-size:0.78rem;color:var(--txt-muted)">piece(s)</span>
           </div>
         </div>
         <!-- Available size chips from auto-fetch — click to add a row -->
         <div id="dc_szchips_${id}" style="display:none;margin-bottom:8px">
-          <div style="font-size:0.71rem;color:#888;margin-bottom:5px">
+          <div style="font-size:0.71rem;color:var(--txt-muted);margin-bottom:5px">
             🔍 Available sizes — tap to add:
           </div>
           <div id="dc_szchips_inner_${id}" style="display:flex;flex-wrap:wrap;gap:6px"></div>
         </div>
         <div id="dc_srows_${id}"></div>
         <div id="dc_sremind_${id}" style="display:none;margin-top:5px;font-size:0.72rem;font-weight:700;
-          color:#c0392b;background:#fff0f0;border:1px solid #f5c6c6;border-radius:5px;padding:4px 8px">
+          color:#ff7575;background:rgba(192,57,43,0.15);border:1px solid rgba(192,57,43,0.35);border-radius:5px;padding:4px 8px">
           ⚠️ Please select a size in every row before saving.
         </div>
       </div>
@@ -1721,14 +1718,14 @@
       .insertAdjacentHTML('beforeend',
         `<div id="sr_${rowId}" style="display:flex;gap:8px;align-items:center;margin-bottom:7px">
           <select onchange="onDraftSizeChange(${draftId})"
-            style="flex:1;padding:8px 10px;border:1.5px solid #d9cfc4;border-radius:6px;font-size:0.85rem;background:#fff;min-width:0">
+            style="flex:1;padding:8px 10px;border:1.5px solid var(--bdr-med);border-radius:6px;font-size:0.85rem;background:var(--input-bg);color:var(--txt);min-width:0">
             <option value="">Pick size</option>${opts}
           </select>
           <input type="number" value="${qty}" min="1" max="20" onchange="checkAddUrlLock()"
-            style="width:62px;padding:8px 8px;border:1.5px solid #d9cfc4;border-radius:6px;font-size:0.85rem;text-align:center"/>
+            style="width:62px;padding:8px 8px;border:1.5px solid var(--bdr-med);border-radius:6px;font-size:0.85rem;text-align:center"/>
           <button type="button" onclick="removeDraftSizeRow(${draftId},'${rowId}')"
-            style="background:none;border:none;color:#ccc;cursor:pointer;font-size:1rem;padding:2px 5px;border-radius:4px;flex-shrink:0"
-            onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ccc'">✕</button>
+            style="background:none;border:none;color:var(--txt-muted);cursor:pointer;font-size:1rem;padding:2px 5px;border-radius:4px;flex-shrink:0"
+            onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='var(--txt-muted)'">✕</button>
         </div>`);
     checkAddUrlLock();
   }
@@ -1751,17 +1748,17 @@
       hintDiv.textContent = groupLabel
         ? `🔍 ${groupLabel} — tap your combination:`
         : '🔍 Available sizes — tap to add:';
-      hintDiv.style.cssText = 'font-size:0.71rem;color:#888;margin-bottom:5px';
+      hintDiv.style.cssText = 'font-size:0.71rem;color:var(--txt-muted);margin-bottom:5px';
     }
     inner.innerHTML = sizes.map(sz => {
       const safeId  = sz.replace(/[^a-zA-Z0-9]/g,'_');
       const safeSz  = sz.replace(/'/g,"\\'");
       return `<button type="button" id="szchip_${id}_${safeId}"
         onclick="addSizeFromChip(${id},'${safeSz}')"
-        style="padding:5px 14px;border:1.5px solid #c9a96e;border-radius:16px;background:#fff;
-               color:#1a1a2e;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.15s"
-        onmouseover="if(!this.disabled)this.style.background='#c9a96e'"
-        onmouseout="if(!this.disabled)this.style.background='#fff'">${sz}</button>`;
+        style="padding:5px 14px;border:1.5px solid #c9a96e;border-radius:16px;background:var(--gold-dim);
+               color:var(--gold);font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.15s"
+        onmouseover="if(!this.disabled)this.style.background='#c9a96e';if(!this.disabled)this.style.color='#080e1c'"
+        onmouseout="if(!this.disabled)this.style.background='var(--gold-dim)';if(!this.disabled)this.style.color='var(--gold)'">${sz}</button>`;
     }).join('');
     wrap.style.display = '';
   }
@@ -1771,7 +1768,7 @@
     const chip = document.getElementById(`szchip_${id}_${sz.replace(/[^a-zA-Z0-9]/g,'_')}`);
     if(chip){
       chip.disabled = true;
-      chip.style.cssText = 'padding:5px 14px;border:1.5px solid #ddd;border-radius:16px;background:#f0f0f0;color:#bbb;font-size:0.78rem;font-weight:700;cursor:default;text-decoration:line-through';
+      chip.style.cssText = 'padding:5px 14px;border:1.5px solid var(--bdr);border-radius:16px;background:var(--surface);color:var(--txt-muted);font-size:0.78rem;font-weight:700;cursor:default;text-decoration:line-through';
     }
     // Find existing empty row and fill it, otherwise add new row
     const rows = document.querySelectorAll(`#dc_srows_${id} > div`);
@@ -2277,10 +2274,10 @@
     const card = document.getElementById(`dc_${id}`);
     card.style.cssText += ';border:2px solid #f9a825 !important;';
     card.insertAdjacentHTML('afterbegin',
-      `<div style="background:#fff8e1;border-bottom:2px solid #f9a825;padding:9px 14px;
+      `<div style="background:rgba(249,168,37,0.12);border-bottom:2px solid #f9a825;padding:9px 14px;
          border-radius:10px 10px 0 0;margin:-1px -1px 0;font-size:0.82rem;font-weight:700;
-         color:#7a5800;display:flex;align-items:center;gap:8px">
-        ✏️ Editing item — change anything below, then click <span style="background:#f9a825;color:#1a1a2e;
+         color:#f0c855;display:flex;align-items:center;gap:8px">
+        ✏️ Editing item — change anything below, then click <span style="background:#f9a825;color:#12122a;
           padding:1px 8px;border-radius:5px;font-size:0.78rem">Save to Order List</span>
       </div>`);
 
@@ -2346,11 +2343,11 @@
           <div class="item-tags">
             <span class="item-tag">${esc(catTag)}</span>
             ${sizeTags}
-            <span class="item-tag" style="background:#f0f8ff;border-color:#c9d8e8">Total qty: ${totalQty}</span>
+            <span class="item-tag" style="background:var(--raised);border-color:var(--bdr-med)">Total qty: ${totalQty}</span>
           </div>
         </div>
         <div>
-          <div class="item-price">PKR ${item.pkr.toLocaleString()} <span style="font-size:0.68rem;font-weight:400;color:#888">each</span></div>
+          <div class="item-price">PKR ${item.pkr.toLocaleString()} <span style="font-size:0.68rem;font-weight:400;color:var(--txt-muted)">each</span></div>
           <div class="item-bdt">≈ ৳${bdtEach.toLocaleString()} each</div>
           <div style="display:flex;gap:4px;margin-top:4px;justify-content:flex-end">
             <button class="remove-item" onclick="editItem(${i})" title="Edit" style="color:#c9a96e;font-size:0.8rem">✏️</button>

@@ -6,8 +6,8 @@
   "scope": "/Pakstyle-BD/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#1a1a2e",
-  "theme_color": "#1a1a2e",
+  "background_color": "#080E1C",
+  "theme_color": "#080E1C",
   "icons": [
     {
       "src": "icon-192.png",
