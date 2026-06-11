@@ -16,7 +16,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="PakStyle BD"/>
   <link rel="manifest" href="manifest.json"/>
-  <link rel="apple-touch-icon" href="icon-192.png"/>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
   <style>
     /* ── Midnight Gold theme ── */
     :root{
@@ -412,6 +412,7 @@
       <input type="url" id="urlInput" placeholder="https://brand.com/products/product-name"/>
       <button class="add-btn" id="addUrlBtn" onclick="handleAddUrl()">+ Add URL</button>
     </div>
+    <div id="urlInputErr" style="display:none;margin-top:9px;padding:10px 14px;border-radius:9px;background:rgba(192,57,43,0.13);border:1px solid rgba(192,57,43,0.40);color:#ff9a9a;font-size:0.82rem;line-height:1.5"></div>
 
     <!-- Draft cards + "Add another" input — shown after first URL added -->
     <div id="draftsContainer" style="display:none;margin-top:18px">
@@ -2194,11 +2195,37 @@
     try{ new URL(url); return url; }catch(e){ return null; }
   }
 
+  function isKnownBrand(url){
+    try{
+      const host = new URL(url).hostname.replace(/^www\./,'');
+      return Object.keys(BRAND_MAP).some(k => host === k || host.endsWith('.'+k));
+    }catch(e){ return false; }
+  }
+
+  function showUrlError(msg){
+    const el = document.getElementById('urlInputErr');
+    if(!el) return;
+    el.innerHTML = msg;
+    el.style.display = '';
+    clearTimeout(el._t);
+    el._t = setTimeout(()=>{ el.style.display='none'; }, 10000);
+  }
+  function clearUrlError(){ const el=document.getElementById('urlInputErr'); if(el) el.style.display='none'; }
+
   function handleAddUrl(){
     const raw = document.getElementById('urlInput').value.trim();
-    if(!raw){ alert('Please paste a product URL first.'); return; }
+    if(!raw){ showUrlError('Please paste a product URL first.'); return; }
     const url = parseUrl(raw);
-    if(!url){ alert('That doesn\'t look like a valid URL:\n' + raw); return; }
+    if(!url){ showUrlError('That doesn\'t look like a valid URL — please copy the full link from the brand\'s website.'); return; }
+    if(!isKnownBrand(url)){
+      showUrlError(
+        '🛍️ <b>We deal in Pakistani clothing only.</b> This link doesn\'t look like a Pakistani brand website we support.<br>'
+        +'Please copy the product URL from brands like <b>Khaadi, Sapphire, Almirah, Gul Ahmed, Limelight, Edenrobe</b> etc. '
+        +'— use the <b>Browse Brands</b> button below to find supported stores.'
+      );
+      return;
+    }
+    clearUrlError();
     // Hide top input row — bottom "Add Another URL" takes over from here
     document.getElementById('urlInputRow').style.display = 'none';
     document.getElementById('draftsContainer').style.display = '';
@@ -2216,7 +2243,11 @@
     const raw = document.getElementById('panelUrlInput').value.trim();
     if(!raw){ alert('Please paste a URL first.'); return; }
     const url = parseUrl(raw);
-    if(!url){ alert('That doesn\'t look like a valid URL:\n' + raw); return; }
+    if(!url){ alert('That doesn\'t look like a valid URL — please copy the full link from the brand\'s website.'); return; }
+    if(!isKnownBrand(url)){
+      alert('We deal in Pakistani clothing only.\n\nThis link doesn\'t look like a supported Pakistani brand site.\n\nPlease paste a URL from brands like Khaadi, Sapphire, Almirah, Gul Ahmed, Limelight, Edenrobe, etc.');
+      return;
+    }
     createDraft(url);
     document.getElementById('panelUrlInput').value = '';
     document.getElementById('globalFetchStatus').textContent = Object.keys(drafts).length + ' URLs ready.';
@@ -2986,6 +3017,17 @@
     document.body.appendChild(tag);
   });
 
+</script>
+<script>
+  /* Register the service worker so the site is installable as an app and works
+     offline. Guarded to http/https so local file:// previews don't throw. */
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('sw.js').catch(function (err) {
+        console.warn('SW registration failed:', err);
+      });
+    });
+  }
 </script>
 </body>
 </html>
