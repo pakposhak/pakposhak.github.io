@@ -1023,6 +1023,7 @@
   // Weights include ~20% packaging allowance.
   const DEFAULT_WEIGHTS = {
     kurti_1pc         : 0.34,
+    womens_trouser    : 0.42,   // single women's trouser/pant (~0.35 base +20%)
     kaftan            : 0.58,   // 1pc long shirt ≈ kurti 0.34 + 70%
     shirt_dupatta_2pc : 0.46,
     shirt_trouser_2pc : 0.58,
@@ -1052,6 +1053,7 @@
 
   const WEIGHT_LABELS = {
     kurti_1pc         : 'Kurti / Shirt (1pc)',
+    womens_trouser    : "Women's Trouser / Pants (1pc)",
     kaftan            : 'Kaftan (1pc long shirt)',
     shirt_dupatta_2pc : 'Shirt + Dupatta (2pc)',
     shirt_trouser_2pc : 'Shirt + Trouser (2pc co-ord)',
@@ -1161,6 +1163,7 @@
       <option value="mens_unstitched">Men's Unstitched Fabric</option>
     </optgroup>
     <optgroup label="➕ Separates">
+      <option value="womens_trouser">Women's Trouser / Pants (1pc)</option>
       <option value="dupatta_only">Dupatta / Stole / Scarf only</option>
       <option value="shawl">Shawl (winter)</option>
       <option value="accessories">Accessories / Jewellery</option>
@@ -1447,6 +1450,11 @@
             ${pkBadge}
           </div>
         </div>
+        <button onclick="duplicateDraft(${id})" title="Add a second item from this same page"
+          style="background:none;border:1.5px solid #c9a96e;color:#c9a96e;border-radius:14px;
+                 padding:3px 11px;font-size:0.72rem;font-weight:700;cursor:pointer;margin-right:6px">
+          + 2nd item
+        </button>
         <button class="draft-remove" onclick="removeDraft(${id})" title="Remove this URL">✕</button>
       </div>
       <div id="dc_fetch_${id}" style="display:none;font-size:0.72rem;font-weight:600;padding:5px 10px;background:#fffbf2;border-radius:5px;margin-top:6px"></div>
@@ -1546,6 +1554,21 @@
       showTopUrlInput(); // show top input again when all cards gone
     }
     checkAddUrlLock();
+  }
+
+  function duplicateDraft(srcId){
+    // Create a fresh card for the same URL so the user can fill a 2nd item
+    // (e.g. matching pants from the same Khaadi page)
+    const srcEl = document.getElementById(`dc_${srcId}`);
+    if(!srcEl) return;
+    const url = srcEl.dataset.url;
+    if(!url) return;
+    const newId = createDraft(url);
+    // Scroll the new card into view
+    setTimeout(() => {
+      const newEl = document.getElementById(`dc_${newId}`);
+      if(newEl) newEl.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    }, 100);
   }
 
   function onDraftCatChange(id){
@@ -2072,9 +2095,10 @@
     if(/winter.*2|2.*winter|khaddar|karandi|linen/.test(s)) return 'winter_2pc';
     if(/3.piece|3pc|three.piece|suit/.test(s) && /pret|stitch/.test(s)) return 'pret_3pc';
     if(/3.piece|3pc|three.piece|lawn.*3/.test(s))  return 'lawn_3pc_unstitch';
-    if(/kurti|shirt.*trouser|co.?ord/.test(s) && /trouser|pant/.test(s)) return 'shirt_trouser_2pc';
+    if(/kurti|kurta|shirt.*trouser|co.?ord/.test(s) && /trouser|pant/.test(s)) return 'shirt_trouser_2pc';
     if(/2.piece|2pc|two.piece|shirt.*dupatta/.test(s)) return 'shirt_dupatta_2pc';
-    if(/kurti|shirt|top/.test(s))                   return 'kurti_1pc';
+    if(/trouser|pant/.test(s) && !/shirt|kurta|kurti|suit/.test(s)) return 'womens_trouser';
+    if(/kurti|kurta|shirt|top/.test(s))             return 'kurti_1pc';
     return '';
   }
 
@@ -2220,7 +2244,7 @@
     pret_3pc:'3pc Pret', winter_2pc:'Winter 2pc', winter_3pc:'Winter 3pc',
     formal_emb_2pc:'Formal 2pc', formal_emb_3pc:'Formal 3pc',
     heavy_formal_3pc:'Heavy Formal 3pc', bridal:'Bridal',
-    dupatta_only:'Dupatta / Stole', shawl:'Shawl', accessories:'Accessories',
+    womens_trouser:"Women's Trouser", dupatta_only:'Dupatta / Stole', shawl:'Shawl', accessories:'Accessories',
     mens_shirt:"Men's Shirt 1pc", mens_trouser:"Men's Trouser 1pc", mens_jeans:"Men's Jeans 1pc",
     mens_kurta:"Men's Kurta 1pc", mens_shalwar_kameez:"Men's Shalwar Kameez 2pc",
     mens_waistcoat:"Men's Waistcoat", mens_suit:"Men's Suit/Pant-Coat",
