@@ -97,6 +97,8 @@
     .hiw-inner{display:flex;align-items:center;justify-content:center;gap:0;min-width:max-content;margin:0 auto}
     .hiw-step{display:flex;align-items:center;gap:5px;padding:0 10px;font-size:0.72rem;font-weight:700;color:#0A1628;white-space:nowrap}
     .hiw-step span.icon{font-size:1rem}
+    .hiw-video{margin-left:12px;background:#0A1628;color:var(--gold);font-weight:800;font-size:0.72rem;padding:6px 14px;border-radius:14px;text-decoration:none;white-space:nowrap}
+    .hiw-mobile .hiw-video{grid-column:1/-1;text-align:center;margin:4px auto 0;display:inline-block;justify-self:center}
     .hiw-mobile{display:none}
     .hiw-arrow{color:#0A1628;opacity:0.45;font-size:0.9rem;flex-shrink:0}
 
@@ -211,9 +213,10 @@
       .hdr-inner{max-width:980px}
       .hiw-inner{max-width:980px}
       .container{max-width:980px;padding:30px 32px 44px}
-      body{padding-bottom:30px}
-      .bottom-nav{display:none}
-      #installPill{bottom:24px}
+      /* Home/Brands/Cart/HowTo bar stays visible on desktop too */
+      body{padding-bottom:92px}
+      .bottom-nav{max-width:520px;left:50%;right:auto;transform:translateX(-50%);border-radius:16px 16px 0 0;border:1px solid var(--bdr);border-bottom:none}
+      #installPill{bottom:86px}
       .cat-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
     }
     /* ── Mobile: stack the 5 categories 2-per-row (all visible, bigger text) ── */
@@ -419,12 +422,14 @@
     <div class="hiw-step"><span class="icon">💳</span><span data-i18n="hiw_pay">Pay via bKash/Nagad</span></div>
     <span class="hiw-arrow">›</span>
     <div class="hiw-step"><span class="icon">🚚</span><span data-i18n="hiw_delivery">2–3 weeks to your door</span></div>
+    <a class="hiw-video" href="how-to-video.html" data-i18n="hiw_video">▶ Watch 1-min video guide</a>
   </div>
   <div class="hiw-inner hiw-mobile">
     <div class="hiw-step"><span class="icon">🔍</span><span data-i18n="hiw_browse">Browse brands</span></div>
     <div class="hiw-step"><span class="icon">🔗</span><span data-i18n="hiw_paste">Paste product URL</span></div>
     <div class="hiw-step"><span class="icon">💳</span><span data-i18n="hiw_confirm_pay">Confirm price &amp; pay (bKash/Nagad)</span></div>
     <div class="hiw-step"><span class="icon">🚚</span><span data-i18n="hiw_delivery">2–3 weeks to your door</span></div>
+    <a class="hiw-video" href="how-to-video.html" data-i18n="hiw_video">▶ Watch 1-min video guide</a>
   </div>
 </div>
 
@@ -529,57 +534,57 @@
 <div class="step-section" id="step2">
 <div class="container">
 
-  <div class="section-label">Your Contact &amp; Delivery Details</div>
+  <div class="section-label" data-i18n="d_contact">Your Contact &amp; Delivery Details</div>
   <div class="details-form">
 
     <div class="saved-indicator" id="savedIndicator">
-      <span>✓ Details saved on this device</span>
-      <button onclick="clearSavedDetails()">Clear saved info</button>
+      <span data-i18n="d_saved">✓ Details saved on this device</span>
+      <button onclick="clearSavedDetails()" data-i18n="d_clearsaved">Clear saved info</button>
     </div>
 
     <div class="row-2">
       <div class="field">
-        <label>Full Name *</label>
-        <input type="text" id="buyerName" placeholder="e.g. Fatima Rahman"/>
+        <label data-i18n="d_name">Full Name *</label>
+        <input type="text" id="buyerName" placeholder="e.g. Fatima Rahman" data-i18n-ph="ph_name"/>
       </div>
       <div class="field">
-        <label>WhatsApp Number *</label>
+        <label data-i18n="d_wa">WhatsApp Number *</label>
         <input type="tel" id="buyerWA" placeholder="+880 17XXXXXXXX"/>
       </div>
     </div>
     <div class="row-2">
       <div class="field">
-        <label>Email <span style="color:#aaa;font-weight:400;font-size:0.75rem">(optional)</span></label>
+        <label data-i18n="d_email">Email (optional)</label>
         <input type="email" id="buyerEmail" placeholder="your@email.com"/>
       </div>
       <div class="field">
-        <label>Delivery Address in Bangladesh *</label>
-        <input type="text" id="buyerAddress" placeholder="Flat, Road, Area, City, Dhaka 1209"/>
+        <label data-i18n="d_address">Delivery Address in Bangladesh *</label>
+        <input type="text" id="buyerAddress" placeholder="Flat, Road, Area, City, Dhaka 1209" data-i18n-ph="ph_address"/>
       </div>
     </div>
     <div class="field">
-      <label>Notes (optional)</label>
-      <input type="text" id="buyerNotes" placeholder="Alternate sizes, special instructions..."/>
+      <label data-i18n="d_notes">Notes (optional)</label>
+      <input type="text" id="buyerNotes" placeholder="Alternate sizes, special instructions..." data-i18n-ph="ph_notes"/>
     </div>
 
     <div class="remember-row">
       <input type="checkbox" id="rememberMe" checked/>
-      <label for="rememberMe">Remember my details on this device</label>
+      <label for="rememberMe" data-i18n="d_remember">Remember my details on this device</label>
     </div>
   </div>
 
   <div style="display:flex;align-items:center;gap:8px;background:rgba(240,192,64,0.10);border:1.5px solid rgba(240,192,64,0.40);border-radius:8px;padding:11px 16px;margin-top:16px;font-size:0.82rem;color:#f0c855">
     <span style="font-size:1.1rem">🚚</span>
-    <span><strong>Estimated Delivery: 2–3 Weeks</strong> from order confirmation to your door.</span>
+    <span><strong data-i18n="d_delivery_t">Estimated Delivery: 2–3 Weeks</strong> <span data-i18n="d_delivery_x">from order confirmation to your door.</span></span>
   </div>
 
   <div class="nav-row">
-    <button class="btn-back" onclick="goToStep(1)">← Back</button>
-    <button class="btn-next" onclick="nextFromStep2()">Review My Order →</button>
+    <button class="btn-back" onclick="goToStep(1)" data-i18n="btn_back">← Back</button>
+    <button class="btn-next" onclick="nextFromStep2()" data-i18n="btn_review">Review My Order →</button>
   </div>
 
   <div class="wa-note" style="margin-top:16px">
-    Questions? <a href="https://wa.me/923XXXXXXXXX" target="_blank">Chat on WhatsApp</a>
+    <span data-i18n="d_questions">Questions?</span> <a href="https://wa.me/923XXXXXXXXX" target="_blank" data-i18n="d_wachat">Chat on WhatsApp</a>
   </div>
 
 </div>
@@ -589,31 +594,31 @@
 <div class="step-section" id="step3">
 <div class="container">
 
-  <div class="section-label">Review Your Order</div>
+  <div class="section-label" data-i18n="r_review">Review Your Order</div>
 
   <div class="review-box">
-    <h2>Order Summary</h2>
-    <p>Please review everything below. We'll confirm the final price on WhatsApp before you pay.</p>
+    <h2 data-i18n="r_summary">Order Summary</h2>
+    <p data-i18n="r_intro">Please review everything below. We'll confirm the final price on WhatsApp before you pay.</p>
 
     <div id="summaryItems"></div>
 
     <div class="summary-total-box">
-      <div class="st-row"><span>Products (PKR value)</span><span id="sum-pkr"></span></div>
-      <div class="st-row"><span>Logistics (est. weight × ৳1,600/kg)</span><span id="sum-logistics"></span></div>
-      <div class="st-row"><span>Transaction Fee</span><span>৳ 100</span></div>
-      <div class="st-total"><span>ESTIMATED TOTAL (BDT)</span><span id="sum-total"></span></div>
+      <div class="st-row"><span data-i18n="r_products">Products (PKR value)</span><span id="sum-pkr"></span></div>
+      <div class="st-row"><span data-i18n="r_logistics">Logistics (est. weight × ৳1,600/kg)</span><span id="sum-logistics"></span></div>
+      <div class="st-row"><span data-i18n="r_txfee">Transaction Fee</span><span>৳ 100</span></div>
+      <div class="st-total"><span data-i18n="r_total">ESTIMATED TOTAL (BDT)</span><span id="sum-total"></span></div>
     </div>
 
     <div class="customer-summary" id="customerSummary"></div>
 
-    <div style="background:rgba(240,192,64,0.10);border:1px solid rgba(240,192,64,0.35);border-radius:7px;padding:9px 13px;font-size:0.75rem;color:#f0c855;margin-bottom:6px">
+    <div style="background:rgba(240,192,64,0.10);border:1px solid rgba(240,192,64,0.35);border-radius:7px;padding:9px 13px;font-size:0.75rem;color:#f0c855;margin-bottom:6px" data-i18n="r_avail">
       ⚠️ Items are subject to availability. If anything goes out of stock, we'll contact you on WhatsApp before proceeding.
     </div>
   </div>
 
   <div class="nav-row">
-    <button class="btn-back" onclick="goToStep(2)">← Edit Details</button>
-    <button class="btn-confirm" id="confirmSubmitBtn" onclick="submitOrder()">✓ Confirm &amp; Submit Order</button>
+    <button class="btn-back" onclick="goToStep(2)" data-i18n="btn_editdetails">← Edit Details</button>
+    <button class="btn-confirm" id="confirmSubmitBtn" onclick="submitOrder()" data-i18n="btn_confirmsubmit">✓ Confirm &amp; Submit Order</button>
   </div>
 
 </div>
@@ -626,32 +631,32 @@
   <!-- Top banner -->
   <div style="text-align:center;margin-bottom:20px">
     <div style="font-size:2.6rem;line-height:1">✅</div>
-    <h2 style="color:var(--gold);font-size:1.5rem;font-weight:700;margin-top:8px">Order Request Submitted!</h2>
-    <p style="margin-top:6px;color:var(--txt-sec);font-size:0.9rem">We'll confirm your price &amp; availability on <strong>WhatsApp within a few hours</strong>.</p>
+    <h2 style="color:var(--gold);font-size:1.5rem;font-weight:700;margin-top:8px" data-i18n="s_submitted">Order Request Submitted!</h2>
+    <p style="margin-top:6px;color:var(--txt-sec);font-size:0.9rem" data-i18n="s_confirm_wa">We'll confirm your price &amp; availability on WhatsApp within a few hours.</p>
   </div>
 
   <!-- Stock notice — high contrast, readable -->
   <div style="background:rgba(230,168,23,0.10);border:2px solid rgba(230,168,23,0.40);border-radius:10px;padding:12px 18px;margin-bottom:20px;display:flex;align-items:flex-start;gap:12px">
     <span style="font-size:1.4rem;flex-shrink:0">⚠️</span>
     <div>
-      <div style="font-size:0.88rem;font-weight:700;color:#f0c855;margin-bottom:2px">Stock Notice</div>
-      <div style="font-size:0.83rem;color:var(--txt-sec);line-height:1.5">Pakistani fashion items sell out fast. If anything goes out of stock before we place your order, we'll contact you on WhatsApp immediately and offer alternatives or a full refund.</div>
+      <div style="font-size:0.88rem;font-weight:700;color:#f0c855;margin-bottom:2px" data-i18n="s_stocktitle">Stock Notice</div>
+      <div style="font-size:0.83rem;color:var(--txt-sec);line-height:1.5" data-i18n="s_stocktext">Pakistani fashion items sell out fast. If anything goes out of stock before we place your order, we'll contact you on WhatsApp immediately and offer alternatives or a full refund.</div>
     </div>
   </div>
 
   <!-- Order ID + Track row -->
   <div style="background:#12122a;border-radius:12px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
     <div>
-      <div style="font-size:0.7rem;color:#888;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px">Your Order ID</div>
+      <div style="font-size:0.7rem;color:#888;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px" data-i18n="s_orderid">Your Order ID</div>
       <div style="font-size:1.3rem;font-weight:700;color:#c9a96e;letter-spacing:1.5px" id="orderRef">—</div>
     </div>
-    <a id="trackOrderLink" href="tracking.html" style="display:inline-flex;align-items:center;gap:6px;background:#c9a96e;color:#12122a;padding:10px 20px;border-radius:8px;font-weight:700;text-decoration:none;font-size:0.88rem;white-space:nowrap">📦 Track My Order</a>
+    <a id="trackOrderLink" href="tracking.html" style="display:inline-flex;align-items:center;gap:6px;background:#c9a96e;color:#12122a;padding:10px 20px;border-radius:8px;font-weight:700;text-decoration:none;font-size:0.88rem;white-space:nowrap" data-i18n="s_track">📦 Track My Order</a>
   </div>
 
   <!-- Payment section heading -->
   <div style="text-align:center;margin-bottom:16px">
-    <div style="font-size:1rem;font-weight:700;color:var(--gold);letter-spacing:0.3px">💳 How to Pay</div>
-    <div style="font-size:0.8rem;color:var(--txt-sec);margin-top:4px">Send payment <strong>only after</strong> receiving your confirmed quote on WhatsApp</div>
+    <div style="font-size:1rem;font-weight:700;color:var(--gold);letter-spacing:0.3px" data-i18n="s_howpay">💳 How to Pay</div>
+    <div style="font-size:0.8rem;color:var(--txt-sec);margin-top:4px" data-i18n="s_payafter">Send payment only after receiving your confirmed quote on WhatsApp</div>
   </div>
 
   <!-- Payment grid — 2 columns on desktop, 1 on mobile -->
@@ -774,26 +779,26 @@
 
   <!-- ═══ PAYMENT CONFIRMATION — upload slip / message, saved to the order ═══ -->
   <div id="payConfirmBox" style="background:var(--raised);border:2px solid var(--gold-bdr2);border-radius:14px;padding:18px 16px;margin-bottom:18px">
-    <div style="text-align:center;font-weight:700;color:var(--gold);font-size:1.02rem">✅ Already Paid? Confirm Your Payment</div>
+    <div style="text-align:center;font-weight:700;color:var(--gold);font-size:1.02rem" data-i18n="s_paid_title">✅ Already Paid? Confirm Your Payment</div>
     <div style="text-align:center;font-size:0.78rem;color:var(--txt-sec);margin:5px 0 14px">
-      Attach your payment slip or paste your transaction details — we'll save it against Order
+      <span data-i18n="s_paid_sub">Attach your payment slip or paste your transaction details — we'll save it against Order</span>
       <span id="payConfirmOrderId" style="font-weight:700;color:#c9a96e">—</span>
     </div>
 
     <!-- Tabs -->
     <div style="display:flex;gap:8px;margin-bottom:14px">
       <button type="button" id="payTabReceiptBtn" onclick="switchPayTab('receipt')"
-        style="flex:1;padding:9px;border:none;border-radius:8px;font-size:0.82rem;font-weight:700;cursor:pointer;background:#12122a;color:#c9a96e">📷 Upload Receipt</button>
+        style="flex:1;padding:9px;border:none;border-radius:8px;font-size:0.82rem;font-weight:700;cursor:pointer;background:#12122a;color:#c9a96e" data-i18n="s_tab_receipt">📷 Upload Receipt</button>
       <button type="button" id="payTabMsgBtn" onclick="switchPayTab('msg')"
-        style="flex:1;padding:9px;border:none;border-radius:8px;font-size:0.82rem;font-weight:700;cursor:pointer;background:var(--surface);color:var(--txt-sec)">💬 Payment Message</button>
+        style="flex:1;padding:9px;border:none;border-radius:8px;font-size:0.82rem;font-weight:700;cursor:pointer;background:var(--surface);color:var(--txt-sec)" data-i18n="s_tab_msg">💬 Payment Message</button>
     </div>
 
     <!-- Receipt tab -->
     <div id="payTabReceipt">
       <label for="payReceiptFile" style="display:block;text-align:center;border:2px dashed var(--gold-bdr2);border-radius:10px;padding:18px 10px;cursor:pointer;background:var(--input-bg)">
         <div style="font-size:1.6rem">🧾</div>
-        <div style="font-size:0.84rem;font-weight:700;color:var(--txt);margin-top:4px">Tap to choose your payment screenshot</div>
-        <div style="font-size:0.72rem;color:var(--txt-muted);margin-top:2px">bKash / Nagad / bank slip — JPG or PNG</div>
+        <div style="font-size:0.84rem;font-weight:700;color:var(--txt);margin-top:4px" data-i18n="s_upload_main">Tap to choose your payment screenshot</div>
+        <div style="font-size:0.72rem;color:var(--txt-muted);margin-top:2px" data-i18n="s_upload_sub">bKash / Nagad / bank slip — JPG or PNG</div>
       </label>
       <input type="file" id="payReceiptFile" accept="image/*" onchange="previewReceipt()" style="display:none"/>
       <div id="payReceiptPreview" style="display:none;margin-top:10px;text-align:center">
@@ -810,18 +815,18 @@
 
     <button type="button" onclick="submitPaymentConfirmation()" id="payConfirmBtn"
       style="width:100%;margin-top:14px;background:#c9a96e;border:none;color:#12122a;padding:13px;border-radius:10px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:opacity 0.15s"
-      onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">✅ Confirm Payment</button>
+      onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'" data-i18n="s_confirmpay">✅ Confirm Payment</button>
     <div id="payConfirmStatus" style="display:none;margin-top:10px;font-size:0.82rem;text-align:center;padding:9px;border-radius:8px"></div>
   </div>
 
   <!-- Footer row -->
   <div style="text-align:center;padding:14px;background:var(--surface);border-radius:10px;margin-bottom:16px">
-    <div style="font-size:0.82rem;color:var(--txt-sec);font-weight:600">Submit your payment slip above — it's saved directly to your order, no need to message separately.</div>
-    <div style="font-size:0.76rem;color:var(--txt-muted);margin-top:4px">Save your Order ID above to track your order status anytime.</div>
+    <div style="font-size:0.82rem;color:var(--txt-sec);font-weight:600" data-i18n="s_footer1">Submit your payment slip above — it's saved directly to your order, no need to message separately.</div>
+    <div style="font-size:0.76rem;color:var(--txt-muted);margin-top:4px" data-i18n="s_footer2">Save your Order ID above to track your order status anytime.</div>
   </div>
 
   <div style="text-align:center">
-    <button onclick="resetForm()" style="background:#12122a;border:none;color:#c9a96e;padding:12px 32px;border-radius:10px;font-size:0.9rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">← Place Another Order</button>
+    <button onclick="resetForm()" style="background:#12122a;border:none;color:#c9a96e;padding:12px 32px;border-radius:10px;font-size:0.9rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'" data-i18n="s_another">← Place Another Order</button>
   </div>
 
 </div>
@@ -2320,7 +2325,7 @@
     en: {
       tagline:'Pakistani Fashion · Bangladesh Delivery',
       hiw_browse:'Browse brands', hiw_paste:'Paste product URL', hiw_confirm:'We confirm price',
-      hiw_pay:'Pay via bKash/Nagad', hiw_delivery:'2–3 weeks to your door',
+      hiw_pay:'Pay via bKash/Nagad', hiw_delivery:'2–3 weeks to your door', hiw_video:'▶ Watch 1-min video guide',
       hiw_confirm_pay:'Confirm price & pay (bKash/Nagad)',
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search any brand by name…',
@@ -2329,12 +2334,38 @@
       btn_addurl:'+ Add URL',
       nav_home:'Home', nav_brands:'Brands', nav_cart:'Cart', nav_how:'How To',
       word_brands:'brands',
-      cat_md:'Multi-Department', cat_w:'Women’s Pret & Unstitched', cat_p:'Premium', cat_m:'Menswear', cat_k:'Kids'
+      cat_md:'Multi-Department', cat_w:'Women’s Pret & Unstitched', cat_p:'Premium', cat_m:'Menswear', cat_k:'Kids',
+      d_contact:'Your Contact & Delivery Details', d_saved:'✓ Details saved on this device', d_clearsaved:'Clear saved info',
+      d_name:'Full Name *', ph_name:'e.g. Fatima Rahman', d_wa:'WhatsApp Number *',
+      d_email:'Email (optional)', d_address:'Delivery Address in Bangladesh *', ph_address:'Flat, Road, Area, City, Dhaka 1209',
+      d_notes:'Notes (optional)', ph_notes:'Alternate sizes, special instructions...', d_remember:'Remember my details on this device',
+      d_delivery_t:'Estimated Delivery: 2–3 Weeks', d_delivery_x:'from order confirmation to your door.',
+      btn_back:'← Back', btn_review:'Review My Order →', d_questions:'Questions?', d_wachat:'Chat on WhatsApp',
+      r_review:'Review Your Order', r_summary:'Order Summary',
+      r_intro:"Please review everything below. We'll confirm the final price on WhatsApp before you pay.",
+      r_products:'Products (PKR value)', r_logistics:'Logistics (est. weight × ৳1,600/kg)', r_txfee:'Transaction Fee', r_total:'ESTIMATED TOTAL (BDT)',
+      r_avail:"⚠️ Items are subject to availability. If anything goes out of stock, we'll contact you on WhatsApp before proceeding.",
+      btn_editdetails:'← Edit Details', btn_confirmsubmit:'✓ Confirm & Submit Order',
+      s_submitted:'Order Request Submitted!', s_confirm_wa:"We'll confirm your price & availability on WhatsApp within a few hours.",
+      s_stocktitle:'Stock Notice', s_stocktext:"Pakistani fashion items sell out fast. If anything goes out of stock before we place your order, we'll contact you on WhatsApp immediately and offer alternatives or a full refund.",
+      s_orderid:'Your Order ID', s_track:'📦 Track My Order', s_howpay:'💳 How to Pay',
+      s_payafter:'Send payment only after receiving your confirmed quote on WhatsApp',
+      s_paid_title:'✅ Already Paid? Confirm Your Payment', s_paid_sub:"Attach your payment slip or paste your transaction details — we'll save it against Order",
+      s_tab_receipt:'📷 Upload Receipt', s_tab_msg:'💬 Payment Message',
+      s_upload_main:'Tap to choose your payment screenshot', s_upload_sub:'bKash / Nagad / bank slip — JPG or PNG',
+      s_confirmpay:'✅ Confirm Payment',
+      s_footer1:"Submit your payment slip above — it's saved directly to your order, no need to message separately.",
+      s_footer2:'Save your Order ID above to track your order status anytime.', s_another:'← Place Another Order',
+      js_paste_first:'Please paste a product URL first.',
+      js_invalid_url:"That doesn't look like a valid URL — please copy the full link from the brand's website.",
+      js_fill_required:'Please fill in all required fields (highlighted in red) for each item.',
+      js_add_item_first:'Please add at least one item to your order first.',
+      js_details_required:'Please fill in all required fields (Name, WhatsApp number, and Delivery Address).'
     },
     bn: {
       tagline:'পাকিস্তানি ফ্যাশন · বাংলাদেশে ডেলিভারি',
       hiw_browse:'ব্র্যান্ড ব্রাউজ করুন', hiw_paste:'প্রোডাক্ট লিংক পেস্ট করুন', hiw_confirm:'আমরা দাম নিশ্চিত করি',
-      hiw_pay:'বিকাশ/নগদে পেমেন্ট করুন', hiw_delivery:'২–৩ সপ্তাহে আপনার দরজায়',
+      hiw_pay:'বিকাশ/নগদে পেমেন্ট করুন', hiw_delivery:'২–৩ সপ্তাহে আপনার দরজায়', hiw_video:'▶ ১ মিনিটের ভিডিও গাইড দেখুন',
       hiw_confirm_pay:'দাম নিশ্চিত করে পেমেন্ট (বিকাশ/নগদ)',
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
       lbl_browse:'ব্র্যান্ড ব্রাউজ করুন', search_ph:'🔍 নাম দিয়ে ব্র্যান্ড খুঁজুন…',
@@ -2343,7 +2374,33 @@
       btn_addurl:'+ লিংক যোগ করুন',
       nav_home:'হোম', nav_brands:'ব্র্যান্ড', nav_cart:'কার্ট', nav_how:'কীভাবে',
       word_brands:'ব্র্যান্ড',
-      cat_md:'মাল্টি-ডিপার্টমেন্ট', cat_w:'মেয়েদের প্রেট ও আনস্টিচড', cat_p:'প্রিমিয়াম', cat_m:'ছেলেদের পোশাক', cat_k:'বাচ্চাদের'
+      cat_md:'মাল্টি-ডিপার্টমেন্ট', cat_w:'মেয়েদের প্রেট ও আনস্টিচড', cat_p:'প্রিমিয়াম', cat_m:'ছেলেদের পোশাক', cat_k:'বাচ্চাদের',
+      d_contact:'আপনার যোগাযোগ ও ডেলিভারির তথ্য', d_saved:'✓ এই ডিভাইসে তথ্য সেভ করা হয়েছে', d_clearsaved:'সেভ করা তথ্য মুছুন',
+      d_name:'পুরো নাম *', ph_name:'যেমন: ফাতিমা রহমান', d_wa:'হোয়াটসঅ্যাপ নম্বর *',
+      d_email:'ইমেইল (ঐচ্ছিক)', d_address:'বাংলাদেশে ডেলিভারির ঠিকানা *', ph_address:'ফ্ল্যাট, রোড, এলাকা, শহর, ঢাকা ১২০৯',
+      d_notes:'নোট (ঐচ্ছিক)', ph_notes:'বিকল্প সাইজ, বিশেষ নির্দেশনা...', d_remember:'এই ডিভাইসে আমার তথ্য মনে রাখুন',
+      d_delivery_t:'আনুমানিক ডেলিভারি: ২–৩ সপ্তাহ', d_delivery_x:'অর্ডার নিশ্চিত হওয়ার পর আপনার দরজা পর্যন্ত।',
+      btn_back:'← পেছনে', btn_review:'আমার অর্ডার রিভিউ →', d_questions:'প্রশ্ন আছে?', d_wachat:'হোয়াটসঅ্যাপে চ্যাট করুন',
+      r_review:'আপনার অর্ডার রিভিউ করুন', r_summary:'অর্ডার সারসংক্ষেপ',
+      r_intro:'নিচের সবকিছু একবার দেখে নিন। পেমেন্টের আগে আমরা হোয়াটসঅ্যাপে চূড়ান্ত দাম নিশ্চিত করব।',
+      r_products:'পণ্য (PKR মূল্য)', r_logistics:'লজিস্টিকস (আনুমানিক ওজন × ৳১,৬০০/কেজি)', r_txfee:'ট্রান্সঅ্যাকশন ফি', r_total:'আনুমানিক মোট (টাকা)',
+      r_avail:'⚠️ পণ্য স্টক সাপেক্ষে। কিছু স্টক শেষ হলে এগোনোর আগে আমরা হোয়াটসঅ্যাপে যোগাযোগ করব।',
+      btn_editdetails:'← তথ্য এডিট করুন', btn_confirmsubmit:'✓ নিশ্চিত করে অর্ডার জমা দিন',
+      s_submitted:'অর্ডার রিকোয়েস্ট জমা হয়েছে!', s_confirm_wa:'কয়েক ঘণ্টার মধ্যে আমরা হোয়াটসঅ্যাপে আপনার দাম ও স্টক নিশ্চিত করব।',
+      s_stocktitle:'স্টক বিষয়ক তথ্য', s_stocktext:'পাকিস্তানি ফ্যাশন পণ্য দ্রুত শেষ হয়ে যায়। অর্ডার করার আগে কিছু স্টক শেষ হলে আমরা সঙ্গে সঙ্গে হোয়াটসঅ্যাপে যোগাযোগ করে বিকল্প বা সম্পূর্ণ রিফান্ড দেব।',
+      s_orderid:'আপনার অর্ডার আইডি', s_track:'📦 অর্ডার ট্র্যাক করুন', s_howpay:'💳 যেভাবে পেমেন্ট করবেন',
+      s_payafter:'হোয়াটসঅ্যাপে নিশ্চিত দাম পাওয়ার পরেই কেবল পেমেন্ট পাঠান',
+      s_paid_title:'✅ পেমেন্ট করেছেন? পেমেন্ট নিশ্চিত করুন', s_paid_sub:'আপনার পেমেন্ট স্লিপ যুক্ত করুন বা ট্রান্সঅ্যাকশন তথ্য পেস্ট করুন — আমরা সেটি আপনার অর্ডারে সেভ করব',
+      s_tab_receipt:'📷 রসিদ আপলোড', s_tab_msg:'💬 পেমেন্ট মেসেজ',
+      s_upload_main:'পেমেন্টের স্ক্রিনশট বেছে নিতে ট্যাপ করুন', s_upload_sub:'বিকাশ / নগদ / ব্যাংক স্লিপ — JPG বা PNG',
+      s_confirmpay:'✅ পেমেন্ট নিশ্চিত করুন',
+      s_footer1:'উপরে আপনার পেমেন্ট স্লিপ জমা দিন — এটি সরাসরি আপনার অর্ডারে সেভ হয়, আলাদাভাবে মেসেজ করার দরকার নেই।',
+      s_footer2:'যেকোনো সময় অর্ডারের অবস্থা জানতে উপরের অর্ডার আইডি সেভ করে রাখুন।', s_another:'← আরেকটি অর্ডার করুন',
+      js_paste_first:'অনুগ্রহ করে আগে একটি প্রোডাক্ট লিংক পেস্ট করুন।',
+      js_invalid_url:'এটি সঠিক লিংক মনে হচ্ছে না — অনুগ্রহ করে ব্র্যান্ডের ওয়েবসাইট থেকে পুরো লিংক কপি করুন।',
+      js_fill_required:'প্রতিটি পণ্যের সব প্রয়োজনীয় ঘর (লাল চিহ্নিত) পূরণ করুন।',
+      js_add_item_first:'অনুগ্রহ করে আগে অন্তত একটি পণ্য অর্ডারে যোগ করুন।',
+      js_details_required:'অনুগ্রহ করে সব প্রয়োজনীয় ঘর পূরণ করুন (নাম, হোয়াটসঅ্যাপ নম্বর ও ডেলিভারির ঠিকানা)।'
     }
   };
   let _lang = localStorage.getItem('psb_lang') || 'en';
@@ -2539,9 +2596,9 @@
 
   function handleAddUrl(){
     const raw = document.getElementById('urlInput').value.trim();
-    if(!raw){ showUrlError('Please paste a product URL first.'); return; }
+    if(!raw){ showUrlError(tr('js_paste_first')); return; }
     const url = parseUrl(raw);
-    if(!url){ showUrlError('That doesn\'t look like a valid URL — please copy the full link from the brand\'s website.'); return; }
+    if(!url){ showUrlError(tr('js_invalid_url')); return; }
     if(!isKnownBrand(url)){
       showUrlError(
         '🛍️ <b>We deal in Pakistani clothing only.</b> This link doesn\'t look like a Pakistani brand website we support.<br>'
@@ -2566,9 +2623,9 @@
 
   function addUrlToPanel(){
     const raw = document.getElementById('panelUrlInput').value.trim();
-    if(!raw){ alert('Please paste a URL first.'); return; }
+    if(!raw){ alert(tr('js_paste_first')); return; }
     const url = parseUrl(raw);
-    if(!url){ alert('That doesn\'t look like a valid URL — please copy the full link from the brand\'s website.'); return; }
+    if(!url){ alert(tr('js_invalid_url')); return; }
     if(!isKnownBrand(url)){
       alert('We deal in Pakistani clothing only.\n\nThis link doesn\'t look like a supported Pakistani brand site.\n\nPlease paste a URL from brands like Khaadi, Sapphire, Almirah, Gul Ahmed, Limelight, Edenrobe, etc.');
       return;
@@ -2608,7 +2665,7 @@
         }
       }
     });
-    if(!allValid){ alert('Please fill in all required fields (highlighted in red) for each item.'); return; }
+    if(!allValid){ alert(tr('js_fill_required')); return; }
     ids.forEach(id => {
       const el = document.getElementById(`dc_${id}`);
       const url = el.dataset.url;
@@ -2812,7 +2869,7 @@
   }
 
   function nextFromStep1(){
-    if(!cart.length){ alert('Please add at least one item to your order first.'); return; }
+    if(!cart.length){ alert(tr('js_add_item_first')); return; }
     if(Object.keys(drafts).length){
       alert('You have unsaved product cards. Click "Save to Order List" to save them, or remove them before continuing.');
       return;
@@ -2837,7 +2894,7 @@
     if(!address){ document.getElementById('buyerAddress').style.borderColor='#c0392b'; valid=false; }
     else          document.getElementById('buyerAddress').style.borderColor='';
     if(!valid){
-      alert('Please fill in all required fields (Name, WhatsApp number, and Delivery Address).');
+      alert(tr('js_details_required'));
       return;
     }
     buildReviewSummary();
