@@ -91,6 +91,7 @@
     .hiw-inner{display:flex;align-items:center;justify-content:center;gap:0;min-width:max-content;margin:0 auto}
     .hiw-step{display:flex;align-items:center;gap:5px;padding:0 10px;font-size:0.72rem;font-weight:700;color:#0A1628;white-space:nowrap}
     .hiw-step span.icon{font-size:1rem}
+    .hiw-mobile{display:none}
     .hiw-arrow{color:#0A1628;opacity:0.45;font-size:0.9rem;flex-shrink:0}
 
     /* ── Bottom navigation bar ── */
@@ -220,10 +221,11 @@
       .cat-panel{border-radius:12px;border-top:1px solid var(--bdr)}
       .cat-head{font-size:0.92rem}
       .cat-brand{font-size:0.92rem;padding:11px 10px}
-      /* how-it-works strip wraps so all steps are visible (no horizontal scroll) */
-      .hiw-strip{overflow-x:visible}
-      .hiw-inner{flex-wrap:wrap;min-width:0;row-gap:2px}
-      .hiw-step{padding:3px 8px}
+      /* how-it-works: merged 4-step version, two rows (2x2 grid) — mobile only */
+      .hiw-strip{overflow-x:visible;padding:10px 12px}
+      .hiw-desktop{display:none}
+      .hiw-mobile{display:grid;grid-template-columns:1fr 1fr;gap:7px 6px;min-width:0}
+      .hiw-mobile .hiw-step{justify-content:center;text-align:center;white-space:normal;padding:0;font-size:0.74rem;line-height:1.2}
     }
     .show-more-btn{font-size:0.75rem;color:var(--gold);background:none;border:none;cursor:pointer;font-weight:600;padding:4px 0;text-decoration:underline}
 
@@ -400,7 +402,7 @@
 
 <!-- How it works strip -->
 <div class="hiw-strip">
-  <div class="hiw-inner">
+  <div class="hiw-inner hiw-desktop">
     <div class="hiw-step"><span class="icon">🔍</span><span>Browse brands</span></div>
     <span class="hiw-arrow">›</span>
     <div class="hiw-step"><span class="icon">🔗</span><span>Paste product URL</span></div>
@@ -409,6 +411,12 @@
     <span class="hiw-arrow">›</span>
     <div class="hiw-step"><span class="icon">💳</span><span>Pay via bKash/Nagad</span></div>
     <span class="hiw-arrow">›</span>
+    <div class="hiw-step"><span class="icon">🚚</span><span>2–3 weeks to your door</span></div>
+  </div>
+  <div class="hiw-inner hiw-mobile">
+    <div class="hiw-step"><span class="icon">🔍</span><span>Browse brands</span></div>
+    <div class="hiw-step"><span class="icon">🔗</span><span>Paste product URL</span></div>
+    <div class="hiw-step"><span class="icon">💳</span><span>Confirm price &amp; pay (bKash/Nagad)</span></div>
     <div class="hiw-step"><span class="icon">🚚</span><span>2–3 weeks to your door</span></div>
   </div>
 </div>
