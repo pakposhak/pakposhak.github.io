@@ -82,6 +82,10 @@
       color:var(--gold);border-radius:10px;padding:8px 14px;font-size:1rem;cursor:pointer;
       display:flex;align-items:center;gap:6px;min-height:44px;min-width:44px;transition:background 0.15s}
     .hdr-cart-btn:hover{background:rgba(201,169,110,0.28)}
+    .hdr-lang{grid-column:1;justify-self:start;background:var(--gold-dim);border:1px solid var(--gold-bdr);
+      color:var(--gold);border-radius:10px;padding:8px 11px;font-size:0.8rem;font-weight:700;cursor:pointer;
+      font-family:inherit;min-height:40px;white-space:nowrap;transition:background 0.15s}
+    .hdr-lang:hover{background:rgba(201,169,110,0.28)}
     .hdr-cart-label{font-size:0.75rem;font-weight:700;color:var(--gold)}
     .hdr-cart-badge{background:#c0392b;color:#fff;border-radius:10px;padding:1px 7px;font-size:0.68rem;font-weight:700;min-width:20px;text-align:center}
 
@@ -385,11 +389,12 @@
 
 <header id="appHeader">
   <div class="hdr-inner">
+    <button class="hdr-lang" id="hdrLangBtn" onclick="toggleLang()" aria-label="Change language">বাংলা</button>
     <div class="hdr-logo">
       <img class="hdr-logo-img" src="icon-192.png" alt="PakiPoshak app icon" width="40" height="40"/>
       <div>
         <div class="hdr-brand">PakiPoshak</div>
-        <div class="hdr-tagline">Pakistani Fashion · Bangladesh Delivery</div>
+        <div class="hdr-tagline" data-i18n="tagline">Pakistani Fashion · Bangladesh Delivery</div>
       </div>
     </div>
     <button class="hdr-cart-btn" onclick="scrollToCart()" id="hdrCartBtn" title="View cart">
@@ -1133,6 +1138,11 @@
     mens_suit         : 1.38,   // 1.15 +20%
     mens_sherwani     : 1.74,   // 1.45 +20%
     mens_unstitched   : 0.96,   // 0.80 +20%
+    // ── Added 2026-06-13 after brand category survey ──
+    maxi_dress        : 0.50,   // western maxi/dress/jumpsuit (1pc)
+    kids_eastern      : 0.25,   // kids kurta / 2pc eastern
+    kids_western      : 0.30,   // kids tee/jeans/frock
+    footwear          : 1.10,   // shoes/khussa incl. box
   };
 
   const WEIGHT_LABELS = {
@@ -1161,6 +1171,10 @@
     mens_suit         : "Men's Suit / Pant-Coat (2pc)",
     mens_sherwani     : "Men's Sherwani / Prince Coat",
     mens_unstitched   : "Men's Unstitched Fabric",
+    maxi_dress        : 'Maxi / Dress / Jumpsuit (1pc)',
+    kids_eastern      : 'Kids Eastern (kurta / 2pc)',
+    kids_western      : 'Kids Western (tee / jeans / frock)',
+    footwear          : 'Footwear / Shoes / Khussa',
   };
 
   function getWeight(key){
@@ -1222,6 +1236,7 @@
       <option value="shirt_trouser_2pc">2-Piece Co-ord – Shirt + Trouser</option>
       <option value="lawn_3pc_unstitch">3-Piece Unstitched</option>
       <option value="pret_3pc">3-Piece Pret / Stitched</option>
+      <option value="maxi_dress">Maxi / Dress / Jumpsuit (1pc)</option>
     </optgroup>
     <optgroup label="👗 WOMEN — Winter">
       <option value="winter_2pc">Winter 2-Piece (karandi/khaddar/linen)</option>
@@ -1246,32 +1261,57 @@
       <option value="mens_sherwani">Men's Sherwani / Prince Coat</option>
       <option value="mens_unstitched">Men's Unstitched Fabric</option>
     </optgroup>
+    <optgroup label="🧸 KIDS">
+      <option value="kids_eastern">Kids Eastern (kurta / 2pc)</option>
+      <option value="kids_western">Kids Western (tee / jeans / frock)</option>
+    </optgroup>
     <optgroup label="➕ Separates">
       <option value="womens_trouser">Women's Trouser / Pants (1pc)</option>
       <option value="dupatta_only">Dupatta / Stole / Scarf only</option>
       <option value="shawl">Shawl (winter)</option>
+      <option value="footwear">Footwear / Shoes / Khussa</option>
       <option value="accessories">Accessories / Jewellery</option>
     </optgroup>`;
 
   // ── AUTO-FETCH ENGINE (Shopify JSON API) ─────────────────────────────────
-  // Maps Shopify product_type strings → our category keys
+  // Maps Shopify product_type strings → our category keys.
+  // Rules built from a survey of ALL brand catalogs (2026-06-13): 1,057 real
+  // product_type strings harvested across 86 Shopify brands. Order matters —
+  // specific rules first, generic garment words last. Types with no garment
+  // info ("Clothing", "Summer 2026") fall through; the caller then retries
+  // with the product TITLE which usually carries the garment words.
   const PT_CAT = [
+    // Kids BEFORE bottoms/tops — "Boys Trousers" must hit kids, not trousers.
+    [/(kid|boy|girl|infant|toddler|junior|newborn|teen)s?\b.*(tee|t[\s-]?shirt|polo|jean|denim|trouser|pant|short|frock|dress|romper|western|legging)/i, 'kids_western'],
+    [/(tee|t[\s-]?shirt|polo|jean|denim|trouser|pant|short|frock|dress|romper)s?\b.*(kid|boy|girl|infant|toddler|junior|newborn)/i, 'kids_western'],
+    [/kid|boys|girls|infant|toddler|junior|newborn/i,          'kids_eastern'],
+    [/shoe|sneaker|sandal|chappal|khussa|kolhapuri|heel|slipper|loafer|peshawari|moccasin|footwear|mule\b/i, 'footwear'],
     [/unstitch/i,                                              'lawn_3pc_unstitch'],
-    [/bridal|velvet/i,                                         'bridal'],
+    [/bridal|velvet|saree|sari\b|lehenga|gharara|sharara/i,    'bridal'],
     [/heavy[\s-]?formal|organza|heavy[\s-]?embroi/i,          'heavy_formal_3pc'],
     [/formal|chiffon|net[\s-]?embroi/i,                       'formal_emb_3pc'],
     [/winter|khaddar|karandi/i,                                'winter_3pc'],
     [/linen/i,                                                 'winter_2pc'],
     [/shawl|pashmina|dhussa|loi|wrap/i,                         'shawl'],
-    [/kaftan|kaftaan|caftan/i,                                  'kaftan'],
-    [/dupatta|stole|scarf/i,                                   'dupatta_only'],
-    [/bag|purse|clutch|jewel|accessories/i,                    'accessories'],
-    [/shalwar[\s-]?kameez|rtw|ready[\s-]?to[\s-]?wear/i,      'pret_3pc'],
-    [/pret|stitched|fusion/i,                                  'pret_3pc'],     // afrozeh "Pret", sbs "Fusion"
+    [/kaftan|kaftaan|caftan|abaya|burqa/i,                      'kaftan'],
+    [/dupatta|stole|scarf|scarves|foulard/i,                   'dupatta_only'],
+    [/bag|purse|clutch|jewel|accessories|wallet|\bcaps?\b|belt|sock|fragrance|perfume|attar|watch|sunglass|cufflink|brooch|hair[\s-]?access/i, 'accessories'],
+    [/dress(es)?\b|maxi|gown|jumpsuit|romper/i,                'maxi_dress'],
+    [/shalwar[\s-]?kameez|kameez[\s-]?(&\s*)?shalwar|rtw|ready[\s-]?to[\s-]?wear/i, 'pret_3pc'],
+    [/pret|stitched|fusion|eastern/i,                          'pret_3pc'],     // afrozeh "Pret", sbs "Fusion"
     [/3[\s-]?pc|3[\s-]?piece|suit/i,                          'pret_3pc'],
     [/2[\s-]?pc[\s|]stitch|2[\s-]?pc[\s|]rtw/i,               'shirt_dupatta_2pc'],
     [/shirt[\s-]?trouser|co[\s-]?ord/i,                       'shirt_trouser_2pc'],
+    [/night|sleep[\s-]?wear|lounge|pyjama[\s-]?set|pajama[\s-]?set/i, 'shirt_trouser_2pc'],
     [/2[\s-]?pc|2[\s-]?piece|shirt[\s-]?dupatta/i,            'shirt_dupatta_2pc'],
+    // Bottoms (women ctx) — survey: 59 type names across brands
+    [/bottoms?\b|trousers?\b|pants?\b|palazzo|tights?|legging|culotte|shorts?\b|jeans?\b|denim|skirt|plazo|capri|shalwars?\b/i, 'womens_trouser'],
+    // Western tops — weight class same as kurti
+    [/\btees?\b|t[\s-]?shirt|polo|blouse|camisole|tank[\s-]?top|sweat|hoodie|cardigan|tunic|western/i, 'kurti_1pc'],
+    // Bare fabric names = unstitched (Alkaram "BLENDED", Kayseria "Lawn"…).
+    // Safe: if the product turns out to have sizes, the sizes-found⇒stitched
+    // correction in fetchProductData flips it back.
+    [/\blawn\b|cambric|voile|khadi\b|jacquard|dobby|slub|yarn[\s-]?dyed|piece[\s-]?goods|fabric|\bblended\b/i, 'lawn_3pc_unstitch'],
     [/kurti|kurta|shirt|top/i,                                 'kurti_1pc'],
   ];
   function mapPtToCat(pt){ const s=(pt||'').toLowerCase(); for(const[re,c] of PT_CAT){ if(re.test(s)) return c; } return ''; }
@@ -1483,7 +1523,10 @@
       const ptStr  = product.product_type || product.type || '';
       const fetchedCat = gender === 'men'
         ? (mapPtToCatMen(ptStr) || mapPtToCatMen(product.title || '') || 'mens_shalwar_kameez')
-        : mapPtToCat(ptStr);
+        // Women/kids: when product_type carries no garment info ("Clothing",
+        // "Summer 2026", "Luxury"…) the TITLE usually does — survey showed
+        // 339 such vague types across brands.
+        : (mapPtToCat(ptStr) || mapPtToCat(product.title || ''));
       const catEl = document.getElementById(`dc_cat_${id}`);
       // Overwrite a wrong women's auto-guess if this is clearly a men's product
       const womensGuess = catEl && catEl.value && !MENS_CATS.has(catEl.value);

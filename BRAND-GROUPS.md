@@ -168,6 +168,25 @@ Done in `order-form.html` `BRANDS`. Barae Khanom & Bareeze gained full auto-fetc
 
 ---
 
+## Category mapping (2026-06-13)
+
+Harvested **1,057 real product_type strings from all 86 reachable Shopify brands** (in-browser fetch;
+curl was bot-challenged after earlier survey bursts). Results:
+
+- Direct type→category mapping improved **45% → 61%** with new PT_CAT rules (kids, footwear, bottoms,
+  western tops, dresses→maxi_dress, saree→bridal, bare fabric names→unstitched, abaya→kaftan,
+  reversed "Kameez Shalwar", lounge sets, standalone "Shalwar"→bottoms).
+- Remaining 39% are garment-info-free labels ("Clothing", "Summer 2026", "Made To Order", "Payment
+  Link") → handled by NEW title fallback: women's path now retries mapPtToCat(product.title), same as
+  the men's path always did.
+- **Unstitched override fix (the Zellbury bug):** brand's product_type saying "Unstitch" now OVERRIDES
+  a wrong stitched URL-guess, so unstitched items never ask for sizes. The reverse (sizes found ⇒
+  stitched) already existed; together they're self-correcting.
+- **4 new categories** (user decisions): `maxi_dress` 0.50kg, `kids_eastern` 0.25kg, `kids_western`
+  0.30kg, `footwear` 1.10kg. Saree/lehenga/gharara → bridal. All editable in admin weight chart.
+- NOTE: category mapping is form-side logic — the VPS/relay does NOT affect it (relay fixes currency
+  + stock only).
+
 ## Build backlog (per group)
 
 - [x] **G5** Fix directory URLs (Barae Khanom, Bareeze, Baroque, FTA, Suffuse) — *done 2026-06-12*
