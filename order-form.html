@@ -324,16 +324,16 @@
     .wa-note a{color:#25d366;font-weight:600;text-decoration:none}
 
     /* ── Step indicator ── */
-    .steps-bar{background:var(--surface);border-bottom:1px solid var(--bdr-med);display:flex;justify-content:center;align-items:center;padding:14px 16px;gap:0}
-    .step-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:default;opacity:0.35;transition:opacity 0.2s;min-width:60px}
+    .steps-bar{background:var(--surface);border-bottom:1px solid var(--bdr-med);display:flex;justify-content:center;align-items:center;padding:8px 16px;gap:0}
+    .step-item{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:default;opacity:0.35;transition:opacity 0.2s;min-width:44px}
     .step-item.active{opacity:1}
     .step-item.done{opacity:0.65;cursor:pointer}
     .step-item.done:hover{opacity:1}
-    .step-num{width:28px;height:28px;border-radius:50%;border:2px solid var(--gold-bdr);color:var(--gold);font-weight:700;font-size:0.8rem;display:flex;align-items:center;justify-content:center;background:transparent;transition:all 0.2s}
+    .step-num{width:22px;height:22px;border-radius:50%;border:2px solid var(--gold-bdr);color:var(--gold);font-weight:700;font-size:0.72rem;display:flex;align-items:center;justify-content:center;background:transparent;transition:all 0.2s}
     .step-item.active .step-num{background:var(--gold);color:#0A1628;border-color:var(--gold)}
     .step-item.done .step-num{background:#2a7a32;border-color:#2a7a32;color:#fff}
-    .step-lbl{font-size:0.6rem;color:var(--gold);font-weight:600;letter-spacing:0.4px;text-align:center;white-space:nowrap}
-    .step-arrow{color:var(--txt-muted);font-size:1.4rem;padding:0 2px;padding-bottom:14px;line-height:1}
+    .step-lbl{font-size:0.55rem;color:var(--gold);font-weight:600;letter-spacing:0.3px;text-align:center;white-space:nowrap}
+    .step-arrow{color:var(--txt-muted);font-size:1.05rem;padding:0 1px;padding-bottom:11px;line-height:1}
 
     /* ── Step sections ── */
     .step-section{display:none}
@@ -358,8 +358,8 @@
       .url-row{flex-direction:column}
       .add-btn{width:100%}
       .cart-item{flex-wrap:wrap}
-      .step-lbl{font-size:0.56rem}
-      .step-item{min-width:50px}
+      .step-lbl{font-size:0.5rem}
+      .step-item{min-width:40px}
     }
   </style>
 </head>
@@ -2245,6 +2245,7 @@
     try{ const h = new URL(b.u).hostname.replace(/^www\./,''); if(!BRAND_MAP[h]) BRAND_MAP[h] = b.n; }catch(e){}
   });
   let _catActive = Object.keys(BRAND_CATS)[0];   // first category open by default
+  let _catOpen = false;                          // flips true on the initial render below
   renderCatBar();   // build the category bar + brand columns now (DOM above this script exists)
 
   function renderCatBar(){
@@ -2256,7 +2257,17 @@
     switchCat(_catActive);
   }
   function switchCat(cat){
+    const panel = document.querySelector('.cat-panel');
+    // Click the already-open category again → collapse the brand list
+    if(cat === _catActive && _catOpen){
+      _catOpen = false;
+      if(panel) panel.style.display = 'none';
+      document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('on'));
+      return;
+    }
     _catActive = cat;
+    _catOpen = true;
+    if(panel) panel.style.display = '';
     document.querySelectorAll('.cat-tab').forEach(t => t.classList.toggle('on', t.dataset.cat === cat));
     const list = BRANDS.filter(b => b.c === cat);
     const head = document.getElementById('catHead');
