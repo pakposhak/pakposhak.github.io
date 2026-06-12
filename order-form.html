@@ -211,11 +211,12 @@
     }
     /* ── Mobile: stack the 5 categories 2-per-row (all visible, bigger text) ── */
     @media (max-width:819px){
-      .cat-bar{display:grid;grid-template-columns:1fr 1fr;gap:8px;overflow:visible;border-bottom:none;margin-bottom:12px}
-      .cat-tab{border:1px solid var(--gold-bdr);border-radius:12px;padding:13px 10px;font-size:0.92rem;font-weight:600;
+      .cat-bar{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;overflow:visible;border-bottom:none;margin-bottom:12px}
+      .cat-tab{border:1px solid var(--gold-bdr);border-radius:12px;padding:13px 6px;font-size:0.9rem;font-weight:600;
         white-space:normal;text-align:center;line-height:1.25;background:var(--surface);color:var(--txt-sec)}
       .cat-tab.on{background:var(--gold);color:#0A1628;border-color:var(--gold);font-weight:700}
-      .cat-tab:last-child:nth-child(odd){grid-column:1 / -1}
+      .cat-tab:nth-child(1),.cat-tab:nth-child(2){grid-column:span 3}
+      .cat-tab:nth-child(3),.cat-tab:nth-child(4),.cat-tab:nth-child(5){grid-column:span 2}
       .cat-panel{border-radius:12px;border-top:1px solid var(--bdr)}
       .cat-head{font-size:0.92rem}
       .cat-brand{font-size:0.92rem;padding:11px 10px}
@@ -2134,7 +2135,7 @@
   const BRAND_CATS = {
     md: 'Multi-Department',
     w:  'Women’s Pret & Unstitched',
-    p:  'Premium & Luxury',
+    p:  'Premium',
     m:  'Menswear',
     k:  'Kids'
   };
