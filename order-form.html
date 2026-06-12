@@ -1314,6 +1314,30 @@
     return null;
   }
 
+  // ── TWIN-STORE MAP ────────────────────────────────────────────────────────
+  // Some brands run TWO separate stores: an international site (often USD, or
+  // a catalog that doesn't match Pakistan) and a Pakistani store. If a buyer
+  // pastes the INTERNATIONAL url, we transparently refetch from the PK twin so
+  // price/stock come from the store we'd actually buy from. Shopify product
+  // "handles" are almost always identical across a brand's twin stores, so the
+  // same /products/{handle}.js path works on the PK domain. If the handle is
+  // NOT found on the PK store, the product isn't carried in Pakistan → warn.
+  // Key = international host (no leading www.), value = Pakistani host.
+  const TWIN_MAP = {
+    'ethnc.com'        : 'pk.ethnc.com',        // intl USD → PK PKR (Shopify)
+    'generation.pk'    : 'generation.com.pk',   // NB: .pk is the INTL one here
+    'bareeze.com'      : 'bareezepk.com',        // intl no-API → PK PKR (Shopify)
+    'mariab.com'       : 'mariab.pk',            // intl bot-walled → PK PKR
+    'baroque.com'      : 'baroque.com.pk',       // intl parked → PK store (still USD)
+    'khaadi.com'       : 'pk.khaadi.com',        // both Salesforce (no API) — redirect only
+    'sapphireonline.pk': 'pk.sapphireonline.pk', // both Salesforce (no API) — redirect only
+  };
+  // Twins whose PK store has NO Shopify API (Salesforce/Magento): a 404 on
+  // /products/{handle}.js there means "no API", NOT "not sold in Pakistan" —
+  // so we must NOT show the not-available warning for these; fall through to
+  // the normal manual-entry path instead.
+  const TWIN_NO_API = new Set(['khaadi.com','sapphireonline.pk']);
+
   async function fetchProductData(id, url){
     const statusEl = document.getElementById(`dc_fetch_${id}`);
     function setStatus(msg, color){ if(statusEl){ statusEl.style.display=''; statusEl.textContent=msg; statusEl.style.color=color||'#c9a96e'; } }
@@ -1333,7 +1357,14 @@
         return setStatus('ℹ️ Fill details manually — link doesn\'t point to a specific product','#aaa');
       }
 
-      setStatus('🔍 Fetching product details from brand site…','#c9a96e');
+      // If this is a brand's INTERNATIONAL site, fetch from its PK twin instead.
+      const pastedHost = u.hostname.replace(/^www\./,'');
+      const twinHost   = TWIN_MAP[pastedHost] || null;
+      const fetchOrigin = twinHost ? (u.protocol + '//' + twinHost) : u.origin;
+
+      setStatus(twinHost
+        ? `🇵🇰 International link detected — checking the Pakistani store (${twinHost})…`
+        : '🔍 Fetching product details from brand site…', '#c9a96e');
       const ctrl = new AbortController();
       const tid  = setTimeout(()=>ctrl.abort(), 22000); // PK sites are slow from BD; allow for retries
 
@@ -1344,19 +1375,27 @@
       // node may omit the CORS header, or the cached copy is stale), so we
       // retry up to 3× with a cache-busting, no-store request to force a
       // fresh, authoritative stock reading every time.
-      let product = null, hasStockInfo = false;
+      let product = null, hasStockInfo = false, sawNotFound = false;
       for(let attempt = 0; attempt < 3 && !product; attempt++){
         try{
           // Constructed URL has no query string, so always start with "?".
-          const r1 = await fetch(`${u.origin}/products/${m[1]}.js?_psb=${Date.now()}_${attempt}`,
+          const r1 = await fetch(`${fetchOrigin}/products/${m[1]}.js?_psb=${Date.now()}_${attempt}`,
             { signal: ctrl.signal, cache: 'no-store' });
           if(r1.ok){ product = await r1.json(); hasStockInfo = true; }
+          else if(r1.status === 404) sawNotFound = true;
         }catch(err){ if(err.name === 'AbortError') throw err; }
       }
       if(!product){
         // Last resort: .json has NO per-size stock — sizes can't be verified.
-        const res = await fetch(`${u.origin}/products/${m[1]}.json`,
+        const res = await fetch(`${fetchOrigin}/products/${m[1]}.json`,
           { signal: ctrl.signal, cache: 'no-store' });
+        if(res.status === 404) sawNotFound = true;
+        // Twin-store + handle genuinely absent → the article isn't sold in
+        // Pakistan. Say so explicitly rather than a generic fetch failure.
+        if(twinHost && sawNotFound && !TWIN_NO_API.has(pastedHost)){
+          clearTimeout(tid);
+          return setStatus(`⛔ This item is on the brand's international site but is NOT available on their Pakistani store (${twinHost}) — it cannot be ordered at Pakistani prices. Please pick a different article or confirm with the brand.`, '#ff7575');
+        }
         if(!res.ok) throw new Error('HTTP '+res.status);
         product = (await res.json()).product;
         hasStockInfo = false;
@@ -1378,7 +1417,7 @@
       if(hasStockInfo){
         let sessionCur = null;
         try{
-          const rc = await fetch(`${u.origin}/cart.js?_psb=${Date.now()}`,
+          const rc = await fetch(`${fetchOrigin}/cart.js?_psb=${Date.now()}`,
             { signal: ctrl.signal, cache: 'no-store' });
           if(rc.ok) sessionCur = (await rc.json()).currency || null;
         }catch(err){ if(err.name === 'AbortError') throw err; }
@@ -1389,7 +1428,9 @@
           if(relay){
             try{
               setStatus(`🇵🇰 Brand served ${sessionCur} — fetching real PKR price via Pakistan relay…`,'#c9a96e');
-              const rr = await fetch(`${relay}/price?url=${encodeURIComponent(url)}`,
+              // Send the relay the PK-twin URL so it queries the right store.
+              const relayUrl = twinHost ? `${fetchOrigin}/products/${m[1]}` : url;
+              const rr = await fetch(`${relay}/price?url=${encodeURIComponent(relayUrl)}`,
                 { signal: ctrl.signal, cache: 'no-store' });
               if(rr.ok){
                 const rj = await rr.json();
@@ -2116,14 +2157,14 @@
     // ── Premium designer & luxury ──
     {n:'Afrozeh',u:'https://afrozeh.com',p:false,c:'p'},
     {n:'Asim Jofa',u:'https://asimjofa.com',p:false,c:'p'},
-    {n:'Barae Khanom',u:'https://embellishedkurtas.com',p:false,c:'p'},
-    {n:'Bareeze',u:'https://bareeze.com',p:false,c:'p'},
-    {n:'Baroque',u:'https://baroque.com',p:false,c:'p'},
+    {n:'Barae Khanom',u:'https://baraekhanom.pk',p:true,c:'p'},
+    {n:'Bareeze',u:'https://bareezepk.com',p:true,c:'p'},
+    {n:'Baroque',u:'https://baroque.com.pk',p:false,c:'p'},
     {n:'Crimson',u:'https://www.crimson.com.pk',p:true,c:'p'},
     {n:'Elan',u:'https://elan.pk',p:true,c:'p'},
     {n:'Erum Khan',u:'https://erumkhancouture.com',p:false,c:'p'},
     {n:'Faiza Saqlain',u:'https://www.faizasaqlain.pk',p:true,c:'p'},
-    {n:'Farah Talib Aziz',u:'https://www.farahtalibaziz.com',p:false,c:'p'},
+    {n:'Farah Talib Aziz',u:'https://www.farahtalibaziz.com.pk',p:false,c:'p'},
     {n:'Hussain Rehar',u:'https://hussainrehar.com',p:false,c:'p'},
     {n:'Mohsin Naveed Ranjha',u:'https://mohsinnaveedranjha.com',p:false,c:'p'},
     {n:'Mushq',u:'https://mushq.com',p:false,c:'p'},
@@ -2133,7 +2174,7 @@
     {n:'Sana Safinaz',u:'https://www.sanasafinaz.com',p:false,c:'p'},
     {n:'Sania Maskatiya',u:'https://saniamaskatiya.com',p:false,c:'p'},
     {n:'Sobia Nazir',u:'https://sobianazir.net',p:false,c:'p'},
-    {n:'Suffuse by Sana Yasir',u:'https://suffuse.com',p:false,c:'p'},
+    {n:'Suffuse by Sana Yasir',u:'https://suffuse.pk',p:false,c:'p'},
     {n:'Tena Durrani',u:'https://tenadurrani.com',p:false,c:'p'},
     {n:'Threads & Motifs',u:'https://threadsandmotifs.com',p:false,c:'p'},
     {n:'Zaha by Elan',u:'https://www.zaha.pk',p:true,c:'p'},

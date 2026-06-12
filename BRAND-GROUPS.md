@@ -13,16 +13,25 @@ session currency (`/cart.js`), product-page structured data (`priceCurrency`), a
 
 ## Summary
 
-| Group | What it is | Brands | Auto today? | Auto after VPS? |
-|---|---|---:|---|---|
-| **1** | Shopify, native PKR | 73 | ✅ from PK only | ✅ guaranteed for BD |
-| **2** | Twin sites (intl + PK store) | 7 | ⚠️ only if PK URL pasted | ✅ via twin-map + relay |
-| **3** | No PKR price exists online (USD/INR only) | 3 | ❌ | ❌ (manual USD) |
-| **4** | Non-Shopify, no product API | 13 | ❌ | partial (Khaadi/Sapphire scrape) |
-| **5** | Dead / wrong directory links | 3 | — | — (cleanup) |
+| Group | What it is | Brands | Auto today? | Auto after VPS? | Status |
+|---|---|---:|---|---|---|
+| **1** | Shopify, native PKR | 73 | ✅ from PK only | ✅ guaranteed for BD | relay wired |
+| **2** | Twin sites (intl + PK store) | 7 | ✅ either URL now works | ✅ via twin-map + relay | 🔧→✅ twin-map shipped |
+| **3** | No PKR price exists online (USD only) | 4 | ❌ | ❌ (manual USD) | — |
+| **4** | Non-Shopify, no product API | 15 | ❌ | partial (Khaadi/Sapphire scrape) | ⏳ needs VPS |
+| **5** | Dead / wrong directory links | 0 | — | — | ✅ all fixed |
 
 > Note: Khaadi & Sapphire are counted in **both** Group 2 (twin sites) and Group 4 (non-Shopify),
 > because they are twin-store *and* have no Shopify API. They are the priority special-cases.
+
+**Shipped 2026-06-12 (this session):**
+- ✅ **Group 5 directory fixes** — Barae Khanom→baraekhanom.pk (now Group 1), Bareeze→bareezepk.com
+  (now Group 1), Baroque→baroque.com.pk, Farah Talib Aziz→farahtalibaziz.com.pk (Group 4),
+  Suffuse→suffuse.pk (Group 3). No more dead links.
+- ✅ **Group 2 twin-map** (`TWIN_MAP` in order-form.html) — pasting an international URL now transparently
+  refetches from the PK twin store. Confirmed working end-to-end on Generation (intl generation.pk →
+  PK generation.com.pk, HTTP 200, PKR). 404-on-PK-store → "not available in Pakistan" warning.
+  Khaadi/Sapphire excluded from that warning (`TWIN_NO_API`) since their 404 means "no API", not "not sold".
 
 ---
 
@@ -47,29 +56,30 @@ Tena Durrani, Threads & Motifs, Uniworth, WearEgo, Zaha, Zara Shahjahan, Zarif, 
 
 ---
 
-## GROUP 2 — 👯 Twin websites: separate international + Pakistani stores — 7 brands
+## GROUP 2 — 👯 Twin websites: separate international + Pakistani stores — 7 brands  ✅ twin-map shipped
 
-Two real stores per brand. **Risk:** buyer pastes the *international* URL → gets USD price, or a product
-that isn't carried on the PK store at all.
+Two real stores per brand. **Risk (now mitigated):** buyer pastes the *international* URL → would get USD
+price, or a product not carried on the PK store. `TWIN_MAP` now redirects the fetch to the PK twin.
 
-| Brand | International site | Pakistani site | PK store currency | Notes |
+| Brand | International site | Pakistani site | PK store currency | Twin-map result |
 |---|---|---|---|---|
-| ETHNC | ethnc.com (USD) | pk.ethnc.com | ✅ PKR (Shopify) | clean twin-map case |
-| Generation | generation.pk (USD!) | generation.com.pk | ✅ PKR (Shopify) | .pk is the *intl* one — counter-intuitive |
-| Bareeze | bareeze.com (custom/no API) | bareezepk.com | ✅ PKR (Shopify) | |
-| Maria B | mariab.com (bot-walled) | mariab.pk | ✅ PKR (Shopify) | |
-| Baroque | baroque.com (domain for sale) | baroque.com.pk | ❌ USD even to PK | PK store still prices USD |
-| **Khaadi** | khaadi.com (USD) | pk.khaadi.com | — (Salesforce, no API) | also Group 4 |
-| **Sapphire** | geo-redirect | pk.sapphireonline.pk | — (Salesforce, no API) | also Group 4 |
+| ETHNC | ethnc.com (USD) | pk.ethnc.com | ✅ PKR (Shopify) | ✅ auto PKR |
+| Generation | generation.pk (USD!) | generation.com.pk | ✅ PKR (Shopify) | ✅ auto PKR (verified) |
+| Bareeze | bareeze.com (custom/no API) | bareezepk.com | ✅ PKR (Shopify) | ✅ auto PKR |
+| Maria B | mariab.com (bot-walled) | mariab.pk | ✅ PKR (Shopify) | ✅ auto PKR |
+| Baroque | baroque.com (domain for sale) | baroque.com.pk | ❌ USD even to PK | redirects, but still USD → manual |
+| **Khaadi** | khaadi.com (USD) | pk.khaadi.com | — (Salesforce, no API) | redirect only; needs G4 scraper |
+| **Sapphire** | geo-redirect | pk.sapphireonline.pk | — (Salesforce, no API) | redirect only; needs G4 scraper |
 
-**Probable solution:** **Twin-map in the form** — when an international URL is pasted, take the product handle
-and refetch from the PK twin domain. Found → PKR price + PK stock. 404 → red warning "not available on the
-Pakistani store." Works **without VPS** for the Shopify twins (ETHNC, Generation, Bareeze, Maria B). Baroque
-needs manual USD (no PKR exists). Khaadi/Sapphire need the Group-4 scraper.
+**Solution (shipped):** `TWIN_MAP` (intl host → PK host) in `order-form.html`. On a pasted international URL,
+the form refetches `/products/{handle}.js` from the PK twin. Found → PKR price + PK stock. 404 → red
+"not available on the Pakistani store" warning. Khaadi/Sapphire are in `TWIN_NO_API` so their (expected) 404
+does NOT trigger that warning — they fall through to manual + the future scraper. **Works without VPS** for
+the 4 Shopify twins; Baroque still needs manual USD (no PKR exists); Khaadi/Sapphire await the Group-4 scraper.
 
 ---
 
-## GROUP 3 — 💵 No PKR price exists anywhere online — 3 brands
+## GROUP 3 — 💵 No PKR price exists anywhere online — 4 brands
 
 Confirmed USD checkout; any on-screen "PKR" is a client-side converter app, **not** the real price.
 
@@ -78,13 +88,14 @@ Confirmed USD checkout; any on-screen "PKR" is a client-side converter app, **no
 | Salitex | salitex.com | `Shopify.currency {active:USD}`, no PKR on page, PK-localized session stays USD |
 | Sania Maskatiya | saniamaskatiya.com | base USD; PK session returns $104.00; visible PKR is app-converted |
 | Zainab Chottani | zainabchottani.com | base USD; PK session returns $77.00; checkout charges USD |
+| Suffuse by Sana Yasir | suffuse.pk | Shopify but base USD even from PK ($63.60); old suffuse.com was offline |
 
 **Probable solution:** No automated PKR possible. Manual USD entry (form handles loudly), **or** source the
 same article via a PK multi-brand retailer (e.g. LAAM) when available. Candidate for removal if low demand.
 
 ---
 
-## GROUP 4 — ✋ Non-Shopify, no product API — 13 brands
+## GROUP 4 — ✋ Non-Shopify, no product API — 15 brands
 
 No `/products.json`. Auto-fetch impossible by the normal path; the red "stock could NOT be verified" warning
 shows correctly today.
@@ -105,6 +116,7 @@ shows correctly today.
 | Nomi Ansari | bot-blocked (retest from VPS) | low |
 | Savoir | unreachable (retest from VPS) | low |
 | Warda | bot-blocked (retest from VPS) | low |
+| Farah Talib Aziz | custom (farahtalibaziz.com.pk, non-Shopify) | low |
 
 **Probable solution:** **Relay HTML-scrape from the PK IP** — fetch the product page server-side and parse the
 embedded JSON-LD (`priceCurrency`/`price`/`offers`) that these sites emit for Google Shopping. Per-brand
@@ -113,26 +125,27 @@ work once requested from the VPS with a real browser UA — retest before writin
 
 ---
 
-## GROUP 5 — 💀 Dead / wrong directory links — 3 fixes
+## GROUP 5 — ✅ Dead / wrong directory links — ALL FIXED
 
-| Brand | Current directory URL | Problem | Fix |
-|---|---|---|---|
-| Barae Khanom | embellishedkurtas.com | **Indian INR store** | repoint → **baraekhanom.pk** (✅ Shopify PKR) → moves to Group 1 |
-| Baroque | baroque.com | domain parked / for sale | repoint → **baroque.com.pk** (but USD — Group 2/3) |
-| Farah Talib Aziz | farahtalibaziz.com | parked lander; .com.pk also down | find current domain or remove |
-| Suffuse | suffuse.com | "Coming Soon" / offline | remove or revisit later |
+| Brand | Old URL | Problem | Fix applied | New group |
+|---|---|---|---|---|
+| Barae Khanom | embellishedkurtas.com | **Indian INR store** | → **baraekhanom.pk** (Shopify PKR) | **Group 1** |
+| Bareeze | bareeze.com | intl, no API | → **bareezepk.com** (Shopify PKR) | **Group 1** |
+| Baroque | baroque.com | domain for sale | → **baroque.com.pk** (USD) | Group 2 (manual price) |
+| Farah Talib Aziz | farahtalibaziz.com | parked lander | → **farahtalibaziz.com.pk** (live, non-Shopify) | Group 4 |
+| Suffuse | suffuse.com | offline | → **suffuse.pk** (live Shopify, USD) | Group 3 |
 
-**Probable solution:** edit `BRANDS`/`BRAND_MAP` in `order-form.html`. Quick win, no VPS needed.
+Done in `order-form.html` `BRANDS`. Barae Khanom & Bareeze gained full auto-fetch as a result.
 
 ---
 
 ## Build backlog (per group)
 
-- [ ] **G5** Fix directory URLs (Barae Khanom, Baroque, FTA, Suffuse) — *form only, do now*
-- [ ] **G2** Twin-map: intl→PK handle refetch + "not in PK store" warning — *form only*
+- [x] **G5** Fix directory URLs (Barae Khanom, Bareeze, Baroque, FTA, Suffuse) — *done 2026-06-12*
+- [x] **G2** Twin-map: intl→PK handle refetch + "not in PK store" warning — *done 2026-06-12*
 - [ ] **VPS** Provision CloudVPS.pk, verify PK geolocation, deploy relay + HTTPS — *blocks G1-BD & G4*
 - [ ] **G1** After VPS: confirm each brand from a Dhaka IP; relay handles USD-switchers
 - [ ] **G4** Khaadi + Sapphire JSON-LD scraper on relay (PK IP); retest bot-blocked brands
-- [ ] **G3** Decide: keep with manual-USD, or remove Salitex / Sania Maskatiya / Zainab Chottani
+- [ ] **G3** Decide: keep with manual-USD, or remove Salitex / Sania Maskatiya / Zainab Chottani / Suffuse
 
 _Last surveyed: 2026-06-12 from Karachi PK IP. Re-run survey from Dhaka after VPS to validate Group 1 USD-switchers._
