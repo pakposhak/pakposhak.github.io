@@ -23,5 +23,11 @@
     }
   ],
   "categories": ["shopping", "lifestyle"],
-  "lang": "en-BD"
+  "lang": "en-BD",
+  "share_target": {
+    "action": "/",
+    "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": { "title": "title", "text": "text", "url": "url" }
+  }
 }

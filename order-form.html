@@ -249,6 +249,12 @@
     .add-btn{padding:12px 22px;background:var(--gold);color:#0A1628;border:none;border-radius:7px;
       font-weight:700;font-size:0.88rem;cursor:pointer;white-space:nowrap;transition:background 0.15s}
     .add-btn:hover{background:#b8934d}
+    /* One-tap paste — big, obvious, full width so it's the easy default on phones */
+    .paste-btn{display:block;width:100%;padding:13px;margin-bottom:10px;background:var(--gold-dim);
+      color:var(--gold);border:1.5px solid var(--gold-bdr);border-radius:8px;font-family:inherit;
+      font-weight:800;font-size:0.95rem;cursor:pointer;transition:background 0.15s}
+    .paste-btn:hover{background:rgba(201,169,110,0.22)}
+    .paste-btn.flash{background:var(--gold);color:#0A1628}
 
     /* Item details panel */
     .item-detail-panel{display:none;background:var(--raised);border:1.5px dashed var(--gold-bdr);border-radius:8px;padding:14px;margin-top:12px}
@@ -470,6 +476,9 @@
 
   <div class="url-input-box">
     <span class="input-label" data-i18n="url_label">📋 Copy a product link from any brand site and paste it below:</span>
+    <!-- One-tap paste — reads the clipboard so the user never has to find this
+         box and long-press. Biggest help on phones / in-app browsers. -->
+    <button type="button" class="paste-btn" onclick="pasteAndAdd('urlInput', handleAddUrl)" data-i18n="btn_paste">📋 Paste Link &amp; Auto-Fill</button>
     <!-- FIRST URL input — hidden once draft cards exist -->
     <div id="urlInputRow" class="url-row">
       <input type="url" id="urlInput" placeholder="https://brand.com/products/product-name"/>
@@ -489,6 +498,7 @@
         <div style="font-size:0.77rem;font-weight:600;color:var(--txt-sec);margin-bottom:7px">
           ➕ Add another product — paste its URL below:
         </div>
+        <button type="button" class="paste-btn" onclick="pasteAndAdd('panelUrlInput', addAnotherUrl)" data-i18n="btn_paste">📋 Paste Link &amp; Auto-Fill</button>
         <div class="url-row">
           <input type="url" id="panelUrlInput" placeholder="https://brand.com/products/another-product"
             onkeydown="if(event.key==='Enter'){event.preventDefault();addAnotherUrl()}"/>
@@ -848,11 +858,11 @@
       </div>
       <div class="bs-step">
         <span class="bs-num">2</span>
-        <span>Browse, find your item, then <strong>copy the link</strong> from the address bar at the top</span>
+        <span>Find your item, then tap the browser's <strong>Share</strong> button → <strong>PakiPoshak</strong> — the link comes straight back here. <em>(Or long-press the link → Copy.)</em></span>
       </div>
       <div class="bs-step">
         <span class="bs-num">3</span>
-        <span><strong>Come back to this tab</strong> and paste the link in the URL box below the brands list</span>
+        <span><strong>Come back</strong> and tap <strong>📋 Paste Link &amp; Auto-Fill</strong> — price &amp; sizes load automatically. No typing.</span>
       </div>
     </div>
     <button class="bs-open-btn" id="bsOpenBtn" onclick="launchBrandTab()">
@@ -2331,7 +2341,7 @@
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search any brand by name…',
       lbl_addproducts:'Add Products to Your Order',
       url_label:'📋 Copy a product link from any brand site and paste it below:',
-      btn_addurl:'+ Add URL',
+      btn_addurl:'+ Add URL', btn_paste:'📋 Paste Link & Auto-Fill',
       nav_home:'Home', nav_brands:'Brands', nav_cart:'Cart', nav_how:'How To',
       word_brands:'brands',
       cat_md:'Multi-Department', cat_w:'Women’s Pret & Unstitched', cat_p:'Premium', cat_m:'Menswear', cat_k:'Kids',
@@ -2372,6 +2382,7 @@
       lbl_addproducts:'অর্ডারে পণ্য যোগ করুন',
       url_label:'📋 যেকোনো ব্র্যান্ড সাইট থেকে প্রোডাক্টের লিংক কপি করে নিচে পেস্ট করুন:',
       btn_addurl:'+ লিংক যোগ করুন',
+      btn_paste:'📋 লিংক পেস্ট করে অটো-ফিল',
       nav_home:'হোম', nav_brands:'ব্র্যান্ড', nav_cart:'কার্ট', nav_how:'কীভাবে',
       word_brands:'ব্র্যান্ড',
       cat_md:'মাল্টি-ডিপার্টমেন্ট', cat_w:'মেয়েদের প্রেট ও আনস্টিচড', cat_p:'প্রিমিয়াম', cat_m:'ছেলেদের পোশাক', cat_k:'বাচ্চাদের',
@@ -2620,6 +2631,59 @@
     document.getElementById('urlInputRow').style.display = '';
     document.getElementById('urlInput').value = '';
   }
+
+  // ── ONE-TAP PASTE ──────────────────────────────────────────────────────────
+  // The hardest step for phone users is copying the link in the brand's in-app
+  // browser, then finding our tiny input box and long-pressing → Paste. This
+  // collapses it to one tap: read the clipboard, pull the URL out of whatever
+  // was copied (browsers often copy "Title https://…"), drop it in, auto-fetch.
+  async function pasteAndAdd(inputId, addFn){
+    const inp = document.getElementById(inputId);
+    if(!inp) return;
+    let txt = '';
+    try{
+      if(navigator.clipboard && navigator.clipboard.readText){
+        txt = await navigator.clipboard.readText();
+      }
+    }catch(e){ /* permission denied / not supported → fall back below */ }
+    if(txt){
+      const m = txt.match(/https?:\/\/[^\s"'<>]+/i);
+      inp.value = (m ? m[0] : txt).trim();
+      addFn();
+    } else {
+      // Clipboard unavailable (iOS in-app, denied): focus + highlight so the
+      // user can long-press → Paste right here without hunting for the box.
+      inp.focus();
+      inp.style.borderColor = 'var(--gold)';
+      inp.style.boxShadow   = '0 0 0 3px rgba(201,169,110,0.35)';
+      inp.placeholder = '⬆️ Long-press here → Paste';
+      setTimeout(()=>{ inp.style.borderColor=''; inp.style.boxShadow=''; }, 6000);
+    }
+  }
+
+  // ── SHARE TARGET ────────────────────────────────────────────────────────────
+  // Installed as a PWA, the app registers in the phone's Share sheet (see
+  // manifest share_target). On the brand's product page the user taps the
+  // browser Share button → "PakiPoshak" → we open with ?url=/?text= set. The
+  // Share button is ALWAYS available, even when the address bar can't be
+  // copied — so this is the most reliable way to get the link with zero typing.
+  function handleSharedUrl(){
+    try{
+      const q = new URLSearchParams(location.search);
+      const shared = q.get('url') || q.get('text') || q.get('title') || '';
+      if(!shared) return;
+      const m = shared.match(/https?:\/\/[^\s"'<>]+/i);
+      const link = m ? m[0] : shared.trim();
+      const clean = parseUrl(link);
+      if(clean && isKnownBrand(clean)){
+        const inp = document.getElementById('urlInput');
+        if(inp){ inp.value = clean; handleAddUrl(); }
+      }
+      // Drop the query string so a refresh doesn't re-add the same item.
+      history.replaceState(null, '', location.pathname);
+    }catch(e){}
+  }
+  document.addEventListener('DOMContentLoaded', handleSharedUrl);
 
   function addUrlToPanel(){
     const raw = document.getElementById('panelUrlInput').value.trim();
@@ -3389,7 +3453,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-13b';
+  const PSB_BUILD = '2026-06-13c';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:#c9a96e;font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
