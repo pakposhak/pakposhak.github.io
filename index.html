@@ -3324,9 +3324,36 @@
     if(dd) dd.style.display = 'none';
   }
 
+  // Are we running as the INSTALLED app (standalone), not a browser tab?
+  function isInstalledApp(){
+    return window.matchMedia && window.matchMedia('(display-mode: standalone)').matches
+      || window.navigator.standalone === true;
+  }
+
   function launchBrandTab(){
-    window.open(_pendingBrandUrl, '_blank', 'noopener');
+    const url = _pendingBrandUrl;
     closeBrandSheet();
+    const isAndroid = /Android/i.test(navigator.userAgent);
+
+    // THE FIX: inside the installed Android app, a normal window.open lands in
+    // a stripped in-app WebView with no address bar and no Share — so the link
+    // can't be copied. An Android `intent:` URL hands the page to the REAL
+    // browser (full address bar + Share button), exactly like the website
+    // version that already works. Falls back to window.open if the intent is
+    // refused or we're not on installed Android.
+    let opened = false;
+    if(isAndroid && isInstalledApp()){
+      try{
+        const u = new URL(url);
+        const intent = 'intent://' + u.host + u.pathname + u.search +
+          '#Intent;scheme=' + u.protocol.replace(':','') +
+          ';S.browser_fallback_url=' + encodeURIComponent(url) + ';end';
+        window.location.href = intent;
+        opened = true;
+      }catch(e){ /* fall through */ }
+    }
+    if(!opened) window.open(url, '_blank', 'noopener');
+
     // Highlight the URL input so it's obvious where to paste on return
     const input = document.getElementById('urlInput');
     if(input){
@@ -3453,7 +3480,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-13c';
+  const PSB_BUILD = '2026-06-13d';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:#c9a96e;font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
