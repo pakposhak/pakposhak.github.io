@@ -3358,30 +3358,18 @@
   // user knows exactly what to do when they come back.
   let _pendingBrandUrl = '';
 
-  // Brands with NO Shopify product API — can't be listed in-app. Tapping these
-  // opens the real browser directly (see openBrandInApp). Hostnames matched
-  // with the leading "www." stripped.
-  const NON_SHOPIFY = new Set([
-    'pk.khaadi.com','khaadi.com','pk.sapphireonline.pk','sapphireonline.pk',
-    'image1993.com','naushemian.com','thredzonline.com','cougar.com.pk',
-    'deepakperwani.com','erumkhancouture.com','ittehadtextiles.com','laam.pk',
-    'mohsinnaveedranjha.com','nomiansari.com','savoir.pk','warda.com.pk',
-    'farahtalibaziz.com.pk'
-  ]);
-
   function openBrandInApp(el){
     _pendingBrandUrl = el.dataset.url;
-    const name = el.dataset.name;
     const dd = document.getElementById('brandDropdown');
     if(dd) dd.style.display = 'none';
-    // Non-Shopify brands (Khaadi, Sapphire, LAAM…) can't be listed in-app —
-    // open them straight in the real browser. Done synchronously inside THIS
-    // tap so the browser doesn't block it as a non-gesture popup.
-    let host = '';
-    try{ host = new URL(_pendingBrandUrl).hostname.replace(/^www\./,''); }catch(e){}
-    if(NON_SHOPIFY.has(host)){ launchBrandTab(); return; }
-    // Everyone else: browse the brand's products INSIDE the app (no copy-paste).
-    browseBrandProducts(_pendingBrandUrl, name);
+    // Open the brand's OWN website (its full, native product layout — images,
+    // colours, fabric/size details) in the REAL browser, where the address bar
+    // and Share button work. The customer picks their item there, then sends it
+    // back via Share → PakiPoshak (or copy → 📋 Paste). Done synchronously in
+    // this tap so the browser doesn't block it as a non-gesture popup.
+    // (The in-app product grid was removed: our generic cards couldn't match
+    // each brand's presentation and large images loaded poorly from BD.)
+    launchBrandTab();
   }
 
   // Show the old "open the brand site + paste" sheet (fallback for brands we
@@ -3634,7 +3622,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-13f';
+  const PSB_BUILD = '2026-06-13g';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:#c9a96e;font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
