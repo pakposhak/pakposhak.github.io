@@ -44,7 +44,7 @@
 
     /* ── Install App pill ── */
     #installPill{
-      position:fixed; right:14px;
+      position:fixed; left:14px;
       bottom:calc(80px + env(safe-area-inset-bottom,0px)); z-index:60;
       display:flex; align-items:center; gap:6px;
       background:linear-gradient(135deg,#f0c855,#c9a96e); color:#1a1206;
@@ -283,7 +283,7 @@
     .paste-btn:hover{background:rgba(201,169,110,0.22)}
     .paste-btn.flash{background:var(--gold);color:#0A1628}
     /* Floating Paste button — fixed, always reachable on the add-products step */
-    #pasteFab{position:fixed;left:14px;bottom:78px;z-index:350;display:none;align-items:center;gap:7px;
+    #pasteFab{position:fixed;right:14px;bottom:78px;z-index:350;display:none;align-items:center;gap:7px;
       background:var(--gold);color:#0A1628;border:none;border-radius:24px;padding:11px 17px;
       font-family:inherit;font-weight:800;font-size:0.9rem;cursor:pointer;
       box-shadow:0 6px 20px rgba(0,0,0,0.45)}
@@ -3655,7 +3655,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-13h';
+  const PSB_BUILD = '2026-06-13i';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:#c9a96e;font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
