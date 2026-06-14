@@ -975,8 +975,8 @@
     </div>
     <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
       <div>
-        <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">PKR → BDT Rate</label>
-        <input id="adm_conv" type="number" step="0.01" placeholder="e.g. 0.42"
+        <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">BDT → PKR Rate (PKR per 1 BDT)</label>
+        <input id="adm_conv" type="number" step="0.01" placeholder="e.g. 2.20"
           style="width:120px;padding:8px 10px;border-radius:6px;border:none;font-size:0.9rem"/>
       </div>
       <div>
@@ -1070,13 +1070,25 @@
 
   // --- ADMIN RATE MANAGEMENT ---
   // Rates stored in localStorage, editable only via ?admin URL
+  // Safe localStorage access — some in-app browsers / private modes throw on
+  // localStorage. That used to make getRates() (and openAdminPanel) crash,
+  // leaving the rate fields blank and the weight chart unbuilt.
+  function lsGet(key, dflt){
+    try{ const v = localStorage.getItem(key); return (v === null || v === '') ? dflt : v; }
+    catch(e){ return dflt; }
+  }
+  function lsSet(key, val){ try{ localStorage.setItem(key, String(val)); return true; }catch(e){ return false; } }
+  function lsDel(key){ try{ localStorage.removeItem(key); }catch(e){} }
+
   function getRates(){
+    const bdtPkr = parseFloat(lsGet('psb_bdtpkr', '2.20')) || 2.20;
     return {
-      CONV_RATE  : parseFloat(localStorage.getItem('psb_conv')     || '0.42'),
-      LOG_RATE   : parseFloat(localStorage.getItem('psb_log')      || '1600'),
-      COMM_1     : parseFloat(localStorage.getItem('psb_comm_1')   || '20') / 100,
-      COMM_23    : parseFloat(localStorage.getItem('psb_comm_23')  || '18') / 100,
-      COMM_4P    : parseFloat(localStorage.getItem('psb_comm_4p')  || '15') / 100,
+      BDT_PKR    : bdtPkr,
+      CONV_RATE  : 1 / bdtPkr,
+      LOG_RATE   : parseFloat(lsGet('psb_log', '1600')) || 1600,
+      COMM_1     : (parseFloat(lsGet('psb_comm_1',  '20')) || 20) / 100,
+      COMM_23    : (parseFloat(lsGet('psb_comm_23', '18')) || 18) / 100,
+      COMM_4P    : (parseFloat(lsGet('psb_comm_4p', '15')) || 15) / 100,
       TRANS_FEE  : 100
     };
   }
@@ -1125,18 +1137,54 @@
   // calling it here threw a (silently caught) TDZ error and the cart never
   // restored after refresh. It is now called at the end of the script.
 
+  // ===================================================================
+  //  ADMIN PASSWORD GATE
+  //  The panel is locked behind a password. Only a SHA-256 HASH of the
+  //  password is stored here, so the real password never appears in the
+  //  page source.
+  //
+  //  >>> TO SET / CHANGE THE PASSWORD <<<
+  //   1. Open this form (preview or live site over http/https, not file://).
+  //   2. Press F12 -> "Console" tab.
+  //   3. Run:  adminHash('your-new-password')
+  //   4. Copy the 64-character value it prints.
+  //   5. Paste it between the quotes in ADMIN_PASS_HASH below, and save.
+  //
+  //  Password is already set (hash below). To change it, follow the steps above.
+  // ===================================================================
+  const ADMIN_PASS_HASH = "7ce3f2629b225ced51f1786a1d7617bd677333bcec6d43e0757c3ed6dfc3d047";
+
+  async function adminHash(pw){
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
+    const hex = [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+    console.log('ADMIN_PASS_HASH =', hex);
+    return hex;
+  }
+
+  let adminAuthed = false; // unlocked once per page load after a correct password
+
+  async function requestAdminAccess(){
+    if(adminAuthed){ openAdminPanel(); return; }
+    const entry = prompt('Enter admin password:');
+    if(entry === null) return; // user cancelled
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(entry));
+    const hex = [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+    if(hex === ADMIN_PASS_HASH){ adminAuthed = true; openAdminPanel(); }
+    else alert('Incorrect password.');
+  }
+
   // Show admin panel — via ?admin URL OR Ctrl+Shift+A keyboard shortcut
   function openAdminPanel(){
     const panel = document.getElementById('adminPanel');
     panel.style.display = 'block';
     const r = getRates();
-    document.getElementById('adm_conv').value    = r.CONV_RATE;
+    document.getElementById('adm_conv').value    = r.BDT_PKR;
     document.getElementById('adm_log').value     = r.LOG_RATE;
-    document.getElementById('adm_usd_pkr').value  = parseFloat(localStorage.getItem('psb_usd_pkr')   || '278');
-    document.getElementById('adm_comm_1').value   = parseFloat(localStorage.getItem('psb_comm_1')    || '20');
-    document.getElementById('adm_comm_23').value  = parseFloat(localStorage.getItem('psb_comm_23')   || '18');
-    document.getElementById('adm_comm_4p').value  = parseFloat(localStorage.getItem('psb_comm_4p')   || '15');
-    document.getElementById('adm_relay').value    = localStorage.getItem('psb_relay_url') || '';
+    document.getElementById('adm_usd_pkr').value  = parseFloat(lsGet('psb_usd_pkr', '278')) || 278;
+    document.getElementById('adm_comm_1').value   = parseFloat(lsGet('psb_comm_1',  '20')) || 20;
+    document.getElementById('adm_comm_23').value  = parseFloat(lsGet('psb_comm_23', '18')) || 18;
+    document.getElementById('adm_comm_4p').value  = parseFloat(lsGet('psb_comm_4p', '15')) || 15;
+    document.getElementById('adm_relay').value    = lsGet('psb_relay_url', '');
     buildWeightEditor();
     panel.scrollIntoView({ behavior: 'smooth' });
   }
@@ -1149,7 +1197,7 @@
     if(e.ctrlKey && e.shiftKey && e.key === 'A'){
       e.preventDefault();
       const panel = document.getElementById('adminPanel');
-      if(panel.style.display === 'none') openAdminPanel();
+      if(panel.style.display === 'none') requestAdminAccess();
       else panel.style.display = 'none';
     }
   });
@@ -1159,19 +1207,19 @@
     const log    = parseFloat(document.getElementById('adm_log').value);
     const usdPkr = parseFloat(document.getElementById('adm_usd_pkr').value);
     if(!conv || !log){ alert('Please enter valid numbers.'); return; }
-    localStorage.setItem('psb_conv', conv);
-    localStorage.setItem('psb_log',  log);
-    if(usdPkr > 0) localStorage.setItem('psb_usd_pkr', usdPkr);
+    if(!lsSet('psb_bdtpkr', conv)){ alert("This browser is blocking storage, so settings can't be saved here. Open the form in a normal browser tab (not private / not an in-app browser) and try again."); return; }
+    lsSet('psb_log',  log);
+    if(usdPkr > 0) lsSet('psb_usd_pkr', usdPkr);
     const c1  = parseFloat(document.getElementById('adm_comm_1').value);
     const c23 = parseFloat(document.getElementById('adm_comm_23').value);
     const c4p = parseFloat(document.getElementById('adm_comm_4p').value);
-    if(c1  >= 0) localStorage.setItem('psb_comm_1',  c1);
-    if(c23 >= 0) localStorage.setItem('psb_comm_23', c23);
-    if(c4p >= 0) localStorage.setItem('psb_comm_4p', c4p);
+    if(c1  >= 0) lsSet('psb_comm_1',  c1);
+    if(c23 >= 0) lsSet('psb_comm_23', c23);
+    if(c4p >= 0) lsSet('psb_comm_4p', c4p);
     const relayUrl = document.getElementById('adm_relay').value.trim();
     if(relayUrl && !/^https:\/\//i.test(relayUrl)){ alert('Relay URL must start with https://'); return; }
-    if(relayUrl) localStorage.setItem('psb_relay_url', relayUrl);
-    else localStorage.removeItem('psb_relay_url');
+    if(relayUrl) lsSet('psb_relay_url', relayUrl);
+    else lsDel('psb_relay_url');
     const btn = document.getElementById('saveRatesBtn');
     btn.textContent = '✓ Saved!';
     btn.style.background = '#2e7d32';
@@ -1282,7 +1330,7 @@
       const el = document.getElementById('wt_' + key);
       if(el){ const v = parseFloat(el.value); if(v > 0) weights[key] = v; }
     });
-    localStorage.setItem('psb_weights', JSON.stringify(weights));
+    lsSet('psb_weights', JSON.stringify(weights));
     const btn = document.getElementById('saveWeightsBtn');
     btn.textContent = '✓ Weights Saved!';
     btn.style.background = '#2e7d32';
@@ -1290,7 +1338,7 @@
   }
 
   function resetWeights(){
-    localStorage.removeItem('psb_weights');
+    lsDel('psb_weights');
     buildWeightEditor();
   }
 
@@ -2924,7 +2972,6 @@
       const totalQty = (item.sizes || [{qty:1}]).reduce((s,r) => s + r.qty, 0);
       totalPkr    += item.pkr * totalQty;
       totalWeight += item.weight * totalQty;
-      const bdtEach = Math.round(item.pkr * r.CONV_RATE);
       const catTag  = CAT_LABELS[item.cat] || item.cat;
 
       // Size tags: "M×1", "L×2" — or blank for unstitched
@@ -2946,7 +2993,6 @@
         </div>
         <div>
           <div class="item-price">PKR ${item.pkr.toLocaleString()} <span style="font-size:0.68rem;font-weight:400;color:var(--txt-muted)">each</span></div>
-          <div class="item-bdt">≈ ৳${bdtEach.toLocaleString()} each</div>
           <div style="display:flex;gap:4px;margin-top:4px;justify-content:flex-end">
             <button class="remove-item" onclick="editItem(${i})" title="Edit" style="color:#c9a96e;font-size:0.8rem">✏️</button>
             <button class="remove-item" onclick="removeItem(${i})" title="Remove">✕</button>
@@ -3582,7 +3628,7 @@
 
   // Auto-open admin panel for ?admin — also must run last so DEFAULT_WEIGHTS etc.
   // are already initialised (this used to crash the whole script when run early).
-  if(window.location.search.includes('admin')) openAdminPanel();
+  if(window.location.search.includes('admin')) requestAdminAccess();
 
   // ═══ SELF-TEST (regression guard) — load the form with ?selftest ═══════════
   // Green = that feature still works. Run this after ANY change before relying
