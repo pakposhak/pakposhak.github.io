@@ -1005,8 +1005,8 @@
           style="width:80px;padding:8px 10px;border-radius:6px;border:none;font-size:0.9rem"/>
       </div>
       <div style="flex-basis:100%">
-        <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">🇵🇰 Pakistan Price Relay URL <span style="color:#777">(PK-IP server — fetches real PKR prices when a brand geo-serves USD; leave empty if not set up)</span></label>
-        <input id="adm_relay" type="url" placeholder="e.g. https://relay.example.com"
+        <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">🇵🇰 Pakistan Price Relay URL <span style="color:#777">(a default PK-IP relay is built in; set this only to override it)</span></label>
+        <input id="adm_relay" type="url" placeholder="default: https://103.83.91.34.sslip.io"
           style="width:100%;max-width:380px;padding:8px 10px;border-radius:6px;border:none;font-size:0.9rem"/>
       </div>
       <button id="saveRatesBtn" onclick="saveRates()"
@@ -1484,6 +1484,12 @@
   // (a PK IP can't produce a PKR price that doesn't exist).
   const USD_ONLY_BRANDS = new Set(['suffuse.pk']);
 
+  // Default Pakistan price relay (Node relay on the Lahore VPS, fronted by Caddy
+  // HTTPS at 103.83.91.34.sslip.io). Baked in so EVERY buyer's browser uses it
+  // automatically when a brand geo-serves USD to Bangladesh — the admin field
+  // (psb_relay_url) only OVERRIDES this. Empty admin field = use this default.
+  const DEFAULT_RELAY_URL = 'https://103.83.91.34.sslip.io';
+
   async function fetchProductData(id, url){
     const statusEl = document.getElementById(`dc_fetch_${id}`);
     function setStatus(msg, color){ if(statusEl){ statusEl.style.display=''; statusEl.textContent=msg; statusEl.style.color=color||'#c9a96e'; } }
@@ -1570,7 +1576,7 @@
         if(sessionCur === 'PKR') pkrVia = 'direct';
         else if(sessionCur){
           pkrVia = sessionCur; // foreign — try the relay
-          const relay = (localStorage.getItem('psb_relay_url')||'').trim().replace(/\/+$/,'');
+          const relay = ((localStorage.getItem('psb_relay_url')||'').trim() || DEFAULT_RELAY_URL).replace(/\/+$/,'');
           if(relay && !USD_ONLY_BRANDS.has(pastedHost)){
             try{
               setStatus(`🇵🇰 Brand served ${sessionCur} — fetching real PKR price via Pakistan relay…`,'#c9a96e');
@@ -1784,7 +1790,7 @@
         // Brand geo-priced this session in a foreign currency and the relay
         // could not get the PKR price — fail LOUD, keep the warning visible.
         setStatus(`⛔ Brand showed ${foreignCur}, not PKR! ${foreignCur} prices include international markup — the real PKR price is unknown. `
-          + `${(localStorage.getItem('psb_relay_url')||'').trim() ? 'Pakistan relay failed — check it is running.' : 'Set the Pakistan relay URL in Admin to fix this automatically.'} `
+          + `The Pakistan relay couldn't fetch the PKR price (it may be temporarily down, or this item isn't sold on the PK store). `
           + `Verify the PKR price from Pakistan before ordering.`, '#ff7575');
         checkAddUrlLock();
         return;  // no auto-hide

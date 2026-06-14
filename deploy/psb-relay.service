@@ -1,0 +1,28 @@
+[Unit]
+Description=PakiPoshak PKR price relay (Pakistan-IP Shopify price/stock proxy)
+Documentation=https://github.com/pakiposhak/pakiposhak.github.io
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=psbrelay
+Group=psbrelay
+Environment=PORT=8787
+ExecStart=/usr/bin/node /opt/psb-relay/relay-server.js
+Restart=always
+RestartSec=3
+
+# --- hardening (relay writes nothing to disk; cache is in-memory) ---
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadOnlyPaths=/opt/psb-relay
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+# binds 127.0.0.1:8787 only — Caddy is the public TLS front
+
+[Install]
+WantedBy=multi-user.target
