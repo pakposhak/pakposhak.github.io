@@ -40,7 +40,9 @@
     body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:70px}
     input,select,textarea{color:var(--txt);background:var(--input-bg)}
     input::placeholder{color:var(--txt-muted)}
-    select option{background:var(--raised);color:var(--txt)}
+    select option{background:var(--raised);color:var(--txt);font-weight:400;font-size:0.92rem}
+    /* Category dropdowns: make group HEADINGS distinct from the listed items */
+    select optgroup{background:var(--surface);color:var(--gold);font-weight:700;font-style:normal;font-size:0.76rem;letter-spacing:0.5px}
 
     /* ── Install App pill ── */
     #installPill{
@@ -1894,6 +1896,11 @@
         setStatus('⚠️ Fetch timed out — fill in details manually','#aaa');
       else
         setStatus('⚠️ Auto-fetch not available for this site — fill in details manually','#aaa');
+    } finally {
+      // Fetch is over: if a category was detected the chip is already showing;
+      // if not, reveal the manual 3-gender picker as the fallback.
+      if(drafts[id]) drafts[id].catFetchDone = true;
+      renderCatUI(id);
     }
   }
 
@@ -1921,11 +1928,23 @@
       <hr class="draft-divider"/>
       <div class="row-2">
         <div class="field">
-          <label>Category * <span style="font-weight:400;color:var(--txt-muted);font-size:0.67rem">— use the matching gender</span></label>
+          <label>Category *</label>
           <input type="hidden" id="dc_cat_${id}">
-          <select id="dc_catw_${id}" onchange="pickCat(${id},'w')">${WOMEN_OPTIONS}</select>
-          <select id="dc_catm_${id}" onchange="pickCat(${id},'m')" style="margin-top:5px">${MEN_OPTIONS}</select>
-          <select id="dc_catk_${id}" onchange="pickCat(${id},'k')" style="margin-top:5px">${KIDS_OPTIONS}</select>
+          <!-- Initial: detecting -->
+          <div id="dc_catdetect_${id}" style="font-size:0.78rem;color:var(--txt-muted);padding:7px 0">🔄 Detecting category…</div>
+          <!-- Auto-detected chip (default once a category is found) -->
+          <div id="dc_catauto_${id}" style="display:none;align-items:center;gap:9px;flex-wrap:wrap;background:rgba(46,125,50,0.12);border:1px solid rgba(46,125,50,0.40);border-radius:7px;padding:8px 11px">
+            <span style="font-size:0.7rem;color:var(--txt-muted)">✓ Auto-detected</span>
+            <b id="dc_catlabel_${id}" style="font-size:0.9rem;color:var(--txt)"></b>
+            <button type="button" onclick="openCatPicker(${id})" style="margin-left:auto;font-size:0.72rem;color:#c9a96e;background:none;border:1.5px solid #c9a96e;border-radius:12px;padding:3px 12px;cursor:pointer;font-weight:700">Change</button>
+          </div>
+          <!-- Manual 3-gender picker — fallback only (no auto-match, or "Change") -->
+          <div id="dc_catpick_${id}" style="display:none">
+            <div id="dc_catpickhint_${id}" style="font-size:0.74rem;color:#f0c855;font-weight:600;margin-bottom:6px">Choose the category:</div>
+            <select id="dc_catw_${id}" onchange="pickCat(${id},'w')">${WOMEN_OPTIONS}</select>
+            <select id="dc_catm_${id}" onchange="pickCat(${id},'m')" style="margin-top:5px">${MEN_OPTIONS}</select>
+            <select id="dc_catk_${id}" onchange="pickCat(${id},'k')" style="margin-top:5px">${KIDS_OPTIONS}</select>
+          </div>
         </div>
         <div class="field">
           <label>Price * — <span style="color:#c0392b;font-weight:700">use sale price if shown</span></label>
@@ -1986,7 +2005,7 @@
     const _cdHost = new URL(url).hostname;
     const isPk  = /\.(pk|com\.pk)(\/|$)/.test(_cdHost + '/') || _cdHost === 'pk.ethnc.com';
     const id    = draftIdCtr++;
-    drafts[id]  = { currency: 'PKR', sizeCounter: 0 };
+    drafts[id]  = { currency: 'PKR', sizeCounter: 0, catFetchDone: false };
     document.getElementById('draftCards')
       .insertAdjacentHTML('beforeend', buildDraftCard(id, url, brand, isPk));
 
@@ -2055,6 +2074,33 @@
     onDraftCatChange(id);
   }
 
+  // Show the auto-detected chip when a category is set; reveal the 3-gender
+  // picker ONLY when there's no match (after fetch) or the user taps "Change".
+  function renderCatUI(id, forcePick){
+    const catEl = document.getElementById(`dc_cat_${id}`);
+    if(!catEl) return;
+    const cat = catEl.value;
+    const detect = document.getElementById(`dc_catdetect_${id}`);
+    const auto   = document.getElementById(`dc_catauto_${id}`);
+    const pick   = document.getElementById(`dc_catpick_${id}`);
+    const done   = !!(drafts[id] && drafts[id].catFetchDone);
+    if(detect) detect.style.display = 'none';
+    if(cat && !forcePick){
+      if(auto){ auto.style.display = 'flex'; const l = document.getElementById(`dc_catlabel_${id}`); if(l) l.textContent = (CAT_LABELS[cat] || WEIGHT_LABELS[cat] || cat); }
+      if(pick) pick.style.display = 'none';
+    } else if(forcePick || done){
+      if(auto) auto.style.display = 'none';
+      if(pick) pick.style.display = 'block';
+      const h = document.getElementById(`dc_catpickhint_${id}`);
+      if(h) h.textContent = cat ? 'Change the category:' : "⚠️ Couldn't auto-detect — please choose:";
+    } else {
+      if(detect) detect.style.display = '';
+      if(auto) auto.style.display = 'none';
+      if(pick) pick.style.display = 'none';
+    }
+  }
+  function openCatPicker(id){ renderCatUI(id, true); }
+
   function onDraftCatChange(id){
     const cat = document.getElementById(`dc_cat_${id}`).value;
     const msg     = document.getElementById(`dc_sz_msg_${id}`);
@@ -2089,6 +2135,7 @@
       if(note) note.style.display = '';
       if(!rowsEl.children.length) addDraftSizeRow(id);
     }
+    renderCatUI(id);
     checkAddUrlLock();
   }
 
@@ -2980,7 +3027,7 @@
     const _host = new URL(item.url).hostname;
     const isPk  = /\.(pk|com\.pk)(\/|$)/.test(_host + '/') || _host === 'pk.ethnc.com';
     const id = draftIdCtr++;
-    drafts[id] = { currency: 'PKR', sizeCounter: 0 };
+    drafts[id] = { currency: 'PKR', sizeCounter: 0, catFetchDone: true };
     document.getElementById('draftsContainer').style.display = '';
     document.getElementById('draftCards').insertAdjacentHTML('beforeend', buildDraftCard(id, item.url, item.brand, isPk));
 
