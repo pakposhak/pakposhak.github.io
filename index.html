@@ -1186,54 +1186,73 @@
   // the board 2026-06-13 (operator margin call) — footwear excluded since
   // its 1.10kg already covers the shoe box.
   const DEFAULT_WEIGHTS = {
-    kurti_1pc         : 0.41,   // 0.34 +20%
-    womens_trouser    : 0.50,   // 0.42 +20%
-    kaftan            : 0.70,   // 0.58 +20%
-    shirt_dupatta_2pc : 0.55,   // 0.46 +20%
-    shirt_trouser_2pc : 0.70,   // 0.58 +20%
-    lawn_3pc_unstitch : 0.79,   // 0.66 +20%
-    pret_3pc          : 0.89,   // 0.74 +20%
-    winter_2pc        : 0.84,   // 0.70 +20%
-    winter_3pc        : 1.08,   // 0.90 +20%
-    formal_emb_2pc    : 1.03,   // 0.86 +20%
-    formal_emb_3pc    : 1.30,   // 1.08 +20%
-    heavy_formal_3pc  : 1.58,   // 1.32 +20%
-    bridal            : 2.40,   // 2.00 +20%
-    dupatta_only      : 0.26,   // 0.22 +20%
-    shawl             : 0.67,   // 0.56 +20%
-    accessories       : 0.29,   // 0.24 +20%
+    // Final SHIPPING weights (packing included). Safety margin added 2026-06-15:
+    // +0.20 kg on 1-piece garments, kids & separates (vary most); +0.15 kg on
+    // multi-piece. Footwear unchanged (boxed = consistent). Admin can override.
+    kurti_1pc         : 0.61,
+    womens_trouser    : 0.70,
+    kaftan            : 0.90,
+    shirt_dupatta_2pc : 0.70,
+    shirt_trouser_2pc : 0.85,
+    pret_2pc_emb      : 0.95,   // NEW — 2pc pret, embroidered
+    lawn_3pc_unstitch : 0.94,   // 3pc unstitched, printed/plain
+    unstitch_3pc_emb  : 1.10,   // NEW — 3pc unstitched, embroidered
+    pret_3pc          : 1.04,   // 3pc pret, printed/plain
+    pret_3pc_emb      : 1.25,   // NEW — 3pc pret, embroidered
+    winter_2pc        : 0.99,
+    winter_3pc        : 1.23,
+    formal_emb_2pc    : 1.18,
+    formal_emb_3pc    : 1.45,
+    heavy_formal_3pc  : 1.73,
+    bridal            : 2.55,
+    saree             : 1.15,   // NEW
+    lehenga           : 1.80,   // NEW — lehenga/gharara/sharara
+    coord_western     : 0.80,   // NEW — western co-ord 2pc
+    loungewear        : 0.75,   // NEW — loungewear/nightwear set
+    abaya             : 0.95,   // NEW
+    maxi_dress        : 0.80,
+    dupatta_only      : 0.46,
+    shawl             : 0.87,
+    accessories       : 0.49,
+    footwear          : 1.10,   // unchanged — boxed, consistent
     // ── Men — Western / Casual ──
-    mens_shirt        : 0.43,   // 0.36 +20%
-    mens_trouser      : 0.65,   // 0.54 +20%
-    mens_jeans        : 0.84,   // 0.70 +20%
+    mens_shirt        : 0.63,
+    mens_trouser      : 0.85,
+    mens_jeans        : 1.04,
     // ── Men — Traditional / Formal ──
-    mens_kurta        : 0.65,   // 0.54 +20%
-    mens_shalwar_kameez: 1.03,  // 0.86 +20%
-    mens_waistcoat    : 0.58,   // 0.48 +20%
-    mens_suit         : 1.66,   // 1.38 +20%
-    mens_sherwani     : 2.09,   // 1.74 +20%
-    mens_unstitched   : 1.15,   // 0.96 +20%
-    // ── Added 2026-06-13 after brand category survey ──
-    maxi_dress        : 0.60,   // 0.50 +20%
-    kids_eastern      : 0.30,   // 0.25 +20%
-    kids_western      : 0.36,   // 0.30 +20%
-    footwear          : 1.10,   // shoes/khussa incl. box — NOT raised
+    mens_kurta        : 0.85,
+    mens_shalwar_kameez: 1.18,
+    mens_waistcoat    : 0.78,
+    mens_suit         : 1.81,
+    mens_sherwani     : 2.24,
+    mens_unstitched   : 1.30,
+    // ── Kids ──
+    kids_eastern      : 0.50,
+    kids_western      : 0.56,
   };
 
   const WEIGHT_LABELS = {
     kurti_1pc         : 'Kurti / Shirt (1pc)',
     womens_trouser    : "Women's Trouser / Pants (1pc)",
     kaftan            : 'Kaftan (1pc long shirt)',
-    shirt_dupatta_2pc : 'Shirt + Dupatta (2pc)',
-    shirt_trouser_2pc : 'Shirt + Trouser (2pc co-ord)',
-    lawn_3pc_unstitch : '3pc Unstitched',
-    pret_3pc          : '3pc Pret / Stitched',
+    shirt_dupatta_2pc : '2pc – Shirt + Dupatta (printed)',
+    shirt_trouser_2pc : '2pc Co-ord – Shirt + Trouser (printed)',
+    pret_2pc_emb      : '2pc Pret – Embroidered',
+    lawn_3pc_unstitch : '3pc Unstitched – Printed/Plain',
+    unstitch_3pc_emb  : '3pc Unstitched – Embroidered',
+    pret_3pc          : '3pc Pret – Printed/Plain',
+    pret_3pc_emb      : '3pc Pret – Embroidered',
     winter_2pc        : 'Winter 2pc (karandi/khaddar)',
     winter_3pc        : 'Winter 3pc (karandi/khaddar)',
     formal_emb_2pc    : 'Formal Embroidered 2pc',
     formal_emb_3pc    : 'Formal Embroidered 3pc',
     heavy_formal_3pc  : 'Heavy Formal 3pc (organza/silk)',
     bridal            : 'Bridal / Velvet / Full Embroidery',
+    saree             : 'Saree',
+    lehenga           : 'Lehenga / Gharara / Sharara',
+    coord_western     : 'Co-ord / Western 2pc',
+    loungewear        : 'Loungewear / Nightwear',
+    abaya             : 'Abaya',
     dupatta_only      : 'Dupatta / Stole only',
     shawl             : 'Shawl (winter)',
     accessories       : 'Accessories / Jewellery',
@@ -1295,58 +1314,77 @@
   }
 
   // ── UNSTITCHED categories: no size field required ────────────────────────
-  const UNSTITCHED_CATS = new Set(['lawn_3pc_unstitch', 'dupatta_only', 'shawl', 'accessories', 'mens_unstitched']);
+  const UNSTITCHED_CATS = new Set(['lawn_3pc_unstitch', 'unstitch_3pc_emb', 'saree', 'dupatta_only', 'shawl', 'accessories', 'mens_unstitched']);
   const MENS_CATS = new Set(['mens_shirt','mens_trouser','mens_jeans','mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_suit','mens_sherwani','mens_unstitched']);
+  const KIDS_CATS = new Set(['kids_eastern','kids_western']);
 
   // ── DRAFT CARD SYSTEM — each URL gets its own card ───────────────────────
   let drafts      = {};  // id → {currency, sizeCounter}
   let draftIdCtr  = 0;
 
-  const CAT_OPTIONS = `
-    <option value="">Select category</option>
-    <optgroup label="👗 WOMEN — Lawn / Summer / Everyday">
-      <option value="kurti_1pc">Kurti / Shirt – 1pc only</option>
-      <option value="kaftan">Kaftan – 1pc long shirt</option>
-      <option value="shirt_dupatta_2pc">2-Piece – Shirt + Dupatta</option>
-      <option value="shirt_trouser_2pc">2-Piece Co-ord – Shirt + Trouser</option>
-      <option value="lawn_3pc_unstitch">3-Piece Unstitched</option>
-      <option value="pret_3pc">3-Piece Pret / Stitched</option>
+  // Category picker is split into THREE gender dropdowns (Women / Men / Kids).
+  // Each dropdown's first <option> is its label/placeholder. The active choice
+  // is mirrored into a hidden <input id="dc_cat_${id}"> so every existing reader
+  // keeps working. catGender() (below) routes a key to the right dropdown.
+  const WOMEN_OPTIONS = `
+    <option value="">👗 Women's category…</option>
+    <optgroup label="Everyday / Lawn">
+      <option value="kurti_1pc">Kurti / Shirt (1pc)</option>
+      <option value="kaftan">Kaftan (1pc long shirt)</option>
+      <option value="shirt_dupatta_2pc">2pc – Shirt + Dupatta (printed)</option>
+      <option value="shirt_trouser_2pc">2pc Co-ord – Shirt + Trouser (printed)</option>
+      <option value="pret_2pc_emb">2pc Pret – Embroidered</option>
+      <option value="lawn_3pc_unstitch">3pc Unstitched – Printed/Plain</option>
+      <option value="unstitch_3pc_emb">3pc Unstitched – Embroidered</option>
+      <option value="pret_3pc">3pc Pret – Printed/Plain</option>
+      <option value="pret_3pc_emb">3pc Pret – Embroidered</option>
       <option value="maxi_dress">Maxi / Dress / Jumpsuit (1pc)</option>
+      <option value="coord_western">Co-ord / Western 2pc</option>
+      <option value="loungewear">Loungewear / Nightwear</option>
     </optgroup>
-    <optgroup label="👗 WOMEN — Winter">
-      <option value="winter_2pc">Winter 2-Piece (karandi/khaddar/linen)</option>
-      <option value="winter_3pc">Winter 3-Piece (karandi/khaddar)</option>
+    <optgroup label="Winter">
+      <option value="winter_2pc">Winter 2pc (karandi/khaddar/linen)</option>
+      <option value="winter_3pc">Winter 3pc (karandi/khaddar)</option>
     </optgroup>
-    <optgroup label="👗 WOMEN — Formal / Designer">
-      <option value="formal_emb_2pc">Formal Embroidered 2-Piece</option>
-      <option value="formal_emb_3pc">Formal Embroidered 3-Piece</option>
-      <option value="heavy_formal_3pc">Heavy Formal 3-Piece (organza/silk)</option>
+    <optgroup label="Formal / Festive / Bridal">
+      <option value="formal_emb_2pc">Formal Embroidered 2pc</option>
+      <option value="formal_emb_3pc">Formal Embroidered 3pc</option>
+      <option value="heavy_formal_3pc">Heavy Formal 3pc (organza/silk)</option>
+      <option value="saree">Saree</option>
+      <option value="lehenga">Lehenga / Gharara / Sharara</option>
       <option value="bridal">Bridal / Velvet / Full Embroidery</option>
     </optgroup>
-    <optgroup label="👔 MEN — Western / Casual">
-      <option value="mens_shirt">Men's Shirt / Polo / T-Shirt (1pc)</option>
-      <option value="mens_trouser">Men's Trouser / Chinos / Cargo (1pc)</option>
-      <option value="mens_jeans">Men's Jeans / Denim (1pc)</option>
+    <optgroup label="Modest">
+      <option value="abaya">Abaya</option>
     </optgroup>
-    <optgroup label="👔 MEN — Traditional / Formal">
-      <option value="mens_kurta">Men's Kurta / Kameez (1pc)</option>
-      <option value="mens_shalwar_kameez">Men's Shalwar Kameez (2pc)</option>
-      <option value="mens_waistcoat">Men's Waistcoat</option>
-      <option value="mens_suit">Men's Suit / Pant-Coat / Blazer (2pc)</option>
-      <option value="mens_sherwani">Men's Sherwani / Prince Coat</option>
-      <option value="mens_unstitched">Men's Unstitched Fabric</option>
-    </optgroup>
-    <optgroup label="🧸 KIDS">
-      <option value="kids_eastern">Kids Eastern (kurta / 2pc)</option>
-      <option value="kids_western">Kids Western (tee / jeans / frock)</option>
-    </optgroup>
-    <optgroup label="➕ Separates">
+    <optgroup label="Separates & Accessories">
       <option value="womens_trouser">Women's Trouser / Pants (1pc)</option>
-      <option value="dupatta_only">Dupatta / Stole / Scarf only</option>
+      <option value="dupatta_only">Dupatta / Stole / Scarf</option>
       <option value="shawl">Shawl (winter)</option>
       <option value="footwear">Footwear / Shoes / Khussa</option>
       <option value="accessories">Accessories / Jewellery</option>
     </optgroup>`;
+  const MEN_OPTIONS = `
+    <option value="">👔 Men's category…</option>
+    <optgroup label="Western / Casual">
+      <option value="mens_shirt">Shirt / Polo / T-Shirt (1pc)</option>
+      <option value="mens_trouser">Trouser / Chinos / Cargo (1pc)</option>
+      <option value="mens_jeans">Jeans / Denim (1pc)</option>
+    </optgroup>
+    <optgroup label="Traditional / Formal">
+      <option value="mens_kurta">Kurta / Kameez (1pc)</option>
+      <option value="mens_shalwar_kameez">Shalwar Kameez (2pc)</option>
+      <option value="mens_waistcoat">Waistcoat</option>
+      <option value="mens_suit">Suit / Pant-Coat / Blazer (2pc)</option>
+      <option value="mens_sherwani">Sherwani / Prince Coat</option>
+      <option value="mens_unstitched">Unstitched Fabric</option>
+    </optgroup>`;
+  const KIDS_OPTIONS = `
+    <option value="">🧸 Kids category…</option>
+    <option value="kids_eastern">Kids Eastern (kurta / 2pc)</option>
+    <option value="kids_western">Kids Western (tee / jeans / frock)</option>`;
+  // Which dropdown owns a category key.
+  function catGender(cat){ return MENS_CATS.has(cat) ? 'm' : (KIDS_CATS.has(cat) ? 'k' : 'w'); }
 
   // ── AUTO-FETCH ENGINE (Shopify JSON API) ─────────────────────────────────
   // Maps Shopify product_type strings → our category keys.
@@ -1361,23 +1399,34 @@
     [/(tee|t[\s-]?shirt|polo|jean|denim|trouser|pant|short|frock|dress|romper)s?\b.*(kid|boy|girl|infant|toddler|junior|newborn)/i, 'kids_western'],
     [/kid|boys|girls|infant|toddler|junior|newborn/i,          'kids_eastern'],
     [/shoe|sneaker|sandal|chappal|khussa|kolhapuri|heel|slipper|loafer|peshawari|moccasin|footwear|mule\b/i, 'footwear'],
+    // Festive eastern — split out from bridal so weights are correct.
+    [/lehenga|gharara|sharara/i,                                'lehenga'],
+    [/\bsaree\b|\bsari\b/i,                                     'saree'],
+    [/bridal|\bvelvet\b|\bwedding\b|nikah|barat|walima/i,       'bridal'],
+    [/abaya|jilbab|\bburqa\b|\bniqab\b/i,                       'abaya'],
+    // Unstitched — embroidered variant first, then plain.
+    [/unstitch.*(embroid|\bemb\b|chikankari|zari|schiffli|adda|hand[\s-]?work)|(embroid|chikankari|zari).*unstitch/i, 'unstitch_3pc_emb'],
     [/unstitch/i,                                              'lawn_3pc_unstitch'],
-    [/bridal|velvet|saree|sari\b|lehenga|gharara|sharara/i,    'bridal'],
-    [/heavy[\s-]?formal|organza|heavy[\s-]?embroi/i,          'heavy_formal_3pc'],
-    [/formal|chiffon|net[\s-]?embroi/i,                       'formal_emb_3pc'],
+    // Formal / party embroidered (heavier tier) BEFORE everyday embroidered.
+    [/heavy[\s-]?formal|organza|tissue|jamawar|heavy[\s-]?embroi/i, 'heavy_formal_3pc'],
+    [/formal|chiffon|net[\s-]?embroi|party[\s-]?wear/i,        'formal_emb_3pc'],
     [/winter|khaddar|karandi/i,                                'winter_3pc'],
     [/linen/i,                                                 'winter_2pc'],
     [/shawl|pashmina|dhussa|loi|wrap/i,                         'shawl'],
-    [/kaftan|kaftaan|caftan|abaya|burqa/i,                      'kaftan'],
+    [/kaftan|kaftaan|caftan/i,                                 'kaftan'],
     [/dupatta|stole|scarf|scarves|foulard/i,                   'dupatta_only'],
     [/bag|purse|clutch|jewel|accessories|wallet|\bcaps?\b|belt|sock|fragrance|perfume|attar|watch|sunglass|cufflink|brooch|hair[\s-]?access/i, 'accessories'],
+    [/night|sleep[\s-]?wear|\blounge|pyjama[\s-]?set|pajama[\s-]?set|night[\s-]?suit/i, 'loungewear'],
+    [/western[\s-]?(co[\s-]?ord|set|2[\s-]?pc)|co[\s-]?ord[\s-]?set\b/i, 'coord_western'],
     [/dress(es)?\b|maxi|gown|jumpsuit|romper/i,                'maxi_dress'],
+    // Everyday embroidered pret — AFTER formal/festive, BEFORE plain pret/2pc.
+    [/(embroid|chikankari|zari|schiffli|adda).*(3[\s-]?pc|3[\s-]?piece|suit|lawn|pret)|(3[\s-]?pc|3[\s-]?piece).*(embroid|chikankari|zari)/i, 'pret_3pc_emb'],
+    [/(embroid|chikankari|zari|schiffli|adda).*(2[\s-]?pc|2[\s-]?piece)|(2[\s-]?pc|2[\s-]?piece).*(embroid|chikankari|zari)/i, 'pret_2pc_emb'],
     [/shalwar[\s-]?kameez|kameez[\s-]?(&\s*)?shalwar|rtw|ready[\s-]?to[\s-]?wear/i, 'pret_3pc'],
     [/pret|stitched|fusion|eastern/i,                          'pret_3pc'],     // afrozeh "Pret", sbs "Fusion"
     [/3[\s-]?pc|3[\s-]?piece|suit/i,                          'pret_3pc'],
     [/2[\s-]?pc[\s|]stitch|2[\s-]?pc[\s|]rtw/i,               'shirt_dupatta_2pc'],
     [/shirt[\s-]?trouser|co[\s-]?ord/i,                       'shirt_trouser_2pc'],
-    [/night|sleep[\s-]?wear|lounge|pyjama[\s-]?set|pajama[\s-]?set/i, 'shirt_trouser_2pc'],
     [/2[\s-]?pc|2[\s-]?piece|shirt[\s-]?dupatta/i,            'shirt_dupatta_2pc'],
     // Bottoms (women ctx) — survey: 59 type names across brands
     [/bottoms?\b|trousers?\b|pants?\b|palazzo|tights?|legging|culotte|shorts?\b|jeans?\b|denim|skirt|plazo|capri|shalwars?\b/i, 'womens_trouser'],
@@ -1653,8 +1702,7 @@
       // Overwrite a wrong women's auto-guess if this is clearly a men's product
       const womensGuess = catEl && catEl.value && !MENS_CATS.has(catEl.value);
       if(catEl && fetchedCat && (!catEl.value || (gender === 'men' && womensGuess))){
-        catEl.value = fetchedCat;
-        onDraftCatChange(id);
+        setDraftCat(id, fetchedCat);
       }
       // The brand's own product_type says UNSTITCHED but the pre-fetch URL
       // guess picked a stitched category (e.g. Zellbury "Luxury Unstitch"
@@ -1663,8 +1711,7 @@
       // (The reverse correction — sizes found ⇒ stitched — happens below.)
       if(catEl && catEl.value && fetchedCat
          && UNSTITCHED_CATS.has(fetchedCat) && !UNSTITCHED_CATS.has(catEl.value)){
-        catEl.value = fetchedCat;
-        onDraftCatChange(id);
+        setDraftCat(id, fetchedCat);
       }
       const activeCat = catEl ? catEl.value : fetchedCat;
 
@@ -1783,13 +1830,14 @@
         // The product sells in garment sizes ⇒ it's stitched/RTW, even if the
         // URL said "lawn"/"fabric" and the category auto-detected as unstitched.
         if(catEl && UNSTITCHED_CATS.has(catEl.value)){
+          let flip;
           if(gender === 'men'){
-            const mensFallback = mapPtToCatMen(ptStr) || mapPtToCatMen(product.title||'') || 'mens_shalwar_kameez';
-            catEl.value = mensFallback;
+            flip = mapPtToCatMen(ptStr) || mapPtToCatMen(product.title||'') || 'mens_shalwar_kameez';
           } else {
-            catEl.value = 'pret_3pc';
+            // sizes found ⇒ stitched; keep the embroidered tier if it was embroidered
+            flip = (catEl.value === 'unstitch_3pc_emb') ? 'pret_3pc_emb' : 'pret_3pc';
           }
-          onDraftCatChange(id);
+          setDraftCat(id, flip);
         }
         {
           const chipLabel = multiSize
@@ -1873,8 +1921,11 @@
       <hr class="draft-divider"/>
       <div class="row-2">
         <div class="field">
-          <label>Category *</label>
-          <select id="dc_cat_${id}" onchange="onDraftCatChange(${id})">${CAT_OPTIONS}</select>
+          <label>Category * <span style="font-weight:400;color:var(--txt-muted);font-size:0.67rem">— use the matching gender</span></label>
+          <input type="hidden" id="dc_cat_${id}">
+          <select id="dc_catw_${id}" onchange="pickCat(${id},'w')">${WOMEN_OPTIONS}</select>
+          <select id="dc_catm_${id}" onchange="pickCat(${id},'m')" style="margin-top:5px">${MEN_OPTIONS}</select>
+          <select id="dc_catk_${id}" onchange="pickCat(${id},'k')" style="margin-top:5px">${KIDS_OPTIONS}</select>
         </div>
         <div class="field">
           <label>Price * — <span style="color:#c0392b;font-weight:700">use sale price if shown</span></label>
@@ -1941,7 +1992,7 @@
 
     // Immediate URL-based detection (instant, no network)
     const cat = detectCategory(url);
-    if(cat){ document.getElementById(`dc_cat_${id}`).value = cat; onDraftCatChange(id); }
+    if(cat){ setDraftCat(id, cat); }
     if(cat && !UNSTITCHED_CATS.has(cat)){
       // Pre-fill size from URL params while fetch loads
       const sz = detectSizeFromUrl(url);
@@ -1981,6 +2032,27 @@
       const newEl = document.getElementById(`dc_${newId}`);
       if(newEl) newEl.scrollIntoView({ behavior:'smooth', block:'nearest' });
     }, 100);
+  }
+
+  // ── 3-DROPDOWN CATEGORY PICKER ───────────────────────────────────────────
+  // Three gender dropdowns (w/m/k) write the active key into the hidden
+  // dc_cat_${id}; every other reader keeps using dc_cat_${id}.value unchanged.
+  function pickCat(id, g){
+    const sel = document.getElementById(`dc_cat${g}_${id}`);
+    const val = sel ? sel.value : '';
+    ['w','m','k'].forEach(o => { if(o !== g){ const e = document.getElementById(`dc_cat${o}_${id}`); if(e) e.value=''; } });
+    const hid = document.getElementById(`dc_cat_${id}`);
+    if(hid) hid.value = val;
+    onDraftCatChange(id);
+  }
+  // Programmatic set (URL guess, auto-fetch, edit): route a key to its gender
+  // dropdown, clear the others, sync the hidden field, refresh the size UI.
+  function setDraftCat(id, cat){
+    const g = catGender(cat);
+    ['w','m','k'].forEach(o => { const e = document.getElementById(`dc_cat${o}_${id}`); if(e) e.value = (o === g ? cat : ''); });
+    const hid = document.getElementById(`dc_cat_${id}`);
+    if(hid) hid.value = cat || '';
+    onDraftCatChange(id);
   }
 
   function onDraftCatChange(id){
@@ -2817,8 +2889,9 @@
       const cat = document.getElementById(`dc_cat_${id}`)?.value;
       const priceRaw = parseFloat(document.getElementById(`dc_price_${id}`)?.value);
       const isUnstitched = UNSTITCHED_CATS.has(cat);
-      if(!cat){ document.getElementById(`dc_cat_${id}`).style.borderColor='#c0392b'; allValid=false; }
-      else document.getElementById(`dc_cat_${id}`).style.borderColor='';
+      const catSels = ['w','m','k'].map(g=>document.getElementById(`dc_cat${g}_${id}`)).filter(Boolean);
+      if(!cat){ catSels.forEach(s=>s.style.borderColor='#c0392b'); allValid=false; }
+      else catSels.forEach(s=>s.style.borderColor='');
       if(!priceRaw || priceRaw<=0){ document.getElementById(`dc_price_${id}`).style.borderColor='#c0392b'; allValid=false; }
       else document.getElementById(`dc_price_${id}`).style.borderColor='';
       if(!isUnstitched && cat){
@@ -2923,8 +2996,7 @@
       </div>`);
 
     // Fill in saved values
-    document.getElementById(`dc_cat_${id}`).value = item.cat;
-    onDraftCatChange(id);
+    setDraftCat(id, item.cat);
     document.getElementById(`dc_price_${id}`).value = item.pkr;
     updateDraftPriceHint(id);
     showDraftCurrencyNote(id, isPk);
@@ -3642,10 +3714,12 @@
       ok('Every brand has name + valid URL', BRANDS.every(b=>b.n && /^https?:\/\//.test(b.u)));
       ok('Search matches a known brand', BRANDS.filter(b=>b.n.toLowerCase().includes('maria')).length>0);
       ok('Search dropdown element exists', !!document.getElementById('brandDropdown'));
-      ok('Women categories present', CAT_OPTIONS.includes('pret_3pc') && CAT_OPTIONS.includes('value="kaftan"'));
-      ok('Men categories present', CAT_OPTIONS.includes('mens_shalwar_kameez') && CAT_OPTIONS.includes('mens_sherwani'));
-      ok('Shawl category present', CAT_OPTIONS.includes('value="shawl"'));
-      const catVals=[...CAT_OPTIONS.matchAll(/value="([^"]+)"/g)].map(m=>m[1]).filter(Boolean);
+      const ALL_CAT_OPTIONS = WOMEN_OPTIONS + MEN_OPTIONS + KIDS_OPTIONS;
+      ok('Women categories present', ALL_CAT_OPTIONS.includes('pret_3pc') && ALL_CAT_OPTIONS.includes('value="kaftan"'));
+      ok('Men categories present', ALL_CAT_OPTIONS.includes('mens_shalwar_kameez') && ALL_CAT_OPTIONS.includes('mens_sherwani'));
+      ok('Shawl category present', ALL_CAT_OPTIONS.includes('value="shawl"'));
+      ok('New categories present', ['pret_2pc_emb','unstitch_3pc_emb','pret_3pc_emb','saree','lehenga','abaya','loungewear','coord_western'].every(k=>ALL_CAT_OPTIONS.includes('value="'+k+'"')));
+      const catVals=[...ALL_CAT_OPTIONS.matchAll(/value="([^"]+)"/g)].map(m=>m[1]).filter(Boolean);
       const missW=catVals.filter(c=>!(c in DEFAULT_WEIGHTS));
       ok('Every category has a weight', missW.length===0, missW.length?('missing: '+missW.join(', ')):'');
       const missL=Object.keys(DEFAULT_WEIGHTS).filter(c=>!WEIGHT_LABELS[c]);
