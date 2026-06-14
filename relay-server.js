@@ -63,6 +63,40 @@ function hostAllowed(hostname){
   return ALLOWED_HOSTS.some(a => h === a || h.endsWith('.' + a));
 }
 
+// ── Group 4: Salesforce Commerce Cloud brands (no Shopify API) ───────────────
+// Khaadi & Sapphire run SFCC. Their PDPs have no /products/{handle}.js, but the
+// SFCC Product-Variation controller returns JSON with price (PKR), per-size
+// availability (`selectable` flags) and the product name — all in one call. The
+// PID is the last path segment of the PDP URL (…/<PID>.html). Verified 2026-06-14.
+const SFCC_BRANDS = [
+  { match:'khaadi.com',        variation:'https://pk.khaadi.com/on/demandware.store/Sites-Khaadi_PK-Site/en_PK/Product-Variation' },
+  { match:'sapphireonline.pk', variation:'https://pk.sapphireonline.pk/on/demandware.store/Sites-Sapphire-Site/default/Product-Variation' },
+];
+function sfccBrandFor(hostname){
+  const h = hostname.replace(/^www\./,'').toLowerCase();
+  return SFCC_BRANDS.find(b => h === b.match || h.endsWith('.' + b.match)) || null;
+}
+// Normalize an SFCC Product-Variation payload to the relay's scrape shape.
+function normalizeSfcc(j){
+  const p = j && j.product;
+  if(!p) return null;
+  const sales = p.price && p.price.sales;
+  const price = sales ? (typeof sales.value === 'number' ? sales.value : parseFloat(sales.decimalPrice)) : null;
+  const currency = sales ? (sales.currency || null) : null;
+  const sizeAttr = (p.variationAttributes || []).find(a => a.id === 'size');
+  const sizes = sizeAttr ? (sizeAttr.values || []).map(v => ({
+    size: v.displayValue || v.value, available: !!v.selectable,
+  })) : [];
+  return {
+    currency,                 // 'PKR'
+    price,                    // number, in RUPEES (not paisa, unlike /price)
+    title: p.productName || null,
+    productType: p.productType || null,
+    available: p.available !== false,
+    sizes,
+  };
+}
+
 const cache = new Map(); // key → { at, body }
 function cacheGet(key){
   const e = cache.get(key);
@@ -78,13 +112,13 @@ function cacheSet(key, body){
   }
 }
 
-async function fetchJson(url){
+async function fetchJson(url, extraHeaders){
   const ctrl = new AbortController();
   const tid = setTimeout(() => ctrl.abort(), FETCH_TIMEOUT_MS);
   try{
     const r = await fetch(url, {
       signal: ctrl.signal,
-      headers: { 'User-Agent': UA, 'Accept': 'application/json' },
+      headers: { 'User-Agent': UA, 'Accept': 'application/json', ...(extraHeaders||{}) },
     });
     if(!r.ok) throw new Error('upstream HTTP ' + r.status);
     return await r.json();
@@ -105,6 +139,36 @@ const server = http.createServer(async (req, res) => {
   const u = new URL(req.url, 'http://localhost');
 
   if(u.pathname === '/health') return send(res, 200, { ok: true });
+
+  // ── /scrape — Group 4 (Khaadi/Sapphire, SFCC). Returns a NORMALIZED shape
+  //    { ok, currency, price (rupees), title, productType, available, sizes:[{size,available}] }
+  if(u.pathname === '/scrape' && req.method === 'GET'){
+    const target = u.searchParams.get('url') || '';
+    let t; try{ t = new URL(target); }catch(e){ return send(res, 400, { ok:false, error:'bad url' }); }
+    if(t.protocol !== 'https:' || !hostAllowed(t.hostname))
+      return send(res, 403, { ok:false, error:'host not allowed' });
+    const brand = sfccBrandFor(t.hostname);
+    if(!brand) return send(res, 400, { ok:false, error:'not an SFCC brand' });
+    const pm = t.pathname.match(/\/([^/]+?)\.html$/);
+    if(!pm) return send(res, 400, { ok:false, error:'not a product url' });
+    const pid = decodeURIComponent(pm[1]);
+    const key = 'scrape:' + brand.match + '/' + pid;
+    const hit = cacheGet(key);
+    if(hit) return send(res, 200, hit);
+    try{
+      const vUrl = `${brand.variation}?pid=${encodeURIComponent(pid)}&quantity=1`;
+      const j = await fetchJson(vUrl, {
+        'Accept': 'application/json, text/javascript, */*; q=0.01',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Accept-Language': 'en-PK,en;q=0.9',
+      });
+      const norm = normalizeSfcc(j);
+      if(!norm || norm.price == null) return send(res, 502, { ok:false, error:'could not parse product' });
+      const body = { ok:true, ...norm };
+      cacheSet(key, body);
+      return send(res, 200, body);
+    }catch(e){ return send(res, 502, { ok:false, error:String(e.message || e) }); }
+  }
 
   if(u.pathname !== '/price' || req.method !== 'GET')
     return send(res, 404, { ok: false, error: 'not found' });
