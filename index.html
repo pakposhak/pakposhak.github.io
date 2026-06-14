@@ -43,6 +43,18 @@
     select option{background:var(--raised);color:var(--txt);font-weight:400;font-size:0.92rem}
     /* Category dropdowns: make group HEADINGS distinct from the listed items */
     select optgroup{background:var(--surface);color:var(--gold);font-weight:700;font-style:normal;font-size:0.76rem;letter-spacing:0.5px}
+    /* Custom category dropdown — full control of heading / sub-heading / item sizing */
+    .catdd{margin-top:6px;border:1.5px solid var(--bdr-med);border-radius:7px;background:var(--input-bg);overflow:hidden}
+    .catdd-sum{list-style:none;cursor:pointer;padding:10px 12px;font-size:0.95rem;font-weight:600;color:var(--txt);display:flex;justify-content:space-between;align-items:center}
+    .catdd-sum::-webkit-details-marker{display:none}
+    .catdd-sum::after{content:'▾';color:var(--txt-muted);font-size:0.85rem;margin-left:8px}
+    .catdd[open] .catdd-sum::after{content:'▴'}
+    .catdd[open] .catdd-sum{border-bottom:1px solid var(--bdr-med);background:var(--raised)}
+    .catdd-panel{max-height:46vh;overflow-y:auto;padding:3px 0}
+    .catdd-sub{font-size:0.7rem;font-weight:800;color:var(--gold);letter-spacing:1px;text-transform:uppercase;padding:9px 13px 4px;background:var(--surface)}
+    .catdd-item{font-size:0.98rem;font-weight:400;color:var(--txt);padding:9px 16px;cursor:pointer}
+    .catdd-item:hover{background:rgba(201,169,110,0.12)}
+    .catdd-item.sel{background:rgba(201,169,110,0.20);font-weight:700;color:var(--gold)}
 
     /* ── Install App pill ── */
     #installPill{
@@ -303,6 +315,7 @@
     .det-url{font-size:0.72rem;color:var(--txt-muted);word-break:break-all;margin-bottom:10px}
     .row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+    @media (max-width:819px){ .row-2{grid-template-columns:1fr} }
     .field label{font-size:0.76rem;font-weight:600;color:var(--txt-sec);display:block;margin-bottom:4px}
     .field input,.field select{width:100%;padding:9px 12px;border:1.5px solid var(--bdr-med);border-radius:6px;
       font-size:0.88rem;background:var(--input-bg);color:var(--txt)}
@@ -1324,67 +1337,81 @@
   let drafts      = {};  // id → {currency, sizeCounter}
   let draftIdCtr  = 0;
 
-  // Category picker is split into THREE gender dropdowns (Women / Men / Kids).
-  // Each dropdown's first <option> is its label/placeholder. The active choice
-  // is mirrored into a hidden <input id="dc_cat_${id}"> so every existing reader
-  // keeps working. catGender() (below) routes a key to the right dropdown.
-  const WOMEN_OPTIONS = `
-    <option value="">👗 Women's category…</option>
-    <optgroup label="Everyday / Lawn">
-      <option value="kurti_1pc">Kurti / Shirt (1pc)</option>
-      <option value="kaftan">Kaftan (1pc long shirt)</option>
-      <option value="shirt_dupatta_2pc">2pc – Shirt + Dupatta (printed)</option>
-      <option value="shirt_trouser_2pc">2pc Co-ord – Shirt + Trouser (printed)</option>
-      <option value="pret_2pc_emb">2pc Pret – Embroidered</option>
-      <option value="lawn_3pc_unstitch">3pc Unstitched – Printed/Plain</option>
-      <option value="unstitch_3pc_emb">3pc Unstitched – Embroidered</option>
-      <option value="pret_3pc">3pc Pret – Printed/Plain</option>
-      <option value="pret_3pc_emb">3pc Pret – Embroidered</option>
-      <option value="maxi_dress">Maxi / Dress / Jumpsuit (1pc)</option>
-      <option value="coord_western">Co-ord / Western 2pc</option>
-      <option value="loungewear">Loungewear / Nightwear</option>
-    </optgroup>
-    <optgroup label="Winter">
-      <option value="winter_2pc">Winter 2pc (karandi/khaddar/linen)</option>
-      <option value="winter_3pc">Winter 3pc (karandi/khaddar)</option>
-    </optgroup>
-    <optgroup label="Formal / Festive / Bridal">
-      <option value="formal_emb_2pc">Formal Embroidered 2pc</option>
-      <option value="formal_emb_3pc">Formal Embroidered 3pc</option>
-      <option value="heavy_formal_3pc">Heavy Formal 3pc (organza/silk)</option>
-      <option value="saree">Saree</option>
-      <option value="lehenga">Lehenga / Gharara / Sharara</option>
-      <option value="bridal">Bridal / Velvet / Full Embroidery</option>
-    </optgroup>
-    <optgroup label="Modest">
-      <option value="abaya">Abaya</option>
-    </optgroup>
-    <optgroup label="Separates & Accessories">
-      <option value="womens_trouser">Women's Trouser / Pants (1pc)</option>
-      <option value="dupatta_only">Dupatta / Stole / Scarf</option>
-      <option value="shawl">Shawl (winter)</option>
-      <option value="footwear">Footwear / Shoes / Khussa</option>
-      <option value="accessories">Accessories / Jewellery</option>
-    </optgroup>`;
-  const MEN_OPTIONS = `
-    <option value="">👔 Men's category…</option>
-    <optgroup label="Western / Casual">
-      <option value="mens_shirt">Shirt / Polo / T-Shirt (1pc)</option>
-      <option value="mens_trouser">Trouser / Chinos / Cargo (1pc)</option>
-      <option value="mens_jeans">Jeans / Denim (1pc)</option>
-    </optgroup>
-    <optgroup label="Traditional / Formal">
-      <option value="mens_kurta">Kurta / Kameez (1pc)</option>
-      <option value="mens_shalwar_kameez">Shalwar Kameez (2pc)</option>
-      <option value="mens_waistcoat">Waistcoat</option>
-      <option value="mens_suit">Suit / Pant-Coat / Blazer (2pc)</option>
-      <option value="mens_sherwani">Sherwani / Prince Coat</option>
-      <option value="mens_unstitched">Unstitched Fabric</option>
-    </optgroup>`;
-  const KIDS_OPTIONS = `
-    <option value="">🧸 Kids category…</option>
-    <option value="kids_eastern">Kids Eastern (kurta / 2pc)</option>
-    <option value="kids_western">Kids Western (tee / jeans / frock)</option>`;
+  // Category taxonomy — single source of truth, also reused for the product
+  // catalogues later. Each gender → ordered groups → [key, label] items.
+  const CAT_TREE = {
+    w: { label:"👗 Women's category", groups:[
+      { h:'Everyday / Lawn', items:[
+        ['kurti_1pc','Kurti / Shirt (1pc)'],
+        ['kaftan','Kaftan (1pc long shirt)'],
+        ['shirt_dupatta_2pc','2pc – Shirt + Dupatta (printed)'],
+        ['shirt_trouser_2pc','2pc Co-ord – Shirt + Trouser (printed)'],
+        ['pret_2pc_emb','2pc Pret – Embroidered'],
+        ['lawn_3pc_unstitch','3pc Unstitched – Printed/Plain'],
+        ['unstitch_3pc_emb','3pc Unstitched – Embroidered'],
+        ['pret_3pc','3pc Pret – Printed/Plain'],
+        ['pret_3pc_emb','3pc Pret – Embroidered'],
+        ['maxi_dress','Maxi / Dress / Jumpsuit (1pc)'],
+        ['coord_western','Co-ord / Western 2pc'],
+        ['loungewear','Loungewear / Nightwear'],
+      ]},
+      { h:'Winter', items:[
+        ['winter_2pc','Winter 2pc (karandi/khaddar/linen)'],
+        ['winter_3pc','Winter 3pc (karandi/khaddar)'],
+      ]},
+      { h:'Formal / Festive / Bridal', items:[
+        ['formal_emb_2pc','Formal Embroidered 2pc'],
+        ['formal_emb_3pc','Formal Embroidered 3pc'],
+        ['heavy_formal_3pc','Heavy Formal 3pc (organza/silk)'],
+        ['saree','Saree'],
+        ['lehenga','Lehenga / Gharara / Sharara'],
+        ['bridal','Bridal / Velvet / Full Embroidery'],
+      ]},
+      { h:'Modest', items:[ ['abaya','Abaya'] ]},
+      { h:'Separates & Accessories', items:[
+        ['womens_trouser',"Women's Trouser / Pants (1pc)"],
+        ['dupatta_only','Dupatta / Stole / Scarf'],
+        ['shawl','Shawl (winter)'],
+        ['footwear','Footwear / Shoes / Khussa'],
+        ['accessories','Accessories / Jewellery'],
+      ]},
+    ]},
+    m: { label:"👔 Men's category", groups:[
+      { h:'Western / Casual', items:[
+        ['mens_shirt','Shirt / Polo / T-Shirt (1pc)'],
+        ['mens_trouser','Trouser / Chinos / Cargo (1pc)'],
+        ['mens_jeans','Jeans / Denim (1pc)'],
+      ]},
+      { h:'Traditional / Formal', items:[
+        ['mens_kurta','Kurta / Kameez (1pc)'],
+        ['mens_shalwar_kameez','Shalwar Kameez (2pc)'],
+        ['mens_waistcoat','Waistcoat'],
+        ['mens_suit','Suit / Pant-Coat / Blazer (2pc)'],
+        ['mens_sherwani','Sherwani / Prince Coat'],
+        ['mens_unstitched','Unstitched Fabric'],
+      ]},
+    ]},
+    k: { label:"🧸 Kids category", groups:[
+      { h:'', items:[
+        ['kids_eastern','Kids Eastern (kurta / 2pc)'],
+        ['kids_western','Kids Western (tee / jeans / frock)'],
+      ]},
+    ]},
+  };
+  const _catEsc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+  // Build a CUSTOM (non-native) dropdown so the gender heading, the group
+  // sub-headings and the listed items can each be sized/coloured differently —
+  // native <select>/<optgroup> ignores CSS for that.
+  function buildCatDropdown(id, g){
+    const t = CAT_TREE[g];
+    const body = t.groups.map(grp =>
+      (grp.h ? `<div class="catdd-sub">${_catEsc(grp.h)}</div>` : '') +
+      grp.items.map(([k,lbl]) => `<div class="catdd-item" data-k="${k}" onclick="pickCatCustom(${id},'${g}','${k}')">${_catEsc(lbl)}</div>`).join('')
+    ).join('');
+    return `<details class="catdd" name="catdd_${id}" id="dc_catdd${g}_${id}" ontoggle="if(this.open)closeOtherCatdd(${id},'${g}')">`
+      + `<summary class="catdd-sum" id="dc_catsum${g}_${id}">${t.label}…</summary>`
+      + `<div class="catdd-panel">${body}</div></details>`;
+  }
   // Which dropdown owns a category key.
   function catGender(cat){ return MENS_CATS.has(cat) ? 'm' : (KIDS_CATS.has(cat) ? 'k' : 'w'); }
 
@@ -1703,7 +1730,7 @@
       const catEl = document.getElementById(`dc_cat_${id}`);
       // Overwrite a wrong women's auto-guess if this is clearly a men's product
       const womensGuess = catEl && catEl.value && !MENS_CATS.has(catEl.value);
-      if(catEl && fetchedCat && (!catEl.value || (gender === 'men' && womensGuess))){
+      if(catEl && fetchedCat && !(drafts[id] && drafts[id].catUserSet) && (!catEl.value || (gender === 'men' && womensGuess))){
         setDraftCat(id, fetchedCat);
       }
       // The brand's own product_type says UNSTITCHED but the pre-fetch URL
@@ -1711,7 +1738,7 @@
       // with handle "shirt-shalwar-dupatta" → guessed 2pc). The brand's word
       // beats our URL guess: unstitched products must never ask for sizes.
       // (The reverse correction — sizes found ⇒ stitched — happens below.)
-      if(catEl && catEl.value && fetchedCat
+      if(catEl && catEl.value && fetchedCat && !(drafts[id] && drafts[id].catUserSet)
          && UNSTITCHED_CATS.has(fetchedCat) && !UNSTITCHED_CATS.has(catEl.value)){
         setDraftCat(id, fetchedCat);
       }
@@ -1831,7 +1858,7 @@
       if(!allSoldOut && sizesToAdd.length){
         // The product sells in garment sizes ⇒ it's stitched/RTW, even if the
         // URL said "lawn"/"fabric" and the category auto-detected as unstitched.
-        if(catEl && UNSTITCHED_CATS.has(catEl.value)){
+        if(catEl && UNSTITCHED_CATS.has(catEl.value) && !(drafts[id] && drafts[id].catUserSet)){
           let flip;
           if(gender === 'men'){
             flip = mapPtToCatMen(ptStr) || mapPtToCatMen(product.title||'') || 'mens_shalwar_kameez';
@@ -1941,9 +1968,9 @@
           <!-- Manual 3-gender picker — fallback only (no auto-match, or "Change") -->
           <div id="dc_catpick_${id}" style="display:none">
             <div id="dc_catpickhint_${id}" style="font-size:0.74rem;color:#f0c855;font-weight:600;margin-bottom:6px">Choose the category:</div>
-            <select id="dc_catw_${id}" onchange="pickCat(${id},'w')">${WOMEN_OPTIONS}</select>
-            <select id="dc_catm_${id}" onchange="pickCat(${id},'m')" style="margin-top:5px">${MEN_OPTIONS}</select>
-            <select id="dc_catk_${id}" onchange="pickCat(${id},'k')" style="margin-top:5px">${KIDS_OPTIONS}</select>
+            ${buildCatDropdown(id,'w')}
+            ${buildCatDropdown(id,'m')}
+            ${buildCatDropdown(id,'k')}
           </div>
         </div>
         <div class="field">
@@ -2005,7 +2032,7 @@
     const _cdHost = new URL(url).hostname;
     const isPk  = /\.(pk|com\.pk)(\/|$)/.test(_cdHost + '/') || _cdHost === 'pk.ethnc.com';
     const id    = draftIdCtr++;
-    drafts[id]  = { currency: 'PKR', sizeCounter: 0, catFetchDone: false };
+    drafts[id]  = { currency: 'PKR', sizeCounter: 0, catFetchDone: false, catUserSet: false, catPickerOpen: false };
     document.getElementById('draftCards')
       .insertAdjacentHTML('beforeend', buildDraftCard(id, url, brand, isPk));
 
@@ -2056,19 +2083,43 @@
   // ── 3-DROPDOWN CATEGORY PICKER ───────────────────────────────────────────
   // Three gender dropdowns (w/m/k) write the active key into the hidden
   // dc_cat_${id}; every other reader keeps using dc_cat_${id}.value unchanged.
-  function pickCat(id, g){
-    const sel = document.getElementById(`dc_cat${g}_${id}`);
-    const val = sel ? sel.value : '';
-    ['w','m','k'].forEach(o => { if(o !== g){ const e = document.getElementById(`dc_cat${o}_${id}`); if(e) e.value=''; } });
+  // Custom-dropdown item clicked → set the hidden canonical value, collapse the
+  // dropdown; renderCatUI (via onDraftCatChange) then shows the auto-chip.
+  function pickCatCustom(id, g, k){
     const hid = document.getElementById(`dc_cat_${id}`);
-    if(hid) hid.value = val;
+    if(hid) hid.value = k;
+    if(drafts[id]){ drafts[id].catUserSet = true; drafts[id].catPickerOpen = false; }
+    const dd = document.getElementById(`dc_catdd${g}_${id}`);
+    if(dd) dd.open = false;
     onDraftCatChange(id);
   }
-  // Programmatic set (URL guess, auto-fetch, edit): route a key to its gender
-  // dropdown, clear the others, sync the hidden field, refresh the size UI.
+  // The 3 <details> dropdowns act as an exclusive accordion (one open at a time).
+  function closeOtherCatdd(id, g){
+    ['w','m','k'].forEach(o => { if(o!==g){ const d=document.getElementById(`dc_catdd${o}_${id}`); if(d && d.open) d.open=false; } });
+  }
+  // Reflect the current category in the 3 dropdowns (summary text + highlight)
+  // when the picker is shown (e.g. after "Change").
+  function syncCatDropdowns(id){
+    const cat = (document.getElementById(`dc_cat_${id}`)||{}).value;
+    const g0 = cat ? catGender(cat) : null;
+    ['w','m','k'].forEach(g => {
+      const sum = document.getElementById(`dc_catsum${g}_${id}`);
+      const dd  = document.getElementById(`dc_catdd${g}_${id}`);
+      if(!sum || !dd) return;
+      const panel = dd.querySelector('.catdd-panel');
+      if(panel) panel.querySelectorAll('.catdd-item').forEach(el => el.classList.toggle('sel', g===g0 && el.dataset.k===cat));
+      if(g === g0){
+        let lbl=''; for(const grp of CAT_TREE[g].groups){ const f=grp.items.find(it=>it[0]===cat); if(f){ lbl=f[1]; break; } }
+        sum.textContent = '✓ ' + (lbl || CAT_TREE[g].label);
+      } else {
+        sum.textContent = CAT_TREE[g].label + '…';
+      }
+      dd.open = false;
+    });
+  }
+  // Programmatic set (URL guess, auto-fetch, edit): set the hidden field and
+  // refresh the UI (the chip shows the label; dropdowns sync when reopened).
   function setDraftCat(id, cat){
-    const g = catGender(cat);
-    ['w','m','k'].forEach(o => { const e = document.getElementById(`dc_cat${o}_${id}`); if(e) e.value = (o === g ? cat : ''); });
     const hid = document.getElementById(`dc_cat_${id}`);
     if(hid) hid.value = cat || '';
     onDraftCatChange(id);
@@ -2084,22 +2135,24 @@
     const auto   = document.getElementById(`dc_catauto_${id}`);
     const pick   = document.getElementById(`dc_catpick_${id}`);
     const done   = !!(drafts[id] && drafts[id].catFetchDone);
+    const force  = forcePick || !!(drafts[id] && drafts[id].catPickerOpen);
     if(detect) detect.style.display = 'none';
-    if(cat && !forcePick){
+    if(cat && !force){
       if(auto){ auto.style.display = 'flex'; const l = document.getElementById(`dc_catlabel_${id}`); if(l) l.textContent = (CAT_LABELS[cat] || WEIGHT_LABELS[cat] || cat); }
       if(pick) pick.style.display = 'none';
-    } else if(forcePick || done){
+    } else if(force || done){
       if(auto) auto.style.display = 'none';
       if(pick) pick.style.display = 'block';
       const h = document.getElementById(`dc_catpickhint_${id}`);
       if(h) h.textContent = cat ? 'Change the category:' : "⚠️ Couldn't auto-detect — please choose:";
+      syncCatDropdowns(id);
     } else {
       if(detect) detect.style.display = '';
       if(auto) auto.style.display = 'none';
       if(pick) pick.style.display = 'none';
     }
   }
-  function openCatPicker(id){ renderCatUI(id, true); }
+  function openCatPicker(id){ if(drafts[id]) drafts[id].catPickerOpen = true; renderCatUI(id, true); }
 
   function onDraftCatChange(id){
     const cat = document.getElementById(`dc_cat_${id}`).value;
@@ -2936,9 +2989,9 @@
       const cat = document.getElementById(`dc_cat_${id}`)?.value;
       const priceRaw = parseFloat(document.getElementById(`dc_price_${id}`)?.value);
       const isUnstitched = UNSTITCHED_CATS.has(cat);
-      const catSels = ['w','m','k'].map(g=>document.getElementById(`dc_cat${g}_${id}`)).filter(Boolean);
-      if(!cat){ catSels.forEach(s=>s.style.borderColor='#c0392b'); allValid=false; }
-      else catSels.forEach(s=>s.style.borderColor='');
+      const catDDs = document.getElementById(`dc_catpick_${id}`)?.querySelectorAll('.catdd') || [];
+      if(!cat){ catDDs.forEach(d=>{ d.style.borderColor='#c0392b'; }); if(drafts[id]) drafts[id].catFetchDone=true; renderCatUI(id, true); allValid=false; }
+      else catDDs.forEach(d=>{ d.style.borderColor=''; });
       if(!priceRaw || priceRaw<=0){ document.getElementById(`dc_price_${id}`).style.borderColor='#c0392b'; allValid=false; }
       else document.getElementById(`dc_price_${id}`).style.borderColor='';
       if(!isUnstitched && cat){
@@ -2998,15 +3051,21 @@
 
   const CAT_LABELS = {
     kurti_1pc:'Kurti / 1pc', kaftan:'Kaftan (1pc)', shirt_dupatta_2pc:'2pc Shirt+Dupatta',
-    shirt_trouser_2pc:'2pc Co-ord', lawn_3pc_unstitch:'3pc Unstitched',
-    pret_3pc:'3pc Pret', winter_2pc:'Winter 2pc', winter_3pc:'Winter 3pc',
+    shirt_trouser_2pc:'2pc Co-ord', pret_2pc_emb:'2pc Pret Emb',
+    lawn_3pc_unstitch:'3pc Unstitched', unstitch_3pc_emb:'3pc Unstitched Emb',
+    pret_3pc:'3pc Pret', pret_3pc_emb:'3pc Pret Emb',
+    winter_2pc:'Winter 2pc', winter_3pc:'Winter 3pc',
     formal_emb_2pc:'Formal 2pc', formal_emb_3pc:'Formal 3pc',
     heavy_formal_3pc:'Heavy Formal 3pc', bridal:'Bridal',
-    womens_trouser:"Women's Trouser", dupatta_only:'Dupatta / Stole', shawl:'Shawl', accessories:'Accessories',
+    saree:'Saree', lehenga:'Lehenga/Gharara', coord_western:'Co-ord/Western',
+    loungewear:'Loungewear', abaya:'Abaya', maxi_dress:'Maxi / Dress',
+    womens_trouser:"Women's Trouser", dupatta_only:'Dupatta / Stole', shawl:'Shawl',
+    accessories:'Accessories', footwear:'Footwear',
     mens_shirt:"Men's Shirt 1pc", mens_trouser:"Men's Trouser 1pc", mens_jeans:"Men's Jeans 1pc",
     mens_kurta:"Men's Kurta 1pc", mens_shalwar_kameez:"Men's Shalwar Kameez 2pc",
     mens_waistcoat:"Men's Waistcoat", mens_suit:"Men's Suit/Pant-Coat",
     mens_sherwani:"Men's Sherwani", mens_unstitched:"Men's Unstitched",
+    kids_eastern:'Kids Eastern', kids_western:'Kids Western',
   };
 
   function removeItem(idx){
@@ -3027,7 +3086,7 @@
     const _host = new URL(item.url).hostname;
     const isPk  = /\.(pk|com\.pk)(\/|$)/.test(_host + '/') || _host === 'pk.ethnc.com';
     const id = draftIdCtr++;
-    drafts[id] = { currency: 'PKR', sizeCounter: 0, catFetchDone: true };
+    drafts[id] = { currency: 'PKR', sizeCounter: 0, catFetchDone: true, catUserSet: true, catPickerOpen: false };
     document.getElementById('draftsContainer').style.display = '';
     document.getElementById('draftCards').insertAdjacentHTML('beforeend', buildDraftCard(id, item.url, item.brand, isPk));
 
@@ -3761,12 +3820,12 @@
       ok('Every brand has name + valid URL', BRANDS.every(b=>b.n && /^https?:\/\//.test(b.u)));
       ok('Search matches a known brand', BRANDS.filter(b=>b.n.toLowerCase().includes('maria')).length>0);
       ok('Search dropdown element exists', !!document.getElementById('brandDropdown'));
-      const ALL_CAT_OPTIONS = WOMEN_OPTIONS + MEN_OPTIONS + KIDS_OPTIONS;
-      ok('Women categories present', ALL_CAT_OPTIONS.includes('pret_3pc') && ALL_CAT_OPTIONS.includes('value="kaftan"'));
-      ok('Men categories present', ALL_CAT_OPTIONS.includes('mens_shalwar_kameez') && ALL_CAT_OPTIONS.includes('mens_sherwani'));
-      ok('Shawl category present', ALL_CAT_OPTIONS.includes('value="shawl"'));
-      ok('New categories present', ['pret_2pc_emb','unstitch_3pc_emb','pret_3pc_emb','saree','lehenga','abaya','loungewear','coord_western'].every(k=>ALL_CAT_OPTIONS.includes('value="'+k+'"')));
-      const catVals=[...ALL_CAT_OPTIONS.matchAll(/value="([^"]+)"/g)].map(m=>m[1]).filter(Boolean);
+      const ALL_CAT_KEYS = Object.values(CAT_TREE).flatMap(g => g.groups.flatMap(grp => grp.items.map(it => it[0])));
+      ok('Women categories present', ALL_CAT_KEYS.includes('pret_3pc') && ALL_CAT_KEYS.includes('kaftan'));
+      ok('Men categories present', ALL_CAT_KEYS.includes('mens_shalwar_kameez') && ALL_CAT_KEYS.includes('mens_sherwani'));
+      ok('Shawl category present', ALL_CAT_KEYS.includes('shawl'));
+      ok('New categories present', ['pret_2pc_emb','unstitch_3pc_emb','pret_3pc_emb','saree','lehenga','abaya','loungewear','coord_western'].every(k=>ALL_CAT_KEYS.includes(k)));
+      const catVals=ALL_CAT_KEYS;
       const missW=catVals.filter(c=>!(c in DEFAULT_WEIGHTS));
       ok('Every category has a weight', missW.length===0, missW.length?('missing: '+missW.join(', ')):'');
       const missL=Object.keys(DEFAULT_WEIGHTS).filter(c=>!WEIGHT_LABELS[c]);
