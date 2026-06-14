@@ -84,8 +84,11 @@ function normalizeSfcc(j){
   const price = sales ? (typeof sales.value === 'number' ? sales.value : parseFloat(sales.decimalPrice)) : null;
   const currency = sales ? (sales.currency || null) : null;
   const sizeAttr = (p.variationAttributes || []).find(a => a.id === 'size');
+  // Some brands pad size codes for sort order (Khaadi: 0XS, 00S, 00M…) — strip
+  // leading zeros that precede a letter so chips read XS/S/M/L/XL.
+  const cleanSize = s => String(s == null ? '' : s).replace(/^0+(?=[A-Za-z])/, '').trim();
   const sizes = sizeAttr ? (sizeAttr.values || []).map(v => ({
-    size: v.displayValue || v.value, available: !!v.selectable,
+    size: cleanSize(v.displayValue || v.value), available: !!v.selectable,
   })) : [];
   return {
     currency,                 // 'PKR'

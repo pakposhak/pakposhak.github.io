@@ -1490,6 +1490,11 @@
   // (psb_relay_url) only OVERRIDES this. Empty admin field = use this default.
   const DEFAULT_RELAY_URL = 'https://103.83.91.34.sslip.io';
 
+  // Hosts routed to the relay /scrape endpoint — Group 4 brands (Salesforce
+  // Commerce Cloud: Khaadi, Sapphire) that have no Shopify product API. Both the
+  // international and PK twin hosts of each brand.
+  const SFCC_SCRAPE_HOSTS = new Set(['khaadi.com','pk.khaadi.com','sapphireonline.pk','pk.sapphireonline.pk']);
+
   async function fetchProductData(id, url){
     const statusEl = document.getElementById(`dc_fetch_${id}`);
     function setStatus(msg, color){ if(statusEl){ statusEl.style.display=''; statusEl.textContent=msg; statusEl.style.color=color||'#c9a96e'; } }
@@ -1497,6 +1502,44 @@
 
     try {
       const u = new URL(url);
+      const pastedHost = u.hostname.replace(/^www\./,'');
+      let product = null, hasStockInfo = false, sawNotFound = false, pkrVia = 'unknown';
+
+      // ── Group 4: Salesforce Commerce Cloud (Khaadi/Sapphire) — no Shopify
+      //    product API. Pull price + per-size stock from the relay /scrape
+      //    (queried from the PK IP) and synthesize a Shopify-shaped product so
+      //    the category/size/price/stock pipeline below treats it like any
+      //    other brand (incl. the in-stock-only size constraint).
+      const isSfcc = SFCC_SCRAPE_HOSTS.has(pastedHost) && u.pathname.toLowerCase().endsWith('.html');
+      if(isSfcc){
+        const relay = ((localStorage.getItem('psb_relay_url')||'').trim() || DEFAULT_RELAY_URL).replace(/\/+$/,'');
+        setStatus('🇵🇰 Fetching price & live stock from Pakistan (this brand has no public API)…','#c9a96e');
+        const sc = new AbortController(); const stid = setTimeout(()=>sc.abort(), 22000);
+        try{
+          const rr = await fetch(`${relay}/scrape?url=${encodeURIComponent(url)}`, { signal: sc.signal, cache:'no-store' });
+          if(rr.ok){
+            const rj = await rr.json();
+            if(rj && rj.ok && rj.currency === 'PKR' && rj.price != null){
+              const paisa = Math.round(rj.price * 100);   // pipeline reads paisa (÷100)
+              const szs = Array.isArray(rj.sizes) ? rj.sizes : [];
+              product = {
+                title: rj.title || '',
+                product_type: '',                          // force title-based category mapping
+                options: szs.length ? [{ name:'Size', values: szs.map(s=>s.size) }] : [],
+                variants: szs.length
+                  ? szs.map(s => ({ option1: s.size, available: !!s.available, price: paisa, compare_at_price: null }))
+                  : [{ available: rj.available !== false, price: paisa, compare_at_price: null }],
+              };
+              hasStockInfo = true; pkrVia = 'relay';
+            }
+          }
+        }catch(err){ /* fall through to the manual-entry note */ }
+        clearTimeout(stid);
+        if(!product)
+          return setStatus("⚠️ Couldn't auto-fetch this item from Pakistan right now — please fill price & size manually, or try again in a moment.",'#ff9a9a');
+      }
+
+      if(!isSfcc){
       let m = u.pathname.match(/\/products\/([^/?#]+)/);
       // Some stores (e.g. Khaadi) use /category/product-id.html — try last path segment as handle
       if(!m && u.pathname.toLowerCase().endsWith('.html')){
@@ -1510,7 +1553,6 @@
       }
 
       // If this is a brand's INTERNATIONAL site, fetch from its PK twin instead.
-      const pastedHost = u.hostname.replace(/^www\./,'');
       const twinHost   = TWIN_MAP[pastedHost] || null;
       const fetchOrigin = twinHost ? (u.protocol + '//' + twinHost) : u.origin;
 
@@ -1527,7 +1569,6 @@
       // node may omit the CORS header, or the cached copy is stale), so we
       // retry up to 3× with a cache-busting, no-store request to force a
       // fresh, authoritative stock reading every time.
-      let product = null, hasStockInfo = false, sawNotFound = false;
       for(let attempt = 0; attempt < 3 && !product; attempt++){
         try{
           // Constructed URL has no query string, so always start with "?".
@@ -1565,7 +1606,6 @@
       // pkrVia: 'direct' | 'relay' = confirmed PKR · 'unknown' = cart.js
       // unreachable (non-Shopify / CORS) → fall back to old heuristic ·
       // otherwise holds the foreign currency code, unresolved.
-      let pkrVia = 'unknown';
       if(hasStockInfo){
         let sessionCur = null;
         try{
@@ -1595,6 +1635,7 @@
         }
       }
       clearTimeout(tid);
+      } // end if(!isSfcc) — SFCC path above already populated `product`
       if(!product) throw new Error('empty');
       // .js endpoint reports money in paisa (×100); .json uses decimal strings
       const moneyOf = v0 => hasStockInfo ? (parseFloat(v0)||0)/100 : (parseFloat(v0)||0);
