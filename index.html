@@ -1019,6 +1019,11 @@
         <input id="adm_comm_4p" type="number" step="0.1" min="0" placeholder="15"
           style="width:80px;padding:8px 10px;border-radius:6px;border:none;font-size:0.9rem"/>
       </div>
+      <div>
+        <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">Max qty / size <span style="color:#777">(stock cap)</span></label>
+        <input id="adm_maxqty" type="number" min="1" step="1" placeholder="5"
+          style="width:80px;padding:8px 10px;border-radius:6px;border:none;font-size:0.9rem"/>
+      </div>
       <div style="flex-basis:100%">
         <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">🇵🇰 Pakistan Price Relay URL <span style="color:#777">(a default PK-IP relay is built in; set this only to override it)</span></label>
         <input id="adm_relay" type="url" placeholder="default: https://103.83.91.34.sslip.io"
@@ -1152,6 +1157,7 @@
     document.getElementById('adm_comm_23').value  = parseFloat(localStorage.getItem('psb_comm_23')   || '18');
     document.getElementById('adm_comm_4p').value  = parseFloat(localStorage.getItem('psb_comm_4p')   || '15');
     document.getElementById('adm_relay').value    = localStorage.getItem('psb_relay_url') || '';
+    document.getElementById('adm_maxqty').value   = parseInt(localStorage.getItem('psb_max_qty') || '5');
     buildWeightEditor();
     panel.scrollIntoView({ behavior: 'smooth' });
   }
@@ -1187,6 +1193,8 @@
     if(relayUrl && !/^https:\/\//i.test(relayUrl)){ alert('Relay URL must start with https://'); return; }
     if(relayUrl) localStorage.setItem('psb_relay_url', relayUrl);
     else localStorage.removeItem('psb_relay_url');
+    const maxq = parseInt(document.getElementById('adm_maxqty').value);
+    if(maxq > 0) localStorage.setItem('psb_max_qty', maxq);
     const btn = document.getElementById('saveRatesBtn');
     btn.textContent = '✓ Saved!';
     btn.style.background = '#2e7d32';
@@ -1509,7 +1517,7 @@
   // Normalize variant size strings → our dropdown values
   function normSizeFull(raw){
     const s = (raw||'').trim().toUpperCase().replace(/[-\s]+/g,' ');
-    if(/^(XS|EXTRA SMALL)$/.test(s))     return 'XS';
+    if(/^(XS|X S|X SMALL|EXTRA SMALL)$/.test(s))     return 'XS';
     if(/^(S|SMALL)$/.test(s))            return 'S';
     if(/^(M|MEDIUM)$/.test(s))           return 'M';
     if(/^(L|LARGE)$/.test(s))            return 'L';
@@ -1884,6 +1892,21 @@
             hint.innerHTML = '⚠️ <b>Your link doesn\'t include a size.</b> Tap an <u>in-stock</u> size below — a highlighted size on the brand\'s page does <u>not</u> mean it was selected.';
             hint.style.cssText = 'font-size:0.75rem;font-weight:600;color:#f0c855;background:rgba(230,168,23,0.12);border:1px solid rgba(230,168,23,0.40);border-radius:6px;padding:6px 10px;margin-bottom:7px';
           }
+          // ── BUYER-PICKED SIZE (from ?variant=) ──────────────────────────
+          // If the pasted link encodes a specific size, pre-select it on top of
+          // the chips — so a chosen size is auto-FILLED, not merely listed.
+          const picked = pickedSizeFromUrl(url, product, sizeIdxAll, multiSize);
+          if(picked && sizesToAdd.includes(picked)){
+            addSizeFromChip(id, picked);            // always pre-fill the chosen size
+            if(hint && d0?.stockVerified){          // only override the hint when stock is trustworthy
+              hint.innerHTML = '✅ <b>Your selected size (' + esc(picked) + ') was auto-filled and is in stock.</b> Add more sizes below if you need them.';
+              hint.style.cssText = 'font-size:0.75rem;font-weight:700;color:#7ee0a0;background:rgba(46,125,50,0.15);border:1px solid rgba(46,125,50,0.45);border-radius:6px;padding:6px 10px;margin-bottom:7px';
+            }
+          } else if(picked && hint && d0?.stockVerified){
+            // The exact size they picked is sold out — say so; keep chips visible.
+            hint.innerHTML = '⚠️ <b>The size you picked (' + esc(picked) + ') is SOLD OUT.</b> Choose an in-stock size below.';
+            hint.style.cssText = 'font-size:0.75rem;font-weight:700;color:#ff9a9a;background:rgba(192,57,43,0.15);border:1px solid rgba(192,57,43,0.45);border-radius:6px;padding:6px 10px;margin-bottom:7px';
+          }
         }
       }
 
@@ -2004,8 +2027,8 @@
         <div id="dc_uqty_wrap_${id}" style="display:none;margin-top:4px">
           <div style="display:flex;align-items:center;gap:10px">
             <label style="font-size:0.8rem;color:var(--txt-sec);font-weight:600">Quantity</label>
-            <input type="number" id="dc_uqty_${id}" value="1" min="1" max="20"
-              onchange="checkAddUrlLock()"
+            <input type="number" id="dc_uqty_${id}" value="1" min="1" max="${maxPerSize()}"
+              title="Max ${maxPerSize()} pieces (stock limit)" onchange="clampQtyInput(this);checkAddUrlLock()"
               style="width:68px;padding:7px 8px;border:1.5px solid var(--bdr-med);border-radius:6px;
                      font-size:0.9rem;text-align:center;font-weight:700"/>
             <span style="font-size:0.78rem;color:var(--txt-muted)">piece(s)</span>
@@ -2293,6 +2316,27 @@
     }
   }
 
+  // ── PER-SIZE QUANTITY CAP ───────────────────────────────────────────────
+  // Brands don't publish exact stock counts: Shopify strips inventory_quantity
+  // from the public storefront API, and the cart-overflow trick is rejected
+  // (verified — these stores accept 99,999 even of a SOLD-OUT size). So we can
+  // never honestly show "only N left". What we CAN do is (a) block sold-out
+  // sizes (the size dropdown is already constrained to in-stock sizes) and
+  // (b) cap each size to a sane ceiling so nobody can order 10,000 of one item.
+  // Ceiling is admin-tunable (psb_max_qty, default 5).
+  function maxPerSize(){
+    const n = parseInt(localStorage.getItem('psb_max_qty'));
+    return (n && n > 0) ? n : 5;
+  }
+  function clampQtyInput(input){
+    const mx = maxPerSize();
+    let v = parseInt(input.value) || 1;
+    if(v < 1) v = 1;
+    if(v > mx){ v = mx; input.style.borderColor = '#e74c3c';
+      setTimeout(()=>{ input.style.borderColor = 'var(--bdr-med)'; }, 1300); }
+    input.value = v;
+  }
+
   function addDraftSizeRow(draftId, size='', qty=1){
     const d = drafts[draftId]; if(!d) return;
     const rowId = `${draftId}_${d.sizeCounter++}`;
@@ -2313,7 +2357,8 @@
             style="flex:1;padding:8px 10px;border:1.5px solid var(--bdr-med);border-radius:6px;font-size:0.85rem;background:var(--input-bg);color:var(--txt);min-width:0">
             <option value="">Pick size</option>${opts}
           </select>
-          <input type="number" value="${qty}" min="1" max="20" onchange="checkAddUrlLock()"
+          <input type="number" value="${Math.min(Math.max(1,qty),maxPerSize())}" min="1" max="${maxPerSize()}"
+            title="Max ${maxPerSize()} per size (stock limit)" onchange="clampQtyInput(this);checkAddUrlLock()"
             style="width:62px;padding:8px 8px;border:1.5px solid var(--bdr-med);border-radius:6px;font-size:0.85rem;text-align:center"/>
           <button type="button" onclick="removeDraftSizeRow(${draftId},'${rowId}')"
             style="background:none;border:none;color:var(--txt-muted);cursor:pointer;font-size:1rem;padding:2px 5px;border-radius:4px;flex-shrink:0"
@@ -2408,7 +2453,7 @@
     const rows=[];
     document.querySelectorAll(`#dc_srows_${draftId} > div`).forEach(row=>{
       const size=row.querySelector('select').value;
-      const qty=Math.max(1,parseInt(row.querySelector('input').value)||1);
+      const qty=Math.min(maxPerSize(),Math.max(1,parseInt(row.querySelector('input').value)||1));
       rows.push({size,qty});
     });
     return rows;
@@ -2829,6 +2874,26 @@
     return '';
   }
 
+  // The Shopify ?variant=<id> in a pasted URL is the EXACT variant (size) the
+  // buyer selected on the brand page before copying the link. We resolve it
+  // against the fetched variant list (reliable — an ID match, no guessing) so
+  // the chosen size can be pre-selected on top of the in-stock chips. Returns
+  // the chip-format size string, or '' if absent/unresolvable (e.g. SFCC, whose
+  // synthesized variants carry no Shopify id).
+  function pickedSizeFromUrl(url, product, sizeIdxAll, multiSize){
+    try{
+      const vid = new URL(url).searchParams.get('variant');
+      if(!vid || !product || !Array.isArray(product.variants) || !sizeIdxAll || !sizeIdxAll.length) return '';
+      const v = product.variants.find(x => String(x.id) === String(vid));
+      if(!v) return '';
+      const keyOf = i => ['option1','option2','option3'][i];
+      if(multiSize)
+        return sizeIdxAll.map(i => normSizeFull(v[keyOf(i)]) || v[keyOf(i)]).filter(Boolean).join(' / ');
+      const sk = keyOf(sizeIdxAll[0]);
+      return sk ? (normSizeFull(v[sk]) || '') : '';
+    }catch(e){ return ''; }
+  }
+
   function detectSizeFromUrl(url){
     try{
       const params = new URL(url).searchParams;
@@ -3015,7 +3080,7 @@
       const cur = drafts[id].currency;
       const pkr = cur==='USD' ? Math.round(priceRaw * usdRate) : priceRaw;
       const isUnstitched = UNSTITCHED_CATS.has(cat);
-      const uQty = isUnstitched ? (Math.max(1, parseInt(document.getElementById(`dc_uqty_${id}`)?.value)||1)) : 1;
+      const uQty = isUnstitched ? (Math.min(maxPerSize(), Math.max(1, parseInt(document.getElementById(`dc_uqty_${id}`)?.value)||1))) : 1;
       const sizes = isUnstitched ? [{size:'',qty:uQty}] : getDraftSizeRows(id);
       cart.push({ url, brand, cat, sizes, pkr, weight: getWeight(cat) });
     });
