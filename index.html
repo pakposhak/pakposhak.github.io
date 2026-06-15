@@ -465,11 +465,8 @@
         <div class="hdr-tagline" data-i18n="tagline">Pakistani Fashion · Bangladesh Delivery</div>
       </div>
     </div>
-    <button class="hdr-cart-btn" onclick="scrollToCart()" id="hdrCartBtn" title="View cart">
-      <span>🛒</span>
-      <span class="hdr-cart-label" id="hdrCartLabel" style="display:none">Cart</span>
-      <span class="hdr-cart-badge" id="hdrCartBadge" style="display:none">0</span>
-    </button>
+    <!-- right header slot — cart removed (it lives in the bottom bar). Space reserved for a future control. -->
+    <div class="hdr-right-slot" aria-hidden="true" style="grid-column:3"></div>
   </div>
 </header>
 
@@ -853,9 +850,9 @@
     <!-- Tabs -->
     <div style="display:flex;gap:8px;margin-bottom:14px">
       <button type="button" id="payTabReceiptBtn" onclick="switchPayTab('receipt')"
-        style="flex:1;padding:9px;border:none;border-radius:8px;font-size:0.82rem;font-weight:700;cursor:pointer;background:#12122a;color:#c9a96e" data-i18n="s_tab_receipt">📷 Upload Receipt</button>
+        style="flex:1;padding:9px;border:none;border-radius:8px;font-size:0.82rem;font-weight:700;cursor:pointer;background:#c9a96e;color:#12122a;transition:background .15s,color .15s" data-i18n="s_tab_receipt">📷 Upload Receipt</button>
       <button type="button" id="payTabMsgBtn" onclick="switchPayTab('msg')"
-        style="flex:1;padding:9px;border:none;border-radius:8px;font-size:0.82rem;font-weight:700;cursor:pointer;background:var(--surface);color:var(--txt-sec)" data-i18n="s_tab_msg">💬 Payment Message</button>
+        style="flex:1;padding:9px;border:none;border-radius:8px;font-size:0.82rem;font-weight:700;cursor:pointer;background:var(--gold-dim);color:var(--gold);transition:background .15s,color .15s" data-i18n="s_tab_msg">💬 Payment Message</button>
     </div>
 
     <!-- Receipt tab -->
@@ -3508,6 +3505,10 @@
       }
     });
     currentStep = n;
+    // The Home/Brands/Cart/How-To bar only navigates the first page's sections,
+    // so hide it on later steps where its buttons would do nothing.
+    const bn = document.getElementById('bottomNav');
+    if(bn) bn.style.display = (n === 1) ? '' : 'none';
     window.scrollTo({ top: 0, behavior: 'smooth' });
     updatePasteFab();
   }
@@ -3746,10 +3747,11 @@
     document.getElementById('payTabMsg').style.display     = onReceipt ? 'none' : '';
     const rBtn = document.getElementById('payTabReceiptBtn');
     const mBtn = document.getElementById('payTabMsgBtn');
-    rBtn.style.background = onReceipt ? '#12122a' : '#eee';
-    rBtn.style.color      = onReceipt ? '#c9a96e' : '#777';
-    mBtn.style.background = onReceipt ? '#eee' : '#12122a';
-    mBtn.style.color      = onReceipt ? '#777' : '#c9a96e';
+    // Selected tab = gold fill (highlighted); the other = dim/muted.
+    rBtn.style.background = onReceipt ? '#c9a96e' : 'var(--gold-dim)';
+    rBtn.style.color      = onReceipt ? '#12122a' : 'var(--gold)';
+    mBtn.style.background = onReceipt ? 'var(--gold-dim)' : '#c9a96e';
+    mBtn.style.color      = onReceipt ? 'var(--gold)' : '#12122a';
   }
 
   function previewReceipt(){
@@ -4081,18 +4083,11 @@
 
   // ── CART BADGE SYNC ──────────────────────────────────────────────────────
   function updateCartBadges(count){
-    const hBadge = document.getElementById('hdrCartBadge');
-    const hLabel = document.getElementById('hdrCartLabel');
+    // Header cart removed — only the bottom-bar badge remains.
     const bBadge = document.getElementById('bnavBadge');
-    if(count > 0){
-      hBadge.textContent = count; hBadge.style.display = '';
-      hLabel.textContent = 'Cart'; hLabel.style.display = '';
-      bBadge.textContent = count; bBadge.style.display = '';
-    } else {
-      hBadge.style.display = 'none';
-      hLabel.style.display = 'none';
-      bBadge.style.display = 'none';
-    }
+    if(!bBadge) return;
+    if(count > 0){ bBadge.textContent = count; bBadge.style.display = ''; }
+    else        { bBadge.style.display = 'none'; }
   }
 
   // Restore any saved cart — must run last, after all consts above are initialised.
@@ -4177,7 +4172,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-15x';
+  const PSB_BUILD = '2026-06-15y';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:#c9a96e;font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
