@@ -281,6 +281,23 @@ function authorizeNow(){
     'Your order script is now authorized to save orders, store receipts, and email you.\nSheet: ' + ss.getName());
 }
 
+// ── RUN ONCE to re-add the Status dropdown (ALL values, can NEVER block) ──
+// Editor ▸ pick "setStatusDropdown" in the function dropdown ▸ Run.
+// Adds a picklist to the Status column with every status, set to "show a
+// warning" (setAllowInvalid=true) so it offers the choices but still accepts
+// anything the script writes — it can never reject like the old rule did.
+function setStatusDropdown(){
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('Order Tracker') || ss.getSheets()[0];
+  var hdr = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  var col = 4;  // default Status = column D
+  for (var i = 0; i < hdr.length; i++){ if (String(hdr[i]).trim().toLowerCase() === 'status'){ col = i + 1; break; } }
+  var values = ['order_received','payment_received','payment_review','payment_confirmed',
+                'placed_at_brand','items_ordered','at_karachi_warehouse','received_in_dhaka','delivered_to_buyer'];
+  var rule = SpreadsheetApp.newDataValidation().requireValueInList(values, true).setAllowInvalid(true).build();
+  sheet.getRange(2, col, Math.max(1, sheet.getMaxRows() - 1), 1).setDataValidation(rule);
+}
+
 // Lets you test the deployment in a browser (visiting the /exec URL).
 // The "v3" tag is how we confirm the NEW code actually went live.
 function doGet() {
