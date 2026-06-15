@@ -20,8 +20,28 @@
   <link rel="manifest" href="manifest.json"/>
   <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
   <style>
-    /* ── Midnight Gold theme ── */
+    /* ── THEME TOKENS ──────────────────────────────────────────────────────
+       Light "Ivory & Gold" is the DEFAULT (:root). The original "Midnight Gold"
+       dark theme is preserved verbatim under [data-theme="dark"]. A tiny script
+       in <head> sets data-theme from the saved choice (psb_theme) or, if none,
+       the phone's system setting — so the same 13 token NAMES drive 350+ styled
+       spots and flip instantly. Brand/semantic inline colours stay fixed. ── */
     :root{
+      --bg:        #FAF6EE;
+      --surface:   #FFFFFF;
+      --raised:    #F3ECDD;
+      --input-bg:  #FFFFFF;
+      --gold:      #A8842B;
+      --gold-dim:  rgba(168,132,43,0.12);
+      --gold-bdr:  rgba(168,132,43,0.40);
+      --gold-bdr2: rgba(168,132,43,0.60);
+      --txt:       #000000;
+      --txt-sec:   #333333;
+      --txt-muted: #6E6E6E;
+      --bdr:       rgba(31,36,51,0.12);
+      --bdr-med:   rgba(31,36,51,0.22);
+    }
+    [data-theme="dark"]{
       --bg:        #080E1C;
       --surface:   #0F1929;
       --raised:    #162035;
@@ -65,7 +85,7 @@
       position:fixed; left:14px;
       bottom:calc(80px + env(safe-area-inset-bottom,0px)); z-index:60;
       display:flex; align-items:center; gap:6px;
-      background:linear-gradient(135deg,#f0c855,#c9a96e); color:#1a1206;
+      background:linear-gradient(135deg,#f0c855,var(--gold)); color:#1a1206;
       font-weight:700; font-size:0.88rem; font-family:inherit;
       border:none; border-radius:30px; padding:10px 16px; cursor:pointer;
       box-shadow:0 6px 22px rgba(201,169,110,0.45); animation:psbPillIn .35s ease;
@@ -96,7 +116,8 @@
     .hdr-inner{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:11px 16px;max-width:700px;margin:0 auto}
     .hdr-logo{grid-column:2;justify-self:center;display:flex;align-items:center;gap:10px}
     .hdr-logo-img{width:40px;height:40px;border-radius:10px;object-fit:cover;flex-shrink:0;border:1px solid var(--gold-bdr)}
-    .hdr-brand{font-size:1.15rem;font-weight:700;color:var(--txt);letter-spacing:0.5px}
+    .hdr-brand{font-size:1.2rem;font-weight:800;color:#000;letter-spacing:0.2px}
+    [data-theme="dark"] .hdr-brand{color:var(--txt)}
     .hdr-tagline{font-size:0.65rem;color:var(--gold);margin-top:1px;letter-spacing:0.3px}
     .hdr-cart-btn{grid-column:3;justify-self:end;position:relative;background:var(--gold-dim);border:1px solid var(--gold-bdr);
       color:var(--gold);border-radius:10px;padding:8px 14px;font-size:1rem;cursor:pointer;
@@ -110,12 +131,14 @@
     .hdr-cart-badge{background:#c0392b;color:#fff;border-radius:10px;padding:1px 7px;font-size:0.68rem;font-weight:700;min-width:20px;text-align:center}
 
     /* ── How-it-works strip ── */
-    .hiw-strip{background:var(--gold);padding:9px 16px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+    .hiw-strip{background:#F4ECD9;padding:9px 16px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+    [data-theme="dark"] .hiw-strip{background:var(--gold)}
     .hiw-strip::-webkit-scrollbar{display:none}
     .hiw-inner{display:flex;align-items:center;justify-content:center;gap:0;min-width:max-content;margin:0 auto}
     .hiw-step{display:flex;align-items:center;gap:5px;padding:0 10px;font-size:0.72rem;font-weight:700;color:#0A1628;white-space:nowrap}
     .hiw-step span.icon{font-size:1rem}
-    .hiw-video,.hiw-guide{margin-left:12px;background:#0A1628;color:var(--gold);font-weight:800;font-size:0.72rem;padding:6px 14px;border-radius:14px;text-decoration:none;white-space:nowrap}
+    .hiw-video,.hiw-guide{margin-left:12px;background:#1F2433;color:#FAF6EE;font-weight:800;font-size:0.72rem;padding:6px 14px;border-radius:14px;text-decoration:none;white-space:nowrap}
+    [data-theme="dark"] .hiw-video,[data-theme="dark"] .hiw-guide{background:#0A1628;color:var(--gold)}
     .hiw-mobile{display:none}
     .hiw-arrow{color:#0A1628;opacity:0.45;font-size:0.9rem;flex-shrink:0}
 
@@ -198,7 +221,7 @@
 
     /* Remember me / saved details */
     .saved-indicator{display:none;align-items:center;gap:8px;font-size:0.75rem;
-      background:#0D2010;border:1px solid #2a6030;border-radius:6px;padding:7px 12px;margin-bottom:12px}
+      background:rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.45);border-radius:6px;padding:7px 12px;margin-bottom:12px}
     .saved-indicator span{color:#4caf50;font-weight:600}
     .saved-indicator button{background:none;border:none;color:var(--txt-muted);cursor:pointer;font-size:0.72rem;text-decoration:underline;padding:0}
     .remember-row{display:flex;align-items:center;gap:8px;margin-top:4px;font-size:0.8rem;color:var(--txt-sec)}
@@ -456,6 +479,17 @@
   </style>
 </head>
 <body>
+<script>
+  /* Set the colour theme BEFORE paint to avoid a flash: a saved choice wins,
+     otherwise follow the phone's own light/dark system setting. */
+  (function(){
+    try{
+      var s = localStorage.getItem('psb_theme');
+      var dark = s ? (s === 'dark') : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    }catch(e){ document.documentElement.setAttribute('data-theme','light'); }
+  })();
+</script>
 
 <header id="appHeader">
   <div class="hdr-inner">
@@ -467,8 +501,10 @@
         <div class="hdr-tagline" data-i18n="tagline">Pakistani Fashion · Bangladesh Delivery</div>
       </div>
     </div>
-    <!-- right header slot — cart removed (it lives in the bottom bar). Space reserved for a future control. -->
-    <div class="hdr-right-slot" aria-hidden="true" style="grid-column:3"></div>
+    <!-- right header slot — light/dark theme toggle -->
+    <div class="hdr-right-slot" style="grid-column:3;justify-self:end">
+      <button class="hdr-lang" id="hdrThemeBtn" onclick="toggleTheme()" aria-label="Switch between light and dark theme" title="Light / dark theme">🌙</button>
+    </div>
   </div>
 </header>
 
@@ -551,7 +587,7 @@
 
   <!-- Order list label -->
   <div class="section-label" style="margin-top:32px">Your Order List
-    <span id="itemCountBadge" style="font-size:0.72rem;background:#c9a96e;color:#12122a;border-radius:10px;padding:2px 9px;margin-left:8px;display:none;font-weight:700"></span>
+    <span id="itemCountBadge" style="font-size:0.72rem;background:var(--gold);color:#12122a;border-radius:10px;padding:2px 9px;margin-left:8px;display:none;font-weight:700"></span>
   </div>
 
   <div class="cart-empty" id="cartEmpty">
@@ -567,7 +603,7 @@
       <div class="rt-row"><span>Transaction Fee</span><span>৳ 100</span></div>
       <div class="rt-total"><span>ESTIMATED TOTAL</span><span id="rt-total">৳ —</span></div>
       <div class="rt-note">* The total above is what you pay — your order is processed automatically.</div>
-      <div class="rt-note" style="margin-top:6px;color:#f9a825">⚖️ Shipping is charged by your parcel's actual weight, so this is a very close estimate. We'll only message you on WhatsApp if a product is unavailable or the weight turns out much higher than estimated.</div>
+      <div class="rt-note" style="margin-top:6px;color:#000;font-weight:600">⚖️ Shipping is charged by your parcel's actual weight, so this is a very close estimate. We'll only message you on WhatsApp if a product is unavailable or the weight turns out much higher than estimated.</div>
     </div>
   </div>
 
@@ -638,7 +674,7 @@
     </div>
   </div>
 
-  <div style="display:flex;align-items:center;gap:8px;background:rgba(240,192,64,0.10);border:1.5px solid rgba(240,192,64,0.40);border-radius:8px;padding:11px 16px;margin-top:16px;font-size:0.82rem;color:#f0c855">
+  <div style="display:flex;align-items:center;gap:8px;background:rgba(240,192,64,0.10);border:1.5px solid rgba(240,192,64,0.40);border-radius:8px;padding:11px 16px;margin-top:16px;font-size:0.82rem;color:var(--txt)">
     <span style="font-size:1.1rem">🚚</span>
     <span><strong data-i18n="d_delivery_t">Estimated Delivery: 2–3 Weeks</strong> <span data-i18n="d_delivery_x">from order confirmation to your door.</span></span>
   </div>
@@ -672,7 +708,7 @@
 
     <div class="customer-summary" id="customerSummary"></div>
 
-    <div style="background:rgba(240,192,64,0.10);border:1px solid rgba(240,192,64,0.35);border-radius:7px;padding:9px 13px;font-size:0.75rem;color:#f0c855;margin-bottom:6px" data-i18n="r_avail">
+    <div style="background:rgba(240,192,64,0.22);border:1px solid rgba(214,158,46,0.5);border-radius:7px;padding:9px 13px;font-size:0.75rem;color:#000;margin-bottom:6px" data-i18n="r_avail">
       ⚠️ Items are subject to availability. If anything goes out of stock, we'll contact you on WhatsApp before proceeding.
     </div>
   </div>
@@ -700,18 +736,18 @@
   <div style="background:rgba(230,168,23,0.10);border:2px solid rgba(230,168,23,0.40);border-radius:10px;padding:12px 18px;margin-bottom:20px;display:flex;align-items:flex-start;gap:12px">
     <span style="font-size:1.4rem;flex-shrink:0">⚠️</span>
     <div>
-      <div style="font-size:0.88rem;font-weight:700;color:#f0c855;margin-bottom:2px" data-i18n="s_stocktitle">Stock Notice</div>
+      <div style="font-size:0.88rem;font-weight:700;color:var(--txt);margin-bottom:2px" data-i18n="s_stocktitle">Stock Notice</div>
       <div style="font-size:0.83rem;color:var(--txt-sec);line-height:1.5" data-i18n="s_stocktext">Pakistani fashion items sell out fast. If anything goes out of stock before we place your order, we'll contact you on WhatsApp immediately and offer alternatives or a full refund.</div>
     </div>
   </div>
 
   <!-- Order ID + Track row -->
-  <div style="background:#12122a;border-radius:12px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+  <div style="background:var(--raised);border:1px solid var(--gold-bdr);border-radius:12px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
     <div>
-      <div style="font-size:0.7rem;color:#888;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px" data-i18n="s_orderid">Your Order ID</div>
-      <div style="font-size:1.3rem;font-weight:700;color:#c9a96e;letter-spacing:1.5px" id="orderRef">—</div>
+      <div style="font-size:0.7rem;color:var(--txt-muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px" data-i18n="s_orderid">Your Order ID</div>
+      <div style="font-size:1.3rem;font-weight:700;color:var(--txt);letter-spacing:1.5px" id="orderRef">—</div>
     </div>
-    <a id="trackOrderLink" href="tracking.html" style="display:inline-flex;align-items:center;gap:6px;background:#c9a96e;color:#12122a;padding:10px 20px;border-radius:8px;font-weight:700;text-decoration:none;font-size:0.88rem;white-space:nowrap" data-i18n="s_track">📦 Track My Order</a>
+    <a id="trackOrderLink" href="tracking.html" style="display:inline-flex;align-items:center;gap:6px;background:var(--gold);color:#12122a;padding:10px 20px;border-radius:8px;font-weight:700;text-decoration:none;font-size:0.88rem;white-space:nowrap" data-i18n="s_track">📦 Track My Order</a>
   </div>
 
   <!-- Payment section heading -->
@@ -724,115 +760,115 @@
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:20px">
 
     <!-- bKash Payment -->
-    <div style="background:var(--raised);border:2px solid #e2136e;border-radius:12px;padding:14px 16px">
+    <div style="background:var(--raised);border:1px solid var(--gold-bdr);border-radius:12px;padding:14px 16px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <span style="font-size:1.4rem">🟣</span>
         <div>
-          <div style="font-weight:700;color:#e2136e;font-size:0.95rem">bKash</div>
-          <div style="font-size:0.68rem;background:#e2136e;color:#fff;border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">PAYMENT</div>
+          <div style="font-weight:700;color:var(--txt);font-size:0.95rem">bKash</div>
+          <div style="font-size:0.68rem;background:var(--gold-dim);color:var(--gold);border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">PAYMENT</div>
         </div>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(226,19,110,0.15);border-radius:8px;padding:8px 12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;background:var(--gold-dim);border-radius:8px;padding:8px 12px">
         <span style="font-size:1.1rem;font-weight:700;color:var(--txt);letter-spacing:1px">01352-018131</span>
-        <button onclick="copyNum('01352018131',this)" style="background:#e2136e;border:none;color:#fff;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
+        <button onclick="copyNum('01352018131',this)" style="background:var(--gold);border:none;color:#1a1206;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
       </div>
     </div>
 
     <!-- bKash Send Money -->
-    <div style="background:var(--raised);border:2px solid #e2136e55;border-radius:12px;padding:14px 16px">
+    <div style="background:var(--raised);border:1px solid var(--gold-bdr);border-radius:12px;padding:14px 16px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <span style="font-size:1.4rem">🟣</span>
         <div>
-          <div style="font-weight:700;color:#e2136e;font-size:0.95rem">bKash</div>
-          <div style="font-size:0.68rem;background:rgba(255,255,255,0.15);color:var(--txt-sec);border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">SEND MONEY</div>
+          <div style="font-weight:700;color:var(--txt);font-size:0.95rem">bKash</div>
+          <div style="font-size:0.68rem;background:var(--gold-dim);color:var(--gold);border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">SEND MONEY</div>
         </div>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(226,19,110,0.12);border-radius:8px;padding:8px 12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;background:var(--gold-dim);border-radius:8px;padding:8px 12px">
         <span style="font-size:1.1rem;font-weight:700;color:var(--txt);letter-spacing:1px">01851-948690</span>
-        <button onclick="copyNum('01851948690',this)" style="background:#e2136e;border:none;color:#fff;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
+        <button onclick="copyNum('01851948690',this)" style="background:var(--gold);border:none;color:#1a1206;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
       </div>
     </div>
 
     <!-- Nagad -->
-    <div style="background:var(--raised);border:2px solid #f7941d88;border-radius:12px;padding:14px 16px">
+    <div style="background:var(--raised);border:1px solid var(--gold-bdr);border-radius:12px;padding:14px 16px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <span style="font-size:1.4rem">🟠</span>
         <div>
-          <div style="font-weight:700;color:#d4780a;font-size:0.95rem">Nagad</div>
-          <div style="font-size:0.68rem;background:rgba(255,255,255,0.15);color:var(--txt-sec);border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">SEND MONEY</div>
+          <div style="font-weight:700;color:var(--txt);font-size:0.95rem">Nagad</div>
+          <div style="font-size:0.68rem;background:var(--gold-dim);color:var(--gold);border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">SEND MONEY</div>
         </div>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(247,148,29,0.15);border-radius:8px;padding:8px 12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;background:var(--gold-dim);border-radius:8px;padding:8px 12px">
         <span style="font-size:1.1rem;font-weight:700;color:var(--txt);letter-spacing:1px">01851-948690</span>
-        <button onclick="copyNum('01851948690',this)" style="background:#f7941d;border:none;color:#fff;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
+        <button onclick="copyNum('01851948690',this)" style="background:var(--gold);border:none;color:#1a1206;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
       </div>
     </div>
 
     <!-- Upay -->
-    <div style="background:var(--raised);border:2px solid #6c3cff66;border-radius:12px;padding:14px 16px">
+    <div style="background:var(--raised);border:1px solid var(--gold-bdr);border-radius:12px;padding:14px 16px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <span style="font-size:1.4rem">🔵</span>
         <div>
-          <div style="font-weight:700;color:#8b6fff;font-size:0.95rem">Upay</div>
-          <div style="font-size:0.68rem;background:rgba(255,255,255,0.15);color:var(--txt-sec);border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">SEND MONEY</div>
+          <div style="font-weight:700;color:var(--txt);font-size:0.95rem">Upay</div>
+          <div style="font-size:0.68rem;background:var(--gold-dim);color:var(--gold);border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">SEND MONEY</div>
         </div>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(108,60,255,0.15);border-radius:8px;padding:8px 12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;background:var(--gold-dim);border-radius:8px;padding:8px 12px">
         <span style="font-size:1.1rem;font-weight:700;color:var(--txt);letter-spacing:1px">01851-948690</span>
-        <button onclick="copyNum('01851948690',this)" style="background:#6c3cff;border:none;color:#fff;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
+        <button onclick="copyNum('01851948690',this)" style="background:var(--gold);border:none;color:#1a1206;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
       </div>
     </div>
 
     <!-- Rocket -->
-    <div style="background:var(--raised);border:2px solid #8b189166;border-radius:12px;padding:14px 16px">
+    <div style="background:var(--raised);border:1px solid var(--gold-bdr);border-radius:12px;padding:14px 16px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <span style="font-size:1.4rem">🚀</span>
         <div>
-          <div style="font-weight:700;color:#c060d4;font-size:0.95rem">Rocket</div>
-          <div style="font-size:0.68rem;background:rgba(255,255,255,0.15);color:var(--txt-sec);border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">SEND MONEY</div>
+          <div style="font-weight:700;color:var(--txt);font-size:0.95rem">Rocket</div>
+          <div style="font-size:0.68rem;background:var(--gold-dim);color:var(--gold);border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">SEND MONEY</div>
         </div>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(139,24,145,0.15);border-radius:8px;padding:8px 12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;background:var(--gold-dim);border-radius:8px;padding:8px 12px">
         <span style="font-size:1.1rem;font-weight:700;color:var(--txt);letter-spacing:1px">01851-948690</span>
-        <button onclick="copyNum('01851948690',this)" style="background:#8b1891;border:none;color:#fff;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
+        <button onclick="copyNum('01851948690',this)" style="background:var(--gold);border:none;color:#1a1206;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
       </div>
     </div>
 
     <!-- City Bank -->
-    <div style="background:var(--raised);border:2px solid #00529b66;border-radius:12px;padding:14px 16px">
+    <div style="background:var(--raised);border:1px solid var(--gold-bdr);border-radius:12px;padding:14px 16px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
         <span style="font-size:1.4rem">🏦</span>
         <div>
-          <div style="font-weight:700;color:#4da6ff;font-size:0.95rem">City Bank</div>
-          <div style="font-size:0.68rem;background:rgba(255,255,255,0.15);color:var(--txt-sec);border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">BANK TRANSFER</div>
+          <div style="font-weight:700;color:var(--txt);font-size:0.95rem">City Bank</div>
+          <div style="font-size:0.68rem;background:var(--gold-dim);color:var(--gold);border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">BANK TRANSFER</div>
         </div>
       </div>
       <div style="font-size:0.76rem;color:var(--txt-sec);margin-bottom:8px">Acc. Name: <strong style="color:var(--txt)">Moors Attire</strong></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(0,82,155,0.18);border-radius:8px;padding:8px 12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;background:var(--gold-dim);border-radius:8px;padding:8px 12px">
         <div>
           <div style="font-size:0.65rem;color:var(--txt-muted);text-transform:uppercase;letter-spacing:0.5px">A/C No</div>
           <div style="font-size:1rem;font-weight:700;color:var(--txt);letter-spacing:0.5px">1324897775001</div>
         </div>
-        <button onclick="copyNum('1324897775001',this)" style="background:#00529b;border:none;color:#fff;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
+        <button onclick="copyNum('1324897775001',this)" style="background:var(--gold);border:none;color:#1a1206;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
       </div>
     </div>
 
     <!-- UCBL -->
-    <div style="background:var(--raised);border:2px solid #00529b66;border-radius:12px;padding:14px 16px">
+    <div style="background:var(--raised);border:1px solid var(--gold-bdr);border-radius:12px;padding:14px 16px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
         <span style="font-size:1.4rem">🏦</span>
         <div>
-          <div style="font-weight:700;color:#4da6ff;font-size:0.95rem">UCBL</div>
-          <div style="font-size:0.68rem;background:rgba(255,255,255,0.15);color:var(--txt-sec);border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">BANK TRANSFER</div>
+          <div style="font-weight:700;color:var(--txt);font-size:0.95rem">UCBL</div>
+          <div style="font-size:0.68rem;background:var(--gold-dim);color:var(--gold);border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">BANK TRANSFER</div>
         </div>
       </div>
       <div style="font-size:0.76rem;color:var(--txt-sec);margin-bottom:8px">Acc. Name: <strong style="color:var(--txt)">Moors Attire</strong></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(0,82,155,0.18);border-radius:8px;padding:8px 12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;background:var(--gold-dim);border-radius:8px;padding:8px 12px">
         <div>
           <div style="font-size:0.65rem;color:var(--txt-muted);text-transform:uppercase;letter-spacing:0.5px">A/C No</div>
           <div style="font-size:1rem;font-weight:700;color:var(--txt);letter-spacing:0.5px">7862141003465221</div>
         </div>
-        <button onclick="copyNum('7862141003465221',this)" style="background:#00529b;border:none;color:#fff;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
+        <button onclick="copyNum('7862141003465221',this)" style="background:var(--gold);border:none;color:#1a1206;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
       </div>
     </div>
 
@@ -843,7 +879,7 @@
     <div style="text-align:center;font-weight:700;color:var(--gold);font-size:1.02rem" data-i18n="s_paid_title">✅ Already Paid? Confirm Your Payment</div>
     <div style="text-align:center;font-size:0.78rem;color:var(--txt-sec);margin:5px 0 14px">
       <span data-i18n="s_paid_sub">Enter your payment details below so we can match it to Order</span>
-      <span id="payConfirmOrderId" style="font-weight:700;color:#c9a96e">—</span>
+      <span id="payConfirmOrderId" style="font-weight:700;color:var(--gold)">—</span>
     </div>
 
     <!-- Structured payment details — lets us verify the payment by amount -->
@@ -878,7 +914,7 @@
     <!-- Tabs -->
     <div style="display:flex;gap:8px;margin-bottom:14px">
       <button type="button" id="payTabReceiptBtn" onclick="switchPayTab('receipt')"
-        style="flex:1;padding:9px;border:none;border-radius:8px;font-size:0.82rem;font-weight:700;cursor:pointer;background:#c9a96e;color:#12122a;transition:background .15s,color .15s" data-i18n="s_tab_receipt">📷 Upload Receipt</button>
+        style="flex:1;padding:9px;border:none;border-radius:8px;font-size:0.82rem;font-weight:700;cursor:pointer;background:var(--gold);color:#12122a;transition:background .15s,color .15s" data-i18n="s_tab_receipt">📷 Upload Receipt</button>
       <button type="button" id="payTabMsgBtn" onclick="switchPayTab('msg')"
         style="flex:1;padding:9px;border:none;border-radius:8px;font-size:0.82rem;font-weight:700;cursor:pointer;background:var(--gold-dim);color:var(--gold);transition:background .15s,color .15s" data-i18n="s_tab_msg">💬 Payment Message</button>
     </div>
@@ -904,7 +940,7 @@
     </div>
 
     <button type="button" onclick="submitPaymentConfirmation()" id="payConfirmBtn"
-      style="width:100%;margin-top:14px;background:#c9a96e;border:none;color:#12122a;padding:13px;border-radius:10px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:opacity 0.15s"
+      style="width:100%;margin-top:14px;background:var(--gold);border:none;color:#12122a;padding:13px;border-radius:10px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:opacity 0.15s"
       onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'" data-i18n="s_confirmpay">✅ Confirm Payment</button>
     <div id="payConfirmStatus" style="display:none;margin-top:10px;font-size:0.82rem;text-align:center;padding:9px;border-radius:8px"></div>
   </div>
@@ -916,7 +952,7 @@
   </div>
 
   <div style="text-align:center">
-    <button onclick="resetForm()" style="background:#12122a;border:none;color:#c9a96e;padding:12px 32px;border-radius:10px;font-size:0.9rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'" data-i18n="s_another">← Place Another Order</button>
+    <button onclick="resetForm()" style="background:#12122a;border:none;color:var(--gold);padding:12px 32px;border-radius:10px;font-size:0.9rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'" data-i18n="s_another">← Place Another Order</button>
   </div>
 
 </div>
@@ -1013,10 +1049,10 @@
 
 <!-- ADMIN PANEL — visible only via ?admin in URL -->
 <div id="adminPanel" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;
-  color:#fff;padding:16px 20px;z-index:999;border-top:3px solid #c9a96e;font-family:inherit;
+  color:#fff;padding:16px 20px;z-index:999;border-top:3px solid var(--gold);font-family:inherit;
   overflow-y:auto;max-height:85vh">
   <div style="max-width:500px;margin:0 auto">
-    <div style="font-size:0.7rem;letter-spacing:2px;color:#c9a96e;font-weight:700;margin-bottom:10px">
+    <div style="font-size:0.7rem;letter-spacing:2px;color:var(--gold);font-weight:700;margin-bottom:10px">
       🔒 ADMIN — RATE SETTINGS (not visible to buyers)
     </div>
     <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
@@ -1061,7 +1097,7 @@
           style="width:100%;max-width:380px;padding:8px 10px;border-radius:6px;border:none;font-size:0.9rem"/>
       </div>
       <button id="saveRatesBtn" onclick="saveRates()"
-        style="padding:8px 20px;background:#c9a96e;color:#1a1a2e;border:none;border-radius:6px;
+        style="padding:8px 20px;background:var(--gold);color:#1a1a2e;border:none;border-radius:6px;
         font-weight:700;font-size:0.88rem;cursor:pointer;height:36px">
         Save Rates
       </button>
@@ -1072,14 +1108,14 @@
 
     <!-- Weight Chart Editor -->
     <div style="margin-top:16px;border-top:1px solid #333;padding-top:14px">
-      <div style="font-size:0.7rem;letter-spacing:1.5px;color:#c9a96e;font-weight:700;margin-bottom:10px">
+      <div style="font-size:0.7rem;letter-spacing:1.5px;color:var(--gold);font-weight:700;margin-bottom:10px">
         📦 WEIGHT CHART (kg per unit — edit &amp; save)
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;max-width:600px" id="weightEditorGrid">
         <!-- Populated by JS -->
       </div>
       <button onclick="saveWeights()"
-        style="margin-top:12px;padding:8px 20px;background:#c9a96e;color:#1a1a2e;border:none;border-radius:6px;font-weight:700;font-size:0.88rem;cursor:pointer"
+        style="margin-top:12px;padding:8px 20px;background:var(--gold);color:#1a1a2e;border:none;border-radius:6px;font-weight:700;font-size:0.88rem;cursor:pointer"
         id="saveWeightsBtn">Save Weights</button>
       <button onclick="resetWeights()"
         style="margin-top:12px;margin-left:8px;padding:8px 16px;background:transparent;color:var(--txt-muted);border:1px solid var(--bdr-med);border-radius:6px;font-size:0.82rem;cursor:pointer">
@@ -1715,7 +1751,7 @@
 
   async function fetchProductData(id, url, presetMember){
     const statusEl = document.getElementById(`dc_fetch_${id}`);
-    function setStatus(msg, color){ if(statusEl){ statusEl.style.display=''; statusEl.textContent=msg; statusEl.style.color=color||'#c9a96e'; } }
+    function setStatus(msg, color){ if(statusEl){ statusEl.style.display=''; statusEl.textContent=msg; statusEl.style.color=color||'var(--gold)'; } }
     function hideStatus(){ if(statusEl) setTimeout(()=>{ statusEl.style.display='none'; },3500); }
 
     try {
@@ -1735,10 +1771,10 @@
           // This draft is an EXTRA piece of a product set — its data was already
           // fetched with the primary piece, so no network call is needed.
           rj = { ok:true, currency:'PKR', price:presetMember.price, title:presetMember.title, sizes:presetMember.sizes||[] };
-          setStatus('🧩 Matching piece of the set…','#c9a96e');
+          setStatus('🧩 Matching piece of the set…','var(--gold)');
         } else {
           const relay = ((localStorage.getItem('psb_relay_url')||'').trim() || DEFAULT_RELAY_URL).replace(/\/+$/,'');
-          setStatus('🇵🇰 Fetching price & live stock from Pakistan (this brand has no public API)…','#c9a96e');
+          setStatus('🇵🇰 Fetching price & live stock from Pakistan (this brand has no public API)…','var(--gold)');
           const sc = new AbortController(); const stid = setTimeout(()=>sc.abort(), 22000);
           try{
             const rr = await fetch(`${relay}/scrape?url=${encodeURIComponent(url)}`, { signal: sc.signal, cache:'no-store' });
@@ -1790,7 +1826,7 @@
       const isGeneric = !isSfcc && GENERIC_SCRAPE_HOSTS.has(pastedHost);
       if(isGeneric){
         const relay = ((localStorage.getItem('psb_relay_url')||'').trim() || DEFAULT_RELAY_URL).replace(/\/+$/,'');
-        setStatus('🇵🇰 Fetching price from Pakistan (this brand has no public API)…','#c9a96e');
+        setStatus('🇵🇰 Fetching price from Pakistan (this brand has no public API)…','var(--gold)');
         const sc = new AbortController(); const stid = setTimeout(()=>sc.abort(), 22000);
         try{
           const rr = await fetch(`${relay}/scrapeld?url=${encodeURIComponent(url)}`, { signal: sc.signal, cache:'no-store' });
@@ -1838,7 +1874,7 @@
       }
       if(!m){
         if(/\/collections\//.test(u.pathname))
-          return setStatus('⚠️ This is a category/collection page — open the brand site, tap a specific product, then copy that product URL','#c9a96e');
+          return setStatus('⚠️ This is a category/collection page — open the brand site, tap a specific product, then copy that product URL','var(--gold)');
         return setStatus('ℹ️ Fill details manually — link doesn\'t point to a specific product','#aaa');
       }
 
@@ -1848,7 +1884,7 @@
 
       setStatus(twinHost
         ? `🇵🇰 International link detected — checking the Pakistani store (${twinHost})…`
-        : '🔍 Fetching product details from brand site…', '#c9a96e');
+        : '🔍 Fetching product details from brand site…', 'var(--gold)');
       const ctrl = new AbortController();
       const tid  = setTimeout(()=>ctrl.abort(), 22000); // PK sites are slow from BD; allow for retries
 
@@ -1912,7 +1948,7 @@
           const relay = ((localStorage.getItem('psb_relay_url')||'').trim() || DEFAULT_RELAY_URL).replace(/\/+$/,'');
           if(relay && !USD_ONLY_BRANDS.has(pastedHost)){
             try{
-              setStatus(`🇵🇰 Brand priced in ${pkrVia} for you — fetching real PKR price via Pakistan relay…`,'#c9a96e');
+              setStatus(`🇵🇰 Brand priced in ${pkrVia} for you — fetching real PKR price via Pakistan relay…`,'var(--gold)');
               // Send the relay the PK-twin URL so it queries the right store.
               const relayUrl = twinHost ? `${fetchOrigin}/products/${m[1]}` : url;
               const rr = await fetch(`${relay}/price?url=${encodeURIComponent(relayUrl)}`,
@@ -2116,7 +2152,7 @@
             // Stock verified, but no choice in the pasted link → remind the operator
             // that a highlighted choice on the brand page is NOT a selection.
             hint.innerHTML = '⚠️ <b>Your link doesn\'t include a ' + whatWord + '.</b> Tap your ' + whatWord + ' below — a highlighted choice on the brand\'s page does <u>not</u> mean it was selected.';
-            hint.style.cssText = 'font-size:0.75rem;font-weight:600;color:#f0c855;background:rgba(230,168,23,0.12);border:1px solid rgba(230,168,23,0.40);border-radius:6px;padding:6px 10px;margin-bottom:7px';
+            hint.style.cssText = 'font-size:0.75rem;font-weight:600;color:var(--txt);background:rgba(230,168,23,0.12);border:1px solid rgba(230,168,23,0.40);border-radius:6px;padding:6px 10px;margin-bottom:7px';
           }
           // ── BUYER-PICKED COMBINATION (from ?variant=) ───────────────────
           // If the link encodes a specific variant (colour and/or size),
@@ -2148,7 +2184,7 @@
       if(foreignCur && USD_ONLY_BRANDS.has(pastedHost)){
         // USD-native brand: the USD price IS the true price (no PKR exists
         // anywhere, even for Pakistani buyers) — calm note, not an alarm.
-        setStatus(`ℹ️ This brand sells in ${foreignCur} only — no PKR price exists. ${foreignCur} price auto-filled; it converts at your admin USD→PKR rate.`, '#f0c855');
+        setStatus(`ℹ️ This brand sells in ${foreignCur} only — no PKR price exists. ${foreignCur} price auto-filled; it converts at your admin USD→PKR rate.`, 'var(--txt)');
         checkAddUrlLock();
         return;  // keep the note visible (no auto-hide)
       }
@@ -2193,7 +2229,7 @@
           </div>
         </div>
         <button onclick="duplicateDraft(${id})" title="Add a second item from this same page"
-          style="background:none;border:1.5px solid #c9a96e;color:#c9a96e;border-radius:14px;
+          style="background:none;border:1.5px solid var(--gold);color:var(--gold);border-radius:14px;
                  padding:3px 11px;font-size:0.72rem;font-weight:700;cursor:pointer;margin-right:6px">
           + 2nd item
         </button>
@@ -2211,11 +2247,11 @@
           <div id="dc_catauto_${id}" style="display:none;align-items:center;gap:9px;flex-wrap:wrap;background:rgba(46,125,50,0.12);border:1px solid rgba(46,125,50,0.40);border-radius:7px;padding:8px 11px">
             <span style="font-size:0.7rem;color:var(--txt-muted)">✓ Auto-detected</span>
             <b id="dc_catlabel_${id}" style="font-size:0.9rem;color:var(--txt)"></b>
-            <button type="button" onclick="openCatPicker(${id})" style="margin-left:auto;font-size:0.72rem;color:#c9a96e;background:none;border:1.5px solid #c9a96e;border-radius:12px;padding:3px 12px;cursor:pointer;font-weight:700">Change</button>
+            <button type="button" onclick="openCatPicker(${id})" style="margin-left:auto;font-size:0.72rem;color:var(--gold);background:none;border:1.5px solid var(--gold);border-radius:12px;padding:3px 12px;cursor:pointer;font-weight:700">Change</button>
           </div>
           <!-- Manual 3-gender picker — fallback only (no auto-match, or "Change") -->
           <div id="dc_catpick_${id}" style="display:none">
-            <div id="dc_catpickhint_${id}" style="font-size:0.74rem;color:#f0c855;font-weight:600;margin-bottom:6px">Choose the category:</div>
+            <div id="dc_catpickhint_${id}" style="font-size:0.74rem;color:var(--txt);font-weight:600;margin-bottom:6px">Choose the category:</div>
             ${buildCatDropdown(id,'w')}
             ${buildCatDropdown(id,'m')}
             ${buildCatDropdown(id,'k')}
@@ -2232,7 +2268,7 @@
             </div>
           </div>
           <div id="dc_cnote_${id}" style="display:none;margin-top:5px;font-size:0.72rem;font-weight:600;padding:4px 8px;border-radius:5px"></div>
-          <div id="dc_phint_${id}" style="font-size:0.72rem;color:#c9a96e;margin-top:3px;min-height:14px"></div>
+          <div id="dc_phint_${id}" style="font-size:0.72rem;color:var(--gold);margin-top:3px;min-height:14px"></div>
         </div>
       </div>
       <!-- Sizes section — always visible, content changes with category -->
@@ -2482,7 +2518,7 @@
     if(!raw){
       // Focus + highlight instead of alert
       inp.focus();
-      inp.style.borderColor = '#c9a96e';
+      inp.style.borderColor = 'var(--gold)';
       inp.style.boxShadow   = '0 0 0 3px rgba(201,169,110,0.3)';
       inp.placeholder = '← Paste the product URL here first';
       setTimeout(()=>{
@@ -2576,7 +2612,7 @@
       note = document.createElement('div');
       note.className = 'qty-cap-msg';
       note.setAttribute('role','alert');
-      note.style.cssText = 'font-size:0.75rem;font-weight:700;color:#f0c855;background:rgba(230,168,23,0.12);border:1px solid rgba(230,168,23,0.40);border-radius:6px;padding:6px 10px;margin-top:6px';
+      note.style.cssText = 'font-size:0.75rem;font-weight:700;color:var(--txt);background:rgba(230,168,23,0.12);border:1px solid rgba(230,168,23,0.40);border-radius:6px;padding:6px 10px;margin-top:6px';
       anchor.insertAdjacentElement('afterend', note);
     }
     note.innerHTML = `⚠️ Maximum <b>${mx}</b> ${isItem ? 'pieces for this item' : 'pieces per size'} can be ordered here. Need more? Please message us and we’ll check availability.`;
@@ -2617,8 +2653,8 @@
     checkAddUrlLock();
   }
 
-  const CHIP_ON  = 'padding:6px 15px;border:1.5px solid #c9a96e;border-radius:16px;background:#c9a96e;color:#080e1c;font-size:0.8rem;font-weight:700;cursor:pointer';
-  const CHIP_OFF = 'padding:6px 15px;border:1.5px solid #c9a96e;border-radius:16px;background:var(--gold-dim);color:var(--gold);font-size:0.8rem;font-weight:700;cursor:pointer';
+  const CHIP_ON  = 'padding:6px 15px;border:1.5px solid var(--gold);border-radius:16px;background:var(--gold);color:#080e1c;font-size:0.8rem;font-weight:700;cursor:pointer';
+  const CHIP_OFF = 'padding:6px 15px;border:1.5px solid var(--gold);border-radius:16px;background:var(--gold-dim);color:var(--gold);font-size:0.8rem;font-weight:700;cursor:pointer';
   function setChipSelected(chip, on){ if(chip) chip.style.cssText = on ? CHIP_ON : CHIP_OFF; }
 
   function stepSizeQty(draftId, safe, delta, btn){
@@ -2998,6 +3034,22 @@
   }
   function toggleLang(){ setLang(_lang === 'en' ? 'bn' : 'en'); }
 
+  // ── Light / dark theme toggle (data-theme is set pre-paint in <head>) ──
+  function applyThemeIcon(){
+    var btn = document.getElementById('hdrThemeBtn'); if(!btn) return;
+    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    btn.textContent = dark ? '☀️' : '🌙';
+    btn.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+  }
+  function toggleTheme(){
+    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    var next = dark ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try{ localStorage.setItem('psb_theme', next); }catch(e){}
+    applyThemeIcon();
+  }
+  applyThemeIcon();
+
   let _catActive = Object.keys(BRAND_CATS)[0];   // first category open by default
   let _catOpen = false;                          // flips true on the initial render below
   renderCatBar();   // build the category bar + brand columns now (DOM above this script exists)
@@ -3240,7 +3292,7 @@
     setTimeout(() => {
       if(!inp) return;
       inp.focus();
-      inp.style.borderColor = '#c9a96e';
+      inp.style.borderColor = 'var(--gold)';
       inp.style.boxShadow   = '0 0 0 3px rgba(201,169,110,0.35)';
       setTimeout(() => { inp.style.borderColor = ''; inp.style.boxShadow = ''; }, 2500);
     }, 350);
@@ -3433,7 +3485,7 @@
     card.insertAdjacentHTML('afterbegin',
       `<div style="background:rgba(249,168,37,0.12);border-bottom:2px solid #f9a825;padding:9px 14px;
          border-radius:10px 10px 0 0;margin:-1px -1px 0;font-size:0.82rem;font-weight:700;
-         color:#f0c855;display:flex;align-items:center;gap:8px">
+         color:var(--txt);display:flex;align-items:center;gap:8px">
         ✏️ Editing item — change anything below, then click <span style="background:#f9a825;color:#12122a;
           padding:1px 8px;border-radius:5px;font-size:0.78rem">Save to Order List</span>
       </div>`);
@@ -3511,7 +3563,7 @@
           <div class="item-price">PKR ${item.pkr.toLocaleString()} <span style="font-size:0.68rem;font-weight:400;color:var(--txt-muted)">each</span></div>
           <div class="item-bdt">≈ ৳${bdtEach.toLocaleString()} each</div>
           <div style="display:flex;gap:4px;margin-top:4px;justify-content:flex-end">
-            <button class="remove-item" onclick="editItem(${i})" title="Edit" style="color:#c9a96e;font-size:0.8rem">✏️</button>
+            <button class="remove-item" onclick="editItem(${i})" title="Edit" style="color:var(--gold);font-size:0.8rem">✏️</button>
             <button class="remove-item" onclick="removeItem(${i})" title="Remove">✕</button>
           </div>
         </div>
@@ -3797,9 +3849,9 @@
     const rBtn = document.getElementById('payTabReceiptBtn');
     const mBtn = document.getElementById('payTabMsgBtn');
     // Selected tab = gold fill (highlighted); the other = dim/muted.
-    rBtn.style.background = onReceipt ? '#c9a96e' : 'var(--gold-dim)';
+    rBtn.style.background = onReceipt ? 'var(--gold)' : 'var(--gold-dim)';
     rBtn.style.color      = onReceipt ? '#12122a' : 'var(--gold)';
-    mBtn.style.background = onReceipt ? 'var(--gold-dim)' : '#c9a96e';
+    mBtn.style.background = onReceipt ? 'var(--gold-dim)' : 'var(--gold)';
     mBtn.style.color      = onReceipt ? 'var(--gold)' : '#12122a';
   }
 
@@ -4126,7 +4178,7 @@
         input.scrollIntoView({behavior:'smooth', block:'center'});
         input.focus();
         input.placeholder = '← Paste your copied product link here';
-        input.style.borderColor   = '#c9a96e';
+        input.style.borderColor   = 'var(--gold)';
         input.style.boxShadow     = '0 0 0 3px rgba(201,169,110,0.35)';
         setTimeout(() => {
           input.style.borderColor = '';
@@ -4249,7 +4301,7 @@
             <span style="flex:1;font-size:0.9rem">${r.n}</span>
             ${r.d?`<span style="color:#ff8a8a;font-size:0.78rem">${r.d}</span>`:''}
           </div>`).join('')}
-        <a href="${location.pathname}" style="display:inline-block;margin-top:20px;color:#c9a96e">← Back to the form</a>
+        <a href="${location.pathname}" style="display:inline-block;margin-top:20px;color:var(--gold)">← Back to the form</a>
       </div>`;
     document.body.appendChild(box);
   }
@@ -4258,8 +4310,8 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-15z3';
-  console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:#c9a96e;font-weight:700;font-size:13px');
+  const PSB_BUILD = '2026-06-16a';
+  console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
     tag.textContent = 'v'+PSB_BUILD;

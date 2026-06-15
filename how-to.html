@@ -9,6 +9,11 @@
 <title>How to order · PakiPoshak</title>
 <style>
   :root{
+    --bg:#FAF6EE; --surface:#FFFFFF; --raised:#F3ECDD;
+    --gold:#A8842B; --gold-bdr:rgba(168,132,43,0.40); --gold-dim:rgba(168,132,43,0.12);
+    --txt:#1F2433; --txt-sec:#6B6457; --txt-muted:#9A917F;
+  }
+  [data-theme="dark"]{
     --bg:#080E1C; --surface:#0F1929; --raised:#162035;
     --gold:#C9A96E; --gold-bdr:rgba(201,169,110,0.30); --gold-dim:rgba(201,169,110,0.12);
     --txt:#EEE4CE; --txt-sec:#A0B2C8; --txt-muted:#5A6E84;
@@ -19,13 +24,15 @@
   a{color:var(--gold)}
   .wrap{max-width:680px;margin:0 auto;padding:0 16px}
 
-  header{position:sticky;top:0;z-index:10;background:rgba(8,14,28,0.95);
+  header{position:sticky;top:0;z-index:10;background:rgba(250,246,238,0.95);
     backdrop-filter:blur(6px);border-bottom:1px solid var(--gold-bdr)}
+  [data-theme="dark"] header{background:rgba(8,14,28,0.95)}
   .hdr{display:flex;align-items:center;justify-content:space-between;gap:10px;
     max-width:680px;margin:0 auto;padding:11px 16px}
   .hdr a.back{display:inline-flex;align-items:center;gap:6px;color:var(--txt-sec);
     text-decoration:none;font-size:0.86rem;font-weight:600}
-  .hdr .brand{font-weight:800;color:var(--gold);font-size:1.02rem;letter-spacing:0.3px}
+  .hdr .brand{font-weight:800;color:#000;font-size:1.05rem;letter-spacing:0.2px}
+  [data-theme="dark"] .hdr .brand{color:var(--gold)}
   .langbtn{background:var(--raised);border:1px solid var(--gold-bdr);color:var(--gold);
     font-size:0.78rem;font-weight:700;padding:6px 12px;border-radius:18px;cursor:pointer}
 
@@ -64,6 +71,7 @@
 </style>
 </head>
 <body>
+<script>(function(){try{var s=localStorage.getItem('psb_theme');var d=s?(s==='dark'):(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.setAttribute('data-theme',d?'dark':'light');}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
 
 <header>
   <div class="hdr">

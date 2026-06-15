@@ -3,56 +3,56 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Track Your Order – PakStyle BD</title>
+<title>Track Your Order – PakiPoshak</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
-  body{background:#0f0f1a;color:#eee;font-family:'Segoe UI',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px}
-  .logo{font-size:1.5rem;font-weight:800;color:#f9a825;margin-bottom:4px;letter-spacing:1px}
-  .tagline{font-size:0.78rem;color:#888;margin-bottom:32px}
-  .card{background:#1a1a2e;border-radius:16px;padding:28px 24px;width:100%;max-width:480px;box-shadow:0 8px 32px rgba(0,0,0,0.4)}
-  h2{font-size:1.2rem;color:#f9a825;margin-bottom:18px}
+  body{background:#FAF6EE;color:#1F2433;font-family:'Segoe UI',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px}
+  .logo{font-size:1.5rem;font-weight:800;color:#000;margin-bottom:4px;letter-spacing:0.5px}
+  .tagline{font-size:0.78rem;color:#6B6457;margin-bottom:32px}
+  .card{background:#FFFFFF;border:1px solid rgba(31,36,51,0.10);border-radius:16px;padding:28px 24px;width:100%;max-width:480px;box-shadow:0 8px 28px rgba(31,36,51,0.08)}
+  h2{font-size:1.2rem;color:#A8842B;margin-bottom:18px}
   .input-row{display:flex;gap:8px;margin-bottom:6px}
-  input[type=text]{flex:1;background:#0f0f1a;border:1.5px solid #333;border-radius:8px;padding:12px 14px;color:#eee;font-size:1rem;outline:none}
-  input[type=text]:focus{border-color:#f9a825}
-  button.track-btn{background:#f9a825;color:#1a1a2e;border:none;border-radius:8px;padding:12px 20px;font-weight:700;font-size:1rem;cursor:pointer;white-space:nowrap}
+  input[type=text]{flex:1;background:#FFFFFF;border:1.5px solid #D8CFC0;border-radius:8px;padding:12px 14px;color:#1F2433;font-size:1rem;outline:none}
+  input[type=text]:focus{border-color:#A8842B}
+  button.track-btn{background:#f9a825;color:#3a2e00;border:none;border-radius:8px;padding:12px 20px;font-weight:700;font-size:1rem;cursor:pointer;white-space:nowrap}
   button.track-btn:hover{background:#e6971c}
-  .error-msg{color:#ff6b6b;font-size:0.82rem;min-height:18px;margin-bottom:12px}
+  .error-msg{color:#C62828;font-size:0.82rem;min-height:18px;margin-bottom:12px}
 
   /* Timeline */
   .timeline{margin-top:24px}
   .step{display:flex;align-items:flex-start;gap:14px;margin-bottom:0;position:relative}
   .step-left{display:flex;flex-direction:column;align-items:center;min-width:32px}
-  .step-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;border:2.5px solid #333;background:#0f0f1a;transition:all 0.3s}
-  .step-line{width:2px;height:36px;background:#333;margin-top:0;flex-shrink:0;transition:background 0.3s}
+  .step-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;border:2.5px solid #D8CFC0;background:#F3ECDD;transition:all 0.3s}
+  .step-line{width:2px;height:36px;background:#D8CFC0;margin-top:0;flex-shrink:0;transition:background 0.3s}
   .step:last-child .step-line{display:none}
   .step-body{padding-top:4px;padding-bottom:20px}
-  .step-title{font-size:0.95rem;font-weight:600;color:#888;transition:color 0.3s}
-  .step-date{font-size:0.75rem;color:#666;margin-top:3px}
-  .step-note{font-size:0.78rem;color:#888;margin-top:4px;font-style:italic}
+  .step-title{font-size:0.95rem;font-weight:600;color:#6B6457;transition:color 0.3s}
+  .step-date{font-size:0.75rem;color:#9A917F;margin-top:3px}
+  .step-note{font-size:0.78rem;color:#6B6457;margin-top:4px;font-style:italic}
 
   /* Active / done states */
   .step.done .step-icon{background:#2ecc71;border-color:#2ecc71;color:#fff}
   .step.done .step-line{background:#2ecc71}
-  .step.done .step-title{color:#eee}
-  .step.active .step-icon{background:#f9a825;border-color:#f9a825;color:#1a1a2e;animation:pulse 1.4s infinite}
-  .step.active .step-title{color:#f9a825;font-weight:700}
+  .step.done .step-title{color:#1F2433}
+  .step.active .step-icon{background:#f9a825;border-color:#f9a825;color:#3a2e00;animation:pulse 1.4s infinite}
+  .step.active .step-title{color:#A8842B;font-weight:700}
   @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(249,168,37,0.5)}50%{box-shadow:0 0 0 8px rgba(249,168,37,0)}}
 
-  .order-meta{background:#0f0f1a;border-radius:10px;padding:14px 16px;margin-bottom:20px;font-size:0.82rem;color:#aaa;line-height:1.7}
-  .order-meta strong{color:#eee}
-  .badge{display:inline-block;background:#f9a825;color:#1a1a2e;border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:700;margin-left:8px}
-  .loading{text-align:center;padding:32px;color:#888;font-size:0.9rem}
-  .not-found{text-align:center;padding:24px;color:#ff6b6b;font-size:0.9rem}
-  .footer{margin-top:32px;font-size:0.75rem;color:#555;text-align:center}
-  .footer a{color:#f9a825;text-decoration:none}
+  .order-meta{background:#F3ECDD;border-radius:10px;padding:14px 16px;margin-bottom:20px;font-size:0.82rem;color:#6B6457;line-height:1.7}
+  .order-meta strong{color:#1F2433}
+  .badge{display:inline-block;background:#f9a825;color:#3a2e00;border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:700;margin-left:8px}
+  .loading{text-align:center;padding:32px;color:#6B6457;font-size:0.9rem}
+  .not-found{text-align:center;padding:24px;color:#C62828;font-size:0.9rem}
+  .footer{margin-top:32px;font-size:0.75rem;color:#9A917F;text-align:center}
+  .footer a{color:#A8842B;text-decoration:none}
 
   /* Refresh note */
-  .refresh-note{font-size:0.72rem;color:#555;text-align:right;margin-top:10px}
+  .refresh-note{font-size:0.72rem;color:#9A917F;text-align:right;margin-top:10px}
 </style>
 </head>
 <body>
 
-<div class="logo">PakStyle BD</div>
+<div class="logo">PakiPoshak</div>
 <div class="tagline">Pakistani Fashion · Delivered to Bangladesh</div>
 
 <div class="card">
@@ -126,7 +126,7 @@ async function lookupOrder(){
       notes: 'Demo mode – Google Sheet not yet connected.'
     });
     resultEl.insertAdjacentHTML('afterbegin',
-      '<div style="background:#2a1f00;border:1px solid #f9a825;border-radius:8px;padding:10px 14px;font-size:0.78rem;color:#f9a825;margin-bottom:16px">⚠️ Demo mode: connect your Google Sheet to show live data.</div>'
+      '<div style="background:#FFF8E1;border:1px solid #f9a825;border-radius:8px;padding:10px 14px;font-size:0.78rem;color:#8a6d00;margin-bottom:16px">⚠️ Demo mode: connect your Google Sheet to show live data.</div>'
     );
     return;
   }
