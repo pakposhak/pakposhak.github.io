@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>PakStyle BD — Weight Chart</title>
+<title>PakiPoshak — Shipping Weights</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f0ea;color:#1a1a2e;padding:20px;min-height:100vh}
@@ -29,75 +29,117 @@
 <div class="wrap">
 
   <div class="header">
-    <div class="logo">Pak<span>Style</span> BD</div>
-    <div class="sub">Estimated weights per item — including packaging</div>
+    <div class="logo">Paki<span>Poshak</span></div>
+    <div class="sub">Estimated parcel weights per item — packaging included</div>
   </div>
 
   <div class="note">
-    <strong>How weight affects your price:</strong><br>
-    Logistics = Total weight × ৳1,600/kg. Weights below include a ~20% packaging buffer and are per <em>unit</em> (multiply by quantity). Weight costs are on an approximate basis — if they vary a lot, we'll either refund you or collect the extra charge at the time of delivery.
+    <strong>How shipping is calculated:</strong><br>
+    Total parcel weight × <strong id="logRate">৳1,600</strong>/kg. Every weight below already includes packaging
+    and is based on real parcels, so the estimate you see is almost always exactly what you pay. Weights are per
+    <em>item</em> — multiply by quantity. In the rare case a parcel comes in a little heavier or lighter, we'll
+    settle the small difference fairly with you: gladly refunding you if it's lighter, or giving you a friendly
+    heads-up first if it's slightly heavier. Always transparent, and never a hidden charge.
   </div>
 
-  <div class="card">
-    <div class="card-title">✅ Stitched / Pret — Casual &amp; Everyday</div>
-    <table>
-      <tr><td class="row-label">Kurti / Shirt – 1pc</td><td>0.34 kg</td></tr>
-      <tr><td class="row-label">Kaftan – 1pc long shirt <span style="color:#999;font-size:0.72rem">+70% vs kurti</span></td><td>0.58 kg</td></tr>
-      <tr><td class="row-label">2pc – Shirt + Dupatta</td><td>0.46 kg</td></tr>
-      <tr><td class="row-label">2pc Co-ord – Shirt + Trouser</td><td>0.58 kg</td></tr>
-      <tr><td class="row-label">3pc Pret / Stitched Suit</td><td>0.74 kg</td></tr>
-    </table>
-  </div>
-
-  <div class="card">
-    <div class="card-title">✅ Stitched / Pret — Winter</div>
-    <table>
-      <tr><td class="row-label">Winter 2pc (karandi / khaddar / linen)</td><td>0.70 kg</td></tr>
-      <tr><td class="row-label">Winter 3pc (karandi / khaddar)</td><td>0.90 kg</td></tr>
-    </table>
-  </div>
-
-  <div class="card">
-    <div class="card-title">✅ Stitched / Pret — Formal &amp; Designer</div>
-    <table>
-      <tr><td class="row-label">Formal Embroidered 2pc (chiffon / net)</td><td>0.86 kg</td></tr>
-      <tr><td class="row-label">Formal Embroidered 3pc (chiffon / net)</td><td>1.08 kg</td></tr>
-      <tr><td class="row-label">Heavy Formal 3pc (organza / silk)</td><td>1.32 kg</td></tr>
-      <tr><td class="row-label">Bridal / Velvet / Full Embroidery</td><td>2.00 kg</td></tr>
-    </table>
-  </div>
-
-  <div class="card">
-    <div class="card-title">🧵 Un-stitched</div>
-    <table>
-      <tr><td class="row-label">2pc Unstitched – Shirt + Dupatta fabric</td><td>0.42 kg</td></tr>
-      <tr><td class="row-label">2pc Unstitched – Shirt + Trouser fabric</td><td>0.54 kg</td></tr>
-      <tr><td class="row-label">3pc Unstitched – Shirt + Dupatta + Trouser fabric</td><td>0.66 kg</td></tr>
-    </table>
-  </div>
-
-  <div class="card">
-    <div class="card-title">👔 Men</div>
-    <table>
-      <tr><td class="row-label">Men's Kurta / Kameez (1pc)</td><td>0.54 kg</td></tr>
-      <tr><td class="row-label">Men's Shalwar Kameez (2pc)</td><td>0.86 kg</td></tr>
-      <tr><td class="row-label">Men's Waistcoat</td><td>0.48 kg</td></tr>
-      <tr><td class="row-label">Men's Suit / Pant-Coat / Blazer (2pc)</td><td>1.38 kg</td></tr>
-      <tr><td class="row-label">Men's Sherwani / Prince Coat</td><td>1.74 kg</td></tr>
-      <tr><td class="row-label">Men's Unstitched Fabric</td><td>0.96 kg</td></tr>
-    </table>
-  </div>
-
-  <div class="card">
-    <div class="card-title">➕ Separates</div>
-    <table>
-      <tr><td class="row-label">Dupatta / Stole / Scarf only</td><td>0.22 kg</td></tr>
-      <tr><td class="row-label">Shawl (winter) <span style="color:#999;font-size:0.72rem">incl. 25% buffer</span></td><td>0.56 kg</td></tr>
-    </table>
-  </div>
+  <div id="tables"></div>
 
   <a class="back" href="index.html">← Back to order form</a>
 
 </div>
+
+<script>
+  // Live shipping weights — pulled from the same Pakistan relay the order form
+  // and admin panel use, so this table NEVER drifts from the real rates. The
+  // values baked in below are the current defaults (offline fallback only).
+  var RELAY = 'https://103.83.91.34.sslip.io';
+  var DEFAULT_LOG = 1600;
+
+  // [key, customer-friendly label, default kg] — grouped for display.
+  var GROUPS = [
+    { title: '👗 Women — Everyday & Pret', rows: [
+      ['kurti_1pc',        'Kurti / Shirt (1pc)',              0.61],
+      ['womens_trouser',   "Women's Trouser / Pants (1pc)",    0.70],
+      ['kaftan',           'Kaftan (1pc long shirt)',          0.90],
+      ['shirt_dupatta_2pc','2pc – Shirt + Dupatta',            0.70],
+      ['shirt_trouser_2pc','2pc Co-ord – Shirt + Trouser',     0.85],
+      ['pret_2pc_emb',     '2pc Pret – Embroidered',           0.95],
+      ['pret_3pc',         '3pc Pret – Printed / Plain',       1.04],
+      ['pret_3pc_emb',     '3pc Pret – Embroidered',           1.25],
+      ['maxi_dress',       'Maxi / Dress / Jumpsuit (1pc)',    0.80],
+      ['loungewear',       'Loungewear / Nightwear',           0.75],
+      ['coord_western',    'Co-ord / Western 2pc',             0.80]
+    ]},
+    { title: '🧵 Women — Unstitched Fabric', rows: [
+      ['lawn_3pc_unstitch','3pc Unstitched – Printed / Plain', 0.94],
+      ['unstitch_3pc_emb', '3pc Unstitched – Embroidered',     1.10]
+    ]},
+    { title: '❄️ Winter', rows: [
+      ['winter_2pc',       'Winter 2pc (karandi / khaddar)',   0.99],
+      ['winter_3pc',       'Winter 3pc (karandi / khaddar)',   1.23]
+    ]},
+    { title: '✨ Women — Formal, Festive & Bridal', rows: [
+      ['formal_emb_2pc',   'Formal Embroidered 2pc',           1.18],
+      ['formal_emb_3pc',   'Formal Embroidered 3pc',           1.45],
+      ['heavy_formal_3pc', 'Heavy Formal 3pc (organza / silk)',1.73],
+      ['saree',            'Saree',                            1.15],
+      ['lehenga',          'Lehenga / Gharara / Sharara',      1.80],
+      ['abaya',            'Abaya',                            0.95],
+      ['bridal',           'Bridal / Velvet / Full Embroidery',2.55]
+    ]},
+    { title: '👔 Men', rows: [
+      ['mens_shirt',        "Men's Shirt / Polo / T-Shirt (1pc)", 0.63],
+      ['mens_trouser',      "Men's Trouser / Chinos / Cargo (1pc)",0.85],
+      ['mens_jeans',        "Men's Jeans / Denim (1pc)",          1.04],
+      ['mens_kurta',        "Men's Kurta / Kameez (1pc)",         0.85],
+      ['mens_shalwar_kameez',"Men's Shalwar Kameez (2pc)",        1.18],
+      ['mens_waistcoat',    "Men's Waistcoat",                    0.78],
+      ['mens_suit',         "Men's Suit / Pant-Coat (2pc)",       1.81],
+      ['mens_sherwani',     "Men's Sherwani / Prince Coat",       2.24],
+      ['mens_unstitched',   "Men's Unstitched Fabric",            1.30]
+    ]},
+    { title: '🧒 Kids', rows: [
+      ['kids_eastern',     'Kids Eastern (kurta / 2pc)',       0.50],
+      ['kids_western',     'Kids Western (tee / jeans / frock)',0.56]
+    ]},
+    { title: '➕ Separates & Accessories', rows: [
+      ['dupatta_only',     'Dupatta / Stole only',             0.46],
+      ['shawl',            'Shawl (winter)',                   0.87],
+      ['accessories',      'Accessories / Jewellery',          0.49],
+      ['footwear',         'Footwear / Shoes / Khussa',        1.10]
+    ]}
+  ];
+
+  function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
+
+  function render(weights, logRate){
+    document.getElementById('logRate').textContent = '৳' + Number(logRate).toLocaleString();
+    var html = '';
+    GROUPS.forEach(function(g){
+      html += '<div class="card"><div class="card-title">' + esc(g.title) + '</div><table>';
+      g.rows.forEach(function(row){
+        var key = row[0], label = row[1], def = row[2];
+        var kg = (weights && weights[key] > 0) ? weights[key] : def;
+        html += '<tr><td class="row-label">' + esc(label) + '</td><td>' + Number(kg).toFixed(2) + ' kg</td></tr>';
+      });
+      html += '</table></div>';
+    });
+    document.getElementById('tables').innerHTML = html;
+  }
+
+  // First paint instantly from the baked-in defaults (works even offline)…
+  render(null, DEFAULT_LOG);
+  // …then overlay the live admin-set weights + logistics rate from the relay.
+  fetch(RELAY + '/config', { cache: 'no-store' })
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      if(j && j.ok){
+        var log = (j.rates && j.rates.log > 0) ? j.rates.log : DEFAULT_LOG;
+        render(j.weights || null, log);
+      }
+    })
+    .catch(function(){ /* relay unreachable → keep the baked-in defaults */ });
+</script>
+
 </body>
 </html>
