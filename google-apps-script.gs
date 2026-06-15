@@ -60,6 +60,23 @@ function json(obj){
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }
 
+// Send owner email but never let a mail hiccup / missing permission abort the
+// data write. If this stays silent, run authorizeNow() once (see bottom).
+function safeMail(subject, body){
+  try { MailApp.sendEmail(OWNER_EMAIL, subject, body); }
+  catch (e) { /* mail not authorized yet — order data is still saved */ }
+}
+
+// Set the Status cell, but tolerate a data-validation dropdown that rejects the
+// value. Richer statuses (payment_review / placed_at_brand) apply only if you
+// add them to the dropdown; otherwise the status is left as-is and the dedicated
+// columns (payment_match / placed_status) carry the signal.
+function safeSetStatus(sheet, rowNum, m, value){
+  if (m['status'] === undefined) return;
+  try { sheet.getRange(rowNum, m['status'] + 1).setValue(value); }
+  catch (e) { /* dropdown rejected this status — leave the existing one */ }
+}
+
 // Create any missing column header (never overwrites an existing one).
 function ensureHeaders(sheet){
   var width = Math.max(COLS.length, sheet.getLastColumn());
@@ -120,7 +137,7 @@ function handleNewOrder(data, sheet, today){
     'PRODUCT LINKS\n-------------\n' + (data.cart_links || '') + '\n\n' +
     'Notes: ' + (data.notes || '(none)') + '\n\n' +
     '— Backup row added automatically.';
-  MailApp.sendEmail(OWNER_EMAIL, subject, body);
+  safeMail(subject, body);
 
   return json({ ok: true });
 }
@@ -162,7 +179,7 @@ function handlePayment(data, sheet, today){
   var custName = '', custWa = '';
   if (found.rowNum > 0){
     var rn = found.rowNum;
-    setCol(rn, 'status',         newStatus);
+    safeSetStatus(sheet, rn, m, newStatus);   // tolerates a status-dropdown rule
     setCol(rn, 'status_date',    today);
     setCol(rn, 'payment_amount', amount);
     setCol(rn, 'payment_method', method);
@@ -179,7 +196,7 @@ function handlePayment(data, sheet, today){
     // Order not in sheet yet → append a payment-only row so nothing is lost
     var arr = [];
     arr[m['order_id']]    = data.order_id || '';
-    arr[m['status']]      = newStatus;
+    arr[m['status']]      = 'payment_received';   // valid status (append needs one the dropdown allows)
     arr[m['status_date']] = today;
     arr[m['notes']]       = note + ' (order row not found)';
     if (m['receipt_url']    !== undefined) arr[m['receipt_url']]    = receiptUrl;
@@ -211,7 +228,7 @@ function handlePayment(data, sheet, today){
     body += '\n— Looks off? Tap to message the customer on WhatsApp:\n' +
             'https://wa.me/' + waDigits + '?text=' + encodeURIComponent(tmpl) + '\n';
   }
-  MailApp.sendEmail(OWNER_EMAIL, subject, body);
+  safeMail(subject, body);
 
   return json({ ok: true, receiptUrl: receiptUrl, flagged: mismatch });
 }
@@ -233,7 +250,7 @@ function handlePlacement(data, sheet, today){
       if (m['placed_gmail']    !== undefined && gmail) sheet.getRange(rn, m['placed_gmail']    + 1).setValue(gmail);
       if (m['brand_order_ref'] !== undefined && ref)   sheet.getRange(rn, m['brand_order_ref'] + 1).setValue((brand ? brand + ' ' : '') + ref);
       if (m['placed_status']   !== undefined)          sheet.getRange(rn, m['placed_status']   + 1).setValue(pstat);
-      if (m['status']          !== undefined)          sheet.getRange(rn, m['status']          + 1).setValue('placed_at_brand');
+      safeSetStatus(sheet, rn, m, 'placed_at_brand');   // tolerates a status-dropdown rule
       if (m['status_date']     !== undefined)          sheet.getRange(rn, m['status_date']     + 1).setValue(today);
       if (m['notes'] !== undefined){
         var prev = String(sheet.getRange(rn, m['notes'] + 1).getValue() || '');
@@ -244,7 +261,7 @@ function handlePlacement(data, sheet, today){
     }
   }
 
-  MailApp.sendEmail(OWNER_EMAIL, '🛍️ Placement linked — ' + (done.join(', ') || '(none matched)'),
+  safeMail('🛍️ Placement linked — ' + (done.join(', ') || '(none matched)'),
     'Linked ' + done.length + ' order(s) to a brand placement.\n\n' +
     'Brand:     ' + brand + '\n' +
     'Order ref: ' + ref + '\n' +
@@ -252,6 +269,16 @@ function handlePlacement(data, sheet, today){
     'Orders:    ' + done.join(', ') + '\n');
 
   return json({ ok: true, linked: done });
+}
+
+// ── RUN THIS ONCE to grant permissions ──────────────────────────────────
+// In the editor: pick "authorizeNow" in the function dropdown ▸ Run ▸ allow.
+// Grants Sheets + Drive + Gmail access and sends you a confirmation email.
+function authorizeNow(){
+  var ss = SpreadsheetApp.getActiveSpreadsheet();   // Sheets scope
+  DriveApp.getRootFolder();                          // Drive scope (receipt slips)
+  MailApp.sendEmail(OWNER_EMAIL, 'PakiPoshak ✅ Authorization OK',
+    'Your order script is now authorized to save orders, store receipts, and email you.\nSheet: ' + ss.getName());
 }
 
 // Lets you test the deployment in a browser (visiting the /exec URL)

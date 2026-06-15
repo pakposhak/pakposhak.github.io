@@ -224,9 +224,9 @@ You can paste several orders at once — paste straight from your order emails."
       const t=await fetch(SHEET_CSV+'&_='+Date.now()).then(r=>r.text());
       const rows=parseCSV(t).filter(r=>r.length>1);
       const hdr=rows[0].map(h=>h.trim().toLowerCase().replace(/\s+/g,'_'));
-      const ci=hdr.indexOf('order_id'), cs=hdr.indexOf('status'), ck=hdr.indexOf('order_items'), cn=hdr.indexOf('buyer_name');
+      const ci=hdr.indexOf('order_id'), cs=hdr.indexOf('status'), ck=hdr.indexOf('order_items'), cn=hdr.indexOf('buyer_name'), cp=hdr.indexOf('placed_status');
       if(ck===-1){ out.innerHTML='<div class="err">Your sheet has no <b>order_items</b> column yet. New orders placed after the auto-logging update will appear here. For older orders, paste the ITEMS block from the order email above.</div>'; return; }
-      const paid=rows.slice(1).filter(r=>(r[cs]||'').trim().toLowerCase()==='payment_received' && (r[ck]||'').includes('http'));
+      const paid=rows.slice(1).filter(r=>(r[cs]||'').trim().toLowerCase()==='payment_received' && (r[ck]||'').includes('http') && !(cp>=0 && (r[cp]||'').trim()));
       if(!paid.length){ out.innerHTML='<div class="err">No paid orders with item data found yet. (Orders must be marked <b>payment_received</b> and placed after the auto-logging update.) Paste an order\'s ITEMS block above to aggregate it now.</div>'; return; }
       const blob=paid.map(r=>r[ck]).join('\n');
       document.getElementById('input').value=blob;
