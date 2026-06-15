@@ -115,8 +115,7 @@
     .hiw-inner{display:flex;align-items:center;justify-content:center;gap:0;min-width:max-content;margin:0 auto}
     .hiw-step{display:flex;align-items:center;gap:5px;padding:0 10px;font-size:0.72rem;font-weight:700;color:#0A1628;white-space:nowrap}
     .hiw-step span.icon{font-size:1rem}
-    .hiw-video{margin-left:12px;background:#0A1628;color:var(--gold);font-weight:800;font-size:0.72rem;padding:6px 14px;border-radius:14px;text-decoration:none;white-space:nowrap}
-    .hiw-mobile .hiw-video{grid-column:1/-1;text-align:center;margin:4px auto 0;display:inline-block;justify-self:center}
+    .hiw-video,.hiw-guide{margin-left:12px;background:#0A1628;color:var(--gold);font-weight:800;font-size:0.72rem;padding:6px 14px;border-radius:14px;text-decoration:none;white-space:nowrap}
     .hiw-mobile{display:none}
     .hiw-arrow{color:#0A1628;opacity:0.45;font-size:0.9rem;flex-shrink:0}
 
@@ -260,7 +259,10 @@
       .container{max-width:980px;padding:30px 32px 44px}
       /* Home/Brands/Cart/HowTo bar stays visible on desktop too */
       body{padding-bottom:92px}
-      .bottom-nav{max-width:520px;left:50%;right:auto;transform:translateX(-50%);border-radius:16px 16px 0 0;border:1px solid var(--bdr);border-bottom:none}
+      .bottom-nav{width:340px;max-width:calc(100% - 32px);left:50%;right:auto;bottom:16px;transform:translateX(-50%);
+        border-radius:16px;border:1px solid var(--bdr);box-shadow:0 8px 28px rgba(0,0,0,0.45);overflow:hidden}
+      .bottom-nav .bnav-btn{min-height:44px;padding:7px 4px 5px;font-size:0.62rem}
+      .bottom-nav .bnav-btn .icon{font-size:1.02rem}
       #installPill{bottom:86px}
       .cat-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
     }
@@ -276,10 +278,10 @@
       .cat-head{font-size:0.92rem}
       .cat-brand{font-size:0.92rem;padding:11px 10px}
       /* how-it-works: merged 4-step version, two rows (2x2 grid) — mobile only */
-      .hiw-strip{overflow-x:visible;padding:10px 12px}
+      .hiw-strip{overflow-x:visible;padding:9px 12px}
       .hiw-desktop{display:none}
-      .hiw-mobile{display:grid;grid-template-columns:1fr 1fr;gap:7px 6px;min-width:0}
-      .hiw-mobile .hiw-step{justify-content:center;text-align:center;white-space:normal;padding:0;font-size:0.74rem;line-height:1.2}
+      .hiw-mobile{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;min-width:0}
+      .hiw-mobile .hiw-video,.hiw-mobile .hiw-guide{margin-left:0}
     }
     .show-more-btn{font-size:0.75rem;color:var(--gold);background:none;border:none;cursor:pointer;font-weight:600;padding:4px 0;text-decoration:underline}
 
@@ -482,14 +484,11 @@
     <div class="hiw-step"><span class="icon">💳</span><span data-i18n="hiw_pay">Pay via bKash/Nagad</span></div>
     <span class="hiw-arrow">›</span>
     <div class="hiw-step"><span class="icon">🚚</span><span data-i18n="hiw_delivery">2–3 weeks to your door</span></div>
-    <a class="hiw-video" href="how-to-video.html" data-i18n="hiw_video">▶ Watch 1-min video guide</a>
+    <a class="hiw-video" href="how-to-video.html" target="_blank" rel="noopener" data-i18n="hiw_video">▶ Watch 1-min video guide</a>
   </div>
   <div class="hiw-inner hiw-mobile">
-    <div class="hiw-step"><span class="icon">🔍</span><span data-i18n="hiw_browse">Browse brands</span></div>
-    <div class="hiw-step"><span class="icon">🔗</span><span data-i18n="hiw_paste">Paste product URL</span></div>
-    <div class="hiw-step"><span class="icon">💳</span><span data-i18n="hiw_confirm_pay">Confirm price &amp; pay (bKash/Nagad)</span></div>
-    <div class="hiw-step"><span class="icon">🚚</span><span data-i18n="hiw_delivery">2–3 weeks to your door</span></div>
-    <a class="hiw-video" href="how-to-video.html" data-i18n="hiw_video">▶ Watch 1-min video guide</a>
+    <a class="hiw-video" href="how-to-video.html" target="_blank" rel="noopener" data-i18n="hiw_video">▶ Watch 1-min video guide</a>
+    <a class="hiw-guide" href="how-to.html" target="_blank" rel="noopener" data-i18n="hiw_guide">📖 How it works</a>
   </div>
 </div>
 
@@ -939,11 +938,15 @@
       </div>
       <div class="bs-step">
         <span class="bs-num">2</span>
-        <span>At the <strong>top-right</strong> of that page, tap the <strong>⋮ three-dots menu</strong> → tap <strong>“Copy link”</strong>.<br><em style="color:var(--txt-muted)">(No three dots? Tap the site name/address at the very top, then Copy.)</em></span>
+        <span>At the <strong>top-right ⋮ three-dots</strong> menu, tap <strong>“Open in Chrome”</strong> (or your phone’s browser).</span>
       </div>
       <div class="bs-step">
         <span class="bs-num">3</span>
-        <span>Tap <strong>‹ back</strong> to return here, then tap the gold <strong>📋 Paste link</strong> button — price &amp; sizes fill in automatically.</span>
+        <span>In Chrome, <strong>press &amp; hold the web address</strong> at the top until <strong>“Copy”</strong> appears — then tap <strong>Copy</strong>.</span>
+      </div>
+      <div class="bs-step">
+        <span class="bs-num">4</span>
+        <span>Come back here and tap the gold <strong>📋 Paste link</strong> button — price &amp; sizes fill in automatically.</span>
       </div>
     </div>
     <button class="bs-open-btn" id="bsOpenBtn" onclick="launchBrandTab()">
@@ -2891,7 +2894,7 @@
     en: {
       tagline:'Pakistani Fashion · Bangladesh Delivery',
       hiw_browse:'Browse brands', hiw_paste:'Paste product URL', hiw_confirm:'We confirm price',
-      hiw_pay:'Pay via bKash/Nagad', hiw_delivery:'2–3 weeks to your door', hiw_video:'▶ Watch 1-min video guide',
+      hiw_pay:'Pay via bKash/Nagad', hiw_delivery:'2–3 weeks to your door', hiw_video:'▶ Watch 1-min video guide', hiw_guide:'📖 How it works',
       hiw_confirm_pay:'Confirm price & pay (bKash/Nagad)',
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search 100+ Pakistani brands…',
@@ -2934,7 +2937,7 @@
     bn: {
       tagline:'পাকিস্তানি ফ্যাশন · বাংলাদেশে ডেলিভারি',
       hiw_browse:'ব্র্যান্ড ব্রাউজ করুন', hiw_paste:'প্রোডাক্ট লিংক পেস্ট করুন', hiw_confirm:'আমরা দাম নিশ্চিত করি',
-      hiw_pay:'বিকাশ/নগদে পেমেন্ট করুন', hiw_delivery:'২–৩ সপ্তাহে আপনার দরজায়', hiw_video:'▶ ১ মিনিটের ভিডিও গাইড দেখুন',
+      hiw_pay:'বিকাশ/নগদে পেমেন্ট করুন', hiw_delivery:'২–৩ সপ্তাহে আপনার দরজায়', hiw_video:'▶ ১ মিনিটের ভিডিও গাইড দেখুন', hiw_guide:'📖 কীভাবে কাজ করে',
       hiw_confirm_pay:'দাম নিশ্চিত করে পেমেন্ট (বিকাশ/নগদ)',
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
       lbl_browse:'ব্র্যান্ড ব্রাউজ করুন', search_ph:'🔍 ১০০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
@@ -3373,9 +3376,11 @@
   }
   function clearCartStorage(){ try{ localStorage.removeItem('psb_cart'); }catch(e){} }
 
-  // Warn before leaving / refreshing if basket has items
+  // Warn before leaving ONLY if there are unsaved draft cards in progress.
+  // Saved cart items persist in localStorage, so leaving/refreshing never loses
+  // them — warning about them was wrong and scared buyers off other pages.
   window.addEventListener('beforeunload', function(e){
-    if(cart.length || Object.keys(drafts).length){
+    if(Object.keys(drafts).length){
       e.preventDefault();
       e.returnValue = '';  // triggers browser's generic "Leave site?" dialog
     }
@@ -4148,7 +4153,8 @@
     } else if(tab === 'cart'){
       scrollToCart();
     } else if(tab === 'how'){
-      document.querySelector('.hiw-strip').scrollIntoView({behavior:'smooth'});
+      // Open the full step-by-step guide in a new tab (keeps the order form intact).
+      window.open('how-to.html', '_blank', 'noopener');
     }
   }
 
@@ -4252,7 +4258,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-15z2';
+  const PSB_BUILD = '2026-06-15z3';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:#c9a96e;font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');

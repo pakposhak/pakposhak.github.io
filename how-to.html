@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<!-- Keep this: stops Chrome auto-translating the hand-written Bangla into worse English -->
+<meta name="google" content="notranslate"/>
+<meta name="theme-color" content="#080E1C"/>
+<title>How to order · PakiPoshak</title>
+<style>
+  :root{
+    --bg:#080E1C; --surface:#0F1929; --raised:#162035;
+    --gold:#C9A96E; --gold-bdr:rgba(201,169,110,0.30); --gold-dim:rgba(201,169,110,0.12);
+    --txt:#EEE4CE; --txt-sec:#A0B2C8; --txt-muted:#5A6E84;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--txt);
+    min-height:100vh;line-height:1.55;padding-bottom:40px}
+  a{color:var(--gold)}
+  .wrap{max-width:680px;margin:0 auto;padding:0 16px}
+
+  header{position:sticky;top:0;z-index:10;background:rgba(8,14,28,0.95);
+    backdrop-filter:blur(6px);border-bottom:1px solid var(--gold-bdr)}
+  .hdr{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    max-width:680px;margin:0 auto;padding:11px 16px}
+  .hdr a.back{display:inline-flex;align-items:center;gap:6px;color:var(--txt-sec);
+    text-decoration:none;font-size:0.86rem;font-weight:600}
+  .hdr .brand{font-weight:800;color:var(--gold);font-size:1.02rem;letter-spacing:0.3px}
+  .langbtn{background:var(--raised);border:1px solid var(--gold-bdr);color:var(--gold);
+    font-size:0.78rem;font-weight:700;padding:6px 12px;border-radius:18px;cursor:pointer}
+
+  .hero{text-align:center;padding:28px 0 6px}
+  .hero h1{font-size:1.5rem;color:var(--gold);font-weight:800;line-height:1.25}
+  .hero p{color:var(--txt-sec);font-size:0.92rem;margin-top:8px}
+
+  .videocta{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px 0 4px;
+    background:var(--gold);color:#0A1628;font-weight:800;font-size:0.95rem;text-decoration:none;
+    padding:13px 18px;border-radius:12px}
+
+  section{margin-top:26px}
+  h2.sec{font-size:0.95rem;color:var(--gold);font-weight:800;margin-bottom:12px;
+    display:flex;align-items:center;gap:9px}
+  h2.sec .badge{flex-shrink:0;width:28px;height:28px;border-radius:8px;background:var(--gold);
+    color:#0A1628;font-weight:800;font-size:0.9rem;display:flex;align-items:center;justify-content:center}
+
+  .steps{display:grid;gap:9px}
+  .step{display:flex;align-items:flex-start;gap:12px;background:var(--surface);
+    border:1px solid var(--gold-bdr);border-radius:12px;padding:12px 14px}
+  .step .n{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--gold-dim);
+    border:1px solid var(--gold-bdr);color:var(--gold);
+    font-weight:800;font-size:0.78rem;display:flex;align-items:center;justify-content:center}
+  .step .t{font-size:0.9rem;color:var(--txt-sec)}
+  .step .t strong{color:var(--txt);font-weight:700}
+
+  .tip{display:flex;align-items:flex-start;gap:10px;background:var(--gold-dim);
+    border:1px solid var(--gold-bdr);border-radius:11px;padding:12px 14px;font-size:0.86rem;
+    color:var(--txt-sec);margin-top:10px}
+  .tip .ic{font-size:1.05rem;flex-shrink:0}
+
+  .endlink{text-align:center;margin-top:32px}
+  .endlink a{display:inline-block;background:var(--gold);color:#0A1628;font-weight:800;
+    text-decoration:none;padding:13px 28px;border-radius:12px;font-size:0.95rem}
+  .faqlink{text-align:center;margin-top:14px;font-size:0.88rem}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr">
+    <a class="back" href="index.html"><span>‹</span> <span data-i18n="back">Back to ordering</span></a>
+    <span class="brand">PakiPoshak</span>
+    <button class="langbtn" onclick="toggleLang()" id="langBtn">বাংলা</button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="hero">
+    <h1 data-i18n="title">How to order — step by step</h1>
+    <p data-i18n="subtitle">A detailed guide for every part of PakiPoshak. It only takes a couple of minutes.</p>
+  </div>
+
+  <a class="videocta" href="how-to-video.html" target="_blank" rel="noopener" data-i18n="videocta">▶ Watch the 1-minute video guide</a>
+
+  <!-- 1 · ADD PRODUCTS -->
+  <section>
+    <h2 class="sec"><span class="badge">1</span><span data-i18n="s1_head">Add the products you want</span></h2>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><div class="t" data-i18n="a1">On the home page, tap a <strong>brand</strong> (or “Browse all brands”) to open its panel.</div></div>
+      <div class="step"><div class="n">2</div><div class="t" data-i18n="a2">Tap <strong>“Open [Brand] →”</strong> — the brand’s own website opens. Find and open the product you want.</div></div>
+      <div class="step"><div class="n">3</div><div class="t" data-i18n="a3">Tap the <strong>⋮ menu (top-right)</strong> and choose <strong>“Open in Chrome”</strong> (or your phone’s browser).</div></div>
+      <div class="step"><div class="n">4</div><div class="t" data-i18n="a4">In Chrome, <strong>press and hold the web address</strong> at the top until <strong>“Copy”</strong> appears, then tap <strong>Copy</strong>.</div></div>
+      <div class="step"><div class="n">5</div><div class="t" data-i18n="a5">Come back to PakiPoshak and tap the gold <strong>“📋 Paste link”</strong> button — the price and sizes fill in automatically.</div></div>
+      <div class="step"><div class="n">6</div><div class="t" data-i18n="a6">Pick your <strong>size(s) and quantity</strong>, choose the category if asked, then tap <strong>“Save to Order List”</strong>.</div></div>
+      <div class="step"><div class="n">7</div><div class="t" data-i18n="a7">Add another product the same way, or tap <strong>“Add Another Product”</strong> / continue to your details.</div></div>
+    </div>
+    <div class="tip"><span class="ic">💡</span><span data-i18n="a_tip">Your saved items stay safe even if you close the app or switch pages — they’re kept on your phone until you submit the order.</span></div>
+  </section>
+
+  <!-- 2 · YOUR DETAILS -->
+  <section>
+    <h2 class="sec"><span class="badge">2</span><span data-i18n="s2_head">Enter your details</span></h2>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><div class="t" data-i18n="b1">Type your <strong>full name</strong>, <strong>WhatsApp number</strong>, and <strong>delivery address</strong> in Bangladesh.</div></div>
+      <div class="step"><div class="n">2</div><div class="t" data-i18n="b2">Tap <strong>“Review my order →”</strong>.</div></div>
+    </div>
+  </section>
+
+  <!-- 3 · REVIEW & PAY -->
+  <section>
+    <h2 class="sec"><span class="badge">3</span><span data-i18n="s3_head">Review &amp; pay</span></h2>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><div class="t" data-i18n="c1">Check your items and the <strong>total</strong> (product price + shipping by weight + a small fee).</div></div>
+      <div class="step"><div class="n">2</div><div class="t" data-i18n="c2">Tap <strong>“Confirm &amp; Submit Order”</strong> — you’ll get your <strong>Order ID</strong>.</div></div>
+      <div class="step"><div class="n">3</div><div class="t" data-i18n="c3">Pay the total using <strong>bKash, Nagad, Rocket, Upay or bank</strong> — the details are shown right on screen.</div></div>
+      <div class="step"><div class="n">4</div><div class="t" data-i18n="c4">Under <strong>“Already Paid?”</strong>, enter the <strong>amount you paid</strong>, the <strong>method</strong>, and your <strong>TrxID</strong> (or attach the receipt screenshot), then tap <strong>“Confirm Payment”</strong>.</div></div>
+    </div>
+    <div class="tip"><span class="ic">🔒</span><span data-i18n="c_tip">You only pay after you’ve seen and approved the total. The amount you enter is matched to your order automatically.</span></div>
+  </section>
+
+  <!-- 4 · TRACK -->
+  <section>
+    <h2 class="sec"><span class="badge">4</span><span data-i18n="s4_head">Track your order</span></h2>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><div class="t" data-i18n="d1">Save your <strong>Order ID</strong>. Tap <strong>“Track My Order”</strong> anytime to see its status.</div></div>
+      <div class="step"><div class="n">2</div><div class="t" data-i18n="d2">We’ll only message you on <strong>WhatsApp</strong> if a product is unavailable, or the parcel weight turns out much higher than estimated.</div></div>
+    </div>
+  </section>
+
+  <div class="endlink">
+    <a href="index.html" data-i18n="start">🛍️ Start your order</a>
+  </div>
+  <div class="faqlink"><a href="faq.html" data-i18n="faqlink">Read our promise &amp; FAQ →</a></div>
+
+</div>
+
+<script>
+  const I18N = {
+    en:{
+      back:'Back to ordering',
+      title:'How to order — step by step',
+      subtitle:'A detailed guide for every part of PakiPoshak. It only takes a couple of minutes.',
+      videocta:'▶ Watch the 1-minute video guide',
+      s1_head:'Add the products you want',
+      a1:'On the home page, tap a <strong>brand</strong> (or “Browse all brands”) to open its panel.',
+      a2:'Tap <strong>“Open [Brand] →”</strong> — the brand’s own website opens. Find and open the product you want.',
+      a3:'Tap the <strong>⋮ menu (top-right)</strong> and choose <strong>“Open in Chrome”</strong> (or your phone’s browser).',
+      a4:'In Chrome, <strong>press and hold the web address</strong> at the top until <strong>“Copy”</strong> appears, then tap <strong>Copy</strong>.',
+      a5:'Come back to PakiPoshak and tap the gold <strong>“📋 Paste link”</strong> button — the price and sizes fill in automatically.',
+      a6:'Pick your <strong>size(s) and quantity</strong>, choose the category if asked, then tap <strong>“Save to Order List”</strong>.',
+      a7:'Add another product the same way, or tap <strong>“Add Another Product”</strong> / continue to your details.',
+      a_tip:'Your saved items stay safe even if you close the app or switch pages — they’re kept on your phone until you submit the order.',
+      s2_head:'Enter your details',
+      b1:'Type your <strong>full name</strong>, <strong>WhatsApp number</strong>, and <strong>delivery address</strong> in Bangladesh.',
+      b2:'Tap <strong>“Review my order →”</strong>.',
+      s3_head:'Review & pay',
+      c1:'Check your items and the <strong>total</strong> (product price + shipping by weight + a small fee).',
+      c2:'Tap <strong>“Confirm & Submit Order”</strong> — you’ll get your <strong>Order ID</strong>.',
+      c3:'Pay the total using <strong>bKash, Nagad, Rocket, Upay or bank</strong> — the details are shown right on screen.',
+      c4:'Under <strong>“Already Paid?”</strong>, enter the <strong>amount you paid</strong>, the <strong>method</strong>, and your <strong>TrxID</strong> (or attach the receipt screenshot), then tap <strong>“Confirm Payment”</strong>.',
+      c_tip:'You only pay after you’ve seen and approved the total. The amount you enter is matched to your order automatically.',
+      s4_head:'Track your order',
+      d1:'Save your <strong>Order ID</strong>. Tap <strong>“Track My Order”</strong> anytime to see its status.',
+      d2:'We’ll only message you on <strong>WhatsApp</strong> if a product is unavailable, or the parcel weight turns out much higher than estimated.',
+      start:'🛍️ Start your order',
+      faqlink:'Read our promise & FAQ →'
+    },
+    bn:{
+      back:'অর্ডারে ফিরে যান',
+      title:'কীভাবে অর্ডার করবেন — ধাপে ধাপে',
+      subtitle:'পাকিপোশাকের প্রতিটি অংশের বিস্তারিত গাইড। মাত্র কয়েক মিনিট লাগে।',
+      videocta:'▶ ১ মিনিটের ভিডিও গাইড দেখুন',
+      s1_head:'পছন্দের পণ্য যোগ করুন',
+      a1:'হোম পেজে একটি <strong>ব্র্যান্ডে</strong> ট্যাপ করুন (অথবা “সব ব্র্যান্ড দেখুন”) — এর প্যানেল খুলবে।',
+      a2:'<strong>“Open [Brand] →”</strong> ট্যাপ করুন — ব্র্যান্ডের নিজস্ব ওয়েবসাইট খুলবে। পছন্দের পণ্যটি খুঁজে খুলুন।',
+      a3:'উপরে-ডানে <strong>⋮ মেনু</strong> ট্যাপ করে <strong>“Open in Chrome”</strong> (বা আপনার ফোনের ব্রাউজার) বেছে নিন।',
+      a4:'Chrome-এ, উপরের <strong>ওয়েব অ্যাড্রেসটি কিছুক্ষণ চেপে ধরে রাখুন</strong> যতক্ষণ না <strong>“Copy”</strong> আসে, তারপর <strong>Copy</strong> ট্যাপ করুন।',
+      a5:'পাকিপোশাকে ফিরে এসে সোনালি <strong>“📋 Paste link”</strong> বোতামে ট্যাপ করুন — দাম ও সাইজ স্বয়ংক্রিয়ভাবে বসে যাবে।',
+      a6:'আপনার <strong>সাইজ ও পরিমাণ</strong> বেছে নিন, প্রয়োজন হলে ক্যাটাগরি নির্বাচন করুন, তারপর <strong>“Save to Order List”</strong> ট্যাপ করুন।',
+      a7:'একইভাবে আরেকটি পণ্য যোগ করুন, অথবা <strong>“Add Another Product”</strong> ট্যাপ করে / আপনার তথ্যে এগিয়ে যান।',
+      a_tip:'অ্যাপ বন্ধ করলে বা পেজ পরিবর্তন করলেও আপনার সেভ করা পণ্য নিরাপদ থাকে — অর্ডার জমা দেওয়া পর্যন্ত এগুলো আপনার ফোনে সংরক্ষিত থাকে।',
+      s2_head:'আপনার তথ্য দিন',
+      b1:'আপনার <strong>পুরো নাম</strong>, <strong>হোয়াটসঅ্যাপ নম্বর</strong> ও বাংলাদেশের <strong>ডেলিভারি ঠিকানা</strong> লিখুন।',
+      b2:'<strong>“Review my order →”</strong> ট্যাপ করুন।',
+      s3_head:'রিভিউ ও পেমেন্ট',
+      c1:'আপনার পণ্য ও <strong>মোট দাম</strong> দেখে নিন (পণ্যের দাম + ওজন অনুযায়ী শিপিং + সামান্য ফি)।',
+      c2:'<strong>“Confirm & Submit Order”</strong> ট্যাপ করুন — আপনি একটি <strong>অর্ডার আইডি</strong> পাবেন।',
+      c3:'<strong>বিকাশ, নগদ, রকেট, উপায় বা ব্যাংক</strong> দিয়ে মোট দাম পরিশোধ করুন — তথ্য স্ক্রিনেই দেখানো থাকে।',
+      c4:'<strong>“Already Paid?”</strong> অংশে, <strong>আপনি যত টাকা দিয়েছেন</strong>, <strong>মাধ্যম</strong> ও আপনার <strong>TrxID</strong> দিন (বা রসিদের স্ক্রিনশট যুক্ত করুন), তারপর <strong>“Confirm Payment”</strong> ট্যাপ করুন।',
+      c_tip:'মোট দাম দেখে অনুমোদনের পরই আপনি পেমেন্ট করেন। আপনার দেওয়া অ্যামাউন্ট স্বয়ংক্রিয়ভাবে অর্ডারের সাথে মিলিয়ে নেওয়া হয়।',
+      s4_head:'অর্ডার ট্র্যাক করুন',
+      d1:'আপনার <strong>অর্ডার আইডি</strong> সেভ করুন। যেকোনো সময় <strong>“Track My Order”</strong> ট্যাপ করে অবস্থা দেখুন।',
+      d2:'কোনো পণ্য না থাকলে, বা পার্সেলের ওজন অনুমানের চেয়ে অনেক বেশি হলে — কেবল তখনই আমরা <strong>হোয়াটসঅ্যাপে</strong> জানাব।',
+      start:'🛍️ অর্ডার শুরু করুন',
+      faqlink:'আমাদের প্রতিশ্রুতি ও সাধারণ জিজ্ঞাসা →'
+    }
+  };
+
+  let lang = 'en';
+  try{ lang = localStorage.getItem('psb_lang') === 'bn' ? 'bn' : 'en'; }catch(e){}
+
+  function setLang(l){
+    lang = (l === 'bn') ? 'bn' : 'en';
+    try{ localStorage.setItem('psb_lang', lang); }catch(e){}
+    const dict = I18N[lang];
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      const k = el.getAttribute('data-i18n');
+      if(dict[k] != null) el.innerHTML = dict[k];
+    });
+    document.documentElement.lang = lang;
+    document.getElementById('langBtn').textContent = (lang === 'en') ? 'বাংলা' : 'English';
+  }
+  function toggleLang(){ setLang(lang === 'en' ? 'bn' : 'en'); }
+
+  setLang(lang);
+</script>
+</body>
+</html>
