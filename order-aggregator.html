@@ -157,11 +157,12 @@ You can paste several orders at once — paste straight from your order emails."
         <div class="brand-hdr">
           <div class="brand-name">${esc(b)}<span class="badge">${prods.length} product${prods.length>1?'s':''} · ${bPieces} pcs</span>${acctFor(b)?`<span style="margin-left:8px;background:#103a2a;border:1px solid #1f6b4d;color:#7CFC9A;border-radius:8px;padding:1px 9px;font-size:0.72rem;font-weight:700">📧 order via ${esc(acctFor(b))}</span>`:''}</div>
           <div class="brand-acts">
+            <button onclick="listBrand('${bid}')">📝 List</button>
             <button onclick="copyBrand('${bid}')">📋 Copy</button>
             <button onclick="csvBrand('${bid}','${esc(b).replace(/[^a-z0-9]/gi,'_')}')">⬇ CSV</button>
           </div>
         </div>
-        <table id="${bid}"><thead><tr>
+        <table id="${bid}" data-brand="${esc(b)}"><thead><tr>
           <th>#</th><th>Product (handle)</th><th>Category</th><th>Sizes × Qty</th><th class="num">Pcs</th><th class="num">PKR ea.</th><th class="num">Line PKR</th>
         </tr></thead><tbody>`;
       rows.forEach((r,i)=>{
@@ -206,6 +207,15 @@ You can paste several orders at once — paste straight from your order emails."
       ...rows.map(r=>[r.handle,`"${r.cat}"`,`"${r.sz}"`,r.pcs,r.ea,r.line,r.url].join(','))].join('\n');
     const blob=new Blob([csv],{type:'text/csv'});
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='order_'+name+'.csv';a.click();
+  }
+  // Readable per-brand order list (for your records / pasting into notes)
+  function listBrand(id){
+    const rows=brandRows(id);
+    const t=document.getElementById(id), bname=(t&&t.dataset.brand)||'Brand', acct=acctFor(bname);
+    const lines=['🛍️ '+bname+(acct?'  —  order via '+acct:''),''];
+    rows.forEach((r,i)=>{ lines.push((i+1)+'. '+r.handle+'  |  '+(r.sz||'—')+'  (×'+r.pcs+' pcs)'); lines.push('   '+r.url); });
+    lines.push(''); lines.push('Total: '+rows.reduce((a,r)=>a+(parseInt(r.pcs)||0),0)+' pcs');
+    navigator.clipboard.writeText(lines.join('\n')).then(()=>flash(id,'Order list copied — paste anywhere.'));
   }
   function flash(id,msg){
     const t=document.querySelector('#'+id).closest('.brand').querySelector('.brand-name');
@@ -294,6 +304,7 @@ You can paste several orders at once — paste straight from your order emails."
           <input id="plRef" placeholder="Brand order # (e.g. 1234567)" style="${inStyle}">
           <input id="plGmail" value="${esc(DEFAULT_ACCT||'')}" placeholder="Gmail used (e.g. G1 / shop1@gmail.com)" style="${inStyle}">
           <button onclick="savePlacement()">🔗 Save placement</button>
+          <button onclick="markAllPlaced()" style="background:#1c6b4f;color:#eafff5">✓ Mark all ${LOADED_ORDERS.length} placed</button>
         </div>
         <div id="plStatus" class="hint" style="margin-top:8px"></div>
       </div>
@@ -315,6 +326,18 @@ You can paste several orders at once — paste straight from your order emails."
       body:JSON.stringify({type:'placement',order_ids:ids,brand:brand,brand_order_ref:ref,placed_gmail:gmail})})
       .then(()=>{ st.style.color='#7CFC9A'; st.textContent='✓ Linked '+ids.length+' order(s) to '+(brand||'brand')+(ref?' #'+ref:'')+(gmail?' via '+gmail:'')+'. Your sheet updates in a moment.'; })
       .catch(()=>{ st.style.color='#ff8a8a'; st.textContent='Could not save — check your connection and try again.'; });
+  }
+  // One-click: mark every loaded order as placed via the default account
+  function markAllPlaced(){
+    const ids=(LOADED_ORDERS||[]).map(o=>o.order_id).filter(Boolean);
+    const st=document.getElementById('plStatus');
+    if(!ids.length){ st.style.color='#ff8a8a'; st.textContent='Nothing loaded to mark.'; return; }
+    if(!confirm('Mark all '+ids.length+' loaded order(s) as PLACED (via '+(DEFAULT_ACCT||'your account')+')?\n\nUse this only once you have actually ordered them all at the brands.')) return;
+    st.style.color='#aaa'; st.textContent='Saving…';
+    fetch(SCRIPT_POST_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({type:'placement',order_ids:ids,placed_gmail:DEFAULT_ACCT})})
+      .then(()=>{ st.style.color='#7CFC9A'; st.textContent='✓ Marked '+ids.length+' order(s) as placed via '+(DEFAULT_ACCT||'your account')+'. They drop off the queue on next load.'; })
+      .catch(()=>{ st.style.color='#ff8a8a'; st.textContent='Could not save — check connection and try again.'; });
   }
 
   function loadSample(){
