@@ -1155,10 +1155,21 @@
   }
   // NOTE: loadPsbConfig() is invoked at the END of the script — calling it here
   // would hit DEFAULT_RELAY_URL while it's still in the temporal dead zone.
-  function commRate(r, itemCount){
-    if(itemCount <= 1) return r.COMM_1;
-    if(itemCount <= 3) return r.COMM_23;
+  // Commission tier is driven by TOTAL PIECES in the cart (every size's qty
+  // summed across all products), so a bulk order of one item counts as the
+  // buyer's real quantity — not as "1 product". 1 → COMM_1, 2–3 → COMM_23, 4+ → COMM_4P.
+  function commRate(r, pieces){
+    if(pieces <= 1) return r.COMM_1;
+    if(pieces <= 3) return r.COMM_23;
     return r.COMM_4P;
+  }
+  // Total pieces across the whole cart (drives the commission tier above).
+  // Mirrors the per-item qty logic used in the totals: an item with no sizes
+  // (unstitched) counts as 1 piece via the [{qty:1}] fallback.
+  function cartTotalQty(){
+    return cart.reduce(function(s, it){
+      return s + (it.sizes || [{qty:1}]).reduce(function(a, q){ return a + (q.qty || 0); }, 0);
+    }, 0);
   }
 
   // --- REMEMBER ME (localStorage) ---
@@ -3505,7 +3516,7 @@
 
     // Running total
     const productBdt = Math.round(totalPkr * r.CONV_RATE);
-    const commission = Math.round(productBdt * commRate(r, cart.length));
+    const commission = Math.round(productBdt * commRate(r, cartTotalQty()));
     const logistics  = Math.round(totalWeight * r.LOG_RATE);
     const totalBdt   = productBdt + commission + logistics + TRANS_FEE;
     document.getElementById('rt-item-count').textContent = cart.length;
@@ -3621,7 +3632,7 @@
     });
     document.getElementById('summaryItems').innerHTML = siHtml;
     const productBdt = Math.round(totalPkr * r.CONV_RATE);
-    const commission = Math.round(productBdt * commRate(r, cart.length));
+    const commission = Math.round(productBdt * commRate(r, cartTotalQty()));
     const logistics  = Math.round(totalWeight * r.LOG_RATE);
     const totalBdt   = productBdt + commission + logistics + TRANS_FEE;
     document.getElementById('sum-pkr').textContent       = 'PKR ' + totalPkr.toLocaleString();
@@ -3652,7 +3663,7 @@
       totalWeight += item.weight * totalQty;
     });
     const productBdt = Math.round(totalPkr * r.CONV_RATE);
-    const commission = Math.round(productBdt * commRate(r, cart.length));
+    const commission = Math.round(productBdt * commRate(r, cartTotalQty()));
     const logistics  = Math.round(totalWeight * r.LOG_RATE);
     const totalBdt   = productBdt + commission + logistics + TRANS_FEE;
 
@@ -4241,7 +4252,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-15z';
+  const PSB_BUILD = '2026-06-15z2';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:#c9a96e;font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
