@@ -1589,7 +1589,7 @@
     try {
       const u = new URL(url);
       const pastedHost = u.hostname.replace(/^www\./,'');
-      let product = null, hasStockInfo = false, sawNotFound = false, pkrVia = 'unknown';
+      let product = null, hasStockInfo = false, sawNotFound = false, pkrVia = 'unknown', sfccPicked = '';
 
       // ── Group 4: Salesforce Commerce Cloud (Khaadi/Sapphire) — no Shopify
       //    product API. Pull price + per-size stock from the relay /scrape
@@ -1608,6 +1608,15 @@
             if(rj && rj.ok && rj.currency === 'PKR' && rj.price != null){
               const paisa = Math.round(rj.price * 100);   // pipeline reads paisa (÷100)
               const szs = Array.isArray(rj.sizes) ? rj.sizes : [];
+              // SFCC encodes the buyer's chosen size in the URL as
+              // ?dwvar_<pid>_size=<code> (e.g. MDM). Map that code back to the
+              // display size via the relay's per-size `value`, to pre-select it.
+              const dwCode = (url.match(/dwvar_[^=&]*_size=([^&]+)/i) || [])[1];
+              if(dwCode){
+                const want = decodeURIComponent(dwCode).toLowerCase();
+                const hit = szs.find(s => s.value && String(s.value).toLowerCase() === want);
+                if(hit) sfccPicked = hit.size;
+              }
               product = {
                 title: rj.title || '',
                 product_type: '',                          // force title-based category mapping
@@ -1899,7 +1908,7 @@
             : null;
           showSizeChips(id, sizesToAdd, chipLabel, soldOutSizes);
           const hint = document.querySelector(`#dc_szchips_${id} > div:first-child`);
-          const picked = pickedVariantFromUrl(url, product, pickDims);
+          const picked = sfccPicked || pickedVariantFromUrl(url, product, pickDims);
           const whatWord = combined ? 'colour &amp; size' : 'size';
           if(hint && !d0?.stockVerified){
             // Stock could NOT be verified — fail LOUD, never silently allow all.
@@ -2351,8 +2360,28 @@
     let v = parseInt(input.value) || 1;
     if(v < 1) v = 1;
     if(v > mx){ v = mx; input.style.borderColor = '#e74c3c';
-      setTimeout(()=>{ input.style.borderColor = 'var(--bdr-med)'; }, 1300); }
+      setTimeout(()=>{ input.style.borderColor = 'var(--bdr-med)'; }, 1500);
+      showQtyCapMsg(input, mx); }   // tell the buyer WHY, only when they ask for more
     input.value = v;
+  }
+  // Shown only when a buyer tries to exceed the per-size cap — explains the limit.
+  function showQtyCapMsg(input, mx){
+    const host = input.closest('[id^="dc_srows_"]') || input.closest('[id^="dc_uqty_wrap_"]');
+    const anchor = host || input.parentElement;
+    if(!anchor || !anchor.parentElement) return;
+    const isItem = !!(anchor.id && anchor.id.indexOf('dc_uqty_wrap_') === 0);
+    let note = anchor.parentElement.querySelector('.qty-cap-msg');
+    if(!note){
+      note = document.createElement('div');
+      note.className = 'qty-cap-msg';
+      note.setAttribute('role','alert');
+      note.style.cssText = 'font-size:0.75rem;font-weight:700;color:#f0c855;background:rgba(230,168,23,0.12);border:1px solid rgba(230,168,23,0.40);border-radius:6px;padding:6px 10px;margin-top:6px';
+      anchor.insertAdjacentElement('afterend', note);
+    }
+    note.innerHTML = `⚠️ Maximum <b>${mx}</b> ${isItem ? 'pieces for this item' : 'pieces per size'} can be ordered here. Need more? Please message us and we’ll check availability.`;
+    note.style.display = '';
+    clearTimeout(note._t);
+    note._t = setTimeout(()=>{ if(note) note.style.display = 'none'; }, 6000);
   }
 
   function addDraftSizeRow(draftId, size='', qty=1){

@@ -89,6 +89,9 @@ function normalizeSfcc(j){
   const cleanSize = s => String(s == null ? '' : s).replace(/^0+(?=[A-Za-z])/, '').trim();
   const sizes = sizeAttr ? (sizeAttr.values || []).map(v => ({
     size: cleanSize(v.displayValue || v.value), available: !!v.selectable,
+    // Raw SFCC variation code (e.g. MDM, 0XS) so the form can map a pasted
+    // ?dwvar_<pid>_size=<code> back to the display size and pre-select it.
+    value: v.value == null ? null : String(v.value),
   })) : [];
   return {
     currency,                 // 'PKR'
