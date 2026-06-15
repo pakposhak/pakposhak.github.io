@@ -532,7 +532,7 @@
   <div class="section-label" style="margin-top:28px" data-i18n="lbl_addproducts">Add Products to Your Order</div>
 
   <div class="url-input-box">
-    <span class="input-label" data-i18n="url_label">📋 Copy a product link from any brand site and paste it below:</span>
+    <span class="input-label" data-i18n="url_label">📋 Copy a product link from any brand site and paste it below — or use the side 📋 Paste tab:</span>
     <!-- Pasting is handled by the always-visible floating Paste tab (bottom-right) —
          no inline paste button needed here. -->
     <!-- FIRST URL input — hidden once draft cards exist -->
@@ -573,6 +573,13 @@
       <div class="rt-note">* The total above is what you pay — your order is processed automatically.</div>
       <div class="rt-note" style="margin-top:6px;color:#f9a825">⚖️ Shipping is charged by your parcel's actual weight, so this is a very close estimate. We'll only message you on WhatsApp if a product is unavailable or the weight turns out much higher than estimated.</div>
     </div>
+  </div>
+
+  <!-- After ≥1 item saved: a clear choice — add another, or continue. -->
+  <div id="addMoreRow" style="display:none;margin-top:22px">
+    <div style="text-align:center;font-size:0.82rem;color:var(--txt-sec);font-weight:600;margin-bottom:11px" data-i18n="addmore_hint">✓ Item saved! Add another product, or continue to your details.</div>
+    <button type="button" onclick="addAnotherProduct()" data-i18n="addmore_btn"
+      style="width:100%;padding:13px;background:var(--surface);border:1.5px solid var(--gold);color:var(--gold);border-radius:12px;font-weight:700;font-size:0.95rem;cursor:pointer">➕ Add Another Product</button>
   </div>
 
   <div class="nav-row">
@@ -2591,6 +2598,7 @@
     const n = Object.keys(drafts).length;
     const btn = document.getElementById('saveAllBtn');
     if(btn) btn.textContent = n>1 ? `✓ Save ${n} items to Order List` : '✓ Save to Order List';
+    updateAddMoreRow();
   }
 
   // ── BRAND & CATEGORY AUTO-DETECTION FROM URL ─────────────────────────────
@@ -2787,10 +2795,11 @@
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search 100+ Pakistani brands…',
       lbl_addproducts:'Add Products to Your Order',
-      url_label:'📋 Copy a product link from any brand site and paste it below:',
+      url_label:'📋 Copy a product link from any brand site and paste it below — or use the side 📋 Paste tab:',
       btn_addurl:'+ Add URL', btn_paste:'📋 Paste Link & Auto-Fill', pp_tap:'Tap a product to add it — no copy-paste needed', pp_search:'🔍 Search this brand…', pp_site:'🌐 Open full brand site instead', fab_paste:'Paste link',
       nav_home:'Home', nav_brands:'Brands', nav_cart:'Cart', nav_how:'How To',
       tl_help:'New here? Start with these:', tl_faq:'❓ How it works & our promise', tl_track:'📦 Track an order', tl_weights:'⚖️ Shipping weights', tl_wa:'💬 Chat on WhatsApp',
+      addmore_hint:'✓ Item saved! Add another product, or continue to your details.', addmore_btn:'➕ Add Another Product',
       word_brands:'brands',
       cat_md:'Multi-Department', cat_w:'Women’s Pret & Unstitched', cat_p:'Premium', cat_m:'Menswear', cat_k:'Kids',
       d_contact:'Your Contact & Delivery Details', d_saved:'✓ Details saved on this device', d_clearsaved:'Clear saved info',
@@ -2828,11 +2837,12 @@
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
       lbl_browse:'ব্র্যান্ড ব্রাউজ করুন', search_ph:'🔍 ১০০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
       lbl_addproducts:'অর্ডারে পণ্য যোগ করুন',
-      url_label:'📋 যেকোনো ব্র্যান্ড সাইট থেকে প্রোডাক্টের লিংক কপি করে নিচে পেস্ট করুন:',
+      url_label:'📋 যেকোনো ব্র্যান্ড সাইট থেকে প্রোডাক্টের লিংক কপি করে নিচে পেস্ট করুন — অথবা পাশের 📋 Paste ট্যাব ব্যবহার করুন:',
       btn_addurl:'+ লিংক যোগ করুন',
       btn_paste:'📋 লিংক পেস্ট করে অটো-ফিল', pp_tap:'পণ্যে ট্যাপ করে যোগ করুন — কপি-পেস্ট লাগবে না', pp_search:'🔍 এই ব্র্যান্ডে খুঁজুন…', pp_site:'🌐 বদলে সম্পূর্ণ ব্র্যান্ড সাইট খুলুন', fab_paste:'লিংক পেস্ট',
       nav_home:'হোম', nav_brands:'ব্র্যান্ড', nav_cart:'কার্ট', nav_how:'কীভাবে',
       tl_help:'নতুন? এখান থেকে শুরু করুন:', tl_faq:'❓ কীভাবে কাজ করে ও প্রতিশ্রুতি', tl_track:'📦 অর্ডার ট্র্যাক করুন', tl_weights:'⚖️ শিপিং ওজন', tl_wa:'💬 হোয়াটসঅ্যাপে চ্যাট',
+      addmore_hint:'✓ আইটেম সেভ হয়েছে! আরেকটি পণ্য যোগ করুন, অথবা আপনার তথ্যে এগিয়ে যান।', addmore_btn:'➕ আরেকটি পণ্য যোগ করুন',
       word_brands:'ব্র্যান্ড',
       cat_md:'মাল্টি-ডিপার্টমেন্ট', cat_w:'মেয়েদের প্রেট ও আনস্টিচড', cat_p:'প্রিমিয়াম', cat_m:'ছেলেদের পোশাক', cat_k:'বাচ্চাদের',
       d_contact:'আপনার যোগাযোগ ও ডেলিভারির তথ্য', d_saved:'✓ এই ডিভাইসে তথ্য সেভ করা হয়েছে', d_clearsaved:'সেভ করা তথ্য মুছুন',
@@ -3107,6 +3117,29 @@
     document.getElementById('urlInput').value = '';
   }
 
+  // Show the "Add another product / Next" choice only once an item is saved AND
+  // no draft is mid-edit — so the flow is: save this item first, then add another.
+  function updateAddMoreRow(){
+    const el = document.getElementById('addMoreRow');
+    if(el) el.style.display = (cart.length > 0 && Object.keys(drafts).length === 0) ? '' : 'none';
+  }
+
+  // "Add Another Product" (shown after a save): reveal + scroll to the paste box
+  // so the out-of-view top input comes right to the buyer.
+  function addAnotherProduct(){
+    showTopUrlInput();
+    const row = document.getElementById('urlInputRow');
+    const inp = document.getElementById('urlInput');
+    if(row) row.scrollIntoView({ behavior:'smooth', block:'center' });
+    setTimeout(() => {
+      if(!inp) return;
+      inp.focus();
+      inp.style.borderColor = '#c9a96e';
+      inp.style.boxShadow   = '0 0 0 3px rgba(201,169,110,0.35)';
+      setTimeout(() => { inp.style.borderColor = ''; inp.style.boxShadow = ''; }, 2500);
+    }, 350);
+  }
+
   // ── ONE-TAP PASTE ──────────────────────────────────────────────────────────
   // The hardest step for phone users is copying the link in the brand's in-app
   // browser, then finding our tiny input box and long-pressing → Paste. This
@@ -3320,6 +3353,7 @@
     const empty = document.getElementById('cartEmpty');
     const rtBox = document.getElementById('runningTotal');
     const badge = document.getElementById('itemCountBadge');
+    updateAddMoreRow();
 
     if(!cart.length){
       if(empty) empty.style.display = '';
@@ -4075,7 +4109,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-15v';
+  const PSB_BUILD = '2026-06-15w';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:#c9a96e;font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
