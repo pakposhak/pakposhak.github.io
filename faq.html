@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<!-- Keep this: stops Chrome auto-translating the hand-written Bangla into worse English -->
+<meta name="google" content="notranslate"/>
+<meta name="theme-color" content="#080E1C"/>
+<title>How it works &amp; our promise · PakiPoshak</title>
+<style>
+  :root{
+    --bg:#080E1C; --surface:#0F1929; --raised:#162035;
+    --gold:#C9A96E; --gold-bdr:rgba(201,169,110,0.30); --gold-dim:rgba(201,169,110,0.12);
+    --txt:#EEE4CE; --txt-sec:#A0B2C8; --txt-muted:#5A6E84;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--txt);
+    min-height:100vh;line-height:1.55;padding-bottom:40px}
+  a{color:var(--gold)}
+  .wrap{max-width:680px;margin:0 auto;padding:0 16px}
+
+  header{position:sticky;top:0;z-index:10;background:rgba(8,14,28,0.95);
+    backdrop-filter:blur(6px);border-bottom:1px solid var(--gold-bdr)}
+  .hdr{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    max-width:680px;margin:0 auto;padding:11px 16px}
+  .hdr a.back{display:inline-flex;align-items:center;gap:6px;color:var(--txt-sec);
+    text-decoration:none;font-size:0.86rem;font-weight:600}
+  .hdr .brand{font-weight:800;color:var(--gold);font-size:1.02rem;letter-spacing:0.3px}
+  .langbtn{background:var(--raised);border:1px solid var(--gold-bdr);color:var(--gold);
+    font-size:0.78rem;font-weight:700;padding:6px 12px;border-radius:18px;cursor:pointer}
+
+  .hero{text-align:center;padding:30px 0 8px}
+  .hero h1{font-size:1.5rem;color:var(--gold);font-weight:800;line-height:1.25}
+  .hero p{color:var(--txt-sec);font-size:0.92rem;margin-top:8px}
+
+  section{margin-top:30px}
+  h2.sec{font-size:0.78rem;text-transform:uppercase;letter-spacing:1.2px;
+    color:var(--txt-muted);font-weight:800;margin-bottom:14px;text-align:center}
+
+  .card{background:var(--surface);border:1px solid var(--gold-bdr);border-radius:14px;padding:18px 18px}
+  .about{color:var(--txt-sec);font-size:0.94rem}
+
+  .steps{display:grid;gap:10px}
+  .step{display:flex;align-items:flex-start;gap:12px;background:var(--surface);
+    border:1px solid var(--gold-bdr);border-radius:12px;padding:13px 15px}
+  .step .n{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--gold);
+    color:#0A1628;font-weight:800;font-size:0.82rem;display:flex;align-items:center;justify-content:center}
+  .step .t{font-size:0.92rem;color:var(--txt)}
+
+  .promise{display:grid;gap:9px}
+  .pr{display:flex;align-items:flex-start;gap:11px;background:var(--gold-dim);
+    border:1px solid var(--gold-bdr);border-radius:11px;padding:12px 14px;font-size:0.9rem}
+  .pr .ic{font-size:1.1rem;flex-shrink:0}
+
+  .faq{display:grid;gap:12px}
+  .qa{background:var(--surface);border:1px solid var(--gold-bdr);border-radius:12px;padding:14px 16px}
+  .qa .q{font-weight:700;color:var(--gold);font-size:0.92rem;margin-bottom:5px}
+  .qa .a{color:var(--txt-sec);font-size:0.88rem}
+
+  .contact{text-align:center}
+  .contact p{color:var(--txt-sec);font-size:0.92rem;margin-bottom:14px}
+  .cta{display:inline-flex;align-items:center;gap:8px;justify-content:center;
+    text-decoration:none;font-weight:700;font-size:0.92rem;padding:12px 22px;border-radius:11px;margin:5px}
+  .cta.wa{background:#25D366;color:#073b1e}
+  .cta.mail{background:var(--raised);color:var(--gold);border:1px solid var(--gold-bdr)}
+
+  .endlink{text-align:center;margin-top:34px}
+  .endlink a{display:inline-block;background:var(--gold);color:#0A1628;font-weight:800;
+    text-decoration:none;padding:13px 28px;border-radius:12px;font-size:0.95rem}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr">
+    <a class="back" href="index.html"><span>‹</span> <span data-i18n="back">Back to ordering</span></a>
+    <span class="brand">PakiPoshak</span>
+    <button class="langbtn" onclick="toggleLang()" id="langBtn">বাংলা</button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="hero">
+    <h1 data-i18n="title">How it works &amp; our promise</h1>
+    <p data-i18n="subtitle">Everything you need to know before your first order.</p>
+  </div>
+
+  <section>
+    <div class="card about">
+      <span data-i18n="about">PakiPoshak is a Dhaka-based personal shopping service by Moors Attire. We bring you authentic Pakistani fashion — ordered directly from the brands' own official websites — delivered to your door anywhere in Bangladesh. You choose what you love; we handle buying it in Pakistan and shipping it safely to you.</span>
+      <!-- TRUST TIP (Danish): adding your name + a real photo here boosts buyer confidence a lot.
+           e.g. "— Danish Wazir, Founder" with a friendly photo. Add when you're comfortable. -->
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec" data-i18n="hiw_head">How it works</h2>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><div class="t" data-i18n="hiw1">Browse 100+ Pakistani brands</div></div>
+      <div class="step"><div class="n">2</div><div class="t" data-i18n="hiw2">Add the products you want</div></div>
+      <div class="step"><div class="n">3</div><div class="t" data-i18n="hiw3">We confirm the final price on WhatsApp</div></div>
+      <div class="step"><div class="n">4</div><div class="t" data-i18n="hiw4">Pay safely &amp; receive in 2–3 weeks</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec" data-i18n="promise_head">Our promise to you</h2>
+    <div class="promise">
+      <div class="pr"><span class="ic">✅</span><span data-i18n="pr1">100% authentic — bought from the brands' official websites.</span></div>
+      <div class="pr"><span class="ic">💬</span><span data-i18n="pr2">Final price confirmed on WhatsApp before you pay — no surprise charges.</span></div>
+      <div class="pr"><span class="ic">🔒</span><span data-i18n="pr3">Pay safely via bKash, Nagad or bank — only after you approve the price.</span></div>
+      <div class="pr"><span class="ic">🚚</span><span data-i18n="pr4">Delivered to your door in about 2–3 weeks.</span></div>
+      <!-- REFUND TERMS (Danish): confirm or adjust the exact wording below before this goes live. -->
+      <div class="pr"><span class="ic">↩️</span><span data-i18n="pr5">If an item sells out, we offer a similar alternative or a full refund — your choice.</span></div>
+      <div class="pr"><span class="ic">📦</span><span data-i18n="pr6">Every order has its own Order ID so you can track it anytime.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec" data-i18n="faq_head">Frequently asked questions</h2>
+    <div class="faq">
+      <div class="qa"><div class="q" data-i18n="q1">Is this genuine? How do I know I'll receive my order?</div><div class="a" data-i18n="a1">Yes. We buy every item directly from the brand's official website, and you only pay after we confirm your order on WhatsApp. You also get an Order ID to track your order at every step.</div></div>
+      <div class="qa"><div class="q" data-i18n="q2">How is the price calculated?</div><div class="a" data-i18n="a2">Your total is the product price, plus shipping (charged by the parcel's weight), plus a small transaction fee. We always confirm the exact final amount on WhatsApp before you pay.</div></div>
+      <div class="qa"><div class="q" data-i18n="q3">How long does delivery take?</div><div class="a" data-i18n="a3">Usually 2–3 weeks from the day we confirm your order, delivered to your address in Bangladesh.</div></div>
+      <div class="qa"><div class="q" data-i18n="q4">How do I pay?</div><div class="a" data-i18n="a4">After we confirm your quote on WhatsApp, you can pay by bKash, Nagad, Upay, Rocket or bank transfer. Never pay before you receive your confirmed price.</div></div>
+      <div class="qa"><div class="q" data-i18n="q5">What if my item goes out of stock?</div><div class="a" data-i18n="a5">Pakistani fashion sells fast. If anything sells out before we place your order, we tell you immediately on WhatsApp and offer a similar alternative or a full refund.</div></div>
+      <div class="qa"><div class="q" data-i18n="q6">What if it doesn't fit or arrives damaged?</div><div class="a" data-i18n="a6">Send us a photo on WhatsApp and we'll do our best to make it right. Your satisfaction matters to us.</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec" data-i18n="contact_head">Still have questions?</h2>
+    <div class="card contact">
+      <p data-i18n="contact_p">We're happy to help before you order. Reach us directly:</p>
+      <a id="waContact" class="cta wa" href="#" target="_blank" rel="noopener" style="display:none" data-i18n="contact_wa">💬 Chat on WhatsApp</a>
+      <a class="cta mail" href="mailto:collectionmoors@gmail.com">✉️ collectionmoors@gmail.com</a>
+    </div>
+  </section>
+
+  <div class="endlink">
+    <a href="index.html" data-i18n="start">🛍️ Start your order</a>
+  </div>
+
+</div>
+
+<script>
+  // Support WhatsApp — DIGITS ONLY, full international format (e.g. 8801712345678).
+  // MUST match the SUPPORT_WA value in order-form.html. Leave '' to hide the
+  // WhatsApp button (email still shows). >>> PASTE YOUR NUMBER BETWEEN THE QUOTES <<<
+  const SUPPORT_WA = '';
+
+  const I18N = {
+    en:{
+      back:'Back to ordering',
+      title:'How it works & our promise',
+      subtitle:'Everything you need to know before your first order.',
+      about:"PakiPoshak is a Dhaka-based personal shopping service by Moors Attire. We bring you authentic Pakistani fashion — ordered directly from the brands' own official websites — delivered to your door anywhere in Bangladesh. You choose what you love; we handle buying it in Pakistan and shipping it safely to you.",
+      hiw_head:'How it works',
+      hiw1:'Browse 100+ Pakistani brands',
+      hiw2:'Add the products you want',
+      hiw3:'We confirm the final price on WhatsApp',
+      hiw4:'Pay safely & receive in 2–3 weeks',
+      promise_head:'Our promise to you',
+      pr1:"100% authentic — bought from the brands' official websites.",
+      pr2:'Final price confirmed on WhatsApp before you pay — no surprise charges.',
+      pr3:'Pay safely via bKash, Nagad or bank — only after you approve the price.',
+      pr4:'Delivered to your door in about 2–3 weeks.',
+      pr5:'If an item sells out, we offer a similar alternative or a full refund — your choice.',
+      pr6:'Every order has its own Order ID so you can track it anytime.',
+      faq_head:'Frequently asked questions',
+      q1:"Is this genuine? How do I know I'll receive my order?",
+      a1:'Yes. We buy every item directly from the brand’s official website, and you only pay after we confirm your order on WhatsApp. You also get an Order ID to track your order at every step.',
+      q2:'How is the price calculated?',
+      a2:"Your total is the product price, plus shipping (charged by the parcel's weight), plus a small transaction fee. We always confirm the exact final amount on WhatsApp before you pay.",
+      q3:'How long does delivery take?',
+      a3:'Usually 2–3 weeks from the day we confirm your order, delivered to your address in Bangladesh.',
+      q4:'How do I pay?',
+      a4:'After we confirm your quote on WhatsApp, you can pay by bKash, Nagad, Upay, Rocket or bank transfer. Never pay before you receive your confirmed price.',
+      q5:'What if my item goes out of stock?',
+      a5:'Pakistani fashion sells fast. If anything sells out before we place your order, we tell you immediately on WhatsApp and offer a similar alternative or a full refund.',
+      q6:"What if it doesn't fit or arrives damaged?",
+      a6:"Send us a photo on WhatsApp and we'll do our best to make it right. Your satisfaction matters to us.",
+      contact_head:'Still have questions?',
+      contact_p:"We're happy to help before you order. Reach us directly:",
+      contact_wa:'💬 Chat on WhatsApp',
+      start:'🛍️ Start your order'
+    },
+    bn:{
+      back:'অর্ডারে ফিরে যান',
+      title:'কীভাবে কাজ করে ও আমাদের প্রতিশ্রুতি',
+      subtitle:'আপনার প্রথম অর্ডারের আগে যা জানা দরকার।',
+      about:'পাকিপোশাক হলো ঢাকা-ভিত্তিক একটি পার্সোনাল শপিং সার্ভিস, পরিচালনায় Moors Attire। আমরা ব্র্যান্ডগুলোর নিজস্ব অফিসিয়াল ওয়েবসাইট থেকে সরাসরি অর্ডার করে অরিজিনাল পাকিস্তানি ফ্যাশন বাংলাদেশের যেকোনো জায়গায় আপনার দরজায় পৌঁছে দিই। আপনি পছন্দ করুন; কেনা ও নিরাপদে পাঠানোর কাজ আমরা করি।',
+      hiw_head:'কীভাবে কাজ করে',
+      hiw1:'১০০+ পাকিস্তানি ব্র্যান্ড দেখুন',
+      hiw2:'পছন্দের পণ্যগুলো যোগ করুন',
+      hiw3:'হোয়াটসঅ্যাপে চূড়ান্ত দাম নিশ্চিত করি',
+      hiw4:'নিরাপদে পেমেন্ট করুন, ২–৩ সপ্তাহে পান',
+      promise_head:'আপনার প্রতি আমাদের প্রতিশ্রুতি',
+      pr1:'শতভাগ অরিজিনাল — ব্র্যান্ডের অফিসিয়াল ওয়েবসাইট থেকে কেনা।',
+      pr2:'পেমেন্টের আগেই হোয়াটসঅ্যাপে চূড়ান্ত দাম নিশ্চিত করা হয় — কোনো লুকানো খরচ নেই।',
+      pr3:'দাম অনুমোদনের পরই বিকাশ, নগদ বা ব্যাংকে নিরাপদে পেমেন্ট করুন।',
+      pr4:'প্রায় ২–৩ সপ্তাহে আপনার দরজায় ডেলিভারি।',
+      pr5:'কোনো পণ্য শেষ হয়ে গেলে একই রকম বিকল্প অথবা সম্পূর্ণ রিফান্ড — আপনার পছন্দমতো।',
+      pr6:'প্রতিটি অর্ডারে আলাদা অর্ডার আইডি, যেকোনো সময় ট্র্যাক করুন।',
+      faq_head:'সাধারণ জিজ্ঞাসা',
+      q1:'এটা কি আসল? আমি কীভাবে নিশ্চিত হব যে অর্ডার পাব?',
+      a1:'হ্যাঁ। আমরা প্রতিটি পণ্য ব্র্যান্ডের অফিসিয়াল ওয়েবসাইট থেকে সরাসরি কিনি, এবং হোয়াটসঅ্যাপে অর্ডার নিশ্চিত করার পরই আপনি পেমেন্ট করেন। প্রতিটি ধাপ ট্র্যাক করার জন্য আপনি একটি অর্ডার আইডিও পান।',
+      q2:'দাম কীভাবে হিসাব করা হয়?',
+      a2:'আপনার মোট দাম = পণ্যের দাম + শিপিং (পার্সেলের ওজন অনুযায়ী) + সামান্য ট্রানজেকশন ফি। পেমেন্টের আগে আমরা সবসময় হোয়াটসঅ্যাপে চূড়ান্ত দাম নিশ্চিত করি।',
+      q3:'ডেলিভারিতে কত সময় লাগে?',
+      a3:'অর্ডার নিশ্চিত হওয়ার দিন থেকে সাধারণত ২–৩ সপ্তাহ, বাংলাদেশে আপনার ঠিকানায় ডেলিভারি।',
+      q4:'আমি কীভাবে পেমেন্ট করব?',
+      a4:'হোয়াটসঅ্যাপে দাম নিশ্চিত করার পর আপনি বিকাশ, নগদ, উপায়, রকেট বা ব্যাংক ট্রান্সফারে পেমেন্ট করতে পারেন। চূড়ান্ত দাম পাওয়ার আগে কখনো পেমেন্ট করবেন না।',
+      q5:'আমার পণ্য স্টকে না থাকলে কী হবে?',
+      a5:'পাকিস্তানি ফ্যাশন দ্রুত বিক্রি হয়। অর্ডার করার আগে কিছু শেষ হয়ে গেলে আমরা সঙ্গে সঙ্গে হোয়াটসঅ্যাপে জানাই এবং একই রকম বিকল্প অথবা সম্পূর্ণ রিফান্ড দিই।',
+      q6:'ফিট না হলে বা ক্ষতিগ্রস্ত অবস্থায় এলে কী করব?',
+      a6:'একটি ছবিসহ হোয়াটসঅ্যাপে আমাদের জানান, আমরা সমাধানের সর্বোচ্চ চেষ্টা করব। আপনার সন্তুষ্টিই আমাদের কাছে গুরুত্বপূর্ণ।',
+      contact_head:'আরও প্রশ্ন আছে?',
+      contact_p:'অর্ডারের আগে আমরা সাহায্য করতে প্রস্তুত। সরাসরি যোগাযোগ করুন:',
+      contact_wa:'💬 হোয়াটসঅ্যাপে চ্যাট করুন',
+      start:'🛍️ অর্ডার শুরু করুন'
+    }
+  };
+
+  let lang = 'en';
+  try{ lang = localStorage.getItem('psb_lang') === 'bn' ? 'bn' : 'en'; }catch(e){}
+
+  function setLang(l){
+    lang = (l === 'bn') ? 'bn' : 'en';
+    try{ localStorage.setItem('psb_lang', lang); }catch(e){}
+    const dict = I18N[lang];
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      const k = el.getAttribute('data-i18n');
+      if(dict[k] != null) el.textContent = dict[k];
+    });
+    document.documentElement.lang = lang;
+    document.getElementById('langBtn').textContent = (lang === 'en') ? 'বাংলা' : 'English';
+  }
+  function toggleLang(){ setLang(lang === 'en' ? 'bn' : 'en'); }
+
+  (function(){
+    const num = (typeof SUPPORT_WA === 'string' ? SUPPORT_WA : '').replace(/\D/g,'');
+    if(!num) return;
+    const a = document.getElementById('waContact');
+    if(a){ a.href = 'https://wa.me/' + num; a.style.display = ''; }
+  })();
+
+  setLang(lang);
+</script>
+</body>
+</html>

@@ -38,6 +38,10 @@
     }
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:70px}
+    .tl-chip{display:inline-flex;align-items:center;gap:5px;background:var(--surface);
+      border:1px solid var(--gold-bdr);color:var(--txt-sec);text-decoration:none;
+      font-size:0.78rem;font-weight:600;padding:7px 13px;border-radius:20px;transition:border-color .15s,color .15s}
+    .tl-chip:hover{border-color:var(--gold);color:var(--gold)}
     input,select,textarea{color:var(--txt);background:var(--input-bg)}
     input::placeholder{color:var(--txt-muted)}
     select option{background:var(--raised);color:var(--txt);font-weight:400;font-size:0.92rem}
@@ -582,12 +586,23 @@
       <div class="rt-row"><span>Transaction Fee</span><span>৳ 100</span></div>
       <div class="rt-total"><span>ESTIMATED TOTAL</span><span id="rt-total">৳ —</span></div>
       <div class="rt-note">* Final confirmed price sent via WhatsApp before payment.</div>
-      <div class="rt-note" style="margin-top:6px;color:#f9a825">⚖️ Weight costs are on an approximate basis. If they vary a lot, we'll either refund you or collect the extra charge at the time of delivery.</div>
+      <div class="rt-note" style="margin-top:6px;color:#f9a825">⚖️ Shipping is charged by your parcel's actual weight, so this is a close estimate. We always confirm the exact final amount on WhatsApp before you pay — no surprise charges.</div>
     </div>
   </div>
 
   <div class="nav-row">
     <button class="btn-next" onclick="nextFromStep1()">Next: My Details →</button>
+  </div>
+
+  <!-- Trust / help links — reassurance + discoverability for first-time buyers -->
+  <div style="margin-top:28px;padding-top:18px;border-top:1px solid var(--gold-bdr);text-align:center">
+    <div style="font-size:0.74rem;color:var(--txt-muted);margin-bottom:9px;letter-spacing:0.3px" data-i18n="tl_help">New here? Start with these:</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">
+      <a href="faq.html" class="tl-chip" data-i18n="tl_faq">❓ How it works &amp; our promise</a>
+      <a href="tracking.html" class="tl-chip" data-i18n="tl_track">📦 Track an order</a>
+      <a href="weight-chart.html" class="tl-chip" data-i18n="tl_weights">⚖️ Shipping weights</a>
+      <a id="waTrustLink" href="#" target="_blank" rel="noopener" class="tl-chip" style="display:none" data-i18n="tl_wa">💬 Chat on WhatsApp</a>
+    </div>
   </div>
 
 </div><!-- end container step1 -->
@@ -646,8 +661,8 @@
     <button class="btn-next" onclick="nextFromStep2()" data-i18n="btn_review">Review My Order →</button>
   </div>
 
-  <div class="wa-note" style="margin-top:16px">
-    <span data-i18n="d_questions">Questions?</span> <a href="https://wa.me/923XXXXXXXXX" target="_blank" data-i18n="d_wachat">Chat on WhatsApp</a>
+  <div class="wa-note" id="waNote" style="margin-top:16px;display:none">
+    <span data-i18n="d_questions">Questions?</span> <a id="waSupportLink" href="#" target="_blank" rel="noopener" data-i18n="d_wachat">Chat on WhatsApp</a>
   </div>
 
 </div>
@@ -1086,6 +1101,12 @@
   const SHEET_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzJ_HQD2NdyFNk2wSBpR-8KzuXT_wqTIipOFWM8HD4R-Q_EHvTOM1leyJ2MvBxfZA/exec';
   // Old Formspree endpoint — used only as a fallback if WEB3FORMS_KEY is blank.
   const FORMSPREE_URL    = 'https://formspree.io/f/xnjypzyl';
+  // (C) Support WhatsApp number — full international format, DIGITS ONLY
+  //     (Bangladesh example: 8801712345678). Fill this once and every
+  //     "Chat on WhatsApp" link/button on the site turns on automatically.
+  //     Leave it '' and those links stay HIDDEN (so buyers never see a dead
+  //     link). >>> PASTE YOUR NUMBER BETWEEN THE QUOTES <<<
+  const SUPPORT_WA       = '';
   // ═══════════════════════════════════════════════════════════════════════
 
   // --- ADMIN RATE MANAGEMENT ---
@@ -2801,6 +2822,7 @@
       url_label:'📋 Copy a product link from any brand site and paste it below:',
       btn_addurl:'+ Add URL', btn_paste:'📋 Paste Link & Auto-Fill', pp_tap:'Tap a product to add it — no copy-paste needed', pp_search:'🔍 Search this brand…', pp_site:'🌐 Open full brand site instead', fab_paste:'Paste link',
       nav_home:'Home', nav_brands:'Brands', nav_cart:'Cart', nav_how:'How To',
+      tl_help:'New here? Start with these:', tl_faq:'❓ How it works & our promise', tl_track:'📦 Track an order', tl_weights:'⚖️ Shipping weights', tl_wa:'💬 Chat on WhatsApp',
       word_brands:'brands',
       cat_md:'Multi-Department', cat_w:'Women’s Pret & Unstitched', cat_p:'Premium', cat_m:'Menswear', cat_k:'Kids',
       d_contact:'Your Contact & Delivery Details', d_saved:'✓ Details saved on this device', d_clearsaved:'Clear saved info',
@@ -2842,6 +2864,7 @@
       btn_addurl:'+ লিংক যোগ করুন',
       btn_paste:'📋 লিংক পেস্ট করে অটো-ফিল', pp_tap:'পণ্যে ট্যাপ করে যোগ করুন — কপি-পেস্ট লাগবে না', pp_search:'🔍 এই ব্র্যান্ডে খুঁজুন…', pp_site:'🌐 বদলে সম্পূর্ণ ব্র্যান্ড সাইট খুলুন', fab_paste:'লিংক পেস্ট',
       nav_home:'হোম', nav_brands:'ব্র্যান্ড', nav_cart:'কার্ট', nav_how:'কীভাবে',
+      tl_help:'নতুন? এখান থেকে শুরু করুন:', tl_faq:'❓ কীভাবে কাজ করে ও প্রতিশ্রুতি', tl_track:'📦 অর্ডার ট্র্যাক করুন', tl_weights:'⚖️ শিপিং ওজন', tl_wa:'💬 হোয়াটসঅ্যাপে চ্যাট',
       word_brands:'ব্র্যান্ড',
       cat_md:'মাল্টি-ডিপার্টমেন্ট', cat_w:'মেয়েদের প্রেট ও আনস্টিচড', cat_p:'প্রিমিয়াম', cat_m:'ছেলেদের পোশাক', cat_k:'বাচ্চাদের',
       d_contact:'আপনার যোগাযোগ ও ডেলিভারির তথ্য', d_saved:'✓ এই ডিভাইসে তথ্য সেভ করা হয়েছে', d_clearsaved:'সেভ করা তথ্য মুছুন',
@@ -4014,6 +4037,19 @@
   // Restore any saved cart — must run last, after all consts above are initialised.
   loadCartFromStorage();
 
+  // Turn on every WhatsApp link ONLY if a support number is configured above —
+  // otherwise they stay hidden so a buyer never taps a dead link.
+  function wireSupportWA(){
+    var num = (typeof SUPPORT_WA === 'string' ? SUPPORT_WA : '').replace(/\D/g,'');
+    if(!num) return;                      // no number set → links remain hidden
+    var href = 'https://wa.me/' + num;
+    var note = document.getElementById('waNote');
+    if(note){ note.style.display = ''; var a = document.getElementById('waSupportLink'); if(a) a.href = href; }
+    var chip = document.getElementById('waTrustLink');
+    if(chip){ chip.href = href; chip.style.display = ''; }
+  }
+  wireSupportWA();
+
   // Auto-open admin panel for ?admin — also must run last so DEFAULT_WEIGHTS etc.
   // are already initialised (this used to crash the whole script when run early).
   if(window.location.search.includes('admin')) openAdminPanel();
@@ -4076,7 +4112,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-13o';
+  const PSB_BUILD = '2026-06-15r';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:#c9a96e;font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
