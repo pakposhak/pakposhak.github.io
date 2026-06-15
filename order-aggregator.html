@@ -53,6 +53,7 @@ You can paste several orders at once — paste straight from your order emails."
 
 <div class="row">
   <button onclick="loadFromSheet()">🔄 Load paid orders from my sheet</button>
+  <button onclick="exportCustomers()">⬇ Export customers (CSV)</button>
   <button onclick="aggregate()">🔀 Group by Brand</button>
   <button class="ghost" onclick="loadSample()">Load sample</button>
   <button class="ghost" onclick="document.getElementById('input').value='';document.getElementById('out').innerHTML='';">Clear</button>
@@ -202,6 +203,11 @@ You can paste several orders at once — paste straight from your order emails."
 
   // ── Auto-load paid orders from the tracking Google Sheet ──────────────────
   const SHEET_CSV='https://docs.google.com/spreadsheets/d/16v2e7pxwMPimVkOTFKID3S4dI-mPexlzNgUT3zN0CM0/gviz/tq?tqx=out:csv&gid=0&headers=1';
+  // Apps Script /exec — same endpoint the order form posts to (used for placement linking)
+  const SCRIPT_POST_URL='https://script.google.com/macros/s/AKfycbzJ_HQD2NdyFNk2wSBpR-8KzuXT_wqTIipOFWM8HD4R-Q_EHvTOM1leyJ2MvBxfZA/exec';
+  let LOADED_ORDERS=[];
+  const csvQuote=s=>'"'+String(s==null?'':s).replace(/"/g,'""')+'"';
+  function downloadFile(text,name,type){const b=new Blob([text],{type:type||'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();}
   function parseCSV(text){
     const rows=[];let cur=[],val='',q=false;
     for(let i=0;i<text.length;i++){const c=text[i];
@@ -218,18 +224,85 @@ You can paste several orders at once — paste straight from your order emails."
       const t=await fetch(SHEET_CSV+'&_='+Date.now()).then(r=>r.text());
       const rows=parseCSV(t).filter(r=>r.length>1);
       const hdr=rows[0].map(h=>h.trim().toLowerCase().replace(/\s+/g,'_'));
-      const ci=hdr.indexOf('order_id'), cs=hdr.indexOf('status'), ck=hdr.indexOf('order_items');
+      const ci=hdr.indexOf('order_id'), cs=hdr.indexOf('status'), ck=hdr.indexOf('order_items'), cn=hdr.indexOf('buyer_name');
       if(ck===-1){ out.innerHTML='<div class="err">Your sheet has no <b>order_items</b> column yet. New orders placed after the auto-logging update will appear here. For older orders, paste the ITEMS block from the order email above.</div>'; return; }
       const paid=rows.slice(1).filter(r=>(r[cs]||'').trim().toLowerCase()==='payment_received' && (r[ck]||'').includes('http'));
       if(!paid.length){ out.innerHTML='<div class="err">No paid orders with item data found yet. (Orders must be marked <b>payment_received</b> and placed after the auto-logging update.) Paste an order\'s ITEMS block above to aggregate it now.</div>'; return; }
       const blob=paid.map(r=>r[ck]).join('\n');
       document.getElementById('input').value=blob;
       aggregate();
+      LOADED_ORDERS=paid.map(r=>({order_id:(r[ci]||'').trim(), name:(cn>=0?(r[cn]||''):'').trim()})).filter(o=>o.order_id);
+      renderPlacementPanel();
       const banner=document.createElement('div');
       banner.className='hint';banner.style.color='#7CFC9A';banner.style.margin='10px 0';
       banner.textContent='✓ Loaded '+paid.length+' paid order(s) from your sheet.';
       out.prepend(banner);
     }catch(e){ out.innerHTML='<div class="err">Could not read the sheet ('+e.message+'). Make sure it is shared "Anyone with the link".</div>'; }
+  }
+
+  // ── Item 5: download a customer backup (name, WhatsApp, address, total) ────
+  async function exportCustomers(){
+    const out=document.getElementById('out');
+    try{
+      const t=await fetch(SHEET_CSV+'&_='+Date.now()).then(r=>r.text());
+      const rows=parseCSV(t).filter(r=>r.length>1);
+      const hdr=rows[0].map(h=>h.trim().toLowerCase().replace(/\s+/g,'_'));
+      const ci=hdr.indexOf('order_id'),cn=hdr.indexOf('buyer_name'),cw=hdr.indexOf('whatsapp'),
+            ca=hdr.indexOf('delivery_address'),ct=hdr.indexOf('est_total'),cs=hdr.indexOf('status');
+      const data=rows.slice(1).filter(r=>(r[ci]||'').trim());
+      if(!data.length){ out.innerHTML='<div class="err">No orders found in the sheet yet.</div>'; return; }
+      const csv=['Order ID,Name,WhatsApp,Address,Order Total,Status',
+        ...data.map(r=>[csvQuote(r[ci]),csvQuote(r[cn]),csvQuote(cw>=0?r[cw]:''),
+          csvQuote(ca>=0?r[ca]:''),csvQuote(ct>=0?r[ct]:''),csvQuote(cs>=0?r[cs]:'')].join(','))
+      ].join('\n');
+      downloadFile(csv,'pakiposhak_customers_backup.csv');
+      const b=document.createElement('div');b.className='hint';b.style.color='#7CFC9A';b.style.margin='10px 0';
+      b.textContent='✓ Exported '+data.length+' customer(s). Address & total fill in for orders placed after the v2 sheet update.';
+      out.prepend(b);
+    }catch(e){ out.innerHTML='<div class="err">Could not export ('+e.message+'). Make sure the sheet is shared "Anyone with the link".</div>'; }
+  }
+
+  // ── Item 6: link our PSB orders to the order you placed at a brand ─────────
+  function renderPlacementPanel(){
+    const host=document.getElementById('out');
+    if(!LOADED_ORDERS.length) return;
+    const inStyle='flex:1;min-width:120px;background:#1a1a2e;border:1.5px solid #333;border-radius:8px;color:#eee;padding:9px 11px;font-size:0.82rem';
+    const rows=LOADED_ORDERS.map(o=>
+      `<label style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:0.82rem">
+         <input type="checkbox" class="pl-chk" value="${esc(o.order_id)}" checked>
+         <b style="color:#c9a96e">${esc(o.order_id)}</b><span style="color:#aaa">${esc(o.name||'')}</span>
+       </label>`).join('');
+    const html=`<div class="brand" id="placementPanel">
+      <div class="brand-hdr"><div class="brand-name">🔗 Record a placement <span class="badge">${LOADED_ORDERS.length}</span></div></div>
+      <div style="padding:12px 16px">
+        <div class="hint" style="margin-bottom:8px">Tick the customer orders you placed together at a brand, add the details, and Save — it links them in your sheet and keeps your PSB-ID as the master.</div>
+        ${rows}
+        <div class="row" style="margin-top:10px">
+          <input id="plBrand" placeholder="Brand (e.g. Khaadi)" style="${inStyle}">
+          <input id="plRef" placeholder="Brand order # (e.g. 1234567)" style="${inStyle}">
+          <input id="plGmail" placeholder="Gmail used (e.g. G1 / shop1@gmail.com)" style="${inStyle}">
+          <button onclick="savePlacement()">🔗 Save placement</button>
+        </div>
+        <div id="plStatus" class="hint" style="margin-top:8px"></div>
+      </div>
+    </div>`;
+    const old=document.getElementById('placementPanel'); if(old) old.remove();
+    host.insertAdjacentHTML('beforeend', html);
+  }
+
+  function savePlacement(){
+    const ids=[...document.querySelectorAll('.pl-chk:checked')].map(c=>c.value);
+    const brand=(document.getElementById('plBrand').value||'').trim();
+    const ref=(document.getElementById('plRef').value||'').trim();
+    const gmail=(document.getElementById('plGmail').value||'').trim();
+    const st=document.getElementById('plStatus');
+    if(!ids.length){ st.style.color='#ff8a8a'; st.textContent='Tick at least one order to link.'; return; }
+    if(!ref && !gmail){ st.style.color='#ff8a8a'; st.textContent='Add the brand order # or the Gmail you used.'; return; }
+    st.style.color='#aaa'; st.textContent='Saving…';
+    fetch(SCRIPT_POST_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({type:'placement',order_ids:ids,brand:brand,brand_order_ref:ref,placed_gmail:gmail})})
+      .then(()=>{ st.style.color='#7CFC9A'; st.textContent='✓ Linked '+ids.length+' order(s) to '+(brand||'brand')+(ref?' #'+ref:'')+(gmail?' via '+gmail:'')+'. Your sheet updates in a moment.'; })
+      .catch(()=>{ st.style.color='#ff8a8a'; st.textContent='Could not save — check your connection and try again.'; });
   }
 
   function loadSample(){

@@ -1,36 +1,42 @@
 /****************************************************************************
- * PakiPoshak — Order Intake Script
+ * PakiPoshak — Order Intake Script  (v2)
  * --------------------------------------------------------------------------
  * WHAT THIS DOES
- *   When a customer submits the order form, this script:
- *     1. Adds a new row to your "Order Tracker" sheet (so tracking works)
- *     2. Emails YOU the full order details (from your own Gmail = never spam)
+ *   1. New order  → appends a full backup row (name, WhatsApp, ADDRESS, TOTAL,
+ *                   items, links) and emails you the order.
+ *   2. Payment    → saves the slip to Drive, records amount / method / TrxID,
+ *                   checks the amount against the order total, and flags any
+ *                   mismatch as "payment_review" with a one-tap WhatsApp link
+ *                   to message the customer.
+ *   3. Placement  → links one or more PSB order IDs to the order YOU placed at
+ *                   the brand (brand order ref + which Gmail you used).
  *
- * ───────────────────────── HOW TO SET UP (one time) ─────────────────────────
+ * ───────────────────────── HOW TO RE-DEPLOY (after editing) ──────────────────
  *  1. Open your tracking Google Sheet (PakStyle_BD_Order_Tracker)
- *  2. Top menu:  Extensions  →  Apps Script
- *  3. Delete anything in the editor, then PASTE this entire file
- *  4. Click the  💾 Save  icon (name it e.g. "Order Intake")
- *  5. Click  Deploy  →  New deployment
- *  6. Click the gear ⚙ next to "Select type"  →  choose  Web app
- *  7. Settings:
- *        Description:      Order intake
- *        Execute as:       Me (your email)
- *        Who has access:   Anyone            ← IMPORTANT, must be "Anyone"
- *  8. Click  Deploy  →  Authorize access  →  pick your Google account
- *        (If it warns "Google hasn't verified this app":
- *         click "Advanced" → "Go to Order Intake (unsafe)" → Allow.
- *         It's YOUR own script, so this is safe.)
- *  9. COPY the "Web app URL" it gives you (ends in /exec)
- * 10. Send that URL to Claude (or paste it into order-form.html as
- *        SHEET_SCRIPT_URL near the top of the <script> section)
+ *  2. Extensions → Apps Script
+ *  3. Select ALL, delete, PASTE this whole file, 💾 Save
+ *  4. Deploy → Manage deployments → ✏️ (edit) the existing Web app
+ *  5. "Version" → New version → Deploy   (keeps the SAME /exec URL — no app change needed)
+ *     (First-time setup instead: Deploy → New deployment → Web app →
+ *      Execute as: Me · Who has access: Anyone · then copy the /exec URL.)
+ *
+ * SHEET COLUMNS (auto-created on first run — do not rename A–I):
+ *  A order_id | B buyer_name | C whatsapp | D status | E status_date | F notes
+ *  G receipt_url | H order_items | I cart_links | J delivery_address | K est_total
+ *  L payment_amount | M payment_method | N payment_trxid | O payment_match
+ *  P placed_gmail | Q brand_order_ref | R placed_status
  ****************************************************************************/
 
 // ── CONFIG ──────────────────────────────────────────────────────────────
 var OWNER_EMAIL = 'collectionmoors@gmail.com';   // where order emails go
 var SHEET_TAB   = 'Order Tracker';               // the tab with your columns
+var SLIP_FOLDER = 'PakStyle Payment Slips';      // Drive folder for receipts
 
-var SLIP_FOLDER = 'PakStyle Payment Slips';        // Drive folder for receipts
+// Canonical column order. Position in this list = column (1 = A, 2 = B, …).
+var COLS = ['order_id','buyer_name','whatsapp','status','status_date','notes',
+            'receipt_url','order_items','cart_links','delivery_address','est_total',
+            'payment_amount','payment_method','payment_trxid','payment_match',
+            'placed_gmail','brand_order_ref','placed_status'];
 
 // ── MAIN HANDLER (do not edit below) ────────────────────────────────────
 function doPost(e) {
@@ -39,44 +45,70 @@ function doPost(e) {
     var ss    = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getSheetByName(SHEET_TAB) || ss.getSheets()[0];
     var today = Utilities.formatDate(new Date(), ss.getSpreadsheetTimeZone() || 'Asia/Dhaka', 'yyyy-MM-dd');
+    ensureHeaders(sheet);
 
-    // Branch: a payment confirmation, or a brand-new order
-    if (data.type === 'payment') {
-      return handlePayment(data, sheet, today);
-    }
+    if (data.type === 'payment')   return handlePayment(data, sheet, today);
+    if (data.type === 'placement') return handlePlacement(data, sheet, today);
     return handleNewOrder(data, sheet, today);
 
   } catch (err) {
-    return ContentService
-      .createTextOutput(JSON.stringify({ ok: false, error: String(err) }))
-      .setMimeType(ContentService.MimeType.JSON);
+    return json({ ok: false, error: String(err) });
   }
 }
 
-// ── NEW ORDER → append row + email owner ────────────────────────────────
-function handleNewOrder(data, sheet, today) {
-  // Ensure headers for the extra columns the aggregator reads (G,H,I)
-  var hdr = sheet.getRange(1, 1, 1, Math.max(9, sheet.getLastColumn())).getValues()[0];
-  function setHdr(col, name){ if (String(hdr[col-1] || '').trim() === '') sheet.getRange(1, col).setValue(name); }
-  setHdr(7, 'receipt_url'); setHdr(8, 'order_items'); setHdr(9, 'cart_links');
+function json(obj){
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}
 
-  // Columns: order_id|buyer_name|whatsapp|status|status_date|notes|receipt_url|order_items|cart_links
+// Create any missing column header (never overwrites an existing one).
+function ensureHeaders(sheet){
+  var width = Math.max(COLS.length, sheet.getLastColumn());
+  var hdr   = sheet.getRange(1, 1, 1, width).getValues()[0];
+  for (var i = 0; i < COLS.length; i++){
+    if (String(hdr[i] || '').trim() === '') sheet.getRange(1, i + 1).setValue(COLS[i]);
+  }
+}
+
+// header-name (lowercased, spaces→_) → 0-based column index
+function headerMap(sheet){
+  var hdr = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  var m = {};
+  for (var i = 0; i < hdr.length; i++) m[String(hdr[i]).trim().toLowerCase().replace(/\s+/g, '_')] = i;
+  return m;
+}
+
+// Locate an order row by order_id. Returns {rowNum, row, map}; rowNum -1 if absent.
+function findRow(sheet, orderId){
+  var values = sheet.getDataRange().getValues();
+  var m = headerMap(sheet);
+  var cId = m['order_id'];
+  orderId = String(orderId || '').trim().toUpperCase();
+  for (var i = 1; i < values.length; i++){
+    if (String(values[i][cId]).trim().toUpperCase() === orderId) return { rowNum: i + 1, row: values[i], map: m };
+  }
+  return { rowNum: -1, row: null, map: m };
+}
+
+// ── NEW ORDER → append full backup row + email owner ────────────────────
+function handleNewOrder(data, sheet, today){
+  // A..K (later columns filled by the payment / placement steps)
   sheet.appendRow([
-    data.order_id   || '',
-    data.buyer_name || '',
-    data.whatsapp   || '',
+    data.order_id        || '',
+    data.buyer_name      || '',
+    data.whatsapp        || '',
     'order_received',
     today,
     'New order — awaiting payment',
-    '',
-    data.order_items || '',
-    data.cart_links  || ''
+    '',                                  // receipt_url
+    data.order_items     || '',
+    data.cart_links      || '',
+    data.delivery_address|| '',          // J — backup
+    data.estimated_total_bdt || ''       // K — backup
   ]);
 
   var subject = 'New PakiPoshak Order ' + (data.order_id || '') + ' — ' + (data.buyer_name || '');
   var body =
-    'NEW ORDER RECEIVED\n' +
-    '====================\n\n' +
+    'NEW ORDER RECEIVED\n==================\n\n' +
     'Order ID:    ' + (data.order_id || '') + '\n' +
     'Name:        ' + (data.buyer_name || '') + '\n' +
     'WhatsApp:    ' + (data.whatsapp || '') + '\n' +
@@ -87,86 +119,139 @@ function handleNewOrder(data, sheet, today) {
     'ITEMS\n-----\n' + (data.order_items || '') + '\n\n' +
     'PRODUCT LINKS\n-------------\n' + (data.cart_links || '') + '\n\n' +
     'Notes: ' + (data.notes || '(none)') + '\n\n' +
-    '— Tracking row was added automatically.';
+    '— Backup row added automatically.';
   MailApp.sendEmail(OWNER_EMAIL, subject, body);
 
-  return ContentService
-    .createTextOutput(JSON.stringify({ ok: true }))
-    .setMimeType(ContentService.MimeType.JSON);
+  return json({ ok: true });
 }
 
-// ── PAYMENT CONFIRMATION → save slip to Drive + update order row ─────────
-function handlePayment(data, sheet, today) {
-  var orderId = String(data.order_id || '').trim().toUpperCase();
-  var msg     = String(data.payment_message || '').trim();
+// ── PAYMENT → save slip + verify amount + update row + flag mismatches ───
+function handlePayment(data, sheet, today){
+  var orderId  = String(data.order_id || '').trim().toUpperCase();
+  var amount   = (data.payment_amount   !== undefined && data.payment_amount   !== null) ? data.payment_amount   : '';
+  var method   = data.payment_method || '';
+  var trx      = data.payment_trxid  || '';
+  var expected = (data.expected_total_bdt !== undefined && data.expected_total_bdt !== null) ? data.expected_total_bdt : '';
+  var mismatch = (data.amount_match === false);   // undefined (old client) → treated as OK
+  var msg      = String(data.payment_message || '').trim();
 
   // 1) Save the receipt image to Drive (if one was sent)
   var receiptUrl = '';
-  if (data.receipt_base64) {
+  if (data.receipt_base64){
     var folders = DriveApp.getFoldersByName(SLIP_FOLDER);
     var folder  = folders.hasNext() ? folders.next() : DriveApp.createFolder(SLIP_FOLDER);
     var bytes   = Utilities.base64Decode(data.receipt_base64);
-    var blob    = Utilities.newBlob(bytes, data.receipt_type || 'image/jpeg',
-                    (orderId || 'receipt') + '_' + Date.now() + '.jpg');
+    var blob    = Utilities.newBlob(bytes, data.receipt_type || 'image/jpeg', (orderId || 'receipt') + '_' + Date.now() + '.jpg');
     var file    = folder.createFile(blob);
     file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
     receiptUrl  = file.getUrl();
   }
 
-  // 2) Locate the order row by order_id
-  var values  = sheet.getDataRange().getValues();
-  var headers = values[0].map(function (h) {
-    return String(h).trim().toLowerCase().replace(/\s+/g, '_');
-  });
-  var cId   = headers.indexOf('order_id');
-  var cStat = headers.indexOf('status');
-  var cDate = headers.indexOf('status_date');
-  var cNote = headers.indexOf('notes');
-  var cRcpt = headers.indexOf('receipt_url');
-  if (cRcpt === -1) {                       // auto-create the column if missing
-    cRcpt = headers.length;
-    sheet.getRange(1, cRcpt + 1).setValue('receipt_url');
+  var found     = findRow(sheet, orderId);
+  var m         = found.map;
+  var newStatus = mismatch ? 'payment_review' : 'payment_received';
+  var note      = (mismatch ? '⚠️ PAYMENT NEEDS REVIEW ' : '💰 Payment submitted ') + today +
+                  ' | ৳' + amount + ' via ' + method + (trx ? ' | TrxID ' + trx : '') +
+                  (mismatch ? ' | expected ৳' + expected : '') + (msg ? ' | ' + msg : '');
+
+  function setCol(rowNum, key, val){
+    if (m[key] !== undefined && val !== '' && val !== undefined && val !== null)
+      sheet.getRange(rowNum, m[key] + 1).setValue(val);
   }
 
-  var rowNum = -1;
-  for (var i = 1; i < values.length; i++) {
-    if (String(values[i][cId]).trim().toUpperCase() === orderId) { rowNum = i + 1; break; }
-  }
-
-  var noteText = '💰 Payment submitted ' + today + (msg ? ' | ' + msg : '');
-  if (rowNum > 0) {
-    if (cStat >= 0) sheet.getRange(rowNum, cStat + 1).setValue('payment_received');
-    if (cDate >= 0) sheet.getRange(rowNum, cDate + 1).setValue(today);
-    if (cNote >= 0) {
-      var prev = String(sheet.getRange(rowNum, cNote + 1).getValue() || '');
-      sheet.getRange(rowNum, cNote + 1).setValue(noteText + (prev ? ' || ' + prev : ''));
+  var custName = '', custWa = '';
+  if (found.rowNum > 0){
+    var rn = found.rowNum;
+    setCol(rn, 'status',         newStatus);
+    setCol(rn, 'status_date',    today);
+    setCol(rn, 'payment_amount', amount);
+    setCol(rn, 'payment_method', method);
+    setCol(rn, 'payment_trxid',  trx);
+    setCol(rn, 'payment_match',  mismatch ? 'NO' : 'YES');
+    if (receiptUrl) setCol(rn, 'receipt_url', receiptUrl);
+    if (m['notes'] !== undefined){
+      var prev = String(sheet.getRange(rn, m['notes'] + 1).getValue() || '');
+      sheet.getRange(rn, m['notes'] + 1).setValue(note + (prev ? ' || ' + prev : ''));
     }
-    if (receiptUrl) sheet.getRange(rowNum, cRcpt + 1).setValue(receiptUrl);
+    custName = (m['buyer_name'] !== undefined) ? String(found.row[m['buyer_name']] || '') : '';
+    custWa   = (m['whatsapp']   !== undefined) ? String(found.row[m['whatsapp']]   || '') : '';
   } else {
     // Order not in sheet yet → append a payment-only row so nothing is lost
-    var row = [];
-    row[cId]   = data.order_id || '';
-    row[cStat] = 'payment_received';
-    row[cDate] = today;
-    row[cNote] = noteText + ' (order row not found)';
-    row[cRcpt] = receiptUrl;
-    for (var j = 0; j <= cRcpt; j++) if (row[j] === undefined) row[j] = '';
-    sheet.appendRow(row);
+    var arr = [];
+    arr[m['order_id']]    = data.order_id || '';
+    arr[m['status']]      = newStatus;
+    arr[m['status_date']] = today;
+    arr[m['notes']]       = note + ' (order row not found)';
+    if (m['receipt_url']    !== undefined) arr[m['receipt_url']]    = receiptUrl;
+    if (m['payment_amount'] !== undefined) arr[m['payment_amount']] = amount;
+    if (m['payment_method'] !== undefined) arr[m['payment_method']] = method;
+    if (m['payment_trxid']  !== undefined) arr[m['payment_trxid']]  = trx;
+    if (m['payment_match']  !== undefined) arr[m['payment_match']]  = mismatch ? 'NO' : 'YES';
+    var maxc = sheet.getLastColumn();
+    for (var j = 0; j < maxc; j++) if (arr[j] === undefined) arr[j] = '';
+    sheet.appendRow(arr);
   }
 
-  // 3) Email the owner
-  MailApp.sendEmail(
-    OWNER_EMAIL,
-    '💰 Payment submitted — ' + orderId,
-    'A customer submitted payment confirmation.\n\n' +
-    'Order ID: ' + orderId + '\n' +
-    'Message:  ' + (msg || '(none)') + '\n' +
-    'Receipt:  ' + (receiptUrl || '(no image attached)') + '\n'
-  );
+  // 3) Email owner — when flagged, include a ready-to-send WhatsApp link
+  var subject = (mismatch ? '⚠️ Payment NEEDS REVIEW — ' : '💰 Payment submitted — ') + orderId;
+  var body =
+    'Order ID:  ' + orderId + '\n' +
+    'Customer:  ' + custName + (custWa ? ' (' + custWa + ')' : '') + '\n' +
+    'Amount:    ৳' + amount + ' via ' + method + (trx ? '  (TrxID ' + trx + ')' : '') + '\n' +
+    'Expected:  ৳' + expected + '\n' +
+    'Match:     ' + (mismatch ? 'NO ⚠️' : 'yes') + '\n' +
+    'Receipt:   ' + (receiptUrl || '(no image attached)') + '\n' +
+    (msg ? 'Message:   ' + msg + '\n' : '');
 
-  return ContentService
-    .createTextOutput(JSON.stringify({ ok: true, receiptUrl: receiptUrl }))
-    .setMimeType(ContentService.MimeType.JSON);
+  if (mismatch && custWa){
+    var waDigits = custWa.replace(/[^\d]/g, '');
+    var tmpl = 'Hi ' + (custName || 'there') + ', this is PakiPoshak about your order ' + orderId + '. ' +
+               'We received your payment note of ৳' + amount + ', but your order total is ৳' + expected + '. ' +
+               'Could you please confirm the correct amount, or share your bKash/Nagad TrxID? Thank you!';
+    body += '\n— Looks off? Tap to message the customer on WhatsApp:\n' +
+            'https://wa.me/' + waDigits + '?text=' + encodeURIComponent(tmpl) + '\n';
+  }
+  MailApp.sendEmail(OWNER_EMAIL, subject, body);
+
+  return json({ ok: true, receiptUrl: receiptUrl, flagged: mismatch });
+}
+
+// ── PLACEMENT → link our PSB order(s) to the order placed at the brand ───
+function handlePlacement(data, sheet, today){
+  var ids   = data.order_ids || (data.order_id ? [data.order_id] : []);
+  var gmail = data.placed_gmail    || '';   // e.g. "G1" alias, or full address
+  var ref   = data.brand_order_ref || '';   // the brand's own order number
+  var brand = data.brand           || '';
+  var pstat = data.placed_status   || 'placed';
+  var m     = headerMap(sheet);
+  var done  = [];
+
+  for (var k = 0; k < ids.length; k++){
+    var found = findRow(sheet, ids[k]);
+    if (found.rowNum > 0){
+      var rn = found.rowNum;
+      if (m['placed_gmail']    !== undefined && gmail) sheet.getRange(rn, m['placed_gmail']    + 1).setValue(gmail);
+      if (m['brand_order_ref'] !== undefined && ref)   sheet.getRange(rn, m['brand_order_ref'] + 1).setValue((brand ? brand + ' ' : '') + ref);
+      if (m['placed_status']   !== undefined)          sheet.getRange(rn, m['placed_status']   + 1).setValue(pstat);
+      if (m['status']          !== undefined)          sheet.getRange(rn, m['status']          + 1).setValue('placed_at_brand');
+      if (m['status_date']     !== undefined)          sheet.getRange(rn, m['status_date']     + 1).setValue(today);
+      if (m['notes'] !== undefined){
+        var prev = String(sheet.getRange(rn, m['notes'] + 1).getValue() || '');
+        var note = '🛍️ Placed ' + today + (brand ? ' @ ' + brand : '') + (ref ? ' #' + ref : '') + (gmail ? ' via ' + gmail : '');
+        sheet.getRange(rn, m['notes'] + 1).setValue(note + (prev ? ' || ' + prev : ''));
+      }
+      done.push(ids[k]);
+    }
+  }
+
+  MailApp.sendEmail(OWNER_EMAIL, '🛍️ Placement linked — ' + (done.join(', ') || '(none matched)'),
+    'Linked ' + done.length + ' order(s) to a brand placement.\n\n' +
+    'Brand:     ' + brand + '\n' +
+    'Order ref: ' + ref + '\n' +
+    'Gmail:     ' + gmail + '\n' +
+    'Orders:    ' + done.join(', ') + '\n');
+
+  return json({ ok: true, linked: done });
 }
 
 // Lets you test the deployment in a browser (visiting the /exec URL)

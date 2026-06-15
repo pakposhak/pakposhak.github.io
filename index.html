@@ -843,9 +843,38 @@
   <div id="payConfirmBox" style="background:var(--raised);border:2px solid var(--gold-bdr2);border-radius:14px;padding:18px 16px;margin-bottom:18px">
     <div style="text-align:center;font-weight:700;color:var(--gold);font-size:1.02rem" data-i18n="s_paid_title">✅ Already Paid? Confirm Your Payment</div>
     <div style="text-align:center;font-size:0.78rem;color:var(--txt-sec);margin:5px 0 14px">
-      <span data-i18n="s_paid_sub">Attach your payment slip or paste your transaction details — we'll save it against Order</span>
+      <span data-i18n="s_paid_sub">Enter your payment details below so we can match it to Order</span>
       <span id="payConfirmOrderId" style="font-weight:700;color:#c9a96e">—</span>
     </div>
+
+    <!-- Structured payment details — lets us verify the payment by amount -->
+    <div style="display:grid;gap:9px;margin-bottom:12px">
+      <div>
+        <label style="display:block;font-size:0.74rem;color:var(--txt-sec);font-weight:600;margin-bottom:3px" data-i18n="s_amt_label">Amount you paid (৳) *</label>
+        <input type="number" inputmode="numeric" id="payAmount" placeholder="e.g. 5000"
+          style="width:100%;border:1.5px solid var(--bdr-med);border-radius:8px;padding:10px 12px;font-size:0.9rem;background:var(--input-bg);color:var(--txt)"/>
+        <div id="payExpectedHint" style="font-size:0.72rem;color:var(--gold);margin-top:3px"></div>
+      </div>
+      <div style="display:flex;gap:9px;flex-wrap:wrap">
+        <div style="flex:1;min-width:135px">
+          <label style="display:block;font-size:0.74rem;color:var(--txt-sec);font-weight:600;margin-bottom:3px" data-i18n="s_method_label">How you paid *</label>
+          <select id="payMethod" style="width:100%;border:1.5px solid var(--bdr-med);border-radius:8px;padding:10px 12px;font-size:0.9rem;background:var(--input-bg);color:var(--txt)">
+            <option value="" data-i18n="s_method_pick">Choose…</option>
+            <option value="bKash">bKash</option>
+            <option value="Nagad">Nagad</option>
+            <option value="Rocket">Rocket</option>
+            <option value="Upay">Upay</option>
+            <option value="Bank">Bank transfer</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:135px">
+          <label style="display:block;font-size:0.74rem;color:var(--txt-sec);font-weight:600;margin-bottom:3px" data-i18n="s_trx_label">TrxID / sender no.</label>
+          <input type="text" id="payTrxId" placeholder="e.g. 8N7X2K9P"
+            style="width:100%;border:1.5px solid var(--bdr-med);border-radius:8px;padding:10px 12px;font-size:0.9rem;background:var(--input-bg);color:var(--txt)"/>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:0.74rem;color:var(--txt-muted);text-align:center;margin-bottom:8px" data-i18n="s_proof_label">Add proof — Transaction ID above, or attach the receipt/message below:</div>
 
     <!-- Tabs -->
     <div style="display:flex;gap:8px;margin-bottom:14px">
@@ -2878,7 +2907,8 @@
       s_stocktitle:'Stock Notice', s_stocktext:"Pakistani fashion items sell out fast. If anything goes out of stock before we place your order, we'll contact you on WhatsApp immediately and offer alternatives or a full refund.",
       s_orderid:'Your Order ID', s_track:'📦 Track My Order', s_howpay:'💳 How to Pay',
       s_payafter:'Pay the total shown above using any method below.',
-      s_paid_title:'✅ Already Paid? Confirm Your Payment', s_paid_sub:"Attach your payment slip or paste your transaction details — we'll save it against Order",
+      s_paid_title:'✅ Already Paid? Confirm Your Payment', s_paid_sub:"Enter your payment details below so we can match it to Order",
+      s_amt_label:'Amount you paid (৳) *', s_method_label:'How you paid *', s_method_pick:'Choose…', s_trx_label:'TrxID / sender no.', s_proof_label:'Add proof — Transaction ID above, or attach the receipt/message below:',
       s_tab_receipt:'📷 Upload Receipt', s_tab_msg:'💬 Payment Message',
       s_upload_main:'Tap to choose your payment screenshot', s_upload_sub:'bKash / Nagad / bank slip — JPG or PNG',
       s_confirmpay:'✅ Confirm Payment',
@@ -2921,7 +2951,8 @@
       s_stocktitle:'স্টক বিষয়ক তথ্য', s_stocktext:'পাকিস্তানি ফ্যাশন পণ্য দ্রুত শেষ হয়ে যায়। অর্ডার করার আগে কিছু স্টক শেষ হলে আমরা সঙ্গে সঙ্গে হোয়াটসঅ্যাপে যোগাযোগ করে বিকল্প বা সম্পূর্ণ রিফান্ড দেব।',
       s_orderid:'আপনার অর্ডার আইডি', s_track:'📦 অর্ডার ট্র্যাক করুন', s_howpay:'💳 যেভাবে পেমেন্ট করবেন',
       s_payafter:'উপরে দেখানো মোট অর্থ নিচের যেকোনো মাধ্যমে পরিশোধ করুন।',
-      s_paid_title:'✅ পেমেন্ট করেছেন? পেমেন্ট নিশ্চিত করুন', s_paid_sub:'আপনার পেমেন্ট স্লিপ যুক্ত করুন বা ট্রান্সঅ্যাকশন তথ্য পেস্ট করুন — আমরা সেটি আপনার অর্ডারে সেভ করব',
+      s_paid_title:'✅ পেমেন্ট করেছেন? পেমেন্ট নিশ্চিত করুন', s_paid_sub:'আপনার পেমেন্টের তথ্য দিন যাতে আমরা তা আপনার অর্ডারের সাথে মিলিয়ে নিতে পারি — অর্ডার',
+      s_amt_label:'আপনি যত টাকা দিয়েছেন (৳) *', s_method_label:'কীভাবে দিয়েছেন *', s_method_pick:'নির্বাচন করুন…', s_trx_label:'TrxID / প্রেরকের নম্বর', s_proof_label:'প্রমাণ যুক্ত করুন — উপরে ট্রান্সঅ্যাকশন আইডি, অথবা নিচে রসিদ/মেসেজ:',
       s_tab_receipt:'📷 রসিদ আপলোড', s_tab_msg:'💬 পেমেন্ট মেসেজ',
       s_upload_main:'পেমেন্টের স্ক্রিনশট বেছে নিতে ট্যাপ করুন', s_upload_sub:'বিকাশ / নগদ / ব্যাংক স্লিপ — JPG বা PNG',
       s_confirmpay:'✅ পেমেন্ট নিশ্চিত করুন',
@@ -3713,6 +3744,7 @@
         document.getElementById('orderRef').textContent = orderId;
         document.getElementById('payConfirmOrderId').textContent = orderId;
         resetPaymentConfirm();
+        primePaymentConfirm(totalBdt);
         document.getElementById('trackOrderLink').href =
           `tracking.html?id=${orderId}&name=${encodeURIComponent(name)}`;
         clearCartStorage();
@@ -3728,6 +3760,7 @@
         document.getElementById('orderRef').textContent = orderId;
         document.getElementById('payConfirmOrderId').textContent = orderId;
         resetPaymentConfirm();
+        primePaymentConfirm(totalBdt);
         document.getElementById('trackOrderLink').href =
           `tracking.html?id=${orderId}&name=${encodeURIComponent(name)}`;
         clearCartStorage();
@@ -3788,17 +3821,35 @@
   }
 
   function resetPaymentConfirm(){
-    const f = document.getElementById('payReceiptFile'); if(f) f.value = '';
-    const m = document.getElementById('payMessage');     if(m) m.value = '';
+    ['payReceiptFile','payMessage','payAmount','payTrxId'].forEach(id => {
+      const e = document.getElementById(id); if(e) e.value = '';
+    });
+    const sel = document.getElementById('payMethod'); if(sel) sel.value = '';
     const p = document.getElementById('payReceiptPreview'); if(p) p.style.display = 'none';
     const s = document.getElementById('payConfirmStatus'); if(s) s.style.display = 'none';
     const b = document.getElementById('payConfirmBtn');
     if(b){ b.disabled = false; b.textContent = '✅ Confirm Payment'; }
+    window.__payOverride = false;
     switchPayTab('receipt');
+  }
+
+  // Called when step 4 opens — stashes the order total so the payment box can
+  // match it, and prefills the amount with that total (most buyers pay exactly).
+  function primePaymentConfirm(totalBdt){
+    const box = document.getElementById('payConfirmBox');
+    if(box) box.dataset.total = totalBdt || 0;
+    const amt = document.getElementById('payAmount');
+    if(amt && totalBdt) amt.value = totalBdt;
+    const hint = document.getElementById('payExpectedHint');
+    if(hint) hint.textContent = totalBdt ? ('Your order total: ৳' + Number(totalBdt).toLocaleString()) : '';
+    window.__payOverride = false;
   }
 
   async function submitPaymentConfirmation(){
     const orderId = document.getElementById('orderRef').textContent.trim();
+    const amount  = parseInt((document.getElementById('payAmount').value || '').replace(/[^\d]/g,''), 10) || 0;
+    const method  = document.getElementById('payMethod').value;
+    const trxId   = document.getElementById('payTrxId').value.trim();
     const file    = document.getElementById('payReceiptFile').files[0];
     const msg     = document.getElementById('payMessage').value.trim();
     const status  = document.getElementById('payConfirmStatus');
@@ -3811,20 +3862,35 @@
       status.style.color      = ok ? '#1b5e20' : '#b71c1c';
     }
 
-    if(!file && !msg){
-      showStatus('Please attach your payment slip or type your transaction details first.', false);
+    // Required: amount, method, and at least one proof (TrxID or receipt image).
+    if(!amount){          showStatus('Please enter the amount you paid (৳).', false); return; }
+    if(!method){          showStatus('Please choose how you paid (bKash, Nagad, …).', false); return; }
+    if(!trxId && !file){  showStatus('Please add your Transaction ID, or attach the receipt screenshot below.', false); return; }
+    if(!SHEET_SCRIPT_URL){
+      showStatus('Payment confirmation isn’t configured yet. Please send your slip on WhatsApp for now.', false);
       return;
     }
-    if(!SHEET_SCRIPT_URL){
-      showStatus('Payment uploads aren’t configured yet. Please send your slip on WhatsApp for now.', false);
+
+    // Soft BDT-amount check — warn once, but never block (advance/partial pays happen).
+    const expected = parseInt((document.getElementById('payConfirmBox').dataset.total || '').replace(/[^\d]/g,''), 10) || 0;
+    const amountMatch = !expected || amount === expected;
+    if(!amountMatch && !window.__payOverride){
+      window.__payOverride = true;
+      showStatus('⚠️ The amount you entered (৳' + amount.toLocaleString() + ') doesn’t match your order total (৳' + expected.toLocaleString() + '). If that’s correct, tap Confirm Payment again to submit it anyway.', false);
+      btn.textContent = '✅ Confirm Payment (submit anyway)';
       return;
     }
 
     btn.disabled = true; btn.textContent = 'Submitting…';
-    showStatus('Uploading your payment confirmation…', true);
+    showStatus('Sending your payment confirmation…', true);
 
     try{
-      const payload = { type:'payment', order_id: orderId, payment_message: msg };
+      const payload = {
+        type:'payment', order_id: orderId,
+        payment_amount: amount, payment_method: method, payment_trxid: trxId,
+        expected_total_bdt: expected, amount_match: amountMatch,
+        payment_message: msg
+      };
       if(file){
         const { base64, type } = await compressImage(file);
         payload.receipt_base64 = base64;
@@ -3837,10 +3903,13 @@
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       });
-      showStatus('✅ Payment confirmation received! We’ll verify and update your order shortly.', true);
+      showStatus(amountMatch
+        ? '✅ Payment confirmation received! We’ll verify and update your order shortly.'
+        : '✅ Received — we’ll double-check the amount and confirm your order shortly.', true);
       btn.textContent = '✓ Submitted';
+      window.__payOverride = false;
     }catch(err){
-      showStatus('Upload failed — please check your connection and try again.', false);
+      showStatus('Couldn’t send — please check your connection and try again.', false);
       btn.disabled = false; btn.textContent = '✅ Confirm Payment';
     }
   }
@@ -4172,7 +4241,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-15y';
+  const PSB_BUILD = '2026-06-15z';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:#c9a96e;font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
