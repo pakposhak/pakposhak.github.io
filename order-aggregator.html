@@ -60,6 +60,15 @@ You can paste several orders at once — paste straight from your order emails."
 </div>
 <div class="hint" style="margin-top:6px">"Load confirmed orders" pulls every order whose status you've set to <b>Payment Confirmed</b> and that hasn't been placed yet — these are the ones ready to order at the brands. Or paste the ITEMS block from any order email — multiple orders are clubbed automatically.</div>
 
+<details style="margin-top:10px">
+  <summary style="cursor:pointer;color:#c9a96e;font-size:0.82rem;font-weight:700">🔑 Account routing — which Gmail orders which brand (optional)</summary>
+  <div style="margin-top:8px">
+    <div class="hint" style="margin-bottom:6px">One line per brand, e.g. <code>Khaadi = G1</code> or <code>Sapphire = shop2@gmail.com</code>. Saved on this device — each brand packet below then shows which account to use.</div>
+    <textarea id="acctMap" style="min-height:80px" placeholder="Khaadi = G1&#10;Sapphire = G2&#10;Maria B = G1"></textarea>
+    <div class="row" style="margin-top:6px"><button onclick="saveAccounts()">💾 Save routing</button><span id="acctStatus" class="hint"></span></div>
+  </div>
+</details>
+
 <div id="out"></div>
 
 <script>
@@ -143,7 +152,7 @@ You can paste several orders at once — paste straight from your order emails."
       const bid='b'+bi;
       html+=`<div class="brand">
         <div class="brand-hdr">
-          <div class="brand-name">${esc(b)}<span class="badge">${prods.length} product${prods.length>1?'s':''} · ${bPieces} pcs</span></div>
+          <div class="brand-name">${esc(b)}<span class="badge">${prods.length} product${prods.length>1?'s':''} · ${bPieces} pcs</span>${acctFor(b)?`<span style="margin-left:8px;background:#103a2a;border:1px solid #1f6b4d;color:#7CFC9A;border-radius:8px;padding:1px 9px;font-size:0.72rem;font-weight:700">📧 order via ${esc(acctFor(b))}</span>`:''}</div>
           <div class="brand-acts">
             <button onclick="copyBrand('${bid}')">📋 Copy</button>
             <button onclick="csvBrand('${bid}','${esc(b).replace(/[^a-z0-9]/gi,'_')}')">⬇ CSV</button>
@@ -313,6 +322,29 @@ You can paste several orders at once — paste straight from your order emails."
 #4 Maria B | Formal 3pc | Sizes: M×1, L×1 | Total qty: 2 | PKR 22,000 each | https://www.mariab.com/products/mbroidered-sample`;
     aggregate();
   }
+
+  // ── Account routing: which Gmail orders which brand ───────────────────────
+  let ACCOUNTS = {};
+  function parseAccounts(text){
+    const m = {};
+    (text||'').split(/\r?\n/).forEach(line => {
+      const i = line.search(/[:=]/);
+      if(i > 0){ const b = line.slice(0,i).trim().toLowerCase(); const a = line.slice(i+1).trim(); if(b && a) m[b] = a; }
+    });
+    return m;
+  }
+  function acctFor(brand){ return ACCOUNTS[(brand||'').trim().toLowerCase()] || ''; }
+  function loadAccounts(){
+    try{ const t = localStorage.getItem('psb_brand_accounts')||''; const el = document.getElementById('acctMap'); if(el) el.value = t; ACCOUNTS = parseAccounts(t); }catch(e){}
+  }
+  function saveAccounts(){
+    const t = (document.getElementById('acctMap').value)||'';
+    try{ localStorage.setItem('psb_brand_accounts', t); }catch(e){}
+    ACCOUNTS = parseAccounts(t);
+    const s = document.getElementById('acctStatus'); if(s){ s.style.color='#7CFC9A'; s.textContent=' ✓ Saved — re-group to see it on each brand.'; }
+    if((document.getElementById('input').value||'').trim()) aggregate();
+  }
+  loadAccounts();
 </script>
 </body>
 </html>
