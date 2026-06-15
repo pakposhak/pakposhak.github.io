@@ -1563,12 +1563,21 @@
   const TWIN_NO_API = new Set(['khaadi.com','sapphireonline.pk']);
 
   // Brands that genuinely price in USD for EVERYONE — including Pakistani
-  // visitors (verified: store currency USD, market US, checkout USD; on-page
-  // "Rs" is a converter widget). Their USD price hides no cheaper PKR price,
-  // so it's the true cost: auto-fill it on the USD toggle with a calm note
-  // instead of the red "real PKR price unknown" alarm, and skip the relay
-  // (a PK IP can't produce a PKR price that doesn't exist).
-  const USD_ONLY_BRANDS = new Set(['suffuse.pk']);
+  // visitors. Their USD price hides no cheaper PKR price, so it's the true cost:
+  // auto-fill it on the USD toggle with a calm note instead of the red "real PKR
+  // price unknown" alarm, and skip the relay (a PK IP can't produce a PKR price
+  // that doesn't exist). Verified 2026-06-15 by querying the relay (PK IP):
+  // Baroque returns USD even from Pakistan → USD-only. (Suffuse was previously
+  // here but the relay returns real PKR for it — it geo-serves USD to BD, PKR to
+  // PK — so it was REMOVED; the relay now recovers its PKR price.)
+  const USD_ONLY_BRANDS = new Set(['baroque.com.pk','baroque.com']);
+
+  // Brands that geo-serve USD to Bangladesh AND whose cart.js is CORS-blocked in
+  // the browser — so the form can't read the session currency — BUT which DO have
+  // a real PKR price reachable via the relay (PK IP). Force the relay for these so
+  // the buyer sees the true PKR price instead of the raw USD .js price (which the
+  // .pk-domain heuristic would otherwise mislabel as a tiny PKR amount).
+  const FORCE_RELAY_HOSTS = new Set(['suffuse.pk']);
 
   // Default Pakistan price relay (Node relay on the Lahore VPS, fronted by Caddy
   // HTTPS at 103.83.91.34.sslip.io). Baked in so EVERY buyer's browser uses it
@@ -1729,12 +1738,15 @@
           if(rc.ok) sessionCur = (await rc.json()).currency || null;
         }catch(err){ if(err.name === 'AbortError') throw err; }
         if(sessionCur === 'PKR') pkrVia = 'direct';
-        else if(sessionCur){
-          pkrVia = sessionCur; // foreign — try the relay
+        else if(sessionCur || USD_ONLY_BRANDS.has(pastedHost) || FORCE_RELAY_HOSTS.has(pastedHost)){
+          // Foreign session — OR a brand we KNOW geo-serves USD but whose cart.js
+          // is CORS-blocked in the browser (Suffuse, Baroque) so sessionCur came
+          // back null. Either way the .js price is NOT trustworthy PKR.
+          pkrVia = sessionCur || 'USD';
           const relay = ((localStorage.getItem('psb_relay_url')||'').trim() || DEFAULT_RELAY_URL).replace(/\/+$/,'');
           if(relay && !USD_ONLY_BRANDS.has(pastedHost)){
             try{
-              setStatus(`🇵🇰 Brand served ${sessionCur} — fetching real PKR price via Pakistan relay…`,'#c9a96e');
+              setStatus(`🇵🇰 Brand priced in ${pkrVia} for you — fetching real PKR price via Pakistan relay…`,'#c9a96e');
               // Send the relay the PK-twin URL so it queries the right store.
               const relayUrl = twinHost ? `${fetchOrigin}/products/${m[1]}` : url;
               const rr = await fetch(`${relay}/price?url=${encodeURIComponent(relayUrl)}`,
@@ -1848,7 +1860,7 @@
           // 3. cart.js unreachable → old heuristic: non-.pk site + price<600.
           const isUsdSite = !/\.(pk|com\.pk)(\/|$)/.test(u.hostname + '/') && u.hostname !== 'pk.ethnc.com';
           const knownPkr  = pkrVia === 'direct' || pkrVia === 'relay';
-          const isUsd     = !knownPkr && (pkrVia !== 'unknown' || (isUsdSite && salePrice < 600));
+          const isUsd     = USD_ONLY_BRANDS.has(pastedHost) || (!knownPkr && (pkrVia !== 'unknown' || (isUsdSite && salePrice < 600)));
           if(isUsd){
             setDraftCurrency(id, 'USD'); // switches toggle before we fill the price
           }
