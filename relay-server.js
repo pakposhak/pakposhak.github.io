@@ -50,7 +50,7 @@ const ALLOWED_HOSTS = [
   'farashaonline.pk','gulaal.pk','image1993.com','kayseria.com.pk','krosskulture.com',
   'motifz.com.pk','ramsha.pk','salitex.com','shaposh.pk','thredzonline.com',
   'warda.com.pk','zarif.pk','bareeze.com','crimson.com.pk','erumkhancouture.com',
-  'faizasaqlain.pk','hussainrehar.com','nomiansari.com','saniamaskatiya.com',
+  'faizasaqlain.pk','hussainrehar.com','nomiansari.com','nomiansari.com.pk','saniamaskatiya.com',
   'tenadurrani.com','threadsandmotifs.com','zaha.pk','zainabchottani.com',
   'amiradnan.com','lakhanyonline.com','furorjeans.com','republicbespoke.com',
   'naushemian.com','thecambridgeshop.com','charcoal.com.pk','cougar.com.pk',
@@ -292,9 +292,24 @@ const server = http.createServer(async (req, res) => {
     try{
       const html = await fetchText(t.origin + t.pathname);
       const ld = extractJsonLdProduct(html);
-      if(!ld || ld.price == null) return send(res, 502, { ok:false, error:'no JSON-LD price' });
+      let price = (ld && ld.price != null) ? ld.price : null;
+      let currency = (ld && ld.currency) || null;
+      let title = (ld && ld.title) || null;
+      let via = 'jsonld';
+      if(price == null){
+        // No JSON-LD price (custom sites, e.g. Nomi Ansari). Conservative
+        // price-text fallback: accept a Rs/PKR amount ONLY if exactly one
+        // distinct sane value (>=500) is on the page — avoids grabbing sale /
+        // shipping / related-product numbers. Made-to-order items show no price
+        // → no match → 502 → the form falls back to manual entry.
+        const nums = [...new Set([...html.matchAll(/(?:Rs\.?|PKR|₨)\s*([\d,]{3,})/gi)]
+          .map(m => parseInt(m[1].replace(/,/g, ''), 10)).filter(n => n >= 500))];
+        if(nums.length === 1){ price = nums[0]; currency = currency || 'PKR'; via = 'pricetext'; }
+        if(!title){ const tm = html.match(/<title[^>]*>([^<|]+)/i); if(tm) title = tm[1].trim() || null; }
+      }
+      if(price == null) return send(res, 502, { ok:false, error:'no price found' });
       const sizes = extractTagSizes(html);
-      const body = { ok:true, currency: ld.currency || null, price: ld.price, title: ld.title, available: ld.available, sizes, via: 'jsonld' };
+      const body = { ok:true, currency: currency || null, price, title, available: ld ? ld.available : true, sizes, via };
       cacheSet(key, body);
       return send(res, 200, body);
     }catch(e){ return send(res, 502, { ok:false, error:String(e.message || e) }); }
