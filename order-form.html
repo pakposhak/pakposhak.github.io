@@ -1767,11 +1767,14 @@
       }
       const sizeIdx   = sizeIdxAll.length > 0 ? sizeIdxAll[0] : -1;
       const sizeKey   = ['option1','option2','option3'][sizeIdx] || null;
-      const multiSize = sizeIdxAll.length >= 2;  // e.g. Khaadi 2-piece shirt+trouser
 
       // ── FIND TYPE OPTION (stitched/unstitched brands like Nureh, Alizeh) ─
       const typeIdx = opts.findIndex(o => /^(type|item|stitch)/i.test(o.name));
       const typeKey = ['option1','option2','option3'][typeIdx] || null;
+
+      // ── FIND COLOUR OPTION ───────────────────────────────────────────────
+      const colourIdx = normOpts.findIndex(o => /colou?r|shade/i.test(o.name));
+      const colourKey = ['option1','option2','option3'][colourIdx] || null;
 
       // ── SELECT RELEVANT VARIANTS ──────────────────────────────────────────
       // Stock filtering only when the endpoint actually reports availability
@@ -1785,6 +1788,22 @@
         const stitched = avail.filter(v => /stitch/i.test(v[typeKey]) && !/unstitch/i.test(v[typeKey]));
         if(stitched.length) avail = stitched;
       }
+
+      // ── PICK DIMENSIONS (colour + size) ──────────────────────────────────
+      // An article can vary by colour AND size. Treat an ACTIVE colour option
+      // (≥2 distinct colours among the variants we'll show) as a pick dimension
+      // alongside size, combined into one chip per real variant ("Colour / Size")
+      // — reusing the same combined-chip path as 2-piece shirt+trouser sizing.
+      // A single-colour product adds no colour dimension (so no clutter).
+      const colourVals  = colourKey ? new Set(avail.map(v => (v[colourKey]||'').trim()).filter(Boolean)) : new Set();
+      const colourActive = !!colourKey && colourVals.size >= 2;
+      const keyOfIdx = i => ['option1','option2','option3'][i];
+      const pickDims = [];
+      if(colourActive) pickDims.push({ key: colourKey, isSize: false, name: normOpts[colourIdx].name });
+      sizeIdxAll.forEach(i => pickDims.push({ key: keyOfIdx(i), isSize: true, name: normOpts[i].name }));
+      const combined = pickDims.length >= 2;   // multiple dims ⇒ "A / B" chips
+      // Real garment sizes present? Colour alone must NOT flip unstitched→pret.
+      const realSizeCount = sizeKey ? new Set(avail.map(v => normSizeFull(v[sizeKey])).filter(Boolean)).size : 0;
 
       // ── PRICE ─────────────────────────────────────────────────────────────
       const refVar = avail[0] || vars[0];
@@ -1823,50 +1842,48 @@
         }
       }
 
-      // ── SIZES — show as clickable chips (in-stock sizes only) ────────────
+      // ── OPTIONS — show in-stock variant combinations as clickable chips ───
+      // One chip per in-stock combination (colour and/or size), built with the
+      // shared variantLabel() so chips, the sold-out list, and the ?variant=
+      // pre-select always agree on the exact label.
       const seen = new Set();
       const sizesToAdd = [];
-      if(multiSize){
-        // 2-piece product: chips show combined variant strings e.g. "M / 30"
-        const keys = sizeIdxAll.map(i => ['option1','option2','option3'][i]);
+      if(pickDims.length){
         avail.forEach(v => {
-          const parts = keys.map(k => { const raw = v[k]||''; return normSizeFull(raw)||raw; }).filter(Boolean);
-          const combined = parts.join(' / ');
-          if(combined && !seen.has(combined)){ seen.add(combined); sizesToAdd.push(combined); }
-        });
-      } else if(sizeKey){
-        avail.forEach(v => {
-          const norm = normSizeFull(v[sizeKey]);
-          if(norm && !seen.has(norm)){ seen.add(norm); sizesToAdd.push(norm); }
+          const label = variantLabel(v, pickDims);
+          if(label && !seen.has(label)){ seen.add(label); sizesToAdd.push(label); }
         });
       }
 
-      // Which sizes are SOLD OUT (single-size only)? We show them struck-through
-      // for the operator's confidence AND keep them out of the size dropdown.
+      // Which combinations are SOLD OUT? Show them struck-through for the
+      // operator's confidence AND keep them out of the dropdown. Only when stock
+      // is actually known (unverified .json fallback can't tell sold-out apart).
       let soldOutSizes = [];
-      if(hasStockInfo && !multiSize && sizeKey){
+      if(hasStockInfo && pickDims.length){
         const inStock = new Set(sizesToAdd), allSeen = new Set();
         vars.forEach(v => {
-          const n = normSizeFull(v[sizeKey]);
-          if(n && !inStock.has(n) && !allSeen.has(n)){ allSeen.add(n); soldOutSizes.push(n); }
+          if(v.available) return;
+          const label = variantLabel(v, pickDims);
+          if(label && !inStock.has(label) && !allSeen.has(label)){ allSeen.add(label); soldOutSizes.push(label); }
         });
       }
 
-      // Persist on the draft so the size dropdown is CONSTRAINED to real in-stock
-      // sizes — the operator must never be able to pick a sold-out size. When
+      // Persist on the draft so the option dropdown is CONSTRAINED to real
+      // in-stock combinations — a sold-out colour/size can never be picked. When
       // stock could NOT be verified (.js failed → .json fallback) we leave it
-      // empty so the dropdown falls back to all sizes + a loud warning is shown.
+      // empty so the dropdown falls back to the standard list + a loud warning.
       const d0 = drafts[id];
       if(d0){
         d0.stockVerified = hasStockInfo && !allSoldOut;
         d0.stockSizes    = d0.stockVerified ? sizesToAdd.slice() : [];
         d0.soldOutSizes  = soldOutSizes.slice();
+        d0.pickWhat      = combined ? 'colour & size' : 'size';
       }
 
       if(!allSoldOut && sizesToAdd.length){
-        // The product sells in garment sizes ⇒ it's stitched/RTW, even if the
-        // URL said "lawn"/"fabric" and the category auto-detected as unstitched.
-        if(catEl && UNSTITCHED_CATS.has(catEl.value) && !(drafts[id] && drafts[id].catUserSet)){
+        // Real garment SIZES (not colour alone) ⇒ stitched/RTW, even if the URL
+        // said "lawn"/"fabric" and the category auto-detected as unstitched.
+        if(realSizeCount > 0 && catEl && UNSTITCHED_CATS.has(catEl.value) && !(drafts[id] && drafts[id].catUserSet)){
           let flip;
           if(gender === 'men'){
             flip = mapPtToCatMen(ptStr) || mapPtToCatMen(product.title||'') || 'mens_shalwar_kameez';
@@ -1877,34 +1894,35 @@
           setDraftCat(id, flip);
         }
         {
-          const chipLabel = multiSize
-            ? sizeIdxAll.map(i => normOpts[i].name).join(' + ')
+          const chipLabel = combined
+            ? pickDims.map(d => d.name).join(' + ')
             : null;
           showSizeChips(id, sizesToAdd, chipLabel, soldOutSizes);
           const hint = document.querySelector(`#dc_szchips_${id} > div:first-child`);
+          const picked = pickedVariantFromUrl(url, product, pickDims);
+          const whatWord = combined ? 'colour &amp; size' : 'size';
           if(hint && !d0?.stockVerified){
             // Stock could NOT be verified — fail LOUD, never silently allow all.
-            hint.innerHTML = '⚠️ <b>Live stock could NOT be verified</b> for this brand. The sizes below are <u>all listed sizes</u>, not confirmed-in-stock — please check the brand page before ordering.';
+            hint.innerHTML = '⚠️ <b>Live stock could NOT be verified</b> for this brand. The options below are <u>all listed</u>, not confirmed-in-stock — please check the brand page before ordering.';
             hint.style.cssText = 'font-size:0.75rem;font-weight:700;color:#ff9a9a;background:rgba(192,57,43,0.15);border:1px solid rgba(192,57,43,0.45);border-radius:6px;padding:6px 10px;margin-bottom:7px';
-          } else if(hint && !detectSizeFromUrl(url) && !multiSize){
-            // Stock verified, but no size in the pasted link → remind the operator
-            // that a highlighted size on the brand page is NOT a selection.
-            hint.innerHTML = '⚠️ <b>Your link doesn\'t include a size.</b> Tap an <u>in-stock</u> size below — a highlighted size on the brand\'s page does <u>not</u> mean it was selected.';
+          } else if(hint && !picked && !detectSizeFromUrl(url)){
+            // Stock verified, but no choice in the pasted link → remind the operator
+            // that a highlighted choice on the brand page is NOT a selection.
+            hint.innerHTML = '⚠️ <b>Your link doesn\'t include a ' + whatWord + '.</b> Tap your ' + whatWord + ' below — a highlighted choice on the brand\'s page does <u>not</u> mean it was selected.';
             hint.style.cssText = 'font-size:0.75rem;font-weight:600;color:#f0c855;background:rgba(230,168,23,0.12);border:1px solid rgba(230,168,23,0.40);border-radius:6px;padding:6px 10px;margin-bottom:7px';
           }
-          // ── BUYER-PICKED SIZE (from ?variant=) ──────────────────────────
-          // If the pasted link encodes a specific size, pre-select it on top of
-          // the chips — so a chosen size is auto-FILLED, not merely listed.
-          const picked = pickedSizeFromUrl(url, product, sizeIdxAll, multiSize);
+          // ── BUYER-PICKED COMBINATION (from ?variant=) ───────────────────
+          // If the link encodes a specific variant (colour and/or size),
+          // pre-select that exact combination on top of the chips.
           if(picked && sizesToAdd.includes(picked)){
-            addSizeFromChip(id, picked);            // always pre-fill the chosen size
-            if(hint && d0?.stockVerified){          // only override the hint when stock is trustworthy
-              hint.innerHTML = '✅ <b>Your selected size (' + esc(picked) + ') was auto-filled and is in stock.</b> Add more sizes below if you need them.';
+            addSizeFromChip(id, picked);            // pre-fill the chosen combination
+            if(hint && d0?.stockVerified){          // override the hint only when stock is trustworthy
+              hint.innerHTML = '✅ <b>Your selection (' + esc(picked) + ') was auto-filled and is in stock.</b> Add more below if you need them.';
               hint.style.cssText = 'font-size:0.75rem;font-weight:700;color:#7ee0a0;background:rgba(46,125,50,0.15);border:1px solid rgba(46,125,50,0.45);border-radius:6px;padding:6px 10px;margin-bottom:7px';
             }
           } else if(picked && hint && d0?.stockVerified){
-            // The exact size they picked is sold out — say so; keep chips visible.
-            hint.innerHTML = '⚠️ <b>The size you picked (' + esc(picked) + ') is SOLD OUT.</b> Choose an in-stock size below.';
+            // The exact combination they picked is sold out — say so; keep chips.
+            hint.innerHTML = '⚠️ <b>What you picked (' + esc(picked) + ') is SOLD OUT.</b> Choose an in-stock option below.';
             hint.style.cssText = 'font-size:0.75rem;font-weight:700;color:#ff9a9a;background:rgba(192,57,43,0.15);border:1px solid rgba(192,57,43,0.45);border-radius:6px;padding:6px 10px;margin-bottom:7px';
           }
         }
@@ -1916,7 +1934,7 @@
         return;  // keep the warning visible (no auto-hide)
       }
 
-      const uniqSizes = multiSize ? new Set(sizesToAdd) : (sizeKey ? new Set(avail.map(v=>normSizeFull(v[sizeKey])).filter(Boolean)) : new Set());
+      const uniqSizes = new Set(sizesToAdd);
       const refPrice  = Math.round(moneyOf((avail[0]||vars[0])?.price));
       const szWord    = hasStockInfo ? ' sizes in stock' : ' sizes found';
       const foreignCur = (pkrVia !== 'direct' && pkrVia !== 'relay' && pkrVia !== 'unknown') ? pkrVia : null;
@@ -2355,7 +2373,7 @@
         `<div id="sr_${rowId}" style="display:flex;gap:8px;align-items:center;margin-bottom:7px">
           <select onchange="onDraftSizeChange(${draftId})"
             style="flex:1;padding:8px 10px;border:1.5px solid var(--bdr-med);border-radius:6px;font-size:0.85rem;background:var(--input-bg);color:var(--txt);min-width:0">
-            <option value="">Pick size</option>${opts}
+            <option value="">Pick ${d.pickWhat||'size'}</option>${opts}
           </select>
           <input type="number" value="${Math.min(Math.max(1,qty),maxPerSize())}" min="1" max="${maxPerSize()}"
             title="Max ${maxPerSize()} per size (stock limit)" onchange="clampQtyInput(this);checkAddUrlLock()"
@@ -2874,23 +2892,29 @@
     return '';
   }
 
-  // The Shopify ?variant=<id> in a pasted URL is the EXACT variant (size) the
-  // buyer selected on the brand page before copying the link. We resolve it
-  // against the fetched variant list (reliable — an ID match, no guessing) so
-  // the chosen size can be pre-selected on top of the in-stock chips. Returns
-  // the chip-format size string, or '' if absent/unresolvable (e.g. SFCC, whose
-  // synthesized variants carry no Shopify id).
-  function pickedSizeFromUrl(url, product, sizeIdxAll, multiSize){
+  // Build a buyer-facing label for ONE variant from the chosen "pick dimensions"
+  // (an active colour option + any size options), in option order — e.g.
+  // "Black / M" or "Barfi White / 8". Size dims are normalised (XS/M/8…);
+  // colour stays raw. Shared by the chips, the sold-out list, and the ?variant=
+  // pre-select so all three always agree on the label.
+  function variantLabel(v, pickDims){
+    if(!v || !pickDims || !pickDims.length) return '';
+    return pickDims.map(d => d.isSize ? (normSizeFull(v[d.key]) || v[d.key]) : v[d.key])
+      .map(x => (x == null ? '' : String(x)).trim()).filter(Boolean).join(' / ');
+  }
+
+  // The Shopify ?variant=<id> in a pasted URL is the EXACT variant the buyer
+  // selected on the brand page (colour AND size) before copying the link. We
+  // resolve it against the fetched variant list (reliable — an ID match, no
+  // guessing) so the chosen combination can be pre-selected on top of the chips.
+  // Returns the chip-format label, or '' if absent/unresolvable (e.g. SFCC,
+  // whose synthesized variants carry no Shopify id).
+  function pickedVariantFromUrl(url, product, pickDims){
     try{
       const vid = new URL(url).searchParams.get('variant');
-      if(!vid || !product || !Array.isArray(product.variants) || !sizeIdxAll || !sizeIdxAll.length) return '';
+      if(!vid || !product || !Array.isArray(product.variants)) return '';
       const v = product.variants.find(x => String(x.id) === String(vid));
-      if(!v) return '';
-      const keyOf = i => ['option1','option2','option3'][i];
-      if(multiSize)
-        return sizeIdxAll.map(i => normSizeFull(v[keyOf(i)]) || v[keyOf(i)]).filter(Boolean).join(' / ');
-      const sk = keyOf(sizeIdxAll[0]);
-      return sk ? (normSizeFull(v[sk]) || '') : '';
+      return v ? variantLabel(v, pickDims) : '';
     }catch(e){ return ''; }
   }
 
