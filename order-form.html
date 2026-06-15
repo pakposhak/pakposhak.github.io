@@ -533,9 +533,8 @@
 
   <div class="url-input-box">
     <span class="input-label" data-i18n="url_label">📋 Copy a product link from any brand site and paste it below:</span>
-    <!-- One-tap paste — reads the clipboard so the user never has to find this
-         box and long-press. Biggest help on phones / in-app browsers. -->
-    <button type="button" class="paste-btn" onclick="pasteAndAdd('urlInput', handleAddUrl)" data-i18n="btn_paste">📋 Paste Link &amp; Auto-Fill</button>
+    <!-- Pasting is handled by the always-visible floating Paste tab (bottom-right) —
+         no inline paste button needed here. -->
     <!-- FIRST URL input — hidden once draft cards exist -->
     <div id="urlInputRow" class="url-row">
       <input type="url" id="urlInput" placeholder="https://brand.com/products/product-name"/>
@@ -547,24 +546,10 @@
     <div id="draftsContainer" style="display:none;margin-top:18px">
       <div id="draftCards"></div>
 
-      <!-- Add-another row — button disabled until last card is complete -->
-      <div id="addAnotherRow" style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--bdr)">
-        <div id="addUrlLockHint" style="font-size:0.75rem;color:#c9a96e;background:var(--surface);border:1px dashed #c9a96e;border-radius:7px;padding:7px 12px;margin-bottom:8px;text-align:center;display:none">
-          ⬆️ Complete Category, Price &amp; Size for the item above first
-        </div>
-        <div style="font-size:0.77rem;font-weight:600;color:var(--txt-sec);margin-bottom:7px">
-          ➕ Add another product — paste its URL below:
-        </div>
-        <button type="button" class="paste-btn" onclick="pasteAndAdd('panelUrlInput', addAnotherUrl)" data-i18n="btn_paste">📋 Paste Link &amp; Auto-Fill</button>
-        <div class="url-row">
-          <input type="url" id="panelUrlInput" placeholder="https://brand.com/products/another-product"
-            onkeydown="if(event.key==='Enter'){event.preventDefault();addAnotherUrl()}"/>
-          <button class="add-btn" id="addAnotherBtn" onclick="addAnotherUrl()" disabled
-            style="background:var(--raised);color:var(--txt-muted);cursor:not-allowed">+ Add</button>
-        </div>
+      <button class="save-item-btn" id="saveAllBtn" onclick="saveAllDrafts()">✓ Save to Order List</button>
+      <div style="text-align:center;font-size:0.74rem;color:var(--txt-muted);margin-top:9px">
+        ✅ Save this item first — then you can add another product.
       </div>
-
-      <button class="save-item-btn" id="saveAllBtn" onclick="saveAllDrafts()">✓ Save All to Order List</button>
     </div>
   </div>
 
@@ -3239,8 +3224,7 @@
     // Clear all drafts
     ids.forEach(id => { document.getElementById(`dc_${id}`)?.remove(); delete drafts[id]; });
     document.getElementById('draftsContainer').style.display = 'none';
-    document.getElementById('panelUrlInput').value = '';
-    showTopUrlInput(); // show top input again, clear it
+    showTopUrlInput(); // show top input again, clear it — ready for the next product
     checkAddUrlLock();
     renderCart();
   }
@@ -3773,7 +3757,6 @@
     draftIdCtr = 0;
     document.getElementById('draftCards').innerHTML = '';
     document.getElementById('draftsContainer').style.display = 'none';
-    document.getElementById('panelUrlInput').value = '';
     showTopUrlInput();
     document.getElementById('buyerNotes').value = '';
     document.getElementById('confirmSubmitBtn').disabled = false;
@@ -4097,7 +4080,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-15t';
+  const PSB_BUILD = '2026-06-15u';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:#c9a96e;font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
