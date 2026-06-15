@@ -281,7 +281,8 @@ function authorizeNow(){
     'Your order script is now authorized to save orders, store receipts, and email you.\nSheet: ' + ss.getName());
 }
 
-// Lets you test the deployment in a browser (visiting the /exec URL)
+// Lets you test the deployment in a browser (visiting the /exec URL).
+// The "v3" tag is how we confirm the NEW code actually went live.
 function doGet() {
-  return ContentService.createTextOutput('PakiPoshak order intake is live ✓');
+  return ContentService.createTextOutput('PakiPoshak order intake — v3 LIVE ✓');
 }
