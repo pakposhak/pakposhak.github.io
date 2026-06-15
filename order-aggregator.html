@@ -52,13 +52,13 @@
 You can paste several orders at once — paste straight from your order emails."></textarea>
 
 <div class="row">
-  <button onclick="loadFromSheet()">🔄 Load paid orders from my sheet</button>
+  <button onclick="loadFromSheet()">🔄 Load confirmed orders to place</button>
   <button onclick="exportCustomers()">⬇ Export customers (CSV)</button>
   <button onclick="aggregate()">🔀 Group by Brand</button>
   <button class="ghost" onclick="loadSample()">Load sample</button>
   <button class="ghost" onclick="document.getElementById('input').value='';document.getElementById('out').innerHTML='';">Clear</button>
 </div>
-<div class="hint" style="margin-top:6px">"Load paid orders" pulls every order marked <b>payment_received</b> from your tracking sheet (works for orders placed after the auto-logging update). Or paste the ITEMS block from any order email — multiple orders are clubbed automatically.</div>
+<div class="hint" style="margin-top:6px">"Load confirmed orders" pulls every order whose status you've set to <b>Payment Confirmed</b> and that hasn't been placed yet — these are the ones ready to order at the brands. Or paste the ITEMS block from any order email — multiple orders are clubbed automatically.</div>
 
 <div id="out"></div>
 
@@ -226,8 +226,8 @@ You can paste several orders at once — paste straight from your order emails."
       const hdr=rows[0].map(h=>h.trim().toLowerCase().replace(/\s+/g,'_'));
       const ci=hdr.indexOf('order_id'), cs=hdr.indexOf('status'), ck=hdr.indexOf('order_items'), cn=hdr.indexOf('buyer_name'), cp=hdr.indexOf('placed_status');
       if(ck===-1){ out.innerHTML='<div class="err">Your sheet has no <b>order_items</b> column yet. New orders placed after the auto-logging update will appear here. For older orders, paste the ITEMS block from the order email above.</div>'; return; }
-      const paid=rows.slice(1).filter(r=>(r[cs]||'').trim().toLowerCase()==='payment_received' && (r[ck]||'').includes('http') && !(cp>=0 && (r[cp]||'').trim()));
-      if(!paid.length){ out.innerHTML='<div class="err">No paid orders with item data found yet. (Orders must be marked <b>payment_received</b> and placed after the auto-logging update.) Paste an order\'s ITEMS block above to aggregate it now.</div>'; return; }
+      const paid=rows.slice(1).filter(r=>{const s=(r[cs]||'').trim().toLowerCase(); return (s==='payment_confirmed'||s==='payment confirmed') && (r[ck]||'').includes('http') && !(cp>=0 && (r[cp]||'').trim());});
+      if(!paid.length){ out.innerHTML='<div class="err">No confirmed orders to place yet. Set an order\'s status to <b>Payment Confirmed</b> once you\'ve verified the payment, then load again. (Or paste an order\'s ITEMS block above to aggregate it now.)</div>'; return; }
       const blob=paid.map(r=>r[ck]).join('\n');
       document.getElementById('input').value=blob;
       aggregate();
