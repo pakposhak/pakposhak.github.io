@@ -1038,7 +1038,7 @@
       </button>
     </div>
     <div style="font-size:0.7rem;color:var(--txt-muted);margin-top:8px">
-      Rates saved in this browser. To update on a new device, visit <em>your-form-url<strong>?admin</strong></em> and save again.
+      🌐 Saved to your Pakistan VPS — changes apply to <strong>every customer and device instantly</strong>. Protected by your admin password. Open anytime via <em>your-form-url<strong>?admin</strong></em>.
     </div>
 
     <!-- Weight Chart Editor -->
@@ -1096,18 +1096,39 @@
   const SUPPORT_WA       = '8801352018131';
   // ═══════════════════════════════════════════════════════════════════════
 
-  // --- ADMIN RATE MANAGEMENT ---
-  // Rates stored in localStorage, editable only via ?admin URL
+  // --- ADMIN RATE MANAGEMENT (rates/weights live on the VPS relay → GLOBAL) ---
+  // The relay's /config is the single source of truth, fetched into PSB_CFG on
+  // load so EVERY device — yours AND customers' — uses the same admin-set rates.
+  // Fallback order: relay config → per-device localStorage → built-in defaults
+  // (so totals never break if the relay is briefly unreachable).
+  let PSB_CFG = null;   // { hasPassword, rates:{conv,log,usd_pkr,comm_1,comm_23,comm_4p,maxqty}, weights:{}, updatedAt }
+  function cfgRate(key){ const r = PSB_CFG && PSB_CFG.rates; return (r && r[key] != null && isFinite(r[key])) ? Number(r[key]) : null; }
+  function cfgWeight(key){ const w = PSB_CFG && PSB_CFG.weights; const v = w && w[key]; return (v != null && isFinite(v) && v > 0) ? Number(v) : null; }
+  function relayBase(){ return ((localStorage.getItem('psb_relay_url')||'').trim() || DEFAULT_RELAY_URL).replace(/\/+$/,''); }
+  async function sha256hex(str){ const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2,'0')).join(''); }
+  function lsNum(k, d){ const v = localStorage.getItem(k); const n = parseFloat(v); return (v != null && v !== '' && isFinite(n)) ? n : d; }
+  function getUsdRate(){ return cfgRate('usd_pkr') ?? lsNum('psb_usd_pkr', 278); }
   function getRates(){
     return {
-      CONV_RATE  : parseFloat(localStorage.getItem('psb_conv')     || '0.42'),
-      LOG_RATE   : parseFloat(localStorage.getItem('psb_log')      || '1600'),
-      COMM_1     : parseFloat(localStorage.getItem('psb_comm_1')   || '20') / 100,
-      COMM_23    : parseFloat(localStorage.getItem('psb_comm_23')  || '18') / 100,
-      COMM_4P    : parseFloat(localStorage.getItem('psb_comm_4p')  || '15') / 100,
-      TRANS_FEE  : 100
+      CONV_RATE : cfgRate('conv')     ?? lsNum('psb_conv', 0.42),
+      LOG_RATE  : cfgRate('log')      ?? lsNum('psb_log', 1600),
+      COMM_1    : (cfgRate('comm_1')  ?? lsNum('psb_comm_1', 20))  / 100,
+      COMM_23   : (cfgRate('comm_23') ?? lsNum('psb_comm_23', 18)) / 100,
+      COMM_4P   : (cfgRate('comm_4p') ?? lsNum('psb_comm_4p', 15)) / 100,
+      TRANS_FEE : 100
     };
   }
+  // Fetch the global config from the relay on load (cached so a relay outage
+  // falls back to the last-known values rather than the built-in defaults).
+  async function loadPsbConfig(){
+    let cfg = null;
+    try{ const r = await fetch(relayBase()+'/config', { cache:'no-store' }); if(r.ok){ const j = await r.json(); if(j && j.ok) cfg = j; } }catch(e){}
+    if(cfg){ PSB_CFG = cfg; try{ localStorage.setItem('psb_cfg_cache', JSON.stringify(cfg)); }catch(e){} }
+    else { try{ const c = JSON.parse(localStorage.getItem('psb_cfg_cache') || 'null'); if(c && c.ok) PSB_CFG = c; }catch(e){} }
+    if(PSB_CFG && typeof renderCart === 'function') renderCart();   // refresh any totals shown before config arrived
+  }
+  // NOTE: loadPsbConfig() is invoked at the END of the script — calling it here
+  // would hit DEFAULT_RELAY_URL while it's still in the temporal dead zone.
   function commRate(r, itemCount){
     if(itemCount <= 1) return r.COMM_1;
     if(itemCount <= 3) return r.COMM_23;
@@ -1153,21 +1174,49 @@
   // calling it here threw a (silently caught) TDZ error and the cart never
   // restored after refresh. It is now called at the end of the script.
 
-  // Show admin panel — via ?admin URL OR Ctrl+Shift+A keyboard shortcut
-  function openAdminPanel(){
+  // Show the admin panel (already authenticated). Fields show the EFFECTIVE
+  // values (global config → fallback), so you edit the live numbers.
+  function showAdminPanel(){
     const panel = document.getElementById('adminPanel');
     panel.style.display = 'block';
     const r = getRates();
     document.getElementById('adm_conv').value    = r.CONV_RATE;
     document.getElementById('adm_log').value     = r.LOG_RATE;
-    document.getElementById('adm_usd_pkr').value  = parseFloat(localStorage.getItem('psb_usd_pkr')   || '278');
-    document.getElementById('adm_comm_1').value   = parseFloat(localStorage.getItem('psb_comm_1')    || '20');
-    document.getElementById('adm_comm_23').value  = parseFloat(localStorage.getItem('psb_comm_23')   || '18');
-    document.getElementById('adm_comm_4p').value  = parseFloat(localStorage.getItem('psb_comm_4p')   || '15');
-    document.getElementById('adm_relay').value    = localStorage.getItem('psb_relay_url') || '';
-    document.getElementById('adm_maxqty').value   = parseInt(localStorage.getItem('psb_max_qty') || '5');
+    document.getElementById('adm_usd_pkr').value = getUsdRate();
+    document.getElementById('adm_comm_1').value  = +(r.COMM_1  * 100).toFixed(2);
+    document.getElementById('adm_comm_23').value = +(r.COMM_23 * 100).toFixed(2);
+    document.getElementById('adm_comm_4p').value = +(r.COMM_4P * 100).toFixed(2);
+    document.getElementById('adm_relay').value   = localStorage.getItem('psb_relay_url') || '';
+    document.getElementById('adm_maxqty').value  = maxPerSize();
     buildWeightEditor();
     panel.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Gated entry — require the admin password (verified against the relay) before
+  // showing the panel. First open (no password yet) → create one. Buyers who hit
+  // ?admin get a prompt they can't pass. Unlock lasts the browser-tab session.
+  async function openAdminPanel(){
+    if(sessionStorage.getItem('psb_admin_h')) return showAdminPanel();
+    if(PSB_CFG == null){ try{ const r = await fetch(relayBase()+'/config',{cache:'no-store'}); const j = await r.json(); if(j && j.ok) PSB_CFG = j; }catch(e){} }
+    const hasPw = !!(PSB_CFG && PSB_CFG.hasPassword);
+    try{
+      if(!hasPw){
+        const p1 = prompt('Set an ADMIN PASSWORD (locks this panel for everyone):'); if(!p1) return;
+        const p2 = prompt('Re-enter the password:'); if(p2 !== p1){ alert('Passwords did not match — try again.'); return; }
+        const h = await sha256hex(p1);
+        const res = await fetch(relayBase()+'/admin/setup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash:h})});
+        const j = await res.json();
+        if(j && j.ok){ sessionStorage.setItem('psb_admin_h', h); if(PSB_CFG) PSB_CFG.hasPassword = true; showAdminPanel(); }
+        else alert('Could not set the password: ' + ((j && j.error) || 'relay error'));
+      } else {
+        const p = prompt('Enter admin password:'); if(!p) return;
+        const h = await sha256hex(p);
+        const res = await fetch(relayBase()+'/admin/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash:h})});
+        const j = await res.json();
+        if(j && j.ok){ sessionStorage.setItem('psb_admin_h', h); showAdminPanel(); }
+        else alert('Wrong password.');
+      }
+    }catch(e){ alert('Could not reach the relay to check the password — try again in a moment.'); }
   }
 
   // NOTE: the ?admin auto-open is fired at the very END of the script — calling
@@ -1183,30 +1232,35 @@
     }
   });
 
-  function saveRates(){
+  async function saveRates(){
     const conv   = parseFloat(document.getElementById('adm_conv').value);
     const log    = parseFloat(document.getElementById('adm_log').value);
     const usdPkr = parseFloat(document.getElementById('adm_usd_pkr').value);
-    if(!conv || !log){ alert('Please enter valid numbers.'); return; }
-    localStorage.setItem('psb_conv', conv);
-    localStorage.setItem('psb_log',  log);
-    if(usdPkr > 0) localStorage.setItem('psb_usd_pkr', usdPkr);
+    if(!(conv > 0) || !(log > 0)){ alert('Please enter valid numbers.'); return; }
     const c1  = parseFloat(document.getElementById('adm_comm_1').value);
     const c23 = parseFloat(document.getElementById('adm_comm_23').value);
     const c4p = parseFloat(document.getElementById('adm_comm_4p').value);
-    if(c1  >= 0) localStorage.setItem('psb_comm_1',  c1);
-    if(c23 >= 0) localStorage.setItem('psb_comm_23', c23);
-    if(c4p >= 0) localStorage.setItem('psb_comm_4p', c4p);
+    const maxq = parseInt(document.getElementById('adm_maxqty').value);
+    // The relay URL is how to REACH the relay, so it stays per-device (localStorage).
     const relayUrl = document.getElementById('adm_relay').value.trim();
     if(relayUrl && !/^https:\/\//i.test(relayUrl)){ alert('Relay URL must start with https://'); return; }
-    if(relayUrl) localStorage.setItem('psb_relay_url', relayUrl);
-    else localStorage.removeItem('psb_relay_url');
-    const maxq = parseInt(document.getElementById('adm_maxqty').value);
-    if(maxq > 0) localStorage.setItem('psb_max_qty', maxq);
-    const btn = document.getElementById('saveRatesBtn');
-    btn.textContent = '✓ Saved!';
-    btn.style.background = '#2e7d32';
-    setTimeout(()=>{ btn.textContent='Save Rates'; btn.style.background=''; }, 2000);
+    if(relayUrl) localStorage.setItem('psb_relay_url', relayUrl); else localStorage.removeItem('psb_relay_url');
+    const h = sessionStorage.getItem('psb_admin_h');
+    if(!h){ alert('Session expired — close and reopen the admin panel to re-enter your password.'); return; }
+    const rates = { conv, log, usd_pkr: usdPkr > 0 ? usdPkr : 278,
+      comm_1: c1 >= 0 ? c1 : 20, comm_23: c23 >= 0 ? c23 : 18, comm_4p: c4p >= 0 ? c4p : 15, maxqty: maxq > 0 ? maxq : 5 };
+    const btn = document.getElementById('saveRatesBtn'); btn.textContent = 'Saving…';
+    try{
+      const res = await fetch(relayBase()+'/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash:h, rates})});
+      const j = await res.json();
+      if(j && j.ok){
+        PSB_CFG = PSB_CFG || {}; PSB_CFG.rates = j.rates; if(j.weights) PSB_CFG.weights = j.weights;
+        try{ localStorage.setItem('psb_cfg_cache', JSON.stringify({ ok:true, hasPassword:true, rates:j.rates, weights:j.weights, updatedAt:j.updatedAt })); }catch(e){}
+        if(typeof renderCart === 'function') renderCart();
+        btn.textContent = '✓ Saved for everyone!'; btn.style.background = '#2e7d32';
+      } else { btn.textContent = 'Save Rates'; alert('Save failed: ' + ((j && j.error) || 'unauthorized — reopen the panel')); }
+    }catch(e){ btn.textContent = 'Save Rates'; alert('Relay unreachable — rates NOT saved.'); }
+    setTimeout(()=>{ btn.textContent='Save Rates'; btn.style.background=''; }, 2500);
   }
 
   const TRANS_FEE = 100;
@@ -1303,6 +1357,7 @@
   };
 
   function getWeight(key){
+    const c = cfgWeight(key); if(c) return c;     // global (relay) weight wins
     try{
       const saved = JSON.parse(localStorage.getItem('psb_weights') || '{}');
       if(saved[key] > 0) return saved[key];
@@ -1313,10 +1368,8 @@
   function buildWeightEditor(){
     const grid = document.getElementById('weightEditorGrid');
     if(!grid) return;
-    let saved = {};
-    try{ saved = JSON.parse(localStorage.getItem('psb_weights') || '{}'); }catch(e){}
     grid.innerHTML = Object.keys(DEFAULT_WEIGHTS).map(key => {
-      const val = saved[key] || DEFAULT_WEIGHTS[key];
+      const val = getWeight(key);   // effective: global config → localStorage → default
       return `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid #2a2a3e">
         <span style="font-size:0.72rem;color:#ccc;flex:1">${WEIGHT_LABELS[key]}</span>
         <input type="number" step="0.01" min="0.01" id="wt_${key}" value="${val}"
@@ -1326,22 +1379,32 @@
     }).join('');
   }
 
-  function saveWeights(){
+  async function saveWeights(){
     const weights = {};
     Object.keys(DEFAULT_WEIGHTS).forEach(key => {
       const el = document.getElementById('wt_' + key);
       if(el){ const v = parseFloat(el.value); if(v > 0) weights[key] = v; }
     });
-    localStorage.setItem('psb_weights', JSON.stringify(weights));
-    const btn = document.getElementById('saveWeightsBtn');
-    btn.textContent = '✓ Weights Saved!';
-    btn.style.background = '#2e7d32';
-    setTimeout(()=>{ btn.textContent='Save Weights'; btn.style.background=''; }, 2000);
+    const h = sessionStorage.getItem('psb_admin_h');
+    if(!h){ alert('Session expired — close and reopen the admin panel to re-enter your password.'); return; }
+    const btn = document.getElementById('saveWeightsBtn'); btn.textContent = 'Saving…';
+    try{
+      const res = await fetch(relayBase()+'/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash:h, weights})});
+      const j = await res.json();
+      if(j && j.ok){
+        PSB_CFG = PSB_CFG || {}; PSB_CFG.weights = j.weights; if(j.rates) PSB_CFG.rates = j.rates;
+        try{ localStorage.setItem('psb_cfg_cache', JSON.stringify({ ok:true, hasPassword:true, rates:j.rates, weights:j.weights, updatedAt:j.updatedAt })); }catch(e){}
+        if(typeof renderCart === 'function') renderCart();
+        btn.textContent = '✓ Saved for everyone!'; btn.style.background = '#2e7d32';
+      } else { btn.textContent = 'Save Weights'; alert('Save failed: ' + ((j && j.error) || 'unauthorized — reopen the panel')); }
+    }catch(e){ btn.textContent = 'Save Weights'; alert('Relay unreachable — weights NOT saved.'); }
+    setTimeout(()=>{ btn.textContent='Save Weights'; btn.style.background=''; }, 2500);
   }
 
   function resetWeights(){
-    localStorage.removeItem('psb_weights');
-    buildWeightEditor();
+    // Load the built-in defaults into the editor fields — click "Save Weights"
+    // to push them to everyone. (Does not auto-save.)
+    Object.keys(DEFAULT_WEIGHTS).forEach(key => { const el = document.getElementById('wt_' + key); if(el) el.value = DEFAULT_WEIGHTS[key]; });
   }
 
   // ── UNSTITCHED categories: no size field required ────────────────────────
@@ -2404,7 +2467,7 @@
 
   function setDraftCurrency(id, cur){
     const d = drafts[id]; if(!d) return;
-    const usdRate = parseFloat(localStorage.getItem('psb_usd_pkr') || '278');
+    const usdRate = getUsdRate();
     const inp = document.getElementById(`dc_price_${id}`);
     const val = parseFloat(inp.value);
     if(val > 0){
@@ -2422,7 +2485,7 @@
     const d = drafts[id]; if(!d) return;
     const val = parseFloat(document.getElementById(`dc_price_${id}`).value);
     const hint = document.getElementById(`dc_phint_${id}`);
-    const usdRate = parseFloat(localStorage.getItem('psb_usd_pkr') || '278');
+    const usdRate = getUsdRate();
     if(!val || val <= 0){ hint.textContent=''; return; }
     if(d.currency==='PKR') hint.innerHTML=`≈ <strong>$${(val/usdRate).toFixed(2)} USD</strong>`;
     else hint.innerHTML=`≈ <strong>PKR ${Math.round(val*usdRate).toLocaleString()}</strong>`;
@@ -2449,6 +2512,7 @@
   // (b) cap each size to a sane ceiling so nobody can order 10,000 of one item.
   // Ceiling is admin-tunable (psb_max_qty, default 5).
   function maxPerSize(){
+    const c = cfgRate('maxqty'); if(c && c > 0) return Math.round(c);   // global (relay) cap wins
     const n = parseInt(localStorage.getItem('psb_max_qty'));
     return (n && n > 0) ? n : 5;
   }
@@ -3214,7 +3278,7 @@
 
   // ── SAVE ALL DRAFTS → CART ───────────────────────────────────────────────
   function saveAllDrafts(){
-    const usdRate = parseFloat(localStorage.getItem('psb_usd_pkr') || '278');
+    const usdRate = getUsdRate();
     const ids = Object.keys(drafts).map(Number);
     if(!ids.length){ alert('No items to save.'); return; }
     let allValid = true;
@@ -4046,6 +4110,10 @@
     if(chip){ chip.href = href; chip.style.display = ''; }
   }
   wireSupportWA();
+
+  // Fetch global rates/weights from the relay (must run after DEFAULT_RELAY_URL
+  // is defined). Refreshes the cart totals once it arrives.
+  loadPsbConfig();
 
   // Auto-open admin panel for ?admin — also must run last so DEFAULT_WEIGHTS etc.
   // are already initialised (this used to crash the whole script when run early).

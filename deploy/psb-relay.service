@@ -12,8 +12,12 @@ Environment=PORT=8787
 ExecStart=/usr/bin/node /opt/psb-relay/relay-server.js
 Restart=always
 RestartSec=3
+# Writable persistent dir for the global rate/weight config (config.json).
+# systemd creates /var/lib/psb-relay owned by the service user — works under
+# ProtectSystem=strict. Exposed to the process as $STATE_DIRECTORY.
+StateDirectory=psb-relay
 
-# --- hardening (relay writes nothing to disk; cache is in-memory) ---
+# --- hardening (only writable path is the StateDirectory; cache is in-memory) ---
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict

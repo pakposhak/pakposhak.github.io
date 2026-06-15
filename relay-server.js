@@ -15,6 +15,7 @@
 
 'use strict';
 const http = require('http');
+const fs = require('fs');
 
 const PORT = process.env.PORT || 8787;
 const CACHE_TTL_MS = 10 * 60 * 1000;   // 10 min — fresh enough for stock/price
@@ -209,6 +210,31 @@ function extractTagSizes(html){
   ];
 }
 
+// ── GLOBAL CONFIG STORE (admin-set rates + weights, shared by every form) ────
+// Persisted to the systemd StateDirectory (writable under ProtectSystem=strict).
+// GET /config (public read) → forms use these rates/weights; POST /config,
+// /admin/setup & /admin/verify are gated by the admin password (SHA-256 hash).
+const CONFIG_DIR  = process.env.STATE_DIRECTORY || '/var/lib/psb-relay';
+const CONFIG_FILE = CONFIG_DIR + '/config.json';
+function loadConfig(){
+  try{ const o = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'));
+    return { adminHash: o.adminHash || null, rates: o.rates || null, weights: o.weights || null, updatedAt: o.updatedAt || null }; }
+  catch(e){ return { adminHash: null, rates: null, weights: null, updatedAt: null }; }
+}
+let CONFIG = loadConfig();
+function saveConfig(){
+  try{ fs.mkdirSync(CONFIG_DIR, { recursive: true }); fs.writeFileSync(CONFIG_FILE, JSON.stringify(CONFIG)); return true; }
+  catch(e){ console.error('config save failed:', e.message); return false; }
+}
+const RATE_KEYS = ['conv','log','usd_pkr','comm_1','comm_23','comm_4p','maxqty'];
+function sanitizeRates(r){ if(!r || typeof r !== 'object') return null; const o = {};
+  for(const k of RATE_KEYS){ const n = parseFloat(r[k]); if(isFinite(n) && n >= 0) o[k] = n; } return Object.keys(o).length ? o : null; }
+function sanitizeWeights(w){ if(!w || typeof w !== 'object') return null; const o = {};
+  for(const k in w){ if(!/^[a-z0-9_]{1,40}$/i.test(k)) continue; const n = parseFloat(w[k]); if(isFinite(n) && n > 0 && n < 100) o[k] = n; } return Object.keys(o).length ? o : null; }
+function readBody(req){ return new Promise(resolve => { let d=''; req.on('data', c => { d += c; if(d.length > 1e6) req.destroy(); });
+  req.on('end', () => { try{ resolve(JSON.parse(d || '{}')); }catch(e){ resolve(null); } }); req.on('error', () => resolve(null)); }); }
+const isHash = h => typeof h === 'string' && /^[a-f0-9]{64}$/i.test(h);
+
 function send(res, status, obj){
   const body = JSON.stringify(obj);
   res.writeHead(status, {
@@ -223,6 +249,42 @@ const server = http.createServer(async (req, res) => {
   const u = new URL(req.url, 'http://localhost');
 
   if(u.pathname === '/health') return send(res, 200, { ok: true });
+
+  // ── CORS preflight (browser POSTs to /config etc.) ───────────────────────
+  if(req.method === 'OPTIONS'){
+    res.writeHead(204, { 'Access-Control-Allow-Origin':'*', 'Access-Control-Allow-Methods':'GET,POST,OPTIONS', 'Access-Control-Allow-Headers':'Content-Type', 'Access-Control-Max-Age':'86400' });
+    return res.end();
+  }
+
+  // ── GLOBAL RATE/WEIGHT CONFIG (admin panel writes here; every form reads it)
+  if(u.pathname === '/config' && req.method === 'GET')
+    return send(res, 200, { ok:true, hasPassword: !!CONFIG.adminHash, rates: CONFIG.rates, weights: CONFIG.weights, updatedAt: CONFIG.updatedAt });
+
+  if(u.pathname === '/admin/setup' && req.method === 'POST'){
+    // First-time password creation — only allowed while none is set.
+    const b = await readBody(req);
+    if(!b || !isHash(b.hash)) return send(res, 400, { ok:false, error:'bad hash' });
+    if(CONFIG.adminHash) return send(res, 403, { ok:false, error:'password already set' });
+    CONFIG.adminHash = b.hash.toLowerCase(); CONFIG.updatedAt = new Date().toISOString();
+    return send(res, saveConfig() ? 200 : 500, { ok: !!CONFIG.adminHash });
+  }
+
+  if(u.pathname === '/admin/verify' && req.method === 'POST'){
+    const b = await readBody(req);
+    return send(res, 200, { ok: !!CONFIG.adminHash && !!b && isHash(b.hash) && b.hash.toLowerCase() === CONFIG.adminHash });
+  }
+
+  if(u.pathname === '/config' && req.method === 'POST'){
+    const b = await readBody(req);
+    if(!b || !isHash(b.hash)) return send(res, 400, { ok:false, error:'bad request' });
+    if(!CONFIG.adminHash || b.hash.toLowerCase() !== CONFIG.adminHash) return send(res, 401, { ok:false, error:'unauthorized' });
+    const r = sanitizeRates(b.rates), w = sanitizeWeights(b.weights);
+    if(r) CONFIG.rates   = { ...(CONFIG.rates   || {}), ...r };
+    if(w) CONFIG.weights = { ...(CONFIG.weights || {}), ...w };
+    CONFIG.updatedAt = new Date().toISOString();
+    const ok = saveConfig();
+    return send(res, ok ? 200 : 500, { ok, updatedAt: CONFIG.updatedAt, rates: CONFIG.rates, weights: CONFIG.weights });
+  }
 
   // ── /scrape — Group 4 (Khaadi/Sapphire, SFCC). Returns a NORMALIZED shape
   //    { ok, currency, price (rupees), title, productType, available, sizes:[{size,available}] }
