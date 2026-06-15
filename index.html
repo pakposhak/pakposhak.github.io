@@ -1590,6 +1590,18 @@
   // international and PK twin hosts of each brand.
   const SFCC_SCRAPE_HOSTS = new Set(['khaadi.com','pk.khaadi.com','sapphireonline.pk','pk.sapphireonline.pk']);
 
+  // NON-Shopify brands (Magento / WooCommerce / custom SPAs). They have no
+  // /products/{handle}.js, and their pages are JS-rendered so the browser can't
+  // fetch them cross-origin. The relay /scrapeld reads the product page's
+  // schema.org JSON-LD from the PK IP → PKR price + title (NO sizes — those load
+  // via JS, so the buyer picks size manually). Brands with no JSON-LD, or
+  // unreachable from the VPS (e.g. Warda, Savoir), fall back to full manual entry.
+  const GENERIC_SCRAPE_HOSTS = new Set([
+    'image1993.com','laam.pk','thredzonline.com','warda.com.pk','ittehadtextiles.com',
+    'erumkhancouture.com','farahtalibaziz.com.pk','mohsinnaveedranjha.com','nomiansari.com',
+    'naushemian.com','cougar.com.pk','deepakperwani.com','savoir.pk','pepperland.pk',
+  ]);
+
   async function fetchProductData(id, url, presetMember){
     const statusEl = document.getElementById(`dc_fetch_${id}`);
     function setStatus(msg, color){ if(statusEl){ statusEl.style.display=''; statusEl.textContent=msg; statusEl.style.color=color||'#c9a96e'; } }
@@ -1663,7 +1675,35 @@
           return setStatus("⚠️ Couldn't auto-fetch this item from Pakistan right now — please fill price & size manually, or try again in a moment.",'#ff9a9a');
       }
 
-      if(!isSfcc){
+      // ── NON-Shopify brands: relay JSON-LD price scrape (PKR price; size manual)
+      const isGeneric = !isSfcc && GENERIC_SCRAPE_HOSTS.has(pastedHost);
+      if(isGeneric){
+        const relay = ((localStorage.getItem('psb_relay_url')||'').trim() || DEFAULT_RELAY_URL).replace(/\/+$/,'');
+        setStatus('🇵🇰 Fetching price from Pakistan (this brand has no public API)…','#c9a96e');
+        const sc = new AbortController(); const stid = setTimeout(()=>sc.abort(), 22000);
+        try{
+          const rr = await fetch(`${relay}/scrapeld?url=${encodeURIComponent(url)}`, { signal: sc.signal, cache:'no-store' });
+          if(rr.ok){
+            const j = await rr.json();
+            // PK-IP fetch → currency should be PKR (or absent). Never accept a
+            // foreign currency here (would mislabel); fall back to manual instead.
+            if(j && j.ok && j.price != null && (!j.currency || j.currency === 'PKR')){
+              product = {
+                title: j.title || '',
+                product_type: '',                      // category from the title
+                options: [],                           // sizes are JS-rendered → none here
+                variants: [{ available: true, price: j.price, compare_at_price: null }],
+              };
+              hasStockInfo = false; pkrVia = 'relay';  // price in RUPEES (moneyOf ÷1 when !hasStockInfo)
+            }
+          }
+        }catch(err){ /* fall through to the manual note */ }
+        clearTimeout(stid);
+        if(!product)
+          return setStatus("ℹ️ Couldn't auto-fetch this brand's price — please enter price & size manually.", '#aaa');
+      }
+
+      if(!isSfcc && !isGeneric){
       let m = u.pathname.match(/\/products\/([^/?#]+)/);
       // Some stores (e.g. Khaadi) use /category/product-id.html — try last path segment as handle
       if(!m && u.pathname.toLowerCase().endsWith('.html')){
@@ -1996,7 +2036,7 @@
         return;  // no auto-hide
       }
       const viaNote = pkrVia === 'relay' ? ' · 🇵🇰 PKR via relay' : '';
-      setStatus(`✓ Fetched: ${product.product_type||product.type||'product'} · PKR ${refPrice.toLocaleString()}${uniqSizes.size?' · '+uniqSizes.size+szWord:''}${viaNote}`, '#2a7a32');
+      setStatus(`✓ Fetched: ${product.product_type||product.type||'product'} · PKR ${refPrice.toLocaleString()}${uniqSizes.size?' · '+uniqSizes.size+szWord:''}${isGeneric?' · ⚠️ pick size manually below':''}${viaNote}`, '#2a7a32');
       hideStatus();
       checkAddUrlLock();
 

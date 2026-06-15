@@ -160,6 +160,38 @@ function extractSetMembers(html){
   return [...pids];
 }
 
+// Generic price extractor for NON-Shopify brands (Magento/Woo/custom). Reads the
+// product page's schema.org JSON-LD Product → {title, price (rupees), currency,
+// available}. Robust to @graph wrappers, offer arrays and AggregateOffer. Sizes
+// are JS-rendered on these sites (absent from server HTML) so they're not here.
+function extractJsonLdProduct(html){
+  const flat = [];
+  for(const m of html.matchAll(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)){
+    let j; try{ j = JSON.parse(m[1].trim()); }catch(e){ continue; }
+    if(Array.isArray(j)) flat.push(...j);
+    else if(j && Array.isArray(j['@graph'])) flat.push(...j['@graph']);
+    else if(j) flat.push(j);
+  }
+  const isProd = x => x && (x['@type'] === 'Product' || (Array.isArray(x['@type']) && x['@type'].includes('Product')));
+  const p = flat.find(isProd);
+  if(!p) return null;
+  let off = p.offers;
+  if(Array.isArray(off)) off = off[0];
+  let price = null, currency = null, avail = null;
+  if(off){
+    const ps = off.priceSpecification && (Array.isArray(off.priceSpecification) ? off.priceSpecification[0] : off.priceSpecification);
+    currency = off.priceCurrency || (ps && ps.priceCurrency) || null;
+    let raw = off.price != null ? off.price : (off.lowPrice != null ? off.lowPrice : (ps && ps.price != null ? ps.price : null));
+    if(raw != null){ const num = parseFloat(String(raw).replace(/[^0-9.]/g, '')); if(!isNaN(num) && num > 0) price = num; }
+    avail = off.availability || null;
+  }
+  return {
+    title: (p.name != null ? String(p.name) : '').trim() || null,
+    price, currency,
+    available: avail ? !/SoldOut|OutOfStock|Discontinued/i.test(avail) : true,
+  };
+}
+
 function send(res, status, obj){
   const body = JSON.stringify(obj);
   res.writeHead(status, {
@@ -222,6 +254,29 @@ const server = http.createServer(async (req, res) => {
       // Top-level fields mirror the first member (back-compat with single-product
       // callers); `members` + `isSet` are additive for set-aware callers.
       const body = { ok:true, isSet: isSet && members.length > 1, members, ...members[0] };
+      cacheSet(key, body);
+      return send(res, 200, body);
+    }catch(e){ return send(res, 502, { ok:false, error:String(e.message || e) }); }
+  }
+
+  // ── /scrapeld — generic JSON-LD price scraper for NON-Shopify brands ──────
+  //    (Magento/Woo/custom SPAs). Returns price (rupees) + currency + title from
+  //    the product page's schema.org JSON-LD. Sizes are JS-rendered on these
+  //    sites so they are NOT available here (sizes:[]) — the form has the buyer
+  //    pick size manually. Shape mirrors /scrape so the form reuses that path.
+  if(u.pathname === '/scrapeld' && req.method === 'GET'){
+    const target = u.searchParams.get('url') || '';
+    let t; try{ t = new URL(target); }catch(e){ return send(res, 400, { ok:false, error:'bad url' }); }
+    if(t.protocol !== 'https:' || !hostAllowed(t.hostname))
+      return send(res, 403, { ok:false, error:'host not allowed' });
+    const key = 'scrapeld:' + t.hostname + t.pathname;
+    const hit = cacheGet(key);
+    if(hit) return send(res, 200, hit);
+    try{
+      const html = await fetchText(t.origin + t.pathname);
+      const ld = extractJsonLdProduct(html);
+      if(!ld || ld.price == null) return send(res, 502, { ok:false, error:'no JSON-LD price' });
+      const body = { ok:true, currency: ld.currency || null, price: ld.price, title: ld.title, available: ld.available, sizes: [], via: 'jsonld' };
       cacheSet(key, body);
       return send(res, 200, body);
     }catch(e){ return send(res, 502, { ok:false, error:String(e.message || e) }); }
