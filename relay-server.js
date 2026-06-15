@@ -192,6 +192,23 @@ function extractJsonLdProduct(html){
   };
 }
 
+// Some non-Shopify storefronts (notably LAAM, a Nuxt SPA) embed per-size
+// availability in the page payload as tag strings like
+// "Phy_InStock_Kids Size_5-6Y_RDLRG" / "Phy_OutOfStock_Women Size_M_ABC".
+// Pull the size + stock from those tags. Sizes the buyer can pick (in stock)
+// come from InStock tags; OutOfStock tags mark sold-out. Brands without such
+// tags → returns [] (price-only). The format could change → fragile by nature,
+// so it just degrades to price-only if it stops matching.
+function extractTagSizes(html){
+  const grab = re => [...new Set([...html.matchAll(re)].map(m => m[1].trim()).filter(Boolean))];
+  const inS  = grab(/InStock[^"]*?Size_([^_"]+)_/g);
+  const outS = grab(/OutOfStock[^"]*?Size_([^_"]+)_/g);
+  return [
+    ...inS.map(s => ({ size: s, available: true })),
+    ...outS.filter(s => !inS.includes(s)).map(s => ({ size: s, available: false })),
+  ];
+}
+
 function send(res, status, obj){
   const body = JSON.stringify(obj);
   res.writeHead(status, {
@@ -276,7 +293,8 @@ const server = http.createServer(async (req, res) => {
       const html = await fetchText(t.origin + t.pathname);
       const ld = extractJsonLdProduct(html);
       if(!ld || ld.price == null) return send(res, 502, { ok:false, error:'no JSON-LD price' });
-      const body = { ok:true, currency: ld.currency || null, price: ld.price, title: ld.title, available: ld.available, sizes: [], via: 'jsonld' };
+      const sizes = extractTagSizes(html);
+      const body = { ok:true, currency: ld.currency || null, price: ld.price, title: ld.title, available: ld.available, sizes, via: 'jsonld' };
       cacheSet(key, body);
       return send(res, 200, body);
     }catch(e){ return send(res, 502, { ok:false, error:String(e.message || e) }); }

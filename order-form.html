@@ -1688,13 +1688,28 @@
             // PK-IP fetch → currency should be PKR (or absent). Never accept a
             // foreign currency here (would mislabel); fall back to manual instead.
             if(j && j.ok && j.price != null && (!j.currency || j.currency === 'PKR')){
-              product = {
-                title: j.title || '',
-                product_type: '',                      // category from the title
-                options: [],                           // sizes are JS-rendered → none here
-                variants: [{ available: true, price: j.price, compare_at_price: null }],
-              };
-              hasStockInfo = false; pkrVia = 'relay';  // price in RUPEES (moneyOf ÷1 when !hasStockInfo)
+              const szs = Array.isArray(j.sizes) ? j.sizes : [];
+              if(szs.length){
+                // Per-size stock recovered (e.g. LAAM tag parse) → run the full
+                // pipeline so in-stock chips + sold-out + qty cap all apply.
+                const paisa = Math.round(j.price * 100);   // moneyOf ÷100 when hasStockInfo
+                product = {
+                  title: j.title || '',
+                  product_type: '',
+                  options: [{ name:'Size', values: szs.map(s=>s.size) }],
+                  variants: szs.map(s => ({ option1: s.size, available: !!s.available, price: paisa, compare_at_price: null })),
+                };
+                hasStockInfo = true; pkrVia = 'relay';
+              } else {
+                // Price-only (sizes JS-rendered / not exposed) → buyer picks size manually.
+                product = {
+                  title: j.title || '',
+                  product_type: '',
+                  options: [],
+                  variants: [{ available: true, price: j.price, compare_at_price: null }],
+                };
+                hasStockInfo = false; pkrVia = 'relay';  // price in RUPEES (moneyOf ÷1 when !hasStockInfo)
+              }
             }
           }
         }catch(err){ /* fall through to the manual note */ }
@@ -2036,7 +2051,7 @@
         return;  // no auto-hide
       }
       const viaNote = pkrVia === 'relay' ? ' · 🇵🇰 PKR via relay' : '';
-      setStatus(`✓ Fetched: ${product.product_type||product.type||'product'} · PKR ${refPrice.toLocaleString()}${uniqSizes.size?' · '+uniqSizes.size+szWord:''}${isGeneric?' · ⚠️ pick size manually below':''}${viaNote}`, '#2a7a32');
+      setStatus(`✓ Fetched: ${product.product_type||product.type||'product'} · PKR ${refPrice.toLocaleString()}${uniqSizes.size?' · '+uniqSizes.size+szWord:''}${isGeneric && !uniqSizes.size?' · ⚠️ pick size manually below':''}${viaNote}`, '#2a7a32');
       hideStatus();
       checkAddUrlLock();
 
