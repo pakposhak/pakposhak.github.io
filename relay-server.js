@@ -131,6 +131,35 @@ async function fetchJson(url, extraHeaders){
   } finally { clearTimeout(tid); }
 }
 
+async function fetchText(url, extraHeaders){
+  const ctrl = new AbortController();
+  const tid = setTimeout(() => ctrl.abort(), FETCH_TIMEOUT_MS);
+  try{
+    const r = await fetch(url, {
+      signal: ctrl.signal,
+      headers: { 'User-Agent': UA, 'Accept': 'text/html,application/xhtml+xml,*/*', ...(extraHeaders||{}) },
+    });
+    if(!r.ok) throw new Error('upstream HTTP ' + r.status);
+    return await r.text();
+  } finally { clearTimeout(tid); }
+}
+
+// Khaadi/Sapphire sell some articles as a "product set" (bundle) — e.g. a kurta
+// shown on the same PDP as its matching trouser, each its own price + sizes. The
+// SFRA PDP marks this with a `bundled-product-set-detail` wrapper and renders one
+// `set-item` block per piece, each carrying its own data-pid. Return the member
+// PIDs (in page order) so each piece can be priced/sized separately; [] = not a set.
+function extractSetMembers(html){
+  if(!html || !/bundled-product-set-detail/.test(html)) return [];
+  const pids = new Set();
+  const res = [
+    /class="[^"]*\bset-item\b[^"]*"[^>]*\bdata-pid="([^"]+)"/g,
+    /\bdata-pid="([^"]+)"[^>]*class="[^"]*\bset-item\b[^"]*"/g,
+  ];
+  for(const re of res){ let m; while((m = re.exec(html))) pids.add(m[1]); }
+  return [...pids];
+}
+
 function send(res, status, obj){
   const body = JSON.stringify(obj);
   res.writeHead(status, {
@@ -162,15 +191,37 @@ const server = http.createServer(async (req, res) => {
     const hit = cacheGet(key);
     if(hit) return send(res, 200, hit);
     try{
-      const vUrl = `${brand.variation}?pid=${encodeURIComponent(pid)}&quantity=1`;
-      const j = await fetchJson(vUrl, {
-        'Accept': 'application/json, text/javascript, */*; q=0.01',
-        'X-Requested-With': 'XMLHttpRequest',
-        'Accept-Language': 'en-PK,en;q=0.9',
-      });
-      const norm = normalizeSfcc(j);
-      if(!norm || norm.price == null) return send(res, 502, { ok:false, error:'could not parse product' });
-      const body = { ok:true, ...norm };
+      // Detect a product set (kurta + matching trouser, etc.) by reading the PDP
+      // HTML once. For a normal product the member list is just the page PID.
+      let memberPids = [pid], isSet = false;
+      try{
+        const html = await fetchText(t.origin + t.pathname);
+        const found = extractSetMembers(html);
+        if(found.length > 1){
+          // Keep the page's own product first (it's the one the buyer opened).
+          isSet = true;
+          memberPids = found.includes(pid) ? [pid, ...found.filter(x => x !== pid)] : found;
+        }
+      }catch(e){ /* HTML unavailable → treat as a single product */ }
+      // Price + per-size stock (+ raw size codes) for each member, via the SFCC
+      // Product-Variation controller.
+      const members = [];
+      for(const mpid of memberPids){
+        try{
+          const vUrl = `${brand.variation}?pid=${encodeURIComponent(mpid)}&quantity=1`;
+          const j = await fetchJson(vUrl, {
+            'Accept': 'application/json, text/javascript, */*; q=0.01',
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept-Language': 'en-PK,en;q=0.9',
+          });
+          const norm = normalizeSfcc(j);
+          if(norm && norm.price != null) members.push({ pid: mpid, ...norm });
+        }catch(e){ /* skip a member that fails to parse */ }
+      }
+      if(!members.length) return send(res, 502, { ok:false, error:'could not parse product' });
+      // Top-level fields mirror the first member (back-compat with single-product
+      // callers); `members` + `isSet` are additive for set-aware callers.
+      const body = { ok:true, isSet: isSet && members.length > 1, members, ...members[0] };
       cacheSet(key, body);
       return send(res, 200, body);
     }catch(e){ return send(res, 502, { ok:false, error:String(e.message || e) }); }

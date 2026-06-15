@@ -1581,7 +1581,7 @@
   // international and PK twin hosts of each brand.
   const SFCC_SCRAPE_HOSTS = new Set(['khaadi.com','pk.khaadi.com','sapphireonline.pk','pk.sapphireonline.pk']);
 
-  async function fetchProductData(id, url){
+  async function fetchProductData(id, url, presetMember){
     const statusEl = document.getElementById(`dc_fetch_${id}`);
     function setStatus(msg, color){ if(statusEl){ statusEl.style.display=''; statusEl.textContent=msg; statusEl.style.color=color||'#c9a96e'; } }
     function hideStatus(){ if(statusEl) setTimeout(()=>{ statusEl.style.display='none'; },3500); }
@@ -1598,38 +1598,58 @@
       //    other brand (incl. the in-stock-only size constraint).
       const isSfcc = SFCC_SCRAPE_HOSTS.has(pastedHost) && u.pathname.toLowerCase().endsWith('.html');
       if(isSfcc){
-        const relay = ((localStorage.getItem('psb_relay_url')||'').trim() || DEFAULT_RELAY_URL).replace(/\/+$/,'');
-        setStatus('🇵🇰 Fetching price & live stock from Pakistan (this brand has no public API)…','#c9a96e');
-        const sc = new AbortController(); const stid = setTimeout(()=>sc.abort(), 22000);
-        try{
-          const rr = await fetch(`${relay}/scrape?url=${encodeURIComponent(url)}`, { signal: sc.signal, cache:'no-store' });
-          if(rr.ok){
-            const rj = await rr.json();
-            if(rj && rj.ok && rj.currency === 'PKR' && rj.price != null){
-              const paisa = Math.round(rj.price * 100);   // pipeline reads paisa (÷100)
-              const szs = Array.isArray(rj.sizes) ? rj.sizes : [];
-              // SFCC encodes the buyer's chosen size in the URL as
-              // ?dwvar_<pid>_size=<code> (e.g. MDM). Map that code back to the
-              // display size via the relay's per-size `value`, to pre-select it.
-              const dwCode = (url.match(/dwvar_[^=&]*_size=([^&]+)/i) || [])[1];
-              if(dwCode){
-                const want = decodeURIComponent(dwCode).toLowerCase();
-                const hit = szs.find(s => s.value && String(s.value).toLowerCase() === want);
-                if(hit) sfccPicked = hit.size;
-              }
-              product = {
-                title: rj.title || '',
-                product_type: '',                          // force title-based category mapping
-                options: szs.length ? [{ name:'Size', values: szs.map(s=>s.size) }] : [],
-                variants: szs.length
-                  ? szs.map(s => ({ option1: s.size, available: !!s.available, price: paisa, compare_at_price: null }))
-                  : [{ available: rj.available !== false, price: paisa, compare_at_price: null }],
-              };
-              hasStockInfo = true; pkrVia = 'relay';
+        let rj = null;
+        if(presetMember){
+          // This draft is an EXTRA piece of a product set — its data was already
+          // fetched with the primary piece, so no network call is needed.
+          rj = { ok:true, currency:'PKR', price:presetMember.price, title:presetMember.title, sizes:presetMember.sizes||[] };
+          setStatus('🧩 Matching piece of the set…','#c9a96e');
+        } else {
+          const relay = ((localStorage.getItem('psb_relay_url')||'').trim() || DEFAULT_RELAY_URL).replace(/\/+$/,'');
+          setStatus('🇵🇰 Fetching price & live stock from Pakistan (this brand has no public API)…','#c9a96e');
+          const sc = new AbortController(); const stid = setTimeout(()=>sc.abort(), 22000);
+          try{
+            const rr = await fetch(`${relay}/scrape?url=${encodeURIComponent(url)}`, { signal: sc.signal, cache:'no-store' });
+            if(rr.ok){
+              const j = await rr.json();
+              if(j && j.ok && j.currency === 'PKR' && j.price != null) rj = j;
+            }
+          }catch(err){ /* fall through to the manual-entry note */ }
+          clearTimeout(stid);
+        }
+        if(rj){
+          const paisa = Math.round(rj.price * 100);   // pipeline reads paisa (÷100)
+          const szs = Array.isArray(rj.sizes) ? rj.sizes : [];
+          // SFCC encodes the buyer's chosen size in the URL as ?dwvar_<pid>_size=
+          // <code> (e.g. MDM) — but ONLY for the primary product. Map the code
+          // back to the display size via the relay's per-size `value`. (Khaadi &
+          // Sapphire don't update the address bar on size click, so this is set
+          // only when the link actually carries the code.)
+          if(!presetMember){
+            const dwCode = (url.match(/dwvar_[^=&]*_size=([^&]+)/i) || [])[1];
+            if(dwCode){
+              const want = decodeURIComponent(dwCode).toLowerCase();
+              const hit = szs.find(s => s.value && String(s.value).toLowerCase() === want);
+              if(hit) sfccPicked = hit.size;
             }
           }
-        }catch(err){ /* fall through to the manual-entry note */ }
-        clearTimeout(stid);
+          product = {
+            title: rj.title || '',
+            product_type: '',                          // force title-based category mapping
+            options: szs.length ? [{ name:'Size', values: szs.map(s=>s.size) }] : [],
+            variants: szs.length
+              ? szs.map(s => ({ option1: s.size, available: !!s.available, price: paisa, compare_at_price: null }))
+              : [{ available: rj.available !== false, price: paisa, compare_at_price: null }],
+          };
+          hasStockInfo = true; pkrVia = 'relay';
+          // PRODUCT SET (Khaadi/Sapphire bundle — e.g. kurta + matching trouser):
+          // this draft holds the FIRST piece; spawn a separate draft per extra
+          // piece so the buyer gets every piece of the article from one link.
+          if(!presetMember && rj.isSet && Array.isArray(rj.members) && rj.members.length > 1){
+            const extras = rj.members.slice(1);
+            setTimeout(() => extras.forEach(mem => createDraft(url, mem)), 0);
+          }
+        }
         if(!product)
           return setStatus("⚠️ Couldn't auto-fetch this item from Pakistan right now — please fill price & size manually, or try again in a moment.",'#ff9a9a');
       }
@@ -2077,7 +2097,7 @@
     </div>`;
   }
 
-  function createDraft(url){
+  function createDraft(url, presetMember){
     const brand = detectBrand(url);
     const _cdHost = new URL(url).hostname;
     const isPk  = /\.(pk|com\.pk)(\/|$)/.test(_cdHost + '/') || _cdHost === 'pk.ethnc.com';
@@ -2086,18 +2106,23 @@
     document.getElementById('draftCards')
       .insertAdjacentHTML('beforeend', buildDraftCard(id, url, brand, isPk));
 
-    // Immediate URL-based detection (instant, no network)
-    const cat = detectCategory(url);
-    if(cat){ setDraftCat(id, cat); }
-    if(cat && !UNSTITCHED_CATS.has(cat)){
-      // Pre-fill size from URL params while fetch loads
-      const sz = detectSizeFromUrl(url);
-      if(sz) addDraftSizeRow(id, sz);
+    // Immediate URL-based detection (instant, no network). SKIP for an extra
+    // set piece: the pasted URL is the set's (primary piece's), so its category/
+    // size would mislabel this piece — its real data comes from presetMember.
+    if(!presetMember){
+      const cat = detectCategory(url);
+      if(cat){ setDraftCat(id, cat); }
+      if(cat && !UNSTITCHED_CATS.has(cat)){
+        // Pre-fill size from URL params while fetch loads
+        const sz = detectSizeFromUrl(url);
+        if(sz) addDraftSizeRow(id, sz);
+      }
     }
     showDraftCurrencyNote(id, isPk);
 
-    // Network fetch — overwrites with richer data if available
-    fetchProductData(id, url);
+    // Network fetch — overwrites with richer data if available. With presetMember
+    // (an extra set piece) it uses that data directly instead of re-fetching.
+    fetchProductData(id, url, presetMember);
 
     updateSaveAllBtn();
     checkAddUrlLock();
