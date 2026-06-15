@@ -2032,7 +2032,7 @@
           // If the link encodes a specific variant (colour and/or size),
           // pre-select that exact combination on top of the chips.
           if(picked && sizesToAdd.includes(picked)){
-            addSizeFromChip(id, picked);            // pre-fill the chosen combination
+            addDraftSizeRow(id, picked, 1);         // pre-fill the chosen combination (selects its chip)
             if(hint && d0?.stockVerified){          // override the hint only when stock is trustworthy
               hint.innerHTML = '✅ <b>Your selection (' + esc(picked) + ') was auto-filled and is in stock.</b> Add more below if you need them.';
               hint.style.cssText = 'font-size:0.75rem;font-weight:700;color:#7ee0a0;background:rgba(46,125,50,0.15);border:1px solid rgba(46,125,50,0.45);border-radius:6px;padding:6px 10px;margin-bottom:7px';
@@ -2147,18 +2147,13 @@
       </div>
       <!-- Sizes section — always visible, content changes with category -->
       <div style="margin-top:12px;background:var(--raised);border-radius:7px;padding:10px 12px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
-          <label style="font-size:0.76rem;font-weight:600;color:var(--txt-sec)">Sizes &amp; Quantities *
-            <span id="dc_sz_note_${id}" style="font-weight:400;color:var(--txt-muted);font-size:0.67rem;margin-left:4px">(same price for all adult sizes)</span>
-          </label>
-          <button type="button" id="dc_addsz_${id}" onclick="addDraftSizeRow(${id})"
-            style="display:none;font-size:0.72rem;color:#c9a96e;background:none;border:1.5px solid #c9a96e;
-            border-radius:12px;padding:3px 12px;cursor:pointer;font-weight:700">+ Add size</button>
-        </div>
+        <label style="font-size:0.76rem;font-weight:600;color:var(--txt-sec)">Sizes &amp; Quantities *
+          <span id="dc_sz_note_${id}" style="font-weight:400;color:var(--txt-muted);font-size:0.67rem;margin-left:4px">(same price for all adult sizes)</span>
+        </label>
         <div id="dc_sz_msg_${id}" style="font-size:0.78rem;color:var(--txt-muted);padding:4px 0">
           ← Select a category first
         </div>
-        <!-- Unstitched qty (shown instead of size rows for unstitched/accessories) -->
+        <!-- Unstitched qty (shown instead of sizes for unstitched/accessories) -->
         <div id="dc_uqty_wrap_${id}" style="display:none;margin-top:4px">
           <div style="display:flex;align-items:center;gap:10px">
             <label style="font-size:0.8rem;color:var(--txt-sec);font-weight:600">Quantity</label>
@@ -2169,17 +2164,19 @@
             <span style="font-size:0.78rem;color:var(--txt-muted)">piece(s)</span>
           </div>
         </div>
-        <!-- Available size chips from auto-fetch — click to add a row -->
-        <div id="dc_szchips_${id}" style="display:none;margin-bottom:8px">
-          <div style="font-size:0.71rem;color:var(--txt-muted);margin-bottom:5px">
-            🔍 Available sizes — tap to add:
+        <!-- Tappable size chips — multi-select (tap as many sizes as you want) -->
+        <div id="dc_szchips_${id}" style="display:none;margin-bottom:4px">
+          <div style="font-size:0.71rem;color:var(--txt-muted);margin-bottom:6px">
+            👇 Tap your size(s) — choose as many as you need:
           </div>
           <div id="dc_szchips_inner_${id}" style="display:flex;flex-wrap:wrap;gap:6px"></div>
         </div>
+        <!-- One quantity stepper per chosen size -->
+        <div id="dc_qhead_${id}" style="display:none;font-size:0.71rem;color:var(--txt-muted);margin:9px 0 5px">Quantity per size:</div>
         <div id="dc_srows_${id}"></div>
         <div id="dc_sremind_${id}" style="display:none;margin-top:5px;font-size:0.72rem;font-weight:700;
           color:#ff7575;background:rgba(192,57,43,0.15);border:1px solid rgba(192,57,43,0.35);border-radius:5px;padding:4px 8px">
-          ⚠️ Please select a size in every row before saving.
+          ⚠️ Please tap at least one size before saving.
         </div>
       </div>
     </div>`;
@@ -2321,35 +2318,35 @@
     const cat = document.getElementById(`dc_cat_${id}`).value;
     const msg     = document.getElementById(`dc_sz_msg_${id}`);
     const rowsEl  = document.getElementById(`dc_srows_${id}`);
-    const addBtn  = document.getElementById(`dc_addsz_${id}`);
     const note    = document.getElementById(`dc_sz_note_${id}`);
+    const chipsW  = document.getElementById(`dc_szchips_${id}`);
+    const qhead   = document.getElementById(`dc_qhead_${id}`);
     document.getElementById(`dc_sremind_${id}`).style.display = 'none';
 
-    // Always hide qty wrap first; re-show only for unstitched
-    const uqtyWrap0 = document.getElementById(`dc_uqty_wrap_${id}`);
-    if(uqtyWrap0) uqtyWrap0.style.display = 'none';
+    const uqtyWrap = document.getElementById(`dc_uqty_wrap_${id}`);
+    if(uqtyWrap) uqtyWrap.style.display = 'none';
 
     if(!cat){
-      msg.style.display    = '';
-      msg.textContent      = '← Select a category first';
-      msg.style.color      = '#bbb';
-      addBtn.style.display = 'none';
+      msg.style.display = ''; msg.textContent = '← Select a category first'; msg.style.color = '#bbb';
+      if(chipsW) chipsW.style.display = 'none';
+      if(qhead) qhead.style.display = 'none';
     } else if(UNSTITCHED_CATS.has(cat)){
-      msg.style.display    = '';
-      msg.textContent      = '✓ No size needed — enter how many pieces you want:';
-      msg.style.color      = '#2a7a32';
-      addBtn.style.display = 'none';
-      rowsEl.innerHTML     = '';  // clear any leftover size rows
-      const szchips0 = document.getElementById(`dc_szchips_${id}`);
-      if(szchips0) szchips0.style.display = 'none';
+      msg.style.display = ''; msg.textContent = '✓ No size needed — choose how many pieces:'; msg.style.color = '#2a7a32';
       if(note) note.style.display = 'none';
-      const uqtyWrap = document.getElementById(`dc_uqty_wrap_${id}`);
+      if(chipsW) chipsW.style.display = 'none';
+      if(qhead) qhead.style.display = 'none';
+      if(rowsEl) rowsEl.innerHTML = '';                  // clear any size rows
       if(uqtyWrap) uqtyWrap.style.display = '';
     } else {
-      msg.style.display    = 'none';
-      addBtn.style.display = '';
+      msg.style.display = 'none';
       if(note) note.style.display = '';
-      if(!rowsEl.children.length) addDraftSizeRow(id);
+      // Tappable chips. Real in-stock sizes arrive from the fetch; until then
+      // show a standard set so a size can always be picked.
+      if(chipsW && chipsW.style.display === 'none'){
+        const d = drafts[id] || {};
+        const std = (d.stockSizes && d.stockSizes.length) ? d.stockSizes.slice() : ['XS','S','M','L','XL','XXL'];
+        showSizeChips(id, std, '', d.soldOutSizes || []);
+      }
     }
     renderCatUI(id);
     checkAddUrlLock();
@@ -2497,110 +2494,100 @@
     note._t = setTimeout(()=>{ if(note) note.style.display = 'none'; }, 6000);
   }
 
-  function addDraftSizeRow(draftId, size='', qty=1){
-    const d = drafts[draftId]; if(!d) return;
-    const rowId = `${draftId}_${d.sizeCounter++}`;
-    // When the fetch verified live stock, the dropdown is CONSTRAINED to the
-    // real in-stock sizes so a sold-out size can never be chosen. Otherwise
-    // (stock unverified / non-Shopify) fall back to the full standard list.
-    const stdSizes = (d.stockSizes && d.stockSizes.length)
-      ? d.stockSizes.slice()
-      : ['XS','S','M','L','XL','XXL','Free Size'];
-    // Brand-specific sizes (numeric 8/10/12, kids 8-9Y…) get added dynamically
-    if(size && !stdSizes.includes(size)) stdSizes.push(size);
-    const opts  = stdSizes
-      .map(s=>`<option${s===size?' selected':''}>${s}</option>`).join('');
-    document.getElementById(`dc_srows_${draftId}`)
-      .insertAdjacentHTML('beforeend',
-        `<div id="sr_${rowId}" style="display:flex;gap:8px;align-items:center;margin-bottom:7px">
-          <select onchange="onDraftSizeChange(${draftId})"
-            style="flex:1;padding:8px 10px;border:1.5px solid var(--bdr-med);border-radius:6px;font-size:0.85rem;background:var(--input-bg);color:var(--txt);min-width:0">
-            <option value="">Pick ${d.pickWhat||'size'}</option>${opts}
-          </select>
-          <input type="number" value="${Math.min(Math.max(1,qty),maxPerSize())}" min="1" max="${maxPerSize()}"
-            title="Max ${maxPerSize()} per size (stock limit)" onchange="clampQtyInput(this);checkAddUrlLock()"
-            style="width:62px;padding:8px 8px;border:1.5px solid var(--bdr-med);border-radius:6px;font-size:0.85rem;text-align:center"/>
-          <button type="button" onclick="removeDraftSizeRow(${draftId},'${rowId}')"
-            style="background:none;border:none;color:var(--txt-muted);cursor:pointer;font-size:1rem;padding:2px 5px;border-radius:4px;flex-shrink:0"
-            onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='var(--txt-muted)'">✕</button>
-        </div>`);
+  // ── SIZE PICKER — tappable multi-select chips + a qty stepper per chosen size ─
+  // Chips are the selector (tap toggles a size on/off). Each chosen size is one
+  // row in dc_srows carrying data-size + a quantity (capped at maxPerSize()).
+  // getDraftSizeRows() still returns [{size,qty}] — save/pricing/colour/sets
+  // logic is unchanged.
+  function safeSz(sz){ return String(sz).replace(/[^a-zA-Z0-9]/g,'_'); }
+
+  function addDraftSizeRow(draftId, size, qty){
+    if(!size) return;                          // chip model: rows always have a size
+    const mx = maxPerSize();
+    qty = Math.min(mx, Math.max(1, parseInt(qty)||1));
+    const rowsEl = document.getElementById(`dc_srows_${draftId}`);
+    if(!rowsEl) return;
+    const rid = `sr_${draftId}_${safeSz(size)}`;
+    if(document.getElementById(rid)) return;   // already chosen
+    const bs = 'width:30px;height:30px;background:var(--input-bg);border:1.5px solid var(--bdr-med);color:var(--txt);border-radius:7px;font-size:1.05rem;font-weight:700;cursor:pointer;line-height:1;display:inline-flex;align-items:center;justify-content:center';
+    rowsEl.insertAdjacentHTML('beforeend',
+      `<div id="${rid}" data-size="${esc(size)}" style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--surface);border:1px solid var(--bdr-med);border-radius:8px;padding:5px 6px 5px 12px;margin-bottom:6px">
+        <span style="font-size:0.85rem;font-weight:700;color:var(--txt)">Size ${esc(size)}</span>
+        <span style="display:flex;align-items:center;gap:4px">
+          <button type="button" aria-label="Less" onclick="stepSizeQty(${draftId},'${safeSz(size)}',-1,this)" style="${bs}">−</button>
+          <span class="dc-qn" style="min-width:26px;text-align:center;font-size:0.88rem;font-weight:700">${qty}</span>
+          <button type="button" aria-label="More" onclick="stepSizeQty(${draftId},'${safeSz(size)}',1,this)" style="${bs}">+</button>
+          <button type="button" aria-label="Remove" title="Remove this size" onclick="toggleSizeChip(${draftId},'${String(size).replace(/'/g,"\\'")}')" style="width:30px;height:30px;background:none;border:none;color:var(--txt-muted);cursor:pointer;font-size:1.05rem">🗑</button>
+        </span>
+      </div>`);
+    setChipSelected(document.getElementById(`szchip_${draftId}_${safeSz(size)}`), true);
+    const qhead = document.getElementById(`dc_qhead_${draftId}`);
+    if(qhead) qhead.style.display = '';
     checkAddUrlLock();
   }
 
-  // ── SIZE CHIPS (from auto-fetch) ─────────────────────────────────────────
+  const CHIP_ON  = 'padding:6px 15px;border:1.5px solid #c9a96e;border-radius:16px;background:#c9a96e;color:#080e1c;font-size:0.8rem;font-weight:700;cursor:pointer';
+  const CHIP_OFF = 'padding:6px 15px;border:1.5px solid #c9a96e;border-radius:16px;background:var(--gold-dim);color:var(--gold);font-size:0.8rem;font-weight:700;cursor:pointer';
+  function setChipSelected(chip, on){ if(chip) chip.style.cssText = on ? CHIP_ON : CHIP_OFF; }
+
+  function stepSizeQty(draftId, safe, delta, btn){
+    const row = document.getElementById(`sr_${draftId}_${safe}`);
+    if(!row) return;
+    const qn = row.querySelector('.dc-qn');
+    const mx = maxPerSize();
+    let v = (parseInt(qn.textContent)||1) + delta;
+    if(v > mx){ v = mx; if(btn) showQtyCapMsg(btn, mx); }   // reuse their cap explainer
+    if(v < 1) v = 1;
+    qn.textContent = v;
+    checkAddUrlLock();
+  }
+
+  // ── SIZE CHIPS — tappable, multi-select (tap toggles a size on/off) ──────────
   function showSizeChips(id, sizes, groupLabel, soldOutSizes){
     const wrap  = document.getElementById(`dc_szchips_${id}`);
     const inner = document.getElementById(`dc_szchips_inner_${id}`);
     if(!wrap || !inner) return;
-    // Remove rows auto-created before chips arrived: empties, and any whose
-    // pre-filled size is now known SOLD OUT (so a stale selection can't slip
-    // through). Surviving in-stock selections are kept.
     const soldSet = new Set(Array.isArray(soldOutSizes) ? soldOutSizes : []);
+    // Drop any chosen size now known SOLD OUT; remember the rest so chips re-highlight.
     const rowsEl = document.getElementById(`dc_srows_${id}`);
+    const chosen = new Set();
     if(rowsEl){
       [...rowsEl.children].forEach(row => {
-        const val = row.querySelector('select')?.value;
-        if(!val || soldSet.has(val)) row.remove();
+        const s = row.dataset.size || '';
+        if(!s || soldSet.has(s)) row.remove();
+        else chosen.add(s);
       });
     }
-    // Update the hint label (first child div of the chips wrapper)
     const hintDiv = wrap.querySelector('div:first-child');
     if(hintDiv){
       hintDiv.textContent = groupLabel
-        ? `🔍 ${groupLabel} — tap your combination:`
-        : '🔍 Available sizes — tap to add:';
-      hintDiv.style.cssText = 'font-size:0.71rem;color:var(--txt-muted);margin-bottom:5px';
+        ? `👇 ${groupLabel} — tap your combination(s):`
+        : '👇 Tap your size(s) — choose as many as you need:';
+      hintDiv.style.cssText = 'font-size:0.71rem;color:var(--txt-muted);margin-bottom:6px';
     }
-    inner.innerHTML = sizes.map(sz => {
-      const safeId  = sz.replace(/[^a-zA-Z0-9]/g,'_');
-      const safeSz  = sz.replace(/'/g,"\\'");
-      return `<button type="button" id="szchip_${id}_${safeId}"
-        onclick="addSizeFromChip(${id},'${safeSz}')"
-        style="padding:5px 14px;border:1.5px solid #c9a96e;border-radius:16px;background:var(--gold-dim);
-               color:var(--gold);font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.15s"
-        onmouseover="if(!this.disabled)this.style.background='#c9a96e';if(!this.disabled)this.style.color='#080e1c'"
-        onmouseout="if(!this.disabled)this.style.background='var(--gold-dim)';if(!this.disabled)this.style.color='var(--gold)'">${sz}</button>`;
-    }).join('');
-    // Show sold-out sizes struck-through (non-clickable) so the operator can
-    // SEE that stock filtering ran and exactly which sizes were excluded.
+    inner.innerHTML = sizes.map(sz =>
+      `<button type="button" id="szchip_${id}_${safeSz(sz)}"
+        onclick="toggleSizeChip(${id},'${String(sz).replace(/'/g,"\\'")}')"
+        style="${chosen.has(sz) ? CHIP_ON : CHIP_OFF}">${esc(sz)}</button>`).join('');
     if(Array.isArray(soldOutSizes) && soldOutSizes.length){
       inner.innerHTML += soldOutSizes.map(sz =>
         `<span title="Sold out — not available to order"
-          style="padding:5px 14px;border:1.5px solid var(--bdr);border-radius:16px;background:var(--surface);
-                 color:var(--txt-muted);font-size:0.78rem;font-weight:700;cursor:not-allowed;
-                 text-decoration:line-through">${sz}</span>`).join('');
+          style="padding:6px 15px;border:1.5px dashed var(--bdr);border-radius:16px;background:var(--surface);color:var(--txt-muted);font-size:0.8rem;font-weight:700;cursor:not-allowed;text-decoration:line-through">${esc(sz)}</span>`).join('');
     }
+    const qhead = document.getElementById(`dc_qhead_${id}`);
+    if(qhead) qhead.style.display = (rowsEl && rowsEl.children.length) ? '' : 'none';
     wrap.style.display = '';
   }
 
-  function addSizeFromChip(id, sz){
-    // Mark chip as used
-    const chip = document.getElementById(`szchip_${id}_${sz.replace(/[^a-zA-Z0-9]/g,'_')}`);
-    if(chip){
-      chip.disabled = true;
-      chip.style.cssText = 'padding:5px 14px;border:1.5px solid var(--bdr);border-radius:16px;background:var(--surface);color:var(--txt-muted);font-size:0.78rem;font-weight:700;cursor:default;text-decoration:line-through';
-    }
-    // Find existing empty row and fill it, otherwise add new row
-    const rows = document.querySelectorAll(`#dc_srows_${id} > div`);
-    for(const row of rows){
-      const sel = row.querySelector('select');
-      if(sel && !sel.value){
-        // Brand-specific size (numeric/kids) may not be in the standard list
-        if(![...sel.options].some(o => o.value === sz))
-          sel.insertAdjacentHTML('beforeend', `<option>${sz}</option>`);
-        sel.value = sz;
-        onDraftSizeChange(id);
-        return;
-      }
-    }
-    addDraftSizeRow(id, sz, 1);
-  }
-
-  function removeDraftSizeRow(draftId, rowId){
-    const container = document.getElementById(`dc_srows_${draftId}`);
-    if(container && container.children.length <= 1) return;
-    document.getElementById(`sr_${rowId}`)?.remove();
-    checkAddUrlLock();
+  function toggleSizeChip(id, sz){
+    const chip = document.getElementById(`szchip_${id}_${safeSz(sz)}`);
+    const existing = document.getElementById(`sr_${id}_${safeSz(sz)}`);
+    if(existing){ existing.remove(); setChipSelected(chip, false); }
+    else { addDraftSizeRow(id, sz, 1); }
+    const rowsEl = document.getElementById(`dc_srows_${id}`);
+    const qhead = document.getElementById(`dc_qhead_${id}`);
+    if(qhead) qhead.style.display = (rowsEl && rowsEl.children.length) ? '' : 'none';
+    onDraftSizeChange(id);
   }
 
   function onDraftSizeChange(draftId){
@@ -2610,11 +2597,12 @@
   }
 
   function getDraftSizeRows(draftId){
-    const rows=[];
+    const rows=[]; const mx = maxPerSize();
     document.querySelectorAll(`#dc_srows_${draftId} > div`).forEach(row=>{
-      const size=row.querySelector('select').value;
-      const qty=Math.min(maxPerSize(),Math.max(1,parseInt(row.querySelector('input').value)||1));
-      rows.push({size,qty});
+      const size = row.dataset.size || '';
+      const qn = row.querySelector('.dc-qn');
+      const qty = Math.min(mx, Math.max(1, parseInt(qn ? qn.textContent : '1')||1));
+      if(size) rows.push({size, qty});
     });
     return rows;
   }
@@ -3228,11 +3216,8 @@
       else document.getElementById(`dc_price_${id}`).style.borderColor='';
       if(!isUnstitched && cat){
         const rows = getDraftSizeRows(id);
-        if(rows.some(r=>!r.size)){
+        if(rows.length === 0){
           document.getElementById(`dc_sremind_${id}`).style.display='';
-          document.querySelectorAll(`#dc_srows_${id} > div select`).forEach(sel=>{
-            sel.style.borderColor = sel.value ? '' : '#c0392b';
-          });
           allValid=false;
         }
       }
@@ -4112,7 +4097,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-15r';
+  const PSB_BUILD = '2026-06-15s';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:#c9a96e;font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
