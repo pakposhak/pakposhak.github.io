@@ -570,8 +570,8 @@
       <div class="rt-row"><span>Logistics (est. weight × ৳1,600/kg)</span><span id="rt-logistics">৳ —</span></div>
       <div class="rt-row"><span>Transaction Fee</span><span>৳ 100</span></div>
       <div class="rt-total"><span>ESTIMATED TOTAL</span><span id="rt-total">৳ —</span></div>
-      <div class="rt-note">* Final confirmed price sent via WhatsApp before payment.</div>
-      <div class="rt-note" style="margin-top:6px;color:#f9a825">⚖️ Shipping is charged by your parcel's actual weight, so this is a close estimate. We always confirm the exact final amount on WhatsApp before you pay — no surprise charges.</div>
+      <div class="rt-note">* The total above is what you pay — your order is processed automatically.</div>
+      <div class="rt-note" style="margin-top:6px;color:#f9a825">⚖️ Shipping is charged by your parcel's actual weight, so this is a very close estimate. We'll only message you on WhatsApp if a product is unavailable or the weight turns out much higher than estimated.</div>
     </div>
   </div>
 
@@ -586,7 +586,6 @@
       <a href="faq.html" class="tl-chip" data-i18n="tl_faq">❓ How it works &amp; our promise</a>
       <a href="tracking.html" class="tl-chip" data-i18n="tl_track">📦 Track an order</a>
       <a href="weight-chart.html" class="tl-chip" data-i18n="tl_weights">⚖️ Shipping weights</a>
-      <a id="waTrustLink" href="#" target="_blank" rel="noopener" class="tl-chip" style="display:none" data-i18n="tl_wa">💬 Chat on WhatsApp</a>
     </div>
   </div>
 
@@ -646,10 +645,6 @@
     <button class="btn-next" onclick="nextFromStep2()" data-i18n="btn_review">Review My Order →</button>
   </div>
 
-  <div class="wa-note" id="waNote" style="margin-top:16px;display:none">
-    <span data-i18n="d_questions">Questions?</span> <a id="waSupportLink" href="#" target="_blank" rel="noopener" data-i18n="d_wachat">Chat on WhatsApp</a>
-  </div>
-
 </div>
 </div>
 
@@ -661,7 +656,7 @@
 
   <div class="review-box">
     <h2 data-i18n="r_summary">Order Summary</h2>
-    <p data-i18n="r_intro">Please review everything below. We'll confirm the final price on WhatsApp before you pay.</p>
+    <p data-i18n="r_intro">Please review everything below before placing your order.</p>
 
     <div id="summaryItems"></div>
 
@@ -695,7 +690,7 @@
   <div style="text-align:center;margin-bottom:20px">
     <div style="font-size:2.6rem;line-height:1">✅</div>
     <h2 style="color:var(--gold);font-size:1.5rem;font-weight:700;margin-top:8px" data-i18n="s_submitted">Order Request Submitted!</h2>
-    <p style="margin-top:6px;color:var(--txt-sec);font-size:0.9rem" data-i18n="s_confirm_wa">We'll confirm your price &amp; availability on WhatsApp within a few hours.</p>
+    <p style="margin-top:6px;color:var(--txt-sec);font-size:0.9rem" data-i18n="s_confirm_wa">Pay using the details below to complete your order. We'll only message you on WhatsApp if a product is unavailable or the weight is much higher than estimated.</p>
   </div>
 
   <!-- Stock notice — high contrast, readable -->
@@ -719,7 +714,7 @@
   <!-- Payment section heading -->
   <div style="text-align:center;margin-bottom:16px">
     <div style="font-size:1rem;font-weight:700;color:var(--gold);letter-spacing:0.3px" data-i18n="s_howpay">💳 How to Pay</div>
-    <div style="font-size:0.8rem;color:var(--txt-sec);margin-top:4px" data-i18n="s_payafter">Send payment only after receiving your confirmed quote on WhatsApp</div>
+    <div style="font-size:0.8rem;color:var(--txt-sec);margin-top:4px" data-i18n="s_payafter">Pay the total shown above using any method below.</div>
   </div>
 
   <!-- Payment grid — 2 columns on desktop, 1 on mobile -->
@@ -2805,14 +2800,14 @@
       d_delivery_t:'Estimated Delivery: 2–3 Weeks', d_delivery_x:'from order confirmation to your door.',
       btn_back:'← Back', btn_review:'Review My Order →', d_questions:'Questions?', d_wachat:'Chat on WhatsApp',
       r_review:'Review Your Order', r_summary:'Order Summary',
-      r_intro:"Please review everything below. We'll confirm the final price on WhatsApp before you pay.",
+      r_intro:"Please review everything below before placing your order.",
       r_products:'Products (PKR value)', r_logistics:'Logistics (est. weight × ৳1,600/kg)', r_txfee:'Transaction Fee', r_total:'ESTIMATED TOTAL (BDT)',
       r_avail:"⚠️ Items are subject to availability. If anything goes out of stock, we'll contact you on WhatsApp before proceeding.",
       btn_editdetails:'← Edit Details', btn_confirmsubmit:'✓ Confirm & Submit Order',
-      s_submitted:'Order Request Submitted!', s_confirm_wa:"We'll confirm your price & availability on WhatsApp within a few hours.",
+      s_submitted:'Order Request Submitted!', s_confirm_wa:"Pay using the details below to complete your order. We'll only message you on WhatsApp if a product is unavailable or the weight is much higher than estimated.",
       s_stocktitle:'Stock Notice', s_stocktext:"Pakistani fashion items sell out fast. If anything goes out of stock before we place your order, we'll contact you on WhatsApp immediately and offer alternatives or a full refund.",
       s_orderid:'Your Order ID', s_track:'📦 Track My Order', s_howpay:'💳 How to Pay',
-      s_payafter:'Send payment only after receiving your confirmed quote on WhatsApp',
+      s_payafter:'Pay the total shown above using any method below.',
       s_paid_title:'✅ Already Paid? Confirm Your Payment', s_paid_sub:"Attach your payment slip or paste your transaction details — we'll save it against Order",
       s_tab_receipt:'📷 Upload Receipt', s_tab_msg:'💬 Payment Message',
       s_upload_main:'Tap to choose your payment screenshot', s_upload_sub:'bKash / Nagad / bank slip — JPG or PNG',
@@ -2847,14 +2842,14 @@
       d_delivery_t:'আনুমানিক ডেলিভারি: ২–৩ সপ্তাহ', d_delivery_x:'অর্ডার নিশ্চিত হওয়ার পর আপনার দরজা পর্যন্ত।',
       btn_back:'← পেছনে', btn_review:'আমার অর্ডার রিভিউ →', d_questions:'প্রশ্ন আছে?', d_wachat:'হোয়াটসঅ্যাপে চ্যাট করুন',
       r_review:'আপনার অর্ডার রিভিউ করুন', r_summary:'অর্ডার সারসংক্ষেপ',
-      r_intro:'নিচের সবকিছু একবার দেখে নিন। পেমেন্টের আগে আমরা হোয়াটসঅ্যাপে চূড়ান্ত দাম নিশ্চিত করব।',
+      r_intro:'অর্ডার করার আগে নিচের সবকিছু একবার দেখে নিন।',
       r_products:'পণ্য (PKR মূল্য)', r_logistics:'লজিস্টিকস (আনুমানিক ওজন × ৳১,৬০০/কেজি)', r_txfee:'ট্রান্সঅ্যাকশন ফি', r_total:'আনুমানিক মোট (টাকা)',
       r_avail:'⚠️ পণ্য স্টক সাপেক্ষে। কিছু স্টক শেষ হলে এগোনোর আগে আমরা হোয়াটসঅ্যাপে যোগাযোগ করব।',
       btn_editdetails:'← তথ্য এডিট করুন', btn_confirmsubmit:'✓ নিশ্চিত করে অর্ডার জমা দিন',
-      s_submitted:'অর্ডার রিকোয়েস্ট জমা হয়েছে!', s_confirm_wa:'কয়েক ঘণ্টার মধ্যে আমরা হোয়াটসঅ্যাপে আপনার দাম ও স্টক নিশ্চিত করব।',
+      s_submitted:'অর্ডার রিকোয়েস্ট জমা হয়েছে!', s_confirm_wa:'অর্ডার সম্পন্ন করতে নিচের তথ্য দিয়ে পেমেন্ট করুন। কোনো পণ্য না থাকলে বা ওজন অনুমানের চেয়ে অনেক বেশি হলে কেবল তখনই আমরা হোয়াটসঅ্যাপে জানাব।',
       s_stocktitle:'স্টক বিষয়ক তথ্য', s_stocktext:'পাকিস্তানি ফ্যাশন পণ্য দ্রুত শেষ হয়ে যায়। অর্ডার করার আগে কিছু স্টক শেষ হলে আমরা সঙ্গে সঙ্গে হোয়াটসঅ্যাপে যোগাযোগ করে বিকল্প বা সম্পূর্ণ রিফান্ড দেব।',
       s_orderid:'আপনার অর্ডার আইডি', s_track:'📦 অর্ডার ট্র্যাক করুন', s_howpay:'💳 যেভাবে পেমেন্ট করবেন',
-      s_payafter:'হোয়াটসঅ্যাপে নিশ্চিত দাম পাওয়ার পরেই কেবল পেমেন্ট পাঠান',
+      s_payafter:'উপরে দেখানো মোট অর্থ নিচের যেকোনো মাধ্যমে পরিশোধ করুন।',
       s_paid_title:'✅ পেমেন্ট করেছেন? পেমেন্ট নিশ্চিত করুন', s_paid_sub:'আপনার পেমেন্ট স্লিপ যুক্ত করুন বা ট্রান্সঅ্যাকশন তথ্য পেস্ট করুন — আমরা সেটি আপনার অর্ডারে সেভ করব',
       s_tab_receipt:'📷 রসিদ আপলোড', s_tab_msg:'💬 পেমেন্ট মেসেজ',
       s_upload_main:'পেমেন্টের স্ক্রিনশট বেছে নিতে ট্যাপ করুন', s_upload_sub:'বিকাশ / নগদ / ব্যাংক স্লিপ — JPG বা PNG',
@@ -4080,7 +4075,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-15u';
+  const PSB_BUILD = '2026-06-15v';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:#c9a96e;font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
