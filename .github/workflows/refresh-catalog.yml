@@ -1,0 +1,52 @@
+name: Refresh product catalog
+
+# Re-harvests catalog.json for the "Browse products" page and commits it.
+# 4×/day at 10:00, 12:00, 17:00, 21:00 PKT (Pakistan, UTC+5).
+# GitHub Actions cron is UTC, so: 05:00, 07:00, 12:00, 16:00 UTC.
+on:
+  schedule:
+    - cron: '0 5,7,12,16 * * *'
+  workflow_dispatch: {}        # lets you run it on demand from the Actions tab
+
+permissions:
+  contents: write              # allow the job to commit catalog.json
+
+concurrency:
+  group: refresh-catalog       # never overlap two refresh runs
+  cancel-in-progress: false
+
+jobs:
+  harvest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Harvest catalog
+        run: node harvest-catalog.js
+
+      - name: Sanity check (don't publish a broken/empty harvest)
+        run: |
+          COUNT=$(node -e "console.log(require('./catalog.json').count||0)")
+          echo "harvested $COUNT products"
+          if [ "$COUNT" -lt 800 ]; then
+            echo "::warning::Only $COUNT products — likely a bad run (bot-block/outage). Keeping the previous catalog."
+            git checkout -- catalog.json
+          fi
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name "pakiposhak-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add catalog.json
+          if git diff --cached --quiet; then
+            echo "No catalog change — nothing to commit."
+            exit 0
+          fi
+          COUNT=$(node -e "console.log(require('./catalog.json').count||0)")
+          git commit -m "Auto-refresh catalog: ${COUNT} products [skip ci]"
+          git pull --rebase origin main
+          git push
