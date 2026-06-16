@@ -275,6 +275,8 @@
     .cat-brand{display:block;text-align:left;background:none;border:none;cursor:pointer;font-family:inherit;width:100%;
       color:var(--txt-sec);font-size:0.83rem;padding:8px;border-radius:8px;transition:background .12s,color .12s}
     .cat-brand:hover{color:var(--gold);background:var(--gold-dim)}
+    .cat-brand.cat-more{color:var(--gold);font-weight:700;background:var(--gold-dim);border:1px dashed var(--gold-bdr);text-align:center}
+    .cat-brand.cat-more:hover{background:var(--gold-bdr)}
     .brand-dd-item .cur-go{color:var(--gold);font-size:0.8rem}
     /* "More" tab — sits at the right end of the category bar and opens the drawer */
     .cat-tab.more-tab{margin-left:auto;color:var(--gold);font-weight:700}
@@ -615,7 +617,7 @@
   <div id="moreDrawer" class="more-drawer-wrap" onclick="if(event.target===this)closeMoreDrawer()">
     <aside class="more-drawer" role="dialog" aria-label="More brands">
       <div class="md-head">
-        <div class="md-title"><span data-i18n="more_title">More Brands</span><span class="md-count" id="mdCount"></span></div>
+        <div class="md-title"><span id="mdTitle">More Brands</span><span class="md-count" id="mdCount"></span></div>
         <button class="md-close" onclick="closeMoreDrawer()" aria-label="Close">✕</button>
       </div>
       <div class="md-sub" data-i18n="more_sub">More verified Pakistani brands — tap any to start, same as the tabs above.</div>
@@ -3069,7 +3071,7 @@
       hiw_confirm_pay:'Confirm price & pay (bKash/Nagad)',
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search 150+ Pakistani brands…',
-      more_tab:'More', more_title:'More Brands', more_sub:'More verified Pakistani brands — tap any to start, same as the tabs above.',
+      more_tab:'More', more_title:'More Brands', more_sub:'All brands in this category — tap any to start, same as the tabs.',
       lbl_addproducts:'Add Products to Your Order',
       url_label:'📋 Copy a product link from any brand site and paste it below — or use the side 📋 Paste tab:',
       btn_addurl:'+ Add URL', btn_paste:'📋 Paste Link & Auto-Fill', pp_tap:'Tap a product to add it — no copy-paste needed', pp_search:'🔍 Search this brand…', pp_site:'🌐 Open full brand site instead', fab_paste:'Paste link',
@@ -3119,7 +3121,7 @@
       hiw_confirm_pay:'দাম নিশ্চিত করে পেমেন্ট (বিকাশ/নগদ)',
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
       lbl_browse:'ব্র্যান্ড ব্রাউজ করুন', search_ph:'🔍 ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
-      more_tab:'আরও', more_title:'আরও ব্র্যান্ড', more_sub:'আরও যাচাই করা পাকিস্তানি ব্র্যান্ড — উপরের ট্যাবের মতোই, শুরু করতে যেকোনোটিতে ট্যাপ করুন।',
+      more_tab:'আরও', more_title:'আরও ব্র্যান্ড', more_sub:'এই ক্যাটাগরির সব ব্র্যান্ড — উপরের ট্যাবের মতোই, শুরু করতে যেকোনোটিতে ট্যাপ করুন।',
       lbl_addproducts:'অর্ডারে পণ্য যোগ করুন',
       url_label:'📋 যেকোনো ব্র্যান্ড সাইট থেকে প্রোডাক্টের লিংক কপি করে নিচে পেস্ট করুন — অথবা পাশের 📋 Paste ট্যাব ব্যবহার করুন:',
       btn_addurl:'+ লিংক যোগ করুন',
@@ -3176,7 +3178,7 @@
     document.querySelectorAll('.cat-tab').forEach(tb => { if(tb.dataset.cat) tb.textContent = catLabel(tb.dataset.cat); });
     if(_catOpen){
       const h = document.getElementById('catHead');
-      if(h) h.innerHTML = `${catLabel(_catActive)} <span class="cnt">· ${BRANDS.filter(b=>b.c===_catActive && !b.more).length} ${tr('word_brands')}</span>`;
+      if(h) h.innerHTML = `${catLabel(_catActive)} <span class="cnt">· ${BRANDS.filter(b=>b.c===_catActive).length} ${tr('word_brands')}</span>`;
     }
     const lb = document.getElementById('hdrLangBtn');
     if(lb) lb.textContent = (_lang === 'en') ? 'বাংলা' : 'EN';
@@ -3199,6 +3201,20 @@
   }
   applyThemeIcon();
 
+  // Per-category first-view caps; categories not listed show ALL brands (no "more").
+  const CAT_LIMIT = { w: 30, p: 20, m: 20 };   // Multi-Department + Kids stay uncapped
+  // ⭐ Important tier (from BRAND-CLASSIFICATION.md) — these surface FIRST in each
+  // category's first view; everyone else follows in array order behind them.
+  const FEATURED = new Set([
+    'Khaadi','Sapphire','Gul Ahmed','Alkaram Studio','Limelight','J. Junaid Jamshed','Edenrobe','Outfitters','Zellbury','Bonanza Satrangi','Nishat Linen','Eminent',
+    'Maria B','Agha Noor','Generation','Warda','Zeen (by Cambridge)','LAAM (multi-brand)','Dhanak','Qalamkar','Coco by Zara Shahjahan','Iznik Fashions','Firdous',
+    'Sana Safinaz','Asim Jofa','Elan','Zara Shahjahan','Afrozeh','Baroque','Bareeze','Faiza Saqlain','Mushq','Sobia Nazir','Zainab Chottani','Asifa & Nabeel','Maria Osama Khan',
+    'Amir Adnan','Bareeze Man',"Narkin's",'Lawrencepur',
+    'Minnie Minors','Rollover Kids'
+  ]);
+  // Stable sort: ⭐ featured first (keeping array order), then the rest in array order.
+  function sortFeatured(list){ return list.sort((a,b) => (FEATURED.has(b.n)?1:0) - (FEATURED.has(a.n)?1:0)); }
+
   let _catActive = Object.keys(BRAND_CATS)[0];   // first category open by default
   let _catOpen = false;                          // flips true on the initial render below
   renderCatBar();   // build the category bar + brand columns now (DOM above this script exists)
@@ -3209,30 +3225,23 @@
     if(!bar) return;
     bar.innerHTML = Object.keys(BRAND_CATS).map(cat =>
       `<button class="cat-tab" data-cat="${cat}" onclick="switchCat('${cat}')">${catLabel(cat)}</button>`
-    ).join('')
-    + `<button class="cat-tab more-tab" onclick="openMoreDrawer()" aria-label="More brands">✨ <span data-i18n="more_tab">More</span> ›</button>`;
+    ).join('');
     switchCat(_catActive);
   }
 
-  // ── "MORE" BRANDS DRAWER — slides in from the right; holds the verified
-  // brands that aren't priority, grouped by category, so they don't lengthen
-  // the page. Tapping a brand runs the SAME openBrandInApp() path as the tabs. ──
-  function openMoreDrawer(){
-    const body = document.getElementById('moreDrawerBody');
-    const more = BRANDS.filter(b => b.more);
+  // ── Per-category "More" → right-side slide-in drawer with the FULL category
+  // list (featured first). Triggered by the "+N more" chip in a capped category.
+  // The page stays static; the extra brands appear by sliding in from the right. ──
+  function openCatMore(cat){
+    const all = sortFeatured(BRANDS.filter(b => b.c === cat));
+    const t = document.getElementById('mdTitle');
     const cnt = document.getElementById('mdCount');
-    if(cnt) cnt.textContent = '· ' + more.length + ' ' + tr('word_brands');
-    let html = '';
-    Object.keys(BRAND_CATS).forEach(cat => {
-      const list = more.filter(b => b.c === cat);
-      if(!list.length) return;
-      html += `<div class="md-group-hdr">${catLabel(cat)} <span>· ${list.length}</span></div>`;
-      html += '<div class="md-grid">' + list.map(b =>
-        `<button class="md-brand" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">${esc(b.n)}</button>`
-      ).join('') + '</div>';
-    });
-    body.innerHTML = html;
-    body.scrollTop = 0;
+    if(t) t.textContent = catLabel(cat);
+    if(cnt) cnt.textContent = '· ' + all.length + ' ' + tr('word_brands');
+    document.getElementById('moreDrawerBody').innerHTML = '<div class="md-grid">' + all.map(b =>
+      `<button class="md-brand" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">${esc(b.n)}</button>`
+    ).join('') + '</div>';
+    document.getElementById('moreDrawerBody').scrollTop = 0;
     document.getElementById('moreDrawer').classList.add('open');
     document.body.style.overflow = 'hidden';   // lock background scroll while the drawer is open
   }
@@ -3254,13 +3263,21 @@
     _catOpen = true;
     if(panel) panel.style.display = '';
     document.querySelectorAll('.cat-tab').forEach(t => t.classList.toggle('on', t.dataset.cat === cat));
-    const list = BRANDS.filter(b => b.c === cat && !b.more);   // category tabs show PRIORITY brands only; the rest live in the "More" drawer
+    const all = sortFeatured(BRANDS.filter(b => b.c === cat));
+    const limit = CAT_LIMIT[cat] || 0;                  // 0 = show all (Multi-Dept, Kids)
+    const shown = limit ? all.slice(0, limit) : all;
     const head = document.getElementById('catHead');
     const grid = document.getElementById('catGrid');
-    if(head) head.innerHTML = `${catLabel(cat)} <span class="cnt">· ${list.length} ${tr('word_brands')}</span>`;
-    if(grid) grid.innerHTML = list.map(b =>
-      `<button class="cat-brand" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">${esc(b.n)}</button>`
-    ).join('');
+    if(head) head.innerHTML = `${catLabel(cat)} <span class="cnt">· ${all.length} ${tr('word_brands')}</span>`;
+    if(grid){
+      let html = shown.map(b =>
+        `<button class="cat-brand" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">${esc(b.n)}</button>`
+      ).join('');
+      if(all.length > shown.length){
+        html += `<button class="cat-brand cat-more" onclick="openCatMore('${cat}')">+${all.length - shown.length} ${tr('more_tab')} ›</button>`;
+      }
+      grid.innerHTML = html;
+    }
   }
 
   let _bdActive = -1;
@@ -4532,7 +4549,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-16e';
+  const PSB_BUILD = '2026-06-16f';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
