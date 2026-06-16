@@ -539,7 +539,8 @@
     .browse-tabs{display:flex;gap:8px;margin-bottom:16px}
     .browse-tab{flex:1;padding:11px 8px;background:var(--surface);border:1.5px solid var(--bdr-med);border-radius:10px;
       color:var(--txt-sec);font-weight:700;font-size:0.86rem;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px}
-    .browse-tab.on{background:var(--gold);color:#12122a;border-color:var(--gold)}
+    .browse-tab{border-color:#137a72;color:#137a72}
+    .browse-tab.on{background:#137a72;color:#fff;border-color:#137a72}
     /* ── Product search page ── */
     .ps-wrap{display:block}
     .ps-rail{background:var(--surface);border:1px solid var(--bdr-med);border-radius:12px;padding:12px 14px;margin-bottom:14px}
@@ -1795,6 +1796,35 @@
     [/kurti|kurta|shirt|top/i,                                 'kurti_1pc'],
   ];
   function mapPtToCat(pt){ const s=(pt||'').toLowerCase(); for(const[re,c] of PT_CAT){ if(re.test(s)) return c; } return ''; }
+  // Women's category from type+title (`s`) + tags — MIRRORS harvest-catalog.js
+  // mapCatWomen so a browsed card and the added cart line AGREE (weight/price
+  // depend on it). Piece-count & garment type come from type+title (reliable);
+  // tags give unstitched/embroidery signals. Order matters: accessories & 2-piece
+  // BEFORE the generic suit/3pc rule; "\bstitched\b" so it never matches "unstitched".
+  function classifyWomenCat(s, tags){
+    tags = tags || ''; const both = s + ' ' + tags;
+    const stitched = /\bpret\b|\bstitched\b|ready[\s-]?to[\s-]?wear|\brtw\b/.test(s);
+    const unstitch = !stitched && (/\bunstitch/.test(both) || /\buns\b/.test(tags) || /\bun[\s-]?stitched\b/.test(s));
+    const emb = /embroid|\bemb\b|chikankari|zari|schiffli|adda/.test(both);
+    if(/\bshawl\b|pashmina|\bstole\b/.test(s)) return 'shawl';
+    if(/\bdupatta\b|\bscarf\b/.test(s) && !/shirt|kurti|kurta|kameez|suit|[23][\s-]?(pc|piece)|trouser|bottom/.test(s)) return 'dupatta_only';
+    if(/\bsaree\b|\bsari\b/.test(s)) return 'saree';
+    if(/lehenga|gharara|sharara/.test(s)) return 'lehenga';
+    if(/abaya|jilbab|burqa|niqab/.test(s)) return 'abaya';
+    if(/bridal|nikah|barat|walima/.test(s)) return 'bridal';
+    if(unstitch) return emb ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch';
+    if(/heavy[\s-]?formal|organza|tissue|jamawar/.test(s)) return 'heavy_formal_3pc';
+    if(/\bformal\b|chiffon|party[\s-]?wear/.test(s)) return 'formal_emb_3pc';
+    if(/night|sleep[\s-]?wear|lounge|pyjama|pajama/.test(s)) return 'loungewear';
+    if(/\b2[\s-]?(pc|piece|pcs)\b|shirt[\s-]?dupatta/.test(s)) return emb ? 'pret_2pc_emb' : 'shirt_dupatta_2pc';
+    if(/(shirt|kurti|kurta)\b.*\b(trouser|bottom|pant)|(trouser|bottom|pant)\b.*\b(shirt|kurti|kurta)/.test(s)) return 'shirt_trouser_2pc';
+    if(/\b3[\s-]?(pc|piece|pcs)\b|shalwar[\s-]?kameez|\bsuit\b/.test(s)) return emb ? 'pret_3pc_emb' : 'pret_3pc';
+    if(/trouser|pant|palazzo|plazo|capri|culotte/.test(s) && !/shirt|kurti|kurta/.test(s)) return 'womens_trouser';
+    if(/dress|maxi|gown|jumpsuit/.test(s)) return 'maxi_dress';
+    if(/kurti|kurta|shirt|top|tunic|\btee\b|blouse/.test(s)) return 'kurti_1pc';
+    if(/\blawn\b|cambric|voile|khaddar|karandi|fabric|piece[\s-]?goods/.test(s)) return 'lawn_3pc_unstitch';
+    return 'pret_3pc';
+  }
 
   // Men's product_type / title → men's category
   const PT_CAT_MEN = [
@@ -2144,25 +2174,14 @@
       // ── CATEGORY (gender-aware) ───────────────────────────────────────────
       const gender = detectGender(url, product);
       const ptStr  = product.product_type || product.type || '';
+      const tagsRaw = product.tags;
+      const tagStr  = (Array.isArray(tagsRaw) ? tagsRaw.join(' ') : String(tagsRaw || '')).toLowerCase();
+      // Women/kids: classify from type+title+tags with the SAME logic the catalog
+      // harvester uses, so a browsed card and the added cart line match. (Garment
+      // type/piece-count beat the generic "pret"; accessories & 2-piece first.)
       let fetchedCat = gender === 'men'
         ? (mapPtToCatMen(ptStr) || mapPtToCatMen(product.title || '') || 'mens_shalwar_kameez')
-        // Women/kids: when product_type carries no garment info ("Clothing",
-        // "Summer 2026", "Luxury"…) the TITLE usually does — survey showed
-        // 339 such vague types across brands.
-        : (mapPtToCat(ptStr) || mapPtToCat(product.title || ''));
-      // Unstitched is most reliably signalled by the brand's TAGS ("unstitched",
-      // "uns 3pc", "emb-uns"…). Several women's product_types read as stitched —
-      // e.g. Nishat "Pack Suit" → pret_3pc — so when the tags say unstitched but
-      // our guess isn't, trust the tag. Self-correcting: if real sizes turn up,
-      // the sizes-found⇒stitched flip below reverts it.
-      if(gender !== 'men'){
-        const tagsRaw = product.tags;
-        const tagStr = (Array.isArray(tagsRaw) ? tagsRaw.join(' ') : String(tagsRaw || '')).toLowerCase();
-        if((/\bunstitch/.test(tagStr) || /\buns\b/.test(tagStr)) && !UNSTITCHED_CATS.has(fetchedCat)){
-          const embU = /embroid|\bemb\b|chikankari|zari|schiffli|adda/.test(tagStr + ' ' + (product.title || '').toLowerCase());
-          fetchedCat = embU ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch';
-        }
-      }
+        : classifyWomenCat((ptStr + ' ' + (product.title || '')).toLowerCase(), tagStr);
       const catEl = document.getElementById(`dc_cat_${id}`);
       // Overwrite a wrong women's auto-guess if this is clearly a men's product
       const womensGuess = catEl && catEl.value && !MENS_CATS.has(catEl.value);
@@ -4829,7 +4848,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-16k';
+  const PSB_BUILD = '2026-06-16l';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');

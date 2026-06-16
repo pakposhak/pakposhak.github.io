@@ -72,24 +72,37 @@ function dec(s){ return (s||'').replace(/&amp;/g,'&').replace(/&quot;/g,'"').rep
 const SIZE_RE = /^(xxs|xs|s|m|l|xl|xxl|xxxl|free\s*size|one\s*size|\d{1,2})$/i;
 
 // ── category mapping (mirror of order-form PT_CAT) ──
-function mapCatWomen(s, tagStr){
-  const unstitch = /\bunstitch/.test(tagStr) || /\buns\b/.test(tagStr) || /unstitch/.test(s);
-  const emb = /embroid|\bemb\b|chikankari|zari|schiffli|adda/.test(s);
-  if(unstitch) return emb ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch';
-  if(/lehenga|gharara|sharara/.test(s)) return 'lehenga';
+// `s` = type+title (reliable for garment/piece-count); `tags` = tag string
+// (used only for unstitched/embroidery signals — piece-count tags are noisy).
+function mapCatWomen(s, tags){
+  const both = s + ' ' + tags;
+  const stitched = /\bpret\b|\bstitched\b|ready[\s-]?to[\s-]?wear|\brtw\b/.test(s);  // \bstitched\b so it does NOT match "unstitched"
+  const unstitch = !stitched && (/\bunstitch/.test(both) || /\buns\b/.test(tags) || /\b(un[\s-]?stitched)\b/.test(s));
+  const emb = /embroid|\bemb\b|chikankari|zari|schiffli|adda/.test(both);
+  // 1) standalone accessories / single dupatta (NOT a suit-with-dupatta)
+  if(/\bshawl\b|pashmina|\bstole\b/.test(s)) return 'shawl';
+  if(/\bdupatta\b|\bscarf\b/.test(s) && !/shirt|kurti|kurta|kameez|suit|[23][\s-]?(pc|piece)|trouser|bottom/.test(s)) return 'dupatta_only';
+  // 2) festive / occasion
   if(/\bsaree\b|\bsari\b/.test(s)) return 'saree';
+  if(/lehenga|gharara|sharara/.test(s)) return 'lehenga';
   if(/abaya|jilbab|burqa|niqab/.test(s)) return 'abaya';
-  if(/bridal|velvet|wedding|nikah|barat|walima/.test(s)) return 'bridal';
+  if(/bridal|nikah|barat|walima/.test(s)) return 'bridal';
+  // 3) unstitched (explicit signal, and not a stitched/pret item)
+  if(unstitch) return emb ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch';
+  // 4) formal / festive-wear tiers
   if(/heavy[\s-]?formal|organza|tissue|jamawar/.test(s)) return 'heavy_formal_3pc';
-  if(/formal|chiffon|party[\s-]?wear/.test(s)) return 'formal_emb_3pc';
+  if(/\bformal\b|chiffon|party[\s-]?wear/.test(s)) return 'formal_emb_3pc';
   if(/night|sleep[\s-]?wear|lounge|pyjama|pajama/.test(s)) return 'loungewear';
-  if(emb && /3[\s-]?pc|3[\s-]?piece/.test(s)) return 'pret_3pc_emb';
-  if(emb && /2[\s-]?pc|2[\s-]?piece/.test(s)) return 'pret_2pc_emb';
-  if(/3[\s-]?pc|3[\s-]?piece|shalwar[\s-]?kameez|\bsuit\b/.test(s)) return 'pret_3pc';
-  if(/2[\s-]?pc|2[\s-]?piece|shirt[\s-]?dupatta/.test(s)) return 'shirt_dupatta_2pc';
-  if(/trouser|pant|palazzo|plazo|capri|culotte/.test(s) && !/shirt|kurti|kurta|suit/.test(s)) return 'womens_trouser';
+  // 5) PIECE COUNT — 2-piece BEFORE 3-piece so "2 Piece … Suit" is not read as 3pc
+  if(/\b2[\s-]?(pc|piece|pcs)\b|shirt[\s-]?dupatta/.test(s)) return emb ? 'pret_2pc_emb' : 'shirt_dupatta_2pc';
+  if(/(shirt|kurti|kurta)\b.*\b(trouser|bottom|pant)|(trouser|bottom|pant)\b.*\b(shirt|kurti|kurta)/.test(s)) return 'shirt_trouser_2pc';
+  if(/\b3[\s-]?(pc|piece|pcs)\b|shalwar[\s-]?kameez|\bsuit\b/.test(s)) return emb ? 'pret_3pc_emb' : 'pret_3pc';
+  // 6) single garments
+  if(/trouser|pant|palazzo|plazo|capri|culotte/.test(s) && !/shirt|kurti|kurta/.test(s)) return 'womens_trouser';
   if(/dress|maxi|gown|jumpsuit/.test(s)) return 'maxi_dress';
-  if(/kurti|kurta|shirt|top|tee|tunic/.test(s)) return 'kurti_1pc';
+  if(/kurti|kurta|shirt|top|tunic|\btee\b|blouse/.test(s)) return 'kurti_1pc';
+  // 7) bare fabric name with no garment word = unstitched
+  if(/\blawn\b|cambric|voile|khaddar|karandi|fabric|piece[\s-]?goods/.test(s)) return 'lawn_3pc_unstitch';
   return 'pret_3pc';
 }
 function mapCatMen(s){
@@ -111,10 +124,11 @@ function mapCatKids(s){
   return 'kids_eastern';
 }
 function mapCat(group, type, title, tagStr){
-  const s = ((type||'') + ' ' + (title||'') + ' ' + (tagStr||'')).toLowerCase();
-  if(group === 'm') return mapCatMen(s);
-  if(group === 'k') return mapCatKids(s);
-  return mapCatWomen(s, tagStr);
+  const tt = ((type||'') + ' ' + (title||'')).toLowerCase();   // garment/piece-count: reliable
+  const tags = (tagStr||'').toLowerCase();                      // unstitch/emb signals only
+  if(group === 'm') return mapCatMen(tt + ' ' + tags);
+  if(group === 'k') return mapCatKids(tt + ' ' + tags);
+  return mapCatWomen(tt, tags);
 }
 
 // ── Shopify harvest ──
