@@ -594,7 +594,15 @@
     /* third-tier club dropdown beside each group heading */
     .bb-grp-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;flex-wrap:wrap}
     .bb-grp-head .bb-grp-h{margin-bottom:0}
-    .bb-club-dd{flex:0 1 auto;max-width:62%;padding:5px 9px;border:1.5px solid var(--bdr-med);border-radius:8px;background:var(--input-bg);color:var(--txt);font-size:0.74rem;font-family:inherit;cursor:pointer}
+    /* 2nd-tier categories as one scrollable tab row */
+    .bb-cat2row{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+    .bb-cat2{flex:0 0 auto;padding:8px 13px;background:var(--surface);border:1.5px solid var(--bdr-med);border-radius:9px;color:var(--txt-sec);font-weight:700;font-size:0.8rem;cursor:pointer;font-family:inherit;white-space:nowrap}
+    .bb-cat2.on{background:var(--gold);color:#12122a;border-color:var(--gold)}
+    /* single 3rd-tier dropdown for the selected tab (themed — no black list) */
+    .bb-tier3{margin-bottom:12px}
+    .bb-club-dd{width:100%;padding:9px 11px;border:1.5px solid var(--bdr-med);border-radius:9px;background:var(--input-bg);color:var(--txt);font-size:0.82rem;font-family:inherit;cursor:pointer;color-scheme:light}
+    [data-theme="dark"] .bb-club-dd{color-scheme:dark}
+    .bb-club-dd option{background:var(--surface);color:var(--txt)}
     .bb-prow-empty{font-size:0.78rem;color:var(--txt-muted);padding:4px 2px}
     .ps-brands{display:flex;flex-direction:column;max-height:230px;overflow-y:auto;border:1px solid var(--bdr-med);border-radius:8px;padding:4px 9px;background:var(--input-bg)}
     .ps-brand-chk{display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--txt-sec);cursor:pointer;padding:2px 0 2px 8px}
@@ -3333,7 +3341,7 @@
       ps_partial:'Not every brand &amp; product is listed here yet —', ps_partial_link:'browse all via Browse by brands →',
       ps_bsearch_ph:'Search 50+ brands…', ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids',
       bb_store:'Store Types', bb_product:'Product Category', bb_women:'👗 Women', bb_men:'👔 Men', bb_kids:'🧸 Kids',
-      bb_more:'more', bb_less:'less', bb_all:'All', bb_two_ways:'Two ways to search brands', bb_prod_sub:'See which brands make what — tap a brand to start.', bb_loading:'Loading brands…', bb_prod_none:'No catalogued brands here yet — use the search below.',
+      bb_more:'more', bb_less:'less', bb_all:'All', bb_two_ways:'Two ways to search brands', bb_pick_gender:'Pick Women, Men or Kids above.', bb_pick_cat:'Pick a category above to see its brands.', bb_prod_sub:'See which brands make what — tap a brand to start.', bb_loading:'Loading brands…', bb_prod_none:'No catalogued brands here yet — use the search below.',
       js_soldout_lead:'Some items appear SOLD OUT and can’t be saved — please remove them or pick another article:',
       js_soldout_all:'sold out on the brand site', js_soldout_size:'this size is sold out',
       more_tab:'More', more_title:'More Brands', more_sub:'All brands in this category — tap any to start, same as the tabs.', more_back:'Back',
@@ -3395,7 +3403,7 @@
       ps_partial:'সব ব্র্যান্ড ও পণ্য এখানে এখনো নেই —', ps_partial_link:'ব্র্যান্ড দেখুন থেকে সব ব্রাউজ করুন →',
       ps_bsearch_ph:'৫০+ ব্র্যান্ড খুঁজুন…', ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের',
       bb_store:'স্টোরের ধরন', bb_product:'পণ্যের ক্যাটাগরি', bb_women:'👗 মেয়েদের', bb_men:'👔 ছেলেদের', bb_kids:'🧸 বাচ্চাদের',
-      bb_more:'আরও', bb_less:'কম', bb_all:'সব', bb_two_ways:'ব্র্যান্ড খোঁজার দুটি উপায়', bb_prod_sub:'কোন ব্র্যান্ড কী বানায় দেখুন — শুরু করতে ব্র্যান্ডে ট্যাপ করুন।', bb_loading:'ব্র্যান্ড লোড হচ্ছে…', bb_prod_none:'এখানে এখনো ক্যাটালগ করা ব্র্যান্ড নেই — নিচে খুঁজুন।',
+      bb_more:'আরও', bb_less:'কম', bb_all:'সব', bb_two_ways:'ব্র্যান্ড খোঁজার দুটি উপায়', bb_pick_gender:'উপরে মেয়ে, ছেলে বা বাচ্চা বেছে নিন।', bb_pick_cat:'ব্র্যান্ড দেখতে উপরে একটি ক্যাটাগরি বেছে নিন।', bb_prod_sub:'কোন ব্র্যান্ড কী বানায় দেখুন — শুরু করতে ব্র্যান্ডে ট্যাপ করুন।', bb_loading:'ব্র্যান্ড লোড হচ্ছে…', bb_prod_none:'এখানে এখনো ক্যাটালগ করা ব্র্যান্ড নেই — নিচে খুঁজুন।',
       js_soldout_lead:'কিছু পণ্য স্টক আউট মনে হচ্ছে এবং সেভ করা যাবে না — অনুগ্রহ করে সরিয়ে ফেলুন বা অন্য পণ্য বেছে নিন:',
       js_soldout_all:'ব্র্যান্ড সাইটে স্টক আউট', js_soldout_size:'এই সাইজ স্টক আউট',
       more_tab:'আরও', more_title:'আরও ব্র্যান্ড', more_sub:'এই ক্যাটাগরির সব ব্র্যান্ড — উপরের ট্যাবের মতোই, শুরু করতে যেকোনোটিতে ট্যাপ করুন।', more_back:'পেছনে',
@@ -5178,7 +5186,7 @@
   // it stays truthful and grows as the catalog grows). The 5-department "Store
   // Types" view and the universal name search are unchanged and stay visible.
   const BB_GENDERS = [['w','bb_women'],['m','bb_men'],['k','bb_kids']];
-  let _bbGender = 'w', _bbIndex = null, _bbExpanded = {}, _bbClub = {};
+  let _bbGender = 'w', _bbGroup = 0, _bbIndex = null, _bbExpanded = {}, _bbClub = {};
   // Third-tier "clubs": each second-tier group has a dropdown of clubbed
   // categories. [label, [catKeys]] — a club lists every brand stocking ANY of
   // its categories (so e.g. "Bridal" folds in heavy-formal without naming it).
@@ -5244,7 +5252,13 @@
     document.getElementById('bbt-product').classList.toggle('on', !store);
     if(!store) bbRenderProduct();
   }
-  function bbPickGender(g){ _bbGender = g; _bbExpanded = {}; _bbClub = {}; bbRenderProduct(); }
+  function bbPickGender(g){
+    if(_bbGender === g){ _bbGender = null; _bbGroup = null; }   // re-tap clears (double-tap removes)
+    else { _bbGender = g; _bbGroup = 0; }
+    _bbExpanded = {}; _bbClub = {};
+    bbRenderProduct();
+  }
+  function bbPickGroup(gi){ _bbGroup = (_bbGroup === gi) ? null : gi; bbRenderProduct(); }   // re-tap clears
   function bbPickClub(g, gi, v){ _bbClub[g+'|'+gi] = (v === '') ? null : +v; _bbExpanded[g+'|'+gi] = false; bbRenderProduct(); }
   function bbMore(g, gi){ _bbExpanded[g+'|'+gi] = true; bbRenderProduct(); }
   // brand name -> Set of category keys it stocks (from the shared catalog).
@@ -5254,6 +5268,9 @@
     _bbIndex = idx;
   }
   function bbBrandsFor(cats){ return BRANDS.filter(b => { const s = _bbIndex[b.n]; return s && cats.some(c => s.has(c)); }); }
+  // CLEAN layout: gender row -> the second-tier categories in ONE scrollable tab
+  // row -> ONE themed dropdown (clubs) for the selected tab -> only THAT tab's
+  // brands. Every tab toggles (re-tap clears), with a "+N more" to expand brands.
   function bbRenderProduct(){
     const body = document.getElementById('bbProdBody');
     const gtabs = document.getElementById('bbGtabs');
@@ -5265,34 +5282,34 @@
       return;
     }
     if(!_bbIndex) bbBuildIndex();
+    const CAP = 12;
+    // Tier 1 — gender (toggle)
     gtabs.innerHTML = BB_GENDERS.map(([g,k]) =>
       `<button type="button" class="bb-gtab${_bbGender===g?' on':''}" onclick="bbPickGender('${g}')">${tr(k)}</button>`).join('');
+    if(!_bbGender){ body.innerHTML = `<div class="bb-prod-empty">${tr('bb_pick_gender')}</div>`; return; }
     const groups = BB_CLUBS[_bbGender] || [];
-    const CAP = 12;
-    let html = '';
-    groups.forEach((grp, gi) => {
-      const key = _bbGender + '|' + gi;
-      // only offer clubs that actually have brands; "All" = union of the group
-      const liveClubs = grp.clubs.map((c, ci) => ({ ci, label: c[0], cats: c[1], n: bbBrandsFor(c[1]).length })).filter(c => c.n > 0);
-      if(!liveClubs.length) return;
-      const sel = _bbClub[key];
-      const cats = (sel != null && grp.clubs[sel]) ? grp.clubs[sel][1] : grp.clubs.reduce((a,c) => a.concat(c[1]), []);
-      const brands = bbBrandsFor(cats);
-      const expanded = !!_bbExpanded[key];
-      const show = expanded ? brands : brands.slice(0, CAP);
-      const chips = show.map(b =>
-        `<button type="button" class="bb-chip" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">${esc(b.n)}</button>`).join('');
-      const more = (!expanded && brands.length > CAP)
-        ? `<button type="button" class="bb-chip bb-more" onclick="bbMore('${_bbGender}',${gi})">+${brands.length - CAP} ${tr('bb_more')}</button>` : '';
-      const opts = liveClubs.map(c => `<option value="${c.ci}" ${sel == c.ci ? 'selected' : ''}>${esc(c.label)} (${c.n})</option>`).join('');
-      html += `<div class="bb-grp">`
-        + `<div class="bb-grp-head"><span class="bb-grp-h">${esc(grp.h)}</span>`
-        +   `<select class="bb-club-dd" onchange="bbPickClub('${_bbGender}',${gi},this.value)"><option value="">${tr('bb_all')}</option>${opts}</select>`
-        + `</div>`
-        + `<div class="bb-prow${expanded ? ' wrap' : ''}">${chips || '<span class="bb-prow-empty">'+tr('bb_prod_none')+'</span>'}${more}</div>`
-        + `</div>`;
-    });
-    body.innerHTML = html || `<div class="bb-prod-empty">${tr('bb_prod_none')}</div>`;
+    // Tier 2 — ALL second-tier categories in one scrollable row (toggle)
+    let html = `<div class="bb-cat2row">` + groups.map((grp, gi) =>
+      `<button type="button" class="bb-cat2${_bbGroup===gi?' on':''}" onclick="bbPickGroup(${gi})">${esc(grp.h)}</button>`).join('') + `</div>`;
+    if(_bbGroup == null || !groups[_bbGroup]){ body.innerHTML = html + `<div class="bb-prod-empty">${tr('bb_pick_cat')}</div>`; return; }
+    // Tier 3 — ONE dropdown of clubs for the selected tab + only its brands
+    const grp = groups[_bbGroup];
+    const key = _bbGender + '|' + _bbGroup;
+    const liveClubs = grp.clubs.map((c, ci) => ({ ci, label: c[0], cats: c[1], n: bbBrandsFor(c[1]).length })).filter(c => c.n > 0);
+    const sel = _bbClub[key];
+    const cats = (sel != null && grp.clubs[sel]) ? grp.clubs[sel][1] : grp.clubs.reduce((a,c) => a.concat(c[1]), []);
+    const brands = bbBrandsFor(cats);
+    const expanded = !!_bbExpanded[key];
+    const show = expanded ? brands : brands.slice(0, CAP);
+    const chips = show.map(b =>
+      `<button type="button" class="bb-chip" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">${esc(b.n)}</button>`).join('');
+    const more = (!expanded && brands.length > CAP)
+      ? `<button type="button" class="bb-chip bb-more" onclick="bbMore('${_bbGender}',${_bbGroup})">+${brands.length - CAP} ${tr('bb_more')}</button>` : '';
+    const opts = liveClubs.map(c => `<option value="${c.ci}" ${sel == c.ci ? 'selected' : ''}>${esc(c.label)} (${c.n})</option>`).join('');
+    html += `<div class="bb-tier3"><select class="bb-club-dd" onchange="bbPickClub('${_bbGender}',${_bbGroup},this.value)">`
+      + `<option value="">${esc(grp.h)} — ${tr('bb_all')}</option>${opts}</select></div>`;
+    html += `<div class="bb-prow${expanded ? ' wrap' : ''}">${chips || '<span class="bb-prow-empty">'+tr('bb_prod_none')+'</span>'}${more}</div>`;
+    body.innerHTML = html;
   }
 
   // Remember the last-used browse tab so returning from Chrome reopens the SAME
@@ -5303,7 +5320,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-17b';
+  const PSB_BUILD = '2026-06-17c';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
