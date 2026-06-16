@@ -271,12 +271,15 @@
     .cat-panel{background:var(--surface);border:1px solid var(--bdr);border-top:none;border-radius:0 0 10px 10px;padding:14px;margin-bottom:14px}
     .cat-head{font-size:0.8rem;font-weight:700;color:var(--gold);margin-bottom:10px;letter-spacing:.3px}
     .cat-head .cnt{color:var(--txt-muted);font-weight:600}
-    .cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:2px 8px}
+    .cat-grid{position:relative;overflow:hidden;transition:height .28s ease}   /* viewport for the horizontal pager */
+    .cat-track{display:flex;align-items:flex-start;transition:transform .28s ease}
+    .cat-page{flex:0 0 100%;min-width:100%}
+    .cat-pagegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:2px 8px}
     .cat-brand{display:block;text-align:left;background:none;border:none;cursor:pointer;font-family:inherit;width:100%;
       color:var(--txt-sec);font-size:0.83rem;padding:8px;border-radius:8px;transition:background .12s,color .12s}
     .cat-brand:hover{color:var(--gold);background:var(--gold-dim)}
-    .cat-brand.cat-more{color:var(--gold);font-weight:700;background:var(--gold-dim);border:1px dashed var(--gold-bdr);text-align:center}
-    .cat-brand.cat-more:hover{background:var(--gold-bdr)}
+    .cat-brand.cat-nav{color:var(--gold);font-weight:700;background:var(--gold-dim);border:1px dashed var(--gold-bdr);text-align:center}
+    .cat-brand.cat-nav:hover{background:var(--gold-bdr)}
     .brand-dd-item .cur-go{color:var(--gold);font-size:0.8rem}
     /* "More" tab — sits at the right end of the category bar and opens the drawer */
     .cat-tab.more-tab{margin-left:auto;color:var(--gold);font-weight:700}
@@ -329,7 +332,7 @@
       .steps-cart{right:24px}
       .steps-cart-badge{background:#c0392b;color:#fff;border-radius:10px;padding:1px 6px;font-size:0.66rem;font-weight:700;min-width:17px;text-align:center}
       #installPill{bottom:24px}
-      .cat-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+      .cat-pagegrid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
       /* Desktop brand-launch sheet uses Chrome-specific copy steps */
       .bs-steps-mobile{display:none}
       .bs-steps-desktop{display:block}
@@ -3071,7 +3074,7 @@
       hiw_confirm_pay:'Confirm price & pay (bKash/Nagad)',
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search 150+ Pakistani brands…',
-      more_tab:'More', more_title:'More Brands', more_sub:'All brands in this category — tap any to start, same as the tabs.',
+      more_tab:'More', more_title:'More Brands', more_sub:'All brands in this category — tap any to start, same as the tabs.', more_back:'Back',
       lbl_addproducts:'Add Products to Your Order',
       url_label:'📋 Copy a product link from any brand site and paste it below — or use the side 📋 Paste tab:',
       btn_addurl:'+ Add URL', btn_paste:'📋 Paste Link & Auto-Fill', pp_tap:'Tap a product to add it — no copy-paste needed', pp_search:'🔍 Search this brand…', pp_site:'🌐 Open full brand site instead', fab_paste:'Paste link',
@@ -3121,7 +3124,7 @@
       hiw_confirm_pay:'দাম নিশ্চিত করে পেমেন্ট (বিকাশ/নগদ)',
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
       lbl_browse:'ব্র্যান্ড ব্রাউজ করুন', search_ph:'🔍 ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
-      more_tab:'আরও', more_title:'আরও ব্র্যান্ড', more_sub:'এই ক্যাটাগরির সব ব্র্যান্ড — উপরের ট্যাবের মতোই, শুরু করতে যেকোনোটিতে ট্যাপ করুন।',
+      more_tab:'আরও', more_title:'আরও ব্র্যান্ড', more_sub:'এই ক্যাটাগরির সব ব্র্যান্ড — উপরের ট্যাবের মতোই, শুরু করতে যেকোনোটিতে ট্যাপ করুন।', more_back:'পেছনে',
       lbl_addproducts:'অর্ডারে পণ্য যোগ করুন',
       url_label:'📋 যেকোনো ব্র্যান্ড সাইট থেকে প্রোডাক্টের লিংক কপি করে নিচে পেস্ট করুন — অথবা পাশের 📋 Paste ট্যাব ব্যবহার করুন:',
       btn_addurl:'+ লিংক যোগ করুন',
@@ -3217,6 +3220,8 @@
 
   let _catActive = Object.keys(BRAND_CATS)[0];   // first category open by default
   let _catOpen = false;                          // flips true on the initial render below
+  let _catPage = 0;                              // in-panel pager: current page index
+  let _catPageH = [];                            // cached page heights (measured at transform:0)
   renderCatBar();   // build the category bar + brand columns now (DOM above this script exists)
   setLang(_lang);   // apply the saved language to all tagged elements
 
@@ -3229,22 +3234,37 @@
     switchCat(_catActive);
   }
 
-  // ── Per-category "More" → right-side slide-in drawer with the FULL category
-  // list (featured first). Triggered by the "+N more" chip in a capped category.
-  // The page stays static; the extra brands appear by sliding in from the right. ──
-  function openCatMore(cat){
-    const all = sortFeatured(BRANDS.filter(b => b.c === cat));
-    const t = document.getElementById('mdTitle');
-    const cnt = document.getElementById('mdCount');
-    if(t) t.textContent = catLabel(cat);
-    if(cnt) cnt.textContent = '· ' + all.length + ' ' + tr('word_brands');
-    document.getElementById('moreDrawerBody').innerHTML = '<div class="md-grid">' + all.map(b =>
-      `<button class="md-brand" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">${esc(b.n)}</button>`
-    ).join('') + '</div>';
-    document.getElementById('moreDrawerBody').scrollTop = 0;
-    document.getElementById('moreDrawer').classList.add('open');
-    document.body.style.overflow = 'hidden';   // lock background scroll while the drawer is open
+  // ── In-panel horizontal pager: a capped category shows its first N brands
+  // (page 0), then slides RIGHT to a 2nd page with ONLY the REMAINING brands,
+  // in the SAME grid. No pop-over window — the panel itself moves. ──
+  function brandGrid(list, navHtml, navFirst){
+    const items = list.map(b =>
+      `<button class="cat-brand" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">${esc(b.n)}</button>`
+    ).join('');
+    const nav = navHtml || '';
+    return '<div class="cat-pagegrid">' + (navFirst ? nav + items : items + nav) + '</div>';
   }
+  // Measure both pages' heights at transform:0 (reading a transformed/off-screen
+  // page can report 0), then size the viewport to whichever page is showing.
+  function measureCatPages(){
+    const track = document.getElementById('catTrack');
+    if(!track) return;
+    track.style.transition = 'none';
+    track.style.transform = 'none';
+    _catPageH = [].map.call(track.children, function(p){ return p.offsetHeight; });
+  }
+  function catSlide(page, instant){
+    _catPage = page;
+    const grid = document.getElementById('catGrid');
+    const track = document.getElementById('catTrack');
+    if(!grid || !track) return;
+    if(instant){ grid.style.transition = 'none'; track.style.transition = 'none'; }
+    track.style.transform = 'translateX(' + (-page * 100) + '%)';
+    const h = _catPageH[page] || 0;
+    if(h) grid.style.height = h + 'px';                 // panel grows/shrinks to the visible page
+    if(instant){ void grid.offsetHeight; grid.style.transition = ''; track.style.transition = ''; }
+  }
+  window.addEventListener('resize', function(){ if(_catOpen){ measureCatPages(); catSlide(_catPage, true); } });
   function closeMoreDrawer(){
     document.getElementById('moreDrawer').classList.remove('open');
     document.body.style.overflow = '';
@@ -3265,18 +3285,23 @@
     document.querySelectorAll('.cat-tab').forEach(t => t.classList.toggle('on', t.dataset.cat === cat));
     const all = sortFeatured(BRANDS.filter(b => b.c === cat));
     const limit = CAT_LIMIT[cat] || 0;                  // 0 = show all (Multi-Dept, Kids)
-    const shown = limit ? all.slice(0, limit) : all;
     const head = document.getElementById('catHead');
     const grid = document.getElementById('catGrid');
     if(head) head.innerHTML = `${catLabel(cat)} <span class="cnt">· ${all.length} ${tr('word_brands')}</span>`;
     if(grid){
-      let html = shown.map(b =>
-        `<button class="cat-brand" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">${esc(b.n)}</button>`
-      ).join('');
-      if(all.length > shown.length){
-        html += `<button class="cat-brand cat-more" onclick="openCatMore('${cat}')">+${all.length - shown.length} ${tr('more_tab')} ›</button>`;
+      let pages;
+      if(!limit || all.length <= limit){
+        pages = '<div class="cat-page">' + brandGrid(all) + '</div>';
+      } else {
+        const first = all.slice(0, limit), rest = all.slice(limit);
+        const moreChip = `<button class="cat-brand cat-nav cat-more" onclick="catSlide(1)">+${rest.length} ${tr('more_tab')} ›</button>`;
+        const backChip = `<button class="cat-brand cat-nav cat-back" onclick="catSlide(0)">‹ ${tr('more_back')}</button>`;
+        pages = '<div class="cat-page">' + brandGrid(first, moreChip) + '</div>'
+              + '<div class="cat-page">' + brandGrid(rest, backChip, true) + '</div>';
       }
-      grid.innerHTML = html;
+      grid.innerHTML = '<div class="cat-track" id="catTrack">' + pages + '</div>';
+      measureCatPages();   // cache page heights at transform:0
+      catSlide(0, true);   // start on page 0, sized to it, no animation
     }
   }
 
@@ -4549,7 +4574,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-16f';
+  const PSB_BUILD = '2026-06-16g';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
