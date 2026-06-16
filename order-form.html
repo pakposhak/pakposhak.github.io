@@ -546,10 +546,50 @@
     .ps-rail{background:var(--surface);border:1px solid var(--bdr-med);border-radius:12px;padding:12px 14px;margin-bottom:14px}
     .ps-fblock{margin-bottom:13px}
     .ps-flabel{font-size:0.7rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:7px}
-    .ps-price{display:flex;flex-wrap:wrap;gap:6px}
-    .ps-bucket{padding:6px 12px;border:1.5px solid var(--gold-bdr);border-radius:16px;background:var(--gold-dim);color:var(--gold);font-size:0.76rem;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit}
+    /* 6 price buckets in a 3×2 grid (two rows on mobile), re-tap a bucket to clear it, multi-select OR */
+    .ps-price{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+    .ps-bucket{padding:7px 4px;border:1.5px solid var(--gold-bdr);border-radius:13px;background:var(--gold-dim);color:var(--gold);font-size:0.72rem;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;text-align:center}
     .ps-bucket.on{background:var(--gold);color:#12122a;border-color:var(--gold)}
     .ps-select{width:100%;padding:9px 10px;border:1.5px solid var(--bdr-med);border-radius:8px;background:var(--input-bg);color:var(--txt);font-size:0.86rem;font-family:inherit}
+    /* "Not everything is here" notice on Browse Products */
+    .ps-note{font-size:0.76rem;color:var(--txt-sec);background:var(--gold-dim);border:1px solid var(--gold-bdr);border-radius:9px;padding:8px 12px;margin-bottom:12px;line-height:1.5}
+    .ps-note a{color:var(--gold);font-weight:700;text-decoration:none}
+    /* Product-Category filter — collapsible 3-gender list mirroring the form's picker */
+    .ps-cats{border:1px solid var(--bdr-med);border-radius:8px;overflow:hidden;background:var(--input-bg)}
+    .ps-catclear{width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--bdr);font-family:inherit;font-size:0.8rem;color:var(--txt-muted);padding:7px 12px;cursor:pointer}
+    .ps-catclear.on{color:var(--gold);font-weight:700}
+    .ps-cdept{border-bottom:1px solid var(--bdr)}
+    .ps-cdept:last-child{border-bottom:none}
+    .ps-cdept>summary{list-style:none;cursor:pointer;padding:8px 10px;font-size:0.82rem;font-weight:700;color:var(--txt-sec);display:flex;align-items:center;gap:6px}
+    .ps-cdept>summary::-webkit-details-marker{display:none}
+    .ps-cdept>summary::after{content:'▾';margin-left:auto;color:var(--txt-muted);font-size:0.7rem}
+    .ps-cdept[open]>summary::after{content:'▴'}
+    .ps-cdept[open]>summary{color:var(--gold)}
+    .ps-cgrp-h{font-size:0.62rem;font-weight:800;letter-spacing:0.6px;text-transform:uppercase;color:var(--txt-muted);padding:7px 12px 2px}
+    .ps-cat-row{display:block;width:100%;text-align:left;background:none;border:none;font-family:inherit;font-size:0.8rem;color:var(--txt-sec);padding:6px 12px 6px 16px;cursor:pointer}
+    .ps-cat-row:hover{background:var(--raised)}
+    .ps-cat-row.on{background:var(--gold);color:#12122a;font-weight:700}
+    .ps-cat-all{font-weight:700;color:var(--txt);padding-left:12px}
+    /* brand search beside the Brands heading (compact, not a full row) */
+    .ps-flabel-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+    .ps-flabel-row .ps-flabel{margin-bottom:0;white-space:nowrap}
+    .ps-bsearch{flex:1;min-width:0;padding:5px 9px;border:1.5px solid var(--bdr-med);border-radius:13px;background:var(--input-bg);color:var(--txt);font-size:0.74rem;font-family:inherit}
+    /* Browse-brands sub-tabs + product-category brand browser */
+    .bb-subtabs{display:flex;gap:8px;margin-bottom:14px}
+    .bb-subtab{flex:1;padding:9px 8px;background:var(--surface);border:1.5px solid var(--bdr-med);border-radius:10px;color:var(--txt-sec);font-weight:700;font-size:0.82rem;cursor:pointer;font-family:inherit}
+    .bb-subtab.on{background:var(--gold);color:#12122a;border-color:var(--gold)}
+    .bb-prod-sub{font-size:0.78rem;color:var(--txt-muted);margin:-4px 0 12px}
+    .bb-gtabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+    .bb-gtab{flex:1;min-width:88px;padding:9px 6px;background:var(--surface);border:1.5px solid var(--bdr-med);border-radius:9px;color:var(--txt-sec);font-weight:700;font-size:0.82rem;cursor:pointer;font-family:inherit}
+    .bb-gtab.on{background:#137a72;color:#fff;border-color:#137a72}
+    .bb-grp{margin-bottom:16px}
+    .bb-grp-h{font-size:0.8rem;font-weight:800;color:var(--gold);margin-bottom:8px;letter-spacing:0.3px}
+    .bb-prow{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+    .bb-prow.wrap{flex-wrap:wrap;overflow-x:visible}
+    .bb-chip{flex:0 0 auto;padding:9px 14px;background:var(--surface);border:1.5px solid var(--bdr-med);border-radius:18px;color:var(--txt);font-weight:600;font-size:0.82rem;cursor:pointer;font-family:inherit;white-space:nowrap}
+    .bb-chip:hover{border-color:var(--gold);color:var(--gold)}
+    .bb-chip.bb-more{background:var(--gold-dim);border-color:var(--gold-bdr);color:var(--gold);font-weight:700}
+    .bb-prod-empty{font-size:0.84rem;color:var(--txt-muted);padding:18px 4px}
     .ps-brands{display:flex;flex-direction:column;max-height:230px;overflow-y:auto;border:1px solid var(--bdr-med);border-radius:8px;padding:4px 9px;background:var(--input-bg)}
     .ps-brand-chk{display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--txt-sec);cursor:pointer;padding:2px 0 2px 8px}
     .ps-bdept{border-bottom:1px solid var(--bdr)}
@@ -609,6 +649,7 @@
       .ps-results{flex:1;min-width:0}
       .ps-grid{grid-template-columns:repeat(auto-fill,minmax(178px,1fr))}
       .ps-brands{max-height:260px}
+      .ps-price{grid-template-columns:repeat(2,1fr)}   /* narrow rail → 2 per row */
     }
   </style>
 </head>
@@ -691,24 +732,49 @@
   </div>
 
   <div id="tabBrands">
-  <div class="brand-section">
-    <!-- Category bar (mega-menu) + brand columns — rendered by JS -->
-    <div class="cat-bar" id="catBar"></div>
-    <div class="cat-panel">
-      <div class="cat-head" id="catHead"></div>
-      <div class="cat-grid" id="catGrid"></div>
+    <!-- Two ways to find a brand: by store type (5 departments) OR by what products they sell -->
+    <div class="bb-subtabs">
+      <button type="button" class="bb-subtab on" id="bbt-store" onclick="bbSwitch('store')" data-i18n="bb_store">Store Types</button>
+      <button type="button" class="bb-subtab" id="bbt-product" onclick="bbSwitch('product')" data-i18n="bb_product">Product Category</button>
     </div>
-    <!-- Search any brand by name -->
-    <div class="brand-search-wrap">
-      <input id="brandSearch" class="brand-search" type="text" autocomplete="off" placeholder="🔍 Search 150+ Pakistani brands…" data-i18n-ph="search_ph"
-        oninput="onBrandSearch()" onfocus="onBrandSearch()"/>
-      <div id="brandDropdown" class="brand-dropdown"></div>
+
+    <!-- SUB-TAB 1: Store Types — the 5-department mega-menu (existing) -->
+    <div id="bbStore">
+      <div class="brand-section">
+        <!-- Category bar (mega-menu) + brand columns — rendered by JS -->
+        <div class="cat-bar" id="catBar"></div>
+        <div class="cat-panel">
+          <div class="cat-head" id="catHead"></div>
+          <div class="cat-grid" id="catGrid"></div>
+        </div>
+      </div>
     </div>
-  </div>
+
+    <!-- SUB-TAB 2: Product Category — which brands make what (Women/Men/Kids → subcategory → brands) -->
+    <div id="bbProduct" style="display:none">
+      <div class="brand-section">
+        <div class="bb-prod-sub" data-i18n="bb_prod_sub">See which brands make what — tap a brand to start.</div>
+        <div class="bb-gtabs" id="bbGtabs"></div>
+        <div id="bbProdBody"></div>
+      </div>
+    </div>
+
+    <!-- Universal brand-name search — stays visible under BOTH sub-tabs -->
+    <div class="brand-section" style="margin-top:14px">
+      <div class="brand-search-wrap">
+        <input id="brandSearch" class="brand-search" type="text" autocomplete="off" placeholder="🔍 Search 150+ Pakistani brands…" data-i18n-ph="search_ph"
+          oninput="onBrandSearch()" onfocus="onBrandSearch()"/>
+        <div id="brandDropdown" class="brand-dropdown"></div>
+      </div>
+    </div>
   </div><!-- /tabBrands -->
 
   <!-- BROWSE PRODUCTS — multi-brand search over catalog.json (price / category / brand filters) -->
   <div id="tabProducts" style="display:none">
+    <div class="ps-note">
+      <span data-i18n="ps_partial">Not every brand &amp; product is listed here yet —</span>
+      <a href="#" onclick="switchBrowse('brands');return false" data-i18n="ps_partial_link">browse all via Browse by brands →</a>
+    </div>
     <div class="ps-wrap">
       <aside class="ps-rail">
         <div class="ps-fblock">
@@ -716,11 +782,14 @@
           <div class="ps-price" id="psPrice"></div>
         </div>
         <div class="ps-fblock">
-          <div class="ps-flabel" data-i18n="ps_category">Category</div>
-          <select class="ps-select" id="psCat" onchange="psOnCat()"></select>
+          <div class="ps-flabel" data-i18n="ps_category">Product Category</div>
+          <div class="ps-cats" id="psCat"></div>
         </div>
         <div class="ps-fblock">
-          <div class="ps-flabel"><span data-i18n="ps_brands">Brands</span> <span id="psBrandCount" style="color:var(--txt-muted);font-weight:600"></span></div>
+          <div class="ps-flabel-row">
+            <div class="ps-flabel"><span data-i18n="ps_brands">Brands</span> <span id="psBrandCount" style="color:var(--txt-muted);font-weight:600"></span></div>
+            <input id="psBrandSearch" class="ps-bsearch" type="text" autocomplete="off" oninput="psBuildBrandFilter()" data-i18n-ph="ps_bsearch_ph" placeholder="Search 50+ brands…"/>
+          </div>
           <div class="ps-brands" id="psBrands"></div>
         </div>
         <button type="button" class="ps-clear" onclick="psClearFilters()" data-i18n="ps_clear">Clear filters</button>
@@ -2364,6 +2433,7 @@
         d0.stockVerified = hasStockInfo && !allSoldOut;
         d0.stockSizes    = d0.stockVerified ? sizesToAdd.slice() : [];
         d0.soldOutSizes  = soldOutSizes.slice();
+        d0.allSoldOut    = !!allSoldOut;   // whole product sold out → block saving (req #7)
         d0.pickWhat      = combined ? 'colour & size' : 'size';
       }
 
@@ -3221,11 +3291,17 @@
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search 150+ Pakistani brands…',
       tab_brands:'Browse brands', tab_products:'Browse products',
-      ps_price:'Price (৳ delivered)', ps_category:'Category', ps_brands:'Brands', ps_clear:'Clear filters',
+      ps_price:'Price (৳ delivered)', ps_category:'Product Category', ps_brands:'Brands', ps_clear:'Clear filters',
       ps_allcats:'All categories', ps_loading:'Loading products…', ps_loadfail:'Could not load products — please try again.',
       ps_results:'products', ps_add:'Add', ps_prev:'Prev', ps_next:'Next', ps_page:'Page',
       ps_d_loading:'Loading more details…', ps_d_open:'Open full page', ps_d_nofetch:'See all photos &amp; details on the brand page →', ps_d_nodesc:'No extra description provided.',
       ps_empty:'No products match these filters — try widening them.',
+      ps_partial:'Not every brand &amp; product is listed here yet —', ps_partial_link:'browse all via Browse by brands →',
+      ps_bsearch_ph:'Search 50+ brands…', ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids',
+      bb_store:'Store Types', bb_product:'Product Category', bb_women:'👗 Women', bb_men:'👔 Men', bb_kids:'🧸 Kids',
+      bb_more:'more', bb_less:'less', bb_prod_sub:'See which brands make what — tap a brand to start.', bb_loading:'Loading brands…', bb_prod_none:'No catalogued brands here yet — use the search below.',
+      js_soldout_lead:'Some items appear SOLD OUT and can’t be saved — please remove them or pick another article:',
+      js_soldout_all:'sold out on the brand site', js_soldout_size:'this size is sold out',
       more_tab:'More', more_title:'More Brands', more_sub:'All brands in this category — tap any to start, same as the tabs.', more_back:'Back',
       lbl_addproducts:'Add Products to Your Order',
       url_label:'📋 Copy a product link from any brand site and paste it below — or use the side 📋 Paste tab:',
@@ -3277,11 +3353,17 @@
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
       lbl_browse:'ব্র্যান্ড ব্রাউজ করুন', search_ph:'🔍 ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
       tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন',
-      ps_price:'দাম (৳ ডেলিভারিসহ)', ps_category:'ক্যাটাগরি', ps_brands:'ব্র্যান্ড', ps_clear:'ফিল্টার মুছুন',
+      ps_price:'দাম (৳ ডেলিভারিসহ)', ps_category:'পণ্যের ক্যাটাগরি', ps_brands:'ব্র্যান্ড', ps_clear:'ফিল্টার মুছুন',
       ps_allcats:'সব ক্যাটাগরি', ps_loading:'পণ্য লোড হচ্ছে…', ps_loadfail:'পণ্য লোড করা যায়নি — আবার চেষ্টা করুন।',
       ps_results:'পণ্য', ps_add:'যোগ করুন', ps_prev:'আগের', ps_next:'পরের', ps_page:'পৃষ্ঠা',
       ps_d_loading:'আরও বিবরণ লোড হচ্ছে…', ps_d_open:'পুরো পেজ খুলুন', ps_d_nofetch:'সব ছবি ও বিবরণ ব্র্যান্ডের পেজে দেখুন →', ps_d_nodesc:'অতিরিক্ত বিবরণ নেই।',
       ps_empty:'এই ফিল্টারে কোনো পণ্য নেই — ফিল্টার একটু কমান।',
+      ps_partial:'সব ব্র্যান্ড ও পণ্য এখানে এখনো নেই —', ps_partial_link:'ব্র্যান্ড দেখুন থেকে সব ব্রাউজ করুন →',
+      ps_bsearch_ph:'৫০+ ব্র্যান্ড খুঁজুন…', ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের',
+      bb_store:'স্টোরের ধরন', bb_product:'পণ্যের ক্যাটাগরি', bb_women:'👗 মেয়েদের', bb_men:'👔 ছেলেদের', bb_kids:'🧸 বাচ্চাদের',
+      bb_more:'আরও', bb_less:'কম', bb_prod_sub:'কোন ব্র্যান্ড কী বানায় দেখুন — শুরু করতে ব্র্যান্ডে ট্যাপ করুন।', bb_loading:'ব্র্যান্ড লোড হচ্ছে…', bb_prod_none:'এখানে এখনো ক্যাটালগ করা ব্র্যান্ড নেই — নিচে খুঁজুন।',
+      js_soldout_lead:'কিছু পণ্য স্টক আউট মনে হচ্ছে এবং সেভ করা যাবে না — অনুগ্রহ করে সরিয়ে ফেলুন বা অন্য পণ্য বেছে নিন:',
+      js_soldout_all:'ব্র্যান্ড সাইটে স্টক আউট', js_soldout_size:'এই সাইজ স্টক আউট',
       more_tab:'আরও', more_title:'আরও ব্র্যান্ড', more_sub:'এই ক্যাটাগরির সব ব্র্যান্ড — উপরের ট্যাবের মতোই, শুরু করতে যেকোনোটিতে ট্যাপ করুন।', more_back:'পেছনে',
       lbl_addproducts:'অর্ডারে পণ্য যোগ করুন',
       url_label:'📋 যেকোনো ব্র্যান্ড সাইট থেকে প্রোডাক্টের লিংক কপি করে নিচে পেস্ট করুন — অথবা পাশের 📋 Paste ট্যাব ব্যবহার করুন:',
@@ -3764,6 +3846,19 @@
     const usdRate = getUsdRate();
     const ids = Object.keys(drafts).map(Number);
     if(!ids.length){ alert('No items to save.'); return; }
+    // Stock guard (req #7): never let a sold-out item into the order list. Block
+    // the save and name the offending items so the buyer can remove them or pick
+    // an in-stock size. Uses the live stock data captured when the item was added.
+    const soldOut = [];
+    ids.forEach(id => {
+      const d = drafts[id]; if(!d) return;
+      const nm = (document.getElementById(`dc_${id}`)?.dataset.brand) || tr('field_item');
+      if(d.allSoldOut){ soldOut.push('• ' + nm + ' — ' + tr('js_soldout_all')); return; }
+      const so = new Set(d.soldOutSizes || []);
+      const bad = getDraftSizeRows(id).map(r => r.size).filter(sz => sz && so.has(sz));
+      if(bad.length) soldOut.push('• ' + nm + ' (' + bad.join(', ') + ') — ' + tr('js_soldout_size'));
+    });
+    if(soldOut.length){ alert(tr('js_soldout_lead') + '\n' + soldOut.join('\n')); return; }
     let allValid = true;
     const problems = [];   // [{name, miss:[field names]}] — drives a specific, per-item message
     ids.forEach(id => {
@@ -4023,11 +4118,13 @@
     updatePasteFab();
   }
 
-  // Floating Paste button: only useful while adding products (step 1).
+  // Floating Paste button: only useful while adding products (step 1) — and NOT
+  // while the Browse-Products grid is open (you tap cards there, not paste).
   function updatePasteFab(){
     const fab = document.getElementById('pasteFab');
     if(!fab) return;
-    fab.classList.toggle('show', currentStep === 1);
+    const onProducts = (typeof psOnProductsTab === 'function') && psOnProductsTab();
+    fab.classList.toggle('show', currentStep === 1 && !onProducts);
   }
   // When the user switches BACK to PakiPoshak (e.g. after copying a link in
   // Chrome), pulse the Paste button so it's obvious where to tap next.
@@ -4611,6 +4708,10 @@
     if(tab === 'home'){
       window.scrollTo({top:0, behavior:'smooth'});
     } else if(tab === 'brands'){
+      // Make sure the brand directory is the visible tab first — otherwise (when
+      // Browse Products is open) the brand section is display:none and scrolling
+      // there does nothing. THEN scroll to it.
+      if(typeof switchBrowse === 'function') switchBrowse('brands');
       const bs = document.querySelector('.brand-section');
       if(bs) bs.scrollIntoView({behavior:'smooth'});
     } else if(tab === 'cart'){
@@ -4737,12 +4838,12 @@
   // Price buckets are on the buyer-facing LANDED ৳BDT estimate (per p._bdt),
   // not PKR — Bangladeshi buyers filter in their own currency.
   const PS_BUCKETS = [
-    {lo:0,     hi:3000,  lbl:'Under ৳3,000'},
-    {lo:3000,  hi:4500,  lbl:'৳3,000 – 4,500'},
-    {lo:4500,  hi:6000,  lbl:'৳4,500 – 6,000'},
-    {lo:6000,  hi:8000,  lbl:'৳6,000 – 8,000'},
-    {lo:8000,  hi:10000, lbl:'৳8,000 – 10,000'},
-    {lo:10000, hi:1e12,  lbl:'৳10,000+'}
+    {lo:0,     hi:3000,  lbl:'Under ৳3k'},
+    {lo:3000,  hi:4500,  lbl:'৳3–4.5k'},
+    {lo:4500,  hi:6000,  lbl:'৳4.5–6k'},
+    {lo:6000,  hi:8000,  lbl:'৳6–8k'},
+    {lo:8000,  hi:10000, lbl:'৳8–10k'},
+    {lo:10000, hi:1e12,  lbl:'৳10k+'}
   ];
   const PS_CAT_LABELS = {
     pret_3pc:'Stitched 3-piece', pret_3pc_emb:'Stitched 3pc — embroidered', pret_2pc_emb:'Stitched 2pc — embroidered',
@@ -4760,8 +4861,17 @@
   function psLabel(cat){ return PS_CAT_LABELS[cat] || cat; }
 
   let PS_CATALOG = null, psLoaded = false, psLoading = false;
-  let psSel = { price:null, cat:'', brands:new Set() };
+  let psSel = { prices:new Set(), cat:'', brands:new Set() };
   let psFiltered = [], psPage = 0;
+  // cat → gender ('w'/'m'/'k') and cat → group-index, derived once from CAT_TREE
+  // so the Browse-Products category filter and the Browse-Brands product view
+  // mirror the order form's picker exactly (single source of truth).
+  const PS_CAT_GENDER = {}, PS_CAT_GROUPIDX = {};
+  ['w','m','k'].forEach(g => (CAT_TREE[g].groups || []).forEach((grp, gi) =>
+    (grp.items || []).forEach(([k]) => { PS_CAT_GENDER[k] = g; PS_CAT_GROUPIDX[k] = gi; })));
+  const PS_GENDER_WORD = { w:'ps_allw', m:'ps_allm', k:'ps_allk' };
+  // Jewellery/accessories are not orderable here → keep them out of Browse Products.
+  const PS_HIDE_CATS = new Set(['accessories']);
 
   function switchBrowse(which){
     const brands = which === 'brands';
@@ -4771,7 +4881,29 @@
     document.getElementById('bt-brands').classList.toggle('on', brands);
     document.getElementById('bt-products').classList.toggle('on', !brands);
     if(!brands) psEnsureLoaded();
+    updatePasteFab();   // the floating Paste tab is not useful on the products grid
   }
+  // True while the Browse-Products grid is the visible tab.
+  function psOnProductsTab(){ const tp = document.getElementById('tabProducts'); return !!tp && tp.style.display !== 'none'; }
+
+  // Default front-page order (no filters): women's everyday pret/unstitched first,
+  // then the rest of women's, then a few men's, then kids — so the first page is
+  // mostly women's stitched/unstitched with only a couple of men/kids items.
+  function psDefaultRank(cat){
+    const g = PS_CAT_GENDER[cat] || 'w';
+    if(g === 'w'){
+      const everyday = (PS_CAT_GROUPIDX[cat] === 0);   // group 0 = "Everyday / Lawn"
+      return everyday ? 0 : 1;
+    }
+    return g === 'm' ? 2 : 3;   // men after all women, kids last
+  }
+
+  // Catalog is loaded once and shared by BOTH the products grid and the
+  // Browse-Brands "Product Category" view. psOnReady() lets the brands view wait
+  // for that single fetch instead of duplicating it.
+  let psReadyCbs = [];
+  function psOnReady(cb){ if(psLoaded){ cb(); return; } psReadyCbs.push(cb); psEnsureLoaded(); }
+  function psFlushReady(){ const cbs = psReadyCbs; psReadyCbs = []; cbs.forEach(fn => { try{ fn(); }catch(e){} }); }
 
   function psEnsureLoaded(){
     if(psLoaded || psLoading) return;
@@ -4782,35 +4914,31 @@
     fetch(cbUrl, { cache:'no-store' })
       .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
       .then(j => {
-        PS_CATALOG = (j.products || []).filter(p => p && p.u && p.pkr && p.img);
+        PS_CATALOG = (j.products || []).filter(p => p && p.u && p.pkr && p.img && !PS_HIDE_CATS.has(p.cat));
         PS_CATALOG.forEach(p => { p._bdt = estLandedBdt(p.pkr, p.cat); });   // landed ৳ once — filter + card both use it
+        // Default order: women's everyday first (men/kids to the back), then
+        // round-robin by brand (_bi = nth item of its brand) so the first page is
+        // a VARIED women's mix, not 8 articles from one label.
+        const _seen = {};
+        PS_CATALOG.forEach((p, i) => { p._ord = i; p._bi = (_seen[p.b] = (_seen[p.b]||0) + 1) - 1; });
+        PS_CATALOG.sort((a, b) => (psDefaultRank(a.cat) - psDefaultRank(b.cat)) || (a._bi - b._bi) || (a._ord - b._ord));
         psLoaded = true; psLoading = false;
         psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psApply();
+        psFlushReady();
       })
-      .catch(() => { psLoading = false; const e=document.getElementById('psCount'); if(e) e.textContent = tr('ps_loadfail'); });
+      .catch(() => { psLoading = false; const e=document.getElementById('psCount'); if(e) e.textContent = tr('ps_loadfail'); psFlushReady(); });
   }
 
-  // Category groups (mirror the "Browse brands" department picker): Women's /
-  // Men's / Kids → subgroups → the fine categories. Drives the grouped dropdown.
-  const PS_CAT_GROUPS = [
-    { dept:'Women', sub:'Everyday & lawn',           cats:['kurti_1pc','pret_3pc','pret_3pc_emb','pret_2pc_emb','shirt_dupatta_2pc','shirt_trouser_2pc','lawn_3pc_unstitch','unstitch_3pc_emb'] },
-    { dept:'Women', sub:'Winter',                    cats:['winter_2pc','winter_3pc','shawl'] },
-    { dept:'Women', sub:'Formal · festive · bridal', cats:['formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','bridal','lehenga','saree'] },
-    { dept:'Women', sub:'Modest',                    cats:['abaya','kaftan'] },
-    { dept:'Women', sub:'Separates & accessories',   cats:['womens_trouser','dupatta_only','maxi_dress','coord_western','loungewear','accessories','footwear'] },
-    { dept:'Men',   sub:'Western & casual',          cats:['mens_shirt','mens_trouser','mens_jeans'] },
-    { dept:'Men',   sub:'Traditional & formal',      cats:['mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_sherwani','mens_suit','mens_unstitched'] },
-    { dept:'Kids',  sub:'Kids',                      cats:['kids_eastern','kids_western'] },
-  ];
   // Brand departments (same 5 as Browse brands), each with a small icon.
   const PS_DEPTS = [['md','🏬','Multi-department'],['w','👗',"Women's pret & unstitched"],['p','💎','Premium'],['m','👔','Menswear'],['k','🧸','Kids']];
   function psBrandDept(name){ const b = (typeof BRANDS!=='undefined') && BRANDS.find(x => x.n === name); return (b && b.c) || 'w'; }
 
+  // ── PRICE (multi-select, OR within itself) — re-tap a bucket to clear it ──
   function psBuildPriceFilter(){
     document.getElementById('psPrice').innerHTML = PS_BUCKETS.map((b,i) =>
-      `<button type="button" class="ps-bucket${psSel.price===i?' on':''}" onclick="psTogglePrice(${i})">${b.lbl}</button>`).join('');
+      `<button type="button" class="ps-bucket${psSel.prices.has(i)?' on':''}" onclick="psTogglePrice(${i})">${b.lbl}</button>`).join('');
   }
-  function psTogglePrice(i){ psSel.price = (psSel.price===i) ? null : i; psBuildPriceFilter(); psApply(); }
+  function psTogglePrice(i){ if(psSel.prices.has(i)) psSel.prices.delete(i); else psSel.prices.add(i); psBuildPriceFilter(); psApply(); }
 
   function psCatalogBrands(){
     const set = new Set(PS_CATALOG.map(p => p.b));
@@ -4818,20 +4946,23 @@
     set.forEach(n => { if(ordered.indexOf(n) < 0) ordered.push(n); });
     return ordered;
   }
+  // 5 collapsible departments + a compact name search beside the heading (req #9).
   function psBuildBrandFilter(){
     const present = psCatalogBrands();
-    const byDept = {}; present.forEach(n => { const d = psBrandDept(n); (byDept[d] = byDept[d] || []).push(n); });
+    const q = (document.getElementById('psBrandSearch')?.value || '').trim().toLowerCase();
+    const byDept = {}; present.forEach(n => { if(q && n.toLowerCase().indexOf(q) < 0) return; const d = psBrandDept(n); (byDept[d] = byDept[d] || []).push(n); });
     let html = '';
     PS_DEPTS.forEach(([d, ic, lbl]) => {
       const brands = byDept[d]; if(!brands || !brands.length) return;
       const sel = brands.filter(n => psSel.brands.has(n)).length;
-      html += `<details class="ps-bdept"${sel ? ' open' : ''}>`
+      const open = sel || !!q;     // expand matching departments while searching
+      html += `<details class="ps-bdept"${open ? ' open' : ''}>`
         + `<summary><span class="ps-bd-ic" aria-hidden="true">${ic}</span> ${esc(lbl)} `
         + `<span class="ps-bd-n">${sel ? sel + '/' + brands.length : brands.length}</span></summary>`
         + brands.map(n => `<label class="ps-brand-chk"><input type="checkbox" value="${esc(n)}" ${psSel.brands.has(n)?'checked':''} onchange="psToggleBrand(this.value,this.checked)"> ${esc(n)}</label>`).join('')
         + `</details>`;
     });
-    document.getElementById('psBrands').innerHTML = html;
+    document.getElementById('psBrands').innerHTML = html || `<div style="padding:10px;color:var(--txt-muted);font-size:0.78rem">—</div>`;
   }
   function psToggleBrand(name, on){ if(on) psSel.brands.add(name); else psSel.brands.delete(name); psApply(); }
 
@@ -4839,36 +4970,58 @@
   // from the WHOLE catalog (independent of the brand filter) so the selection is
   // never silently cleared — an empty brand+category combo just shows the "no
   // products" message (req: keep it empty, never show wrong items).
+  // Collapsible Women/Men/Kids that MIRRORS the order form's 3-gender picker
+  // (CAT_TREE = single source of truth, so the filter and the picker never drift).
+  // Built from the WHOLE catalog so a selection is never silently cleared — an
+  // empty brand+category combo just shows "no products" (keep it empty, req #4/#8).
   function psBuildCatFilter(){
     const present = PS_CATALOG ? new Set(PS_CATALOG.map(p => p.cat)) : new Set();
-    let html = `<option value="">${tr('ps_allcats')}</option>`;
-    PS_CAT_GROUPS.forEach((g, gi) => {
-      const cats = g.cats.filter(c => present.has(c));
-      if(!cats.length) return;
-      html += `<optgroup label="${esc(g.dept)} · ${esc(g.sub)}">`
-        + `<option value="grp:${gi}" ${psSel.cat==='grp:'+gi?'selected':''}>▸ All ${esc(g.sub)}</option>`
-        + cats.map(c => `<option value="${esc(c)}" ${psSel.cat===c?'selected':''}>  ${esc(psLabel(c))}</option>`).join('')
-        + `</optgroup>`;
+    let html = `<button type="button" class="ps-catclear${psSel.cat===''?' on':''}" onclick="psPickCat('')">${tr('ps_allcats')}</button>`;
+    ['w','m','k'].forEach(g => {
+      const tree = CAT_TREE[g]; if(!tree) return;
+      let inner = '';
+      tree.groups.forEach(grp => {
+        const items = grp.items.filter(([k]) => !PS_HIDE_CATS.has(k) && present.has(k));
+        if(!items.length) return;
+        if(grp.h) inner += `<div class="ps-cgrp-h">${esc(grp.h)}</div>`;
+        inner += items.map(([k,lbl]) => `<button type="button" class="ps-cat-row${psSel.cat===k?' on':''}" onclick="psPickCat('${k}')">${esc(lbl)}</button>`).join('');
+      });
+      if(!inner) return;
+      const allKey = 'all:'+g;
+      const open = (psSel.cat===allKey) || (PS_CAT_GENDER[psSel.cat]===g);
+      html += `<details class="ps-cdept"${open?' open':''}>`
+        + `<summary>${esc(tree.label)}</summary>`
+        + `<button type="button" class="ps-cat-row ps-cat-all${psSel.cat===allKey?' on':''}" onclick="psPickCat('${allKey}')">${tr(PS_GENDER_WORD[g])}</button>`
+        + inner
+        + `</details>`;
     });
     document.getElementById('psCat').innerHTML = html;
   }
-  function psOnCat(){ psSel.cat = document.getElementById('psCat').value; psApply(); }
-  // True if product p is in the selected category OR category-group.
+  function psPickCat(v){ psSel.cat = v; psBuildCatFilter(); psApply(); }
+  // True if p is in the selected category, the selected gender, or nothing is selected.
   function psCatMatch(p){
     if(!psSel.cat) return true;
-    if(psSel.cat.indexOf('grp:') === 0){ const g = PS_CAT_GROUPS[+psSel.cat.slice(4)]; return !!g && g.cats.indexOf(p.cat) >= 0; }
+    if(psSel.cat.indexOf('all:') === 0) return PS_CAT_GENDER[p.cat] === psSel.cat.slice(4);
     return p.cat === psSel.cat;
   }
 
-  function psClearFilters(){ psSel = {price:null, cat:'', brands:new Set()}; psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psApply(); }
+  function psClearFilters(){
+    psSel = { prices:new Set(), cat:'', brands:new Set() };
+    const bs = document.getElementById('psBrandSearch'); if(bs) bs.value = '';
+    psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psApply();
+  }
 
-  // Three filters combine (AND) and each works independently.
+  // All three filters combine with AND; price buckets OR within themselves.
   function psApply(){
     psPage = 0;
     psFiltered = PS_CATALOG.filter(p => {
       if(psSel.brands.size && !psSel.brands.has(p.b)) return false;
       if(!psCatMatch(p)) return false;
-      if(psSel.price !== null){ const b = PS_BUCKETS[psSel.price]; if(!(p._bdt >= b.lo && p._bdt < b.hi)) return false; }
+      if(psSel.prices.size){
+        let ok = false;
+        psSel.prices.forEach(i => { const b = PS_BUCKETS[i]; if(p._bdt >= b.lo && p._bdt < b.hi) ok = true; });
+        if(!ok) return false;
+      }
       return true;
     });
     psRender();
@@ -4979,11 +5132,72 @@
       .catch(() => { if(descEl) descEl.innerHTML = tr('ps_d_nofetch'); });
   }
 
+  // ══ BROWSE BRANDS · PRODUCT-CATEGORY VIEW ════════════════════════════════
+  // A 2nd way to find brands: by WHAT they sell, not their store type. Women /
+  // Men / Kids → the same subgroups as the order form → a slide-able row of the
+  // brands that actually stock that subgroup (derived from the shared catalog, so
+  // it stays truthful and grows as the catalog grows). The 5-department "Store
+  // Types" view and the universal name search are unchanged and stay visible.
+  const BB_GENDERS = [['w','bb_women'],['m','bb_men'],['k','bb_kids']];
+  let _bbGender = 'w', _bbIndex = null, _bbExpanded = {};
+  function bbActive(){ const p = document.getElementById('bbProduct'); return !!p && p.style.display !== 'none'; }
+  function bbSwitch(which){
+    const store = which === 'store';
+    const st = document.getElementById('bbStore'), pr = document.getElementById('bbProduct');
+    if(st) st.style.display = store ? '' : 'none';
+    if(pr) pr.style.display = store ? 'none' : '';
+    document.getElementById('bbt-store').classList.toggle('on', store);
+    document.getElementById('bbt-product').classList.toggle('on', !store);
+    if(!store) bbRenderProduct();
+  }
+  function bbPickGender(g){ _bbGender = g; _bbExpanded = {}; bbRenderProduct(); }
+  function bbMore(key){ _bbExpanded[key] = true; bbRenderProduct(); }
+  // brand name → Set of "gender|groupIndex" it stocks (from the shared catalog)
+  function bbBuildIndex(){
+    const idx = {};
+    (PS_CATALOG || []).forEach(p => {
+      const g = PS_CAT_GENDER[p.cat], gi = PS_CAT_GROUPIDX[p.cat];
+      if(g == null || gi == null) return;
+      (idx[p.b] = idx[p.b] || new Set()).add(g + '|' + gi);
+    });
+    _bbIndex = idx;
+  }
+  function bbRenderProduct(){
+    const body = document.getElementById('bbProdBody');
+    const gtabs = document.getElementById('bbGtabs');
+    if(!body || !gtabs) return;
+    if(!PS_CATALOG){                          // catalog not loaded yet → load once, then redraw
+      gtabs.innerHTML = '';
+      body.innerHTML = `<div class="bb-prod-empty">${tr('bb_loading')}</div>`;
+      psOnReady(() => { if(bbActive()) bbRenderProduct(); });
+      return;
+    }
+    if(!_bbIndex) bbBuildIndex();
+    gtabs.innerHTML = BB_GENDERS.map(([g,k]) =>
+      `<button type="button" class="bb-gtab${_bbGender===g?' on':''}" onclick="bbPickGender('${g}')">${tr(k)}</button>`).join('');
+    const tree = CAT_TREE[_bbGender]; let html = '';
+    const CAP = 12;
+    (tree.groups || []).forEach((grp, gi) => {
+      const key = _bbGender + '|' + gi;
+      const brands = BRANDS.filter(b => _bbIndex[b.n] && _bbIndex[b.n].has(key));
+      if(!brands.length) return;
+      const expanded = !!_bbExpanded[key];
+      const show = expanded ? brands : brands.slice(0, CAP);
+      const chips = show.map(b =>
+        `<button type="button" class="bb-chip" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">${esc(b.n)}</button>`).join('');
+      const more = (!expanded && brands.length > CAP)
+        ? `<button type="button" class="bb-chip bb-more" onclick="bbMore('${key}')">+${brands.length - CAP} ${tr('bb_more')}</button>` : '';
+      const head = grp.h ? `<div class="bb-grp-h">${esc(grp.h)}</div>` : '';
+      html += `<div class="bb-grp">${head}<div class="bb-prow${expanded?' wrap':''}">${chips}${more}</div></div>`;
+    });
+    body.innerHTML = html || `<div class="bb-prod-empty">${tr('bb_prod_none')}</div>`;
+  }
+
   // ── BUILD STAMP ──────────────────────────────────────────────────────────
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-16n';
+  const PSB_BUILD = '2026-06-17a';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
