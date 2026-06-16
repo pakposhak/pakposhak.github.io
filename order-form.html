@@ -276,9 +276,9 @@
     .cat-tab{flex:0 0 auto;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:inherit;
       padding:11px 14px;font-size:0.82rem;font-weight:600;color:var(--txt-sec);white-space:nowrap;transition:color .15s}
     .cat-tab:hover{color:var(--txt)}
-    .cat-tab.on{color:var(--gold);border-bottom-color:var(--gold);font-weight:700}
+    .cat-tab.on{color:#137a72;border-bottom-color:#137a72;font-weight:700}
     .cat-panel{background:var(--surface);border:1px solid var(--bdr);border-top:none;border-radius:0 0 10px 10px;padding:14px;margin-bottom:14px}
-    .cat-head{font-size:0.8rem;font-weight:700;color:var(--gold);margin-bottom:10px;letter-spacing:.3px}
+    .cat-head{font-size:0.8rem;font-weight:700;color:#137a72;margin-bottom:10px;letter-spacing:.3px}
     .cat-head .cnt{color:var(--txt-muted);font-weight:600}
     .cat-grid{position:relative;overflow:hidden;transition:height .28s ease}   /* viewport for the horizontal pager */
     .cat-track{display:flex;align-items:flex-start;transition:transform .28s ease}
@@ -351,7 +351,7 @@
       .cat-bar{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;overflow:visible;border-bottom:none;margin-bottom:12px}
       .cat-tab{border:1px solid var(--gold-bdr);border-radius:12px;padding:13px 6px;font-size:0.9rem;font-weight:600;
         white-space:normal;text-align:center;line-height:1.25;background:var(--surface);color:var(--txt-sec)}
-      .cat-tab.on{background:var(--gold);color:#0A1628;border-color:var(--gold);font-weight:700}
+      .cat-tab.on{background:#137a72;color:#fff;border-color:#137a72;font-weight:700}
       .cat-tab:nth-child(1),.cat-tab:nth-child(2){grid-column:span 3}
       .cat-tab:nth-child(3),.cat-tab:nth-child(4),.cat-tab:nth-child(5){grid-column:span 2}
       .cat-tab.more-tab{grid-column:1 / -1;margin-left:0;background:var(--gold-dim);border-color:var(--gold-bdr2);color:var(--gold)}
@@ -575,6 +575,7 @@
     .ps-flabel-row .ps-flabel{margin-bottom:0;white-space:nowrap}
     .ps-bsearch{flex:1;min-width:0;padding:5px 9px;border:1.5px solid var(--bdr-med);border-radius:13px;background:var(--input-bg);color:var(--txt);font-size:0.74rem;font-family:inherit}
     /* Browse-brands sub-tabs + product-category brand browser */
+    .bb-two-ways{font-size:0.72rem;color:var(--txt-muted);font-weight:600;margin:0 0 6px 2px;letter-spacing:0.2px}
     .bb-subtabs{display:flex;gap:8px;margin-bottom:14px}
     .bb-subtab{flex:1;padding:9px 8px;background:var(--surface);border:1.5px solid var(--bdr-med);border-radius:10px;color:var(--txt-sec);font-weight:700;font-size:0.82rem;cursor:pointer;font-family:inherit}
     .bb-subtab.on{background:var(--gold);color:#12122a;border-color:var(--gold)}
@@ -590,6 +591,11 @@
     .bb-chip:hover{border-color:var(--gold);color:var(--gold)}
     .bb-chip.bb-more{background:var(--gold-dim);border-color:var(--gold-bdr);color:var(--gold);font-weight:700}
     .bb-prod-empty{font-size:0.84rem;color:var(--txt-muted);padding:18px 4px}
+    /* third-tier club dropdown beside each group heading */
+    .bb-grp-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+    .bb-grp-head .bb-grp-h{margin-bottom:0}
+    .bb-club-dd{flex:0 1 auto;max-width:62%;padding:5px 9px;border:1.5px solid var(--bdr-med);border-radius:8px;background:var(--input-bg);color:var(--txt);font-size:0.74rem;font-family:inherit;cursor:pointer}
+    .bb-prow-empty{font-size:0.78rem;color:var(--txt-muted);padding:4px 2px}
     .ps-brands{display:flex;flex-direction:column;max-height:230px;overflow-y:auto;border:1px solid var(--bdr-med);border-radius:8px;padding:4px 9px;background:var(--input-bg)}
     .ps-brand-chk{display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--txt-sec);cursor:pointer;padding:2px 0 2px 8px}
     .ps-bdept{border-bottom:1px solid var(--bdr)}
@@ -623,8 +629,9 @@
     .ps-pg-btn:disabled{opacity:0.4;cursor:default}
     .ps-empty{text-align:center;color:var(--txt-muted);padding:40px 10px;font-size:0.9rem}
     /* card "details" icon → in-page product popup */
-    .ps-info{position:absolute;top:6px;right:6px;width:29px;height:29px;border-radius:50%;background:rgba(10,22,40,0.55);color:#fff;border:none;cursor:pointer;font-size:0.95rem;display:flex;align-items:center;justify-content:center;z-index:2;line-height:1;padding:0}
-    .ps-info:hover{background:rgba(10,22,40,0.8)}
+    .ps-info{position:absolute;top:6px;right:6px;height:24px;border-radius:13px;background:rgba(10,22,40,0.62);color:#fff;border:none;cursor:pointer;font-size:0.72rem;font-weight:700;display:flex;align-items:center;gap:3px;z-index:2;line-height:1;padding:0 9px;font-family:inherit}
+    .ps-info:hover{background:rgba(10,22,40,0.85)}
+    .ps-info .ps-info-tx{font-size:0.66rem;letter-spacing:0.2px}
     .ps-detail{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.62);align-items:center;justify-content:center;padding:14px}
     .ps-detail-card{background:var(--surface);border:1px solid var(--bdr-med);border-radius:14px;max-width:560px;width:100%;max-height:92vh;overflow-y:auto;position:relative}
     .ps-detail-x{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;background:var(--raised);border:1px solid var(--bdr-med);color:var(--txt);font-size:1.05rem;cursor:pointer;z-index:3;display:flex;align-items:center;justify-content:center}
@@ -733,6 +740,7 @@
 
   <div id="tabBrands">
     <!-- Two ways to find a brand: by store type (5 departments) OR by what products they sell -->
+    <div class="bb-two-ways" data-i18n="bb_two_ways">Two ways to search brands</div>
     <div class="bb-subtabs">
       <button type="button" class="bb-subtab on" id="bbt-store" onclick="bbSwitch('store')" data-i18n="bb_store">Store Types</button>
       <button type="button" class="bb-subtab" id="bbt-product" onclick="bbSwitch('product')" data-i18n="bb_product">Product Category</button>
@@ -1640,8 +1648,10 @@
     unstitch_3pc_emb  : 1.10,   // NEW — 3pc unstitched, embroidered
     pret_3pc          : 1.04,   // 3pc pret, printed/plain
     pret_3pc_emb      : 1.25,   // NEW — 3pc pret, embroidered
-    winter_2pc        : 0.99,
-    winter_3pc        : 1.23,
+    winter_2pc_unstitch : 0.99,   // winter 2pc unstitched (karandi/khaddar)
+    winter_2pc_stitch   : 1.19,   // stitched = unstitched + 0.20 (stitching/lining)
+    winter_3pc_unstitch : 1.23,
+    winter_3pc_stitch   : 1.43,
     formal_emb_2pc    : 1.18,
     formal_emb_3pc    : 1.45,
     heavy_formal_3pc  : 1.73,
@@ -1683,8 +1693,10 @@
     unstitch_3pc_emb  : '3pc Unstitched – Embroidered',
     pret_3pc          : '3pc Pret – Printed/Plain',
     pret_3pc_emb      : '3pc Pret – Embroidered',
-    winter_2pc        : 'Winter 2pc (karandi/khaddar)',
-    winter_3pc        : 'Winter 3pc (karandi/khaddar)',
+    winter_2pc_unstitch : 'Winter 2pc – Unstitched (karandi/khaddar)',
+    winter_2pc_stitch   : 'Winter 2pc – Stitched / Pret',
+    winter_3pc_unstitch : 'Winter 3pc – Unstitched (karandi/khaddar)',
+    winter_3pc_stitch   : 'Winter 3pc – Stitched / Pret',
     formal_emb_2pc    : 'Formal Embroidered 2pc',
     formal_emb_3pc    : 'Formal Embroidered 3pc',
     heavy_formal_3pc  : 'Heavy Formal 3pc (organza/silk)',
@@ -1764,7 +1776,7 @@
   }
 
   // ── UNSTITCHED categories: no size field required ────────────────────────
-  const UNSTITCHED_CATS = new Set(['lawn_3pc_unstitch', 'unstitch_3pc_emb', 'saree', 'dupatta_only', 'shawl', 'accessories', 'mens_unstitched']);
+  const UNSTITCHED_CATS = new Set(['lawn_3pc_unstitch', 'unstitch_3pc_emb', 'winter_2pc_unstitch', 'winter_3pc_unstitch', 'saree', 'dupatta_only', 'shawl', 'accessories', 'mens_unstitched']);
   const MENS_CATS = new Set(['mens_shirt','mens_trouser','mens_jeans','mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_suit','mens_sherwani','mens_unstitched']);
   const KIDS_CATS = new Set(['kids_eastern','kids_western']);
 
@@ -1791,8 +1803,10 @@
         ['loungewear','Loungewear / Nightwear'],
       ]},
       { h:'Winter', items:[
-        ['winter_2pc','Winter 2pc (karandi/khaddar/linen)'],
-        ['winter_3pc','Winter 3pc (karandi/khaddar)'],
+        ['winter_2pc_unstitch','Winter 2pc – Unstitched (karandi/khaddar)'],
+        ['winter_2pc_stitch','Winter 2pc – Stitched / Pret'],
+        ['winter_3pc_unstitch','Winter 3pc – Unstitched'],
+        ['winter_3pc_stitch','Winter 3pc – Stitched / Pret'],
       ]},
       { h:'Formal / Festive / Bridal', items:[
         ['formal_emb_2pc','Formal Embroidered 2pc'],
@@ -1874,8 +1888,7 @@
     // Formal / party embroidered (heavier tier) BEFORE everyday embroidered.
     [/heavy[\s-]?formal|organza|tissue|jamawar|heavy[\s-]?embroi/i, 'heavy_formal_3pc'],
     [/formal|chiffon|net[\s-]?embroi|party[\s-]?wear/i,        'formal_emb_3pc'],
-    [/winter|khaddar|karandi/i,                                'winter_3pc'],
-    [/linen/i,                                                 'winter_2pc'],
+    [/winter|khaddar|karandi/i,                                'winter_3pc_unstitch'],
     [/shawl|pashmina|dhussa|loi|wrap/i,                         'shawl'],
     [/kaftan|kaftaan|caftan/i,                                 'kaftan'],
     [/dupatta|stole|scarf|scarves|foulard/i,                   'dupatta_only'],
@@ -1919,6 +1932,14 @@
     if(/lehenga|gharara|sharara/.test(s)) return 'lehenga';
     if(/abaya|jilbab|burqa|niqab/.test(s)) return 'abaya';
     if(/bridal|nikah|barat|walima/.test(s)) return 'bridal';
+    // WINTER (khaddar/karandi/velvet/wool) — split by piece count AND stitched vs
+    // unstitched (stitched weighs ~200g more). Default to 3pc unstitched.
+    if(/\bwinter\b|khaddar|khadar|karandi|\bwool|woolen|velvet|marina|corduroy/.test(both)){
+      const two = /\b2[\s-]?(pc|piece|pcs)\b/.test(s);
+      const st = stitched && !unstitch;
+      if(two) return st ? 'winter_2pc_stitch' : 'winter_2pc_unstitch';
+      return st ? 'winter_3pc_stitch' : 'winter_3pc_unstitch';
+    }
     if(unstitch) return emb ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch';
     if(/heavy[\s-]?formal|organza|tissue|jamawar/.test(s)) return 'heavy_formal_3pc';
     if(/\bformal\b|chiffon|party[\s-]?wear/.test(s)) return 'formal_emb_3pc';
@@ -1975,6 +1996,10 @@
   // Normalize variant size strings → our dropdown values
   function normSizeFull(raw){
     const s = (raw||'').trim().toUpperCase().replace(/[-\s]+/g,' ');
+    // Piece-count / type / garment-part values are NOT garment sizes. Unstitched
+    // suits list "1/2/3 Piece", "Unstitched", "Suit" inside a "Size" option —
+    // reject them so an unstitched product is never sized as "3 Piece" (req #2).
+    if(/PIECE|\bPCS?\b|UNSTITCH|\bSUIT\b|FABRIC|\bSHIRT\b|TROUSER|DUPATTA|SHALWAR|KAMEEZ/.test(s)) return null;
     if(/^(XS|X S|X SMALL|EXTRA SMALL)$/.test(s))     return 'XS';
     if(/^(S|SMALL)$/.test(s))            return 'S';
     if(/^(M|MEDIUM)$/.test(s))           return 'M';
@@ -1983,8 +2008,9 @@
     if(/^(XXL|XX L|2XL|XX LARGE|DOUBLE XL)$/.test(s)) return 'XXL';
     if(/^(FREE SIZE|FREESIZE|ONE SIZE|OS)$/.test(s)) return 'Free Size';
     if(/^(XXXL|3XL|XXX L)$/.test(s))     return '3XL';
-    // Numeric garment sizes (Generation, Khaadi etc. use 8/10/12/14/16…)
-    if(/^\d{1,2}$/.test(s))             return s;
+    // Numeric garment sizes start at ~6 (8/10/12…46, waist 28-44). A bare 1–5 is
+    // almost always a piece-count, not a size, so it is rejected.
+    if(/^\d{1,2}$/.test(s) && +s >= 6) return s;
     // Trouser/jeans waist sizes: "30", "32", "34" (already caught above as 2-digit)
     // Waist × length: "28x30", "30x32", "32x34" — keep as-is
     if(/^\d{2} ?[Xx×] ?\d{2}$/.test(s)) return s.replace(/ /g,'').toUpperCase();
@@ -2354,12 +2380,20 @@
       const colourVals  = colourKey ? new Set(avail.map(v => (v[colourKey]||'').trim()).filter(Boolean)) : new Set();
       const colourActive = !!colourKey && colourVals.size >= 2;
       const keyOfIdx = i => ['option1','option2','option3'][i];
-      const pickDims = [];
-      if(colourActive) pickDims.push({ key: colourKey, isSize: false, name: normOpts[colourIdx].name });
-      sizeIdxAll.forEach(i => pickDims.push({ key: keyOfIdx(i), isSize: true, name: normOpts[i].name }));
-      const combined = pickDims.length >= 2;   // multiple dims ⇒ "A / B" chips
-      // Real garment sizes present? Colour alone must NOT flip unstitched→pret.
+      // Real garment sizes present? (normSizeFull now rejects piece-counts/types.)
+      // Colour alone must NOT flip unstitched→pret.
       const realSizeCount = sizeKey ? new Set(avail.map(v => normSizeFull(v[sizeKey])).filter(Boolean)).size : 0;
+      // UNSTITCHED never needs a size pick. If the resolved category is unstitched
+      // and there are NO real garment sizes (only piece-count/type options like
+      // "3 Piece" / "Unstitched"), suppress ALL picks so the buyer is asked for
+      // quantity only and is never sized as "3 Piece" (req #2).
+      const suppressPicks = catEl && UNSTITCHED_CATS.has(catEl.value) && realSizeCount === 0;
+      const pickDims = [];
+      if(!suppressPicks){
+        if(colourActive) pickDims.push({ key: colourKey, isSize: false, name: normOpts[colourIdx].name });
+        sizeIdxAll.forEach(i => pickDims.push({ key: keyOfIdx(i), isSize: true, name: normOpts[i].name }));
+      }
+      const combined = pickDims.length >= 2;   // multiple dims ⇒ "A / B" chips
 
       // ── PRICE ─────────────────────────────────────────────────────────────
       const refVar = avail[0] || vars[0];
@@ -3294,12 +3328,12 @@
       ps_price:'Price (৳ delivered)', ps_category:'Product Category', ps_brands:'Brands', ps_clear:'Clear filters',
       ps_allcats:'All categories', ps_loading:'Loading products…', ps_loadfail:'Could not load products — please try again.',
       ps_results:'products', ps_add:'Add', ps_prev:'Prev', ps_next:'Next', ps_page:'Page',
-      ps_d_loading:'Loading more details…', ps_d_open:'Open full page', ps_d_nofetch:'See all photos &amp; details on the brand page →', ps_d_nodesc:'No extra description provided.',
+      ps_enlarge:'Enlarge', ps_d_loading:'Loading more details…', ps_d_open:'Open full page', ps_d_nofetch:'See all photos &amp; details on the brand page →', ps_d_nodesc:'No extra description provided.',
       ps_empty:'No products match these filters — try widening them.',
       ps_partial:'Not every brand &amp; product is listed here yet —', ps_partial_link:'browse all via Browse by brands →',
       ps_bsearch_ph:'Search 50+ brands…', ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids',
       bb_store:'Store Types', bb_product:'Product Category', bb_women:'👗 Women', bb_men:'👔 Men', bb_kids:'🧸 Kids',
-      bb_more:'more', bb_less:'less', bb_prod_sub:'See which brands make what — tap a brand to start.', bb_loading:'Loading brands…', bb_prod_none:'No catalogued brands here yet — use the search below.',
+      bb_more:'more', bb_less:'less', bb_all:'All', bb_two_ways:'Two ways to search brands', bb_prod_sub:'See which brands make what — tap a brand to start.', bb_loading:'Loading brands…', bb_prod_none:'No catalogued brands here yet — use the search below.',
       js_soldout_lead:'Some items appear SOLD OUT and can’t be saved — please remove them or pick another article:',
       js_soldout_all:'sold out on the brand site', js_soldout_size:'this size is sold out',
       more_tab:'More', more_title:'More Brands', more_sub:'All brands in this category — tap any to start, same as the tabs.', more_back:'Back',
@@ -3356,12 +3390,12 @@
       ps_price:'দাম (৳ ডেলিভারিসহ)', ps_category:'পণ্যের ক্যাটাগরি', ps_brands:'ব্র্যান্ড', ps_clear:'ফিল্টার মুছুন',
       ps_allcats:'সব ক্যাটাগরি', ps_loading:'পণ্য লোড হচ্ছে…', ps_loadfail:'পণ্য লোড করা যায়নি — আবার চেষ্টা করুন।',
       ps_results:'পণ্য', ps_add:'যোগ করুন', ps_prev:'আগের', ps_next:'পরের', ps_page:'পৃষ্ঠা',
-      ps_d_loading:'আরও বিবরণ লোড হচ্ছে…', ps_d_open:'পুরো পেজ খুলুন', ps_d_nofetch:'সব ছবি ও বিবরণ ব্র্যান্ডের পেজে দেখুন →', ps_d_nodesc:'অতিরিক্ত বিবরণ নেই।',
+      ps_enlarge:'বড় ছবি', ps_d_loading:'আরও বিবরণ লোড হচ্ছে…', ps_d_open:'পুরো পেজ খুলুন', ps_d_nofetch:'সব ছবি ও বিবরণ ব্র্যান্ডের পেজে দেখুন →', ps_d_nodesc:'অতিরিক্ত বিবরণ নেই।',
       ps_empty:'এই ফিল্টারে কোনো পণ্য নেই — ফিল্টার একটু কমান।',
       ps_partial:'সব ব্র্যান্ড ও পণ্য এখানে এখনো নেই —', ps_partial_link:'ব্র্যান্ড দেখুন থেকে সব ব্রাউজ করুন →',
       ps_bsearch_ph:'৫০+ ব্র্যান্ড খুঁজুন…', ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের',
       bb_store:'স্টোরের ধরন', bb_product:'পণ্যের ক্যাটাগরি', bb_women:'👗 মেয়েদের', bb_men:'👔 ছেলেদের', bb_kids:'🧸 বাচ্চাদের',
-      bb_more:'আরও', bb_less:'কম', bb_prod_sub:'কোন ব্র্যান্ড কী বানায় দেখুন — শুরু করতে ব্র্যান্ডে ট্যাপ করুন।', bb_loading:'ব্র্যান্ড লোড হচ্ছে…', bb_prod_none:'এখানে এখনো ক্যাটালগ করা ব্র্যান্ড নেই — নিচে খুঁজুন।',
+      bb_more:'আরও', bb_less:'কম', bb_all:'সব', bb_two_ways:'ব্র্যান্ড খোঁজার দুটি উপায়', bb_prod_sub:'কোন ব্র্যান্ড কী বানায় দেখুন — শুরু করতে ব্র্যান্ডে ট্যাপ করুন।', bb_loading:'ব্র্যান্ড লোড হচ্ছে…', bb_prod_none:'এখানে এখনো ক্যাটালগ করা ব্র্যান্ড নেই — নিচে খুঁজুন।',
       js_soldout_lead:'কিছু পণ্য স্টক আউট মনে হচ্ছে এবং সেভ করা যাবে না — অনুগ্রহ করে সরিয়ে ফেলুন বা অন্য পণ্য বেছে নিন:',
       js_soldout_all:'ব্র্যান্ড সাইটে স্টক আউট', js_soldout_size:'এই সাইজ স্টক আউট',
       more_tab:'আরও', more_title:'আরও ব্র্যান্ড', more_sub:'এই ক্যাটাগরির সব ব্র্যান্ড — উপরের ট্যাবের মতোই, শুরু করতে যেকোনোটিতে ট্যাপ করুন।', more_back:'পেছনে',
@@ -3627,8 +3661,8 @@
     if(/heavy.formal|organza|silk/.test(s))         return 'heavy_formal_3pc';
     if(/formal.*(embroi|chiffon|net)/.test(s) && /3/.test(s)) return 'formal_emb_3pc';
     if(/formal.*(embroi|chiffon|net)/.test(s))     return 'formal_emb_2pc';
-    if(/winter.*3|3.*winter/.test(s))               return 'winter_3pc';
-    if(/winter.*2|2.*winter|khaddar|karandi|linen/.test(s)) return 'winter_2pc';
+    if(/winter.*3|3.*winter/.test(s))               return 'winter_3pc_unstitch';
+    if(/winter.*2|2.*winter|khaddar|karandi/.test(s)) return 'winter_2pc_unstitch';
     if(/3.piece|3pc|three.piece|suit/.test(s) && /pret|stitch/.test(s)) return 'pret_3pc';
     if(/3.piece|3pc|three.piece|lawn.*3/.test(s))  return 'lawn_3pc_unstitch';
     if(/kurti|kurta|shirt.*trouser|co.?ord/.test(s) && /trouser|pant/.test(s)) return 'shirt_trouser_2pc';
@@ -3949,7 +3983,8 @@
     shirt_trouser_2pc:'2pc Co-ord', pret_2pc_emb:'2pc Pret Emb',
     lawn_3pc_unstitch:'3pc Unstitched', unstitch_3pc_emb:'3pc Unstitched Emb',
     pret_3pc:'3pc Pret', pret_3pc_emb:'3pc Pret Emb',
-    winter_2pc:'Winter 2pc', winter_3pc:'Winter 3pc',
+    winter_2pc_unstitch:'Winter 2pc Unstitched', winter_2pc_stitch:'Winter 2pc Stitched',
+    winter_3pc_unstitch:'Winter 3pc Unstitched', winter_3pc_stitch:'Winter 3pc Stitched',
     formal_emb_2pc:'Formal 2pc', formal_emb_3pc:'Formal 3pc',
     heavy_formal_3pc:'Heavy Formal 3pc', bridal:'Bridal',
     saree:'Saree', lehenga:'Lehenga/Gharara', coord_western:'Co-ord/Western',
@@ -4118,13 +4153,13 @@
     updatePasteFab();
   }
 
-  // Floating Paste button: only useful while adding products (step 1) — and NOT
-  // while the Browse-Products grid is open (you tap cards there, not paste).
+  // Floating Paste button: useful on step 1 INCLUDING the Browse-Products grid —
+  // buyers open a product in Chrome to inspect it, copy the link, then come back
+  // and paste here (req #7). Shown on both browse tabs.
   function updatePasteFab(){
     const fab = document.getElementById('pasteFab');
     if(!fab) return;
-    const onProducts = (typeof psOnProductsTab === 'function') && psOnProductsTab();
-    fab.classList.toggle('show', currentStep === 1 && !onProducts);
+    fab.classList.toggle('show', currentStep === 1);
   }
   // When the user switches BACK to PakiPoshak (e.g. after copying a link in
   // Chrome), pulse the Paste button so it's obvious where to tap next.
@@ -4881,7 +4916,8 @@
     document.getElementById('bt-brands').classList.toggle('on', brands);
     document.getElementById('bt-products').classList.toggle('on', !brands);
     if(!brands) psEnsureLoaded();
-    updatePasteFab();   // the floating Paste tab is not useful on the products grid
+    updatePasteFab();
+    try{ localStorage.setItem('psb_browse', which); }catch(e){}   // remember tab so we return to it (req #7)
   }
   // True while the Browse-Products grid is the visible tab.
   function psOnProductsTab(){ const tp = document.getElementById('tabProducts'); return !!tp && tp.style.display !== 'none'; }
@@ -4914,7 +4950,9 @@
     fetch(cbUrl, { cache:'no-store' })
       .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
       .then(j => {
-        PS_CATALOG = (j.products || []).filter(p => p && p.u && p.pkr && p.img && !PS_HIDE_CATS.has(p.cat));
+        // Keep the FULL catalog (incl. accessories) — the Browse-Brands product
+        // view needs accessory brands; the Products grid hides them in psApply.
+        PS_CATALOG = (j.products || []).filter(p => p && p.u && p.pkr && p.img);
         PS_CATALOG.forEach(p => { p._bdt = estLandedBdt(p.pkr, p.cat); });   // landed ৳ once — filter + card both use it
         // Default order: women's everyday first (men/kids to the back), then
         // round-robin by brand (_bi = nth item of its brand) so the first page is
@@ -5015,6 +5053,7 @@
   function psApply(){
     psPage = 0;
     psFiltered = PS_CATALOG.filter(p => {
+      if(PS_HIDE_CATS.has(p.cat)) return false;   // accessories/jewellery not shown on the Products grid
       if(psSel.brands.size && !psSel.brands.has(p.b)) return false;
       if(!psCatMatch(p)) return false;
       if(psSel.prices.size){
@@ -5040,7 +5079,7 @@
     const bdt = (p._bdt != null) ? p._bdt : estLandedBdt(p.pkr, p.cat);
     const sz = (p.sz || []).slice(0,5).map(s => `<span class="ps-sz">${esc(s)}</span>`).join('');
     return `<div class="ps-card">
-      <div class="ps-img"><button type="button" class="ps-info" onclick="psDetail(${idx})" aria-label="View product details" title="View details">ⓘ</button><img loading="lazy" src="${esc(p.img)}" alt="${esc(p.t)}" onerror="this.parentElement.classList.add('ps-img-fail')"></div>
+      <div class="ps-img"><button type="button" class="ps-info" onclick="psDetail(${idx})" aria-label="Enlarge pictures and details" title="Enlarge pics &amp; details">🔍<span class="ps-info-tx">${tr('ps_enlarge')}</span></button><img loading="lazy" src="${esc(p.img)}" alt="${esc(p.t)}" onerror="this.parentElement.classList.add('ps-img-fail')"></div>
       <div class="ps-cbody">
         <div class="ps-brand">${esc(p.b)}</div>
         <div class="ps-title">${esc(p.t)}</div>
@@ -5139,7 +5178,62 @@
   // it stays truthful and grows as the catalog grows). The 5-department "Store
   // Types" view and the universal name search are unchanged and stay visible.
   const BB_GENDERS = [['w','bb_women'],['m','bb_men'],['k','bb_kids']];
-  let _bbGender = 'w', _bbIndex = null, _bbExpanded = {};
+  let _bbGender = 'w', _bbIndex = null, _bbExpanded = {}, _bbClub = {};
+  // Third-tier "clubs": each second-tier group has a dropdown of clubbed
+  // categories. [label, [catKeys]] — a club lists every brand stocking ANY of
+  // its categories (so e.g. "Bridal" folds in heavy-formal without naming it).
+  const BB_CLUBS = {
+    w: [
+      { h:'Everyday / Lawn', clubs:[
+        ['1pc Shirts / Kaftans', ['kurti_1pc','kaftan']],
+        ['1pc Trousers / Pants', ['womens_trouser']],
+        ['2/3pc Pret (Stitched)', ['pret_3pc','pret_3pc_emb','pret_2pc_emb','shirt_dupatta_2pc','shirt_trouser_2pc']],
+        ['2/3pc Unstitched', ['lawn_3pc_unstitch','unstitch_3pc_emb']],
+        ['Western (co-ord / maxi / lounge)', ['coord_western','maxi_dress','loungewear']],
+      ]},
+      { h:'Winter', clubs:[
+        ['Stitched / Pret (2 & 3pc)', ['winter_2pc_stitch','winter_3pc_stitch']],
+        ['Unstitched (2 & 3pc)', ['winter_2pc_unstitch','winter_3pc_unstitch']],
+        ['Shawls', ['shawl']],
+      ]},
+      { h:'Formal / Festive / Bridal', clubs:[
+        ['Bridal / Velvet / Full Embroidery', ['bridal','heavy_formal_3pc']],
+        ['Formal Embroidered', ['formal_emb_2pc','formal_emb_3pc']],
+        ['Saree', ['saree']],
+        ['Lehenga / Gharara / Sharara', ['lehenga']],
+      ]},
+      { h:'Modest', clubs:[
+        ['Abaya', ['abaya']],
+        ['Kaftan', ['kaftan']],
+      ]},
+      { h:'Separates & Accessories', clubs:[
+        ['Dupatta / Stole', ['dupatta_only']],
+        ['Footwear', ['footwear']],
+        ['Accessories / Jewellery', ['accessories']],
+      ]},
+    ],
+    m: [
+      { h:'Western / Casual', clubs:[
+        ['Shirt / Polo / T-Shirt', ['mens_shirt']],
+        ['Trouser / Chinos', ['mens_trouser']],
+        ['Jeans / Denim', ['mens_jeans']],
+      ]},
+      { h:'Traditional / Formal', clubs:[
+        ['Kurta / Kameez', ['mens_kurta']],
+        ['Shalwar Kameez', ['mens_shalwar_kameez']],
+        ['Waistcoat', ['mens_waistcoat']],
+        ['Suit / Pant-Coat', ['mens_suit']],
+        ['Sherwani / Prince Coat', ['mens_sherwani']],
+        ['Unstitched Fabric', ['mens_unstitched']],
+      ]},
+    ],
+    k: [
+      { h:'Kids', clubs:[
+        ['Eastern (kurta / 2pc)', ['kids_eastern']],
+        ['Western (tee / jeans / frock)', ['kids_western']],
+      ]},
+    ],
+  };
   function bbActive(){ const p = document.getElementById('bbProduct'); return !!p && p.style.display !== 'none'; }
   function bbSwitch(which){
     const store = which === 'store';
@@ -5150,23 +5244,21 @@
     document.getElementById('bbt-product').classList.toggle('on', !store);
     if(!store) bbRenderProduct();
   }
-  function bbPickGender(g){ _bbGender = g; _bbExpanded = {}; bbRenderProduct(); }
-  function bbMore(key){ _bbExpanded[key] = true; bbRenderProduct(); }
-  // brand name → Set of "gender|groupIndex" it stocks (from the shared catalog)
+  function bbPickGender(g){ _bbGender = g; _bbExpanded = {}; _bbClub = {}; bbRenderProduct(); }
+  function bbPickClub(g, gi, v){ _bbClub[g+'|'+gi] = (v === '') ? null : +v; _bbExpanded[g+'|'+gi] = false; bbRenderProduct(); }
+  function bbMore(g, gi){ _bbExpanded[g+'|'+gi] = true; bbRenderProduct(); }
+  // brand name -> Set of category keys it stocks (from the shared catalog).
   function bbBuildIndex(){
     const idx = {};
-    (PS_CATALOG || []).forEach(p => {
-      const g = PS_CAT_GENDER[p.cat], gi = PS_CAT_GROUPIDX[p.cat];
-      if(g == null || gi == null) return;
-      (idx[p.b] = idx[p.b] || new Set()).add(g + '|' + gi);
-    });
+    (PS_CATALOG || []).forEach(p => { (idx[p.b] = idx[p.b] || new Set()).add(p.cat); });
     _bbIndex = idx;
   }
+  function bbBrandsFor(cats){ return BRANDS.filter(b => { const s = _bbIndex[b.n]; return s && cats.some(c => s.has(c)); }); }
   function bbRenderProduct(){
     const body = document.getElementById('bbProdBody');
     const gtabs = document.getElementById('bbGtabs');
     if(!body || !gtabs) return;
-    if(!PS_CATALOG){                          // catalog not loaded yet → load once, then redraw
+    if(!PS_CATALOG){
       gtabs.innerHTML = '';
       body.innerHTML = `<div class="bb-prod-empty">${tr('bb_loading')}</div>`;
       psOnReady(() => { if(bbActive()) bbRenderProduct(); });
@@ -5175,29 +5267,43 @@
     if(!_bbIndex) bbBuildIndex();
     gtabs.innerHTML = BB_GENDERS.map(([g,k]) =>
       `<button type="button" class="bb-gtab${_bbGender===g?' on':''}" onclick="bbPickGender('${g}')">${tr(k)}</button>`).join('');
-    const tree = CAT_TREE[_bbGender]; let html = '';
+    const groups = BB_CLUBS[_bbGender] || [];
     const CAP = 12;
-    (tree.groups || []).forEach((grp, gi) => {
+    let html = '';
+    groups.forEach((grp, gi) => {
       const key = _bbGender + '|' + gi;
-      const brands = BRANDS.filter(b => _bbIndex[b.n] && _bbIndex[b.n].has(key));
-      if(!brands.length) return;
+      // only offer clubs that actually have brands; "All" = union of the group
+      const liveClubs = grp.clubs.map((c, ci) => ({ ci, label: c[0], cats: c[1], n: bbBrandsFor(c[1]).length })).filter(c => c.n > 0);
+      if(!liveClubs.length) return;
+      const sel = _bbClub[key];
+      const cats = (sel != null && grp.clubs[sel]) ? grp.clubs[sel][1] : grp.clubs.reduce((a,c) => a.concat(c[1]), []);
+      const brands = bbBrandsFor(cats);
       const expanded = !!_bbExpanded[key];
       const show = expanded ? brands : brands.slice(0, CAP);
       const chips = show.map(b =>
         `<button type="button" class="bb-chip" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">${esc(b.n)}</button>`).join('');
       const more = (!expanded && brands.length > CAP)
-        ? `<button type="button" class="bb-chip bb-more" onclick="bbMore('${key}')">+${brands.length - CAP} ${tr('bb_more')}</button>` : '';
-      const head = grp.h ? `<div class="bb-grp-h">${esc(grp.h)}</div>` : '';
-      html += `<div class="bb-grp">${head}<div class="bb-prow${expanded?' wrap':''}">${chips}${more}</div></div>`;
+        ? `<button type="button" class="bb-chip bb-more" onclick="bbMore('${_bbGender}',${gi})">+${brands.length - CAP} ${tr('bb_more')}</button>` : '';
+      const opts = liveClubs.map(c => `<option value="${c.ci}" ${sel == c.ci ? 'selected' : ''}>${esc(c.label)} (${c.n})</option>`).join('');
+      html += `<div class="bb-grp">`
+        + `<div class="bb-grp-head"><span class="bb-grp-h">${esc(grp.h)}</span>`
+        +   `<select class="bb-club-dd" onchange="bbPickClub('${_bbGender}',${gi},this.value)"><option value="">${tr('bb_all')}</option>${opts}</select>`
+        + `</div>`
+        + `<div class="bb-prow${expanded ? ' wrap' : ''}">${chips || '<span class="bb-prow-empty">'+tr('bb_prod_none')+'</span>'}${more}</div>`
+        + `</div>`;
     });
     body.innerHTML = html || `<div class="bb-prod-empty">${tr('bb_prod_none')}</div>`;
   }
+
+  // Remember the last-used browse tab so returning from Chrome reopens the SAME
+  // page (Browse Products) instead of resetting to Browse Brands (req #7).
+  try{ if(localStorage.getItem('psb_browse') === 'products') switchBrowse('products'); }catch(e){}
 
   // ── BUILD STAMP ──────────────────────────────────────────────────────────
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-17a';
+  const PSB_BUILD = '2026-06-17b';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');

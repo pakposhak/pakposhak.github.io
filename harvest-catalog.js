@@ -87,6 +87,15 @@ function mapCatWomen(s, tags){
   if(/lehenga|gharara|sharara/.test(s)) return 'lehenga';
   if(/abaya|jilbab|burqa|niqab/.test(s)) return 'abaya';
   if(/bridal|nikah|barat|walima/.test(s)) return 'bridal';
+  // WINTER (khaddar/karandi/velvet/wool) — split by piece count AND stitched vs
+  // unstitched (stitched ~+200g). Default 3pc unstitched. MUST mirror the form's
+  // classifyWomenCat so a browsed card and the carted line agree.
+  if(/\bwinter\b|khaddar|khadar|karandi|\bwool|woolen|velvet|marina|corduroy/.test(both)){
+    const two = /\b2[\s-]?(pc|piece|pcs)\b/.test(s);
+    const st = stitched && !unstitch;
+    if(two) return st ? 'winter_2pc_stitch' : 'winter_2pc_unstitch';
+    return st ? 'winter_3pc_stitch' : 'winter_3pc_unstitch';
+  }
   // 3) unstitched (explicit signal, and not a stitched/pret item)
   if(unstitch) return emb ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch';
   // 4) formal / festive-wear tiers
