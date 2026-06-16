@@ -2014,12 +2014,25 @@
       // ── CATEGORY (gender-aware) ───────────────────────────────────────────
       const gender = detectGender(url, product);
       const ptStr  = product.product_type || product.type || '';
-      const fetchedCat = gender === 'men'
+      let fetchedCat = gender === 'men'
         ? (mapPtToCatMen(ptStr) || mapPtToCatMen(product.title || '') || 'mens_shalwar_kameez')
         // Women/kids: when product_type carries no garment info ("Clothing",
         // "Summer 2026", "Luxury"…) the TITLE usually does — survey showed
         // 339 such vague types across brands.
         : (mapPtToCat(ptStr) || mapPtToCat(product.title || ''));
+      // Unstitched is most reliably signalled by the brand's TAGS ("unstitched",
+      // "uns 3pc", "emb-uns"…). Several women's product_types read as stitched —
+      // e.g. Nishat "Pack Suit" → pret_3pc — so when the tags say unstitched but
+      // our guess isn't, trust the tag. Self-correcting: if real sizes turn up,
+      // the sizes-found⇒stitched flip below reverts it.
+      if(gender !== 'men'){
+        const tagsRaw = product.tags;
+        const tagStr = (Array.isArray(tagsRaw) ? tagsRaw.join(' ') : String(tagsRaw || '')).toLowerCase();
+        if((/\bunstitch/.test(tagStr) || /\buns\b/.test(tagStr)) && !UNSTITCHED_CATS.has(fetchedCat)){
+          const embU = /embroid|\bemb\b|chikankari|zari|schiffli|adda/.test(tagStr + ' ' + (product.title || '').toLowerCase());
+          fetchedCat = embU ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch';
+        }
+      }
       const catEl = document.getElementById(`dc_cat_${id}`);
       // Overwrite a wrong women's auto-guess if this is clearly a men's product
       const womensGuess = catEl && catEl.value && !MENS_CATS.has(catEl.value);
@@ -2270,11 +2283,6 @@
             ${pkBadge}
           </div>
         </div>
-        <button onclick="duplicateDraft(${id})" title="Add a second item from this same page"
-          style="background:none;border:1.5px solid var(--gold);color:var(--gold);border-radius:14px;
-                 padding:3px 11px;font-size:0.72rem;font-weight:700;cursor:pointer;margin-right:6px">
-          + 2nd item
-        </button>
         <button class="draft-remove" onclick="removeDraft(${id})" title="Remove this URL">✕</button>
       </div>
       <div id="dc_fetch_${id}" style="display:none;font-size:0.72rem;font-weight:600;padding:5px 10px;background:var(--surface);border-radius:5px;margin-top:6px"></div>
@@ -2391,21 +2399,6 @@
       showTopUrlInput(); // show top input again when all cards gone
     }
     checkAddUrlLock();
-  }
-
-  function duplicateDraft(srcId){
-    // Create a fresh card for the same URL so the user can fill a 2nd item
-    // (e.g. matching pants from the same Khaadi page)
-    const srcEl = document.getElementById(`dc_${srcId}`);
-    if(!srcEl) return;
-    const url = srcEl.dataset.url;
-    if(!url) return;
-    const newId = createDraft(url);
-    // Scroll the new card into view
-    setTimeout(() => {
-      const newEl = document.getElementById(`dc_${newId}`);
-      if(newEl) newEl.scrollIntoView({ behavior:'smooth', block:'nearest' });
-    }, 100);
   }
 
   // ── 3-DROPDOWN CATEGORY PICKER ───────────────────────────────────────────
@@ -3195,7 +3188,14 @@
   }
 
   function detectCategory(url){
-    const s = (url + ' ' + decodeURIComponent(url)).toLowerCase();
+    // Match ONLY the path + query, never the hostname — several brand domains
+    // contain garment words (nishatLINEN → "linen", sobianazir.NET …) that
+    // would otherwise false-match a category from the brand NAME, not the item.
+    let p = url;
+    try{ const u = new URL(url); p = u.pathname + ' ' + u.search; }
+    catch(e){ p = String(url).replace(/^https?:\/\/[^/]+/i, ''); }
+    let dec = p; try{ dec = decodeURIComponent(p); }catch(e){}
+    const s = (p + ' ' + dec).toLowerCase();
     // ── Men's first (so a men's shalwar kameez isn't read as women's 3pc) ──
     if(detectGender(url, null) === 'men'){
       if(/sherwani|prince.?coat/.test(s))           return 'mens_sherwani';
@@ -4373,6 +4373,7 @@
       ok('Gender: Maria B → women', detectGender('https://mariab.pk/products/x',null)==='women');
       ok('Category: kaftan auto-detect', detectCategory('https://silayipret.com/products/x-summer-kaftan')==='kaftan');
       ok("Category: men's shalwar kameez", detectCategory('https://thecambridgeshop.com/collections/designer-shalwar-kameez/products/x')==='mens_shalwar_kameez');
+      ok('Category: brand NAME not read as fabric (nishatLINEN ≠ linen/winter)', detectCategory('https://nishatlinen.com/products/42602009')==='');
       ok('Size NOT falsely read from handle "s26…"', detectSizeFromUrl('https://x.com/products/s26b4569')==='');
       let admErr=''; try{ buildWeightEditor(); }catch(e){ admErr=e.message; }
       ok('Admin weight editor builds', !admErr, admErr);
@@ -4406,7 +4407,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-16c';
+  const PSB_BUILD = '2026-06-16d';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
