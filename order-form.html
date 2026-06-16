@@ -3014,6 +3014,7 @@
       s_footer2:'Save your Order ID above to track your order status anytime.', s_another:'← Place Another Order',
       js_paste_first:'Please paste a product URL first.',
       js_invalid_url:"That doesn't look like a valid URL — please copy the full link from the brand's website.",
+      js_not_brand:'❌ This is not a correct product link — please copy a product URL from a supported brand below.',
       js_fill_required:'Please fill in all required fields (highlighted in red) for each item.',
       js_add_item_first:'Please add at least one item to your order first.',
       js_details_required:'Please fill in all required fields (Name, WhatsApp number, and Delivery Address).',
@@ -3063,6 +3064,7 @@
       s_footer2:'যেকোনো সময় অর্ডারের অবস্থা জানতে উপরের অর্ডার আইডি সেভ করে রাখুন।', s_another:'← আরেকটি অর্ডার করুন',
       js_paste_first:'অনুগ্রহ করে আগে একটি প্রোডাক্ট লিংক পেস্ট করুন।',
       js_invalid_url:'এটি সঠিক লিংক মনে হচ্ছে না — অনুগ্রহ করে ব্র্যান্ডের ওয়েবসাইট থেকে পুরো লিংক কপি করুন।',
+      js_not_brand:'❌ এটি সঠিক প্রোডাক্ট লিংক নয় — অনুগ্রহ করে নিচের কোনো সাপোর্টেড ব্র্যান্ড থেকে প্রোডাক্ট লিংক কপি করুন।',
       js_fill_required:'প্রতিটি পণ্যের সব প্রয়োজনীয় ঘর (লাল চিহ্নিত) পূরণ করুন।',
       js_add_item_first:'অনুগ্রহ করে আগে অন্তত একটি পণ্য অর্ডারে যোগ করুন।',
       js_details_required:'অনুগ্রহ করে সব প্রয়োজনীয় ঘর পূরণ করুন (নাম, হোয়াটসঅ্যাপ নম্বর ও ডেলিভারির ঠিকানা)।',
@@ -3312,11 +3314,7 @@
     const url = parseUrl(raw);
     if(!url){ showUrlError(tr('js_invalid_url')); return; }
     if(!isKnownBrand(url)){
-      showUrlError(
-        '🛍️ <b>We deal in Pakistani clothing only.</b> This link doesn\'t look like a Pakistani brand website we support.<br>'
-        +'Please copy the product URL from brands like <b>Khaadi, Sapphire, Almirah, Gul Ahmed, Limelight, Edenrobe</b> etc. '
-        +'— use the <b>Browse Brands</b> button below to find supported stores.'
-      );
+      showUrlError(tr('js_not_brand'));
       return;
     }
     clearUrlError();
@@ -4408,7 +4406,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-16b';
+  const PSB_BUILD = '2026-06-16c';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
