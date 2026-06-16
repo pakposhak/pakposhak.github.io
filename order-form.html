@@ -681,7 +681,7 @@
     <div class="ps-wrap">
       <aside class="ps-rail">
         <div class="ps-fblock">
-          <div class="ps-flabel" data-i18n="ps_price">Price (PKR)</div>
+          <div class="ps-flabel" data-i18n="ps_price">Price (৳ delivered)</div>
           <div class="ps-price" id="psPrice"></div>
         </div>
         <div class="ps-fblock">
@@ -3162,7 +3162,7 @@
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search 150+ Pakistani brands…',
       tab_brands:'Browse brands', tab_products:'Browse products',
-      ps_price:'Price (PKR)', ps_category:'Category', ps_brands:'Brands', ps_clear:'Clear filters',
+      ps_price:'Price (৳ delivered)', ps_category:'Category', ps_brands:'Brands', ps_clear:'Clear filters',
       ps_allcats:'All categories', ps_loading:'Loading products…', ps_loadfail:'Could not load products — please try again.',
       ps_results:'products', ps_add:'Add', ps_prev:'Prev', ps_next:'Next', ps_page:'Page',
       ps_empty:'No products match these filters — try widening them.',
@@ -3217,7 +3217,7 @@
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
       lbl_browse:'ব্র্যান্ড ব্রাউজ করুন', search_ph:'🔍 ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
       tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন',
-      ps_price:'দাম (PKR)', ps_category:'ক্যাটাগরি', ps_brands:'ব্র্যান্ড', ps_clear:'ফিল্টার মুছুন',
+      ps_price:'দাম (৳ ডেলিভারিসহ)', ps_category:'ক্যাটাগরি', ps_brands:'ব্র্যান্ড', ps_clear:'ফিল্টার মুছুন',
       ps_allcats:'সব ক্যাটাগরি', ps_loading:'পণ্য লোড হচ্ছে…', ps_loadfail:'পণ্য লোড করা যায়নি — আবার চেষ্টা করুন।',
       ps_results:'পণ্য', ps_add:'যোগ করুন', ps_prev:'আগের', ps_next:'পরের', ps_page:'পৃষ্ঠা',
       ps_empty:'এই ফিল্টারে কোনো পণ্য নেই — ফিল্টার একটু কমান।',
@@ -4673,13 +4673,15 @@
   // fetches. Tapping a product hands its URL to the existing live add pipeline
   // (handleAddUrl), so price / stock / category are verified on add.
   const PSB_CATALOG_URL = (function(){ try{ return localStorage.getItem('psb_catalog_url') || 'catalog.json'; }catch(e){ return 'catalog.json'; } })();
+  // Price buckets are on the buyer-facing LANDED ৳BDT estimate (per p._bdt),
+  // not PKR — Bangladeshi buyers filter in their own currency.
   const PS_BUCKETS = [
-    {lo:0,     hi:3500,  lbl:'Below 3,500'},
-    {lo:3500,  hi:5000,  lbl:'3,500 – 5,000'},
-    {lo:5000,  hi:8000,  lbl:'5,000 – 8,000'},
-    {lo:8000,  hi:10000, lbl:'8,000 – 10,000'},
-    {lo:10000, hi:15000, lbl:'10,000 – 15,000'},
-    {lo:15000, hi:1e12,  lbl:'Above 15,000'}
+    {lo:0,     hi:3000,  lbl:'Under ৳3,000'},
+    {lo:3000,  hi:4500,  lbl:'৳3,000 – 4,500'},
+    {lo:4500,  hi:6000,  lbl:'৳4,500 – 6,000'},
+    {lo:6000,  hi:8000,  lbl:'৳6,000 – 8,000'},
+    {lo:8000,  hi:10000, lbl:'৳8,000 – 10,000'},
+    {lo:10000, hi:1e12,  lbl:'৳10,000+'}
   ];
   const PS_CAT_LABELS = {
     pret_3pc:'Stitched 3-piece', pret_3pc_emb:'Stitched 3pc — embroidered', pret_2pc_emb:'Stitched 2pc — embroidered',
@@ -4714,6 +4716,7 @@
       .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
       .then(j => {
         PS_CATALOG = (j.products || []).filter(p => p && p.u && p.pkr && p.img);
+        PS_CATALOG.forEach(p => { p._bdt = estLandedBdt(p.pkr, p.cat); });   // landed ৳ once — filter + card both use it
         psLoaded = true; psLoading = false;
         psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psApply();
       })
@@ -4756,7 +4759,7 @@
     psFiltered = PS_CATALOG.filter(p => {
       if(psSel.brands.size && !psSel.brands.has(p.b)) return false;
       if(psSel.cat && p.cat !== psSel.cat) return false;
-      if(psSel.price !== null){ const b = PS_BUCKETS[psSel.price]; if(!(p.pkr >= b.lo && p.pkr < b.hi)) return false; }
+      if(psSel.price !== null){ const b = PS_BUCKETS[psSel.price]; if(!(p._bdt >= b.lo && p._bdt < b.hi)) return false; }
       return true;
     });
     psRender();
@@ -4772,7 +4775,7 @@
   }
 
   function psCard(p, idx){
-    const bdt = estLandedBdt(p.pkr, p.cat);
+    const bdt = (p._bdt != null) ? p._bdt : estLandedBdt(p.pkr, p.cat);
     const sz = (p.sz || []).slice(0,5).map(s => `<span class="ps-sz">${esc(s)}</span>`).join('');
     return `<div class="ps-card">
       <div class="ps-img"><img loading="lazy" src="${esc(p.img)}" alt="${esc(p.t)}" onerror="this.parentElement.classList.add('ps-img-fail')"></div>
@@ -4820,7 +4823,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-16i';
+  const PSB_BUILD = '2026-06-16j';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');

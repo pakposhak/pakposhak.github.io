@@ -43,9 +43,11 @@ On the relay VPS (103.83.91.34):
 # one-time: copy the harvester up
 scp harvest-catalog.js root@103.83.91.34:/opt/psb/
 
-# nightly cron (writes catalog.json into Caddy's web root)
+# cron 3×/day (06:00, 14:00, 22:00 PKT) — stock moves fast, so refresh often.
+# The job is light (~20 brands, gentle 700ms spacing ≈ 1–2 min); the 700ms delay
+# in harvest-catalog.js keeps it from tripping brand bot-walls even 3×/day.
 crontab -e
-0 2 * * *  cd /opt/psb && /usr/bin/node harvest-catalog.js && cp catalog.json /var/www/psb/catalog.json
+0 6,14,22 * * *  cd /opt/psb && /usr/bin/node harvest-catalog.js && cp catalog.json /var/www/psb/catalog.json
 ```
 Serve it from Caddy (gzip + permissive CORS, same as the relay):
 ```
