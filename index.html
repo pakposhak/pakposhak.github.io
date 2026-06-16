@@ -276,6 +276,31 @@
       color:var(--txt-sec);font-size:0.83rem;padding:8px;border-radius:8px;transition:background .12s,color .12s}
     .cat-brand:hover{color:var(--gold);background:var(--gold-dim)}
     .brand-dd-item .cur-go{color:var(--gold);font-size:0.8rem}
+    /* "More" tab — sits at the right end of the category bar and opens the drawer */
+    .cat-tab.more-tab{margin-left:auto;color:var(--gold);font-weight:700}
+    .cat-tab.more-tab:hover{color:var(--gold)}
+    .cat-tab.more-tab.on{border-bottom-color:transparent}
+    /* ── "More brands" right-side slide-in drawer ── */
+    .more-drawer-wrap{display:none;position:fixed;inset:0;z-index:450;background:rgba(0,0,0,0.5)}
+    .more-drawer-wrap.open{display:block}
+    .more-drawer{position:absolute;top:0;right:0;height:100%;width:min(440px,88vw);background:var(--surface);
+      box-shadow:-10px 0 34px rgba(0,0,0,0.32);display:flex;flex-direction:column;
+      transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);overflow:hidden}
+    .more-drawer-wrap.open .more-drawer{transform:translateX(0)}
+    .md-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:16px 18px 12px;border-bottom:1px solid var(--gold-bdr)}
+    .md-title{font-size:1.05rem;font-weight:800;color:var(--gold)}
+    .md-title .md-count{font-size:0.78rem;color:var(--txt-muted);font-weight:600;margin-left:4px}
+    .md-close{background:none;border:none;font-size:1.15rem;color:var(--txt-sec);cursor:pointer;padding:4px 10px;border-radius:8px;line-height:1}
+    .md-close:hover{background:var(--gold-dim);color:var(--gold)}
+    .md-sub{padding:10px 18px 0;font-size:0.76rem;color:var(--txt-muted);line-height:1.5}
+    .md-body{flex:1;overflow-y:auto;padding:6px 18px 28px;-webkit-overflow-scrolling:touch}
+    .md-group-hdr{font-size:0.72rem;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:var(--gold);
+      margin:16px 0 8px;padding-bottom:5px;border-bottom:1px dashed var(--gold-bdr)}
+    .md-group-hdr span{color:var(--txt-muted);font-weight:600}
+    .md-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:2px 8px}
+    .md-brand{display:block;width:100%;text-align:left;background:none;border:none;cursor:pointer;font-family:inherit;
+      color:var(--txt-sec);font-size:0.88rem;padding:10px 10px;border-radius:8px;transition:background .12s,color .12s}
+    .md-brand:hover{color:var(--gold);background:var(--gold-dim)}
 
     /* Mobile-first defaults — desktop-only controls hidden until the min-width:820px block reveals them.
        (Must sit BEFORE that media query so equal-specificity source order lets desktop win.) */
@@ -315,6 +340,7 @@
       .cat-tab.on{background:var(--gold);color:#0A1628;border-color:var(--gold);font-weight:700}
       .cat-tab:nth-child(1),.cat-tab:nth-child(2){grid-column:span 3}
       .cat-tab:nth-child(3),.cat-tab:nth-child(4),.cat-tab:nth-child(5){grid-column:span 2}
+      .cat-tab.more-tab{grid-column:1 / -1;margin-left:0;background:var(--gold-dim);border-color:var(--gold-bdr2);color:var(--gold)}
       .cat-panel{border-radius:12px;border-top:1px solid var(--bdr)}
       .cat-head{font-size:0.92rem}
       .cat-brand{font-size:0.92rem;padding:11px 10px}
@@ -579,10 +605,22 @@
     </div>
     <!-- Search any brand by name -->
     <div class="brand-search-wrap">
-      <input id="brandSearch" class="brand-search" type="text" autocomplete="off" placeholder="🔍 Search 100+ Pakistani brands…" data-i18n-ph="search_ph"
+      <input id="brandSearch" class="brand-search" type="text" autocomplete="off" placeholder="🔍 Search 150+ Pakistani brands…" data-i18n-ph="search_ph"
         oninput="onBrandSearch()" onfocus="onBrandSearch()"/>
       <div id="brandDropdown" class="brand-dropdown"></div>
     </div>
+  </div>
+
+  <!-- "MORE BRANDS" RIGHT-SIDE DRAWER (opened by the ✨ More tab on the category bar) -->
+  <div id="moreDrawer" class="more-drawer-wrap" onclick="if(event.target===this)closeMoreDrawer()">
+    <aside class="more-drawer" role="dialog" aria-label="More brands">
+      <div class="md-head">
+        <div class="md-title"><span data-i18n="more_title">More Brands</span><span class="md-count" id="mdCount"></span></div>
+        <button class="md-close" onclick="closeMoreDrawer()" aria-label="Close">✕</button>
+      </div>
+      <div class="md-sub" data-i18n="more_sub">More verified Pakistani brands — tap any to start, same as the tabs above.</div>
+      <div class="md-body" id="moreDrawerBody"></div>
+    </aside>
   </div>
 
   <div class="section-label" style="margin-top:28px" data-i18n="lbl_addproducts">Add Products to Your Order</div>
@@ -2961,6 +2999,62 @@
     {n:'Bin Saeed',u:'https://binsaeedfabric.com',p:false,c:'w'},
     {n:'Tawakkal Fabrics',u:'https://tawakkalfabrics.co',p:false,c:'w'},
     {n:'Rang Rasiya',u:'https://rangrasiya.com.pk',p:true,c:'w'},
+    // ── Priority add (verified 4-point auto-fetch) — shown in the main category tabs. (Saya already added above.) ──
+    {n:'Elaya Prints',u:'https://elayaprints.com',p:true,c:'w'},
+    // ═══ "MORE" BRANDS ═══════════════════════════════════════════════════════
+    // Verified 2026-06-16: each returns a live Shopify products.json, prices in
+    // PKR, exposes Size variants (or is unstitched/free-size where size is N/A),
+    // and a mappable product_type/title. Shown ONLY in the right-side "More"
+    // drawer (more:true), NOT the main category tabs, to keep the page short.
+    {n:'Eminent',u:'https://eminent.pk',p:true,c:'md',more:true},
+    {n:'Dhanak',u:'https://dhanak.com.pk',p:true,c:'w',more:true},
+    {n:'Qalamkar',u:'https://qalamkar.com.pk',p:true,c:'w',more:true},
+    {n:'Coco by Zara Shahjahan',u:'https://cocobyzarashahjahan.com',p:true,c:'w',more:true},
+    {n:'Firdous',u:'https://firdouscloth.com',p:true,c:'w',more:true},
+    {n:'Iznik Fashions',u:'https://iznikfashions.com',p:true,c:'w',more:true},
+    {n:'Sifa',u:'https://sifa.pk',p:true,c:'w',more:true},
+    {n:'Jade',u:'https://jadeonline.pk',p:true,c:'w',more:true},
+    {n:'Roheenaz',u:'https://roheenaz.com',p:true,c:'w',more:true},
+    {n:'Mohagni',u:'https://mohagni.com',p:true,c:'w',more:true},
+    {n:"Adan's Libas",u:'https://adanslibas.com',p:true,c:'w',more:true},
+    {n:'RajBari',u:'https://rajbari.pk',p:true,c:'w',more:true},
+    {n:'Ittehad Textiles',u:'https://ittehadtextile.com',p:true,c:'w',more:true},
+    {n:'Tassels',u:'https://tassels.pk',p:true,c:'w',more:true},
+    {n:'Wear Ochre',u:'https://wearochre.com',p:true,c:'w',more:true},
+    {n:'Senorita',u:'https://senorita.pk',p:true,c:'w',more:true},
+    {n:'Vanya',u:'https://vanya.pk',p:true,c:'w',more:true},
+    {n:'Garnet',u:'https://garnetclothing.com',p:true,c:'w',more:true},
+    {n:'Al-Deebaj',u:'https://aldeebaj.com',p:true,c:'w',more:true},
+    {n:'Abaya.pk',u:'https://abaya.pk',p:true,c:'w',more:true},
+    {n:'Hijabi.pk',u:'https://hijabi.pk',p:true,c:'w',more:true},
+    {n:'Paarsa',u:'https://paarsa.pk',p:true,c:'w',more:true},
+    {n:'SHAAL',u:'https://shaal.com.pk',p:true,c:'w',more:true},
+    {n:'Hijab & Co',u:'https://hijabandco.com',p:true,c:'w',more:true},
+    {n:'Asifa & Nabeel',u:'https://asifaandnabeel.pk',p:true,c:'p',more:true},
+    {n:'Ammara Khan',u:'https://ammarakhan.com',p:true,c:'p',more:true},
+    {n:'Maria Osama Khan',u:'https://mariaosamakhan.com',p:true,c:'p',more:true},
+    {n:'Saira Rizwan',u:'https://sairarizwan.pk',p:true,c:'p',more:true},
+    {n:'Mina Hasan',u:'https://minahasan.com',p:true,c:'p',more:true},
+    {n:'Wardha Saleem',u:'https://wardhasaleem.com',p:true,c:'p',more:true},
+    {n:'Sadaf Fawad Khan',u:'https://sadaffawadkhan.com',p:true,c:'p',more:true},
+    {n:'Akbar Aslam',u:'https://akbaraslam.com',p:true,c:'p',more:true},
+    {n:'Azure',u:'https://azureofficial.pk',p:true,c:'p',more:true},
+    {n:'Naqshi',u:'https://naqshiofficial.com',p:true,c:'p',more:true},
+    {n:'Jeem',u:'https://jeem.pk',p:true,c:'p',more:true},
+    {n:'Bareeze Man',u:'https://bareezeman.com',p:true,c:'m',more:true},
+    {n:"Narkin's",u:'https://narkins.com',p:true,c:'m',more:true},
+    {n:'Lawrencepur',u:'https://lawrencepur.com',p:true,c:'m',more:true},
+    {n:'Humayun Alamgir',u:'https://humayunalamgir.com',p:true,c:'m',more:true},
+    {n:'Arsalan Iqbal',u:'https://arsalaniqbal.com',p:true,c:'m',more:true},
+    {n:'CRUSH Menswear',u:'https://crushmenswear.com',p:true,c:'m',more:true},
+    {n:'Edge Republic',u:'https://edge.pk',p:true,c:'m',more:true},
+    {n:'Riwaj Menswear',u:'https://riwajmenswear.com',p:true,c:'m',more:true},
+    {n:'Kurta Corner',u:'https://kurtacorner.com',p:true,c:'m',more:true},
+    {n:'Innerlines',u:'https://innerlines.com.pk',p:true,c:'m',more:true},
+    {n:'Rollover Kids',u:'https://rollover.com.pk',p:true,c:'k',more:true},
+    {n:'Cocobee',u:'https://cocobee.com.pk',p:true,c:'k',more:true},
+    {n:'Kjunction',u:'https://kjunction.com.pk',p:true,c:'k',more:true},
+    {n:'TIFL',u:'https://tifl.pk',p:true,c:'k',more:true},
   ];
   // Feed every brand's hostname into BRAND_MAP so pasted URLs auto-detect the name
   BRANDS.forEach(b => {
@@ -2974,7 +3068,8 @@
       hiw_pay:'Pay via bKash/Nagad', hiw_delivery:'2–3 weeks to your door', hiw_video:'▶ Watch 1-min video guide', hiw_guide:'📖 How it works',
       hiw_confirm_pay:'Confirm price & pay (bKash/Nagad)',
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
-      lbl_browse:'Browse a Brand', search_ph:'🔍 Search 100+ Pakistani brands…',
+      lbl_browse:'Browse a Brand', search_ph:'🔍 Search 150+ Pakistani brands…',
+      more_tab:'More', more_title:'More Brands', more_sub:'More verified Pakistani brands — tap any to start, same as the tabs above.',
       lbl_addproducts:'Add Products to Your Order',
       url_label:'📋 Copy a product link from any brand site and paste it below — or use the side 📋 Paste tab:',
       btn_addurl:'+ Add URL', btn_paste:'📋 Paste Link & Auto-Fill', pp_tap:'Tap a product to add it — no copy-paste needed', pp_search:'🔍 Search this brand…', pp_site:'🌐 Open full brand site instead', fab_paste:'Paste link',
@@ -3023,7 +3118,8 @@
       hiw_pay:'বিকাশ/নগদে পেমেন্ট করুন', hiw_delivery:'২–৩ সপ্তাহে আপনার দরজায়', hiw_video:'▶ ১ মিনিটের ভিডিও গাইড দেখুন', hiw_guide:'📖 কীভাবে কাজ করে',
       hiw_confirm_pay:'দাম নিশ্চিত করে পেমেন্ট (বিকাশ/নগদ)',
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
-      lbl_browse:'ব্র্যান্ড ব্রাউজ করুন', search_ph:'🔍 ১০০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
+      lbl_browse:'ব্র্যান্ড ব্রাউজ করুন', search_ph:'🔍 ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
+      more_tab:'আরও', more_title:'আরও ব্র্যান্ড', more_sub:'আরও যাচাই করা পাকিস্তানি ব্র্যান্ড — উপরের ট্যাবের মতোই, শুরু করতে যেকোনোটিতে ট্যাপ করুন।',
       lbl_addproducts:'অর্ডারে পণ্য যোগ করুন',
       url_label:'📋 যেকোনো ব্র্যান্ড সাইট থেকে প্রোডাক্টের লিংক কপি করে নিচে পেস্ট করুন — অথবা পাশের 📋 Paste ট্যাব ব্যবহার করুন:',
       btn_addurl:'+ লিংক যোগ করুন',
@@ -3077,10 +3173,10 @@
     document.documentElement.lang = _lang;
     document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = tr(el.getAttribute('data-i18n')); });
     document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = tr(el.getAttribute('data-i18n-ph')); });
-    document.querySelectorAll('.cat-tab').forEach(tb => { tb.textContent = catLabel(tb.dataset.cat); });
+    document.querySelectorAll('.cat-tab').forEach(tb => { if(tb.dataset.cat) tb.textContent = catLabel(tb.dataset.cat); });
     if(_catOpen){
       const h = document.getElementById('catHead');
-      if(h) h.innerHTML = `${catLabel(_catActive)} <span class="cnt">· ${BRANDS.filter(b=>b.c===_catActive).length} ${tr('word_brands')}</span>`;
+      if(h) h.innerHTML = `${catLabel(_catActive)} <span class="cnt">· ${BRANDS.filter(b=>b.c===_catActive && !b.more).length} ${tr('word_brands')}</span>`;
     }
     const lb = document.getElementById('hdrLangBtn');
     if(lb) lb.textContent = (_lang === 'en') ? 'বাংলা' : 'EN';
@@ -3113,9 +3209,38 @@
     if(!bar) return;
     bar.innerHTML = Object.keys(BRAND_CATS).map(cat =>
       `<button class="cat-tab" data-cat="${cat}" onclick="switchCat('${cat}')">${catLabel(cat)}</button>`
-    ).join('');
+    ).join('')
+    + `<button class="cat-tab more-tab" onclick="openMoreDrawer()" aria-label="More brands">✨ <span data-i18n="more_tab">More</span> ›</button>`;
     switchCat(_catActive);
   }
+
+  // ── "MORE" BRANDS DRAWER — slides in from the right; holds the verified
+  // brands that aren't priority, grouped by category, so they don't lengthen
+  // the page. Tapping a brand runs the SAME openBrandInApp() path as the tabs. ──
+  function openMoreDrawer(){
+    const body = document.getElementById('moreDrawerBody');
+    const more = BRANDS.filter(b => b.more);
+    const cnt = document.getElementById('mdCount');
+    if(cnt) cnt.textContent = '· ' + more.length + ' ' + tr('word_brands');
+    let html = '';
+    Object.keys(BRAND_CATS).forEach(cat => {
+      const list = more.filter(b => b.c === cat);
+      if(!list.length) return;
+      html += `<div class="md-group-hdr">${catLabel(cat)} <span>· ${list.length}</span></div>`;
+      html += '<div class="md-grid">' + list.map(b =>
+        `<button class="md-brand" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">${esc(b.n)}</button>`
+      ).join('') + '</div>';
+    });
+    body.innerHTML = html;
+    body.scrollTop = 0;
+    document.getElementById('moreDrawer').classList.add('open');
+    document.body.style.overflow = 'hidden';   // lock background scroll while the drawer is open
+  }
+  function closeMoreDrawer(){
+    document.getElementById('moreDrawer').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') closeMoreDrawer(); });
   function switchCat(cat){
     const panel = document.querySelector('.cat-panel');
     // Click the already-open category again → collapse the brand list
@@ -3129,7 +3254,7 @@
     _catOpen = true;
     if(panel) panel.style.display = '';
     document.querySelectorAll('.cat-tab').forEach(t => t.classList.toggle('on', t.dataset.cat === cat));
-    const list = BRANDS.filter(b => b.c === cat);
+    const list = BRANDS.filter(b => b.c === cat && !b.more);   // category tabs show PRIORITY brands only; the rest live in the "More" drawer
     const head = document.getElementById('catHead');
     const grid = document.getElementById('catGrid');
     if(head) head.innerHTML = `${catLabel(cat)} <span class="cnt">· ${list.length} ${tr('word_brands')}</span>`;
@@ -4407,7 +4532,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-16d';
+  const PSB_BUILD = '2026-06-16e';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
