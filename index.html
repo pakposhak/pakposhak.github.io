@@ -4690,7 +4690,11 @@
     kurti_1pc:'Kurti / 1-piece', womens_trouser:'Trousers / bottoms', maxi_dress:'Dress / maxi',
     formal_emb_3pc:'Formal 3-piece', formal_emb_2pc:'Formal 2-piece', heavy_formal_3pc:'Heavy formal 3pc',
     bridal:'Bridal', lehenga:'Lehenga', saree:'Saree', abaya:'Abaya', kaftan:'Kaftan',
-    loungewear:'Loungewear', coord_western:'Co-ord set'
+    loungewear:'Loungewear', coord_western:'Co-ord set',
+    mens_shirt:'Men — shirt', mens_kurta:'Men — kurta', mens_shalwar_kameez:'Men — shalwar kameez',
+    mens_trouser:'Men — trousers', mens_jeans:'Men — jeans', mens_suit:'Men — suit',
+    mens_waistcoat:'Men — waistcoat', mens_sherwani:'Men — sherwani', mens_unstitched:'Men — unstitched',
+    kids_eastern:'Kids — eastern', kids_western:'Kids — western'
   };
   function psLabel(cat){ return PS_CAT_LABELS[cat] || cat; }
 
@@ -4712,7 +4716,9 @@
     if(psLoaded || psLoading) return;
     psLoading = true;
     const c = document.getElementById('psCount'); if(c) c.textContent = tr('ps_loading');
-    fetch(PSB_CATALOG_URL, { cache:'no-store' })
+    // cache-bust so a CDN/browser never serves a stale catalog (it refreshes 3×/day)
+    const cbUrl = PSB_CATALOG_URL + (PSB_CATALOG_URL.indexOf('?') >= 0 ? '&' : '?') + 't=' + Date.now();
+    fetch(cbUrl, { cache:'no-store' })
       .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
       .then(j => {
         PS_CATALOG = (j.products || []).filter(p => p && p.u && p.pkr && p.img);
@@ -4823,7 +4829,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-16j';
+  const PSB_BUILD = '2026-06-16k';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
