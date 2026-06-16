@@ -236,11 +236,41 @@ function readBody(req){ return new Promise(resolve => { let d=''; req.on('data',
   req.on('end', () => { try{ resolve(JSON.parse(d || '{}')); }catch(e){ resolve(null); } }); req.on('error', () => resolve(null)); }); }
 const isHash = h => typeof h === 'string' && /^[a-f0-9]{64}$/i.test(h);
 
-function send(res, status, obj){
+// ── Per-IP rate limit for the password endpoints (anti brute-force) ──────────
+// Caddy proxies from localhost, so the real client IP is in X-Forwarded-For.
+function clientIp(req){
+  const xff = req.headers['x-forwarded-for'];
+  if(xff) return String(xff).split(',')[0].trim();
+  return (req.socket && req.socket.remoteAddress) || '?';
+}
+const RL_WINDOW_MS = 10 * 60 * 1000;   // 10-minute window
+const RL_MAX = 20;                     // max hits to the gated endpoints per IP per window
+const rl = new Map();                  // ip → { n, reset }
+function rateLimited(req){
+  const ip = clientIp(req), now = Date.now();
+  let e = rl.get(ip);
+  if(!e || now > e.reset){ e = { n: 0, reset: now + RL_WINDOW_MS }; rl.set(ip, e); }
+  e.n++;
+  if(rl.size > 5000){ for(const [k,v] of rl){ if(now > v.reset) rl.delete(k); } }  // prune expired
+  return e.n > RL_MAX;                  // true → block (brute-force)
+}
+
+// CORS: echo the form's OWN origin for the (password-gated) write endpoints, so
+// another website can't drive them from a victim's browser. Public GET reads
+// (config/price/scrape) keep '*' so the live form never breaks.
+const ALLOWED_ORIGINS = ['https://pakiposhak.github.io'];
+function corsOrigin(req, strict){
+  const o = req.headers.origin;
+  if(o && ALLOWED_ORIGINS.includes(o)) return o;
+  return strict ? ALLOWED_ORIGINS[0] : '*';
+}
+
+function send(res, status, obj, origin){
   const body = JSON.stringify(obj);
   res.writeHead(status, {
     'Content-Type': 'application/json; charset=utf-8',
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': origin || '*',
+    'Vary': 'Origin',
     'Cache-Control': 'no-store',
   });
   res.end(body);
@@ -253,7 +283,8 @@ const server = http.createServer(async (req, res) => {
 
   // ── CORS preflight (browser POSTs to /config etc.) ───────────────────────
   if(req.method === 'OPTIONS'){
-    res.writeHead(204, { 'Access-Control-Allow-Origin':'*', 'Access-Control-Allow-Methods':'GET,POST,OPTIONS', 'Access-Control-Allow-Headers':'Content-Type', 'Access-Control-Max-Age':'86400' });
+    // Preflight only fires for the JSON POSTs (writes); lock it to the form origin.
+    res.writeHead(204, { 'Access-Control-Allow-Origin': corsOrigin(req, true), 'Access-Control-Allow-Methods':'GET,POST,OPTIONS', 'Access-Control-Allow-Headers':'Content-Type', 'Access-Control-Max-Age':'86400', 'Vary':'Origin' });
     return res.end();
   }
 
@@ -262,29 +293,35 @@ const server = http.createServer(async (req, res) => {
     return send(res, 200, { ok:true, hasPassword: !!CONFIG.adminHash, rates: CONFIG.rates, weights: CONFIG.weights, updatedAt: CONFIG.updatedAt });
 
   if(u.pathname === '/admin/setup' && req.method === 'POST'){
+    const co = corsOrigin(req, true);
+    if(rateLimited(req)) return send(res, 429, { ok:false, error:'too many attempts — try again later' }, co);
     // First-time password creation — only allowed while none is set.
     const b = await readBody(req);
-    if(!b || !isHash(b.hash)) return send(res, 400, { ok:false, error:'bad hash' });
-    if(CONFIG.adminHash) return send(res, 403, { ok:false, error:'password already set' });
+    if(!b || !isHash(b.hash)) return send(res, 400, { ok:false, error:'bad hash' }, co);
+    if(CONFIG.adminHash) return send(res, 403, { ok:false, error:'password already set' }, co);
     CONFIG.adminHash = b.hash.toLowerCase(); CONFIG.updatedAt = new Date().toISOString();
-    return send(res, saveConfig() ? 200 : 500, { ok: !!CONFIG.adminHash });
+    return send(res, saveConfig() ? 200 : 500, { ok: !!CONFIG.adminHash }, co);
   }
 
   if(u.pathname === '/admin/verify' && req.method === 'POST'){
+    const co = corsOrigin(req, true);
+    if(rateLimited(req)) return send(res, 429, { ok:false, error:'too many attempts — try again later' }, co);
     const b = await readBody(req);
-    return send(res, 200, { ok: !!CONFIG.adminHash && !!b && isHash(b.hash) && b.hash.toLowerCase() === CONFIG.adminHash });
+    return send(res, 200, { ok: !!CONFIG.adminHash && !!b && isHash(b.hash) && b.hash.toLowerCase() === CONFIG.adminHash }, co);
   }
 
   if(u.pathname === '/config' && req.method === 'POST'){
+    const co = corsOrigin(req, true);
+    if(rateLimited(req)) return send(res, 429, { ok:false, error:'too many attempts — try again later' }, co);
     const b = await readBody(req);
-    if(!b || !isHash(b.hash)) return send(res, 400, { ok:false, error:'bad request' });
-    if(!CONFIG.adminHash || b.hash.toLowerCase() !== CONFIG.adminHash) return send(res, 401, { ok:false, error:'unauthorized' });
+    if(!b || !isHash(b.hash)) return send(res, 400, { ok:false, error:'bad request' }, co);
+    if(!CONFIG.adminHash || b.hash.toLowerCase() !== CONFIG.adminHash) return send(res, 401, { ok:false, error:'unauthorized' }, co);
     const r = sanitizeRates(b.rates), w = sanitizeWeights(b.weights);
     if(r) CONFIG.rates   = { ...(CONFIG.rates   || {}), ...r };
     if(w) CONFIG.weights = { ...(CONFIG.weights || {}), ...w };
     CONFIG.updatedAt = new Date().toISOString();
     const ok = saveConfig();
-    return send(res, ok ? 200 : 500, { ok, updatedAt: CONFIG.updatedAt, rates: CONFIG.rates, weights: CONFIG.weights });
+    return send(res, ok ? 200 : 500, { ok, updatedAt: CONFIG.updatedAt, rates: CONFIG.rates, weights: CONFIG.weights }, co);
   }
 
   // ── /scrape — Group 4 (Khaadi/Sapphire, SFCC). Returns a NORMALIZED shape
