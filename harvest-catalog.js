@@ -38,8 +38,8 @@ const SHOPIFY = [
   ['Elan','elan.pk','p'],['Emaan Adeel','emaanadeel.com','p'],['Erum Khan','erumkhanstores.com','p'],
   ['Imrozia Premium','imroziapremium.com','p'],['Maryum N Maria','maryumnmaria.com','p'],
   ['Faiza Saqlain','www.faizasaqlain.pk','p'],['Sania Maskatiya','pk.saniamaskatiya.com','p'],
-  ['Zaha by Elan','www.zaha.pk','p'],['Zainab Chottani','pk.zainabchottani.com','p'],['Zellbury','zellbury.com','p'],
-  ['Bonanza Satrangi','bonanzasatrangi.com','p'],
+  ['Zaha by Elan','www.zaha.pk','p'],['Zainab Chottani','pk.zainabchottani.com','p'],['Zellbury','zellbury.com','md'],
+  ['Bonanza Satrangi','bonanzasatrangi.com','md'],
   ['Charcoal','charcoal.com.pk','m'],['Cougar','cougar.com.pk','m'],['Dynasty Fabrics','dynastyfabrics.com','m'],
   ['Monark','monark.com.pk','m'],['Royal Tag','royaltag.com.pk','m'],['Shahnameh','shahnameh.pk','m'],
   ['Shahzeb Saeed','shahzebsaeed.com','m'],
@@ -93,14 +93,20 @@ function mapCatWomen(s, tags){
   if(/heavy[\s-]?formal|organza|tissue|jamawar/.test(s)) return 'heavy_formal_3pc';
   if(/\bformal\b|chiffon|party[\s-]?wear/.test(s)) return 'formal_emb_3pc';
   if(/night|sleep[\s-]?wear|lounge|pyjama|pajama/.test(s)) return 'loungewear';
-  // 5) PIECE COUNT — 2-piece BEFORE 3-piece so "2 Piece … Suit" is not read as 3pc
+  // 5) PIECE COUNT (drives weight) — explicit 3-piece: number 3, OR a suit/kameez
+  //    that names a dupatta (the 3rd piece).
+  if(/\b3[\s-]?(pc|piece|pcs)\b|(shirt|kameez|suit|kurta)[\s\w]*dupatta|dupatta[\s\w]*(shirt|kameez|suit|kurta)/.test(s)) return emb ? 'pret_3pc_emb' : 'pret_3pc';
+  // explicit 2-piece / shirt+dupatta
   if(/\b2[\s-]?(pc|piece|pcs)\b|shirt[\s-]?dupatta/.test(s)) return emb ? 'pret_2pc_emb' : 'shirt_dupatta_2pc';
-  if(/(shirt|kurti|kurta)\b.*\b(trouser|bottom|pant)|(trouser|bottom|pant)\b.*\b(shirt|kurti|kurta)/.test(s)) return 'shirt_trouser_2pc';
-  if(/\b3[\s-]?(pc|piece|pcs)\b|shalwar[\s-]?kameez|\bsuit\b/.test(s)) return emb ? 'pret_3pc_emb' : 'pret_3pc';
-  // 6) single garments
-  if(/trouser|pant|palazzo|plazo|capri|culotte/.test(s) && !/shirt|kurti|kurta/.test(s)) return 'womens_trouser';
+  // kameez+shalwar or shirt+trouser with NO 3rd piece = 2-piece, NOT a 3pc suit
+  if(/shalwar[\s-]?kameez|kameez[\s-]?shalwar|(shirt|kurti|kurta|kameez)\b[\s\w]{0,12}\b(trouser|bottom|pant|shalwar)\b|\b(trouser|bottom|pant|shalwar)\b[\s\w]{0,12}\b(shirt|kurti|kurta|kameez)\b/.test(s)) return emb ? 'pret_2pc_emb' : 'shirt_trouser_2pc';
+  // a generic "suit" with no piece number defaults to 3-piece (most lawn suits)
+  if(/\bsuit\b/.test(s)) return emb ? 'pret_3pc_emb' : 'pret_3pc';
+  // 6) single garments / separates
+  if(/co[\s-]?ord|coord/.test(s)) return 'coord_western';
+  if(/trouser|pant|palazzo|plazo|capri|culotte|tights|leggings?/.test(s) && !/shirt|kurti|kurta|kameez/.test(s)) return 'womens_trouser';
   if(/dress|maxi|gown|jumpsuit/.test(s)) return 'maxi_dress';
-  if(/kurti|kurta|shirt|top|tunic|\btee\b|blouse/.test(s)) return 'kurti_1pc';
+  if(/kurti|kurta|shirt|top|tunic|\btee\b|blouse|\bcape\b/.test(s)) return 'kurti_1pc';
   // 7) bare fabric name with no garment word = unstitched
   if(/\blawn\b|cambric|voile|khaddar|karandi|fabric|piece[\s-]?goods/.test(s)) return 'lawn_3pc_unstitch';
   return 'pret_3pc';
@@ -120,14 +126,26 @@ function mapCatMen(s){
   return 'mens_kurta';
 }
 function mapCatKids(s){
-  if(/western|jean|trouser|\btee\b|t[\s-]?shirt|dress|frock|romper|legging|short/.test(s)) return 'kids_western';
+  if(/shalwar|kameez|\bkurta\b|frock|lehenga|gharara|ethnic|eastern|abaya/.test(s)) return 'kids_eastern';
+  if(/western|jean|denim|trouser|\bpant|\btee\b|t[\s-]?shirt|\bshirt\b|polo|dress|romper|legging|short|jumpsuit|hoodie|sweat/.test(s)) return 'kids_western';
   return 'kids_eastern';
 }
+const PS_FOOTWEAR = /\bshoe|sneaker|sandal|chappal|khussa|kolhapuri|\bheel|slipper|loafer|peshawari|\bmule\b|footwear|\bpump\b/;
+const PS_NON_APPAREL = /\b(bed|mattress|\bnet\b|blanket|quilt|pillow|cushion|towel|bottle|feeder|diaper|nappy|\btoy|stroller|pram|\bcomb\b|\bsocks?\b|\bcap\b|\bhat\b|\bbib\b|mitten|booties|booti|headband|hair[\s-]?band|\bbag\b|clutch|purse|wallet|jewel|earring|necklace|\bring\b|bangle|bracelet|brooch|perfume|fragrance|\battar\b|\bwatch\b|sunglass|\bbelt\b|key[\s-]?chain|gift[\s-]?set|hamper|pouch)\b/;
+// Items that are never garments (so the non-apparel guard below never matches a real outfit)
+const PS_IS_GARMENT = /shirt|kurti|kurta|kameez|\bsuit\b|frock|\bdress\b|gown|abaya|trouser|shalwar|saree|lehenga|\bcoat\b|jacket|sweater/;
 function mapCat(group, type, title, tagStr){
   const tt = ((type||'') + ' ' + (title||'')).toLowerCase();   // garment/piece-count: reliable
   const tags = (tagStr||'').toLowerCase();                      // unstitch/emb signals only
-  if(group === 'm') return mapCatMen(tt + ' ' + tags);
-  if(group === 'k') return mapCatKids(tt + ' ' + tags);
+  const s = tt + ' ' + tags;
+  // cross-gender non-garment items first (these were landing in clothing cats)
+  if(PS_FOOTWEAR.test(s)) return 'footwear';
+  if(PS_NON_APPAREL.test(s) && !PS_IS_GARMENT.test(s)) return 'accessories';
+  // gender from the text — esp. multi-department brands that mix men's & kids in
+  if(/\b(boys?|girls?|infant|toddler|junior|newborn|\bbaby\b|\bkid|kids\b)\b/.test(s)) return mapCatKids(s);
+  if(group === 'k') return mapCatKids(s);
+  if(group === 'm') return mapCatMen(s);
+  if(group === 'md' && /\b(mens?|men's|gents?|\bpolo\b|waist[\s-]?coat|sherwani|boxer|\btie\b)\b/.test(s)) return mapCatMen(s);
   return mapCatWomen(tt, tags);
 }
 

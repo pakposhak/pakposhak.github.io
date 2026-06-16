@@ -1854,12 +1854,14 @@
     if(/heavy[\s-]?formal|organza|tissue|jamawar/.test(s)) return 'heavy_formal_3pc';
     if(/\bformal\b|chiffon|party[\s-]?wear/.test(s)) return 'formal_emb_3pc';
     if(/night|sleep[\s-]?wear|lounge|pyjama|pajama/.test(s)) return 'loungewear';
+    if(/\b3[\s-]?(pc|piece|pcs)\b|(shirt|kameez|suit|kurta)[\s\w]*dupatta|dupatta[\s\w]*(shirt|kameez|suit|kurta)/.test(s)) return emb ? 'pret_3pc_emb' : 'pret_3pc';
     if(/\b2[\s-]?(pc|piece|pcs)\b|shirt[\s-]?dupatta/.test(s)) return emb ? 'pret_2pc_emb' : 'shirt_dupatta_2pc';
-    if(/(shirt|kurti|kurta)\b.*\b(trouser|bottom|pant)|(trouser|bottom|pant)\b.*\b(shirt|kurti|kurta)/.test(s)) return 'shirt_trouser_2pc';
-    if(/\b3[\s-]?(pc|piece|pcs)\b|shalwar[\s-]?kameez|\bsuit\b/.test(s)) return emb ? 'pret_3pc_emb' : 'pret_3pc';
-    if(/trouser|pant|palazzo|plazo|capri|culotte/.test(s) && !/shirt|kurti|kurta/.test(s)) return 'womens_trouser';
+    if(/shalwar[\s-]?kameez|kameez[\s-]?shalwar|(shirt|kurti|kurta|kameez)\b[\s\w]{0,12}\b(trouser|bottom|pant|shalwar)\b|\b(trouser|bottom|pant|shalwar)\b[\s\w]{0,12}\b(shirt|kurti|kurta|kameez)\b/.test(s)) return emb ? 'pret_2pc_emb' : 'shirt_trouser_2pc';
+    if(/\bsuit\b/.test(s)) return emb ? 'pret_3pc_emb' : 'pret_3pc';
+    if(/co[\s-]?ord|coord/.test(s)) return 'coord_western';
+    if(/trouser|pant|palazzo|plazo|capri|culotte|tights|leggings?/.test(s) && !/shirt|kurti|kurta|kameez/.test(s)) return 'womens_trouser';
     if(/dress|maxi|gown|jumpsuit/.test(s)) return 'maxi_dress';
-    if(/kurti|kurta|shirt|top|tunic|\btee\b|blouse/.test(s)) return 'kurti_1pc';
+    if(/kurti|kurta|shirt|top|tunic|\btee\b|blouse|\bcape\b/.test(s)) return 'kurti_1pc';
     if(/\blawn\b|cambric|voile|khaddar|karandi|fabric|piece[\s-]?goods/.test(s)) return 'lawn_3pc_unstitch';
     return 'pret_3pc';
   }
@@ -4981,7 +4983,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-16m';
+  const PSB_BUILD = '2026-06-16n';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
