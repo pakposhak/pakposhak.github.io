@@ -3,6 +3,15 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <!-- ── Security hardening ── Content-Security-Policy: the app loads NO external
+       JS, so scripts are locked to this origin (inline allowed for the app's own
+       handlers); object/base/form are locked down. connect/img stay broad because
+       the app legitimately fetches products.json from arbitrary brand sites + the
+       PK relay — all over https (http/data exfil is blocked). -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self' https:"/>
+  <meta name="referrer" content="strict-origin-when-cross-origin"/>
+  <!-- Clickjacking guard: GitHub Pages can't send X-Frame-Options, so refuse to run inside a frame. -->
+  <script>if(self!==top){try{top.location=self.location;}catch(e){document.documentElement.style.visibility='hidden';}}</script>
   <!-- Always load the freshest version — this file changes often and GitHub
        Pages otherwise lets browsers cache the HTML for ~10 min, so operators
        were seeing stale builds after a deploy. -->
@@ -3838,7 +3847,7 @@
   }
 
   function esc(s){
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
   }
 
   // ── SUMMARY MODAL ─────────────────────────────────────────────────────────
@@ -3924,7 +3933,7 @@
       totalWeight += item.weight * totalQty;
       const bdtTotal = Math.round(item.pkr * totalQty * r.CONV_RATE);
       const sizeSummary = (item.sizes || []).filter(r => r.size)
-        .map(r => `${r.size}×${r.qty}`).join(', ') || '—';
+        .map(r => `${esc(r.size)}×${r.qty}`).join(', ') || '—';
       const tags = [CAT_LABELS[item.cat] || item.cat];
       if(sizeSummary !== '—') tags.push(sizeSummary);
       tags.push('Total qty: ' + totalQty);
@@ -4574,7 +4583,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-16g';
+  const PSB_BUILD = '2026-06-16h';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
