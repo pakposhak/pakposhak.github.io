@@ -28,14 +28,19 @@ jobs:
       - name: Harvest catalog
         run: node harvest-catalog.js
 
-      - name: Sanity check (don't publish a broken/empty harvest)
+      - name: Sanity check (never publish a broken harvest or lose top brands)
         run: |
-          COUNT=$(node -e "console.log(require('./catalog.json').count||0)")
-          echo "harvested $COUNT products"
-          if [ "$COUNT" -lt 800 ]; then
-            echo "::warning::Only $COUNT products — likely a bad run (bot-block/outage). Keeping the previous catalog."
-            git checkout -- catalog.json
-          fi
+          node -e '
+            const fs=require("fs"), cp=require("child_process");
+            const cur=JSON.parse(fs.readFileSync("catalog.json","utf8"));
+            const has=(j,b)=>j.products.some(p=>p.b===b);
+            let prev=null; try{ prev=JSON.parse(cp.execSync("git show HEAD:catalog.json").toString()); }catch(e){}
+            const bad=[];
+            if((cur.count||0)<800) bad.push("count "+cur.count+" < 800");
+            if(prev){ for(const b of ["Khaadi","Sapphire"]) if(has(prev,b) && !has(cur,b)) bad.push("lost "+b); }
+            if(bad.length){ console.log("::warning::Bad harvest ("+bad.join(", ")+") — keeping the previous catalog."); cp.execSync("git checkout -- catalog.json"); }
+            else console.log("OK: "+cur.count+" products from "+cur.brands+" brands");
+          '
 
       - name: Commit & push if changed
         run: |

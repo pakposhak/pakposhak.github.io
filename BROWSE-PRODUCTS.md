@@ -33,11 +33,25 @@ The catalog is the only moving part, and it's a light periodic job.
   list at the top). SFCC brands (Khaadi, Sapphire) have no `/products.json` and
   are skipped — they need the relay `/scrape` (a later add).
 
-## Phase 2 — automate the refresh
+## Phase 2 — automated refresh (DONE via GitHub Actions)
 
-Pick whichever is easier:
+`.github/workflows/refresh-catalog.yml` runs `harvest-catalog.js` **4×/day at
+10:00 / 12:00 / 17:00 / 21:00 PKT** (cron `0 5,7,12,16 * * *` UTC), sanity-checks
+the result (won't publish a run with <800 products or one that lost Khaadi/
+Sapphire), and commits `catalog.json` — GitHub Pages auto-deploys it. No VPS.
+Run it on demand from **Actions → Refresh product catalog → Run workflow**.
 
-### Option A — VPS nightly cron (matches existing infra)
+> Watch the first runs: GitHub's runner IPs *may* get bot-blocked by the SFCC
+> brands (Khaadi/Sapphire). If that happens the safety check keeps the last good
+> catalog (so you never lose them), but to refresh them reliably move the harvest
+> to the **VPS cron** below (Pakistan IP). The 53 Shopify brands refresh fine from
+> GitHub.
+
+---
+
+## Alternative — VPS cron (most reliable for the SFCC brands)
+
+### Option A — VPS cron (matches existing infra)
 On the relay VPS (103.83.91.34):
 ```bash
 # one-time: copy the harvester up
