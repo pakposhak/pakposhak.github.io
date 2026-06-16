@@ -195,6 +195,7 @@ Goal: professional mobile website where brand links open in-app, packageable as 
 - [ ] **Phase 5 — iPhone**: free via PWA "Add to Home Screen" (works after Phase 2); App Store optional ($99/yr + Mac).
 
 ## Pending issues (update each session)
+- [x] **Browse UX overhaul (build 2026-06-17a, commit 5bd9a13)** — 10 items: price filter multi-select + 2-row mobile; "not everything here" notice; women-first + brand round-robin default order; how-to new section; Paste tab hidden on Products grid; bottom-nav Brands link fixed; sold-out guard on Save; category filter = collapsible Women/Men/Kids from `CAT_TREE` (accessories removed, heading "Product Category"); brand search beside the Brands heading; Browse Brands "Store Types | Product Category" sub-tabs (catalog-derived brand chips). See memory `browse-products.md` (2026-06-17a batch).
 - [x] **Commission calc wired** — `getRates()` now returns `COMM_1/COMM_23/COMM_4P`; `commRate(r, itemCount)` picks the right tier; applied in `renderCart`, `buildReviewSummary`, `submitOrder`
 - [x] **Admin weight chart** — fixed by adding `overflow-y:auto;max-height:85vh` to `#adminPanel` (panel was fixed at bottom, content overflowed off-screen)
 - [x] **Commission field** — split into 3 numeric inputs (`adm_comm_1/23/4p`), saved to `psb_comm_1/23/4p` in localStorage
