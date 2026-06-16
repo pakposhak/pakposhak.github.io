@@ -79,6 +79,8 @@
     .catdd-item{font-size:0.98rem;font-weight:400;color:var(--txt);padding:9px 16px;cursor:pointer}
     .catdd-item:hover{background:rgba(201,169,110,0.12)}
     .catdd-item.sel{background:rgba(201,169,110,0.20);font-weight:700;color:var(--gold)}
+    /* Missing-field highlight when saving an item with empty Category / Price / Size */
+    .psb-missing{border-color:#c0392b !important;box-shadow:0 0 0 3px rgba(192,57,43,0.30) !important;border-radius:7px}
 
     /* ── Install App pill ── */
     #installPill{
@@ -275,19 +277,35 @@
     .cat-brand:hover{color:var(--gold);background:var(--gold-dim)}
     .brand-dd-item .cur-go{color:var(--gold);font-size:0.8rem}
 
+    /* Mobile-first defaults — desktop-only controls hidden until the min-width:820px block reveals them.
+       (Must sit BEFORE that media query so equal-specificity source order lets desktop win.) */
+    .steps-aux{display:none}
+    .bs-steps-desktop{display:none}
+
     /* ── Desktop / wide screens: behave like a full website, not a phone column ── */
     @media (min-width:820px){
+      /* Desktop type: a touch larger + heavier body copy (headings keep their own weight) */
+      html{font-size:17px}
+      body{font-weight:600;padding-bottom:40px}
       .hdr-inner{max-width:980px}
       .hiw-inner{max-width:980px}
       .container{max-width:980px;padding:30px 32px 44px}
-      /* Home/Brands/Cart/HowTo bar stays visible on desktop too */
-      body{padding-bottom:92px}
-      .bottom-nav{width:340px;max-width:calc(100% - 32px);left:50%;right:auto;bottom:16px;transform:translateX(-50%);
-        border-radius:16px;border:1px solid var(--bdr);box-shadow:0 8px 28px rgba(0,0,0,0.45);overflow:hidden}
-      .bottom-nav .bnav-btn{min-height:44px;padding:7px 4px 5px;font-size:0.62rem}
-      .bottom-nav .bnav-btn .icon{font-size:1.02rem}
-      #installPill{bottom:86px}
+      /* No floating bottom bar on desktop — Cart & How-To sit beside the 1·2·3·4 steps */
+      .bottom-nav{display:none !important}
+      .steps-bar{position:relative}
+      .steps-aux{display:inline-flex;align-items:center;gap:7px;position:absolute;top:50%;transform:translateY(-50%);
+        background:var(--gold-dim);border:1.5px solid var(--gold-bdr);color:var(--gold);border-radius:22px;
+        padding:9px 18px;font-size:0.82rem;font-weight:700;cursor:pointer;text-decoration:none;line-height:1}
+      .steps-aux:hover{background:rgba(201,169,110,0.22)}
+      .steps-aux .sa-ic{font-size:1.05rem}
+      .steps-how{left:24px}
+      .steps-cart{right:24px}
+      .steps-cart-badge{background:#c0392b;color:#fff;border-radius:10px;padding:1px 6px;font-size:0.66rem;font-weight:700;min-width:17px;text-align:center}
+      #installPill{bottom:24px}
       .cat-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+      /* Desktop brand-launch sheet uses Chrome-specific copy steps */
+      .bs-steps-mobile{display:none}
+      .bs-steps-desktop{display:block}
     }
     /* ── Mobile: stack the 5 categories 2-per-row (all visible, bigger text) ── */
     @media (max-width:819px){
@@ -335,7 +353,7 @@
     #pasteFab.pulse{animation:fabPulse 1.1s ease infinite}
     @keyframes fabPulse{0%,100%{box-shadow:0 6px 20px rgba(0,0,0,.45),0 0 0 0 rgba(201,169,110,.55)}
       50%{box-shadow:0 6px 20px rgba(0,0,0,.45),0 0 0 12px rgba(201,169,110,0)}}
-    @media (min-width:820px){ #pasteFab{bottom:96px} }
+    @media (min-width:820px){ #pasteFab{bottom:24px} }
 
     /* Item details panel */
     .item-detail-panel{display:none;background:var(--raised);border:1.5px dashed var(--gold-bdr);border-radius:8px;padding:14px;margin-top:12px}
@@ -537,6 +555,12 @@
   <div class="step-item" id="si_3"><div class="step-num">3</div><div class="step-lbl" data-i18n="step_review">Review</div></div>
   <div class="step-arrow">›</div>
   <div class="step-item" id="si_4"><div class="step-num">4</div><div class="step-lbl" data-i18n="step_payment">Payment</div></div>
+  <!-- Desktop-only: How-To (left) and Cart (right) flank the steps; replaces the bottom bar -->
+  <a class="steps-aux steps-how" href="how-to.html" target="_blank" rel="noopener" title="How it works">
+    <span class="sa-ic">ℹ️</span><span data-i18n="nav_how">How To</span></a>
+  <button class="steps-aux steps-cart" type="button" onclick="gotoCart()" title="Go to your cart">
+    <span class="sa-ic">🛒</span><span data-i18n="nav_cart">Cart</span>
+    <span class="steps-cart-badge" id="stepsCartBadge" style="display:none">0</span></button>
 </div>
 
 <!-- ═══ STEP 1: ADD ITEMS ═══ -->
@@ -968,21 +992,39 @@
     </div>
     <div class="bs-steps">
       <div class="bs-steps-title">How to copy the product link</div>
-      <div class="bs-step">
-        <span class="bs-num">1</span>
-        <span>Tap <strong>Open Brand Site</strong> below, then browse and open the product you want.</span>
+      <!-- MOBILE: viewing inside an in-app browser → must hop to Chrome first (unchanged) -->
+      <div class="bs-steps-mobile">
+        <div class="bs-step">
+          <span class="bs-num">1</span>
+          <span>Tap <strong>Open Brand Site</strong> below, then browse and open the product you want.</span>
+        </div>
+        <div class="bs-step">
+          <span class="bs-num">2</span>
+          <span>At the <strong>top-right ⋮ three-dots</strong> menu, tap <strong>“Open in Chrome”</strong> (or your phone’s browser).</span>
+        </div>
+        <div class="bs-step">
+          <span class="bs-num">3</span>
+          <span>In Chrome, <strong>press &amp; hold the web address</strong> at the top until <strong>“Copy”</strong> appears — then tap <strong>Copy</strong>.</span>
+        </div>
+        <div class="bs-step">
+          <span class="bs-num">4</span>
+          <span>Come back here and tap the gold <strong>📋 Paste link</strong> button — price &amp; sizes fill in automatically.</span>
+        </div>
       </div>
-      <div class="bs-step">
-        <span class="bs-num">2</span>
-        <span>At the <strong>top-right ⋮ three-dots</strong> menu, tap <strong>“Open in Chrome”</strong> (or your phone’s browser).</span>
-      </div>
-      <div class="bs-step">
-        <span class="bs-num">3</span>
-        <span>In Chrome, <strong>press &amp; hold the web address</strong> at the top until <strong>“Copy”</strong> appears — then tap <strong>Copy</strong>.</span>
-      </div>
-      <div class="bs-step">
-        <span class="bs-num">4</span>
-        <span>Come back here and tap the gold <strong>📋 Paste link</strong> button — price &amp; sizes fill in automatically.</span>
+      <!-- DESKTOP: the brand opens directly in a new Chrome tab — no ⋮ menu hop needed -->
+      <div class="bs-steps-desktop">
+        <div class="bs-step">
+          <span class="bs-num">1</span>
+          <span>Click <strong>Open Brand Site</strong> below — it opens in a <strong>new Chrome tab</strong>. Browse and open the product you want.</span>
+        </div>
+        <div class="bs-step">
+          <span class="bs-num">2</span>
+          <span>Click the <strong>web address</strong> at the top (or press <strong>Ctrl + L</strong>), then <strong>Ctrl + C</strong> to copy it. <span style="opacity:.75">(Or right-click the product → <strong>Copy link</strong>.)</span></span>
+        </div>
+        <div class="bs-step">
+          <span class="bs-num">3</span>
+          <span>Switch back to this <strong>PakiPoshak</strong> tab and click the gold <strong>📋 Paste link</strong> button — price &amp; sizes fill in automatically.</span>
+        </div>
       </div>
     </div>
     <button class="bs-open-btn" id="bsOpenBtn" onclick="launchBrandTab()">
@@ -2261,7 +2303,7 @@
           <label>Price * — <span style="color:#c0392b;font-weight:700">use sale price if shown</span></label>
           <div class="price-row">
             <input type="number" id="dc_price_${id}" placeholder="e.g. 4500 PKR" min="0"
-              oninput="updateDraftPriceHint(${id});checkAddUrlLock()"/>
+              oninput="this.classList.remove('psb-missing');updateDraftPriceHint(${id});checkAddUrlLock()"/>
             <div class="currency-toggle">
               <button id="dc_pkr_${id}" class="active" onclick="setDraftCurrency(${id},'PKR')">PKR</button>
               <button id="dc_usd_${id}" onclick="setDraftCurrency(${id},'USD')">USD</button>
@@ -2272,7 +2314,7 @@
         </div>
       </div>
       <!-- Sizes section — always visible, content changes with category -->
-      <div style="margin-top:12px;background:var(--raised);border-radius:7px;padding:10px 12px">
+      <div id="dc_szbox_${id}" style="margin-top:12px;background:var(--raised);border-radius:7px;padding:10px 12px">
         <label style="font-size:0.76rem;font-weight:600;color:var(--txt-sec)">Sizes &amp; Quantities *
           <span id="dc_sz_note_${id}" style="font-weight:400;color:var(--txt-muted);font-size:0.67rem;margin-left:4px">(same price for all adult sizes)</span>
         </label>
@@ -2448,6 +2490,9 @@
     const chipsW  = document.getElementById(`dc_szchips_${id}`);
     const qhead   = document.getElementById(`dc_qhead_${id}`);
     document.getElementById(`dc_sremind_${id}`).style.display = 'none';
+    // Picking a category clears its (and the sizes box's) red missing-highlight
+    document.getElementById(`dc_catpick_${id}`)?.querySelectorAll('.catdd').forEach(d=> d.classList.remove('psb-missing'));
+    document.getElementById(`dc_szbox_${id}`)?.classList.remove('psb-missing');
 
     const uqtyWrap = document.getElementById(`dc_uqty_wrap_${id}`);
     if(uqtyWrap) uqtyWrap.style.display = 'none';
@@ -2718,8 +2763,10 @@
   }
 
   function onDraftSizeChange(draftId){
-    if(getDraftSizeRows(draftId).some(r=>r.size))
+    if(getDraftSizeRows(draftId).some(r=>r.size)){
       document.getElementById(`dc_sremind_${draftId}`).style.display='none';
+      document.getElementById(`dc_szbox_${draftId}`)?.classList.remove('psb-missing');
+    }
     checkAddUrlLock();
   }
 
@@ -2856,6 +2903,7 @@
     {n:'Rang Ja',u:'https://myrangja.com',p:false,c:'w'},
     {n:'Ramsha',u:'https://ramsha.pk',p:true,c:'w'},
     {n:'Salitex',u:'https://salitexonline.com',p:true,c:'w'},
+    {n:'Saya',u:'https://saya.pk',p:true,c:'w'},
     {n:'Sha Posh',u:'https://shaposh.pk',p:true,c:'w'},
     {n:'Silayi Pret',u:'https://silayipret.com',p:true,c:'w'},
     {n:'Sitara Studio',u:'https://sitarastudio.pk',p:true,c:'w'},
@@ -2968,7 +3016,12 @@
       js_invalid_url:"That doesn't look like a valid URL — please copy the full link from the brand's website.",
       js_fill_required:'Please fill in all required fields (highlighted in red) for each item.',
       js_add_item_first:'Please add at least one item to your order first.',
-      js_details_required:'Please fill in all required fields (Name, WhatsApp number, and Delivery Address).'
+      js_details_required:'Please fill in all required fields (Name, WhatsApp number, and Delivery Address).',
+      field_item:'This item', field_category:'Category', field_price:'Price', field_size:'Size',
+      js_missing_lead:'Almost there — please add:',
+      js_missing_multi:'Some items still need a detail:',
+      js_paste_nocopy:'No product link copied yet. Press &amp; hold the product’s web address → <b>Copy</b>, then tap <b>📋 Paste link</b>.',
+      js_paste_nocopy_d:'No product link copied yet. Copy the product’s web address (click the address bar, then Ctrl+C), then click <b>📋 Paste link</b>.'
     },
     bn: {
       tagline:'পাকিস্তানি ফ্যাশন · বাংলাদেশে ডেলিভারি',
@@ -3012,7 +3065,12 @@
       js_invalid_url:'এটি সঠিক লিংক মনে হচ্ছে না — অনুগ্রহ করে ব্র্যান্ডের ওয়েবসাইট থেকে পুরো লিংক কপি করুন।',
       js_fill_required:'প্রতিটি পণ্যের সব প্রয়োজনীয় ঘর (লাল চিহ্নিত) পূরণ করুন।',
       js_add_item_first:'অনুগ্রহ করে আগে অন্তত একটি পণ্য অর্ডারে যোগ করুন।',
-      js_details_required:'অনুগ্রহ করে সব প্রয়োজনীয় ঘর পূরণ করুন (নাম, হোয়াটসঅ্যাপ নম্বর ও ডেলিভারির ঠিকানা)।'
+      js_details_required:'অনুগ্রহ করে সব প্রয়োজনীয় ঘর পূরণ করুন (নাম, হোয়াটসঅ্যাপ নম্বর ও ডেলিভারির ঠিকানা)।',
+      field_item:'এই পণ্যটি', field_category:'ক্যাটাগরি', field_price:'দাম', field_size:'সাইজ',
+      js_missing_lead:'প্রায় হয়ে গেছে — অনুগ্রহ করে দিন:',
+      js_missing_multi:'কিছু পণ্যের জন্য আরও তথ্য দরকার:',
+      js_paste_nocopy:'এখনও কোনো প্রোডাক্ট লিংক কপি হয়নি। প্রোডাক্টের ওয়েব ঠিকানায় চেপে ধরে <b>Copy</b> করুন, তারপর <b>📋 Paste link</b> চাপুন।',
+      js_paste_nocopy_d:'এখনও কোনো প্রোডাক্ট লিংক কপি হয়নি। প্রোডাক্টের ওয়েব ঠিকানা কপি করুন (অ্যাড্রেস বারে ক্লিক করে Ctrl+C), তারপর <b>📋 Paste link</b> ক্লিক করুন।'
     }
   };
   let _lang = localStorage.getItem('psb_lang') || 'en';
@@ -3306,25 +3364,33 @@
   async function pasteAndAdd(inputId, addFn){
     const inp = document.getElementById(inputId);
     if(!inp) return;
-    let txt = '';
+    let txt = '', readOk = false;
     try{
       if(navigator.clipboard && navigator.clipboard.readText){
         txt = await navigator.clipboard.readText();
+        readOk = true;
       }
     }catch(e){ /* permission denied / not supported → fall back below */ }
-    if(txt){
-      const m = txt.match(/https?:\/\/[^\s"'<>]+/i);
-      inp.value = (m ? m[0] : txt).trim();
+    const m = txt && txt.match(/https?:\/\/[^\s"'<>]+/i);
+    if(m){
+      inp.value = m[0].trim();
       addFn();
-    } else {
-      // Clipboard unavailable (iOS in-app, denied): focus + highlight so the
-      // user can long-press → Paste right here without hunting for the box.
-      inp.focus();
-      inp.style.borderColor = 'var(--gold)';
-      inp.style.boxShadow   = '0 0 0 3px rgba(201,169,110,0.35)';
-      inp.placeholder = '⬆️ Long-press here → Paste';
-      setTimeout(()=>{ inp.style.borderColor=''; inp.style.boxShadow=''; }, 6000);
+      return;
     }
+    if(readOk){
+      // Clipboard WAS readable but holds no product link → they tapped Paste
+      // without copying a product URL first. Tell them exactly what to do.
+      inp.focus();
+      showUrlError(tr(window.innerWidth >= 820 ? 'js_paste_nocopy_d' : 'js_paste_nocopy'));
+      return;
+    }
+    // Clipboard unreadable (iOS in-app browser, permission denied): focus +
+    // highlight so the user can long-press → Paste right here.
+    inp.focus();
+    inp.style.borderColor = 'var(--gold)';
+    inp.style.boxShadow   = '0 0 0 3px rgba(201,169,110,0.35)';
+    inp.placeholder = '⬆️ Long-press here → Paste';
+    setTimeout(()=>{ inp.style.borderColor=''; inp.style.boxShadow=''; }, 6000);
   }
 
   // ── SHARE TARGET ────────────────────────────────────────────────────────────
@@ -3376,24 +3442,46 @@
     const ids = Object.keys(drafts).map(Number);
     if(!ids.length){ alert('No items to save.'); return; }
     let allValid = true;
+    const problems = [];   // [{name, miss:[field names]}] — drives a specific, per-item message
     ids.forEach(id => {
-      const cat = document.getElementById(`dc_cat_${id}`)?.value;
-      const priceRaw = parseFloat(document.getElementById(`dc_price_${id}`)?.value);
+      const el        = document.getElementById(`dc_${id}`);
+      const itemName  = (el && el.dataset.brand) || tr('field_item');
+      const cat       = document.getElementById(`dc_cat_${id}`)?.value;
+      const priceRaw  = parseFloat(document.getElementById(`dc_price_${id}`)?.value);
       const isUnstitched = UNSTITCHED_CATS.has(cat);
-      const catDDs = document.getElementById(`dc_catpick_${id}`)?.querySelectorAll('.catdd') || [];
-      if(!cat){ catDDs.forEach(d=>{ d.style.borderColor='#c0392b'; }); if(drafts[id]) drafts[id].catFetchDone=true; renderCatUI(id, true); allValid=false; }
-      else catDDs.forEach(d=>{ d.style.borderColor=''; });
-      if(!priceRaw || priceRaw<=0){ document.getElementById(`dc_price_${id}`).style.borderColor='#c0392b'; allValid=false; }
-      else document.getElementById(`dc_price_${id}`).style.borderColor='';
-      if(!isUnstitched && cat){
-        const rows = getDraftSizeRows(id);
-        if(rows.length === 0){
-          document.getElementById(`dc_sremind_${id}`).style.display='';
-          allValid=false;
-        }
+      const catDDs    = document.getElementById(`dc_catpick_${id}`)?.querySelectorAll('.catdd') || [];
+      const priceEl   = document.getElementById(`dc_price_${id}`);
+      const szBox     = document.getElementById(`dc_szbox_${id}`);
+      const miss      = [];
+      // Category — force the picker open AND ring it red (the ring survives re-render via a class)
+      if(!cat){
+        if(drafts[id]) drafts[id].catFetchDone=true; renderCatUI(id, true);
+        catDDs.forEach(d=> d.classList.add('psb-missing'));
+        miss.push(tr('field_category'));
+      } else catDDs.forEach(d=> d.classList.remove('psb-missing'));
+      // Price
+      if(priceEl){
+        if(!priceRaw || priceRaw<=0){ priceEl.classList.add('psb-missing'); miss.push(tr('field_price')); }
+        else priceEl.classList.remove('psb-missing');
       }
+      // Size — stitched garments only; ring the whole sizes box, not just the tiny reminder
+      if(!isUnstitched && cat && getDraftSizeRows(id).length === 0){
+        const rem = document.getElementById(`dc_sremind_${id}`); if(rem) rem.style.display='';
+        if(szBox) szBox.classList.add('psb-missing');
+        miss.push(tr('field_size'));
+      } else if(szBox) szBox.classList.remove('psb-missing');
+
+      if(miss.length){ allValid=false; problems.push({name:itemName, miss}); }
     });
-    if(!allValid){ alert(tr('js_fill_required')); return; }
+    if(!allValid){
+      const msg = (problems.length === 1)
+        ? tr('js_missing_lead') + ' ' + problems[0].miss.join(', ') + '.'
+        : tr('js_missing_multi') + '\n' + problems.map(p => '• ' + p.name + ': ' + p.miss.join(', ')).join('\n');
+      alert(msg);
+      const firstBad = document.querySelector('.psb-missing');
+      if(firstBad) firstBad.scrollIntoView({behavior:'smooth', block:'center'});
+      return;
+    }
     ids.forEach(id => {
       const el = document.getElementById(`dc_${id}`);
       const url = el.dataset.url;
@@ -4219,13 +4307,23 @@
     }
   }
 
+  // Desktop "Cart" chip (beside the stepper): the cart lives on step 1, so jump
+  // back there first if we're deeper in the flow, then scroll to it.
+  function gotoCart(){
+    if(!document.getElementById('step1').classList.contains('active')) goToStep(1);
+    setTimeout(scrollToCart, 80);
+  }
+
   // ── CART BADGE SYNC ──────────────────────────────────────────────────────
   function updateCartBadges(count){
-    // Header cart removed — only the bottom-bar badge remains.
-    const bBadge = document.getElementById('bnavBadge');
-    if(!bBadge) return;
-    if(count > 0){ bBadge.textContent = count; bBadge.style.display = ''; }
-    else        { bBadge.style.display = 'none'; }
+    // Header cart removed. Mobile shows the bottom-bar badge; desktop shows the
+    // badge on the Cart chip beside the stepper. Keep both in sync.
+    [['bnavBadge'], ['stepsCartBadge']].forEach(([elId]) => {
+      const b = document.getElementById(elId);
+      if(!b) return;
+      if(count > 0){ b.textContent = count; b.style.display = ''; }
+      else         { b.style.display = 'none'; }
+    });
   }
 
   // Restore any saved cart — must run last, after all consts above are initialised.
@@ -4310,7 +4408,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-16a';
+  const PSB_BUILD = '2026-06-16b';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');

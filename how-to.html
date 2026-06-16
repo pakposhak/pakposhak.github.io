@@ -58,6 +58,9 @@
     font-weight:800;font-size:0.78rem;display:flex;align-items:center;justify-content:center}
   .step .t{font-size:0.9rem;color:var(--txt-sec)}
   .step .t strong{color:var(--txt);font-weight:700}
+  /* Copy-link steps differ phone vs computer: phone hops to Chrome, desktop opens Chrome directly */
+  .t-desktop{display:none}
+  @media (min-width:820px){ .t-mobile{display:none} .t-desktop{display:inline} }
 
   .tip{display:flex;align-items:flex-start;gap:10px;background:var(--gold-dim);
     border:1px solid var(--gold-bdr);border-radius:11px;padding:12px 14px;font-size:0.86rem;
@@ -96,8 +99,8 @@
     <div class="steps">
       <div class="step"><div class="n">1</div><div class="t" data-i18n="a1">On the home page, tap a <strong>brand</strong> (or “Browse all brands”) to open its panel.</div></div>
       <div class="step"><div class="n">2</div><div class="t" data-i18n="a2">Tap <strong>“Open [Brand] →”</strong> — the brand’s own website opens. Find and open the product you want.</div></div>
-      <div class="step"><div class="n">3</div><div class="t" data-i18n="a3">Tap the <strong>⋮ menu (top-right)</strong> and choose <strong>“Open in Chrome”</strong> (or your phone’s browser).</div></div>
-      <div class="step"><div class="n">4</div><div class="t" data-i18n="a4">In Chrome, <strong>press and hold the web address</strong> at the top until <strong>“Copy”</strong> appears, then tap <strong>Copy</strong>.</div></div>
+      <div class="step"><div class="n">3</div><div class="t"><span class="t-mobile" data-i18n="a3">Tap the <strong>⋮ menu (top-right)</strong> and choose <strong>“Open in Chrome”</strong> (or your phone’s browser).</span><span class="t-desktop" data-i18n="a3_d">On a computer the brand site opens in a <strong>new Chrome tab</strong> automatically — just open the product you want.</span></div></div>
+      <div class="step"><div class="n">4</div><div class="t"><span class="t-mobile" data-i18n="a4">In Chrome, <strong>press and hold the web address</strong> at the top until <strong>“Copy”</strong> appears, then tap <strong>Copy</strong>.</span><span class="t-desktop" data-i18n="a4_d">Click the <strong>web address</strong> at the top (or press <strong>Ctrl + L</strong>), then <strong>Ctrl + C</strong> to copy it.</span></div></div>
       <div class="step"><div class="n">5</div><div class="t" data-i18n="a5">Come back to PakiPoshak and tap the gold <strong>“📋 Paste link”</strong> button — the price and sizes fill in automatically.</div></div>
       <div class="step"><div class="n">6</div><div class="t" data-i18n="a6">Pick your <strong>size(s) and quantity</strong>, choose the category if asked, then tap <strong>“Save to Order List”</strong>.</div></div>
       <div class="step"><div class="n">7</div><div class="t" data-i18n="a7">Add another product the same way, or tap <strong>“Add Another Product”</strong> / continue to your details.</div></div>
@@ -154,6 +157,8 @@
       a2:'Tap <strong>“Open [Brand] →”</strong> — the brand’s own website opens. Find and open the product you want.',
       a3:'Tap the <strong>⋮ menu (top-right)</strong> and choose <strong>“Open in Chrome”</strong> (or your phone’s browser).',
       a4:'In Chrome, <strong>press and hold the web address</strong> at the top until <strong>“Copy”</strong> appears, then tap <strong>Copy</strong>.',
+      a3_d:'On a computer the brand site opens in a <strong>new Chrome tab</strong> automatically — just open the product you want.',
+      a4_d:'Click the <strong>web address</strong> at the top (or press <strong>Ctrl + L</strong>), then <strong>Ctrl + C</strong> to copy it.',
       a5:'Come back to PakiPoshak and tap the gold <strong>“📋 Paste link”</strong> button — the price and sizes fill in automatically.',
       a6:'Pick your <strong>size(s) and quantity</strong>, choose the category if asked, then tap <strong>“Save to Order List”</strong>.',
       a7:'Add another product the same way, or tap <strong>“Add Another Product”</strong> / continue to your details.',
@@ -183,6 +188,8 @@
       a2:'<strong>“Open [Brand] →”</strong> ট্যাপ করুন — ব্র্যান্ডের নিজস্ব ওয়েবসাইট খুলবে। পছন্দের পণ্যটি খুঁজে খুলুন।',
       a3:'উপরে-ডানে <strong>⋮ মেনু</strong> ট্যাপ করে <strong>“Open in Chrome”</strong> (বা আপনার ফোনের ব্রাউজার) বেছে নিন।',
       a4:'Chrome-এ, উপরের <strong>ওয়েব অ্যাড্রেসটি কিছুক্ষণ চেপে ধরে রাখুন</strong> যতক্ষণ না <strong>“Copy”</strong> আসে, তারপর <strong>Copy</strong> ট্যাপ করুন।',
+      a3_d:'কম্পিউটারে ব্র্যান্ডের সাইট স্বয়ংক্রিয়ভাবে একটি <strong>নতুন Chrome ট্যাবে</strong> খোলে — শুধু পছন্দের পণ্যটি খুলুন।',
+      a4_d:'উপরের <strong>ওয়েব অ্যাড্রেসে</strong> ক্লিক করুন (বা <strong>Ctrl + L</strong> চাপুন), তারপর <strong>Ctrl + C</strong> দিয়ে কপি করুন।',
       a5:'পাকিপোশাকে ফিরে এসে সোনালি <strong>“📋 Paste link”</strong> বোতামে ট্যাপ করুন — দাম ও সাইজ স্বয়ংক্রিয়ভাবে বসে যাবে।',
       a6:'আপনার <strong>সাইজ ও পরিমাণ</strong> বেছে নিন, প্রয়োজন হলে ক্যাটাগরি নির্বাচন করুন, তারপর <strong>“Save to Order List”</strong> ট্যাপ করুন।',
       a7:'একইভাবে আরেকটি পণ্য যোগ করুন, অথবা <strong>“Add Another Product”</strong> ট্যাপ করে / আপনার তথ্যে এগিয়ে যান।',

@@ -57,6 +57,7 @@ const ALLOWED_HOSTS = [
   'naushemian.com','thecambridgeshop.com','charcoal.com.pk','cougar.com.pk',
   'deepakperwani.com','ismailfarid.com','royaltag.com.pk','savoir.pk',
   'minnieminors.com','bachaaparty.com','ilovehopscotch.com','rangrasiya.com.pk',
+  'saya.pk',
 ];
 
 function hostAllowed(hostname){
