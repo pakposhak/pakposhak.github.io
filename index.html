@@ -534,6 +534,51 @@
       .step-lbl{font-size:0.56rem}
       .step-item{min-width:50px}
     }
+
+    /* ── Browse tabs: Brands | Products ── */
+    .browse-tabs{display:flex;gap:8px;margin-bottom:16px}
+    .browse-tab{flex:1;padding:11px 8px;background:var(--surface);border:1.5px solid var(--bdr-med);border-radius:10px;
+      color:var(--txt-sec);font-weight:700;font-size:0.86rem;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px}
+    .browse-tab.on{background:var(--gold);color:#12122a;border-color:var(--gold)}
+    /* ── Product search page ── */
+    .ps-wrap{display:block}
+    .ps-rail{background:var(--surface);border:1px solid var(--bdr-med);border-radius:12px;padding:12px 14px;margin-bottom:14px}
+    .ps-fblock{margin-bottom:13px}
+    .ps-flabel{font-size:0.7rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:7px}
+    .ps-price{display:flex;flex-wrap:wrap;gap:6px}
+    .ps-bucket{padding:6px 12px;border:1.5px solid var(--gold-bdr);border-radius:16px;background:var(--gold-dim);color:var(--gold);font-size:0.76rem;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit}
+    .ps-bucket.on{background:var(--gold);color:#12122a;border-color:var(--gold)}
+    .ps-select{width:100%;padding:9px 10px;border:1.5px solid var(--bdr-med);border-radius:8px;background:var(--input-bg);color:var(--txt);font-size:0.86rem;font-family:inherit}
+    .ps-brands{display:flex;flex-direction:column;gap:2px;max-height:132px;overflow-y:auto;border:1px solid var(--bdr-med);border-radius:8px;padding:7px 9px;background:var(--input-bg)}
+    .ps-brand-chk{display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--txt-sec);cursor:pointer;padding:2px 0}
+    .ps-brand-chk input{accent-color:var(--gold);width:15px;height:15px;flex-shrink:0}
+    .ps-clear{width:100%;padding:8px;background:none;border:1.5px solid var(--bdr-med);border-radius:8px;color:var(--txt-muted);font-weight:600;font-size:0.78rem;cursor:pointer;font-family:inherit}
+    .ps-resbar{font-size:0.8rem;color:var(--txt-muted);margin-bottom:10px;font-weight:600;min-height:18px}
+    .ps-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .ps-card{border:1px solid var(--bdr-med);border-radius:11px;overflow:hidden;background:var(--surface);display:flex;flex-direction:column}
+    .ps-img{aspect-ratio:3/4;background:var(--raised);position:relative;overflow:hidden}
+    .ps-img img{width:100%;height:100%;object-fit:cover;display:block}
+    .ps-img-fail::after{content:'🛍️';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.7rem;opacity:0.4}
+    .ps-img-fail img{display:none}
+    .ps-cbody{padding:8px 9px;display:flex;flex-direction:column}
+    .ps-brand{font-size:0.66rem;color:var(--txt-muted);font-weight:700;letter-spacing:0.3px;text-transform:uppercase}
+    .ps-title{font-size:0.78rem;color:var(--txt);line-height:1.3;height:2.6em;overflow:hidden;margin:2px 0 3px}
+    .ps-bdt{font-size:0.92rem;font-weight:800;color:var(--txt)}
+    .ps-pkr{font-size:0.7rem;color:var(--txt-muted)}
+    .ps-szrow{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;min-height:17px}
+    .ps-sz{font-size:0.64rem;border:1px solid var(--bdr-med);border-radius:4px;padding:1px 5px;color:var(--txt-sec)}
+    .ps-add{margin-top:8px;width:100%;padding:7px;background:var(--gold);color:#12122a;border:none;border-radius:7px;font-weight:700;font-size:0.78rem;cursor:pointer;font-family:inherit}
+    .ps-pager{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:18px;font-size:0.84rem;color:var(--txt-sec);font-weight:600}
+    .ps-pg-btn{padding:7px 14px;border:1.5px solid var(--gold-bdr);border-radius:8px;background:var(--gold-dim);color:var(--gold);font-weight:700;cursor:pointer;font-family:inherit;font-size:0.82rem}
+    .ps-pg-btn:disabled{opacity:0.4;cursor:default}
+    .ps-empty{text-align:center;color:var(--txt-muted);padding:40px 10px;font-size:0.9rem}
+    @media (min-width:820px){
+      .ps-wrap{display:flex;gap:18px;align-items:flex-start}
+      .ps-rail{width:212px;flex-shrink:0;margin-bottom:0;position:sticky;top:12px}
+      .ps-results{flex:1;min-width:0}
+      .ps-grid{grid-template-columns:repeat(auto-fill,minmax(178px,1fr))}
+      .ps-brands{max-height:260px}
+    }
   </style>
 </head>
 <body>
@@ -608,8 +653,13 @@
 
 <div class="container">
 
-  <div class="section-label" data-i18n="lbl_browse">Browse a Brand</div>
+  <!-- Browse: switch between the brand directory and the multi-brand product search -->
+  <div class="browse-tabs">
+    <button type="button" class="browse-tab on" id="bt-brands" onclick="switchBrowse('brands')"><span aria-hidden="true">🏪</span> <span data-i18n="tab_brands">Browse brands</span></button>
+    <button type="button" class="browse-tab" id="bt-products" onclick="switchBrowse('products')"><span aria-hidden="true">🔎</span> <span data-i18n="tab_products">Browse products</span></button>
+  </div>
 
+  <div id="tabBrands">
   <div class="brand-section">
     <!-- Category bar (mega-menu) + brand columns — rendered by JS -->
     <div class="cat-bar" id="catBar"></div>
@@ -622,6 +672,34 @@
       <input id="brandSearch" class="brand-search" type="text" autocomplete="off" placeholder="🔍 Search 150+ Pakistani brands…" data-i18n-ph="search_ph"
         oninput="onBrandSearch()" onfocus="onBrandSearch()"/>
       <div id="brandDropdown" class="brand-dropdown"></div>
+    </div>
+  </div>
+  </div><!-- /tabBrands -->
+
+  <!-- BROWSE PRODUCTS — multi-brand search over catalog.json (price / category / brand filters) -->
+  <div id="tabProducts" style="display:none">
+    <div class="ps-wrap">
+      <aside class="ps-rail">
+        <div class="ps-fblock">
+          <div class="ps-flabel" data-i18n="ps_price">Price (PKR)</div>
+          <div class="ps-price" id="psPrice"></div>
+        </div>
+        <div class="ps-fblock">
+          <div class="ps-flabel" data-i18n="ps_category">Category</div>
+          <select class="ps-select" id="psCat" onchange="psOnCat()"></select>
+        </div>
+        <div class="ps-fblock">
+          <div class="ps-flabel"><span data-i18n="ps_brands">Brands</span> <span id="psBrandCount" style="color:var(--txt-muted);font-weight:600"></span></div>
+          <div class="ps-brands" id="psBrands"></div>
+        </div>
+        <button type="button" class="ps-clear" onclick="psClearFilters()" data-i18n="ps_clear">Clear filters</button>
+      </aside>
+      <section class="ps-results">
+        <div class="ps-resbar" id="psCount"></div>
+        <div class="ps-grid" id="psGrid"></div>
+        <div class="ps-empty" id="psEmpty" style="display:none" data-i18n="ps_empty">No products match these filters — try widening them.</div>
+        <div class="ps-pager" id="psPager"></div>
+      </section>
     </div>
   </div>
 
@@ -3083,6 +3161,11 @@
       hiw_confirm_pay:'Confirm price & pay (bKash/Nagad)',
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search 150+ Pakistani brands…',
+      tab_brands:'Browse brands', tab_products:'Browse products',
+      ps_price:'Price (PKR)', ps_category:'Category', ps_brands:'Brands', ps_clear:'Clear filters',
+      ps_allcats:'All categories', ps_loading:'Loading products…', ps_loadfail:'Could not load products — please try again.',
+      ps_results:'products', ps_add:'Add', ps_prev:'Prev', ps_next:'Next', ps_page:'Page',
+      ps_empty:'No products match these filters — try widening them.',
       more_tab:'More', more_title:'More Brands', more_sub:'All brands in this category — tap any to start, same as the tabs.', more_back:'Back',
       lbl_addproducts:'Add Products to Your Order',
       url_label:'📋 Copy a product link from any brand site and paste it below — or use the side 📋 Paste tab:',
@@ -3133,6 +3216,11 @@
       hiw_confirm_pay:'দাম নিশ্চিত করে পেমেন্ট (বিকাশ/নগদ)',
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
       lbl_browse:'ব্র্যান্ড ব্রাউজ করুন', search_ph:'🔍 ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
+      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন',
+      ps_price:'দাম (PKR)', ps_category:'ক্যাটাগরি', ps_brands:'ব্র্যান্ড', ps_clear:'ফিল্টার মুছুন',
+      ps_allcats:'সব ক্যাটাগরি', ps_loading:'পণ্য লোড হচ্ছে…', ps_loadfail:'পণ্য লোড করা যায়নি — আবার চেষ্টা করুন।',
+      ps_results:'পণ্য', ps_add:'যোগ করুন', ps_prev:'আগের', ps_next:'পরের', ps_page:'পৃষ্ঠা',
+      ps_empty:'এই ফিল্টারে কোনো পণ্য নেই — ফিল্টার একটু কমান।',
       more_tab:'আরও', more_title:'আরও ব্র্যান্ড', more_sub:'এই ক্যাটাগরির সব ব্র্যান্ড — উপরের ট্যাবের মতোই, শুরু করতে যেকোনোটিতে ট্যাপ করুন।', more_back:'পেছনে',
       lbl_addproducts:'অর্ডারে পণ্য যোগ করুন',
       url_label:'📋 যেকোনো ব্র্যান্ড সাইট থেকে প্রোডাক্টের লিংক কপি করে নিচে পেস্ট করুন — অথবা পাশের 📋 Paste ট্যাব ব্যবহার করুন:',
@@ -4579,11 +4667,160 @@
     document.body.appendChild(box);
   }
 
+  // ══ BROWSE PRODUCTS — multi-brand search over a pre-built catalog ═══════════
+  // catalog.json is harvested by harvest-catalog.js (locally now; VPS nightly in
+  // Phase 2). Loaded ONCE, filtered client-side — no live per-search brand
+  // fetches. Tapping a product hands its URL to the existing live add pipeline
+  // (handleAddUrl), so price / stock / category are verified on add.
+  const PSB_CATALOG_URL = (function(){ try{ return localStorage.getItem('psb_catalog_url') || 'catalog.json'; }catch(e){ return 'catalog.json'; } })();
+  const PS_BUCKETS = [
+    {lo:0,     hi:3500,  lbl:'Below 3,500'},
+    {lo:3500,  hi:5000,  lbl:'3,500 – 5,000'},
+    {lo:5000,  hi:8000,  lbl:'5,000 – 8,000'},
+    {lo:8000,  hi:10000, lbl:'8,000 – 10,000'},
+    {lo:10000, hi:15000, lbl:'10,000 – 15,000'},
+    {lo:15000, hi:1e12,  lbl:'Above 15,000'}
+  ];
+  const PS_CAT_LABELS = {
+    pret_3pc:'Stitched 3-piece', pret_3pc_emb:'Stitched 3pc — embroidered', pret_2pc_emb:'Stitched 2pc — embroidered',
+    lawn_3pc_unstitch:'Unstitched 3-piece', unstitch_3pc_emb:'Unstitched 3pc — embroidered',
+    shirt_dupatta_2pc:'2-piece (shirt + dupatta)', shirt_trouser_2pc:'2-piece (shirt + trouser)',
+    kurti_1pc:'Kurti / 1-piece', womens_trouser:'Trousers / bottoms', maxi_dress:'Dress / maxi',
+    formal_emb_3pc:'Formal 3-piece', formal_emb_2pc:'Formal 2-piece', heavy_formal_3pc:'Heavy formal 3pc',
+    bridal:'Bridal', lehenga:'Lehenga', saree:'Saree', abaya:'Abaya', kaftan:'Kaftan',
+    loungewear:'Loungewear', coord_western:'Co-ord set'
+  };
+  function psLabel(cat){ return PS_CAT_LABELS[cat] || cat; }
+
+  let PS_CATALOG = null, psLoaded = false, psLoading = false;
+  let psSel = { price:null, cat:'', brands:new Set() };
+  let psFiltered = [], psPage = 0;
+
+  function switchBrowse(which){
+    const brands = which === 'brands';
+    const tb = document.getElementById('tabBrands'), tp = document.getElementById('tabProducts');
+    if(tb) tb.style.display = brands ? '' : 'none';
+    if(tp) tp.style.display = brands ? 'none' : '';
+    document.getElementById('bt-brands').classList.toggle('on', brands);
+    document.getElementById('bt-products').classList.toggle('on', !brands);
+    if(!brands) psEnsureLoaded();
+  }
+
+  function psEnsureLoaded(){
+    if(psLoaded || psLoading) return;
+    psLoading = true;
+    const c = document.getElementById('psCount'); if(c) c.textContent = tr('ps_loading');
+    fetch(PSB_CATALOG_URL, { cache:'no-store' })
+      .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+      .then(j => {
+        PS_CATALOG = (j.products || []).filter(p => p && p.u && p.pkr && p.img);
+        psLoaded = true; psLoading = false;
+        psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psApply();
+      })
+      .catch(() => { psLoading = false; const e=document.getElementById('psCount'); if(e) e.textContent = tr('ps_loadfail'); });
+  }
+
+  function psBuildPriceFilter(){
+    document.getElementById('psPrice').innerHTML = PS_BUCKETS.map((b,i) =>
+      `<button type="button" class="ps-bucket${psSel.price===i?' on':''}" onclick="psTogglePrice(${i})">${b.lbl}</button>`).join('');
+  }
+  function psTogglePrice(i){ psSel.price = (psSel.price===i) ? null : i; psBuildPriceFilter(); psApply(); }
+
+  function psCatalogBrands(){
+    const set = new Set(PS_CATALOG.map(p => p.b));
+    const ordered = BRANDS.map(b => b.n).filter(n => set.has(n));
+    set.forEach(n => { if(ordered.indexOf(n) < 0) ordered.push(n); });
+    return ordered;
+  }
+  function psBuildBrandFilter(){
+    document.getElementById('psBrands').innerHTML = psCatalogBrands().map(n =>
+      `<label class="ps-brand-chk"><input type="checkbox" value="${esc(n)}" ${psSel.brands.has(n)?'checked':''} onchange="psToggleBrand(this.value,this.checked)"> ${esc(n)}</label>`).join('');
+  }
+  function psToggleBrand(name, on){ if(on) psSel.brands.add(name); else psSel.brands.delete(name); psBuildCatFilter(); psApply(); }
+
+  // Categories present in the (brand-filtered) catalog — all top brands when none picked.
+  function psBuildCatFilter(){
+    const pool = psSel.brands.size ? PS_CATALOG.filter(p => psSel.brands.has(p.b)) : PS_CATALOG;
+    const cats = [...new Set(pool.map(p => p.cat))].sort((a,b) => psLabel(a).localeCompare(psLabel(b)));
+    if(cats.indexOf(psSel.cat) < 0) psSel.cat = '';
+    document.getElementById('psCat').innerHTML = `<option value="">${tr('ps_allcats')}</option>` +
+      cats.map(c => `<option value="${esc(c)}" ${psSel.cat===c?'selected':''}>${esc(psLabel(c))}</option>`).join('');
+  }
+  function psOnCat(){ psSel.cat = document.getElementById('psCat').value; psApply(); }
+
+  function psClearFilters(){ psSel = {price:null, cat:'', brands:new Set()}; psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psApply(); }
+
+  // Three filters combine (AND) and each works independently.
+  function psApply(){
+    psPage = 0;
+    psFiltered = PS_CATALOG.filter(p => {
+      if(psSel.brands.size && !psSel.brands.has(p.b)) return false;
+      if(psSel.cat && p.cat !== psSel.cat) return false;
+      if(psSel.price !== null){ const b = PS_BUCKETS[psSel.price]; if(!(p.pkr >= b.lo && p.pkr < b.hi)) return false; }
+      return true;
+    });
+    psRender();
+  }
+
+  function psPageSize(){ return window.innerWidth >= 820 ? 12 : 8; }
+  // Per-card estimated landed ৳BDT (product + base commission + weight×logistics).
+  function estLandedBdt(pkr, cat){
+    const r = getRates();
+    const product = pkr * r.CONV_RATE;
+    const logistics = (typeof getWeight === 'function' ? getWeight(cat) : 0.5) * r.LOG_RATE;
+    return Math.round(product * (1 + (r.COMM_1 || 0)) + logistics);
+  }
+
+  function psCard(p, idx){
+    const bdt = estLandedBdt(p.pkr, p.cat);
+    const sz = (p.sz || []).slice(0,5).map(s => `<span class="ps-sz">${esc(s)}</span>`).join('');
+    return `<div class="ps-card">
+      <div class="ps-img"><img loading="lazy" src="${esc(p.img)}" alt="${esc(p.t)}" onerror="this.parentElement.classList.add('ps-img-fail')"></div>
+      <div class="ps-cbody">
+        <div class="ps-brand">${esc(p.b)}</div>
+        <div class="ps-title">${esc(p.t)}</div>
+        <div class="ps-bdt">≈ ৳${bdt.toLocaleString()}</div>
+        <div class="ps-pkr">PKR ${p.pkr.toLocaleString()}</div>
+        <div class="ps-szrow">${sz}</div>
+        <button type="button" class="ps-add" onclick="psAdd(${idx})">+ ${tr('ps_add')}</button>
+      </div>
+    </div>`;
+  }
+
+  function psRender(){
+    const grid = document.getElementById('psGrid');
+    const empty = document.getElementById('psEmpty');
+    const total = psFiltered.length;
+    document.getElementById('psCount').textContent = total ? (total.toLocaleString() + ' ' + tr('ps_results')) : '';
+    document.getElementById('psBrandCount').textContent = psSel.brands.size ? '('+psSel.brands.size+')' : '';
+    if(!total){ grid.innerHTML = ''; empty.style.display = ''; document.getElementById('psPager').innerHTML = ''; return; }
+    empty.style.display = 'none';
+    const ps = psPageSize(), pages = Math.ceil(total / ps);
+    if(psPage >= pages) psPage = pages - 1;
+    const start = psPage * ps;
+    grid.innerHTML = psFiltered.slice(start, start + ps).map((p,i) => psCard(p, start + i)).join('');
+    document.getElementById('psPager').innerHTML = pages > 1
+      ? `<button class="ps-pg-btn" ${psPage<=0?'disabled':''} onclick="psGo(-1)">‹ ${tr('ps_prev')}</button>`
+        + `<span>${tr('ps_page')} ${psPage+1} / ${pages}</span>`
+        + `<button class="ps-pg-btn" ${psPage>=pages-1?'disabled':''} onclick="psGo(1)">${tr('ps_next')} ›</button>`
+      : '';
+  }
+  function psGo(d){ psPage += d; psRender(); const t=document.getElementById('tabProducts'); if(t) window.scrollTo({top:t.offsetTop-8, behavior:'smooth'}); }
+
+  // Tap a product → hand its URL to the proven live add pipeline (verifies
+  // price/stock/category live, then the buyer picks size and saves to the cart).
+  function psAdd(idx){
+    const p = psFiltered[idx]; if(!p) return;
+    const inp = document.getElementById('urlInput');
+    if(inp) inp.value = p.u;
+    handleAddUrl();
+  }
+
   // ── BUILD STAMP ──────────────────────────────────────────────────────────
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-16h';
+  const PSB_BUILD = '2026-06-16i';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
