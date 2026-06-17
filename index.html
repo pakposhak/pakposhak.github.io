@@ -643,6 +643,9 @@
     .ps-pkr{font-size:0.7rem;color:var(--txt-muted)}
     .ps-szrow{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;min-height:17px}
     .ps-sz{font-size:0.64rem;border:1px solid var(--bdr-med);border-radius:4px;padding:1px 5px;color:var(--txt-sec)}
+    /* in-stock sizes, labelled, on the bottom of the first image */
+    .ps-img-sizes{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:18px 7px 5px;background:linear-gradient(rgba(10,22,40,0),rgba(10,22,40,0.9));color:#fff;font-size:0.63rem;font-weight:600;line-height:1.3}
+    .ps-img-sizes b{display:block;font-size:0.5rem;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#f0d595;margin-bottom:1px}
     .ps-add{margin-top:8px;width:100%;padding:7px;background:var(--gold);color:#12122a;border:none;border-radius:7px;font-weight:700;font-size:0.78rem;cursor:pointer;font-family:inherit}
     .ps-pager{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:18px;font-size:0.84rem;color:var(--txt-sec);font-weight:600}
     .ps-pg-btn{padding:7px 14px;border:1.5px solid var(--gold-bdr);border-radius:8px;background:var(--gold-dim);color:var(--gold);font-weight:700;cursor:pointer;font-family:inherit;font-size:0.82rem}
@@ -3386,7 +3389,7 @@
       ps_price:'Price (৳ delivered)', ps_category:'Product Category', ps_brands:'Brands', ps_clear:'Clear filters',
       ps_allcats:'All categories', ps_loading:'Loading products…', ps_loadfail:'Could not load products — please try again.',
       ps_results:'products', ps_add:'Add', ps_prev:'Prev', ps_next:'Next', ps_page:'Page',
-      ps_enlarge:'Enlarge', ps_d_loading:'Loading more details…', ps_d_open:'Open full page', ps_d_nofetch:'See all photos &amp; details on the brand page →', ps_d_nodesc:'No extra description provided.',
+      ps_enlarge:'Enlarge', ps_avail_sizes:'Available sizes', ps_unstitched:'Unstitched · no size needed', ps_mto:'Made to order', ps_d_loading:'Loading more details…', ps_d_open:'Open full page', ps_d_nofetch:'See all photos &amp; details on the brand page →', ps_d_nodesc:'No extra description provided.',
       ps_empty:'No products match these filters — try widening them.',
       ps_partial:'Not every brand &amp; product is listed here yet —', ps_partial_link:'browse all via Browse by brands →',
       ps_bsearch_ph:'Search 50+ brands…', ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products',
@@ -3448,7 +3451,7 @@
       ps_price:'দাম (৳, ডেলিভারিসহ)', ps_category:'পণ্যের ক্যাটাগরি', ps_brands:'ব্র্যান্ড', ps_clear:'ফিল্টার মুছুন',
       ps_allcats:'সব ক্যাটাগরি', ps_loading:'পণ্য আসছে…', ps_loadfail:'পণ্য আনা গেল না — আবার চেষ্টা করুন।',
       ps_results:'পণ্য', ps_add:'যোগ করুন', ps_prev:'আগের', ps_next:'পরের', ps_page:'পৃষ্ঠা',
-      ps_enlarge:'ছবি বড় করুন', ps_d_loading:'আরও বিবরণ আসছে…', ps_d_open:'পুরো পেজ খুলুন', ps_d_nofetch:'সব ছবি ও বিবরণ ব্র্যান্ডের পেজে দেখুন →', ps_d_nodesc:'বাড়তি কোনো বিবরণ নেই।',
+      ps_enlarge:'ছবি বড় করুন', ps_avail_sizes:'স্টকে থাকা সাইজ', ps_unstitched:'আনস্টিচড · সাইজ লাগে না', ps_mto:'অর্ডারে তৈরি হবে', ps_d_loading:'আরও বিবরণ আসছে…', ps_d_open:'পুরো পেজ খুলুন', ps_d_nofetch:'সব ছবি ও বিবরণ ব্র্যান্ডের পেজে দেখুন →', ps_d_nodesc:'বাড়তি কোনো বিবরণ নেই।',
       ps_empty:'এই ফিল্টারে কোনো পণ্য নেই — ফিল্টার একটু কমিয়ে দেখুন।',
       ps_partial:'সব ব্র্যান্ড বা পণ্য এখনো এখানে যোগ হয়নি —', ps_partial_link:'“ব্র্যান্ড দেখুন”-এ গিয়ে সব ব্রাউজ করুন →',
       ps_bsearch_ph:'৫০+ ব্র্যান্ড খুঁজুন…', ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়',
@@ -5185,15 +5188,23 @@
 
   function psCard(p, idx){
     const bdt = (p._bdt != null) ? p._bdt : estLandedBdt(p.pkr, p.cat);
-    const sz = (p.sz || []).slice(0,5).map(s => `<span class="ps-sz">${esc(s)}</span>`).join('');
+    // ONLY in-stock sizes (the catalog already lists available sizes only); labelled
+    // on the first image so the buyer sees what's orderable at a glance.
+    const list = p.sz || [];
+    const isUns = list.length === 1 && /unstitch/i.test(list[0]);
+    const isMto = list.length === 1 && /made to order/i.test(list[0]);
+    const szOverlay = isMto
+      ? `<div class="ps-img-sizes"><b>${tr('ps_mto')}</b></div>`
+      : isUns
+        ? `<div class="ps-img-sizes"><b>${tr('ps_unstitched')}</b></div>`
+        : `<div class="ps-img-sizes"><b>${tr('ps_avail_sizes')}</b>${list.slice(0,7).map(esc).join(' · ')}</div>`;
     return `<div class="ps-card">
-      <div class="ps-img">${p.sale?'<span class="ps-sale">SALE</span>':''}<button type="button" class="ps-info" onclick="psDetail(${idx})" aria-label="Enlarge pictures and details" title="Enlarge pics &amp; details">🔍<span class="ps-info-tx">${tr('ps_enlarge')}</span></button><img loading="lazy" src="${esc(p.img)}" alt="${esc(p.t)}" onerror="this.parentElement.classList.add('ps-img-fail')"></div>
+      <div class="ps-img">${p.sale?'<span class="ps-sale">SALE</span>':''}<button type="button" class="ps-info" onclick="psDetail(${idx})" aria-label="Enlarge pictures and details" title="Enlarge pics &amp; details">🔍<span class="ps-info-tx">${tr('ps_enlarge')}</span></button><img loading="lazy" src="${esc(p.img)}" alt="${esc(p.t)}" onerror="this.parentElement.classList.add('ps-img-fail')">${szOverlay}</div>
       <div class="ps-cbody">
         <div class="ps-brand">${esc(p.b)}</div>
         <div class="ps-title">${esc(p.t)}</div>
         <div class="ps-bdt">≈ ৳${bdt.toLocaleString()}</div>
         <div class="ps-pkr">PKR ${p.pkr.toLocaleString()}</div>
-        <div class="ps-szrow">${sz}</div>
         <button type="button" class="ps-add" onclick="psAdd(${idx})">+ ${tr('ps_add')}</button>
       </div>
     </div>`;
@@ -5459,7 +5470,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-18c';
+  const PSB_BUILD = '2026-06-18d';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');

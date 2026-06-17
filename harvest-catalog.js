@@ -109,6 +109,24 @@ function get(url){
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 function dec(s){ return (s||'').replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;/g,"'"); }
 const SIZE_RE = /^(xxs|xs|s|m|l|xl|xxl|xxxl|free\s*size|one\s*size|\d{1,2})$/i;
+// IN-STOCK sizes only: from each AVAILABLE variant take its Size option value.
+// Returns ['Unstitched'] for products with no size option; [] when every size of a
+// sized product is sold out (caller drops those — only available items are listed).
+function availSizes(p){
+  const idx = (p.options||[]).findIndex(o => /size/i.test((o && o.name) || o));
+  if(idx < 0) return ['Unstitched'];
+  const seen = new Set(), out = [];
+  (p.variants||[]).forEach(v => {
+    if(!v || v.available === false) return;          // skip sold-out variants
+    const raw = v['option' + (idx + 1)];
+    const s = raw && String(raw).trim();
+    if(s && SIZE_RE.test(s) && !seen.has(s)){ seen.add(s); out.push(s); }
+  });
+  return out.slice(0, 8);
+}
+// Bridal & lehenga are CUSTOM / made-to-order (their variants are usually all
+// available:false) — don't drop them for "no stock"; they ship made-to-order.
+const MTO_CATS = new Set(['bridal','lehenga']);
 
 // ── category mapping (mirror of order-form PT_CAT) ──
 // `s` = type+title (reliable for garment/piece-count); `tags` = tag string
@@ -251,10 +269,8 @@ async function harvestShopify(name, host, group){
       if(FESTIVE_BRANDS.has(name) && (cat === 'pret_3pc' || cat === 'kurti_1pc' || cat === 'pret_3pc_emb')) cat = 'formal_emb_3pc';
       const desc = (p.body_html || '').replace(/<[^>]+>/g, ' ');
       if(isHandmadeFull(cat, desc)) cat = 'handmade_emb';   // only an explicit adda/full-hand description
-      let sz = [];
-      const sizeOpt = (p.options||[]).find(o => /size/i.test(o.name||o));
-      if(sizeOpt && Array.isArray(sizeOpt.values)) sz = sizeOpt.values.filter(x => SIZE_RE.test(String(x).trim())).slice(0, 8);
-      if(!sz.length) sz = ['Unstitched'];
+      let sz = availSizes(p);
+      if(!sz.length){ if(MTO_CATS.has(cat)) sz = ['Made to order']; else return null; }
       // recency + on-sale signals so the page can surface fresh / discounted items first
       const pub = Math.floor((Date.parse(p.published_at || p.updated_at || p.created_at || '') || 0) / 1000);
       const onSale = (p.variants||[]).some(v => v.compare_at_price && parseFloat(v.compare_at_price) > parseFloat(v.price||0));
@@ -337,10 +353,8 @@ async function harvestCollectionUrl(name, host, group, force, handle){
     if(!force && FESTIVE_BRANDS.has(name) && (cat==='pret_3pc'||cat==='kurti_1pc'||cat==='pret_3pc_emb')) cat = 'formal_emb_3pc';
     const desc = (p.body_html || '').replace(/<[^>]+>/g, ' ');
     if(!force && isHandmadeFull(cat, desc)) cat = 'handmade_emb';
-    let sz = [];
-    const sizeOpt = (p.options||[]).find(o => /size/i.test(o.name||o));
-    if(sizeOpt && Array.isArray(sizeOpt.values)) sz = sizeOpt.values.filter(x => SIZE_RE.test(String(x).trim())).slice(0, 8);
-    if(!sz.length) sz = ['Unstitched'];
+    let sz = availSizes(p);
+    if(!sz.length){ if(MTO_CATS.has(cat)) sz = ['Made to order']; else return null; }
     const pub = Math.floor((Date.parse(p.published_at || p.updated_at || p.created_at || '') || 0) / 1000);
     const onSale = (p.variants||[]).some(v => v.compare_at_price && parseFloat(v.compare_at_price) > parseFloat(v.price||0));
     const o = { b:name, t:(p.title||'').slice(0,80), u:`https://${host}/products/${p.handle}`, img, pkr, cat, sz, pub };
