@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<title>PakiPoshak — Admin Dashboard</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0f0f1a;color:#eee;font-family:'Segoe UI',system-ui,sans-serif;padding:18px 14px;max-width:1180px;margin:0 auto;line-height:1.5}
+  h1{color:#c9a96e;font-size:1.4rem;letter-spacing:0.5px}
+  .sub{color:#888;font-size:0.84rem;margin:4px 0 16px}
+  a{color:#7ab8ff;text-decoration:none}
+  button{background:#c9a96e;color:#12122a;border:none;border-radius:8px;padding:9px 16px;font-weight:700;font-size:0.85rem;cursor:pointer;transition:opacity .15s}
+  button:hover{opacity:.85}
+  button.ghost{background:transparent;border:1.5px solid #555;color:#bbb}
+  input,select{background:#1a1a2e;border:1.5px solid #333;border-radius:8px;color:#eee;padding:9px 11px;font-size:0.85rem;outline:none;font-family:inherit}
+  input:focus,select:focus{border-color:#c9a96e}
+  .hint{font-size:0.74rem;color:#777}
+  .err{color:#ff8a8a;font-size:0.86rem;margin:10px 0}
+  .ok{color:#7CFC9A;font-size:0.82rem}
+
+  /* ── Gate ───────────────────────────────────────── */
+  #gate{max-width:420px;margin:60px auto;background:#16162a;border:1px solid #2a2a40;border-radius:14px;padding:26px 24px;text-align:center}
+  #gate h2{color:#c9a96e;font-size:1.1rem;margin-bottom:6px}
+  #gate p{color:#999;font-size:0.84rem;margin-bottom:16px}
+  #gate input{width:100%;margin-bottom:12px;text-align:center;letter-spacing:2px}
+  #gate button{width:100%}
+  #gateMsg{margin-top:10px;min-height:18px}
+
+  /* ── Controls ───────────────────────────────────── */
+  .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+  .controls .grp{display:flex;gap:6px;align-items:center}
+  .controls label{font-size:0.72rem;color:#999;text-transform:uppercase;letter-spacing:0.5px}
+  .preset{background:transparent;border:1.5px solid #3a3a55;color:#bbb;padding:7px 12px;font-weight:600}
+  .preset.on{background:#c9a96e;color:#12122a;border-color:#c9a96e}
+  #search{flex:1;min-width:200px}
+
+  /* ── Metric cards ───────────────────────────────── */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:6px}
+  .card{background:#16162a;border:1px solid #2a2a40;border-radius:12px;padding:15px 16px;position:relative;overflow:hidden}
+  .card .lbl{font-size:0.7rem;color:#999;text-transform:uppercase;letter-spacing:1px}
+  .card .val{font-size:1.6rem;font-weight:800;color:#fff;margin-top:4px;font-variant-numeric:tabular-nums}
+  .card .meta{font-size:0.74rem;color:#888;margin-top:3px}
+  .card.gold{border-color:#5a4a2a}.card.gold .val{color:#e7c787}
+  .card.green{border-color:#1f6b4d}.card.green .val{color:#7CFC9A}
+  .card.blue{border-color:#274a6b}.card.blue .val{color:#8fc4ff}
+  .card.amber{border-color:#6b5a27}.card.amber .val{color:#ffd98f}
+  .card .bar{height:5px;border-radius:3px;background:#23233a;margin-top:10px;overflow:hidden}
+  .card .bar i{display:block;height:100%;border-radius:3px}
+
+  .secondary{display:flex;gap:18px;flex-wrap:wrap;background:#13132400;margin:12px 0 18px}
+  .stat{background:#14142680;border:1px solid #23233a;border-radius:10px;padding:9px 14px}
+  .stat b{display:block;color:#c9a96e;font-size:1.05rem;font-variant-numeric:tabular-nums}
+  .stat span{font-size:0.68rem;color:#999;text-transform:uppercase;letter-spacing:0.5px}
+
+  /* ── Table ──────────────────────────────────────── */
+  .tablewrap{background:#16162a;border:1px solid #2a2a40;border-radius:12px;overflow:auto}
+  table{width:100%;border-collapse:collapse;font-size:0.8rem;min-width:920px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid #23233a;vertical-align:top;white-space:nowrap}
+  th{color:#999;font-size:0.66rem;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;cursor:pointer;user-select:none;position:sticky;top:0;background:#14142a}
+  th.num,td.num{text-align:right;font-variant-numeric:tabular-nums}
+  tbody tr:hover{background:#1b1b30}
+  .pill{display:inline-block;padding:1px 9px;border-radius:10px;font-size:0.68rem;font-weight:700}
+  .pill.sub{background:#2a2a40;color:#bbb}
+  .pill.rec{background:#274a3a;color:#9fe6c0}
+  .pill.rev{background:#5a3a1f;color:#ffcf9f}
+  .pill.conf{background:#1f6b4d;color:#eafff5}
+  .pill.placed{background:#274a6b;color:#bfe0ff}
+  .matchY{color:#7CFC9A;font-weight:700}.matchN{color:#ff8a8a;font-weight:700}
+  .empty{color:#777;text-align:center;padding:34px;font-size:0.9rem}
+  .updated{font-size:0.72rem;color:#666;margin:10px 2px}
+  @media(max-width:560px){ .card .val{font-size:1.35rem} h1{font-size:1.2rem} }
+</style>
+</head>
+<body>
+
+<!-- ── PASSWORD GATE (relay-verified, same admin password as the order form) ── -->
+<div id="gate">
+  <h2>🔒 Admin Dashboard</h2>
+  <p>Enter the admin password (same one as the in-app admin panel).</p>
+  <input id="gatePw" type="password" placeholder="Admin password" autocomplete="current-password"
+    onkeydown="if(event.key==='Enter')unlock()"/>
+  <button onclick="unlock()">Unlock</button>
+  <div id="gateMsg" class="hint"></div>
+  <div class="hint" style="margin-top:14px">Relay: <span id="gateRelay"></span> · <a href="#" onclick="setRelay();return false">change</a></div>
+</div>
+
+<!-- ── DASHBOARD (hidden until unlocked) ── -->
+<div id="app" style="display:none">
+  <h1>📊 PakiPoshak Admin Dashboard</h1>
+  <div class="sub">Live order &amp; payment funnel from your tracking sheet · <a href="order-aggregator.html">Order aggregator →</a></div>
+
+  <div class="controls">
+    <div class="grp"><label>From</label><input id="dFrom" type="date" onchange="markCustom();render()"></div>
+    <div class="grp"><label>To</label><input id="dTo" type="date" onchange="markCustom();render()"></div>
+    <div class="grp" id="presets">
+      <button class="preset on" data-p="all" onclick="preset('all')">All</button>
+      <button class="preset" data-p="today" onclick="preset('today')">Today</button>
+      <button class="preset" data-p="7" onclick="preset('7')">7d</button>
+      <button class="preset" data-p="30" onclick="preset('30')">30d</button>
+      <button class="preset" data-p="month" onclick="preset('month')">This month</button>
+    </div>
+    <input id="search" type="text" placeholder="🔍 Search order id, name, WhatsApp, status, TrxID…" oninput="render()">
+    <button onclick="loadSheet()">🔄 Refresh</button>
+    <button class="ghost" onclick="exportCsv()">⬇ Export</button>
+  </div>
+
+  <div class="cards" id="cards"></div>
+  <div class="secondary" id="secondary"></div>
+
+  <div class="updated" id="updated"></div>
+  <div id="msg"></div>
+  <div class="tablewrap"><table id="tbl">
+    <thead><tr id="thead"></tr></thead>
+    <tbody id="tbody"></tbody>
+  </table></div>
+  <div class="hint" style="margin-top:10px">💡 “Submitted” = order value placed by customers · “Received” = payments logged · “Confirmed” = payments you’ve verified (status <b>payment_confirmed</b> or later). Dates use each order’s submission time (from its PSB id).</div>
+</div>
+
+<script>
+  // ── Config ───────────────────────────────────────────────────────────────
+  const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/16v2e7pxwMPimVkOTFKID3S4dI-mPexlzNgUT3zN0CM0/gviz/tq?tqx=out:csv&gid=0&headers=1';
+  const DEFAULT_RELAY_URL = 'https://103.83.91.34.sslip.io';
+  function relayBase(){ return ((localStorage.getItem('psb_relay_url')||'').trim() || DEFAULT_RELAY_URL).replace(/\/+$/,''); }
+  async function sha256hex(str){ const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
+  const esc = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  // Confirmed = payment verified (this status) or any later fulfilment stage.
+  const CONFIRMED = new Set(['payment_confirmed','placed_at_brand','items_ordered','at_karachi_warehouse','received_in_dhaka','delivered_to_buyer']);
+  const RECEIVED_HINT = new Set(['payment_received','payment_review','payment_confirmed','placed_at_brand','items_ordered','at_karachi_warehouse','received_in_dhaka','delivered_to_buyer']);
+
+  // ── Gate ─────────────────────────────────────────────────────────────────
+  document.getElementById('gateRelay').textContent = relayBase();
+  function setRelay(){
+    const cur = localStorage.getItem('psb_relay_url')||'';
+    const v = prompt('Relay base URL (https://…). Leave blank to use the default.', cur);
+    if(v===null) return;
+    const t = v.trim();
+    if(t && !/^https:\/\//i.test(t)){ alert('Must start with https://'); return; }
+    if(t) localStorage.setItem('psb_relay_url', t); else localStorage.removeItem('psb_relay_url');
+    document.getElementById('gateRelay').textContent = relayBase();
+  }
+  async function unlock(){
+    const pw = document.getElementById('gatePw').value;
+    const msg = document.getElementById('gateMsg');
+    if(!pw){ msg.innerHTML='<span class="err">Enter the password.</span>'; return; }
+    msg.textContent = 'Checking…'; msg.className='hint';
+    try{
+      const h = await sha256hex(pw);
+      const res = await fetch(relayBase()+'/admin/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash:h})});
+      const j = await res.json().catch(()=>null);
+      if(j && j.ok){ sessionStorage.setItem('psb_admin_h', h); enterApp(); }
+      else { msg.innerHTML='<span class="err">Wrong password.</span>'; }
+    }catch(e){ msg.innerHTML='<span class="err">Could not reach the relay to check the password. Tap “change” to set the relay URL, or try again.</span>'; }
+  }
+  function enterApp(){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('app').style.display='';
+    loadSheet();
+  }
+  // Skip the prompt for the rest of the browser-tab session.
+  if(sessionStorage.getItem('psb_admin_h')) enterApp();
+
+  // ── CSV ──────────────────────────────────────────────────────────────────
+  function parseCSV(text){
+    const rows=[];let cur=[],val='',q=false;
+    for(let i=0;i<text.length;i++){const c=text[i];
+      if(q){ if(c==='"'){ if(text[i+1]==='"'){val+='"';i++;} else q=false; } else val+=c; }
+      else { if(c==='"')q=true; else if(c===','){cur.push(val);val='';} else if(c==='\n'){cur.push(val);rows.push(cur);cur=[];val='';} else if(c!=='\r')val+=c; }
+    }
+    if(val.length||cur.length){cur.push(val);rows.push(cur);}
+    return rows;
+  }
+  const num = s => { const n = parseFloat(String(s==null?'':s).replace(/[^\d.]/g,'')); return isFinite(n)?n:0; };
+  const fbdt = n => '৳' + Math.round(n).toLocaleString();
+  const statusNorm = s => String(s==null?'':s).trim().toLowerCase().replace(/\s+/g,'_');
+
+  // Submission date: decode the PSB-<base36 ms> id (exact); fall back to status_date.
+  function orderDate(o){
+    const id = (o.order_id||'').trim();
+    const m = id.match(/^PSB-([0-9A-Za-z]+)$/);
+    if(m){ const ms = parseInt(m[1].toLowerCase(),36); if(ms>1.4e12 && ms<4e12) return new Date(ms); }
+    const d = Date.parse((o.status_date||'').trim()); if(!isNaN(d)) return new Date(d);
+    return null;
+  }
+  const ymd = d => d ? d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0') : '';
+
+  // ── State ────────────────────────────────────────────────────────────────
+  let ORDERS = [], COLS = [], _sortKey='date', _sortDir=-1;
+  let _msg='';
+
+  async function loadSheet(){
+    const msg = document.getElementById('msg');
+    msg.innerHTML = '<div class="hint">Loading orders from the sheet…</div>';
+    try{
+      const t = await fetch(SHEET_CSV+'&_='+Date.now()).then(r=>r.text());
+      const rows = parseCSV(t).filter(r=>r.length>1);
+      if(!rows.length){ msg.innerHTML='<div class="err">Sheet is empty.</div>'; return; }
+      const hdr = rows[0].map(h=>h.trim().toLowerCase().replace(/\s+/g,'_'));
+      COLS = hdr;
+      ORDERS = rows.slice(1).map(r=>{ const o={}; hdr.forEach((h,i)=>o[h]=(r[i]||'').trim()); return o; })
+        .filter(o => (o.order_id||'').trim());
+      _msg = '';
+      document.getElementById('updated').textContent = 'Updated ' + new Date().toLocaleString() + ' · ' + ORDERS.length + ' orders in sheet';
+      render();
+    }catch(e){ msg.innerHTML='<div class="err">Could not read the sheet ('+esc(e.message)+'). Make sure it is shared “Anyone with the link”.</div>'; }
+  }
+
+  // ── Filtering ────────────────────────────────────────────────────────────
+  let _preset='all';
+  function preset(p){
+    _preset=p;
+    [...document.querySelectorAll('.preset')].forEach(b=>b.classList.toggle('on', b.dataset.p===p));
+    const now=new Date(); const to=new Date(now); let from=null;
+    if(p==='today'){ from=new Date(now); from.setHours(0,0,0,0); }
+    else if(p==='7'){ from=new Date(now); from.setDate(from.getDate()-6); from.setHours(0,0,0,0); }
+    else if(p==='30'){ from=new Date(now); from.setDate(from.getDate()-29); from.setHours(0,0,0,0); }
+    else if(p==='month'){ from=new Date(now.getFullYear(), now.getMonth(), 1); }
+    document.getElementById('dFrom').value = (p==='all')?'':ymd(from);
+    document.getElementById('dTo').value   = (p==='all')?'':ymd(to);
+    render();
+  }
+  function markCustom(){ _preset='custom'; [...document.querySelectorAll('.preset')].forEach(b=>b.classList.remove('on')); }
+
+  function inRange(d){
+    if(!d) return true;   // undated rows always shown (rare legacy rows)
+    const f = document.getElementById('dFrom').value, t = document.getElementById('dTo').value;
+    if(f){ const fd=new Date(f); fd.setHours(0,0,0,0); if(d<fd) return false; }
+    if(t){ const td=new Date(t); td.setHours(23,59,59,999); if(d>td) return false; }
+    return true;
+  }
+  function matchSearch(o,q){
+    if(!q) return true;
+    return ['order_id','buyer_name','whatsapp','status','payment_trxid','payment_method','brand_order_ref','placed_status','placed_gmail']
+      .some(k => String(o[k]||'').toLowerCase().includes(q));
+  }
+
+  function filtered(){
+    const q = document.getElementById('search').value.trim().toLowerCase();
+    return ORDERS.map(o=>({o, d:orderDate(o)})).filter(x=>inRange(x.d) && matchSearch(x.o,q));
+  }
+
+  // ── Render ───────────────────────────────────────────────────────────────
+  function render(){
+    const rows = filtered();
+    let submitted=0, received=0, confirmed=0, weight=0;
+    let nSub=rows.length, nRec=0, nConf=0, nPend=0, nFlag=0, nPlaced=0;
+    rows.forEach(({o})=>{
+      const st = statusNorm(o.status);
+      submitted += num(o.est_total);
+      weight += num(o.est_weight_kg);
+      const pay = num(o.payment_amount);
+      if(pay>0 || RECEIVED_HINT.has(st)){ received += pay; nRec++; }
+      if(CONFIRMED.has(st)){ confirmed += pay || num(o.est_total); nConf++; }
+      if(st==='order_received' || (!pay && !RECEIVED_HINT.has(st))) nPend++;
+      if(st==='payment_review' || statusNorm(o.payment_match)==='no') nFlag++;
+      if((o.placed_status||'').trim() || st==='placed_at_brand') nPlaced++;
+    });
+    const avg = nSub ? submitted/nSub : 0;
+    const pctRec = submitted ? Math.min(100, received/submitted*100) : 0;
+    const pctConf = submitted ? Math.min(100, confirmed/submitted*100) : 0;
+
+    document.getElementById('cards').innerHTML =
+      card('gold','Total Value Submitted', fbdt(submitted), nSub+' orders', 100, '#c9a96e') +
+      card('green','Amount Received', fbdt(received), nRec+' paid · '+Math.round(pctRec)+'% of submitted', pctRec, '#7CFC9A') +
+      card('blue','Amount Confirmed', fbdt(confirmed), nConf+' confirmed · '+Math.round(pctConf)+'% of submitted', pctConf, '#8fc4ff') +
+      card('amber','Outstanding', fbdt(Math.max(0,submitted-received)), 'submitted − received', submitted?Math.max(0,(submitted-received)/submitted*100):0, '#ffd98f');
+
+    document.getElementById('secondary').innerHTML =
+      stat(fbdt(avg),'Avg order value') + stat(nPend,'Awaiting payment') + stat(nFlag,'Flagged / mismatch') +
+      stat(nPlaced,'Placed at brand') + stat(weight.toFixed(2)+' kg','Est. total weight');
+
+    renderTable(rows);
+    document.getElementById('msg').innerHTML = rows.length ? '' : '<div class="empty">No orders match this date range / search.</div>';
+  }
+  function card(cls,lbl,val,meta,pct,col){
+    return '<div class="card '+cls+'"><div class="lbl">'+esc(lbl)+'</div><div class="val">'+esc(val)+'</div>'+
+      '<div class="meta">'+esc(meta)+'</div><div class="bar"><i style="width:'+pct+'%;background:'+col+'"></i></div></div>';
+  }
+  function stat(v,l){ return '<div class="stat"><b>'+esc(v)+'</b><span>'+esc(l)+'</span></div>'; }
+
+  const TCOLS = [
+    {k:'order_id',  t:'Order ID'},
+    {k:'date',      t:'Submitted'},
+    {k:'buyer_name',t:'Customer'},
+    {k:'whatsapp',  t:'WhatsApp'},
+    {k:'status',    t:'Status'},
+    {k:'est_total', t:'Submitted ৳', num:true},
+    {k:'payment_amount', t:'Received ৳', num:true},
+    {k:'payment_match',  t:'Match'},
+    {k:'est_weight_kg',  t:'Wt (kg)'},
+    {k:'placed_status',  t:'Placed'},
+  ];
+  function statusPill(st){
+    const s = statusNorm(st);
+    let cls='sub';
+    if(s==='payment_confirmed') cls='conf';
+    else if(CONFIRMED.has(s)) cls='placed';
+    else if(s==='payment_review') cls='rev';
+    else if(s==='payment_received') cls='rec';
+    return '<span class="pill '+cls+'">'+esc(st||'—')+'</span>';
+  }
+  function sortVal(x,k){
+    if(k==='date') return x.d ? x.d.getTime() : 0;
+    if(k==='est_total'||k==='payment_amount'||k==='est_weight_kg') return num(x.o[k]);
+    return String(x.o[k]||'').toLowerCase();
+  }
+  function setSort(k){ if(_sortKey===k) _sortDir*=-1; else { _sortKey=k; _sortDir = (k==='date'||k==='est_total'||k==='payment_amount')?-1:1; } render(); }
+  function renderTable(rows){
+    document.getElementById('thead').innerHTML = TCOLS.map(c=>{
+      const arrow = _sortKey===c.k ? (_sortDir>0?' ▲':' ▼') : '';
+      return '<th class="'+(c.num?'num':'')+'" onclick="setSort(\''+c.k+'\')">'+esc(c.t)+arrow+'</th>';
+    }).join('');
+    rows.sort((a,b)=>{ const va=sortVal(a,_sortKey), vb=sortVal(b,_sortKey); return (va<vb?-1:va>vb?1:0)*_sortDir; });
+    document.getElementById('tbody').innerHTML = rows.map(({o,d})=>{
+      const wa = (o.whatsapp||'').replace(/\s/g,'');
+      const waLink = wa ? '<a href="https://wa.me/'+esc(wa.replace(/[^\d]/g,''))+'" target="_blank">'+esc(o.whatsapp)+'</a>' : '—';
+      const match = statusNorm(o.payment_match);
+      const matchHtml = match==='yes' ? '<span class="matchY">✓</span>' : match==='no' ? '<span class="matchN">✗</span>' : '—';
+      return '<tr>'+
+        '<td><b style="color:#c9a96e">'+esc(o.order_id)+'</b></td>'+
+        '<td>'+esc(d?ymd(d):'—')+'</td>'+
+        '<td>'+esc(o.buyer_name||'—')+'</td>'+
+        '<td>'+waLink+'</td>'+
+        '<td>'+statusPill(o.status)+'</td>'+
+        '<td class="num">'+(num(o.est_total)?Math.round(num(o.est_total)).toLocaleString():'—')+'</td>'+
+        '<td class="num">'+(num(o.payment_amount)?Math.round(num(o.payment_amount)).toLocaleString():'—')+'</td>'+
+        '<td class="num">'+matchHtml+'</td>'+
+        '<td class="num">'+(num(o.est_weight_kg)?num(o.est_weight_kg).toFixed(2):'—')+'</td>'+
+        '<td>'+esc(o.placed_status||(o.brand_order_ref||'')||'—')+'</td>'+
+      '</tr>';
+    }).join('');
+  }
+
+  // ── Export the current (filtered) view ───────────────────────────────────
+  function exportCsv(){
+    const rows = filtered();
+    const head = ['order_id','submitted_date','buyer_name','whatsapp','status','est_total','payment_amount','payment_match','est_weight_kg','placed_status'];
+    const q = s => '"'+String(s==null?'':s).replace(/"/g,'""')+'"';
+    const lines = [head.join(',')].concat(rows.map(({o,d})=>[
+      q(o.order_id), q(d?ymd(d):''), q(o.buyer_name), q(o.whatsapp), q(o.status),
+      q(o.est_total), q(o.payment_amount), q(o.payment_match), q(o.est_weight_kg), q(o.placed_status)
+    ].join(',')));
+    const blob = new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download='pakiposhak_dashboard_'+ymd(new Date())+'.csv'; a.click();
+  }
+</script>
+</body>
+</html>

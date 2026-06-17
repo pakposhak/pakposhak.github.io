@@ -24,7 +24,9 @@
  *  A order_id | B buyer_name | C whatsapp | D status | E status_date | F notes
  *  G receipt_url | H order_items | I cart_links | J delivery_address | K est_total
  *  L payment_amount | M payment_method | N payment_trxid | O payment_match
- *  P placed_gmail | Q brand_order_ref | R placed_status
+ *  P placed_gmail | Q brand_order_ref | R placed_status | S est_weight_kg
+ *  (S = the estimated parcel weight in kg, to match against the physical parcel
+ *   when it arrives. Added at the END so existing columns never shift.)
  ****************************************************************************/
 
 // ── CONFIG ──────────────────────────────────────────────────────────────
@@ -36,7 +38,7 @@ var SLIP_FOLDER = 'PakStyle Payment Slips';      // Drive folder for receipts
 var COLS = ['order_id','buyer_name','whatsapp','status','status_date','notes',
             'receipt_url','order_items','cart_links','delivery_address','est_total',
             'payment_amount','payment_method','payment_trxid','payment_match',
-            'placed_gmail','brand_order_ref','placed_status'];
+            'placed_gmail','brand_order_ref','placed_status','est_weight_kg'];
 
 // ── MAIN HANDLER (do not edit below) ────────────────────────────────────
 function doPost(e) {
@@ -123,6 +125,13 @@ function handleNewOrder(data, sheet, today){
     data.estimated_total_bdt || ''       // K — backup
   ]);
 
+  // Estimated parcel weight → its own column (S), addressed by header name so it
+  // never disturbs the A–K append above. Used to reconcile the physical weight.
+  var m = headerMap(sheet);
+  if (m['est_weight_kg'] !== undefined && data.estimated_weight_kg){
+    sheet.getRange(sheet.getLastRow(), m['est_weight_kg'] + 1).setValue(data.estimated_weight_kg + ' kg');
+  }
+
   var subject = 'New PakiPoshak Order ' + (data.order_id || '') + ' — ' + (data.buyer_name || '');
   var body =
     'NEW ORDER RECEIVED\n==================\n\n' +
@@ -132,6 +141,7 @@ function handleNewOrder(data, sheet, today){
     'Email:       ' + (data.email || '(none — contact via WhatsApp)') + '\n' +
     'Address:     ' + (data.delivery_address || '') + '\n' +
     'Est. Total:  ' + (data.estimated_total_bdt || '') + '\n' +
+    'Est. Weight: ' + (data.estimated_weight_kg ? data.estimated_weight_kg + ' kg' : '(n/a)') + '\n' +
     'Item count:  ' + (data.item_count || '') + '\n\n' +
     'ITEMS\n-----\n' + (data.order_items || '') + '\n\n' +
     'PRODUCT LINKS\n-------------\n' + (data.cart_links || '') + '\n\n' +

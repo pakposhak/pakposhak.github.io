@@ -266,6 +266,12 @@
       font-family:inherit;outline:none;background:var(--input-bg);color:var(--txt);transition:border-color .15s}
     .brand-search::placeholder{color:var(--txt-muted)}
     .brand-search:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,169,110,0.12)}
+    /* Prominent variant for the Store-Types focal search (req #1): heavier border,
+       bigger type, a soft gold glow so it reads as the main call to action. */
+    .brand-search-lead{font-size:0.9rem;font-weight:700;color:var(--txt);margin-bottom:8px}
+    .brand-search-lg{padding:15px 18px;font-size:1rem;font-weight:600;border-width:2.5px;border-color:var(--gold);
+      box-shadow:0 0 0 4px rgba(201,169,110,0.10)}
+    .brand-search-lg:focus{box-shadow:0 0 0 4px rgba(201,169,110,0.22)}
     .brand-dropdown{display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:50;background:var(--raised);
       border:1.5px solid var(--bdr-med);border-radius:10px;max-height:280px;overflow-y:auto}
     .brand-dd-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 14px;cursor:pointer;
@@ -597,6 +603,16 @@
     .bb-gtabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
     .bb-gtab{flex:1;min-width:88px;padding:9px 6px;background:var(--surface);border:1.5px solid var(--bdr-med);border-radius:9px;color:var(--txt-sec);font-weight:700;font-size:0.82rem;cursor:pointer;font-family:inherit}
     .bb-gtab.on{background:#137a72;color:#fff;border-color:#137a72}
+    /* Product-Category smart search (req #2): one heavy-border, highly-readable bar
+       that searches brands + product concepts. Hint line names what it matched. */
+    .bb-smartwrap{margin-bottom:16px}
+    .bb-smartsearch{width:100%;box-sizing:border-box;padding:14px 16px;border:2.5px solid var(--gold);border-radius:12px;
+      background:var(--input-bg);color:var(--txt);font-size:0.95rem;font-weight:600;font-family:inherit;box-shadow:0 0 0 4px rgba(201,169,110,0.10)}
+    .bb-smartsearch::placeholder{color:var(--txt-muted);font-weight:500}
+    .bb-smartsearch:focus{outline:none;box-shadow:0 0 0 4px rgba(201,169,110,0.22)}
+    .bb-search-hint{font-size:0.74rem;color:var(--txt-muted);margin-top:7px}
+    .bb-search-hint:empty{display:none}
+    .bb-search-hint b{color:var(--gold)}
     .bb-grp{margin-bottom:16px}
     .bb-grp-h{font-size:0.8rem;font-weight:800;color:var(--gold);margin-bottom:8px;letter-spacing:0.3px}
     .bb-prow{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
@@ -798,11 +814,11 @@
 
   <!-- Browse: switch between the brand directory and the multi-brand product search -->
   <div class="browse-tabs">
-    <button type="button" class="browse-tab on" id="bt-brands" onclick="switchBrowse('brands')"><span aria-hidden="true">🏪</span> <span data-i18n="tab_brands">Browse brands</span></button>
-    <button type="button" class="browse-tab" id="bt-products" onclick="switchBrowse('products')"><span aria-hidden="true">🔎</span> <span data-i18n="tab_products">Browse products</span></button>
+    <button type="button" class="browse-tab on" id="bt-products" onclick="switchBrowse('products')"><span aria-hidden="true">🔎</span> <span data-i18n="tab_products">Browse products</span></button>
+    <button type="button" class="browse-tab" id="bt-brands" onclick="switchBrowse('brands')"><span aria-hidden="true">🏪</span> <span data-i18n="tab_brands">Browse brands</span></button>
   </div>
 
-  <div id="tabBrands">
+  <div id="tabBrands" style="display:none">
     <!-- Two ways to find a brand: by store type (5 departments) OR by what products they sell -->
     <div class="bb-two-ways" data-i18n="bb_two_ways">Two ways to search brands</div>
     <div class="bb-subtabs">
@@ -827,14 +843,22 @@
       <div class="brand-section">
         <div class="bb-prod-sub" data-i18n="bb_prod_sub">See which brands make what — tap a brand to start.</div>
         <div class="bb-gtabs" id="bbGtabs"></div>
+        <!-- ONE smart search (brands + products). Typing "casual" surfaces both the
+             matching product categories AND the brands that make them (req #2). -->
+        <div class="bb-smartwrap">
+          <input id="bbSmartSearch" class="bb-smartsearch" type="text" autocomplete="off" oninput="bbSmartSearch(this.value)" data-i18n-ph="bb_smart_ph" placeholder="🔍 Search brands or products — e.g. casual, lawn, Khaadi"/>
+          <div class="bb-search-hint" id="bbSearchHint"></div>
+        </div>
         <div id="bbProdBody"></div>
       </div>
     </div>
 
-    <!-- Universal brand-name search — stays visible under BOTH sub-tabs -->
-    <div class="brand-section" style="margin-top:14px">
+    <!-- Brand-name search — the FOCAL point of the Store Types view (hidden under
+         Product Category, which has its own smart search). -->
+    <div class="brand-section" id="brandSearchSection" style="margin-top:14px">
+      <div class="brand-search-lead" data-i18n="bb_search_lead">🔎 Know the brand? Search 150+ Pakistani brands by name:</div>
       <div class="brand-search-wrap">
-        <input id="brandSearch" class="brand-search" type="text" autocomplete="off" placeholder="🔍 Search 150+ Pakistani brands…" data-i18n-ph="search_ph"
+        <input id="brandSearch" class="brand-search brand-search-lg" type="text" autocomplete="off" placeholder="🔍 Search 150+ Pakistani brands…" data-i18n-ph="search_ph"
           oninput="onBrandSearch()" onfocus="onBrandSearch()"/>
         <div id="brandDropdown" class="brand-dropdown"></div>
       </div>
@@ -842,7 +866,7 @@
   </div><!-- /tabBrands -->
 
   <!-- BROWSE PRODUCTS — multi-brand search over catalog.json (price / category / brand filters) -->
-  <div id="tabProducts" style="display:none">
+  <div id="tabProducts">
     <div class="ps-note">
       <span data-i18n="ps_partial">Not every brand &amp; product is listed here yet —</span>
       <a href="#" onclick="switchBrowse('brands');return false" data-i18n="ps_partial_link">browse all via Browse by brands →</a>
@@ -942,7 +966,6 @@
   <div id="runningTotal" style="display:none">
     <div class="running-total">
       <div class="rt-row"><span>Products (<span id="rt-item-count">0</span> items)</span><span id="rt-pkr">PKR —</span></div>
-      <div class="rt-row"><span>Estimated total weight</span><span id="rt-weight">— kg</span></div>
       <div class="rt-row"><span>Logistics (est. weight × ৳1,600/kg)</span><span id="rt-logistics">৳ —</span></div>
       <div class="rt-row"><span>Transaction Fee</span><span>৳ 100</span></div>
       <div class="rt-total"><span>ESTIMATED TOTAL</span><span id="rt-total">৳ —</span></div>
@@ -3460,6 +3483,7 @@
       ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products', ps_sort_lh:'৳ Low→High', ps_sort_hl:'৳ High→Low', ps_sale:'Sale', ps_new:'New', ps_lbl_sort:'Sort', ps_lbl_filter:'Filter', ps_search_ph:'Search brands or products…', ps_search_nomatch:'No brand or category matched',
       bb_store:'Store Types', bb_product:'Product Category', bb_women:'👗 Women', bb_men:'👔 Men', bb_kids:'🧸 Kids',
       bb_more:'more', bb_less:'less', bb_all:'All', bb_two_ways:'Two ways to search brands', bb_pick_gender:'Pick Women, Men or Kids above.', bb_pick_cat:'Pick a category above to see its brands.', bb_prod_sub:'See which brands make what — tap a brand to start.', bb_loading:'Loading brands…', bb_prod_none:'No catalogued brands here yet.',
+      bb_smart_ph:'🔍 Search brands or products — e.g. casual, lawn, Khaadi', bb_search_lead:'🔎 Know the brand? Search 150+ Pakistani brands by name:',
       js_soldout_lead:'Some items appear SOLD OUT and can’t be saved — please remove them or pick another article:',
       js_soldout_all:'sold out on the brand site', js_soldout_size:'this size is sold out',
       more_tab:'More', more_title:'More Brands', more_sub:'All brands in this category — tap any to start, same as the tabs.', more_back:'Back',
@@ -3524,6 +3548,7 @@
       ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়', ps_sort_lh:'৳ কম→বেশি', ps_sort_hl:'৳ বেশি→কম', ps_sale:'সেল', ps_new:'নতুন', ps_lbl_sort:'সাজান', ps_lbl_filter:'ফিল্টার', ps_search_ph:'ব্র্যান্ড বা পণ্য খুঁজুন…', ps_search_nomatch:'কোনো ব্র্যান্ড বা ক্যাটাগরি মেলেনি',
       bb_store:'স্টোরের ধরন', bb_product:'পণ্যের ক্যাটাগরি', bb_women:'👗 মেয়েদের', bb_men:'👔 ছেলেদের', bb_kids:'🧸 বাচ্চাদের',
       bb_more:'আরও', bb_less:'কম', bb_all:'সব', bb_two_ways:'ব্র্যান্ড খোঁজার দুটি উপায়', bb_pick_gender:'উপরে মেয়েদের, ছেলেদের বা বাচ্চাদের বেছে নিন।', bb_pick_cat:'ব্র্যান্ড দেখতে উপরের একটি ক্যাটাগরিতে ট্যাপ করুন।', bb_prod_sub:'কোন ব্র্যান্ড কী বানায় দেখে নিন — শুরু করতে ব্র্যান্ডে ট্যাপ করুন।', bb_loading:'ব্র্যান্ড আসছে…', bb_prod_none:'এখানে এখনো কোনো ব্র্যান্ড নেই।',
+      bb_smart_ph:'🔍 ব্র্যান্ড বা পণ্য খুঁজুন — যেমন casual, lawn, Khaadi', bb_search_lead:'🔎 ব্র্যান্ড জানা আছে? নাম দিয়ে ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন:',
       js_soldout_lead:'কিছু পণ্য স্টকে নেই, তাই সেভ করা যাচ্ছে না — সেগুলো সরিয়ে দিন বা অন্য পণ্য বেছে নিন:',
       js_soldout_all:'ব্র্যান্ডের সাইটে স্টকে নেই', js_soldout_size:'এই সাইজটি স্টকে নেই',
       more_tab:'আরও', more_title:'আরও ব্র্যান্ড', more_sub:'এই ক্যাটাগরির সব ব্র্যান্ড — উপরের ট্যাবের মতোই, শুরু করতে যেকোনোটিতে ট্যাপ করুন।', more_back:'পেছনে',
@@ -3635,7 +3660,13 @@
     bar.innerHTML = Object.keys(BRAND_CATS).map(cat =>
       `<button class="cat-tab" data-cat="${cat}" onclick="switchCat('${cat}')">${catLabel(cat)}</button>`
     ).join('');
-    switchCat(_catActive);
+    // Default: NO department pre-selected — keep the brand-name search the focal
+    // point so Store Types opens on the search view (req #1). A category opens
+    // only when the buyer taps a tab.
+    _catActive = null; _catOpen = false;
+    const panel = document.querySelector('.cat-panel');
+    if(panel) panel.style.display = 'none';
+    document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('on'));
   }
 
   // ── In-panel horizontal pager: a capped category shows its first N brands
@@ -4468,6 +4499,7 @@
       delivery_address:    address,
       notes:               notes || '',
       estimated_total_bdt: '৳ ' + totalBdt.toLocaleString(),
+      estimated_weight_kg: totalWeight.toFixed(2),   // for matching the physical parcel weight on arrival (tracker sheet)
       item_count:          cart.length,
       order_items:         itemsText,
       cart_links:          cart.map(i => i.url).join('\n'),
@@ -5684,6 +5716,10 @@
     if(pr) pr.style.display = store ? 'none' : '';
     document.getElementById('bbt-store').classList.toggle('on', store);
     document.getElementById('bbt-product').classList.toggle('on', !store);
+    // The "Search 150+ brands" bar belongs to Store Types only; Product Category
+    // has its own smart search (req #2), so hide the brand-name search there.
+    const bss = document.getElementById('brandSearchSection');
+    if(bss) bss.style.display = store ? '' : 'none';
     if(!store) bbRenderProduct();
   }
   function bbPickGender(g){
@@ -5740,6 +5776,63 @@
   // CLEAN layout: gender row -> the second-tier categories in ONE scrollable tab
   // row -> ONE themed dropdown (clubs) for the selected tab -> only THAT tab's
   // brands. Every tab toggles (re-tap clears), with a "+N more" to expand brands.
+  // All category keys that belong to a gender (flattened from BB_CLUBS) — used to
+  // scope the smart search to the selected gender.
+  function bbGenderCats(g){
+    const set = new Set();
+    (BB_CLUBS[g] || []).forEach(grp => grp.clubs.forEach(c => c[1].forEach(cat => set.add(cat))));
+    return set;
+  }
+  let _bbQuery = '';
+  // Unified smart search for the Product-Category view: typing a concept ("casual",
+  // "lawn") marks the matching product categories AND the brands that make them;
+  // typing a brand name ("khaadi") filters to that brand. Mirrors the Browse-
+  // Products smart search but the OUTPUT here is the brand grid (req #2).
+  function bbSmartSearch(val){
+    _bbQuery = val || '';
+    const inp = document.getElementById('bbSmartSearch');
+    if(inp && inp.value !== _bbQuery) inp.value = _bbQuery;   // keep field in sync (also for programmatic calls)
+    // The input is a STATIC node outside #bbProdBody, so re-rendering keeps focus.
+    bbRenderProduct();
+  }
+  // Brand list for the current gender, filtered by the smart-search query.
+  function bbBrandsForView(){
+    const genderCats = bbGenderCats(_bbGender);
+    // Base set = every brand for this gender: catalog-sampled (bbBrandsFor) PLUS the
+    // directory brands classified for this gender even if not yet catalogued.
+    let brands = bbBrandsFor([...genderCats]);
+    const have = new Set(brands.map(b => b.n));
+    BRANDS.forEach(b => { if(b.c === _bbGender && !have.has(b.n)){ have.add(b.n); brands.push(b); } });
+    const q = (_bbQuery || '').trim().toLowerCase();
+    if(q.length < 2){ bbSetHint('', null, null); return brands; }
+    const present = new Set(PS_CATALOG.map(p => p.cat));
+    const rawN = psNorm(q);
+    const tokens = q.split(/[\s,]+/).map(psNorm).filter(t => t.length >= 2 && !PS_STOP.has(t));
+    const matchedCats = new Set(), matchedNames = new Set();
+    tokens.forEach(t => {
+      psMatchCatsToken(t, present).forEach(c => { if(genderCats.has(c)) matchedCats.add(c); });
+      if(t.length >= 3) brands.forEach(b => { if(psNorm(b.n).indexOf(t) >= 0) matchedNames.add(b.n); });
+    });
+    if(rawN.length >= 2) psMatchCatsToken(rawN, present).forEach(c => { if(genderCats.has(c)) matchedCats.add(c); });
+    if(rawN.length >= 3) brands.forEach(b => { if(psNorm(b.n).indexOf(rawN) >= 0) matchedNames.add(b.n); });
+    const catArr = [...matchedCats];
+    const filtered = brands.filter(b => matchedNames.has(b.n) ||
+      (catArr.length && _bbIndex[b.n] && catArr.some(c => _bbIndex[b.n].has(c))));
+    bbSetHint(q, matchedNames, matchedCats);
+    return filtered;
+  }
+  // Hint line under the smart search: names the matched brands + product categories.
+  function bbSetHint(raw, names, cats){
+    const el = document.getElementById('bbSearchHint');
+    if(!el) return;
+    if(!raw || raw.length < 2){ el.textContent = ''; return; }
+    const nN = names ? names.size : 0, cN = cats ? cats.size : 0;
+    if(!nN && !cN){ el.textContent = tr('ps_search_nomatch'); return; }
+    const nm = [...(names || [])].slice(0, 3);
+    const lbls = [...(cats || [])].slice(0, 3).map(c => (PS_CAT_LABELS[c] || c).replace(/—/g,'').replace(/\s+/g,' ').trim());
+    const extra = Math.max(0, nN - 3) + Math.max(0, cN - 3);
+    el.innerHTML = '<b>✓</b> ' + esc(nm.concat(lbls).join(', ')) + (extra > 0 ? ' +' + extra : '');
+  }
   function bbRenderProduct(){
     const body = document.getElementById('bbProdBody');
     const gtabs = document.getElementById('bbGtabs');
@@ -5751,56 +5844,26 @@
       return;
     }
     if(!_bbIndex) bbBuildIndex();
-    const CAP = 12;
-    // Tier 1 — gender (toggle)
+    // Tier 1 — gender (toggle). The smart search bar (static node) sits below it.
     gtabs.innerHTML = BB_GENDERS.map(([g,k]) =>
       `<button type="button" class="bb-gtab${_bbGender===g?' on':''}" onclick="bbPickGender('${g}')">${tr(k)}</button>`).join('');
-    if(!_bbGender){ body.innerHTML = `<div class="bb-prod-empty">${tr('bb_pick_gender')}</div>`; return; }
-    const groups = BB_CLUBS[_bbGender] || [];
-    // Tier 2 — ALL second-tier categories in one scrollable row (toggle)
-    let html = `<div class="bb-cat2row">` + groups.map((grp, gi) =>
-      `<button type="button" class="bb-cat2${_bbGroup===gi?' on':''}" onclick="bbPickGroup(${gi})">${esc(grp.h)}</button>`).join('') + `</div>`;
-    if(_bbGroup == null || !groups[_bbGroup]){ body.innerHTML = html + `<div class="bb-prod-empty">${tr('bb_pick_cat')}</div>`; return; }
-    // Tier 3 — a custom THEMED dropdown of clubs (not a native <select>, so its
-    // list matches the app's colour & font) + a Store-Types-style brand grid.
-    const grp = groups[_bbGroup];
-    const key = _bbGender + '|' + _bbGroup;
-    const liveClubs = grp.clubs.map((c, ci) => ({ ci, label: c[0], cats: c[1], n: bbBrandsFor(c[1]).length })).filter(c => c.n > 0);
-    const sel = _bbClub[key];
-    const cats = (sel != null && grp.clubs[sel]) ? grp.clubs[sel][1] : grp.clubs.reduce((a,c) => a.concat(c[1]), []);
-    let brands = bbBrandsFor(cats);
-    // "All" view → also list brands the directory classifies for THIS gender even when
-    // the catalog hasn't sampled their products yet. Without this, Kids showed only
-    // Sha Posh (the lone brand with catalogued kids items); now all kids brands appear.
-    if(sel == null){
-      const have = new Set(brands.map(b => b.n));
-      BRANDS.forEach(b => { if(b.c === _bbGender && !have.has(b.n)){ have.add(b.n); brands.push(b); } });
-    }
-    const selLabel = (sel != null && grp.clubs[sel]) ? grp.clubs[sel][0] : (grp.h + ' — ' + tr('bb_all'));
-    // Tier-3 = the themed club dropdown only (the brand search bar was removed — Danish).
-    html += `<div class="bb-tier3row">`
-      + `<div class="bb-cdd" id="bbClubDD">`
-      +   `<button type="button" class="bb-cdd-btn" onclick="bbToggleClubDD(event)"><span>${esc(selLabel)}</span><span class="bb-cdd-car">▾</span></button>`
-      +   `<div class="bb-cdd-list" style="display:none">`
-      +     `<button type="button" class="bb-cdd-opt${sel==null?' on':''}" onclick="bbPickClub2(event,'')">${esc(grp.h)} — ${tr('bb_all')}</button>`
-      +     liveClubs.map(c => `<button type="button" class="bb-cdd-opt${sel===c.ci?' on':''}" onclick="bbPickClub2(event,'${c.ci}')">${esc(c.label)} (${c.n})</button>`).join('')
-      +   `</div></div>`
-      + `</div>`;
+    if(!_bbGender){ bbSetHint('', null, null); body.innerHTML = `<div class="bb-prod-empty">${tr('bb_pick_gender')}</div>`; return; }
+    const brands = bbBrandsForView();
     _bbSlidePage = 0;
-    html += `<div id="bbGridWrap">` + bbBrandGrid(brands) + `</div>`;
-    body.innerHTML = html;
+    body.innerHTML = `<div id="bbGridWrap">` + bbBrandGrid(brands) + `</div>`;
     bbMeasureSlide();
   }
 
-  // Remember the last-used browse tab so returning from Chrome reopens the SAME
-  // page (Browse Products) instead of resetting to Browse Brands (req #7).
-  try{ if(localStorage.getItem('psb_browse') === 'products') switchBrowse('products'); }catch(e){}
+  // Browse PRODUCTS is the default landing tab. We still honour a saved choice so
+  // a buyer who switched to Browse Brands returns to it; otherwise default products.
+  try{ switchBrowse(localStorage.getItem('psb_browse') === 'brands' ? 'brands' : 'products'); }
+  catch(e){ try{ switchBrowse('products'); }catch(_){} }
 
   // ── BUILD STAMP ──────────────────────────────────────────────────────────
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-18l';
+  const PSB_BUILD = '2026-06-18m';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
