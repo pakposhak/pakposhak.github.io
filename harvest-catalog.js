@@ -55,6 +55,7 @@ const SHOPIFY = [
   ['Zara Shahjahan','www.zarashahjahan.com','p'],['Afrozeh','afrozeh.com','p'],
   ['Baroque','baroque.pk','p'],['Mushq','mushq.pk','p'],
   ['Amir Adnan','www.amiradnan.com','m'],['Lawrencepur','www.lawrencepur.com','m'],
+  ['Cambridge','thecambridgeshop.com','m'],   // menswear (shalwar kameez, suits, polo, unstitched)
   ['Hijabi.pk','hijabi.pk','w'],   // abaya specialist → fills the Modest / abaya category
   // ── added 2026-06-18 ──
   ['Agha Noor','pk.aghanoorofficial.com','w'],   // aghanoorofficial.com 301s → the pk store
@@ -72,7 +73,15 @@ const COLLECTIONS = [
   ['Dazzle by Sarah','dazzlebysarah.com','w',40,[['khussa-shoes-online','footwear'],['kolhapuri-chappal','footwear']]],
   ['Khussa Corner','www.khussacorner.com','w',40,[['all-khussa','footwear']]],
   ['Khussa Master','khussamaster.com','w',40,[['ALL','footwear']]],
-  ['Zuruj','www.zuruj.com','w',30,[['ALL','footwear']]],
+  // Zuruj sells BOTH khussa AND clothing — only force the footwear collections (the
+  // whole-store force was wrong; "Mehrun" etc. are kaftans/suits, not khussa).
+  // Zuruj — TWO separate entries so footwear doesn't eat the whole cap and the
+  // clothing (kaftans/suits/co-ords) actually gets harvested into its real category.
+  ['Zuruj','www.zuruj.com','w',20,[['casual-khussa','footwear'],['bow-khussa','footwear'],['casual-kolhapuri','footwear']]],
+  ['Zuruj','www.zuruj.com','w',30,[['stiched',null],['3-piece-unstitched',null],['co-ord-sets',null]]],
+  // Kaftans — a hot category; force the collection (titles are kaftan design names)
+  ['Silayi Pret','silayipret.com','w',80,[['kaftaan','kaftan']]],
+  ['Lulusar','lulusar.com','w',35,[['kaftan','kaftan'],['flat-70-kaftan','kaftan']]],
   // J. Junaid Jamshed — menswear ONLY (req)
   ['J. Junaid Jamshed','www.junaidjamshed.com','m',60,[['men-collections',null]]],
   // bridal / lehenga top-ups — the COLLECTION is the category, so force it

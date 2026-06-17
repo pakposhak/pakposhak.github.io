@@ -3433,6 +3433,7 @@
       js_not_brand:'❌ This is not a correct product link — please copy a product URL from a supported brand below.',
       js_fill_required:'Please fill in all required fields (highlighted in red) for each item.',
       js_add_item_first:'Please add at least one item to your order first.',
+      js_leave_confirm:'You have items in your cart. Leave PakiPoshak? Your saved items will stay on this device.',
       js_details_required:'Please fill in all required fields (Name, WhatsApp number, and Delivery Address).',
       field_item:'This item', field_category:'Category', field_price:'Price', field_size:'Size',
       js_missing_lead:'Almost there — please add:',
@@ -3496,6 +3497,7 @@
       js_not_brand:'❌ এটি ঠিক পণ্যের লিংক নয় — নিচের কোনো ব্র্যান্ড থেকে পণ্যের লিংক কপি করুন।',
       js_fill_required:'প্রতিটি পণ্যের লাল চিহ্নিত ঘরগুলো পূরণ করুন।',
       js_add_item_first:'আগে অন্তত একটি পণ্য অর্ডারে যোগ করুন।',
+      js_leave_confirm:'আপনার কার্টে পণ্য আছে। পাকিপোশাক ছেড়ে যাবেন? সেভ করা পণ্য এই ডিভাইসেই থাকবে।',
       js_details_required:'নাম, হোয়াটসঅ্যাপ নম্বর ও ডেলিভারির ঠিকানা — এই ঘরগুলো পূরণ করুন।',
       field_item:'এই পণ্যটি', field_category:'ক্যাটাগরি', field_price:'দাম', field_size:'সাইজ',
       js_missing_lead:'প্রায় হয়ে গেছে — শুধু দিন:',
@@ -4055,15 +4057,28 @@
   // Warn before leaving ONLY if there are unsaved draft cards in progress.
   // Saved cart items persist in localStorage, so leaving/refreshing never loses
   // them — warning about them was wrong and scared buyers off other pages.
+  function psbHasUnsaved(){ return Object.keys(drafts).length > 0 || (typeof cart !== 'undefined' && cart.length > 0); }
+  // Tab close / refresh / desktop nav: the browser's own generic "Leave site?" prompt.
   window.addEventListener('beforeunload', function(e){
-    // Ask before leaving if there's anything in progress — unsaved draft cards OR
-    // items already in the cart — so a buyer doesn't lose their place by accident.
-    // (Browsers show their own generic "Leave site?" text; it can't be customised.)
-    if(Object.keys(drafts).length || (typeof cart !== 'undefined' && cart.length)){
-      e.preventDefault();
-      e.returnValue = '';
-    }
+    if(psbHasUnsaved()){ e.preventDefault(); e.returnValue = ''; }
   });
+  // Mobile BACK button / gesture: beforeunload is unreliable for it, so trap it with
+  // the History API — keep one spare history entry; when Back pops it, confirm if
+  // there's unsaved work and re-arm the trap if the buyer chooses to stay.
+  (function(){
+    var armed = false;
+    function arm(){ if(armed) return; try{ history.pushState({psbBack:1}, ''); armed = true; }catch(e){} }
+    arm();
+    window.addEventListener('popstate', function(){
+      armed = false;
+      if(psbHasUnsaved()){
+        if(confirm(tr('js_leave_confirm'))){ history.back(); }   // OK → leave for real
+        else { arm(); }                                          // Cancel → stay, re-trap
+      } else {
+        history.back();   // nothing to lose → go back normally
+      }
+    });
+  })();
 
   const CAT_LABELS = {
     kurti_1pc:'Kurti / 1pc', kaftan:'Kaftan (1pc)', shirt_dupatta_2pc:'2pc Shirt+Dupatta',
@@ -5470,7 +5485,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-18d';
+  const PSB_BUILD = '2026-06-18e';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
