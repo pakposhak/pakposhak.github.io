@@ -890,6 +890,7 @@
   <div id="runningTotal" style="display:none">
     <div class="running-total">
       <div class="rt-row"><span>Products (<span id="rt-item-count">0</span> items)</span><span id="rt-pkr">PKR —</span></div>
+      <div class="rt-row"><span>Estimated total weight</span><span id="rt-weight">— kg</span></div>
       <div class="rt-row"><span>Logistics (est. weight × ৳1,600/kg)</span><span id="rt-logistics">৳ —</span></div>
       <div class="rt-row"><span>Transaction Fee</span><span>৳ 100</span></div>
       <div class="rt-total"><span>ESTIMATED TOTAL</span><span id="rt-total">৳ —</span></div>
@@ -1676,6 +1677,7 @@
     formal_emb_2pc    : 1.18,
     formal_emb_3pc    : 1.45,
     heavy_formal_3pc  : 1.73,
+    handmade_emb      : 2.50,   // full HAND embroidery (adda) — heavy, same wt stitched/unstitched
     bridal            : 2.55,
     saree             : 1.15,   // NEW
     lehenga           : 1.80,   // NEW — lehenga/gharara/sharara
@@ -1721,6 +1723,7 @@
     formal_emb_2pc    : 'Formal Embroidered 2pc',
     formal_emb_3pc    : 'Formal Embroidered 3pc',
     heavy_formal_3pc  : 'Heavy Formal 3pc (organza/silk)',
+    handmade_emb      : 'Handmade Full Embroidery (adda)',
     bridal            : 'Bridal / Velvet / Full Embroidery',
     saree             : 'Saree',
     lehenga           : 'Lehenga / Gharara / Sharara',
@@ -1797,7 +1800,21 @@
   }
 
   // ── UNSTITCHED categories: no size field required ────────────────────────
-  const UNSTITCHED_CATS = new Set(['lawn_3pc_unstitch', 'unstitch_3pc_emb', 'winter_2pc_unstitch', 'winter_3pc_unstitch', 'saree', 'dupatta_only', 'shawl', 'accessories', 'mens_unstitched']);
+  const UNSTITCHED_CATS = new Set(['lawn_3pc_unstitch', 'unstitch_3pc_emb', 'winter_2pc_unstitch', 'winter_3pc_unstitch', 'handmade_emb', 'saree', 'dupatta_only', 'shawl', 'accessories', 'mens_unstitched']);
+
+  // Full HAND embroidery (adda) is heavy (~2.5kg). On live-add, upgrade a heavy
+  // women's category to 'handmade_emb' when the brand is a predominantly-handmade
+  // house (Emaan Adeel) or the description explicitly says adda / fully-hand work —
+  // mirrors the catalog harvester so the carted weight matches the browsed card.
+  const HANDMADE_HOSTS = new Set(['emaanadeel.com']);
+  const FORM_HEAVY_CATS = new Set(['pret_3pc','pret_3pc_emb','pret_2pc_emb','shirt_dupatta_2pc','shirt_trouser_2pc','formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','lawn_3pc_unstitch','unstitch_3pc_emb','bridal']);
+  function isHandmadeFullForm(url, product, cat, tagStr){
+    if(!FORM_HEAVY_CATS.has(cat)) return false;
+    let host = ''; try{ host = new URL(url).hostname.replace(/^www\./,''); }catch(e){}
+    if(HANDMADE_HOSTS.has(host)) return true;   // whole-brand default (their feed often omits the wording)
+    const desc = ((product && product.body_html) || '').replace(/<[^>]+>/g,' ');
+    return /\badda[\s-]?work|\badda\b|fully hand[\s-]?embroider|all[\s-]?over hand[\s-]?embroider|complete(?:ly)? hand[\s-]?embroider|entirely hand[\s-]?embroider|pure hand[\s-]?embroider/i.test(desc);
+  }
   const MENS_CATS = new Set(['mens_shirt','mens_trouser','mens_jeans','mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_suit','mens_sherwani','mens_unstitched']);
   const KIDS_CATS = new Set(['kids_eastern','kids_western']);
 
@@ -1833,6 +1850,7 @@
         ['formal_emb_2pc','Formal Embroidered 2pc'],
         ['formal_emb_3pc','Formal Embroidered 3pc'],
         ['heavy_formal_3pc','Heavy Formal 3pc (organza/silk)'],
+        ['handmade_emb','Handmade Full Embroidery (adda)'],
         ['saree','Saree'],
         ['lehenga','Lehenga / Gharara / Sharara'],
         ['bridal','Bridal / Velvet / Full Embroidery'],
@@ -2338,6 +2356,8 @@
       let fetchedCat = gender === 'men'
         ? (mapPtToCatMen(ptStr) || mapPtToCatMen(product.title || '') || 'mens_shalwar_kameez')
         : classifyWomenCat((ptStr + ' ' + (product.title || '')).toLowerCase(), tagStr);
+      // Full hand-embroidery (adda) → heavy 2.5kg category (matches the catalog).
+      if(gender !== 'men' && fetchedCat && isHandmadeFullForm(url, product, fetchedCat, tagStr)) fetchedCat = 'handmade_emb';
       const catEl = document.getElementById(`dc_cat_${id}`);
       // Overwrite a wrong women's auto-guess if this is clearly a men's product
       const womensGuess = catEl && catEl.value && !MENS_CATS.has(catEl.value);
@@ -3211,6 +3231,7 @@
     {n:'Ramsha',u:'https://ramsha.pk',p:true,c:'w'},
     {n:'Salitex',u:'https://salitexonline.com',p:true,c:'w'},
     {n:'Saya',u:'https://saya.pk',p:true,c:'w'},
+    {n:'Stylo',u:'https://stylo.pk',p:true,c:'w'},
     {n:'Sha Posh',u:'https://shaposh.pk',p:true,c:'w'},
     {n:'Silayi Pret',u:'https://silayipret.com',p:true,c:'w'},
     {n:'Sitara Studio',u:'https://sitarastudio.pk',p:true,c:'w'},
@@ -4016,9 +4037,12 @@
   // Saved cart items persist in localStorage, so leaving/refreshing never loses
   // them — warning about them was wrong and scared buyers off other pages.
   window.addEventListener('beforeunload', function(e){
-    if(Object.keys(drafts).length){
+    // Ask before leaving if there's anything in progress — unsaved draft cards OR
+    // items already in the cart — so a buyer doesn't lose their place by accident.
+    // (Browsers show their own generic "Leave site?" text; it can't be customised.)
+    if(Object.keys(drafts).length || (typeof cart !== 'undefined' && cart.length)){
       e.preventDefault();
-      e.returnValue = '';  // triggers browser's generic "Leave site?" dialog
+      e.returnValue = '';
     }
   });
 
@@ -4163,6 +4187,7 @@
     const totalBdt   = productBdt + commission + logistics + TRANS_FEE;
     document.getElementById('rt-item-count').textContent = cart.length;
     document.getElementById('rt-pkr').textContent  = 'PKR ' + totalPkr.toLocaleString();
+    const rtW = document.getElementById('rt-weight'); if(rtW) rtW.textContent = '≈ ' + totalWeight.toFixed(2) + ' kg';
     document.getElementById('rt-logistics').textContent = '৳ ' + logistics.toLocaleString();
     document.getElementById('rt-total').textContent = '৳ ' + totalBdt.toLocaleString();
     rtBox.style.display = '';
@@ -4930,6 +4955,7 @@
     shirt_dupatta_2pc:'2-piece (shirt + dupatta)', shirt_trouser_2pc:'2-piece (shirt + trouser)',
     kurti_1pc:'Kurti / 1-piece', womens_trouser:'Trousers / bottoms', maxi_dress:'Dress / maxi',
     formal_emb_3pc:'Formal 3-piece', formal_emb_2pc:'Formal 2-piece', heavy_formal_3pc:'Heavy formal 3pc',
+    handmade_emb:'Handmade full embroidery (adda)',
     bridal:'Bridal', lehenga:'Lehenga', saree:'Saree', abaya:'Abaya', kaftan:'Kaftan',
     loungewear:'Loungewear', coord_western:'Co-ord set',
     mens_shirt:'Men — shirt', mens_kurta:'Men — kurta', mens_shalwar_kameez:'Men — shalwar kameez',
@@ -5175,7 +5201,9 @@
         + `<button class="ps-pg-btn" ${psPage>=pages-1?'disabled':''} onclick="psGo(1)">${tr('ps_next')} ›</button>`
       : '';
   }
-  function psGo(d){ psPage += d; psRender(); const t=document.getElementById('tabProducts'); if(t) window.scrollTo({top:t.offsetTop-8, behavior:'smooth'}); }
+  // Next/Prev: scroll to the RESULTS (not the page top) so the buyer keeps seeing
+  // products instead of being thrown back up to the filters every time.
+  function psGo(d){ psPage += d; psRender(); const g=document.getElementById('psCount'); if(g) window.scrollTo({top: g.getBoundingClientRect().top + window.scrollY - 64, behavior:'smooth'}); }
 
   // Tap a product → hand its URL to the proven live add pipeline (verifies
   // price/stock/category live, then the buyer picks size and saves to the cart).
@@ -5264,6 +5292,7 @@
       ]},
       { h:'Formal / Festive / Bridal', clubs:[
         ['Bridal / Velvet / Full Embroidery', ['bridal','heavy_formal_3pc']],
+        ['Handmade / Adda Embroidery', ['handmade_emb']],
         ['Formal Embroidered', ['formal_emb_2pc','formal_emb_3pc']],
         ['Saree', ['saree']],
         ['Lehenga / Gharara / Sharara', ['lehenga']],
@@ -5414,7 +5443,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-17e';
+  const PSB_BUILD = '2026-06-18a';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');

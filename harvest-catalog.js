@@ -21,7 +21,7 @@ const fs    = require('fs');
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36';
 const PER_BRAND = parseInt(process.env.PER_BRAND || '50', 10);
 // Most-popular-in-Bangladesh brands get a deeper harvest (req: ~100+ each).
-const BRAND_CAP = { 'ETHNC':120, 'Sapphire':120, 'Nishat Linen':120, 'Maria B':120 };
+const BRAND_CAP = { 'ETHNC':120, 'Sapphire':120, 'Nishat Linen':120, 'Maria B':120, 'Stylo':250 };  // Stylo: scan deep, only khussa/peshawari are kept anyway
 function capFor(name){ return BRAND_CAP[name] || PER_BRAND; }
 
 // ── Shopify brands [name, host, group]  (group: md/w/p → women's cats, m → men, k → kids) ──
@@ -56,6 +56,10 @@ const SHOPIFY = [
   ['Baroque','baroque.pk','p'],['Mushq','mushq.pk','p'],
   ['Amir Adnan','www.amiradnan.com','m'],['Lawrencepur','www.lawrencepur.com','m'],
   ['Hijabi.pk','hijabi.pk','w'],   // abaya specialist → fills the Modest / abaya category
+  // ── added 2026-06-18 ──
+  ['Agha Noor','pk.aghanoorofficial.com','w'],   // aghanoorofficial.com 301s → the pk store
+  ['Eminent','eminent.pk','md'],
+  ['Stylo','stylo.pk','f'],   // footwear-only brand → group 'f' keeps ONLY khussa/peshawari
 ];
 
 // ── SFCC brands (no /products.json) — parse product tiles from listing pages ──
@@ -161,15 +165,35 @@ const PS_NON_APPAREL = /\b(bed|mattress|\bnet\b|blanket|quilt|pillow|cushion|tow
 // STRONG garment signals — if present, the item is apparel even when its NAME
 // contains a shoe/non-apparel word ("Sandali" lawn collection, "Net 3PC" suit).
 const GARMENT_SIG = /shirt|kurti|kurta|kameez|\bsuit\b|frock|\bdress\b|gown|abaya|kaftan|trouser|\bpants?\b|\bjeans?\b|denim|shalwar|saree|lehenga|\bcoat\b|jacket|sweater|dupatta|\bmaxi\b|[23][\s-]?(pc|piece|pcs)|un[\s-]?stitch|\blawn\b|cambric|khaddar|karandi|chiffon|organza/;
+const BAG_RE = /\bbag|hand[\s-]?bag|clutch|purse|wallet|tote\b|satchel|wristlet|backpack|\bpouch\b/;
+// Full HAND-embroidery (adda work) = heavy (~2.5kg), regardless of stitched/unstitched.
+// Detected from the product DESCRIPTION's hand/adda wording, plus a brand-default for
+// houses that are predominantly handmade (their feed often omits the wording).
+const HANDMADE_BRANDS = new Set(['Emaan Adeel']);
+const HEAVY_WOMEN_CATS = new Set(['pret_3pc','pret_3pc_emb','pret_2pc_emb','shirt_dupatta_2pc','shirt_trouser_2pc','formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','lawn_3pc_unstitch','unstitch_3pc_emb','bridal']);
+function isHandmadeFull(brand, cat, desc, blob){
+  if(!HEAVY_WOMEN_CATS.has(cat)) return false;
+  // Brand-default: houses that are predominantly full hand-embroidery (their feed
+  // often omits the wording) → any embroidered piece counts.
+  if(HANDMADE_BRANDS.has(brand) && /embroid|zardozi|\bzari\b|naqshi|gota|adda/i.test(blob)) return true;
+  // Otherwise require a STRONG hand-work signal (adda, or explicitly "fully/all-over
+  // hand embroidered") — a casual "hand-embroidered neckline" must NOT count, or every
+  // mid-range lawn suit would wrongly become 2.5kg.
+  return /\badda[\s-]?work|\badda\b|fully hand[\s-]?embroider|all[\s-]?over hand[\s-]?embroider|complete(?:ly)? hand[\s-]?embroider|entirely hand[\s-]?embroider|pure hand[\s-]?embroider/i.test(desc);
+}
 function mapCat(group, type, title, tagStr){
   const tt = ((type||'') + ' ' + (title||'')).toLowerCase();   // garment/piece-count: reliable
   const tags = (tagStr||'').toLowerCase();                      // unstitch/emb signals only
   const s = tt + ' ' + tags;
+  // Footwear-only brand (e.g. Stylo): keep ONLY khussa/peshawari, drop everything
+  // else (so a vaguely-named shoe never defaults to a women's 3pc suit).
+  if(group === 'f') return KHUSSA_RE.test(s) ? 'footwear' : null;
   // Non-garment classification ONLY when there is NO real garment signal — so a
   // suit/lawn whose NAME happens to contain "sandal"/"net" is never mis-flagged.
   if(!GARMENT_SIG.test(s)){
     if(KHUSSA_RE.test(s)) return 'footwear';      // khussa etc. — shippable
     if(SHOE_RE.test(s)) return null;              // sneakers/heels/sandals — drop (we can't ship)
+    if(BAG_RE.test(s)) return null;               // bags removed from listings entirely (req)
     if(PS_NON_APPAREL.test(s)) return 'accessories';
   }
   // gender from the text — esp. multi-department brands that mix men's & kids in
@@ -180,20 +204,25 @@ function mapCat(group, type, title, tagStr){
   return mapCatWomen(tt, tags);
 }
 
-// ── Shopify harvest ──
-function harvestShopify(name, host, group){
-  return get(`https://${host}/products.json?limit=250`).then(raw => {
-    let j; try{ j = JSON.parse(raw); }catch(e){ return []; }
+// ── Shopify harvest (with one retry so a transient timeout doesn't drop a brand) ──
+async function harvestShopify(name, host, group){
+  for(let attempt = 1; attempt <= 2; attempt++){
+    let raw;
+    try{ raw = await get(`https://${host}/products.json?limit=250`); }
+    catch(e){ if(attempt < 2){ await sleep(1500); continue; } console.error(`  ✗ ${name} (${host}): ${e.message}`); return []; }
+    let j; try{ j = JSON.parse(raw); }catch(e){ if(attempt < 2){ await sleep(1500); continue; } return []; }
     const prods = (j.products||[]).filter(p => p.variants && p.variants.length && p.handle).slice(0, capFor(name));
-    return prods.map(p => {
+    const out = prods.map(p => {
       const v0 = p.variants[0];
       const pkr = Math.round(parseFloat(v0 && v0.price) || 0);
       if(pkr < 500) return null;
       const img = (p.images && p.images[0] && p.images[0].src) || '';
       if(!img) return null;
       const tagStr = (Array.isArray(p.tags) ? p.tags.join(' ') : String(p.tags||'')).toLowerCase();
-      const cat = mapCat(group, p.product_type, p.title, tagStr);
-      if(!cat) return null;   // dropped (e.g. sneakers/heels we can't ship)
+      let cat = mapCat(group, p.product_type, p.title, tagStr);
+      if(!cat) return null;   // dropped (e.g. sneakers/heels/bags we can't ship)
+      const desc = (p.body_html || '').replace(/<[^>]+>/g, ' ');
+      if(isHandmadeFull(name, cat, desc, (p.title||'') + ' ' + tagStr + ' ' + desc)) cat = 'handmade_emb';
       let sz = [];
       const sizeOpt = (p.options||[]).find(o => /size/i.test(o.name||o));
       if(sizeOpt && Array.isArray(sizeOpt.values)) sz = sizeOpt.values.filter(x => SIZE_RE.test(String(x).trim())).slice(0, 8);
@@ -205,7 +234,10 @@ function harvestShopify(name, host, group){
       if(onSale) o.sale = 1;
       return o;
     }).filter(Boolean);
-  }).catch(e => { console.error(`  ✗ ${name} (${host}): ${e.message}`); return []; });
+    if(out.length || attempt === 2) return out;
+    await sleep(1500);   // got 0 usable products → one retry before giving up
+  }
+  return [];
 }
 
 // ── SFCC harvest (parse product tiles) ──
