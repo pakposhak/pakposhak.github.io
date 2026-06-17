@@ -1806,12 +1806,16 @@
   // women's category to 'handmade_emb' when the brand is a predominantly-handmade
   // house (Emaan Adeel) or the description explicitly says adda / fully-hand work —
   // mirrors the catalog harvester so the carted weight matches the browsed card.
-  const HANDMADE_HOSTS = new Set(['emaanadeel.com']);
   const FORM_HEAVY_CATS = new Set(['pret_3pc','pret_3pc_emb','pret_2pc_emb','shirt_dupatta_2pc','shirt_trouser_2pc','formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','lawn_3pc_unstitch','unstitch_3pc_emb','bridal']);
-  function isHandmadeFullForm(url, product, cat, tagStr){
+  // Khussa/footwear specialist stores → the carted item is footwear no matter what
+  // its product name says (matches the catalog's forced 'footwear').
+  const FOOTWEAR_HOSTS = new Set(['shopecs.com','dazzlebysarah.com','khussacorner.com','khussamaster.com','zuruj.com','stylo.pk']);
+  // Festive houses → bump a too-light auto-guess to formal-embroidered (NOT a blanket 2.5kg).
+  const FESTIVE_HOSTS = new Set(['emaanadeel.com']);
+  function _hostOf(url){ try{ return new URL(url).hostname.replace(/^www\./,''); }catch(e){ return ''; } }
+  // handmade_emb (2.5kg) ONLY when the description explicitly says adda / full-hand work.
+  function isHandmadeFullForm(product, cat){
     if(!FORM_HEAVY_CATS.has(cat)) return false;
-    let host = ''; try{ host = new URL(url).hostname.replace(/^www\./,''); }catch(e){}
-    if(HANDMADE_HOSTS.has(host)) return true;   // whole-brand default (their feed often omits the wording)
     const desc = ((product && product.body_html) || '').replace(/<[^>]+>/g,' ');
     return /\badda[\s-]?work|\badda\b|fully hand[\s-]?embroider|all[\s-]?over hand[\s-]?embroider|complete(?:ly)? hand[\s-]?embroider|entirely hand[\s-]?embroider|pure hand[\s-]?embroider/i.test(desc);
   }
@@ -2356,8 +2360,15 @@
       let fetchedCat = gender === 'men'
         ? (mapPtToCatMen(ptStr) || mapPtToCatMen(product.title || '') || 'mens_shalwar_kameez')
         : classifyWomenCat((ptStr + ' ' + (product.title || '')).toLowerCase(), tagStr);
-      // Full hand-embroidery (adda) → heavy 2.5kg category (matches the catalog).
-      if(gender !== 'men' && fetchedCat && isHandmadeFullForm(url, product, fetchedCat, tagStr)) fetchedCat = 'handmade_emb';
+      // Host overrides so the carted weight matches the catalog: khussa stores →
+      // footwear; festive houses (Emaan) → formal-embroidered floor (not 2.5kg);
+      // an explicit adda / full-hand description → handmade_emb (2.5kg).
+      const _host = _hostOf(url);
+      if(FOOTWEAR_HOSTS.has(_host)){ fetchedCat = 'footwear'; }
+      else if(gender !== 'men' && fetchedCat){
+        if(FESTIVE_HOSTS.has(_host) && (fetchedCat==='pret_3pc'||fetchedCat==='kurti_1pc'||fetchedCat==='pret_3pc_emb')) fetchedCat = 'formal_emb_3pc';
+        if(isHandmadeFullForm(product, fetchedCat)) fetchedCat = 'handmade_emb';
+      }
       const catEl = document.getElementById(`dc_cat_${id}`);
       // Overwrite a wrong women's auto-guess if this is clearly a men's product
       const womensGuess = catEl && catEl.value && !MENS_CATS.has(catEl.value);
@@ -3232,6 +3243,11 @@
     {n:'Salitex',u:'https://salitexonline.com',p:true,c:'w'},
     {n:'Saya',u:'https://saya.pk',p:true,c:'w'},
     {n:'Stylo',u:'https://stylo.pk',p:true,c:'w'},
+    {n:'ECS',u:'https://shopecs.com',p:true,c:'w'},
+    {n:'Dazzle by Sarah',u:'https://dazzlebysarah.com',p:true,c:'w'},
+    {n:'Khussa Corner',u:'https://www.khussacorner.com',p:true,c:'w'},
+    {n:'Khussa Master',u:'https://khussamaster.com',p:true,c:'w'},
+    {n:'Zuruj',u:'https://www.zuruj.com',p:true,c:'w'},
     {n:'Sha Posh',u:'https://shaposh.pk',p:true,c:'w'},
     {n:'Silayi Pret',u:'https://silayipret.com',p:true,c:'w'},
     {n:'Sitara Studio',u:'https://sitarastudio.pk',p:true,c:'w'},
