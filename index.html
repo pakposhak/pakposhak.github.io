@@ -103,23 +103,29 @@
     }
     #installPill:active{transform:scale(0.96)}
     @keyframes psbPillIn{from{opacity:0;transform:translateY(12px)}to{opacity:1}}
-    /* iOS install sheet */
+    /* Add-to-home-screen help sheet. z-index ABOVE the bottom-nav (300) and the
+       Paste FAB (350) — otherwise they cover the "Got it" button. The card is
+       height-capped: title + button stay pinned and tappable, the steps scroll. */
     #iosInstallSheet{
-      position:fixed; inset:0; z-index:120; background:rgba(0,0,0,0.6);
+      position:fixed; inset:0; z-index:600; background:rgba(0,0,0,0.6);
       display:flex; align-items:flex-end; justify-content:center;
     }
     #iosInstallSheet .ios-card{
       background:var(--surface); border:1px solid var(--gold-bdr);
       border-radius:18px 18px 0 0; width:100%; max-width:480px;
-      padding:22px 22px calc(28px + env(safe-area-inset-bottom,0px));
+      max-height:90vh; max-height:90dvh; overflow:hidden;
+      display:flex; flex-direction:column;
+      padding:20px 22px calc(18px + env(safe-area-inset-bottom,0px));
       color:var(--txt); animation:psbPillIn .3s ease;
     }
-    #iosInstallSheet .ios-title{font-size:1.15rem;font-weight:700;color:var(--gold);margin-bottom:8px}
+    #iosInstallSheet .ios-title{font-size:1.15rem;font-weight:700;color:var(--gold);margin-bottom:8px;flex-shrink:0}
+    #iosInstallSheet #installHelpBody{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0}
     #iosInstallSheet p{color:var(--txt-sec);margin-bottom:10px}
     #iosInstallSheet ol{margin:0 0 16px 18px;line-height:1.9;color:var(--txt)}
     #iosInstallSheet .ios-close{
       width:100%; background:var(--gold); color:#1a1206; font-weight:700;
-      border:none; border-radius:12px; padding:13px; font-size:1rem; cursor:pointer;
+      border:none; border-radius:12px; padding:14px; font-size:1rem; cursor:pointer;
+      flex-shrink:0; margin-top:10px;
     }
 
     /* ── Sticky header ── */
@@ -5794,7 +5800,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-18k';
+  const PSB_BUILD = '2026-06-18l';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
@@ -5875,8 +5881,8 @@
         body = '<p>Adds a one-tap icon that opens in Chrome (so brands open in Chrome too):</p>'
           + '<ol><li>Tap the <b>⋮ menu</b> (top-right in Chrome)</li>'
           + '<li>Tap <b>“Add to Home screen”</b></li>'
-          + '<li>Tap <b>Add</b></li></ol>'
-          + '<p style="font-size:0.85rem;color:#ff9a9a">⚠️ If you previously installed PakiPoshak as an '
+          + '<li>Tap <b>Add</b> (or <b>Install</b>)</li></ol>'
+          + '<p style="font-size:0.84rem;color:var(--txt);background:rgba(192,57,43,0.12);border:1px solid rgba(192,57,43,0.4);border-radius:8px;padding:8px 10px;margin-top:4px">⚠️ If you previously installed PakiPoshak as an '
           + '<b>app</b>, delete that old icon first — the old one opens brand links in a stuck in-app '
           + 'window. The new “Add to Home screen” icon opens them in Chrome.</p>';
       }
