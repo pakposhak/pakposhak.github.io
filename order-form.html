@@ -636,10 +636,18 @@
     .ps-bdept[open]>summary{color:var(--gold)}
     .ps-brand-chk input{accent-color:var(--gold);width:15px;height:15px;flex-shrink:0}
     .ps-clear{width:100%;padding:8px;background:none;border:1.5px solid var(--bdr-med);border-radius:8px;color:var(--txt-muted);font-weight:600;font-size:0.78rem;cursor:pointer;font-family:inherit}
-    .ps-resbar{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:0.8rem;color:var(--txt-muted);margin-bottom:10px;font-weight:600;min-height:24px}
-    .ps-sort{display:flex;gap:6px;flex-shrink:0}
-    .ps-sortbtn{padding:4px 9px;border:1.5px solid var(--gold-bdr);border-radius:13px;background:var(--gold-dim);color:var(--gold);font-size:0.68rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+    .ps-resbar{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:0.8rem;color:var(--txt-muted);margin-bottom:8px;font-weight:600;min-height:22px}
+    .ps-resbar-hint{font-size:0.62rem;letter-spacing:0.4px;color:var(--txt-muted);font-weight:600;flex-shrink:0;opacity:0.85}
+    /* Option C: filter+sort chips on their own row beneath the count (never crowds the count) */
+    .ps-sortrow{display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;border-top:1px solid var(--bdr);padding:9px 0 2px;margin-bottom:11px}
+    .ps-sortrow::-webkit-scrollbar{display:none}
+    .ps-sortbtn{padding:4px 10px;border:1.5px solid var(--gold-bdr);border-radius:13px;background:var(--gold-dim);color:var(--gold);font-size:0.68rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0}
     .ps-sortbtn.on{background:var(--gold);color:#12122a;border-color:var(--gold)}
+    /* Sale = a filter (red, echoes the SALE badge), distinct from the gold sort chips */
+    .ps-salebtn{background:transparent;border-color:rgba(192,57,43,0.55);color:#c0392b}
+    .ps-salebtn.on{background:#c0392b;color:#fff;border-color:#c0392b}
+    [data-theme="dark"] .ps-salebtn{color:#e8897c;border-color:rgba(232,137,124,0.5)}
+    [data-theme="dark"] .ps-salebtn.on{background:#c0392b;color:#fff;border-color:#c0392b}
     .ps-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .ps-card{border:1px solid var(--bdr-med);border-radius:11px;overflow:hidden;background:var(--surface);display:flex;flex-direction:column}
     .ps-img{aspect-ratio:3/4;background:var(--raised);position:relative;overflow:hidden}
@@ -852,7 +860,8 @@
         <button type="button" class="ps-clear" onclick="psClearFilters()" data-i18n="ps_clear">Clear filters</button>
       </aside>
       <section class="ps-results">
-        <div class="ps-resbar"><span id="psCount"></span><span class="ps-sort" id="psSortTabs"></span></div>
+        <div class="ps-resbar"><span id="psCount"></span><span class="ps-resbar-hint" data-i18n="ps_fsort">filter &amp; sort</span></div>
+        <div class="ps-sortrow" id="psSortTabs"></div>
         <div class="ps-grid" id="psGrid"></div>
         <div class="ps-empty" id="psEmpty" style="display:none" data-i18n="ps_empty">No products match these filters — try widening them.</div>
         <div class="ps-pager" id="psPager"></div>
@@ -3428,7 +3437,7 @@
       ps_enlarge:'Enlarge', ps_avail_sizes:'Available sizes', ps_unstitched:'Unstitched · no size needed', ps_mto:'Made to order', ps_d_loading:'Loading more details…', ps_d_open:'Open full page', ps_d_nofetch:'See all photos &amp; details on the brand page →', ps_d_nodesc:'No extra description provided.',
       ps_empty:'No products match these filters — try widening them.',
       ps_partial:'Not every brand &amp; product is listed here yet —', ps_partial_link:'browse all via Browse by brands →',
-      ps_bsearch_ph:'Search 50+ brands…', ps_catsearch_ph:'Search category…', ps_cat_nomatch:'No matching category', ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products', ps_sort_lh:'৳ Low→High', ps_sort_hl:'৳ High→Low',
+      ps_bsearch_ph:'Search 50+ brands…', ps_catsearch_ph:'Search category…', ps_cat_nomatch:'No matching category', ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products', ps_sort_lh:'৳ Low→High', ps_sort_hl:'৳ High→Low', ps_sale:'Sale', ps_new:'New', ps_fsort:'filter & sort',
       bb_store:'Store Types', bb_product:'Product Category', bb_women:'👗 Women', bb_men:'👔 Men', bb_kids:'🧸 Kids',
       bb_more:'more', bb_less:'less', bb_all:'All', bb_two_ways:'Two ways to search brands', bb_pick_gender:'Pick Women, Men or Kids above.', bb_pick_cat:'Pick a category above to see its brands.', bb_prod_sub:'See which brands make what — tap a brand to start.', bb_loading:'Loading brands…', bb_prod_none:'No catalogued brands here yet — use the search below.', bb_bsearch_ph:'Search brand…',
       js_soldout_lead:'Some items appear SOLD OUT and can’t be saved — please remove them or pick another article:',
@@ -3491,7 +3500,7 @@
       ps_enlarge:'ছবি বড় করুন', ps_avail_sizes:'স্টকে থাকা সাইজ', ps_unstitched:'আনস্টিচড · সাইজ লাগে না', ps_mto:'অর্ডারে তৈরি হবে', ps_d_loading:'আরও বিবরণ আসছে…', ps_d_open:'পুরো পেজ খুলুন', ps_d_nofetch:'সব ছবি ও বিবরণ ব্র্যান্ডের পেজে দেখুন →', ps_d_nodesc:'বাড়তি কোনো বিবরণ নেই।',
       ps_empty:'এই ফিল্টারে কোনো পণ্য নেই — ফিল্টার একটু কমিয়ে দেখুন।',
       ps_partial:'সব ব্র্যান্ড বা পণ্য এখনো এখানে যোগ হয়নি —', ps_partial_link:'“ব্র্যান্ড দেখুন”-এ গিয়ে সব ব্রাউজ করুন →',
-      ps_bsearch_ph:'৫০+ ব্র্যান্ড খুঁজুন…', ps_catsearch_ph:'ক্যাটাগরি খুঁজুন…', ps_cat_nomatch:'মিলে এমন ক্যাটাগরি নেই', ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়', ps_sort_lh:'৳ কম→বেশি', ps_sort_hl:'৳ বেশি→কম',
+      ps_bsearch_ph:'৫০+ ব্র্যান্ড খুঁজুন…', ps_catsearch_ph:'ক্যাটাগরি খুঁজুন…', ps_cat_nomatch:'মিলে এমন ক্যাটাগরি নেই', ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়', ps_sort_lh:'৳ কম→বেশি', ps_sort_hl:'৳ বেশি→কম', ps_sale:'সেল', ps_new:'নতুন', ps_fsort:'ফিল্টার ও সাজান',
       bb_store:'স্টোরের ধরন', bb_product:'পণ্যের ক্যাটাগরি', bb_women:'👗 মেয়েদের', bb_men:'👔 ছেলেদের', bb_kids:'🧸 বাচ্চাদের',
       bb_more:'আরও', bb_less:'কম', bb_all:'সব', bb_two_ways:'ব্র্যান্ড খোঁজার দুটি উপায়', bb_pick_gender:'উপরে মেয়েদের, ছেলেদের বা বাচ্চাদের বেছে নিন।', bb_pick_cat:'ব্র্যান্ড দেখতে উপরের একটি ক্যাটাগরিতে ট্যাপ করুন।', bb_prod_sub:'কোন ব্র্যান্ড কী বানায় দেখে নিন — শুরু করতে ব্র্যান্ডে ট্যাপ করুন।', bb_loading:'ব্র্যান্ড আসছে…', bb_prod_none:'এখানে এখনো কোনো ব্র্যান্ড নেই — নিচে খুঁজে দেখুন।', bb_bsearch_ph:'ব্র্যান্ড খুঁজুন…',
       js_soldout_lead:'কিছু পণ্য স্টকে নেই, তাই সেভ করা যাচ্ছে না — সেগুলো সরিয়ে দিন বা অন্য পণ্য বেছে নিন:',
@@ -5039,7 +5048,8 @@
 
   let PS_CATALOG = null, psLoaded = false, psLoading = false;
   let psSel = { prices:new Set(), cats:new Set(), brands:new Set() };
-  let psFiltered = [], psPage = 0, psSort = '';   // '' | 'asc' | 'desc' (price)
+  let psFiltered = [], psPage = 0, psSort = '';   // '' | 'asc' | 'desc' (price) | 'new' (recent→old)
+  let psSaleOnly = false;                          // Sale filter: show only discounted items
   // cat → gender ('w'/'m'/'k') and cat → group-index, derived once from CAT_TREE
   // so the Browse-Products category filter and the Browse-Brands product view
   // mirror the order form's picker exactly (single source of truth).
@@ -5218,6 +5228,7 @@
   function psClearFilters(){
     psSel = { prices:new Set(), cats:new Set(), brands:new Set() };
     psSort = '';
+    psSaleOnly = false;
     const bs = document.getElementById('psBrandSearch'); if(bs) bs.value = '';
     const cs = document.getElementById('psCatSearch'); if(cs) cs.value = '';
     psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply();
@@ -5235,20 +5246,26 @@
         psSel.prices.forEach(i => { const b = PS_BUCKETS[i]; if(p._bdt >= b.lo && p._bdt < b.hi) ok = true; });
         if(!ok) return false;
       }
+      if(psSaleOnly && !p.sale) return false;   // Sale filter: discounted items only
       return true;
     });
-    // Optional price sort (overrides the default women-first/sale order); ৳ landed price.
-    if(psSort === 'asc')  psFiltered.sort((a,b) => a._bdt - b._bdt);
-    else if(psSort === 'desc') psFiltered.sort((a,b) => b._bdt - a._bdt);
+    // Optional sort (overrides the default women-first/sale order).
+    if(psSort === 'asc')       psFiltered.sort((a,b) => a._bdt - b._bdt);          // ৳ landed price ↑
+    else if(psSort === 'desc') psFiltered.sort((a,b) => b._bdt - a._bdt);          // ৳ landed price ↓
+    else if(psSort === 'new')  psFiltered.sort((a,b) => (b.pub||0) - (a.pub||0));  // most recent → oldest
     psRender();
   }
-  // Two price-sort tabs beside the result count; tapping the active one clears it.
+  // Filter + sort chip row beneath the count (Option C): Sale (filter) · New · ৳↑ · ৳↓.
+  // Tapping the active sort/Sale chip clears it.
   function psBuildSort(){
     const el = document.getElementById('psSortTabs'); if(!el) return;
-    el.innerHTML = `<button type="button" class="ps-sortbtn${psSort==='asc'?' on':''}" onclick="psSetSort('asc')">${tr('ps_sort_lh')}</button>`
+    el.innerHTML = `<button type="button" class="ps-sortbtn ps-salebtn${psSaleOnly?' on':''}" onclick="psToggleSale()">${tr('ps_sale')}</button>`
+      + `<button type="button" class="ps-sortbtn${psSort==='new'?' on':''}" onclick="psSetSort('new')">${tr('ps_new')}</button>`
+      + `<button type="button" class="ps-sortbtn${psSort==='asc'?' on':''}" onclick="psSetSort('asc')">${tr('ps_sort_lh')}</button>`
       + `<button type="button" class="ps-sortbtn${psSort==='desc'?' on':''}" onclick="psSetSort('desc')">${tr('ps_sort_hl')}</button>`;
   }
   function psSetSort(s){ psSort = (psSort === s) ? '' : s; psBuildSort(); psApply(); }
+  function psToggleSale(){ psSaleOnly = !psSaleOnly; psBuildSort(); psApply(); }
 
   function psPageSize(){ return window.innerWidth >= 820 ? 12 : 8; }
   // Per-card estimated landed ৳BDT (product + base commission + weight×logistics).
@@ -5578,7 +5595,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-18h';
+  const PSB_BUILD = '2026-06-18i';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
