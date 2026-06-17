@@ -1344,15 +1344,15 @@
       <div class="bs-steps-mobile">
         <div class="bs-step">
           <span class="bs-num">1</span>
-          <span>Tap <strong>Open Brand Site</strong> below, then browse and open the product you want.</span>
+          <span>Tap <strong>Open Brand Site</strong> below. The brand’s <strong>home page</strong> opens — now <strong>tap the exact product you want</strong> so its own <strong>product page</strong> loads. <span style="opacity:.75">(The product link doesn’t exist until you open the product — copying on the home page only gives the home page.)</span></span>
         </div>
         <div class="bs-step">
           <span class="bs-num">2</span>
-          <span>At the <strong>top-right ⋮ three-dots</strong> menu, tap <strong>“Open in Chrome”</strong> (or your phone’s browser).</span>
+          <span>If you don’t see a <strong>web address bar</strong> at the top, tap the <strong>⋮ three-dots</strong> menu → <strong>“Open in Chrome”</strong> first.</span>
         </div>
         <div class="bs-step">
           <span class="bs-num">3</span>
-          <span>In Chrome, <strong>press &amp; hold the web address</strong> at the top until <strong>“Copy”</strong> appears — then tap <strong>Copy</strong>.</span>
+          <span>On the <strong>product page</strong>, tap the <strong>web address at the top</strong> (or press &amp; hold it) until <strong>“Copy”</strong> appears — then tap <strong>Copy</strong>.</span>
         </div>
         <div class="bs-step">
           <span class="bs-num">4</span>
@@ -5929,7 +5929,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-18n';
+  const PSB_BUILD = '2026-06-18o';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
@@ -6002,7 +6002,12 @@
     function showInstallHelp() {
       var title = 'Add PakiPoshak to your home screen', body;
       if (isIOS) {
-        body = '<p>Adds a one-tap icon that opens in Safari:</p>'
+        body = '<p>Adds a one-tap icon to your iPhone home screen. Works in <b>Chrome</b> or <b>Safari</b>:</p>'
+          + '<p style="margin:6px 0 2px;font-weight:600">In Chrome (iPhone):</p>'
+          + '<ol><li>Tap the <b>Share</b> icon (or <b>⋯</b> menu) at the bottom of Chrome</li>'
+          + '<li>Tap <b>Share…</b>, then scroll down and tap <b>“Add to Home Screen”</b></li>'
+          + '<li>Tap <b>Add</b></li></ol>'
+          + '<p style="margin:6px 0 2px;font-weight:600">Or in Safari:</p>'
           + '<ol><li>Tap the <b>Share</b> button at the bottom of Safari</li>'
           + '<li>Scroll down and tap <b>“Add to Home Screen”</b></li>'
           + '<li>Tap <b>Add</b></li></ol>';
