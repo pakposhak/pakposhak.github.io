@@ -19,7 +19,10 @@
 const https = require('https');
 const fs    = require('fs');
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36';
-const PER_BRAND = parseInt(process.env.PER_BRAND || '34', 10);
+const PER_BRAND = parseInt(process.env.PER_BRAND || '50', 10);
+// Most-popular-in-Bangladesh brands get a deeper harvest (req: ~100+ each).
+const BRAND_CAP = { 'ETHNC':120, 'Sapphire':120, 'Nishat Linen':120, 'Maria B':120 };
+function capFor(name){ return BRAND_CAP[name] || PER_BRAND; }
 
 // ── Shopify brands [name, host, group]  (group: md/w/p → women's cats, m → men, k → kids) ──
 const SHOPIFY = [
@@ -44,6 +47,15 @@ const SHOPIFY = [
   ['Monark','monark.com.pk','m'],['Royal Tag','royaltag.com.pk','m'],['Shahnameh','shahnameh.pk','m'],
   ['Shahzeb Saeed','shahzebsaeed.com','m'],
   ['Minnie Minors','minnieminors.com','k'],['Bachaa Party','bachaaparty.com','k'],['Hopscotch','ilovehopscotch.com','k'],
+  // ── added 2026-06-17 (most-popular-in-BD + abaya) — all verified live Shopify /products.json in PKR ──
+  ['Gul Ahmed','gulahmedshop.com','md'],['Alkaram Studio','www.alkaramstudio.com','md'],
+  ['J. Junaid Jamshed','www.junaidjamshed.com','md'],['Edenrobe','edenrobe.com','md'],
+  ['Lakhany by LSM','lakhanyonline.com','md'],
+  ['Sana Safinaz','www.sanasafinaz.com','p'],['Asim Jofa','asimjofa.com','p'],
+  ['Zara Shahjahan','www.zarashahjahan.com','p'],['Afrozeh','afrozeh.com','p'],
+  ['Baroque','baroque.pk','p'],['Mushq','mushq.pk','p'],
+  ['Amir Adnan','www.amiradnan.com','m'],['Lawrencepur','www.lawrencepur.com','m'],
+  ['Hijabi.pk','hijabi.pk','w'],   // abaya specialist → fills the Modest / abaya category
 ];
 
 // ── SFCC brands (no /products.json) — parse product tiles from listing pages ──
@@ -53,8 +65,8 @@ const SFCC = [
       'https://pk.khaadi.com/ready-to-wear/?sz=40',
       'https://pk.khaadi.com/unstitched/?sz=40' ] },
   { name:'Sapphire', host:'pk.sapphireonline.pk', group:'md', priceRe:/Rs\.?\s?([0-9,]+)/, pages:[
-      'https://pk.sapphireonline.pk/on/demandware.store/Sites-Sapphire-Site/en_PK/Search-UpdateGrid?cgid=rtw-summer-26&start=0&sz=40',
-      'https://pk.sapphireonline.pk/on/demandware.store/Sites-Sapphire-Site/en_PK/Search-UpdateGrid?cgid=uns-summer-26&start=0&sz=40' ] },
+      'https://pk.sapphireonline.pk/on/demandware.store/Sites-Sapphire-Site/en_PK/Search-UpdateGrid?cgid=rtw-summer-26&start=0&sz=72',
+      'https://pk.sapphireonline.pk/on/demandware.store/Sites-Sapphire-Site/en_PK/Search-UpdateGrid?cgid=uns-summer-26&start=0&sz=72' ] },
 ];
 
 function get(url){
@@ -86,6 +98,7 @@ function mapCatWomen(s, tags){
   if(/\bsaree\b|\bsari\b/.test(s)) return 'saree';
   if(/lehenga|gharara|sharara/.test(s)) return 'lehenga';
   if(/abaya|jilbab|burqa|niqab/.test(s)) return 'abaya';
+  if(/kaftan|kaftaan|caftan/.test(s)) return 'kaftan';
   if(/bridal|nikah|barat|walima/.test(s)) return 'bridal';
   // WINTER (khaddar/karandi/velvet/wool) — split by piece count AND stitched vs
   // unstitched (stitched ~+200g). Default 3pc unstitched. MUST mirror the form's
@@ -139,17 +152,25 @@ function mapCatKids(s){
   if(/western|jean|denim|trouser|\bpant|\btee\b|t[\s-]?shirt|\bshirt\b|polo|dress|romper|legging|short|jumpsuit|hoodie|sweat/.test(s)) return 'kids_western';
   return 'kids_eastern';
 }
-const PS_FOOTWEAR = /\bshoe|sneaker|sandal|chappal|khussa|kolhapuri|\bheel|slipper|loafer|peshawari|\bmule\b|footwear|\bpump\b/;
-const PS_NON_APPAREL = /\b(bed|mattress|\bnet\b|blanket|quilt|pillow|cushion|towel|bottle|feeder|diaper|nappy|\btoy|stroller|pram|\bcomb\b|\bsocks?\b|\bcap\b|\bhat\b|\bbib\b|mitten|booties|booti|headband|hair[\s-]?band|\bbag\b|clutch|purse|wallet|jewel|earring|necklace|\bring\b|bangle|bracelet|brooch|perfume|fragrance|\battar\b|\bwatch\b|sunglass|\bbelt\b|key[\s-]?chain|gift[\s-]?set|hamper|pouch)\b/;
-// Items that are never garments (so the non-apparel guard below never matches a real outfit)
-const PS_IS_GARMENT = /shirt|kurti|kurta|kameez|\bsuit\b|frock|\bdress\b|gown|abaya|trouser|shalwar|saree|lehenga|\bcoat\b|jacket|sweater/;
+// khussa/kolhapuri/peshawari are traditional flats we CAN ship → keep as footwear.
+const KHUSSA_RE = /\bkhussa|kolhapuri|peshawari/;
+// Modern shoes we can't ship → dropped from the catalog entirely (return null).
+const SHOE_RE = /\bshoe|sneaker|\bsandal|chappal|\bheel|slipper|loafer|\bmule\b|footwear|\bpump\b|\bboot|slip[\s-]?on|wedge|stiletto|flip[\s-]?flop/;
+const PS_NON_APPAREL = /\b(bed|mattress|\bnet\b|blanket|quilt|pillow|cushion|towel|bottle|feeder|diaper|nappy|\btoy|stroller|pram|\bcomb\b|\bsocks?\b|\bcap\b|\bhat\b|\bbib\b|mitten|booties|booti|headband|hair[\s-]?band|\bbag\b|clutch|purse|wallet|jewel|earring|necklace|\bring\b|bangle|bracelet|brooch|perfume|fragrance|\battar\b|\bwatch\b|sunglass|\bbelt\b|key[\s-]?chain|gift[\s-]?set|hamper|pouch|cufflink)\b/;
+// STRONG garment signals — if present, the item is apparel even when its NAME
+// contains a shoe/non-apparel word ("Sandali" lawn collection, "Net 3PC" suit).
+const GARMENT_SIG = /shirt|kurti|kurta|kameez|\bsuit\b|frock|\bdress\b|gown|abaya|kaftan|trouser|shalwar|saree|lehenga|\bcoat\b|jacket|sweater|dupatta|\bmaxi\b|[23][\s-]?(pc|piece|pcs)|un[\s-]?stitch|\blawn\b|cambric|khaddar|karandi|chiffon|organza/;
 function mapCat(group, type, title, tagStr){
   const tt = ((type||'') + ' ' + (title||'')).toLowerCase();   // garment/piece-count: reliable
   const tags = (tagStr||'').toLowerCase();                      // unstitch/emb signals only
   const s = tt + ' ' + tags;
-  // cross-gender non-garment items first (these were landing in clothing cats)
-  if(PS_FOOTWEAR.test(s)) return 'footwear';
-  if(PS_NON_APPAREL.test(s) && !PS_IS_GARMENT.test(s)) return 'accessories';
+  // Non-garment classification ONLY when there is NO real garment signal — so a
+  // suit/lawn whose NAME happens to contain "sandal"/"net" is never mis-flagged.
+  if(!GARMENT_SIG.test(s)){
+    if(KHUSSA_RE.test(s)) return 'footwear';      // khussa etc. — shippable
+    if(SHOE_RE.test(s)) return null;              // sneakers/heels/sandals — drop (we can't ship)
+    if(PS_NON_APPAREL.test(s)) return 'accessories';
+  }
   // gender from the text — esp. multi-department brands that mix men's & kids in
   if(/\b(boys?|girls?|infant|toddler|junior|newborn|\bbaby\b|\bkid|kids\b)\b/.test(s)) return mapCatKids(s);
   if(group === 'k') return mapCatKids(s);
@@ -162,7 +183,7 @@ function mapCat(group, type, title, tagStr){
 function harvestShopify(name, host, group){
   return get(`https://${host}/products.json?limit=250`).then(raw => {
     let j; try{ j = JSON.parse(raw); }catch(e){ return []; }
-    const prods = (j.products||[]).filter(p => p.variants && p.variants.length && p.handle).slice(0, PER_BRAND);
+    const prods = (j.products||[]).filter(p => p.variants && p.variants.length && p.handle).slice(0, capFor(name));
     return prods.map(p => {
       const v0 = p.variants[0];
       const pkr = Math.round(parseFloat(v0 && v0.price) || 0);
@@ -171,11 +192,17 @@ function harvestShopify(name, host, group){
       if(!img) return null;
       const tagStr = (Array.isArray(p.tags) ? p.tags.join(' ') : String(p.tags||'')).toLowerCase();
       const cat = mapCat(group, p.product_type, p.title, tagStr);
+      if(!cat) return null;   // dropped (e.g. sneakers/heels we can't ship)
       let sz = [];
       const sizeOpt = (p.options||[]).find(o => /size/i.test(o.name||o));
       if(sizeOpt && Array.isArray(sizeOpt.values)) sz = sizeOpt.values.filter(x => SIZE_RE.test(String(x).trim())).slice(0, 8);
       if(!sz.length) sz = ['Unstitched'];
-      return { b:name, t:(p.title||'').slice(0,80), u:`https://${host}/products/${p.handle}`, img, pkr, cat, sz };
+      // recency + on-sale signals so the page can surface fresh / discounted items first
+      const pub = Math.floor((Date.parse(p.published_at || p.updated_at || p.created_at || '') || 0) / 1000);
+      const onSale = (p.variants||[]).some(v => v.compare_at_price && parseFloat(v.compare_at_price) > parseFloat(v.price||0));
+      const o = { b:name, t:(p.title||'').slice(0,80), u:`https://${host}/products/${p.handle}`, img, pkr, cat, sz, pub };
+      if(onSale) o.sale = 1;
+      return o;
     }).filter(Boolean);
   }).catch(e => { console.error(`  ✗ ${name} (${host}): ${e.message}`); return []; });
 }
@@ -204,8 +231,9 @@ function parseSfccPage(html, host, group, priceRe){
     const url = dec(href.startsWith('http') ? href : 'https://'+host+href);
     const title = dec(name).slice(0,80);
     const cat = mapCat(group, '', title, '');
+    if(!cat) continue;   // dropped (sneakers/heels etc.)
     const sz = /unstitch/i.test(title) ? ['Unstitched'] : ['XS','S','M','L'];
-    out.push({ b:'', t:title, u:url, img:dec(img), pkr, cat, sz });
+    out.push({ b:'', t:title, u:url, img:dec(img), pkr, cat, sz, pub:0 });
   }
   return out;
 }
@@ -219,9 +247,9 @@ async function harvestSfcc(brand){
       });
     }catch(e){ console.error(`  ✗ ${brand.name} page: ${e.message}`); }
     await sleep(700);
-    if(all.length >= PER_BRAND) break;
+    if(all.length >= capFor(brand.name)) break;
   }
-  return all.slice(0, PER_BRAND);
+  return all.slice(0, capFor(brand.name));
 }
 
 (async () => {

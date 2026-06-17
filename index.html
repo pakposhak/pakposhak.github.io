@@ -544,8 +544,11 @@
     /* ── Product search page ── */
     .ps-wrap{display:block}
     .ps-rail{background:var(--surface);border:1px solid var(--bdr-med);border-radius:12px;padding:12px 14px;margin-bottom:14px}
+    .ps-rail-head{font-size:0.8rem;font-weight:800;color:var(--txt);margin-bottom:11px;padding-bottom:9px;border-bottom:1px solid var(--bdr)}
     .ps-fblock{margin-bottom:13px}
     .ps-flabel{font-size:0.7rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:7px}
+    .ps-fnum{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--gold);color:#12122a;font-size:0.62rem;font-weight:800;letter-spacing:0;vertical-align:middle}
+    .ps-sale{position:absolute;top:6px;left:6px;z-index:2;background:#c0392b;color:#fff;font-size:0.6rem;font-weight:800;letter-spacing:0.5px;padding:2px 7px;border-radius:5px}
     /* 6 price buckets in a 3×2 grid (two rows on mobile), re-tap a bucket to clear it, multi-select OR */
     .ps-price{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
     .ps-bucket{padding:7px 4px;border:1.5px solid var(--gold-bdr);border-radius:13px;background:var(--gold-dim);color:var(--gold);font-size:0.72rem;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;text-align:center}
@@ -603,6 +606,15 @@
     .bb-club-dd{width:100%;padding:9px 11px;border:1.5px solid var(--bdr-med);border-radius:9px;background:var(--input-bg);color:var(--txt);font-size:0.82rem;font-family:inherit;cursor:pointer;color-scheme:light}
     [data-theme="dark"] .bb-club-dd{color-scheme:dark}
     .bb-club-dd option{background:var(--surface);color:var(--txt)}
+    /* custom themed club dropdown (replaces the native select so its list matches the theme) */
+    .bb-cdd{position:relative;margin-bottom:12px}
+    .bb-cdd-btn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border:1.5px solid var(--bdr-med);border-radius:9px;background:var(--input-bg);color:var(--txt);font-size:0.84rem;font-weight:600;font-family:inherit;cursor:pointer}
+    .bb-cdd-car{color:var(--txt-muted);font-size:0.7rem;flex-shrink:0}
+    .bb-cdd-list{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:30;background:var(--surface);border:1.5px solid var(--bdr-med);border-radius:9px;overflow:hidden auto;max-height:300px;box-shadow:0 10px 28px rgba(0,0,0,0.22)}
+    .bb-cdd-opt{display:block;width:100%;text-align:left;padding:10px 12px;background:none;border:none;border-bottom:1px solid var(--bdr);color:var(--txt-sec);font-size:0.82rem;font-family:inherit;cursor:pointer}
+    .bb-cdd-opt:last-child{border-bottom:none}
+    .bb-cdd-opt:hover{background:var(--raised)}
+    .bb-cdd-opt.on{background:var(--gold);color:#12122a;font-weight:700}
     .bb-prow-empty{font-size:0.78rem;color:var(--txt-muted);padding:4px 2px}
     .ps-brands{display:flex;flex-direction:column;max-height:230px;overflow-y:auto;border:1px solid var(--bdr-med);border-radius:8px;padding:4px 9px;background:var(--input-bg)}
     .ps-brand-chk{display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--txt-sec);cursor:pointer;padding:2px 0 2px 8px}
@@ -793,17 +805,18 @@
     </div>
     <div class="ps-wrap">
       <aside class="ps-rail">
+        <div class="ps-rail-head" data-i18n="ps_rail_head">3 ways to search products</div>
         <div class="ps-fblock">
-          <div class="ps-flabel" data-i18n="ps_price">Price (৳ delivered)</div>
+          <div class="ps-flabel"><span class="ps-fnum">1</span> <span data-i18n="ps_price">Price (৳ delivered)</span></div>
           <div class="ps-price" id="psPrice"></div>
         </div>
         <div class="ps-fblock">
-          <div class="ps-flabel" data-i18n="ps_category">Product Category</div>
+          <div class="ps-flabel"><span class="ps-fnum">2</span> <span data-i18n="ps_category">Product Category</span></div>
           <div class="ps-cats" id="psCat"></div>
         </div>
         <div class="ps-fblock">
           <div class="ps-flabel-row">
-            <div class="ps-flabel"><span data-i18n="ps_brands">Brands</span> <span id="psBrandCount" style="color:var(--txt-muted);font-weight:600"></span></div>
+            <div class="ps-flabel"><span class="ps-fnum">3</span> <span data-i18n="ps_brands">Brands</span> <span id="psBrandCount" style="color:var(--txt-muted);font-weight:600"></span></div>
             <input id="psBrandSearch" class="ps-bsearch" type="text" autocomplete="off" oninput="psBuildBrandFilter()" data-i18n-ph="ps_bsearch_ph" placeholder="Search 50+ brands…"/>
           </div>
           <div class="ps-brands" id="psBrands"></div>
@@ -3339,7 +3352,7 @@
       ps_enlarge:'Enlarge', ps_d_loading:'Loading more details…', ps_d_open:'Open full page', ps_d_nofetch:'See all photos &amp; details on the brand page →', ps_d_nodesc:'No extra description provided.',
       ps_empty:'No products match these filters — try widening them.',
       ps_partial:'Not every brand &amp; product is listed here yet —', ps_partial_link:'browse all via Browse by brands →',
-      ps_bsearch_ph:'Search 50+ brands…', ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids',
+      ps_bsearch_ph:'Search 50+ brands…', ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products',
       bb_store:'Store Types', bb_product:'Product Category', bb_women:'👗 Women', bb_men:'👔 Men', bb_kids:'🧸 Kids',
       bb_more:'more', bb_less:'less', bb_all:'All', bb_two_ways:'Two ways to search brands', bb_pick_gender:'Pick Women, Men or Kids above.', bb_pick_cat:'Pick a category above to see its brands.', bb_prod_sub:'See which brands make what — tap a brand to start.', bb_loading:'Loading brands…', bb_prod_none:'No catalogued brands here yet — use the search below.',
       js_soldout_lead:'Some items appear SOLD OUT and can’t be saved — please remove them or pick another article:',
@@ -3401,7 +3414,7 @@
       ps_enlarge:'বড় ছবি', ps_d_loading:'আরও বিবরণ লোড হচ্ছে…', ps_d_open:'পুরো পেজ খুলুন', ps_d_nofetch:'সব ছবি ও বিবরণ ব্র্যান্ডের পেজে দেখুন →', ps_d_nodesc:'অতিরিক্ত বিবরণ নেই।',
       ps_empty:'এই ফিল্টারে কোনো পণ্য নেই — ফিল্টার একটু কমান।',
       ps_partial:'সব ব্র্যান্ড ও পণ্য এখানে এখনো নেই —', ps_partial_link:'ব্র্যান্ড দেখুন থেকে সব ব্রাউজ করুন →',
-      ps_bsearch_ph:'৫০+ ব্র্যান্ড খুঁজুন…', ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের',
+      ps_bsearch_ph:'৫০+ ব্র্যান্ড খুঁজুন…', ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়',
       bb_store:'স্টোরের ধরন', bb_product:'পণ্যের ক্যাটাগরি', bb_women:'👗 মেয়েদের', bb_men:'👔 ছেলেদের', bb_kids:'🧸 বাচ্চাদের',
       bb_more:'আরও', bb_less:'কম', bb_all:'সব', bb_two_ways:'ব্র্যান্ড খোঁজার দুটি উপায়', bb_pick_gender:'উপরে মেয়ে, ছেলে বা বাচ্চা বেছে নিন।', bb_pick_cat:'ব্র্যান্ড দেখতে উপরে একটি ক্যাটাগরি বেছে নিন।', bb_prod_sub:'কোন ব্র্যান্ড কী বানায় দেখুন — শুরু করতে ব্র্যান্ডে ট্যাপ করুন।', bb_loading:'ব্র্যান্ড লোড হচ্ছে…', bb_prod_none:'এখানে এখনো ক্যাটালগ করা ব্র্যান্ড নেই — নিচে খুঁজুন।',
       js_soldout_lead:'কিছু পণ্য স্টক আউট মনে হচ্ছে এবং সেভ করা যাবে না — অনুগ্রহ করে সরিয়ে ফেলুন বা অন্য পণ্য বেছে নিন:',
@@ -3740,10 +3753,33 @@
     try{ new URL(url); return url; }catch(e){ return null; }
   }
 
+  // The "brand label" = the distinctive part of a host, with the public suffix
+  // and any subdomain stripped: shaposh.pk / shaposh.com / www.shaposh.com →
+  // "shaposh"; pk.ethnc.com → "ethnc". Lets a .com link match a .pk brand (and
+  // vice-versa) so a paste is accepted whichever twin domain the buyer copied.
+  function brandLabel(host){
+    const base = (host||'').replace(/^www\./,'').replace(/\.(com\.pk|net\.pk|org\.pk|com|net|org|co|store|shop|pk)$/,'');
+    return base.split('.').pop();
+  }
+  let _brandLabels = null;
+  function knownBrandLabels(){
+    if(_brandLabels) return _brandLabels;
+    const s = new Set();
+    Object.keys(BRAND_MAP).forEach(h => s.add(brandLabel(h)));
+    (typeof BRANDS !== 'undefined' ? BRANDS : []).forEach(b => { try{ s.add(brandLabel(new URL(b.u).hostname)); }catch(e){} });
+    s.delete('');
+    _brandLabels = s;
+    return s;
+  }
+  // A URL is a supported brand if its host is in BRAND_MAP OR matches ANY brand in
+  // the directory (by label) — not just the currency map. (Fixes Sha Posh & every
+  // other directory brand that wasn't in BRAND_MAP getting wrongly rejected.)
   function isKnownBrand(url){
     try{
       const host = new URL(url).hostname.replace(/^www\./,'');
-      return Object.keys(BRAND_MAP).some(k => host === k || host.endsWith('.'+k));
+      if(Object.keys(BRAND_MAP).some(k => host === k || host.endsWith('.'+k))) return true;
+      const lbl = brandLabel(host);
+      return lbl.length >= 3 && knownBrandLabels().has(lbl);
     }catch(e){ return false; }
   }
 
@@ -4904,7 +4940,7 @@
   function psLabel(cat){ return PS_CAT_LABELS[cat] || cat; }
 
   let PS_CATALOG = null, psLoaded = false, psLoading = false;
-  let psSel = { prices:new Set(), cat:'', brands:new Set() };
+  let psSel = { prices:new Set(), cats:new Set(), brands:new Set() };
   let psFiltered = [], psPage = 0;
   // cat → gender ('w'/'m'/'k') and cat → group-index, derived once from CAT_TREE
   // so the Browse-Products category filter and the Browse-Brands product view
@@ -4967,7 +5003,18 @@
         // a VARIED women's mix, not 8 articles from one label.
         const _seen = {};
         PS_CATALOG.forEach((p, i) => { p._ord = i; p._bi = (_seen[p.b] = (_seen[p.b]||0) + 1) - 1; });
-        PS_CATALOG.sort((a, b) => (psDefaultRank(a.cat) - psDefaultRank(b.cat)) || (a._bi - b._bi) || (a._ord - b._ord));
+        // Default order: women's everyday first → on-SALE first → recently published
+        // (bucketed, last ~120 days) → brand round-robin for variety → newest within.
+        // Surfaces current / discounted stock while keeping the women-first front page.
+        const NOW = Date.now() / 1000, RECENT = 120 * 86400;
+        const recentRank = p => ((p.pub && (NOW - p.pub) < RECENT) ? 0 : 1);
+        PS_CATALOG.sort((a, b) =>
+          (psDefaultRank(a.cat) - psDefaultRank(b.cat))
+          || ((b.sale ? 1 : 0) - (a.sale ? 1 : 0))
+          || (recentRank(a) - recentRank(b))
+          || (a._bi - b._bi)
+          || ((b.pub || 0) - (a.pub || 0))
+          || (a._ord - b._ord));
         psLoaded = true; psLoading = false;
         psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psApply();
         psFlushReady();
@@ -5020,9 +5067,12 @@
   // (CAT_TREE = single source of truth, so the filter and the picker never drift).
   // Built from the WHOLE catalog so a selection is never silently cleared — an
   // empty brand+category combo just shows "no products" (keep it empty, req #4/#8).
+  // MULTI-SELECT (req): pick several categories — they combine as OR. Re-tapping a
+  // category clears just that one; "All categories" clears the whole category filter.
   function psBuildCatFilter(){
     const present = PS_CATALOG ? new Set(PS_CATALOG.map(p => p.cat)) : new Set();
-    let html = `<button type="button" class="ps-catclear${psSel.cat===''?' on':''}" onclick="psPickCat('')">${tr('ps_allcats')}</button>`;
+    const sel = psSel.cats;
+    let html = `<button type="button" class="ps-catclear${sel.size===0?' on':''}" onclick="psPickCat('')">${tr('ps_allcats')}</button>`;
     ['w','m','k'].forEach(g => {
       const tree = CAT_TREE[g]; if(!tree) return;
       let inner = '';
@@ -5030,29 +5080,37 @@
         const items = grp.items.filter(([k]) => !PS_HIDE_CATS.has(k) && present.has(k));
         if(!items.length) return;
         if(grp.h) inner += `<div class="ps-cgrp-h">${esc(grp.h)}</div>`;
-        inner += items.map(([k,lbl]) => `<button type="button" class="ps-cat-row${psSel.cat===k?' on':''}" onclick="psPickCat('${k}')">${esc(lbl)}</button>`).join('');
+        inner += items.map(([k,lbl]) => `<button type="button" class="ps-cat-row${sel.has(k)?' on':''}" onclick="psPickCat('${k}')">${esc(lbl)}</button>`).join('');
       });
       if(!inner) return;
       const allKey = 'all:'+g;
-      const open = (psSel.cat===allKey) || (PS_CAT_GENDER[psSel.cat]===g);
+      const open = sel.has(allKey) || [...sel].some(t => PS_CAT_GENDER[t] === g);
       html += `<details class="ps-cdept"${open?' open':''}>`
         + `<summary>${esc(tree.label)}</summary>`
-        + `<button type="button" class="ps-cat-row ps-cat-all${psSel.cat===allKey?' on':''}" onclick="psPickCat('${allKey}')">${tr(PS_GENDER_WORD[g])}</button>`
+        + `<button type="button" class="ps-cat-row ps-cat-all${sel.has(allKey)?' on':''}" onclick="psPickCat('${allKey}')">${tr(PS_GENDER_WORD[g])}</button>`
         + inner
         + `</details>`;
     });
     document.getElementById('psCat').innerHTML = html;
   }
-  function psPickCat(v){ psSel.cat = v; psBuildCatFilter(); psApply(); }
-  // True if p is in the selected category, the selected gender, or nothing is selected.
+  function psPickCat(v){
+    if(v === '') psSel.cats.clear();                              // "All categories" → clear filter
+    else if(psSel.cats.has(v)) psSel.cats.delete(v);             // re-tap clears just this one
+    else psSel.cats.add(v);
+    psBuildCatFilter(); psApply();
+  }
+  // True if p matches ANY selected category / gender (OR), or nothing is selected.
   function psCatMatch(p){
-    if(!psSel.cat) return true;
-    if(psSel.cat.indexOf('all:') === 0) return PS_CAT_GENDER[p.cat] === psSel.cat.slice(4);
-    return p.cat === psSel.cat;
+    if(!psSel.cats.size) return true;
+    for(const t of psSel.cats){
+      if(t.indexOf('all:') === 0){ if(PS_CAT_GENDER[p.cat] === t.slice(4)) return true; }
+      else if(p.cat === t) return true;
+    }
+    return false;
   }
 
   function psClearFilters(){
-    psSel = { prices:new Set(), cat:'', brands:new Set() };
+    psSel = { prices:new Set(), cats:new Set(), brands:new Set() };
     const bs = document.getElementById('psBrandSearch'); if(bs) bs.value = '';
     psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psApply();
   }
@@ -5087,7 +5145,7 @@
     const bdt = (p._bdt != null) ? p._bdt : estLandedBdt(p.pkr, p.cat);
     const sz = (p.sz || []).slice(0,5).map(s => `<span class="ps-sz">${esc(s)}</span>`).join('');
     return `<div class="ps-card">
-      <div class="ps-img"><button type="button" class="ps-info" onclick="psDetail(${idx})" aria-label="Enlarge pictures and details" title="Enlarge pics &amp; details">🔍<span class="ps-info-tx">${tr('ps_enlarge')}</span></button><img loading="lazy" src="${esc(p.img)}" alt="${esc(p.t)}" onerror="this.parentElement.classList.add('ps-img-fail')"></div>
+      <div class="ps-img">${p.sale?'<span class="ps-sale">SALE</span>':''}<button type="button" class="ps-info" onclick="psDetail(${idx})" aria-label="Enlarge pictures and details" title="Enlarge pics &amp; details">🔍<span class="ps-info-tx">${tr('ps_enlarge')}</span></button><img loading="lazy" src="${esc(p.img)}" alt="${esc(p.t)}" onerror="this.parentElement.classList.add('ps-img-fail')"></div>
       <div class="ps-cbody">
         <div class="ps-brand">${esc(p.b)}</div>
         <div class="ps-title">${esc(p.t)}</div>
@@ -5259,8 +5317,43 @@
     bbRenderProduct();
   }
   function bbPickGroup(gi){ _bbGroup = (_bbGroup === gi) ? null : gi; bbRenderProduct(); }   // re-tap clears
-  function bbPickClub(g, gi, v){ _bbClub[g+'|'+gi] = (v === '') ? null : +v; _bbExpanded[g+'|'+gi] = false; bbRenderProduct(); }
-  function bbMore(g, gi){ _bbExpanded[g+'|'+gi] = true; bbRenderProduct(); }
+  function bbPickClub2(v){ _bbClub[_bbGender+'|'+_bbGroup] = (v === '') ? null : +v; bbRenderProduct(); }
+  function bbToggleClubDD(e){ if(e) e.stopPropagation(); const l = document.querySelector('#bbClubDD .bb-cdd-list'); if(l) l.style.display = (l.style.display === 'none' ? 'block' : 'none'); }
+  document.addEventListener('click', e => { const dd = document.getElementById('bbClubDD'); if(dd && !dd.contains(e.target)){ const l = dd.querySelector('.bb-cdd-list'); if(l) l.style.display = 'none'; } });
+  // Brand list rendered exactly like the Store-Types mega-menu (same .cat-*
+  // classes → identical grid look) with a horizontal "+N more" slider: ~22 per
+  // page, page 2 holds the rest. Consistency with the Store-Types view.
+  let _bbSlidePage = 0, _bbPageH = [];
+  function bbBrandGrid(brands){
+    if(!brands.length) return `<div class="bb-prod-empty">${tr('bb_prod_none')}</div>`;
+    const CAP = 22;
+    const chip = b => `<button type="button" class="cat-brand" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">${esc(b.n)}</button>`;
+    if(brands.length <= CAP)
+      return `<div class="cat-grid" id="bbGrid"><div class="cat-track" id="bbTrack"><div class="cat-page"><div class="cat-pagegrid">${brands.map(chip).join('')}</div></div></div></div>`;
+    const first = brands.slice(0, CAP), rest = brands.slice(CAP);
+    const moreChip = `<button type="button" class="cat-brand cat-nav" onclick="bbSlide(1)">+${rest.length} ${tr('more_tab')} ›</button>`;
+    const backChip = `<button type="button" class="cat-brand cat-nav" onclick="bbSlide(0)">‹ ${tr('more_back')}</button>`;
+    return `<div class="cat-grid" id="bbGrid"><div class="cat-track" id="bbTrack">`
+      + `<div class="cat-page"><div class="cat-pagegrid">${first.map(chip).join('')}${moreChip}</div></div>`
+      + `<div class="cat-page"><div class="cat-pagegrid">${backChip}${rest.map(chip).join('')}</div></div>`
+      + `</div></div>`;
+  }
+  function bbMeasureSlide(){
+    const track = document.getElementById('bbTrack'); if(!track) return;
+    track.style.transition = 'none'; track.style.transform = 'none';
+    _bbPageH = [].map.call(track.children, p => p.offsetHeight);
+    bbSlide(_bbSlidePage, true);
+  }
+  function bbSlide(page, instant){
+    _bbSlidePage = page;
+    const grid = document.getElementById('bbGrid'), track = document.getElementById('bbTrack');
+    if(!grid || !track) return;
+    if(instant){ grid.style.transition = 'none'; track.style.transition = 'none'; }
+    track.style.transform = 'translateX(' + (-page * 100) + '%)';
+    const h = _bbPageH[page] || 0; if(h) grid.style.height = h + 'px';
+    if(instant){ void grid.offsetHeight; grid.style.transition = ''; track.style.transition = ''; }
+  }
+  window.addEventListener('resize', () => { if(bbActive() && document.getElementById('bbTrack')) bbMeasureSlide(); });
   // brand name -> Set of category keys it stocks (from the shared catalog).
   function bbBuildIndex(){
     const idx = {};
@@ -5292,24 +5385,25 @@
     let html = `<div class="bb-cat2row">` + groups.map((grp, gi) =>
       `<button type="button" class="bb-cat2${_bbGroup===gi?' on':''}" onclick="bbPickGroup(${gi})">${esc(grp.h)}</button>`).join('') + `</div>`;
     if(_bbGroup == null || !groups[_bbGroup]){ body.innerHTML = html + `<div class="bb-prod-empty">${tr('bb_pick_cat')}</div>`; return; }
-    // Tier 3 — ONE dropdown of clubs for the selected tab + only its brands
+    // Tier 3 — a custom THEMED dropdown of clubs (not a native <select>, so its
+    // list matches the app's colour & font) + a Store-Types-style brand grid.
     const grp = groups[_bbGroup];
     const key = _bbGender + '|' + _bbGroup;
     const liveClubs = grp.clubs.map((c, ci) => ({ ci, label: c[0], cats: c[1], n: bbBrandsFor(c[1]).length })).filter(c => c.n > 0);
     const sel = _bbClub[key];
     const cats = (sel != null && grp.clubs[sel]) ? grp.clubs[sel][1] : grp.clubs.reduce((a,c) => a.concat(c[1]), []);
     const brands = bbBrandsFor(cats);
-    const expanded = !!_bbExpanded[key];
-    const show = expanded ? brands : brands.slice(0, CAP);
-    const chips = show.map(b =>
-      `<button type="button" class="bb-chip" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">${esc(b.n)}</button>`).join('');
-    const more = (!expanded && brands.length > CAP)
-      ? `<button type="button" class="bb-chip bb-more" onclick="bbMore('${_bbGender}',${_bbGroup})">+${brands.length - CAP} ${tr('bb_more')}</button>` : '';
-    const opts = liveClubs.map(c => `<option value="${c.ci}" ${sel == c.ci ? 'selected' : ''}>${esc(c.label)} (${c.n})</option>`).join('');
-    html += `<div class="bb-tier3"><select class="bb-club-dd" onchange="bbPickClub('${_bbGender}',${_bbGroup},this.value)">`
-      + `<option value="">${esc(grp.h)} — ${tr('bb_all')}</option>${opts}</select></div>`;
-    html += `<div class="bb-prow${expanded ? ' wrap' : ''}">${chips || '<span class="bb-prow-empty">'+tr('bb_prod_none')+'</span>'}${more}</div>`;
+    const selLabel = (sel != null && grp.clubs[sel]) ? grp.clubs[sel][0] : (grp.h + ' — ' + tr('bb_all'));
+    html += `<div class="bb-cdd" id="bbClubDD">`
+      + `<button type="button" class="bb-cdd-btn" onclick="bbToggleClubDD(event)"><span>${esc(selLabel)}</span><span class="bb-cdd-car">▾</span></button>`
+      + `<div class="bb-cdd-list" style="display:none">`
+      +   `<button type="button" class="bb-cdd-opt${sel==null?' on':''}" onclick="bbPickClub2('')">${esc(grp.h)} — ${tr('bb_all')}</button>`
+      +   liveClubs.map(c => `<button type="button" class="bb-cdd-opt${sel===c.ci?' on':''}" onclick="bbPickClub2('${c.ci}')">${esc(c.label)} (${c.n})</button>`).join('')
+      + `</div></div>`;
+    _bbSlidePage = 0;
+    html += bbBrandGrid(brands);
     body.innerHTML = html;
+    bbMeasureSlide();
   }
 
   // Remember the last-used browse tab so returning from Chrome reopens the SAME
@@ -5320,7 +5414,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-17c';
+  const PSB_BUILD = '2026-06-17d';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
