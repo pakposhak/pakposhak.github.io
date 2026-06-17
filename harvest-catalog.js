@@ -19,9 +19,28 @@
 const https = require('https');
 const fs    = require('fs');
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36';
-const PER_BRAND = parseInt(process.env.PER_BRAND || '50', 10);
-// Most-popular-in-Bangladesh brands get a deeper harvest (req: ~100+ each).
-const BRAND_CAP = { 'ETHNC':120, 'Sapphire':120, 'Nishat Linen':120, 'Maria B':120, 'Stylo':250 };  // Stylo: scan deep, only khussa/peshawari are kept anyway
+const PER_BRAND = parseInt(process.env.PER_BRAND || '110', 10);
+// Per-brand depth. Shopify brands now PAGINATE (/products.json?page=N), so caps
+// above 250 pull multiple pages. SFCC (Khaadi/Sapphire) paginate via &start=.
+// Target a ~9,000-product catalog at roughly 70% women / 15% men / 15% kids, with
+// the priority lawn / first-tier houses (Khaadi, Sapphire, ETHNC, Nishat, Gul
+// Ahmed, Alkaram, Maria B …) contributing the deepest.
+const BRAND_CAP = {
+  // ── priority women lawn / multi-department (paginated → hundreds each) ──
+  'Khaadi':460, 'Sapphire':520, 'ETHNC':340, 'Nishat Linen':340, 'Gul Ahmed':340,
+  'Alkaram Studio':320, 'Maria B':280, 'Limelight':260, 'Edenrobe':240, 'Outfitters':220,
+  'Bonanza Satrangi':220, 'Sana Safinaz':240, 'Asim Jofa':240, 'Cross Stitch':200,
+  'Beechtree':190, 'Generation':190, 'Zellbury':190, 'Almirah':180, 'Eminent':180,
+  'Breakout':170, 'Zara Shahjahan':180, 'Afrozeh':150, 'Baroque':150, 'Mushq':140,
+  'Charizma':150, 'Rang Rasiya':150, 'Motifz':150, 'Saya':140, 'Sha Posh':150,
+  'Republic Womenswear':180, 'Iznik Fashions':170, 'Coco by Zara Shahjahan':170,
+  // ── men (boosted to reach ~15% men) ──
+  'Amir Adnan':240, 'Cambridge':220, 'Charcoal':200, 'Cougar':190, 'Dynasty Fabrics':170,
+  'Royal Tag':190, 'Monark':160, 'Shahnameh':130, 'Shahzeb Saeed':130, 'Lawrencepur':130,
+  // ── kids (boosted; limited live sources — paginate the two kids houses) ──
+  'Minnie Minors':320, 'Hopscotch':280,
+  'Stylo':250,  // footwear-only — scan deep, only khussa/peshawari are kept anyway
+};
 function capFor(name){ return BRAND_CAP[name] || PER_BRAND; }
 
 // ── Shopify brands [name, host, group]  (group: md/w/p → women's cats, m → men, k → kids) ──
@@ -63,6 +82,10 @@ const SHOPIFY = [
   ['Agha Noor','pk.aghanoorofficial.com','w'],   // aghanoorofficial.com 301s → the pk store
   ['Eminent','eminent.pk','md'],
   ['Stylo','stylo.pk','f'],   // footwear-only brand → group 'f' keeps ONLY khussa/peshawari
+  // ── added 2026-06-19 (catalog 3k→9k): first-tier women, verified live Shopify in PKR ──
+  ['Republic Womenswear','republicwomenswear.com','p'],
+  ['Iznik Fashions','iznikfashions.com','p'],
+  ['Coco by Zara Shahjahan','www.cocobyzarashahjahan.com','p'],
 ];
 
 // ── Collection-scoped harvests: pull SPECIFIC Shopify collections (not whole
@@ -94,17 +117,34 @@ const COLLECTIONS = [
   ['Maryum N Maria','maryumnmaria.com','p',24,[['bridal-couture-1','bridal'],['bridals','bridal']]],
   ['Imrozia Premium','imroziapremium.com','p',15,[['imrozia-bridals','bridal'],['bridals','bridal']]],
   ['Elan','elan.pk','p',18,[['wedding-festive','bridal'],['festive','bridal']]],
+  // ── KIDS depth (req: ≥3 kids brands beyond Minnie Minors / Hopscotch). These are
+  //    the kids LINES of established houses — real kids clothing, mapped by group 'k'
+  //    (force=null → mapCatKids classifies eastern/frock/formal/western). They surface
+  //    as their own brand in the Kids view, so the Kids section now has 6 brands. ──
+  ['Edenrobe','edenrobe.com','k',320,[['kids',null],['girls',null],['boys',null]]],
+  ['Bonanza Satrangi','bonanzasatrangi.com','k',70,[['kids',null]]],
+  ['Gul Ahmed','gulahmedshop.com','k',70,[['kids',null]]],
+  ['Alkaram Studio','www.alkaramstudio.com','k',60,[['boys',null],['girls',null]]],
 ];
 
 // ── SFCC brands (no /products.json) — parse product tiles from listing pages ──
 // NOTE: Sapphire cgids are SEASONAL ("…-summer-26") — update each season.
+// Each page is {path|cgid, group, sz, max}. The harvester paginates &start=0..max
+// (step sz) until a page repeats/empties or the brand cap is hit. Khaadi uses clean
+// category PATHS; Sapphire uses Search-UpdateGrid cgids. Both verified live 2026-06-19.
+//   Khaadi: /unstitched/ 404s → use /fabrics/. kids/men paths 404 → women only here.
+//   Sapphire cgids are SEASONAL ("…-summer-26") — update each season; cgid=man is the menswear grid.
 const SFCC = [
-  { name:'Khaadi', host:'pk.khaadi.com', group:'md', priceRe:/PKR\s?([0-9,]+)/, pages:[
-      'https://pk.khaadi.com/ready-to-wear/?sz=40',
-      'https://pk.khaadi.com/unstitched/?sz=40' ] },
-  { name:'Sapphire', host:'pk.sapphireonline.pk', group:'md', priceRe:/Rs\.?\s?([0-9,]+)/, pages:[
-      'https://pk.sapphireonline.pk/on/demandware.store/Sites-Sapphire-Site/en_PK/Search-UpdateGrid?cgid=rtw-summer-26&start=0&sz=72',
-      'https://pk.sapphireonline.pk/on/demandware.store/Sites-Sapphire-Site/en_PK/Search-UpdateGrid?cgid=uns-summer-26&start=0&sz=72' ] },
+  { name:'Khaadi', host:'pk.khaadi.com', priceRe:/PKR\s?([0-9,]+)/, pages:[
+      { path:'ready-to-wear', group:'md', sz:120, max:480 },   // women's pret — paginates 400+
+      { path:'fabrics',       group:'w',  sz:48,  max:192 },   // unstitched fabric
+      { path:'new-in',        group:'md', sz:48,  max:96  } ] },
+  { name:'Sapphire', host:'pk.sapphireonline.pk', priceRe:/Rs\.?\s?([0-9,]+)/, pages:[
+      { cgid:'rtw-summer-26',  group:'w', sz:72, max:432 },     // ~446 women's RTW
+      { cgid:'uns-summer-26',  group:'w', sz:72, max:288 },     // unstitched
+      { cgid:'west-summer-26', group:'w', sz:72, max:144 },     // western
+      { cgid:'man',            group:'m', sz:72, max:216 },     // menswear grid
+      { cgid:'sale',           group:'w', sz:72, max:144 } ] },
 ];
 
 function get(url){
@@ -119,19 +159,32 @@ function get(url){
 }
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 function dec(s){ return (s||'').replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;/g,"'"); }
-const SIZE_RE = /^(xxs|xs|s|m|l|xl|xxl|xxxl|free\s*size|one\s*size|\d{1,2})$/i;
-// IN-STOCK sizes only: from each AVAILABLE variant take its Size option value.
+// A valid size token: standard apparel sizes, plain numeric (waist/EU), OR kids AGE
+// sizing (2-3Y, 4-5 Y, 5Y, 12-18M, 2T, newborn). Kids feeds size by age — the old
+// strict list rejected those, so availSizes returned [] and EVERY kids product was
+// silently dropped as "all sold out". This is why Minnie/Hopscotch/Edenrobe-kids
+// yielded ~0. (Catalog sz is indicative; the live fetch on Add re-validates stock.)
+function isSizeToken(s){
+  s = String(s||'').trim().toLowerCase();
+  if(!s || s.length > 16) return false;
+  if(/^(xxs|xs|s|m|l|xl|xxl|xxxl|4xl|xs\/s|s\/m|m\/l|l\/xl|free\s*size|one\s*size|newborn|nb|standard)$/.test(s)) return true;
+  if(/^\d{1,2}(\.5)?$/.test(s)) return true;                                                       // 28, 30, 5, 7.5
+  if(/^\d{1,2}\s*[\/-]\s*\d{1,2}\s*-?\s*(y|yr|yrs|years?|m|mo|months?|t)?$/.test(s)) return true;   // 2-3, 4-5 Y, 12-18 M, 9/12-M, 3/4-Y, 24/36-M
+  if(/^\d{1,2}\s*-?\s*(y|yr|yrs|years?|m|mo|months?|t)$/.test(s)) return true;                      // 5Y, 4-Y, 6 M, 2T
+  return false;
+}
+// IN-STOCK sizes only: from each AVAILABLE variant take its Size/Age option value.
 // Returns ['Unstitched'] for products with no size option; [] when every size of a
 // sized product is sold out (caller drops those — only available items are listed).
 function availSizes(p){
-  const idx = (p.options||[]).findIndex(o => /size/i.test((o && o.name) || o));
+  const idx = (p.options||[]).findIndex(o => /size|age/i.test((o && o.name) || o));
   if(idx < 0) return ['Unstitched'];
   const seen = new Set(), out = [];
   (p.variants||[]).forEach(v => {
     if(!v || v.available === false) return;          // skip sold-out variants
     const raw = v['option' + (idx + 1)];
     const s = raw && String(raw).trim();
-    if(s && SIZE_RE.test(s) && !seen.has(s)){ seen.add(s); out.push(s); }
+    if(s && isSizeToken(s) && !seen.has(s)){ seen.add(s); out.push(s); }
   });
   return out.slice(0, 8);
 }
@@ -287,40 +340,63 @@ function mapCat(group, type, title, tagStr){
   return mapCatWomen(tt, tags);
 }
 
-// ── Shopify harvest (with one retry so a transient timeout doesn't drop a brand) ──
+// ── Shared Shopify product → catalog object mapper ───────────────────────────
+// Used by BOTH the whole-store harvest and the collection harvest. `force`
+// overrides the category for collection-scoped pulls (null = normal mapCat).
+function buildProduct(p, name, host, group, force){
+  const v0 = p.variants[0];
+  const pkr = Math.round(parseFloat(v0 && v0.price) || 0);
+  if(pkr < 500) return null;
+  const img = (p.images && p.images[0] && p.images[0].src) || '';
+  if(!img) return null;
+  const tagStr = (Array.isArray(p.tags) ? p.tags.join(' ') : String(p.tags||'')).toLowerCase();
+  let cat;
+  if(force === 'bridal'){
+    const tt = ((p.product_type||'') + ' ' + (p.title||'')).toLowerCase();
+    cat = /lehenga|gharara|sharara/.test(tt) ? 'lehenga' : (/\bsaree\b|\bsari\b/.test(tt) ? 'saree' : 'bridal');
+  } else if(force){ cat = force; }
+  else { cat = mapCat(group, p.product_type, p.title, tagStr); }
+  if(!cat) return null;   // dropped (sneakers/heels/bags/perfume we can't ship)
+  // Festive house with a too-light auto-guess → formal-embroidered weight floor.
+  if(!force && FESTIVE_BRANDS.has(name) && (cat === 'pret_3pc' || cat === 'kurti_1pc' || cat === 'pret_3pc_emb')) cat = 'formal_emb_3pc';
+  const desc = (p.body_html || '').replace(/<[^>]+>/g, ' ');
+  if(!force && isHandmadeFull(cat, desc)) cat = 'handmade_emb';   // only an explicit adda/full-hand description
+  const sz = availSizes(p);
+  if(!sz.length) return null;   // every size sold out (incl. made-to-order bridal) → drop
+  const pub = Math.floor((Date.parse(p.published_at || p.updated_at || p.created_at || '') || 0) / 1000);
+  const onSale = (p.variants||[]).some(v => v.compare_at_price && parseFloat(v.compare_at_price) > parseFloat(v.price||0));
+  const o = { b:name, t:(p.title||'').slice(0,80), u:`https://${host}/products/${p.handle}`, img, pkr, cat, sz, pub };
+  if(onSale) o.sale = 1;
+  return o;
+}
+
+// ── Shopify whole-store harvest — PAGINATED (?page=N) so deep caps pull multiple
+// pages. One retry per page so a transient timeout doesn't drop the brand. Stops at
+// the cap, at a short (<250) page, or when a page returns empty. ──
 async function harvestShopify(name, host, group){
-  for(let attempt = 1; attempt <= 2; attempt++){
-    let raw;
-    try{ raw = await get(`https://${host}/products.json?limit=250`); }
-    catch(e){ if(attempt < 2){ await sleep(1500); continue; } console.error(`  ✗ ${name} (${host}): ${e.message}`); return []; }
-    let j; try{ j = JSON.parse(raw); }catch(e){ if(attempt < 2){ await sleep(1500); continue; } return []; }
-    const prods = (j.products||[]).filter(p => p.variants && p.variants.length && p.handle).slice(0, capFor(name));
-    const out = prods.map(p => {
-      const v0 = p.variants[0];
-      const pkr = Math.round(parseFloat(v0 && v0.price) || 0);
-      if(pkr < 500) return null;
-      const img = (p.images && p.images[0] && p.images[0].src) || '';
-      if(!img) return null;
-      const tagStr = (Array.isArray(p.tags) ? p.tags.join(' ') : String(p.tags||'')).toLowerCase();
-      let cat = mapCat(group, p.product_type, p.title, tagStr);
-      if(!cat) return null;   // dropped (e.g. sneakers/heels/bags we can't ship)
-      // Festive house with a too-light auto-guess → formal-embroidered weight floor.
-      if(FESTIVE_BRANDS.has(name) && (cat === 'pret_3pc' || cat === 'kurti_1pc' || cat === 'pret_3pc_emb')) cat = 'formal_emb_3pc';
-      const desc = (p.body_html || '').replace(/<[^>]+>/g, ' ');
-      if(isHandmadeFull(cat, desc)) cat = 'handmade_emb';   // only an explicit adda/full-hand description
-      let sz = availSizes(p);
-      if(!sz.length) return null;   // every size sold out (incl. made-to-order bridal) → drop
-      // recency + on-sale signals so the page can surface fresh / discounted items first
-      const pub = Math.floor((Date.parse(p.published_at || p.updated_at || p.created_at || '') || 0) / 1000);
-      const onSale = (p.variants||[]).some(v => v.compare_at_price && parseFloat(v.compare_at_price) > parseFloat(v.price||0));
-      const o = { b:name, t:(p.title||'').slice(0,80), u:`https://${host}/products/${p.handle}`, img, pkr, cat, sz, pub };
-      if(onSale) o.sale = 1;
-      return o;
-    }).filter(Boolean);
-    if(out.length || attempt === 2) return out;
-    await sleep(1500);   // got 0 usable products → one retry before giving up
+  const cap = capFor(name);
+  const out = [], seenH = new Set();
+  const maxPages = Math.min(10, Math.ceil(cap / 200) + 1);
+  for(let page = 1; page <= maxPages && out.length < cap; page++){
+    let raw = null;
+    for(let attempt = 1; attempt <= 2; attempt++){
+      try{ raw = await get(`https://${host}/products.json?limit=250&page=${page}`); break; }
+      catch(e){ if(attempt < 2){ await sleep(1300); continue; } if(page === 1) console.error(`  ✗ ${name} (${host}): ${e.message}`); }
+    }
+    if(raw == null) break;
+    let j; try{ j = JSON.parse(raw); }catch(e){ break; }
+    const prods = (j.products||[]).filter(p => p.variants && p.variants.length && p.handle);
+    if(!prods.length) break;                 // no more pages
+    for(const p of prods){
+      if(out.length >= cap) break;
+      if(seenH.has(p.handle)) continue; seenH.add(p.handle);
+      const o = buildProduct(p, name, host, group, null);
+      if(o) out.push(o);
+    }
+    if(prods.length < 250) break;            // last page reached
+    await sleep(450);
   }
-  return [];
+  return out;
 }
 
 // ── SFCC harvest (parse product tiles) ──
@@ -353,19 +429,30 @@ function parseSfccPage(html, host, group, priceRe){
   }
   return out;
 }
+function sfccUrl(host, pg, start){
+  if(pg.cgid) return `https://${host}/on/demandware.store/Sites-Sapphire-Site/en_PK/Search-UpdateGrid?cgid=${pg.cgid}&start=${start}&sz=${pg.sz}`;
+  return `https://${host}/${pg.path}/?sz=${pg.sz}&start=${start}`;
+}
+// Paginate each SFCC category (&start=0..max step sz) until it repeats / empties or
+// the brand cap is hit. Per-page group lets Sapphire's `man` grid map to men's cats.
 async function harvestSfcc(brand){
   const all = [], seen = new Set();
-  for(const page of brand.pages){
-    try{
-      const html = await get(page);
-      parseSfccPage(html, brand.host, brand.group, brand.priceRe).forEach(p => {
-        if(seen.has(p.u)) return; seen.add(p.u); p.b = brand.name; all.push(p);
-      });
-    }catch(e){ console.error(`  ✗ ${brand.name} page: ${e.message}`); }
-    await sleep(700);
-    if(all.length >= capFor(brand.name)) break;
+  const cap = capFor(brand.name);
+  for(const pg of brand.pages){
+    for(let start = 0; start <= pg.max && all.length < cap; start += pg.sz){
+      let html;
+      try{ html = await get(sfccUrl(brand.host, pg, start)); }
+      catch(e){ console.error(`  ✗ ${brand.name} ${pg.cgid||pg.path}@${start}: ${e.message}`); break; }
+      const items = parseSfccPage(html, brand.host, pg.group, brand.priceRe);
+      if(!items.length) break;                 // end of this category
+      let added = 0;
+      for(const p of items){ if(seen.has(p.u)) continue; seen.add(p.u); p.b = brand.name; all.push(p); added++; }
+      await sleep(650);
+      if(!added) break;                         // only repeats → category exhausted
+    }
+    if(all.length >= cap) break;
   }
-  return all.slice(0, capFor(brand.name));
+  return all.slice(0, cap);
 }
 
 // ── Collection harvest (Shopify /collections/<handle>/products.json) ──
@@ -375,31 +462,8 @@ async function harvestCollectionUrl(name, host, group, force, handle){
     : `https://${host}/collections/${handle}/products.json?limit=250`;
   let raw; try{ raw = await get(url); }catch(e){ return []; }
   let j; try{ j = JSON.parse(raw); }catch(e){ return []; }
-  return (j.products||[]).filter(p => p.variants && p.variants.length && p.handle).map(p => {
-    const v0 = p.variants[0];
-    const pkr = Math.round(parseFloat(v0 && v0.price) || 0);
-    if(pkr < 500) return null;
-    const img = (p.images && p.images[0] && p.images[0].src) || '';
-    if(!img) return null;
-    const tagStr = (Array.isArray(p.tags) ? p.tags.join(' ') : String(p.tags||'')).toLowerCase();
-    let cat;
-    if(force === 'bridal'){
-      const tt = ((p.product_type||'') + ' ' + (p.title||'')).toLowerCase();
-      cat = /lehenga|gharara|sharara/.test(tt) ? 'lehenga' : (/\bsaree\b|\bsari\b/.test(tt) ? 'saree' : 'bridal');
-    } else if(force){ cat = force; }
-    else { cat = mapCat(group, p.product_type, p.title, tagStr); }
-    if(!cat) return null;
-    if(!force && FESTIVE_BRANDS.has(name) && (cat==='pret_3pc'||cat==='kurti_1pc'||cat==='pret_3pc_emb')) cat = 'formal_emb_3pc';
-    const desc = (p.body_html || '').replace(/<[^>]+>/g, ' ');
-    if(!force && isHandmadeFull(cat, desc)) cat = 'handmade_emb';
-    let sz = availSizes(p);
-    if(!sz.length) return null;   // every size sold out (incl. made-to-order bridal) → drop
-    const pub = Math.floor((Date.parse(p.published_at || p.updated_at || p.created_at || '') || 0) / 1000);
-    const onSale = (p.variants||[]).some(v => v.compare_at_price && parseFloat(v.compare_at_price) > parseFloat(v.price||0));
-    const o = { b:name, t:(p.title||'').slice(0,80), u:`https://${host}/products/${p.handle}`, img, pkr, cat, sz, pub };
-    if(onSale) o.sale = 1;
-    return o;
-  }).filter(Boolean);
+  return (j.products||[]).filter(p => p.variants && p.variants.length && p.handle)
+    .map(p => buildProduct(p, name, host, group, force)).filter(Boolean);
 }
 async function harvestCollections(entry){
   const [name, host, group, cap, handles] = entry;
@@ -442,4 +506,13 @@ async function harvestCollections(entry){
   const out = { updated: new Date().toISOString(), count: deduped.length, brands: brands.length, products: deduped };
   fs.writeFileSync('catalog.json', JSON.stringify(out));
   console.log(`\n✓ catalog.json — ${deduped.length} products from ${brands.length} brands`);
+  // gender mix (cat → gender): mens_* = men, kids_* = kids, else women.
+  const genOf = c => /^mens_/.test(c) ? 'm' : /^kids_/.test(c) ? 'k' : 'w';
+  const split = { w:0, m:0, k:0 };
+  deduped.forEach(p => split[genOf(p.cat)]++);
+  const pct = g => deduped.length ? Math.round(split[g] / deduped.length * 100) : 0;
+  console.log(`  gender mix → women ${split.w} (${pct('w')}%) · men ${split.m} (${pct('m')}%) · kids ${split.k} (${pct('k')}%)`);
+  // kids brands present (so we can confirm the kids variety requirement)
+  const kidsBrands = [...new Set(deduped.filter(p => /^kids_/.test(p.cat)).map(p => p.b))];
+  console.log(`  kids brands (${kidsBrands.length}): ${kidsBrands.join(', ')}`);
 })();
