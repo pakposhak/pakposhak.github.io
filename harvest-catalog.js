@@ -153,13 +153,14 @@ function mapCatKids(s){
   return 'kids_eastern';
 }
 // khussa/kolhapuri/peshawari are traditional flats we CAN ship → keep as footwear.
-const KHUSSA_RE = /\bkhussa|kolhapuri|peshawari/;
+const KHUSSA_RE = /\b(khussa|kolhapuri|peshawari)/;
 // Modern shoes we can't ship → dropped from the catalog entirely (return null).
-const SHOE_RE = /\bshoe|sneaker|\bsandal|chappal|\bheel|slipper|loafer|\bmule\b|footwear|\bpump\b|\bboot|slip[\s-]?on|wedge|stiletto|flip[\s-]?flop/;
+// Word-boundaried so "bootcut"/"sandali" (garment names) are NOT caught as shoes.
+const SHOE_RE = /\bshoe|sneaker|\bsandals?\b|chappal|\bheels?\b|slipper|loafer|\bmule\b|footwear|\bpump\b|\bboots?\b|slip[\s-]?on|wedge|stiletto|flip[\s-]?flop/;
 const PS_NON_APPAREL = /\b(bed|mattress|\bnet\b|blanket|quilt|pillow|cushion|towel|bottle|feeder|diaper|nappy|\btoy|stroller|pram|\bcomb\b|\bsocks?\b|\bcap\b|\bhat\b|\bbib\b|mitten|booties|booti|headband|hair[\s-]?band|\bbag\b|clutch|purse|wallet|jewel|earring|necklace|\bring\b|bangle|bracelet|brooch|perfume|fragrance|\battar\b|\bwatch\b|sunglass|\bbelt\b|key[\s-]?chain|gift[\s-]?set|hamper|pouch|cufflink)\b/;
 // STRONG garment signals — if present, the item is apparel even when its NAME
 // contains a shoe/non-apparel word ("Sandali" lawn collection, "Net 3PC" suit).
-const GARMENT_SIG = /shirt|kurti|kurta|kameez|\bsuit\b|frock|\bdress\b|gown|abaya|kaftan|trouser|shalwar|saree|lehenga|\bcoat\b|jacket|sweater|dupatta|\bmaxi\b|[23][\s-]?(pc|piece|pcs)|un[\s-]?stitch|\blawn\b|cambric|khaddar|karandi|chiffon|organza/;
+const GARMENT_SIG = /shirt|kurti|kurta|kameez|\bsuit\b|frock|\bdress\b|gown|abaya|kaftan|trouser|\bpants?\b|\bjeans?\b|denim|shalwar|saree|lehenga|\bcoat\b|jacket|sweater|dupatta|\bmaxi\b|[23][\s-]?(pc|piece|pcs)|un[\s-]?stitch|\blawn\b|cambric|khaddar|karandi|chiffon|organza/;
 function mapCat(group, type, title, tagStr){
   const tt = ((type||'') + ' ' + (title||'')).toLowerCase();   // garment/piece-count: reliable
   const tags = (tagStr||'').toLowerCase();                      // unstitch/emb signals only

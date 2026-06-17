@@ -5317,7 +5317,7 @@
     bbRenderProduct();
   }
   function bbPickGroup(gi){ _bbGroup = (_bbGroup === gi) ? null : gi; bbRenderProduct(); }   // re-tap clears
-  function bbPickClub2(v){ _bbClub[_bbGender+'|'+_bbGroup] = (v === '') ? null : +v; bbRenderProduct(); }
+  function bbPickClub2(e, v){ if(e) e.stopPropagation(); _bbClub[_bbGender+'|'+_bbGroup] = (v === '') ? null : +v; bbRenderProduct(); }
   function bbToggleClubDD(e){ if(e) e.stopPropagation(); const l = document.querySelector('#bbClubDD .bb-cdd-list'); if(l) l.style.display = (l.style.display === 'none' ? 'block' : 'none'); }
   document.addEventListener('click', e => { const dd = document.getElementById('bbClubDD'); if(dd && !dd.contains(e.target)){ const l = dd.querySelector('.bb-cdd-list'); if(l) l.style.display = 'none'; } });
   // Brand list rendered exactly like the Store-Types mega-menu (same .cat-*
@@ -5397,8 +5397,8 @@
     html += `<div class="bb-cdd" id="bbClubDD">`
       + `<button type="button" class="bb-cdd-btn" onclick="bbToggleClubDD(event)"><span>${esc(selLabel)}</span><span class="bb-cdd-car">▾</span></button>`
       + `<div class="bb-cdd-list" style="display:none">`
-      +   `<button type="button" class="bb-cdd-opt${sel==null?' on':''}" onclick="bbPickClub2('')">${esc(grp.h)} — ${tr('bb_all')}</button>`
-      +   liveClubs.map(c => `<button type="button" class="bb-cdd-opt${sel===c.ci?' on':''}" onclick="bbPickClub2('${c.ci}')">${esc(c.label)} (${c.n})</button>`).join('')
+      +   `<button type="button" class="bb-cdd-opt${sel==null?' on':''}" onclick="bbPickClub2(event,'')">${esc(grp.h)} — ${tr('bb_all')}</button>`
+      +   liveClubs.map(c => `<button type="button" class="bb-cdd-opt${sel===c.ci?' on':''}" onclick="bbPickClub2(event,'${c.ci}')">${esc(c.label)} (${c.n})</button>`).join('')
       + `</div></div>`;
     _bbSlidePage = 0;
     html += bbBrandGrid(brands);
@@ -5414,7 +5414,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-17d';
+  const PSB_BUILD = '2026-06-17e';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
