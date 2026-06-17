@@ -216,6 +216,13 @@ const PS_NON_APPAREL = /\b(bed|mattress|\bnet\b|blanket|quilt|pillow|cushion|tow
 // contains a shoe/non-apparel word ("Sandali" lawn collection, "Net 3PC" suit).
 const GARMENT_SIG = /shirt|kurti|kurta|kameez|\bsuit\b|frock|\bdress\b|gown|abaya|kaftan|trouser|\bpants?\b|\bjeans?\b|denim|shalwar|saree|lehenga|\bcoat\b|jacket|sweater|dupatta|\bmaxi\b|[23][\s-]?(pc|piece|pcs)|un[\s-]?stitch|\blawn\b|cambric|khaddar|karandi|chiffon|organza/;
 const BAG_RE = /\bbag|hand[\s-]?bag|clutch|purse|wallet|tote\b|satchel|wristlet|backpack|\bpouch\b/;
+// Fragrances/perfumes & ANY liquid — STRICTLY excluded (we can't ship liquids). Use
+// only STRONG terms: plain "mist"/"deo"/"oil" show up in suit collection NAMES
+// ("Pearl Mist", "DEODAR", "Bell Mist") so they must NOT match.
+const FRAGRANCE_RE = /perfume|fragrance|cologne|deodorant|body[\s-]?mist|body[\s-]?spray|eau[\s-]?de|\bedt\b|\bedp\b|\battar\b|pour[\s-]?homme|pour[\s-]?femme|sanitizer|\bcandle\b|essential[\s-]?oil|\bserum\b|\blotion\b/;
+// Gift/perfume BUNDLES (e.g. "Father's Day Bundle", tag=bundle) — these often contain
+// a perfume; drop when there's NO garment signal (a real "3-suit bundle" survives).
+const BUNDLE_RE = /\bbundle\b|gift[\s-]?set|gift[\s-]?bundle|\bhamper\b|combo[\s-]?(?:deal|pack|set)/;
 // Full HAND-embroidery (adda work) = heavy (~2.5kg), regardless of stitched/unstitched.
 // Detected from the product DESCRIPTION's hand/adda wording, plus a brand-default for
 // houses that are predominantly handmade (their feed often omits the wording).
@@ -238,6 +245,9 @@ function mapCat(group, type, title, tagStr){
   const tt = ((type||'') + ' ' + (title||'')).toLowerCase();   // garment/piece-count: reliable
   const tags = (tagStr||'').toLowerCase();                      // unstitch/emb signals only
   const s = tt + ' ' + tags;
+  // Liquids/perfumes & gift-bundles — strictly excluded, before anything else.
+  if(FRAGRANCE_RE.test(s)) return null;
+  if(BUNDLE_RE.test(s) && !GARMENT_SIG.test(s)) return null;
   // Footwear-only brand (e.g. Stylo): keep ONLY khussa/peshawari, drop everything
   // else (so a vaguely-named shoe never defaults to a women's 3pc suit).
   if(group === 'f') return KHUSSA_RE.test(s) ? 'footwear' : null;
