@@ -656,6 +656,9 @@
     .ps-add{margin-top:8px;width:100%;padding:7px;background:var(--gold);color:#12122a;border:none;border-radius:7px;font-weight:700;font-size:0.78rem;cursor:pointer;font-family:inherit}
     .ps-pager{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:18px;font-size:0.84rem;color:var(--txt-sec);font-weight:600}
     .ps-pg-btn{padding:7px 14px;border:1.5px solid var(--gold-bdr);border-radius:8px;background:var(--gold-dim);color:var(--gold);font-weight:700;cursor:pointer;font-family:inherit;font-size:0.82rem}
+    .ps-pg-jump{padding:7px 10px;border:1.5px solid var(--bdr-med);border-radius:8px;background:var(--input-bg);color:var(--txt);font-weight:600;font-size:0.82rem;font-family:inherit;cursor:pointer;color-scheme:light}
+    [data-theme="dark"] .ps-pg-jump{color-scheme:dark}
+    .ps-pg-jump option{background:var(--surface);color:var(--txt)}
     .ps-pg-btn:disabled{opacity:0.4;cursor:default}
     .ps-empty{text-align:center;color:var(--txt-muted);padding:40px 10px;font-size:0.9rem}
     /* card "details" icon → in-page product popup */
@@ -5255,15 +5258,21 @@
     if(psPage >= pages) psPage = pages - 1;
     const start = psPage * ps;
     grid.innerHTML = psFiltered.slice(start, start + ps).map((p,i) => psCard(p, start + i)).join('');
+    // Page jump: the "X / Y" is a dropdown so a buyer can hop to any page directly
+    // instead of tapping Next/Prev many times.
+    const jump = Array.from({length:pages}, (_,i) =>
+      `<option value="${i}" ${i===psPage?'selected':''}>${tr('ps_page')} ${i+1} / ${pages}</option>`).join('');
     document.getElementById('psPager').innerHTML = pages > 1
       ? `<button class="ps-pg-btn" ${psPage<=0?'disabled':''} onclick="psGo(-1)">‹ ${tr('ps_prev')}</button>`
-        + `<span>${tr('ps_page')} ${psPage+1} / ${pages}</span>`
+        + `<select class="ps-pg-jump" onchange="psJump(this.value)">${jump}</select>`
         + `<button class="ps-pg-btn" ${psPage>=pages-1?'disabled':''} onclick="psGo(1)">${tr('ps_next')} ›</button>`
       : '';
   }
   // Next/Prev: scroll to the RESULTS (not the page top) so the buyer keeps seeing
   // products instead of being thrown back up to the filters every time.
-  function psGo(d){ psPage += d; psRender(); const g=document.getElementById('psCount'); if(g) window.scrollTo({top: g.getBoundingClientRect().top + window.scrollY - 64, behavior:'smooth'}); }
+  function psGo(d){ psPage += d; psRender(); psScrollToResults(); }
+  function psJump(v){ psPage = parseInt(v, 10) || 0; psRender(); psScrollToResults(); }
+  function psScrollToResults(){ const g=document.getElementById('psCount'); if(g) window.scrollTo({top: g.getBoundingClientRect().top + window.scrollY - 64, behavior:'smooth'}); }
 
   // Tap a product → hand its URL to the proven live add pipeline (verifies
   // price/stock/category live, then the buyer picks size and saves to the cart).
@@ -5519,7 +5528,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-18f';
+  const PSB_BUILD = '2026-06-18g';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
