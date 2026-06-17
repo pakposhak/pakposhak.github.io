@@ -37,7 +37,13 @@ jobs:
             let prev=null; try{ prev=JSON.parse(cp.execSync("git show HEAD:catalog.json").toString()); }catch(e){}
             const bad=[];
             if((cur.count||0)<800) bad.push("count "+cur.count+" < 800");
-            if(prev){ for(const b of ["Khaadi","Sapphire"]) if(has(prev,b) && !has(cur,b)) bad.push("lost "+b); }
+            if(prev){
+              for(const b of ["Khaadi","Sapphire"]) if(has(prev,b) && !has(cur,b)) bad.push("lost "+b);
+              // Reject a run that harvested far fewer than the live catalog — the
+              // GitHub runner IP gets bot-limited/rate-limited by some brands, which
+              // silently shrinks the catalog (e.g. 12.6k -> 7.5k). Keep the good one.
+              if((prev.count||0)>=800 && (cur.count||0) < (prev.count*0.85)) bad.push("count "+cur.count+" dropped >15% from "+prev.count+" (runner likely throttled)");
+            }
             if(bad.length){ console.log("::warning::Bad harvest ("+bad.join(", ")+") — keeping the previous catalog."); cp.execSync("git checkout -- catalog.json"); }
             else console.log("OK: "+cur.count+" products from "+cur.brands+" brands");
           '
