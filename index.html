@@ -4130,21 +4130,14 @@
     var armed = false;
     function arm(){ if(armed) return; try{ history.pushState({psbBack:1}, ''); armed = true; }catch(e){} }
     arm();
-    // Mobile/PWA = treat Back like an "exit app?" guard (Danish). On desktop, Back is
-    // primary navigation — keep it silent when there's nothing unsaved to lose.
-    function isMobileLike(){
-      try{ return (window.matchMedia && (window.matchMedia('(max-width:819px)').matches || window.matchMedia('(pointer:coarse)').matches || window.matchMedia('(display-mode:standalone)').matches)) || window.navigator.standalone === true; }
-      catch(e){ return false; }
-    }
+    // ALWAYS confirm on the Back button — even with an empty cart, on every device
+    // (Danish: treat Back as an "exit app?" guard). Cart-specific copy when there's
+    // unsaved work, the plain exit prompt otherwise.
     window.addEventListener('popstate', function(){
       armed = false;
-      if(psbHasUnsaved()){
-        if(confirm(tr('js_leave_confirm'))){ history.back(); } else { arm(); }   // unsaved work → always confirm
-      } else if(isMobileLike()){
-        if(confirm(tr('js_exit_confirm'))){ history.back(); } else { arm(); }    // mobile empty cart → exit guard
-      } else {
-        history.back();   // desktop, nothing to lose → silent Back
-      }
+      const msg = psbHasUnsaved() ? tr('js_leave_confirm') : tr('js_exit_confirm');
+      if(confirm(msg)){ history.back(); }   // OK → leave for real
+      else { arm(); }                       // Cancel → stay, re-trap
     });
   })();
 
@@ -5801,7 +5794,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-18j';
+  const PSB_BUILD = '2026-06-18k';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
