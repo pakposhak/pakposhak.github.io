@@ -577,6 +577,9 @@
     .ps-flabel-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
     .ps-flabel-row .ps-flabel{margin-bottom:0;white-space:nowrap}
     .ps-bsearch{flex:1;min-width:0;padding:5px 9px;border:1.5px solid var(--bdr-med);border-radius:13px;background:var(--input-bg);color:var(--txt);font-size:0.74rem;font-family:inherit}
+    .ps-bsearch::placeholder{color:var(--txt-muted)}
+    /* Category search shows on mobile only — hidden on desktop below (narrow rail, short list) */
+    .ps-cat-none{padding:9px 12px;color:var(--txt-muted);font-size:0.76rem}
     /* Browse-brands sub-tabs + product-category brand browser */
     .bb-two-ways{font-size:0.72rem;color:var(--txt-muted);font-weight:600;margin:0 0 6px 2px;letter-spacing:0.2px}
     .bb-subtabs{display:flex;gap:8px;margin-bottom:14px}
@@ -656,9 +659,17 @@
     .ps-add{margin-top:8px;width:100%;padding:7px;background:var(--gold);color:#12122a;border:none;border-radius:7px;font-weight:700;font-size:0.78rem;cursor:pointer;font-family:inherit}
     .ps-pager{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:18px;font-size:0.84rem;color:var(--txt-sec);font-weight:600}
     .ps-pg-btn{padding:7px 14px;border:1.5px solid var(--gold-bdr);border-radius:8px;background:var(--gold-dim);color:var(--gold);font-weight:700;cursor:pointer;font-family:inherit;font-size:0.82rem}
-    .ps-pg-jump{padding:7px 10px;border:1.5px solid var(--bdr-med);border-radius:8px;background:var(--input-bg);color:var(--txt);font-weight:600;font-size:0.82rem;font-family:inherit;cursor:pointer;color-scheme:light}
-    [data-theme="dark"] .ps-pg-jump{color-scheme:dark}
-    .ps-pg-jump option{background:var(--surface);color:var(--txt)}
+    /* Page jump = CUSTOM themed dropdown — a native <select>'s option list ignores
+       the app theme and renders OS black/white. Built from var() tokens = always on-theme. */
+    .ps-pgdd{position:relative;display:inline-block}
+    .ps-pgdd>summary{list-style:none;cursor:pointer;padding:7px 12px;border:1.5px solid var(--bdr-med);border-radius:8px;background:var(--input-bg);color:var(--txt);font-weight:700;font-size:0.82rem;font-family:inherit;white-space:nowrap}
+    .ps-pgdd>summary::-webkit-details-marker{display:none}
+    .ps-pgdd>summary::marker{content:''}
+    .ps-pgdd[open]>summary{border-color:var(--gold-bdr);color:var(--gold)}
+    .ps-pgdd-panel{position:absolute;z-index:60;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);min-width:152px;max-height:264px;overflow-y:auto;background:var(--surface);border:1.5px solid var(--gold-bdr);border-radius:10px;box-shadow:0 10px 28px rgba(0,0,0,0.28);padding:5px}
+    .ps-pgdd-item{padding:8px 14px;border-radius:6px;cursor:pointer;color:var(--txt);font-size:0.82rem;white-space:nowrap;text-align:center}
+    .ps-pgdd-item:hover{background:var(--raised)}
+    .ps-pgdd-item.on{background:var(--gold-dim);color:var(--gold);font-weight:700}
     .ps-pg-btn:disabled{opacity:0.4;cursor:default}
     .ps-empty{text-align:center;color:var(--txt-muted);padding:40px 10px;font-size:0.9rem}
     /* card "details" icon → in-page product popup */
@@ -690,6 +701,7 @@
       .ps-grid{grid-template-columns:repeat(auto-fill,minmax(178px,1fr))}
       .ps-brands{max-height:260px}
       .ps-price{grid-template-columns:repeat(2,1fr)}   /* narrow rail → 2 per row */
+      .ps-catsearch{display:none}                      /* category search is mobile-only */
     }
   </style>
 </head>
@@ -824,7 +836,10 @@
           <div class="ps-price" id="psPrice"></div>
         </div>
         <div class="ps-fblock">
-          <div class="ps-flabel"><span class="ps-fnum">2</span> <span data-i18n="ps_category">Product Category</span></div>
+          <div class="ps-flabel-row">
+            <div class="ps-flabel"><span class="ps-fnum">2</span> <span data-i18n="ps_category">Product Category</span></div>
+            <input id="psCatSearch" class="ps-bsearch ps-catsearch" type="text" autocomplete="off" oninput="psBuildCatFilter()" data-i18n-ph="ps_catsearch_ph" placeholder="Search category…"/>
+          </div>
           <div class="ps-cats" id="psCat"></div>
         </div>
         <div class="ps-fblock">
@@ -1716,6 +1731,8 @@
     // ── Kids ──
     kids_eastern      : 0.50,
     kids_western      : 0.56,
+    kids_frock        : 0.45,
+    kids_formal       : 0.65,
   };
 
   const WEIGHT_LABELS = {
@@ -1756,8 +1773,10 @@
     mens_sherwani     : "Men's Sherwani / Prince Coat",
     mens_unstitched   : "Men's Unstitched Fabric",
     maxi_dress        : 'Maxi / Dress / Jumpsuit (1pc)',
-    kids_eastern      : 'Kids Eastern (kurta / 2pc)',
-    kids_western      : 'Kids Western (tee / jeans / frock)',
+    kids_eastern      : 'Kids Eastern (kurta / 2–3pc)',
+    kids_western      : 'Kids Western (tee / jeans)',
+    kids_frock        : 'Kids Frock / Maxi (1pc)',
+    kids_formal       : 'Kids Party / Formal (embroidered)',
     footwear          : 'Footwear / Shoes / Khussa',
   };
 
@@ -1833,7 +1852,7 @@
     return /\badda[\s-]?work|\badda\b|fully hand[\s-]?embroider|all[\s-]?over hand[\s-]?embroider|complete(?:ly)? hand[\s-]?embroider|entirely hand[\s-]?embroider|pure hand[\s-]?embroider/i.test(desc);
   }
   const MENS_CATS = new Set(['mens_shirt','mens_trouser','mens_jeans','mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_suit','mens_sherwani','mens_unstitched']);
-  const KIDS_CATS = new Set(['kids_eastern','kids_western']);
+  const KIDS_CATS = new Set(['kids_eastern','kids_western','kids_frock','kids_formal']);
 
   // ── DRAFT CARD SYSTEM — each URL gets its own card ───────────────────────
   let drafts      = {};  // id → {currency, sizeCounter}
@@ -1898,8 +1917,10 @@
     ]},
     k: { label:"🧸 Kids category", groups:[
       { h:'', items:[
-        ['kids_eastern','Kids Eastern (kurta / 2pc)'],
-        ['kids_western','Kids Western (tee / jeans / frock)'],
+        ['kids_eastern','Kids Eastern (kurta / 2–3pc)'],
+        ['kids_frock','Kids Frock / Maxi (1pc)'],
+        ['kids_formal','Kids Party / Formal (embroidered)'],
+        ['kids_western','Kids Western (tee / jeans)'],
       ]},
     ]},
   };
@@ -1929,8 +1950,13 @@
   // with the product TITLE which usually carries the garment words.
   const PT_CAT = [
     // Kids BEFORE bottoms/tops — "Boys Trousers" must hit kids, not trousers.
-    [/(kid|boy|girl|infant|toddler|junior|newborn|teen)s?\b.*(tee|t[\s-]?shirt|polo|jean|denim|trouser|pant|short|frock|dress|romper|western|legging)/i, 'kids_western'],
-    [/(tee|t[\s-]?shirt|polo|jean|denim|trouser|pant|short|frock|dress|romper)s?\b.*(kid|boy|girl|infant|toddler|junior|newborn)/i, 'kids_western'],
+    // Order: party/formal → frock/maxi → western → generic eastern (mirrors mapCatKids).
+    [/(kid|boy|girl|infant|toddler|junior|newborn|teen)s?\b.*(formal|party|embroider|chiffon|organza|fancy)/i, 'kids_formal'],
+    [/(formal|party|embroider|chiffon|organza|fancy)\b.*(kid|boy|girl|infant|toddler|junior|newborn)/i, 'kids_formal'],
+    [/(kid|boy|girl|infant|toddler|junior|newborn|teen)s?\b.*(frock|maxi|gown|dress|jumpsuit)/i, 'kids_frock'],
+    [/(frock|maxi|gown|dress|jumpsuit)\b.*(kid|boy|girl|infant|toddler|junior|newborn)/i, 'kids_frock'],
+    [/(kid|boy|girl|infant|toddler|junior|newborn|teen)s?\b.*(tee|t[\s-]?shirt|polo|jean|denim|trouser|pant|short|romper|western|legging)/i, 'kids_western'],
+    [/(tee|t[\s-]?shirt|polo|jean|denim|trouser|pant|short|romper)s?\b.*(kid|boy|girl|infant|toddler|junior|newborn)/i, 'kids_western'],
     [/kid|boys|girls|infant|toddler|junior|newborn/i,          'kids_eastern'],
     [/shoe|sneaker|sandal|chappal|khussa|kolhapuri|heel|slipper|loafer|peshawari|moccasin|footwear|mule\b/i, 'footwear'],
     // Festive eastern — split out from bridal so weights are correct.
@@ -3402,7 +3428,7 @@
       ps_enlarge:'Enlarge', ps_avail_sizes:'Available sizes', ps_unstitched:'Unstitched · no size needed', ps_mto:'Made to order', ps_d_loading:'Loading more details…', ps_d_open:'Open full page', ps_d_nofetch:'See all photos &amp; details on the brand page →', ps_d_nodesc:'No extra description provided.',
       ps_empty:'No products match these filters — try widening them.',
       ps_partial:'Not every brand &amp; product is listed here yet —', ps_partial_link:'browse all via Browse by brands →',
-      ps_bsearch_ph:'Search 50+ brands…', ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products', ps_sort_lh:'৳ Low→High', ps_sort_hl:'৳ High→Low',
+      ps_bsearch_ph:'Search 50+ brands…', ps_catsearch_ph:'Search category…', ps_cat_nomatch:'No matching category', ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products', ps_sort_lh:'৳ Low→High', ps_sort_hl:'৳ High→Low',
       bb_store:'Store Types', bb_product:'Product Category', bb_women:'👗 Women', bb_men:'👔 Men', bb_kids:'🧸 Kids',
       bb_more:'more', bb_less:'less', bb_all:'All', bb_two_ways:'Two ways to search brands', bb_pick_gender:'Pick Women, Men or Kids above.', bb_pick_cat:'Pick a category above to see its brands.', bb_prod_sub:'See which brands make what — tap a brand to start.', bb_loading:'Loading brands…', bb_prod_none:'No catalogued brands here yet — use the search below.', bb_bsearch_ph:'Search brand…',
       js_soldout_lead:'Some items appear SOLD OUT and can’t be saved — please remove them or pick another article:',
@@ -3465,7 +3491,7 @@
       ps_enlarge:'ছবি বড় করুন', ps_avail_sizes:'স্টকে থাকা সাইজ', ps_unstitched:'আনস্টিচড · সাইজ লাগে না', ps_mto:'অর্ডারে তৈরি হবে', ps_d_loading:'আরও বিবরণ আসছে…', ps_d_open:'পুরো পেজ খুলুন', ps_d_nofetch:'সব ছবি ও বিবরণ ব্র্যান্ডের পেজে দেখুন →', ps_d_nodesc:'বাড়তি কোনো বিবরণ নেই।',
       ps_empty:'এই ফিল্টারে কোনো পণ্য নেই — ফিল্টার একটু কমিয়ে দেখুন।',
       ps_partial:'সব ব্র্যান্ড বা পণ্য এখনো এখানে যোগ হয়নি —', ps_partial_link:'“ব্র্যান্ড দেখুন”-এ গিয়ে সব ব্রাউজ করুন →',
-      ps_bsearch_ph:'৫০+ ব্র্যান্ড খুঁজুন…', ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়', ps_sort_lh:'৳ কম→বেশি', ps_sort_hl:'৳ বেশি→কম',
+      ps_bsearch_ph:'৫০+ ব্র্যান্ড খুঁজুন…', ps_catsearch_ph:'ক্যাটাগরি খুঁজুন…', ps_cat_nomatch:'মিলে এমন ক্যাটাগরি নেই', ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়', ps_sort_lh:'৳ কম→বেশি', ps_sort_hl:'৳ বেশি→কম',
       bb_store:'স্টোরের ধরন', bb_product:'পণ্যের ক্যাটাগরি', bb_women:'👗 মেয়েদের', bb_men:'👔 ছেলেদের', bb_kids:'🧸 বাচ্চাদের',
       bb_more:'আরও', bb_less:'কম', bb_all:'সব', bb_two_ways:'ব্র্যান্ড খোঁজার দুটি উপায়', bb_pick_gender:'উপরে মেয়েদের, ছেলেদের বা বাচ্চাদের বেছে নিন।', bb_pick_cat:'ব্র্যান্ড দেখতে উপরের একটি ক্যাটাগরিতে ট্যাপ করুন।', bb_prod_sub:'কোন ব্র্যান্ড কী বানায় দেখে নিন — শুরু করতে ব্র্যান্ডে ট্যাপ করুন।', bb_loading:'ব্র্যান্ড আসছে…', bb_prod_none:'এখানে এখনো কোনো ব্র্যান্ড নেই — নিচে খুঁজে দেখুন।', bb_bsearch_ph:'ব্র্যান্ড খুঁজুন…',
       js_soldout_lead:'কিছু পণ্য স্টকে নেই, তাই সেভ করা যাচ্ছে না — সেগুলো সরিয়ে দিন বা অন্য পণ্য বেছে নিন:',
@@ -4108,6 +4134,7 @@
     mens_waistcoat:"Men's Waistcoat", mens_suit:"Men's Suit/Pant-Coat",
     mens_sherwani:"Men's Sherwani", mens_unstitched:"Men's Unstitched",
     kids_eastern:'Kids Eastern', kids_western:'Kids Western',
+    kids_frock:'Kids Frock/Maxi', kids_formal:'Kids Party/Formal',
   };
 
   function removeItem(idx){
@@ -5005,7 +5032,8 @@
     mens_shirt:'Men — shirt', mens_kurta:'Men — kurta', mens_shalwar_kameez:'Men — shalwar kameez',
     mens_trouser:'Men — trousers', mens_jeans:'Men — jeans', mens_suit:'Men — suit',
     mens_waistcoat:'Men — waistcoat', mens_sherwani:'Men — sherwani', mens_unstitched:'Men — unstitched',
-    kids_eastern:'Kids — eastern', kids_western:'Kids — western'
+    kids_eastern:'Kids — eastern', kids_western:'Kids — western',
+    kids_frock:'Kids — frock / maxi', kids_formal:'Kids — party / formal'
   };
   function psLabel(cat){ return PS_CAT_LABELS[cat] || cat; }
 
@@ -5142,25 +5170,33 @@
   function psBuildCatFilter(){
     const present = PS_CATALOG ? new Set(PS_CATALOG.map(p => p.cat)) : new Set();
     const sel = psSel.cats;
+    // Optional category search (mobile-only input). Matches the visible label, the
+    // browse label, OR the department name ("kids"/"women" → that whole dept).
+    const q = (document.getElementById('psCatSearch')?.value || '').trim().toLowerCase();
     let html = `<button type="button" class="ps-catclear${sel.size===0?' on':''}" onclick="psPickCat('')">${tr('ps_allcats')}</button>`;
+    let shown = 0;
     ['w','m','k'].forEach(g => {
       const tree = CAT_TREE[g]; if(!tree) return;
+      const deptHit = !!q && tree.label.toLowerCase().indexOf(q) >= 0;
       let inner = '';
       tree.groups.forEach(grp => {
-        const items = grp.items.filter(([k]) => !PS_HIDE_CATS.has(k) && present.has(k));
+        const items = grp.items.filter(([k,lbl]) => !PS_HIDE_CATS.has(k) && present.has(k)
+          && (!q || deptHit || lbl.toLowerCase().indexOf(q) >= 0 || (PS_CAT_LABELS[k]||'').toLowerCase().indexOf(q) >= 0));
         if(!items.length) return;
-        if(grp.h) inner += `<div class="ps-cgrp-h">${esc(grp.h)}</div>`;
+        if(grp.h && !q) inner += `<div class="ps-cgrp-h">${esc(grp.h)}</div>`;   // hide sub-heads while searching
         inner += items.map(([k,lbl]) => `<button type="button" class="ps-cat-row${sel.has(k)?' on':''}" onclick="psPickCat('${k}')">${esc(lbl)}</button>`).join('');
+        shown += items.length;
       });
       if(!inner) return;
       const allKey = 'all:'+g;
-      const open = sel.has(allKey) || [...sel].some(t => PS_CAT_GENDER[t] === g);
+      const open = !!q || sel.has(allKey) || [...sel].some(t => PS_CAT_GENDER[t] === g);   // auto-expand while searching
       html += `<details class="ps-cdept"${open?' open':''}>`
         + `<summary>${esc(tree.label)}</summary>`
-        + `<button type="button" class="ps-cat-row ps-cat-all${sel.has(allKey)?' on':''}" onclick="psPickCat('${allKey}')">${tr(PS_GENDER_WORD[g])}</button>`
+        + (q ? '' : `<button type="button" class="ps-cat-row ps-cat-all${sel.has(allKey)?' on':''}" onclick="psPickCat('${allKey}')">${tr(PS_GENDER_WORD[g])}</button>`)
         + inner
         + `</details>`;
     });
+    if(q && !shown) html += `<div class="ps-cat-none">${tr('ps_cat_nomatch')}</div>`;
     document.getElementById('psCat').innerHTML = html;
   }
   function psPickCat(v){
@@ -5183,6 +5219,7 @@
     psSel = { prices:new Set(), cats:new Set(), brands:new Set() };
     psSort = '';
     const bs = document.getElementById('psBrandSearch'); if(bs) bs.value = '';
+    const cs = document.getElementById('psCatSearch'); if(cs) cs.value = '';
     psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply();
   }
 
@@ -5261,12 +5298,23 @@
     // Page jump: the "X / Y" is a dropdown so a buyer can hop to any page directly
     // instead of tapping Next/Prev many times.
     const jump = Array.from({length:pages}, (_,i) =>
-      `<option value="${i}" ${i===psPage?'selected':''}>${tr('ps_page')} ${i+1} / ${pages}</option>`).join('');
+      `<div class="ps-pgdd-item${i===psPage?' on':''}" onclick="psJump(${i})">${tr('ps_page')} ${i+1} / ${pages}</div>`).join('');
     document.getElementById('psPager').innerHTML = pages > 1
       ? `<button class="ps-pg-btn" ${psPage<=0?'disabled':''} onclick="psGo(-1)">‹ ${tr('ps_prev')}</button>`
-        + `<select class="ps-pg-jump" onchange="psJump(this.value)">${jump}</select>`
+        + `<details class="ps-pgdd" id="psPgDd" ontoggle="psPgDdToggle(this)">`
+        +   `<summary class="ps-pgdd-sum">${tr('ps_page')} ${psPage+1} / ${pages} ▾</summary>`
+        +   `<div class="ps-pgdd-panel">${jump}</div>`
+        + `</details>`
         + `<button class="ps-pg-btn" ${psPage>=pages-1?'disabled':''} onclick="psGo(1)">${tr('ps_next')} ›</button>`
       : '';
+  }
+  // When the page dropdown opens: scroll the current page into view (365 pages → long
+  // list) and close it on an outside click/tap (so it behaves like a native select).
+  function psPgDdToggle(d){
+    if(!d || !d.open) return;
+    const on = d.querySelector('.ps-pgdd-item.on'); if(on) on.scrollIntoView({block:'center'});
+    const close = e => { if(!d.contains(e.target)){ d.open = false; document.removeEventListener('click', close, true); } };
+    setTimeout(() => document.addEventListener('click', close, true), 0);
   }
   // Next/Prev: scroll to the RESULTS (not the page top) so the buyer keeps seeing
   // products instead of being thrown back up to the filters every time.
@@ -5394,8 +5442,10 @@
     ],
     k: [
       { h:'Kids', clubs:[
-        ['Eastern (kurta / 2pc)', ['kids_eastern']],
-        ['Western (tee / jeans / frock)', ['kids_western']],
+        ['Eastern (kurta / 2–3pc)', ['kids_eastern']],
+        ['Frock / Maxi', ['kids_frock']],
+        ['Party / Formal', ['kids_formal']],
+        ['Western (tee / jeans)', ['kids_western']],
       ]},
     ],
   };
@@ -5528,7 +5578,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-18g';
+  const PSB_BUILD = '2026-06-18h';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');

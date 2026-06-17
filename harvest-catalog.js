@@ -46,7 +46,9 @@ const SHOPIFY = [
   ['Charcoal','charcoal.com.pk','m'],['Cougar','cougar.com.pk','m'],['Dynasty Fabrics','dynastyfabrics.com','m'],
   ['Monark','monark.com.pk','m'],['Royal Tag','royaltag.com.pk','m'],['Shahnameh','shahnameh.pk','m'],
   ['Shahzeb Saeed','shahzebsaeed.com','m'],
-  ['Minnie Minors','minnieminors.com','k'],['Bachaa Party','bachaaparty.com','k'],['Hopscotch','ilovehopscotch.com','k'],
+  // Bachaa Party removed: its live /products.json is a general kids store (Toys,
+  // Crockery, Baby Care, School Supplies) — no clothing in the feed, only pollution.
+  ['Minnie Minors','minnieminors.com','k'],['Hopscotch','ilovehopscotch.com','k'],
   // ── added 2026-06-17 (most-popular-in-BD + abaya) — all verified live Shopify /products.json in PKR ──
   ['Gul Ahmed','gulahmedshop.com','md'],['Alkaram Studio','www.alkaramstudio.com','md'],
   ['Edenrobe','edenrobe.com','md'],   // J. Junaid Jamshed moved to COLLECTIONS (menswear-only)
@@ -133,9 +135,9 @@ function availSizes(p){
   });
   return out.slice(0, 8);
 }
-// Bridal & lehenga are CUSTOM / made-to-order (their variants are usually all
-// available:false) — don't drop them for "no stock"; they ship made-to-order.
-const MTO_CATS = new Set(['bridal','lehenga']);
+// Made-to-order policy: products whose every sized variant is sold out are DROPPED
+// (incl. bridal/lehenga whose variants are all available:false). Per Danish — no
+// "Made to order" items in the listings; only items we can actually buy now.
 
 // ── category mapping (mirror of order-form PT_CAT) ──
 // `s` = type+title (reliable for garment/piece-count); `tags` = tag string
@@ -202,8 +204,13 @@ function mapCatMen(s){
   return 'mens_kurta';
 }
 function mapCatKids(s){
-  if(/shalwar|kameez|\bkurta\b|frock|lehenga|gharara|ethnic|eastern|abaya/.test(s)) return 'kids_eastern';
-  if(/western|jean|denim|trouser|\bpant|\btee\b|t[\s-]?shirt|\bshirt\b|polo|dress|romper|legging|short|jumpsuit|hoodie|sweat/.test(s)) return 'kids_western';
+  // party / formal (embroidered, chiffon, organza, fancy, wedding/eid) — check first
+  if(/formal|party|\bemb\b|embroider|chiffon|organza|jamawar|fancy|wedding|eid[\s-]?special|festive/.test(s)) return 'kids_formal';
+  // girls' frock / maxi / one-piece dress
+  if(/frock|\bmaxi\b|\bgown\b|\bdress\b|jumpsuit/.test(s)) return 'kids_frock';
+  // western (tee / jeans / denim / shorts)
+  if(/western|jean|denim|trouser|\bpant|\btee\b|t[\s-]?shirt|\bshirt\b|polo|romper|legging|short|hoodie|sweat/.test(s)) return 'kids_western';
+  // eastern suits (kurta / shalwar / 2–3pc) — default
   return 'kids_eastern';
 }
 // khussa/kolhapuri/peshawari are traditional flats we CAN ship → keep as footwear.
@@ -214,7 +221,8 @@ const SHOE_RE = /\bshoe|sneaker|\bsandals?\b|chappal|\bheels?\b|slipper|loafer|\
 const PS_NON_APPAREL = /\b(bed|mattress|\bnet\b|blanket|quilt|pillow|cushion|towel|bottle|feeder|diaper|nappy|\btoy|stroller|pram|\bcomb\b|\bsocks?\b|\bcap\b|\bhat\b|\bbib\b|mitten|booties|booti|headband|hair[\s-]?band|\bbag\b|clutch|purse|wallet|jewel|earring|necklace|\bring\b|bangle|bracelet|brooch|perfume|fragrance|\battar\b|\bwatch\b|sunglass|\bbelt\b|key[\s-]?chain|gift[\s-]?set|hamper|pouch|cufflink)\b/;
 // STRONG garment signals — if present, the item is apparel even when its NAME
 // contains a shoe/non-apparel word ("Sandali" lawn collection, "Net 3PC" suit).
-const GARMENT_SIG = /shirt|kurti|kurta|kameez|\bsuit\b|frock|\bdress\b|gown|abaya|kaftan|trouser|\bpants?\b|\bjeans?\b|denim|shalwar|saree|lehenga|\bcoat\b|jacket|sweater|dupatta|\bmaxi\b|[23][\s-]?(pc|piece|pcs)|un[\s-]?stitch|\blawn\b|cambric|khaddar|karandi|chiffon|organza/;
+// `\b[23]…\b` so "22Pcs"/"42Pcs" (toy quantities) do NOT read as a 2pc/3pc suit.
+const GARMENT_SIG = /shirt|kurti|kurta|kameez|\bsuit\b|frock|\bdress\b|gown|abaya|kaftan|trouser|\bpants?\b|\bjeans?\b|denim|shalwar|saree|lehenga|\bcoat\b|jacket|sweater|dupatta|\bmaxi\b|\b[23][\s-]?(pc|piece|pcs)\b|un[\s-]?stitch|\blawn\b|cambric|khaddar|karandi|chiffon|organza/;
 const BAG_RE = /\bbag|hand[\s-]?bag|clutch|purse|wallet|tote\b|satchel|wristlet|backpack|\bpouch\b/;
 // Fragrances/perfumes & ANY liquid — STRICTLY excluded (we can't ship liquids).
 // UNAMBIGUOUS terms (never a garment) → drop unconditionally:
@@ -263,9 +271,17 @@ function mapCat(group, type, title, tagStr){
     if(BAG_RE.test(s)) return null;               // bags removed from listings entirely (req)
     if(PS_NON_APPAREL.test(s)) return 'accessories';
   }
-  // gender from the text — esp. multi-department brands that mix men's & kids in
-  if(/\b(boys?|girls?|infant|toddler|junior|newborn|\bbaby\b|\bkid|kids\b)\b/.test(s)) return mapCatKids(s);
-  if(group === 'k') return mapCatKids(s);
+  // Hijab / headscarf — a women's scarf-class item. Classify BEFORE the kids/gender
+  // check so a "Wardah Cotton Hijab – Baby pink" isn't misread as kids on the word "baby".
+  if(/\bhijab\b|head[\s-]?scarf|\bshayla\b/.test(s)) return 'dupatta_only';
+  // gender from the text — esp. multi-department brands that mix men's & kids in.
+  // Kids items must carry a GARMENT signal: a kids brand also stocks toys / baby
+  // gear / books (Bachaa Party: "R/C Car", "Building Blocks", "Piano Play Mat") and
+  // those have no garment word → drop them (we only list clothing).
+  // Keep/drop uses `s` (tags too); the eastern/frock/formal SUB-split uses `tt`
+  // (type+title) — tags are noisy ("3 piece Dresses" tag on a plain lawn 2pc).
+  if(/\b(boys?|girls?|infant|toddler|junior|newborn|\bbaby\b|\bkid|kids\b)\b/.test(s)) return GARMENT_SIG.test(s) ? mapCatKids(tt) : null;
+  if(group === 'k') return GARMENT_SIG.test(s) ? mapCatKids(tt) : null;
   if(group === 'm') return mapCatMen(s);
   if(group === 'md' && /\b(mens?|men's|gents?|\bpolo\b|waist[\s-]?coat|sherwani|boxer|\btie\b)\b/.test(s)) return mapCatMen(s);
   return mapCatWomen(tt, tags);
@@ -293,7 +309,7 @@ async function harvestShopify(name, host, group){
       const desc = (p.body_html || '').replace(/<[^>]+>/g, ' ');
       if(isHandmadeFull(cat, desc)) cat = 'handmade_emb';   // only an explicit adda/full-hand description
       let sz = availSizes(p);
-      if(!sz.length){ if(MTO_CATS.has(cat)) sz = ['Made to order']; else return null; }
+      if(!sz.length) return null;   // every size sold out (incl. made-to-order bridal) → drop
       // recency + on-sale signals so the page can surface fresh / discounted items first
       const pub = Math.floor((Date.parse(p.published_at || p.updated_at || p.created_at || '') || 0) / 1000);
       const onSale = (p.variants||[]).some(v => v.compare_at_price && parseFloat(v.compare_at_price) > parseFloat(v.price||0));
@@ -377,7 +393,7 @@ async function harvestCollectionUrl(name, host, group, force, handle){
     const desc = (p.body_html || '').replace(/<[^>]+>/g, ' ');
     if(!force && isHandmadeFull(cat, desc)) cat = 'handmade_emb';
     let sz = availSizes(p);
-    if(!sz.length){ if(MTO_CATS.has(cat)) sz = ['Made to order']; else return null; }
+    if(!sz.length) return null;   // every size sold out (incl. made-to-order bridal) → drop
     const pub = Math.floor((Date.parse(p.published_at || p.updated_at || p.created_at || '') || 0) / 1000);
     const onSale = (p.variants||[]).some(v => v.compare_at_price && parseFloat(v.compare_at_price) > parseFloat(v.price||0));
     const o = { b:name, t:(p.title||'').slice(0,80), u:`https://${host}/products/${p.handle}`, img, pkr, cat, sz, pub };
