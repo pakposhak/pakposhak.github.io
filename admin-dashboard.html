@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="robots" content="noindex,nofollow"/>
-<title>PakiPoshak — Admin Dashboard</title>
+<title>PakPoshak — Admin Dashboard</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:#0f0f1a;color:#eee;font-family:'Segoe UI',system-ui,sans-serif;padding:18px 14px;max-width:1180px;margin:0 auto;line-height:1.5}
@@ -88,7 +88,7 @@
 
 <!-- ── DASHBOARD (hidden until unlocked) ── -->
 <div id="app" style="display:none">
-  <h1>📊 PakiPoshak Admin Dashboard</h1>
+  <h1>📊 PakPoshak Admin Dashboard</h1>
   <div class="sub">Live order &amp; payment funnel from your tracking sheet · <a href="order-aggregator.html">Order aggregator →</a></div>
 
   <div class="controls">
@@ -344,7 +344,7 @@
     ].join(',')));
     const blob = new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8'});
     const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
-    a.download='pakiposhak_dashboard_'+ymd(new Date())+'.csv'; a.click();
+    a.download='pakposhak_dashboard_'+ymd(new Date())+'.csv'; a.click();
   }
 </script>
 </body>

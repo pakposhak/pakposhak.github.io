@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* PakiPoshak — product catalog harvester
+/* PakPoshak — product catalog harvester
  *
  * Builds catalog.json for the "Browse products" search page. NO live per-search
  * fetching — the page loads this file once and filters client-side.

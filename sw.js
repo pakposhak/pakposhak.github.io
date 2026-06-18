@@ -1,4 +1,4 @@
-/* PakiPoshak service worker.
+/* PakPoshak service worker.
  *
  * Goals:
  *  - Make the site an installable PWA (Android "Install app", iOS "Add to Home Screen").

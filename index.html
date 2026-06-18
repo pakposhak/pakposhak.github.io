@@ -18,14 +18,14 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
   <meta http-equiv="Expires" content="0"/>
-  <title>PakiPoshak – Pakistani Fashion Delivered to Bangladesh</title>
+  <title>PakPoshak – Pakistani Fashion Delivered to Bangladesh</title>
   <meta name="description" content="Order authentic Pakistani lawn, pret & designer clothes. We purchase from Pakistan and deliver to your door in Bangladesh."/>
   <meta name="theme-color" content="#080E1C"/>
   <!-- This page manages its own EN/BN toggle — stop browsers auto-translating it -->
   <meta name="google" content="notranslate"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <meta name="apple-mobile-web-app-title" content="PakiPoshak"/>
+  <meta name="apple-mobile-web-app-title" content="PakPoshak"/>
   <link rel="manifest" href="manifest.json"/>
   <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
   <style>
@@ -762,9 +762,9 @@
   <div class="hdr-inner">
     <button class="hdr-lang" id="hdrLangBtn" onclick="toggleLang()" aria-label="Change language">বাংলা</button>
     <div class="hdr-logo">
-      <img class="hdr-logo-img" src="icon-192.png" alt="PakiPoshak app icon" width="40" height="40"/>
+      <img class="hdr-logo-img" src="icon-192.png" alt="PakPoshak app icon" width="40" height="40"/>
       <div>
-        <div class="hdr-brand">PakiPoshak</div>
+        <div class="hdr-brand">PakPoshak</div>
         <div class="hdr-tagline" data-i18n="tagline">Pakistani Fashion · Bangladesh Delivery</div>
       </div>
     </div>
@@ -1371,7 +1371,7 @@
         </div>
         <div class="bs-step">
           <span class="bs-num">3</span>
-          <span>Switch back to this <strong>PakiPoshak</strong> tab and click the gold <strong>📋 Paste link</strong> button — price &amp; sizes fill in automatically.</span>
+          <span>Switch back to this <strong>PakPoshak</strong> tab and click the gold <strong>📋 Paste link</strong> button — price &amp; sizes fill in automatically.</span>
         </div>
       </div>
     </div>
@@ -1431,7 +1431,7 @@
 <!-- iOS install instructions sheet -->
 <div id="iosInstallSheet" onclick="if(event.target===this)psbCloseIos()" style="display:none">
   <div class="ios-card">
-    <div class="ios-title" id="installHelpTitle">Install PakiPoshak</div>
+    <div class="ios-title" id="installHelpTitle">Install PakPoshak</div>
     <div id="installHelpBody"></div>
     <button class="ios-close" onclick="psbCloseIos()">Got it</button>
   </div>
@@ -1516,7 +1516,7 @@
 
 <!-- Hidden form for Formspree -->
 <form id="hiddenForm" action="https://formspree.io/f/xnjypzyl" method="POST" style="display:none">
-  <input type="hidden" name="_subject" id="hf_subject" value="New PakiPoshak Order"/>
+  <input type="hidden" name="_subject" id="hf_subject" value="New PakPoshak Order"/>
   <input type="hidden" name="_replyto" id="hf_replyto"/>
   <input type="hidden" name="order_id" id="hf_order_id"/>
   <input type="hidden" name="buyer_name" id="hf_name"/>
@@ -3527,8 +3527,8 @@
       js_not_brand:'❌ This is not a correct product link — please copy a product URL from a supported brand below.',
       js_fill_required:'Please fill in all required fields (highlighted in red) for each item.',
       js_add_item_first:'Please add at least one item to your order first.',
-      js_leave_confirm:'You have items in your cart. Leave PakiPoshak? Your saved items will stay on this device.',
-      js_exit_confirm:'Are you sure you want to exit PakiPoshak?',
+      js_leave_confirm:'You have items in your cart. Leave PakPoshak? Your saved items will stay on this device.',
+      js_exit_confirm:'Are you sure you want to exit PakPoshak?',
       js_details_required:'Please fill in all required fields (Name, WhatsApp number, and Delivery Address).',
       field_item:'This item', field_category:'Category', field_price:'Price', field_size:'Size',
       js_missing_lead:'Almost there — please add:',
@@ -4024,7 +4024,7 @@
   // ── SHARE TARGET ────────────────────────────────────────────────────────────
   // Installed as a PWA, the app registers in the phone's Share sheet (see
   // manifest share_target). On the brand's product page the user taps the
-  // browser Share button → "PakiPoshak" → we open with ?url=/?text= set. The
+  // browser Share button → "PakPoshak" → we open with ?url=/?text= set. The
   // Share button is ALWAYS available, even when the address bar can't be
   // copied — so this is the most reliable way to get the link with zero typing.
   function handleSharedUrl(){
@@ -4368,7 +4368,7 @@
     if(!fab) return;
     fab.classList.toggle('show', currentStep === 1);
   }
-  // When the user switches BACK to PakiPoshak (e.g. after copying a link in
+  // When the user switches BACK to PakPoshak (e.g. after copying a link in
   // Chrome), pulse the Paste button so it's obvious where to tap next.
   document.addEventListener('visibilitychange', () => {
     if(document.visibilityState === 'visible' && currentStep === 1){
@@ -4531,8 +4531,8 @@
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify(Object.assign({
           access_key: WEB3FORMS_KEY,
-          subject: `New PakiPoshak Order ${orderId} — ${name}`,
-          from_name: 'PakiPoshak Orders'
+          subject: `New PakPoshak Order ${orderId} — ${name}`,
+          from_name: 'PakPoshak Orders'
         }, payload))
       }).then(r => r.json()).then(j => j.success);
     } else {
@@ -5061,7 +5061,7 @@
     box.innerHTML =
       `<div style="max-width:680px;margin:0 auto">
         <h1 style="color:${allOk?'#4caf50':'#ff5252'};font-size:1.4rem">${allOk?'✅ ALL CHECKS PASSED':'❌ '+(total-pass)+' CHECK(S) FAILED'} <span style="color:#888;font-size:0.9rem">(${pass}/${total})</span></h1>
-        <p style="color:#888;font-size:0.85rem;margin:6px 0 16px">PakiPoshak self-test · run after every change. ${allOk?'Safe to use.':'Fix the red items before relying on the site.'}</p>
+        <p style="color:#888;font-size:0.85rem;margin:6px 0 16px">PakPoshak self-test · run after every change. ${allOk?'Safe to use.':'Fix the red items before relying on the site.'}</p>
         ${res.map(r=>`<div style="display:flex;gap:10px;padding:9px 12px;border-bottom:1px solid #23233a;align-items:center">
             <span style="font-size:1.1rem">${r.pass?'🟢':'🔴'}</span>
             <span style="flex:1;font-size:0.9rem">${r.n}</span>
@@ -5929,8 +5929,8 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-18o';
-  console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
+  const PSB_BUILD = '2026-06-18p';
+  console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
     tag.textContent = 'v'+PSB_BUILD;
@@ -6000,7 +6000,7 @@
     if (isMobile) pill.style.display = 'flex';
 
     function showInstallHelp() {
-      var title = 'Add PakiPoshak to your home screen', body;
+      var title = 'Add PakPoshak to your home screen', body;
       if (isIOS) {
         body = '<p>Adds a one-tap icon to your iPhone home screen. Works in <b>Chrome</b> or <b>Safari</b>:</p>'
           + '<p style="margin:6px 0 2px;font-weight:600">In Chrome (iPhone):</p>'
@@ -6016,7 +6016,7 @@
           + '<ol><li>Tap the <b>⋮ menu</b> (top-right in Chrome)</li>'
           + '<li>Tap <b>“Add to Home screen”</b></li>'
           + '<li>Tap <b>Add</b> (or <b>Install</b>)</li></ol>'
-          + '<p style="font-size:0.84rem;color:var(--txt);background:rgba(192,57,43,0.12);border:1px solid rgba(192,57,43,0.4);border-radius:8px;padding:8px 10px;margin-top:4px">⚠️ If you previously installed PakiPoshak as an '
+          + '<p style="font-size:0.84rem;color:var(--txt);background:rgba(192,57,43,0.12);border:1px solid rgba(192,57,43,0.4);border-radius:8px;padding:8px 10px;margin-top:4px">⚠️ If you previously installed PakPoshak as an '
           + '<b>app</b>, delete that old icon first — the old one opens brand links in a stuck in-app '
           + 'window. The new “Add to Home screen” icon opens them in Chrome.</p>';
       }

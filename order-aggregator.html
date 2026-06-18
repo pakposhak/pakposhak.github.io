@@ -277,7 +277,7 @@ You can paste several orders at once — paste straight from your order emails."
         ...data.map(r=>[csvQuote(r[ci]),csvQuote(r[cn]),csvQuote(cw>=0?r[cw]:''),
           csvQuote(ca>=0?r[ca]:''),csvQuote(ct>=0?r[ct]:''),csvQuote(cs>=0?r[cs]:'')].join(','))
       ].join('\n');
-      downloadFile(csv,'pakiposhak_customers_backup.csv');
+      downloadFile(csv,'pakposhak_customers_backup.csv');
       const b=document.createElement('div');b.className='hint';b.style.color='#7CFC9A';b.style.margin='10px 0';
       b.textContent='✓ Exported '+data.length+' customer(s). Address & total fill in for orders placed after the v2 sheet update.';
       out.prepend(b);
