@@ -4,8 +4,8 @@ name: Refresh product catalog
 # 4×/day at 10:00, 12:00, 17:00, 21:00 PKT (Pakistan, UTC+5).
 # GitHub Actions cron is UTC, so: 05:00, 07:00, 12:00, 16:00 UTC.
 on:
-  schedule:
-    - cron: '0 5,7,12,16 * * *'
+  # schedule:  (disabled — VPS cron is the source of truth; bot-limited runner)
+    # - cron: '0 5,7,12,16 * * *'
   workflow_dispatch: {}        # lets you run it on demand from the Actions tab
 
 permissions:
