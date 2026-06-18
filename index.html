@@ -1456,6 +1456,7 @@
       🔒 ADMIN — RATE SETTINGS (not visible to buyers)
     </div>
     <a href="admin-dashboard.html" style="display:inline-block;margin-bottom:12px;padding:9px 16px;background:var(--gold);color:#1a1a2e;border-radius:8px;font-weight:700;font-size:0.85rem;text-decoration:none">📊 Open Orders Dashboard →</a>
+    <a href="share-card.html" style="display:inline-block;margin:0 0 12px 8px;padding:9px 16px;background:transparent;border:1.5px solid var(--gold);color:var(--gold);border-radius:8px;font-weight:700;font-size:0.85rem;text-decoration:none">📇 Share / QR card →</a>
     <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
       <div>
         <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">PKR → BDT Rate</label>
@@ -2674,9 +2675,10 @@
       }
 
       if(allSoldOut){
+        psMarkSoldOut(url);   // hide this dead listing from the Browse-Products grid right away
         setStatus('⛔ All sizes appear SOLD OUT on the brand site — please double-check the product page before ordering.', '#c0392b');
         checkAddUrlLock();
-        return;  // keep the warning visible (no auto-hide)
+        return;  // keep the warning visible
       }
 
       const uniqSizes = new Set(sizesToAdd);
@@ -5138,6 +5140,33 @@
   let psSel = { prices:new Set(), cats:new Set(), brands:new Set() };
   let psFiltered = [], psPage = 0, psSort = '';   // '' | 'asc' | 'desc' | 'new' — sorts (one at a time, keep ALL items)
   let psSaleOnly = false;                          // Sale filter: show only discounted items (combines with any sort)
+
+  // ── Sold-out auto-hide ──────────────────────────────────────────────────
+  // When the LIVE add pipeline finds a product fully sold out (it sold out AFTER
+  // the catalogue's last harvest), hide it from the Browse-Products grid right
+  // away so no other customer taps a dead listing. Persisted (keyed by a
+  // normalised product URL) with a 24h TTL — the catalogue re-harvests 4×/day and
+  // drops sold-out items itself, and the TTL lets a re-stocked item reappear.
+  const PS_SOLDOUT_TTL = 24 * 3600 * 1000;
+  let _psSoldOut = {};
+  try { _psSoldOut = JSON.parse(localStorage.getItem('psb_soldout') || '{}') || {}; } catch(e){ _psSoldOut = {}; }
+  function psUrlKey(u){
+    try { const x = new URL(u, location.href);
+      return (x.host.replace(/^www\./,'') + x.pathname.replace(/\/+$/,'')).toLowerCase(); }
+    catch(e){ return String(u || '').toLowerCase(); }
+  }
+  function psIsHidden(p){ const ts = _psSoldOut[psUrlKey(p.u)]; return !!ts && (Date.now() - ts < PS_SOLDOUT_TTL); }
+  function psPruneSoldOut(){
+    const now = Date.now(); let changed = false;
+    for(const k in _psSoldOut){ if(now - _psSoldOut[k] > PS_SOLDOUT_TTL){ delete _psSoldOut[k]; changed = true; } }
+    if(changed){ try{ localStorage.setItem('psb_soldout', JSON.stringify(_psSoldOut)); }catch(e){} }
+  }
+  function psMarkSoldOut(url){
+    if(!url) return;
+    _psSoldOut[psUrlKey(url)] = Date.now();
+    try{ localStorage.setItem('psb_soldout', JSON.stringify(_psSoldOut)); }catch(e){}
+    if(PS_CATALOG){ try{ psApply(); }catch(e){} }   // re-filter so the dead listing drops out immediately
+  }
   // cat → gender ('w'/'m'/'k') and cat → group-index, derived once from CAT_TREE
   // so the Browse-Products category filter and the Browse-Brands product view
   // mirror the order form's picker exactly (single source of truth).
@@ -5431,7 +5460,7 @@
           || ((b.pub || 0) - (a.pub || 0))
           || (a._ord - b._ord));
         psLoaded = true; psLoading = false;
-        psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply(); psUpdateNote();
+        psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psPruneSoldOut(); psApply(); psUpdateNote();
         psFlushReady();
       })
       .catch(() => { psLoading = false; const e=document.getElementById('psCount'); if(e) e.textContent = tr('ps_loadfail'); psFlushReady(); });
@@ -5538,6 +5567,7 @@
     psPage = 0;
     psFiltered = PS_CATALOG.filter(p => {
       if(PS_HIDE_CATS.has(p.cat)) return false;   // accessories/jewellery not shown on the Products grid
+      if(psIsHidden(p)) return false;             // found SOLD OUT via the live add → hidden from the grid
       if(psSel.brands.size && !psSel.brands.has(p.b)) return false;
       if(!psCatMatch(p)) return false;
       if(psSel.prices.size){
@@ -5999,7 +6029,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-18w';
+  const PSB_BUILD = '2026-06-18x';
   console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');

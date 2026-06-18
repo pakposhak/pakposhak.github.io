@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'"/>
+<title>PakPoshak — Share Card</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#15130f;color:#eee;font-family:'Segoe UI',system-ui,sans-serif;
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:22px 14px 40px;line-height:1.5}
+  h1{color:#D9B872;font-size:1.1rem;font-weight:700;letter-spacing:.5px;margin-bottom:4px;text-align:center}
+  .lead{color:#9b937f;font-size:.84rem;text-align:center;margin-bottom:18px;max-width:520px}
+  /* the card scales to fit the screen but keeps its 4:5 proportion */
+  .cardwrap{width:100%;max-width:440px;border-radius:18px;overflow:hidden;
+    box-shadow:0 18px 50px rgba(0,0,0,.5);background:#F7F1E6}
+  svg#card{display:block;width:100%;height:auto}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:20px}
+  button{background:#C9A96E;color:#15130f;border:none;border-radius:10px;padding:12px 20px;
+    font-weight:700;font-size:.92rem;cursor:pointer;font-family:inherit;transition:opacity .15s}
+  button:hover{opacity:.88}
+  button.ghost{background:transparent;border:1.5px solid #5a513c;color:#cbb88a}
+  .hint{color:#7d735c;font-size:.78rem;text-align:center;margin-top:14px;max-width:480px}
+  a.home{color:#8fb6ff;font-size:.82rem;text-decoration:none;margin-top:18px}
+  #msg{min-height:18px;color:#7CFC9A;font-size:.82rem;text-align:center;margin-top:8px}
+</style>
+</head>
+<body>
+  <h1>📇 PakPoshak share card</h1>
+  <div class="lead">Post this on WhatsApp groups, Facebook or Instagram. Anyone can <b>scan the QR</b> or type the link to open your store.</div>
+
+  <div class="cardwrap">
+    <svg id="card" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1080 1350" width="1080" height="1350">
+      <defs>
+        <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#E0C27E"/><stop offset="1" stop-color="#B8893B"/>
+        </linearGradient>
+        <clipPath id="logoClip"><rect x="450" y="92" width="180" height="180" rx="40"/></clipPath>
+      </defs>
+
+      <rect width="1080" height="1350" fill="#F7F1E6"/>
+      <rect width="1080" height="16" fill="#0B261C"/>
+      <rect y="1334" width="1080" height="16" fill="#0B261C"/>
+      <rect x="40" y="46" width="1000" height="1258" rx="30" fill="none" stroke="url(#gold)" stroke-width="4"/>
+
+      <!-- logo -->
+      <rect x="446" y="88" width="188" height="188" rx="44" fill="#ffffff" stroke="url(#gold)" stroke-width="3"/>
+      <image id="logoImg" x="450" y="92" width="180" height="180" clip-path="url(#logoClip)"
+             href="icon-192.png" xlink:href="icon-192.png" preserveAspectRatio="xMidYMid slice"/>
+
+      <!-- name + tagline -->
+      <text x="540" y="362" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="94" font-weight="700" fill="#0B261C">PakPoshak</text>
+      <text x="540" y="410" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="25" font-weight="600" fill="#B8893B" letter-spacing="3">PAKISTANI FASHION · DELIVERED TO BANGLADESH</text>
+      <rect x="430" y="442" width="220" height="3" rx="2" fill="url(#gold)"/>
+
+      <!-- value prop -->
+      <text x="540" y="516" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="33" fill="#2a241c">Authentic Pakistani lawn, pret &amp; designer wear —</text>
+      <text x="540" y="560" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="33" fill="#2a241c">ordered for you, delivered to your door in Bangladesh.</text>
+
+      <!-- QR -->
+      <rect x="330" y="612" width="420" height="420" rx="28" fill="#ffffff" stroke="#e7dcc4" stroke-width="2"/>
+      <g transform="translate(360,642) scale(11.612)" shape-rendering="crispEdges">
+        <path fill="#FFFFFF" d="M0 0h31v31H0z"/>
+        <path stroke="#0B261C" d="M1 1.5h7m4 0h2m1 0h1m4 0h1m2 0h7M1 2.5h1m5 0h1m1 0h1m2 0h1m1 0h1m3 0h3m2 0h1m5 0h1M1 3.5h1m1 0h3m1 0h1m2 0h1m1 0h2m2 0h1m4 0h1m1 0h1m1 0h3m1 0h1M1 4.5h1m1 0h3m1 0h1m2 0h1m3 0h1m2 0h1m1 0h1m3 0h1m1 0h3m1 0h1M1 5.5h1m1 0h3m1 0h1m1 0h2m1 0h3m2 0h1m1 0h2m2 0h1m1 0h3m1 0h1M1 6.5h1m5 0h1m5 0h1m1 0h3m2 0h1m2 0h1m5 0h1M1 7.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M10 8.5h1m5 0h1m1 0h1m1 0h2M1 9.5h1m1 0h1m1 0h1m1 0h1m2 0h1m1 0h1m4 0h3m5 0h1m2 0h1M2 10.5h2m4 0h1m1 0h1m1 0h1m1 0h1m1 0h2m3 0h3m2 0h1m2 0h1M5 11.5h1m1 0h3m5 0h4m3 0h1m2 0h1m1 0h3M4 12.5h2m2 0h1m1 0h6m1 0h2m1 0h1m2 0h2m3 0h1M1 13.5h1m1 0h3m1 0h2m2 0h1m1 0h1m1 0h2m1 0h1m1 0h5m1 0h1m1 0h2M1 14.5h2m5 0h3m1 0h2m1 0h2m4 0h1m1 0h1m2 0h1m2 0h1M2 15.5h3m1 0h2m1 0h3m2 0h1m4 0h1m3 0h2m1 0h1m1 0h2M3 16.5h3m4 0h4m2 0h1m1 0h2m1 0h1m1 0h4m1 0h1M1 17.5h1m3 0h3m1 0h5m3 0h2m2 0h3m2 0h1m1 0h2M3 18.5h2m3 0h1m1 0h2m2 0h1m1 0h2m3 0h3m2 0h2m1 0h1M1 19.5h1m2 0h2m1 0h1m2 0h4m1 0h4m2 0h1m2 0h2m2 0h2M2 20.5h1m5 0h1m1 0h2m2 0h2m1 0h3m1 0h2m1 0h1m1 0h1m1 0h1M1 21.5h1m1 0h2m1 0h3m4 0h1m1 0h2m2 0h7M9 22.5h1m1 0h2m2 0h2m3 0h2m3 0h1m1 0h3M1 23.5h7m2 0h1m1 0h3m3 0h1m1 0h2m1 0h1m1 0h2m1 0h2M1 24.5h1m5 0h1m2 0h2m1 0h1m2 0h1m3 0h2m3 0h2m2 0h1M1 25.5h1m1 0h3m1 0h1m1 0h2m2 0h1m3 0h1m3 0h5M1 26.5h1m1 0h3m1 0h1m2 0h1m1 0h3m1 0h3m2 0h1m2 0h2m1 0h1M1 27.5h1m1 0h3m1 0h1m1 0h5m2 0h2m1 0h1m4 0h3m2 0h1M1 28.5h1m5 0h1m5 0h1m3 0h6m1 0h1m3 0h1M1 29.5h7m1 0h2m3 0h1m1 0h1m2 0h5m1 0h2m1 0h2"/>
+      </g>
+
+      <text x="540" y="1086" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="30" font-weight="700" fill="#0B261C" letter-spacing="3">SCAN TO SHOP</text>
+
+      <!-- url pill -->
+      <rect x="345" y="1112" width="390" height="64" rx="32" fill="url(#gold)"/>
+      <text x="540" y="1154" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="32" font-weight="700" fill="#ffffff">pakposhak.github.io</text>
+
+      <text x="540" y="1244" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="25" fill="#6b5f48">12,000+ products · 150+ brands · Pay with bKash / Nagad</text>
+    </svg>
+  </div>
+
+  <div class="toolbar">
+    <button onclick="downloadPNG()">📥 Download as image (PNG)</button>
+    <button class="ghost" onclick="copyLink()">🔗 Copy link</button>
+  </div>
+  <div id="msg"></div>
+  <div class="hint">Tip: the Download button saves a high-resolution PNG (1080×1350) ready for WhatsApp / Instagram. You can also just screenshot the card.</div>
+  <a class="home" href="index.html">← Back to PakPoshak</a>
+
+<script>
+  // Inline the logo as a data URI so the card displays AND exports to PNG without
+  // tainting the canvas (same-origin fetch → base64 → embedded in the SVG).
+  (function loadLogo(){
+    fetch('icon-192.png').then(r => r.blob()).then(b => new Promise(res => {
+      const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(b);
+    })).then(d => {
+      const im = document.getElementById('logoImg');
+      im.setAttribute('href', d); im.setAttribute('xlink:href', d);
+    }).catch(function(){ /* keep the relative href fallback for display */ });
+  })();
+
+  function msg(t){ document.getElementById('msg').textContent = t || ''; }
+
+  function downloadPNG(){
+    try{
+      const svg = document.getElementById('card');
+      const xml = new XMLSerializer().serializeToString(svg);
+      const src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(xml)));
+      const img = new Image();
+      img.onload = function(){
+        const c = document.createElement('canvas'); c.width = 1080; c.height = 1350;
+        const ctx = c.getContext('2d'); ctx.fillStyle = '#F7F1E6'; ctx.fillRect(0,0,1080,1350);
+        ctx.drawImage(img, 0, 0, 1080, 1350);
+        c.toBlob(function(blob){
+          if(!blob){ msg('Could not export — please screenshot the card instead.'); return; }
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob); a.download = 'PakPoshak-share-card.png';
+          document.body.appendChild(a); a.click(); a.remove();
+          msg('✓ Saved PakPoshak-share-card.png');
+        }, 'image/png');
+      };
+      img.onerror = function(){ msg('Could not export — please screenshot the card instead.'); };
+      img.src = src;
+    }catch(e){ msg('Could not export — please screenshot the card instead.'); }
+  }
+
+  function copyLink(){
+    const url = 'https://pakposhak.github.io';
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).then(()=>msg('✓ Link copied: ' + url)).catch(()=>msg(url));
+    } else { msg(url); }
+  }
+</script>
+</body>
+</html>
