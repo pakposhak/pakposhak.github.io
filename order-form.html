@@ -301,6 +301,10 @@
     .cat-brand:hover{color:var(--gold);background:var(--gold-dim)}
     .cat-brand.cat-nav{color:var(--gold);font-weight:700;background:var(--gold-dim);border:1px dashed var(--gold-bdr);text-align:center}
     .cat-brand.cat-nav:hover{background:var(--gold-bdr)}
+    /* product-count badge = "brand strength" in the current category (Browse brands) */
+    .cb-cnt{float:right;margin:1px 0 0 8px;padding:0 7px;border-radius:9px;font-size:0.72em;font-weight:700;
+      color:var(--gold);background:var(--gold-dim);line-height:1.7}
+    .cat-brand:hover .cb-cnt{background:var(--gold-bdr)}
     .brand-dd-item .cur-go{color:var(--gold);font-size:0.8rem}
     /* "More" tab — sits at the right end of the category bar and opens the drawer */
     .cat-tab.more-tab{margin-left:auto;color:var(--gold);font-weight:700}
@@ -3615,7 +3619,11 @@
     document.querySelectorAll('.cat-tab').forEach(tb => { if(tb.dataset.cat) tb.textContent = catLabel(tb.dataset.cat); });
     if(_catOpen){
       const h = document.getElementById('catHead');
-      if(h) h.innerHTML = `${catLabel(_catActive)} <span class="cnt">· ${BRANDS.filter(b=>b.c===_catActive).length} ${tr('word_brands')}</span>`;
+      if(h){
+        const dept = BRANDS.filter(b => b.c === _catActive);
+        const stock = _bbCnt ? dept.filter(b => (_bbCnt[b.n] || 0) > 0).length : dept.length;
+        h.innerHTML = `${catLabel(_catActive)} <span class="cnt">· ${stock}${(_bbCnt && stock < dept.length) ? ' / ' + dept.length : ''} ${tr('word_brands')}</span>`;
+      }
     }
     const lb = document.getElementById('hdrLangBtn');
     if(lb) lb.textContent = (_lang === 'en') ? 'বাংলা' : 'EN';
@@ -3677,10 +3685,10 @@
   // ── In-panel horizontal pager: a capped category shows its first N brands
   // (page 0), then slides RIGHT to a 2nd page with ONLY the REMAINING brands,
   // in the SAME grid. No pop-over window — the panel itself moves. ──
-  function brandGrid(list, navHtml, navFirst){
-    const items = list.map(b =>
-      `<button class="cat-brand" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">${esc(b.n)}</button>`
-    ).join('');
+  function brandGrid(list, navHtml, navFirst, cntOf){
+    const items = list.map(b => { const n = cntOf ? (cntOf(b) || 0) : 0;
+      return `<button class="cat-brand" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">${esc(b.n)}${n > 0 ? `<span class="cb-cnt">${n}</span>` : ''}</button>`;
+    }).join('');
     const nav = navHtml || '';
     return '<div class="cat-pagegrid">' + (navFirst ? nav + items : items + nav) + '</div>';
   }
@@ -3723,21 +3731,34 @@
     _catOpen = true;
     if(panel) panel.style.display = '';
     document.querySelectorAll('.cat-tab').forEach(t => t.classList.toggle('on', t.dataset.cat === cat));
-    const all = sortFeatured(BRANDS.filter(b => b.c === cat));
-    const limit = CAT_LIMIT[cat] || 0;                  // 0 = show all (Multi-Dept, Kids)
+    // Catalog-back the grid: brands we actually stock lead (strongest first); the
+    // rest of the directory (no catalogue data yet) trails behind "+ show all" so any
+    // brand stays reachable. Strength = total products in our catalogue.
+    const inDept = BRANDS.filter(b => b.c === cat);
+    const ready = !!_bbCnt;
+    const cntOf = b => ready ? (_bbCnt[b.n] || 0) : 0;
+    const inStock = ready
+      ? inDept.filter(cntOf).sort((a, b) => (cntOf(b) - cntOf(a))
+          || ((FEATURED.has(b.n) ? 1 : 0) - (FEATURED.has(a.n) ? 1 : 0)) || a.n.localeCompare(b.n))
+      : sortFeatured(inDept);
+    const directoryOnly = ready ? inDept.filter(b => !cntOf(b)) : [];
+    const all = inStock.concat(directoryOnly);
+    const limit = CAT_LIMIT[cat] || 30;                 // every dept now gets a first-view cap
     const head = document.getElementById('catHead');
     const grid = document.getElementById('catGrid');
-    if(head) head.innerHTML = `${catLabel(cat)} <span class="cnt">· ${all.length} ${tr('word_brands')}</span>`;
+    if(head) head.innerHTML = `${catLabel(cat)} <span class="cnt">· ${inStock.length}${(ready && directoryOnly.length) ? ' / ' + inDept.length : ''} ${tr('word_brands')}</span>`;
     if(grid){
+      // page 1 = shoppable brands (capped); page 2 = overflow + the rest of the directory
+      const firstN = inStock.length ? Math.min(inStock.length, limit) : Math.min(all.length, limit);
+      const first = all.slice(0, firstN), more = all.slice(firstN);
       let pages;
-      if(!limit || all.length <= limit){
-        pages = '<div class="cat-page">' + brandGrid(all) + '</div>';
+      if(!more.length){
+        pages = '<div class="cat-page">' + brandGrid(first, '', false, cntOf) + '</div>';
       } else {
-        const first = all.slice(0, limit), rest = all.slice(limit);
-        const moreChip = `<button class="cat-brand cat-nav cat-more" onclick="catSlide(1)">+${rest.length} ${tr('more_tab')} ›</button>`;
+        const moreChip = `<button class="cat-brand cat-nav cat-more" onclick="catSlide(1)">+${more.length} ${tr('more_tab')} ›</button>`;
         const backChip = `<button class="cat-brand cat-nav cat-back" onclick="catSlide(0)">‹ ${tr('more_back')}</button>`;
-        pages = '<div class="cat-page">' + brandGrid(first, moreChip) + '</div>'
-              + '<div class="cat-page">' + brandGrid(rest, backChip, true) + '</div>';
+        pages = '<div class="cat-page">' + brandGrid(first, moreChip, false, cntOf) + '</div>'
+              + '<div class="cat-page">' + brandGrid(more, backChip, true, cntOf) + '</div>';
       }
       grid.innerHTML = '<div class="cat-track" id="catTrack">' + pages + '</div>';
       measureCatPages();   // cache page heights at transform:0
@@ -5689,7 +5710,7 @@
   // w/m/k OR a store tier md/p on mobile).
   const BB_TABS_MOBILE = [['k','bb_kids'],['w','bb_women'],['m','bb_men'],['md','bb_md'],['p','bb_premium']];
   function bbIsMobile(){ return (window.innerWidth || document.documentElement.clientWidth || 0) < 820; }
-  let _bbGender = 'w', _bbGroup = 0, _bbIndex = null, _bbExpanded = {}, _bbClub = {}, _bbWasMobile = null;
+  let _bbGender = 'w', _bbGroup = 0, _bbIndex = null, _bbCnt = null, _bbCatCnt = null, _bbExpanded = {}, _bbClub = {}, _bbWasMobile = null;
   // Third-tier "clubs": each second-tier group has a dropdown of clubbed
   // categories. [label, [catKeys]] — a club lists every brand stocking ANY of
   // its categories (so e.g. "Bridal" folds in heavy-formal without naming it).
@@ -5776,10 +5797,11 @@
   // classes → identical grid look) with a horizontal "+N more" slider: ~22 per
   // page, page 2 holds the rest. Consistency with the Store-Types view.
   let _bbSlidePage = 0, _bbPageH = [];
-  function bbBrandGrid(brands){
+  function bbBrandGrid(brands, cntOf){
     if(!brands.length) return `<div class="bb-prod-empty">${tr('bb_prod_none')}</div>`;
     const CAP = 22;
-    const chip = b => `<button type="button" class="cat-brand" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">${esc(b.n)}</button>`;
+    const chip = b => { const n = cntOf ? (cntOf(b) || 0) : 0;
+      return `<button type="button" class="cat-brand" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">${esc(b.n)}${n > 0 ? `<span class="cb-cnt">${n}</span>` : ''}</button>`; };
     if(brands.length <= CAP)
       return `<div class="cat-grid" id="bbGrid"><div class="cat-track" id="bbTrack"><div class="cat-page"><div class="cat-pagegrid">${brands.map(chip).join('')}</div></div></div></div>`;
     const first = brands.slice(0, CAP), rest = brands.slice(CAP);
@@ -5820,9 +5842,19 @@
   });
   // brand name -> Set of category keys it stocks (from the shared catalog).
   function bbBuildIndex(){
-    const idx = {};
-    (PS_CATALOG || []).forEach(p => { (idx[p.b] = idx[p.b] || new Set()).add(p.cat); });
-    _bbIndex = idx;
+    const idx = {}, cnt = {}, ccnt = {};
+    (PS_CATALOG || []).forEach(p => {
+      (idx[p.b] = idx[p.b] || new Set()).add(p.cat);
+      cnt[p.b] = (cnt[p.b] || 0) + 1;                                  // total products (brand strength)
+      (ccnt[p.b] = ccnt[p.b] || {})[p.cat] = (ccnt[p.b][p.cat] || 0) + 1;
+    });
+    _bbIndex = idx; _bbCnt = cnt; _bbCatCnt = ccnt;
+  }
+  // How many products a brand stocks within a set of category keys = its "strength"
+  // in that category (drives the specialist-first ranking + the count badges).
+  function bbStrength(name, cats){
+    const c = _bbCatCnt && _bbCatCnt[name]; if(!c) return 0;
+    let s = 0; cats.forEach(k => { s += (c[k] || 0); }); return s;
   }
   function bbBrandsFor(cats){ return BRANDS.filter(b => { const s = _bbIndex[b.n]; return s && cats.some(c => s.has(c)); }); }
   // CLEAN layout: gender row -> the second-tier categories in ONE scrollable tab
@@ -5851,12 +5883,28 @@
   // gender + directory brands of that gender. Store-tier keys (md/p, mobile-only
   // tabs) → the directory brands of that tier (featured first), like Store Types.
   function bbDeptPool(key){
-    if(key === 'md' || key === 'p') return sortFeatured(BRANDS.filter(b => b.c === key));
-    const genderCats = bbGenderCats(key);
-    const brands = bbBrandsFor([...genderCats]);
+    if(key === 'md' || key === 'p') return bbRankPool(BRANDS.filter(b => b.c === key), key, null);
+    const genderCats = [...bbGenderCats(key)];
+    const brands = bbBrandsFor(genderCats);
     const have = new Set(brands.map(b => b.n));
     BRANDS.forEach(b => { if(b.c === key && !have.has(b.n)){ have.add(b.n); brands.push(b); } });
-    return brands;
+    return bbRankPool(brands, key, genderCats);
+  }
+  // Rank by BRAND STRENGTH for this category. Stores dedicated to it (e.g. Minnie
+  // Minors → Kids, where b.c === key) lead; multi-department stores that also sell it
+  // (Khaadi, Gul Ahmed) follow, strongest (most products here) first. Brands with no
+  // catalogue data trail at the very end so they stay discoverable without crowding
+  // the shoppable ones. `cats` null ⇒ rank a store-tier tab by total catalogue size.
+  function bbRankPool(pool, key, cats){
+    const str = b => cats ? bbStrength(b.n, cats) : ((_bbCnt && _bbCnt[b.n]) || 0);
+    const tier = b => (str(b) > 0 ? 0 : 2) + (b.c === key ? 0 : 1);   // 0 stock-spec ▸ 1 stock-gen ▸ 2 dead-spec ▸ 3 dead-gen
+    return pool.slice().sort((a, b) => {
+      const ta = tier(a), tb = tier(b); if(ta !== tb) return ta - tb;
+      const sa = str(a), sb = str(b); if(sb !== sa) return sb - sa;   // strongest first
+      const fa = FEATURED.has(a.n) ? 0 : 1, fb = FEATURED.has(b.n) ? 0 : 1;
+      if(fa !== fb) return fa - fb;                                    // ⭐ featured as tiebreak
+      return a.n.localeCompare(b.n);
+    });
   }
   // Brand list for the active tab, filtered by the smart-search query. For gender
   // tabs the category matches are scoped to that gender; for the md/p tiers any cat.
@@ -5915,8 +5963,10 @@
       `<button type="button" class="bb-gtab${_bbGender===g?' on':''}" onclick="bbPickGender('${g}')">${tr(k)}</button>`).join('');
     if(!_bbGender){ bbSetHint('', null, null); body.innerHTML = `<div class="bb-prod-empty">${tr('bb_pick_gender')}</div>`; return; }
     const brands = bbBrandsForView();
+    const cats = (_bbGender === 'w' || _bbGender === 'm' || _bbGender === 'k') ? [...bbGenderCats(_bbGender)] : null;
+    const cntOf = b => cats ? bbStrength(b.n, cats) : ((_bbCnt && _bbCnt[b.n]) || 0);   // count shown = strength in THIS category
     _bbSlidePage = 0;
-    body.innerHTML = `<div id="bbGridWrap">` + bbBrandGrid(brands) + `</div>`;
+    body.innerHTML = `<div id="bbGridWrap">` + bbBrandGrid(brands, cntOf) + `</div>`;
     bbMeasureSlide();
   }
 
@@ -5929,7 +5979,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-18r';
+  const PSB_BUILD = '2026-06-18s';
   console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
