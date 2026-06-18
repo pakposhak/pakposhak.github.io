@@ -1,5 +1,5 @@
 /****************************************************************************
- * PakiPoshak — Order Intake Script  (v2)
+ * PakPoshak — Order Intake Script  (v2)
  * --------------------------------------------------------------------------
  * WHAT THIS DOES
  *   1. New order  → appends a full backup row (name, WhatsApp, ADDRESS, TOTAL,
@@ -132,7 +132,7 @@ function handleNewOrder(data, sheet, today){
     sheet.getRange(sheet.getLastRow(), m['est_weight_kg'] + 1).setValue(data.estimated_weight_kg + ' kg');
   }
 
-  var subject = 'New PakiPoshak Order ' + (data.order_id || '') + ' — ' + (data.buyer_name || '');
+  var subject = 'New PakPoshak Order ' + (data.order_id || '') + ' — ' + (data.buyer_name || '');
   var body =
     'NEW ORDER RECEIVED\n==================\n\n' +
     'Order ID:    ' + (data.order_id || '') + '\n' +
@@ -232,7 +232,7 @@ function handlePayment(data, sheet, today){
 
   if (mismatch && custWa){
     var waDigits = custWa.replace(/[^\d]/g, '');
-    var tmpl = 'Hi ' + (custName || 'there') + ', this is PakiPoshak about your order ' + orderId + '. ' +
+    var tmpl = 'Hi ' + (custName || 'there') + ', this is PakPoshak about your order ' + orderId + '. ' +
                'We received your payment note of ৳' + amount + ', but your order total is ৳' + expected + '. ' +
                'Could you please confirm the correct amount, or share your bKash/Nagad TrxID? Thank you!';
     body += '\n— Looks off? Tap to message the customer on WhatsApp:\n' +
@@ -287,7 +287,7 @@ function handlePlacement(data, sheet, today){
 function authorizeNow(){
   var ss = SpreadsheetApp.getActiveSpreadsheet();   // Sheets scope
   DriveApp.getRootFolder();                          // Drive scope (receipt slips)
-  MailApp.sendEmail(OWNER_EMAIL, 'PakiPoshak ✅ Authorization OK',
+  MailApp.sendEmail(OWNER_EMAIL, 'PakPoshak ✅ Authorization OK',
     'Your order script is now authorized to save orders, store receipts, and email you.\nSheet: ' + ss.getName());
 }
 
@@ -311,5 +311,5 @@ function setStatusDropdown(){
 // Lets you test the deployment in a browser (visiting the /exec URL).
 // The "v3" tag is how we confirm the NEW code actually went live.
 function doGet() {
-  return ContentService.createTextOutput('PakiPoshak order intake — v3 LIVE ✓');
+  return ContentService.createTextOutput('PakPoshak order intake — v3 LIVE ✓');
 }

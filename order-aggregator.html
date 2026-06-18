@@ -224,9 +224,9 @@ You can paste several orders at once — paste straight from your order emails."
   }
 
   // ── Auto-load paid orders from the tracking Google Sheet ──────────────────
-  const SHEET_CSV='https://docs.google.com/spreadsheets/d/16v2e7pxwMPimVkOTFKID3S4dI-mPexlzNgUT3zN0CM0/gviz/tq?tqx=out:csv&gid=0&headers=1';
+  const SHEET_CSV='https://docs.google.com/spreadsheets/d/1vaLOMG8no7bNg9BOCWX8i_34h6ohDkKLJIjznGRr_bc/gviz/tq?tqx=out:csv&gid=0&headers=1';
   // Apps Script /exec — same endpoint the order form posts to (used for placement linking)
-  const SCRIPT_POST_URL='https://script.google.com/macros/s/AKfycbzJ_HQD2NdyFNk2wSBpR-8KzuXT_wqTIipOFWM8HD4R-Q_EHvTOM1leyJ2MvBxfZA/exec';
+  const SCRIPT_POST_URL='https://script.google.com/macros/s/AKfycby1CkPAQwvilQLt_UD8I46_7nCOPlRMoagCRaJ8vsrwYqYlyOoJRrJYc1sbqIIqqkk-Zg/exec';
   let LOADED_ORDERS=[];
   const csvQuote=s=>'"'+String(s==null?'':s).replace(/"/g,'""')+'"';
   function downloadFile(text,name,type){const b=new Blob([text],{type:type||'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();}

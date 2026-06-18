@@ -120,7 +120,7 @@
 
 <script>
   // ── Config ───────────────────────────────────────────────────────────────
-  const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/16v2e7pxwMPimVkOTFKID3S4dI-mPexlzNgUT3zN0CM0/gviz/tq?tqx=out:csv&gid=0&headers=1';
+  const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/1vaLOMG8no7bNg9BOCWX8i_34h6ohDkKLJIjznGRr_bc/gviz/tq?tqx=out:csv&gid=0&headers=1';
   const DEFAULT_RELAY_URL = 'https://103.83.91.34.sslip.io';
   function relayBase(){ return ((localStorage.getItem('psb_relay_url')||'').trim() || DEFAULT_RELAY_URL).replace(/\/+$/,''); }
   async function sha256hex(str){ const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
