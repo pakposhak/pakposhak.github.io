@@ -5136,9 +5136,8 @@
 
   let PS_CATALOG = null, psLoaded = false, psLoading = false;
   let psSel = { prices:new Set(), cats:new Set(), brands:new Set() };
-  let psFiltered = [], psPage = 0, psSort = '';   // '' | 'asc' | 'desc' — price sort only (New is now a filter)
-  let psSaleOnly = false;                          // Sale filter: show only discounted items
-  let psNewOnly  = false;                          // New filter: recent arrivals — combines with the price sort
+  let psFiltered = [], psPage = 0, psSort = '';   // '' | 'asc' | 'desc' | 'new' — sorts (one at a time, keep ALL items)
+  let psSaleOnly = false;                          // Sale filter: show only discounted items (combines with any sort)
   // cat → gender ('w'/'m'/'k') and cat → group-index, derived once from CAT_TREE
   // so the Browse-Products category filter and the Browse-Brands product view
   // mirror the order form's picker exactly (single source of truth).
@@ -5529,7 +5528,6 @@
     psSel = { prices:new Set(), cats:new Set(), brands:new Set() };
     psSort = '';
     psSaleOnly = false;
-    psNewOnly = false;
     ['psSearchMobile','psSearchDesktop'].forEach(idd => { const e = document.getElementById(idd); if(e) e.value = ''; });
     psSearchHint('', new Set(), new Set());
     psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply();
@@ -5548,13 +5546,12 @@
         if(!ok) return false;
       }
       if(psSaleOnly && !p.sale) return false;        // Sale filter: discounted items only
-      if(psNewOnly && !psIsNew(p)) return false;     // New filter: recent arrivals (combines with price sort)
       return true;
     });
-    // Optional price sort (overrides the default order); New with no price sort → newest first.
+    // Optional sort (overrides the default order) — price OR newest; keeps ALL items either way.
     if(psSort === 'asc')       psFiltered.sort((a,b) => a._bdt - b._bdt);          // ৳ landed price ↑
     else if(psSort === 'desc') psFiltered.sort((a,b) => b._bdt - a._bdt);          // ৳ landed price ↓
-    else if(psNewOnly)         psFiltered.sort((a,b) => (b.pub||0) - (a.pub||0));  // New → most recent first
+    else if(psSort === 'new')  psFiltered.sort((a,b) => (b.pub||0) - (a.pub||0));  // newest → oldest (ALL items)
     psRender();
   }
   // Filter + sort chip row beneath the count (Option C): Sale (filter) · New · ৳↑ · ৳↓.
@@ -5565,18 +5562,16 @@
         `<span class="ps-sortgrp"><span class="ps-grouplbl">${tr('ps_lbl_sort')}</span>`
       +   `<button type="button" class="ps-sortbtn${psSort==='asc'?' on':''}" onclick="psSetSort('asc')">${tr('ps_sort_lh')}</button>`
       +   `<button type="button" class="ps-sortbtn${psSort==='desc'?' on':''}" onclick="psSetSort('desc')">${tr('ps_sort_hl')}</button>`
+      +   `<button type="button" class="ps-sortbtn${psSort==='new'?' on':''}" onclick="psSetSort('new')">${tr('ps_new')}</button>`
       + `</span>`
       + `<span class="ps-sortgrp"><span class="ps-grouplbl">${tr('ps_lbl_filter')}</span>`
       +   `<button type="button" class="ps-sortbtn ps-salebtn${psSaleOnly?' on':''}" onclick="psToggleSale()">${tr('ps_sale')}</button>`
-      +   `<button type="button" class="ps-sortbtn${psNewOnly?' on':''}" onclick="psToggleNew()">${tr('ps_new')}</button>`
       + `</span>`;
   }
-  // Sale & New are FILTER chips (mutually exclusive); both combine with the ৳ price sort.
+  // ৳ Low→High, ৳ High→Low and New are SORTS — one at a time, over ALL items (re-tap
+  // clears). Sale is the only FILTER and combines with whichever sort is active.
   function psSetSort(s){ psSort = (psSort === s) ? '' : s; psBuildSort(); psApply(); }
-  function psToggleSale(){ psSaleOnly = !psSaleOnly; if(psSaleOnly) psNewOnly = false; psBuildSort(); psApply(); }
-  function psToggleNew(){ psNewOnly = !psNewOnly; if(psNewOnly) psSaleOnly = false; psBuildSort(); psApply(); }   // keeps the active price sort
-  // "New" = a recent arrival (published within the last 120 days), excluding sale items.
-  function psIsNew(p){ return !p.sale && p.pub && (Date.now()/1000 - p.pub) < 120*86400; }
+  function psToggleSale(){ psSaleOnly = !psSaleOnly; psBuildSort(); psApply(); }
   // Dynamic "12,000+ products · 80+ brands — want more?" note; counts come from the
   // live catalogue (rounded down) so they grow/shrink with the listing automatically.
   function psUpdateNote(){
@@ -6002,7 +5997,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-18u';
+  const PSB_BUILD = '2026-06-18v';
   console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
