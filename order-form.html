@@ -5593,10 +5593,10 @@
         `<span class="ps-sortgrp"><span class="ps-grouplbl">${tr('ps_lbl_sort')}</span>`
       +   `<button type="button" class="ps-sortbtn${psSort==='asc'?' on':''}" onclick="psSetSort('asc')">${tr('ps_sort_lh')}</button>`
       +   `<button type="button" class="ps-sortbtn${psSort==='desc'?' on':''}" onclick="psSetSort('desc')">${tr('ps_sort_hl')}</button>`
-      +   `<button type="button" class="ps-sortbtn${psSort==='new'?' on':''}" onclick="psSetSort('new')">${tr('ps_new')}</button>`
       + `</span>`
       + `<span class="ps-sortgrp"><span class="ps-grouplbl">${tr('ps_lbl_filter')}</span>`
       +   `<button type="button" class="ps-sortbtn ps-salebtn${psSaleOnly?' on':''}" onclick="psToggleSale()">${tr('ps_sale')}</button>`
+      +   `<button type="button" class="ps-sortbtn${psSort==='new'?' on':''}" onclick="psSetSort('new')">${tr('ps_new')}</button>`
       + `</span>`;
   }
   // ৳ Low→High, ৳ High→Low and New are SORTS (one at a time, re-tap clears). New shows
@@ -6029,7 +6029,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-18x';
+  const PSB_BUILD = '2026-06-18y';
   console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
