@@ -269,7 +269,7 @@
     .remember-row{display:flex;align-items:center;gap:8px;margin-top:4px;font-size:0.8rem;color:var(--txt-sec)}
     .remember-row input[type=checkbox]{width:15px;height:15px;cursor:pointer;accent-color:var(--gold)}
 
-    .container{max-width:700px;margin:0 auto;padding:24px 14px 70px}
+    .container{max-width:700px;margin:0 auto;padding:12px 14px 70px}
 
     .section-label{font-size:0.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
       color:var(--gold);margin:28px 0 12px;border-bottom:1px solid var(--bdr-med);padding-bottom:6px}
@@ -400,7 +400,7 @@
       .cat-head{font-size:0.92rem}
       .cat-brand{font-size:0.92rem;padding:11px 10px}
       /* how-it-works: merged 4-step version, two rows (2x2 grid) — mobile only */
-      .hiw-strip{overflow-x:visible;padding:9px 12px}
+      .hiw-strip{overflow-x:visible;padding:6px 12px}
       .hiw-desktop{display:none}
       .hiw-mobile{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;min-width:0}
       .hiw-mobile .hiw-video,.hiw-mobile .hiw-guide{margin-left:0}
@@ -581,16 +581,17 @@
     }
 
     /* ── Browse tabs: Brands | Products ── */
-    .browse-tabs{display:flex;gap:8px;margin-bottom:16px}
+    .browse-tabs{display:flex;gap:8px;margin-bottom:10px}
     .browse-tab{flex:1;padding:11px 8px;background:var(--surface);border:1.5px solid var(--bdr-med);border-radius:10px;
       color:var(--txt-sec);font-weight:700;font-size:0.86rem;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px}
     .browse-tab{border-color:#137a72;color:#137a72}
     .browse-tab.on{background:#137a72;color:#fff;border-color:#137a72}
     /* ── Product search page ── */
     .ps-wrap{display:block}
-    .ps-rail{background:var(--surface);border:1px solid var(--bdr-med);border-radius:12px;padding:12px 14px;margin-bottom:14px}
+    .ps-rail{background:var(--surface);border:1px solid var(--bdr-med);border-radius:12px;padding:12px 14px 8px;margin-bottom:8px}
     .ps-rail-head{font-size:0.8rem;font-weight:800;color:var(--txt);margin-bottom:11px;padding-bottom:9px;border-bottom:1px solid var(--bdr)}
-    .ps-fblock{margin-bottom:13px}
+    .ps-fblock{margin-bottom:10px}
+    .ps-rail .ps-fblock:last-child{margin-bottom:0}
     .ps-flabel{font-size:0.7rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:7px}
     .ps-fnum{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--gold);color:#12122a;font-size:0.62rem;font-weight:800;letter-spacing:0;vertical-align:middle}
     .ps-sale{position:absolute;top:6px;left:6px;z-index:2;background:#c0392b;color:#fff;font-size:0.6rem;font-weight:800;letter-spacing:0.5px;padding:2px 7px;border-radius:5px}
@@ -6290,7 +6291,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-19f';
+  const PSB_BUILD = '2026-06-19g';
   console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
