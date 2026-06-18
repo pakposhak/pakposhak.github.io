@@ -20,7 +20,7 @@
   <meta http-equiv="Expires" content="0"/>
   <title>PakPoshak – Pakistani Fashion Delivered to Bangladesh</title>
   <meta name="description" content="Order authentic Pakistani lawn, pret & designer clothes. We purchase from Pakistan and deliver to your door in Bangladesh."/>
-  <meta name="theme-color" content="#080E1C"/>
+  <meta name="theme-color" content="#0B261C"/>
   <!-- This page manages its own EN/BN toggle — stop browsers auto-translating it -->
   <meta name="google" content="notranslate"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
@@ -28,6 +28,10 @@
   <meta name="apple-mobile-web-app-title" content="PakPoshak"/>
   <link rel="manifest" href="manifest.json"/>
   <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
+  <!-- Favicon so the browser tab shows the PakPoshak icon, not a generic globe -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"/>
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png"/>
+  <link rel="shortcut icon" href="icon-192.png"/>
   <style>
     /* ── THEME TOKENS ──────────────────────────────────────────────────────
        Light "Ivory & Gold" is the DEFAULT (:root). The original "Midnight Gold"
@@ -751,12 +755,14 @@
 </head>
 <body>
 <script>
-  /* Set the colour theme BEFORE paint to avoid a flash: a saved choice wins,
-     otherwise follow the phone's own light/dark system setting. */
+  /* Set the colour theme BEFORE paint to avoid a flash. Light "Ivory & Gold" is
+     the DEFAULT on first load — we deliberately IGNORE the phone's dark setting,
+     so a fresh install always opens bright. Only an explicit toggle (which saves
+     'dark') switches it. */
   (function(){
     try{
       var s = localStorage.getItem('psb_theme');
-      var dark = s ? (s === 'dark') : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      var dark = (s === 'dark');
       document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
     }catch(e){ document.documentElement.setAttribute('data-theme','light'); }
   })();
@@ -850,14 +856,14 @@
     <!-- SUB-TAB 2: Product Category — which brands make what (Women/Men/Kids → subcategory → brands) -->
     <div id="bbProduct" style="display:none">
       <div class="brand-section">
-        <div class="bb-prod-sub" data-i18n="bb_prod_sub">See which brands make what — tap a brand to start.</div>
-        <div class="bb-gtabs" id="bbGtabs"></div>
-        <!-- ONE smart search (brands + products). Typing "casual" surfaces both the
-             matching product categories AND the brands that make them (req #2). -->
+        <!-- Search FIRST so a buyer who knows the brand goes straight to it, without
+             having to pick a category first (req). Smart search = brands + products. -->
+        <div class="bb-prod-sub" data-i18n="bb_prod_sub">🔎 Search 150+ brands to order directly from their page:</div>
         <div class="bb-smartwrap">
-          <input id="bbSmartSearch" class="bb-smartsearch" type="text" autocomplete="off" oninput="bbSmartSearch(this.value)" data-i18n-ph="bb_smart_ph" placeholder="🔍 Search brands or products — e.g. casual, lawn, Khaadi"/>
+          <input id="bbSmartSearch" class="bb-smartsearch" type="text" autocomplete="off" oninput="bbSmartSearch(this.value)" data-i18n-ph="bb_smart_ph" placeholder="🔍 Search 150+ brands — e.g. Khaadi, lawn, casual"/>
           <div class="bb-search-hint" id="bbSearchHint"></div>
         </div>
+        <div class="bb-gtabs" id="bbGtabs"></div>
         <div id="bbProdBody"></div>
       </div>
     </div>
@@ -877,8 +883,8 @@
   <!-- BROWSE PRODUCTS — multi-brand search over catalog.json (price / category / brand filters) -->
   <div id="tabProducts">
     <div class="ps-note">
-      <span data-i18n="ps_partial">Not every brand &amp; product is listed here yet —</span>
-      <a href="#" onclick="switchBrowse('brands');return false" data-i18n="ps_partial_link">browse all via Browse by brands →</a>
+      <span id="psNoteCounts"><b>12,000+</b> products · <b>80+</b> brands</span> —
+      <a href="#" onclick="switchBrowse('brands');return false" data-i18n="ps_partial_link">want more? Browse by brands →</a>
     </div>
     <div class="ps-wrap">
       <aside class="ps-rail">
@@ -1429,7 +1435,7 @@
 
 <!-- INSTALL APP — floating pill, hidden until installable (or iOS Safari) -->
 <button id="installPill" onclick="psbInstall()" style="display:none">
-  <span style="font-size:1.05rem">⭐</span> Add to Home
+  <span style="font-size:1.05rem">⬇️</span> Install app
 </button>
 
 <!-- iOS install instructions sheet -->
@@ -3488,11 +3494,11 @@
       ps_results:'products', ps_add:'Add', ps_prev:'Prev', ps_next:'Next', ps_page:'Page',
       ps_enlarge:'Enlarge', ps_avail_sizes:'Available sizes', ps_unstitched:'Unstitched · no size needed', ps_mto:'Made to order', ps_d_loading:'Loading more details…', ps_d_open:'Open full page', ps_d_nofetch:'See all photos &amp; details on the brand page →', ps_d_nodesc:'No extra description provided.',
       ps_empty:'No products match these filters — try widening them.',
-      ps_partial:'Not every brand &amp; product is listed here yet —', ps_partial_link:'browse all via Browse by brands →',
+      ps_partial:'Not every brand &amp; product is listed here yet —', ps_partial_link:'want more? Browse by brands →', ps_word_products:'products', ps_word_brands:'brands',
       ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products', ps_sort_lh:'৳ Low→High', ps_sort_hl:'৳ High→Low', ps_sale:'Sale', ps_new:'New', ps_lbl_sort:'Sort', ps_lbl_filter:'Filter', ps_search_ph:'Search brands or products…', ps_search_nomatch:'No brand or category matched',
       bb_store:'Store Types', bb_product:'Product Category', bb_women:'👗 Women', bb_men:'👔 Men', bb_kids:'🧸 Kids', bb_md:'🏬 Multi-Dept', bb_premium:'💎 Premium',
-      bb_more:'more', bb_less:'less', bb_all:'All', bb_two_ways:'Two ways to search brands', bb_pick_gender:'Pick Women, Men or Kids above.', bb_pick_cat:'Pick a category above to see its brands.', bb_prod_sub:'See which brands make what — tap a brand to start.', bb_loading:'Loading brands…', bb_prod_none:'No catalogued brands here yet.',
-      bb_smart_ph:'🔍 Search brands or products — e.g. casual, lawn, Khaadi', bb_search_lead:'🔎 Know the brand? Search 150+ Pakistani brands by name:',
+      bb_more:'more', bb_less:'less', bb_all:'All', bb_two_ways:'Two ways to search brands', bb_pick_gender:'Pick Women, Men or Kids above.', bb_pick_cat:'Pick a category above to see its brands.', bb_prod_sub:'🔎 Search 150+ brands to order directly from their page:', bb_loading:'Loading brands…', bb_prod_none:'No catalogued brands here yet.',
+      bb_smart_ph:'🔍 Search 150+ brands — e.g. Khaadi, lawn, casual', bb_search_lead:'🔎 Know the brand? Search 150+ Pakistani brands by name:',
       js_soldout_lead:'Some items appear SOLD OUT and can’t be saved — please remove them or pick another article:',
       js_soldout_all:'sold out on the brand site', js_soldout_size:'this size is sold out',
       more_tab:'More', more_title:'More Brands', more_sub:'All brands in this category — tap any to start, same as the tabs.', more_back:'Back',
@@ -3553,11 +3559,11 @@
       ps_results:'পণ্য', ps_add:'যোগ করুন', ps_prev:'আগের', ps_next:'পরের', ps_page:'পৃষ্ঠা',
       ps_enlarge:'ছবি বড় করুন', ps_avail_sizes:'স্টকে থাকা সাইজ', ps_unstitched:'আনস্টিচড · সাইজ লাগে না', ps_mto:'অর্ডারে তৈরি হবে', ps_d_loading:'আরও বিবরণ আসছে…', ps_d_open:'পুরো পেজ খুলুন', ps_d_nofetch:'সব ছবি ও বিবরণ ব্র্যান্ডের পেজে দেখুন →', ps_d_nodesc:'বাড়তি কোনো বিবরণ নেই।',
       ps_empty:'এই ফিল্টারে কোনো পণ্য নেই — ফিল্টার একটু কমিয়ে দেখুন।',
-      ps_partial:'সব ব্র্যান্ড বা পণ্য এখনো এখানে যোগ হয়নি —', ps_partial_link:'“ব্র্যান্ড দেখুন”-এ গিয়ে সব ব্রাউজ করুন →',
+      ps_partial:'সব ব্র্যান্ড বা পণ্য এখনো এখানে যোগ হয়নি —', ps_partial_link:'আরও চান? “ব্র্যান্ড দেখুন”-এ যান →', ps_word_products:'পণ্য', ps_word_brands:'ব্র্যান্ড',
       ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়', ps_sort_lh:'৳ কম→বেশি', ps_sort_hl:'৳ বেশি→কম', ps_sale:'সেল', ps_new:'নতুন', ps_lbl_sort:'সাজান', ps_lbl_filter:'ফিল্টার', ps_search_ph:'ব্র্যান্ড বা পণ্য খুঁজুন…', ps_search_nomatch:'কোনো ব্র্যান্ড বা ক্যাটাগরি মেলেনি',
       bb_store:'স্টোরের ধরন', bb_product:'পণ্যের ক্যাটাগরি', bb_women:'👗 মেয়েদের', bb_men:'👔 ছেলেদের', bb_kids:'🧸 বাচ্চাদের', bb_md:'🏬 মাল্টি-ডিপ', bb_premium:'💎 প্রিমিয়াম',
-      bb_more:'আরও', bb_less:'কম', bb_all:'সব', bb_two_ways:'ব্র্যান্ড খোঁজার দুটি উপায়', bb_pick_gender:'উপরে মেয়েদের, ছেলেদের বা বাচ্চাদের বেছে নিন।', bb_pick_cat:'ব্র্যান্ড দেখতে উপরের একটি ক্যাটাগরিতে ট্যাপ করুন।', bb_prod_sub:'কোন ব্র্যান্ড কী বানায় দেখে নিন — শুরু করতে ব্র্যান্ডে ট্যাপ করুন।', bb_loading:'ব্র্যান্ড আসছে…', bb_prod_none:'এখানে এখনো কোনো ব্র্যান্ড নেই।',
-      bb_smart_ph:'🔍 ব্র্যান্ড বা পণ্য খুঁজুন — যেমন casual, lawn, Khaadi', bb_search_lead:'🔎 ব্র্যান্ড জানা আছে? নাম দিয়ে ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন:',
+      bb_more:'আরও', bb_less:'কম', bb_all:'সব', bb_two_ways:'ব্র্যান্ড খোঁজার দুটি উপায়', bb_pick_gender:'উপরে মেয়েদের, ছেলেদের বা বাচ্চাদের বেছে নিন।', bb_pick_cat:'ব্র্যান্ড দেখতে উপরের একটি ক্যাটাগরিতে ট্যাপ করুন।', bb_prod_sub:'🔎 সরাসরি অর্ডার করতে ১৫০+ ব্র্যান্ড খুঁজুন:', bb_loading:'ব্র্যান্ড আসছে…', bb_prod_none:'এখানে এখনো কোনো ব্র্যান্ড নেই।',
+      bb_smart_ph:'🔍 ১৫০+ ব্র্যান্ড খুঁজুন — যেমন Khaadi, lawn, casual', bb_search_lead:'🔎 ব্র্যান্ড জানা আছে? নাম দিয়ে ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন:',
       js_soldout_lead:'কিছু পণ্য স্টকে নেই, তাই সেভ করা যাচ্ছে না — সেগুলো সরিয়ে দিন বা অন্য পণ্য বেছে নিন:',
       js_soldout_all:'ব্র্যান্ডের সাইটে স্টকে নেই', js_soldout_size:'এই সাইজটি স্টকে নেই',
       more_tab:'আরও', more_title:'আরও ব্র্যান্ড', more_sub:'এই ক্যাটাগরির সব ব্র্যান্ড — উপরের ট্যাবের মতোই, শুরু করতে যেকোনোটিতে ট্যাপ করুন।', more_back:'পেছনে',
@@ -3616,6 +3622,7 @@
     document.documentElement.lang = _lang;
     document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = tr(el.getAttribute('data-i18n')); });
     document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = tr(el.getAttribute('data-i18n-ph')); });
+    try{ psUpdateNote(); }catch(e){}
     document.querySelectorAll('.cat-tab').forEach(tb => { if(tb.dataset.cat) tb.textContent = catLabel(tb.dataset.cat); });
     if(_catOpen){
       const h = document.getElementById('catHead');
@@ -5128,8 +5135,9 @@
 
   let PS_CATALOG = null, psLoaded = false, psLoading = false;
   let psSel = { prices:new Set(), cats:new Set(), brands:new Set() };
-  let psFiltered = [], psPage = 0, psSort = '';   // '' | 'asc' | 'desc' (price) | 'new' (recent→old)
+  let psFiltered = [], psPage = 0, psSort = '';   // '' | 'asc' | 'desc' — price sort only (New is now a filter)
   let psSaleOnly = false;                          // Sale filter: show only discounted items
+  let psNewOnly  = false;                          // New filter: recent arrivals — combines with the price sort
   // cat → gender ('w'/'m'/'k') and cat → group-index, derived once from CAT_TREE
   // so the Browse-Products category filter and the Browse-Brands product view
   // mirror the order form's picker exactly (single source of truth).
@@ -5423,7 +5431,7 @@
           || ((b.pub || 0) - (a.pub || 0))
           || (a._ord - b._ord));
         psLoaded = true; psLoading = false;
-        psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply();
+        psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply(); psUpdateNote();
         psFlushReady();
       })
       .catch(() => { psLoading = false; const e=document.getElementById('psCount'); if(e) e.textContent = tr('ps_loadfail'); psFlushReady(); });
@@ -5520,6 +5528,7 @@
     psSel = { prices:new Set(), cats:new Set(), brands:new Set() };
     psSort = '';
     psSaleOnly = false;
+    psNewOnly = false;
     ['psSearchMobile','psSearchDesktop'].forEach(idd => { const e = document.getElementById(idd); if(e) e.value = ''; });
     psSearchHint('', new Set(), new Set());
     psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply();
@@ -5538,13 +5547,13 @@
         if(!ok) return false;
       }
       if(psSaleOnly && !p.sale) return false;        // Sale filter: discounted items only
-      if(psSort === 'new' && p.sale) return false;   // New excludes sale items (Danish)
+      if(psNewOnly && !psIsNew(p)) return false;     // New filter: recent arrivals (combines with price sort)
       return true;
     });
-    // Optional sort (overrides the default women-first/sale order).
+    // Optional price sort (overrides the default order); New with no price sort → newest first.
     if(psSort === 'asc')       psFiltered.sort((a,b) => a._bdt - b._bdt);          // ৳ landed price ↑
     else if(psSort === 'desc') psFiltered.sort((a,b) => b._bdt - a._bdt);          // ৳ landed price ↓
-    else if(psSort === 'new')  psFiltered.sort((a,b) => (b.pub||0) - (a.pub||0));  // most recent → oldest
+    else if(psNewOnly)         psFiltered.sort((a,b) => (b.pub||0) - (a.pub||0));  // New → most recent first
     psRender();
   }
   // Filter + sort chip row beneath the count (Option C): Sale (filter) · New · ৳↑ · ৳↓.
@@ -5558,12 +5567,25 @@
       + `</span>`
       + `<span class="ps-sortgrp"><span class="ps-grouplbl">${tr('ps_lbl_filter')}</span>`
       +   `<button type="button" class="ps-sortbtn ps-salebtn${psSaleOnly?' on':''}" onclick="psToggleSale()">${tr('ps_sale')}</button>`
-      +   `<button type="button" class="ps-sortbtn${psSort==='new'?' on':''}" onclick="psSetSort('new')">${tr('ps_new')}</button>`
+      +   `<button type="button" class="ps-sortbtn${psNewOnly?' on':''}" onclick="psToggleNew()">${tr('ps_new')}</button>`
       + `</span>`;
   }
-  // New & Sale are mutually exclusive (New shows newest NON-sale items, Sale shows only sale).
-  function psSetSort(s){ psSort = (psSort === s) ? '' : s; if(psSort === 'new') psSaleOnly = false; psBuildSort(); psApply(); }
-  function psToggleSale(){ psSaleOnly = !psSaleOnly; if(psSaleOnly && psSort === 'new') psSort = ''; psBuildSort(); psApply(); }
+  // Sale & New are FILTER chips (mutually exclusive); both combine with the ৳ price sort.
+  function psSetSort(s){ psSort = (psSort === s) ? '' : s; psBuildSort(); psApply(); }
+  function psToggleSale(){ psSaleOnly = !psSaleOnly; if(psSaleOnly) psNewOnly = false; psBuildSort(); psApply(); }
+  function psToggleNew(){ psNewOnly = !psNewOnly; if(psNewOnly) psSaleOnly = false; psBuildSort(); psApply(); }   // keeps the active price sort
+  // "New" = a recent arrival (published within the last 120 days), excluding sale items.
+  function psIsNew(p){ return !p.sale && p.pub && (Date.now()/1000 - p.pub) < 120*86400; }
+  // Dynamic "12,000+ products · 80+ brands — want more?" note; counts come from the
+  // live catalogue (rounded down) so they grow/shrink with the listing automatically.
+  function psUpdateNote(){
+    const el = document.getElementById('psNoteCounts');
+    if(!el || !PS_CATALOG) return;
+    const prods = Math.floor(PS_CATALOG.length / 1000) * 1000;
+    const brands = Math.floor(new Set(PS_CATALOG.map(p => p.b)).size / 10) * 10;
+    el.innerHTML = '<b>' + prods.toLocaleString('en-US') + '+</b> ' + tr('ps_word_products')
+                 + ' · <b>' + brands + '+</b> ' + tr('ps_word_brands');
+  }
 
   function psPageSize(){ return window.innerWidth >= 820 ? 12 : 8; }
   // Per-card estimated landed ৳BDT (product + base commission + weight×logistics).
@@ -5979,7 +6001,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-18s';
+  const PSB_BUILD = '2026-06-18t';
   console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
@@ -6041,34 +6063,32 @@
       pill.style.display = 'none';
     });
 
-    // The manifest uses display:"browser" so the home-screen icon is a CHROME
-    // SHORTCUT (opens in Chrome) rather than a standalone app — that's what
-    // keeps brand links opening in real Chrome. So beforeinstallprompt won't
-    // fire; surface the pill manually on any mobile, and the help sheet tells
-    // the user to "Add to Home screen" (which makes the Chrome shortcut).
+    // Manifest is display:"standalone" → PakPoshak is a real installable app.
+    // Android / desktop Chrome fire beforeinstallprompt (captured above) so the
+    // pill triggers the NATIVE one-tap install dialog. iOS has no install API,
+    // so always show the pill there → it opens the Share → "Add to Home Screen"
+    // help. (Brand links still open in a Chrome Custom Tab via launchBrandTab,
+    // so copy/paste keeps working even though the app is standalone now.)
     var isMobile = /android|iphone|ipad|ipod/i.test(navigator.userAgent);
     if (isMobile) pill.style.display = 'flex';
 
     function showInstallHelp() {
-      var title = 'Add PakPoshak to your home screen', body;
+      var title = 'Install PakPoshak', body;
       if (isIOS) {
-        body = '<p>Adds a one-tap icon to your iPhone home screen. Works in <b>Chrome</b> or <b>Safari</b>:</p>'
-          + '<p style="margin:6px 0 2px;font-weight:600">In Chrome (iPhone):</p>'
-          + '<ol><li>Tap the <b>Share</b> icon (or <b>⋯</b> menu) at the bottom of Chrome</li>'
-          + '<li>Tap <b>Share…</b>, then scroll down and tap <b>“Add to Home Screen”</b></li>'
-          + '<li>Tap <b>Add</b></li></ol>'
-          + '<p style="margin:6px 0 2px;font-weight:600">Or in Safari:</p>'
+        body = '<p>Installs PakPoshak as an app on your iPhone — its own icon, opens full-screen:</p>'
+          + '<p style="margin:6px 0 2px;font-weight:600">In Safari:</p>'
           + '<ol><li>Tap the <b>Share</b> button at the bottom of Safari</li>'
           + '<li>Scroll down and tap <b>“Add to Home Screen”</b></li>'
-          + '<li>Tap <b>Add</b></li></ol>';
+          + '<li>Tap <b>Add</b></li></ol>'
+          + '<p style="margin:6px 0 2px;font-weight:600">In Chrome (iPhone):</p>'
+          + '<ol><li>Tap the <b>Share</b> icon (or <b>⋯</b> menu)</li>'
+          + '<li>Tap <b>“Add to Home Screen”</b>, then <b>Add</b></li></ol>';
       } else {
-        body = '<p>Adds a one-tap icon that opens in Chrome (so brands open in Chrome too):</p>'
-          + '<ol><li>Tap the <b>⋮ menu</b> (top-right in Chrome)</li>'
-          + '<li>Tap <b>“Add to Home screen”</b></li>'
-          + '<li>Tap <b>Add</b> (or <b>Install</b>)</li></ol>'
-          + '<p style="font-size:0.84rem;color:var(--txt);background:rgba(192,57,43,0.12);border:1px solid rgba(192,57,43,0.4);border-radius:8px;padding:8px 10px;margin-top:4px">⚠️ If you previously installed PakPoshak as an '
-          + '<b>app</b>, delete that old icon first — the old one opens brand links in a stuck in-app '
-          + 'window. The new “Add to Home screen” icon opens them in Chrome.</p>';
+        body = '<p>Installs PakPoshak as an app, with its own icon:</p>'
+          + '<ol><li>Tap <b>Install</b> on the prompt that appears — or open the <b>⋮ menu</b> (top-right in Chrome)</li>'
+          + '<li>Tap <b>“Install app”</b> (or <b>“Add to Home screen”</b>)</li>'
+          + '<li>Tap <b>Install</b></li></ol>'
+          + '<p style="font-size:0.84rem;color:var(--txt);background:var(--gold-dim);border:1px solid var(--gold-bdr);border-radius:8px;padding:8px 10px;margin-top:4px">💡 If you added an old PakiPoshak icon before, delete it first — then install again from here.</p>';
       }
       document.getElementById('installHelpTitle').textContent = title;
       document.getElementById('installHelpBody').innerHTML = body;

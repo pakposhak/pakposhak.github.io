@@ -4,10 +4,10 @@
   "description": "Order authentic Pakistani fashion delivered to Bangladesh.",
   "start_url": "/",
   "scope": "/",
-  "display": "browser",
+  "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#080E1C",
-  "theme_color": "#080E1C",
+  "background_color": "#F7F1E6",
+  "theme_color": "#0B261C",
   "icons": [
     {
       "src": "icon-192.png",
