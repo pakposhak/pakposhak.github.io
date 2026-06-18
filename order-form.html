@@ -404,8 +404,10 @@
       .hiw-desktop{display:none}
       .hiw-mobile{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;min-width:0}
       .hiw-mobile .hiw-video,.hiw-mobile .hiw-guide{margin-left:0}
-      /* The 1·2·3·4 step indicator moves into the fixed bottom bar on mobile */
-      .steps-bar{display:none}
+      /* The 1·2·3·4 step indicator moves into the fixed bottom bar on mobile.
+         !important: the base .steps-bar rule appears LATER in source, so it would
+         otherwise win on equal specificity and keep the top stepper visible. */
+      .steps-bar{display:none !important}
     }
     .show-more-btn{font-size:0.75rem;color:var(--gold);background:none;border:none;cursor:pointer;font-weight:600;padding:4px 0;text-decoration:underline}
 
@@ -620,7 +622,7 @@
     .ps-searchblock{margin-bottom:12px}
     /* Highlighted, easy-to-see smart search (req): heavy gold border + soft glow, bigger type. */
     .ps-smartsearch{width:100%;box-sizing:border-box;padding:14px 16px;border:2.5px solid var(--gold);border-radius:12px;background:var(--input-bg);color:var(--txt);font-size:0.95rem;font-weight:600;font-family:inherit;box-shadow:0 0 0 4px rgba(201,169,110,0.10)}
-    .ps-smartsearch::placeholder{color:var(--txt-muted);font-weight:500}
+    .ps-smartsearch::placeholder{color:var(--txt-muted);font-weight:500;font-size:0.78rem}
     .ps-smartsearch:focus{outline:none;box-shadow:0 0 0 4px rgba(201,169,110,0.22)}
     .ps-search-hint{font-size:0.68rem;color:var(--txt-muted);margin-top:5px;min-height:0}
     .ps-search-hint:empty{display:none}
@@ -922,12 +924,10 @@
 
   <!-- BROWSE PRODUCTS — multi-brand search over catalog.json (price / category / brand filters) -->
   <div id="tabProducts">
-    <!-- Value-prop so a first-time visitor instantly gets what the site is -->
-    <div class="ps-valueprop" data-i18n="ps_valueprop">Any Pakistani brand → delivered to Bangladesh 🇧🇩</div>
     <div class="ps-wrap">
       <aside class="ps-rail">
         <div class="ps-searchblock ps-search-mobile">
-          <input id="psSearchMobile" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSmartSearch(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search 12,000+ products, 80+ brands"/>
+          <input id="psSearchMobile" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSmartSearch(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search 12,000+ products, 80+ Pakistani brands"/>
           <div class="ps-search-hint" id="psSearchHintM"></div>
         </div>
         <div class="ps-fblock">
@@ -951,7 +951,7 @@
             <button type="button" class="ps-clear-inline" onclick="psClearFilters()" data-i18n="ps_clear">Clear</button>
           </span>
           <span class="ps-search-desktop" style="flex-direction:column;align-items:flex-end;min-width:0">
-            <input id="psSearchDesktop" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSmartSearch(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search 12,000+ products, 80+ brands"/>
+            <input id="psSearchDesktop" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSmartSearch(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search 12,000+ products, 80+ Pakistani brands"/>
             <span class="ps-search-hint" id="psSearchHintD"></span>
           </span>
         </div>
@@ -3706,13 +3706,13 @@
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search 150+ Pakistani brands…',
       tab_brands:'Browse brands', tab_products:'Browse products',
-      ps_price:'Price (৳ delivered)', ps_category:'Product Category', ps_brands:'Brands', ps_clear:'Clear filters',
+      ps_price:'Price (৳ delivered)', ps_price_short:'Price ৳', ps_category:'Product Category', ps_brands:'Brands', ps_clear:'Clear', ps_valueprop:'Any Pakistani brand → delivered to Bangladesh 🇧🇩', ps_morebrands:"Can't find it? Browse all 155 brands →",
       ps_allcats:'All categories', ps_loading:'Loading products…', ps_loadfail:'Could not load products — please try again.',
       ps_results:'products', ps_add:'Add', ps_prev:'Prev', ps_next:'Next', ps_page:'Page',
       ps_enlarge:'Enlarge', ps_avail_sizes:'Available sizes', ps_unstitched:'Unstitched · no size needed', ps_mto:'Made to order', ps_d_loading:'Loading more details…', ps_d_open:'Open full page', ps_d_nofetch:'See all photos &amp; details on the brand page →', ps_d_nodesc:'No extra description provided.',
       ps_empty:'No products match these filters — try widening them.',
       ps_partial:'Not every brand &amp; product is listed here yet —', ps_partial_link:'want more? Browse by brands →', ps_word_products:'products', ps_word_brands:'brands',
-      ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products', ps_sort_lh:'৳ Low→High', ps_sort_hl:'৳ High→Low', ps_sale:'Sale', ps_new:'New', ps_lbl_sort:'Sort', ps_lbl_filter:'Filter', ps_search_ph:'Search brands or products…', ps_search_nomatch:'No brand or category matched',
+      ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products', ps_sort_lh:'৳ Low→High', ps_sort_hl:'৳ High→Low', ps_sale:'Sale', ps_new:'New', ps_lbl_sort:'Sort', ps_lbl_filter:'Filter', ps_search_ph:'Search 12,000+ products, 80+ Pakistani brands', ps_search_nomatch:'No brand or category matched',
       bb_store:'Store Types', bb_product:'Product Category', bb_women:'👗 Women', bb_men:'👔 Men', bb_kids:'🧸 Kids', bb_md:'🏬 Multi-Dept', bb_premium:'💎 Premium',
       bb_more:'more', bb_less:'less', bb_all:'All', bb_two_ways:'Two ways to search brands', bb_pick_gender:'Pick Women, Men or Kids above.', bb_pick_cat:'Pick a category above to see its brands.', bb_prod_sub:'🔎 Search 150+ brands to order directly from their page:', bb_loading:'Loading brands…', bb_prod_none:'No catalogued brands here yet.',
       bb_smart_ph:'🔍 Search 150+ brands — e.g. Khaadi, lawn, casual', bb_search_lead:'🔎 Know the brand? Search 150+ Pakistani brands by name:',
@@ -3720,7 +3720,7 @@
       js_soldout_all:'sold out on the brand site', js_soldout_size:'this size is sold out',
       more_tab:'More', more_title:'More Brands', more_sub:'All brands in this category — tap any to start, same as the tabs.', more_back:'Back',
       lbl_addproducts:'Add Products to Your Order',
-      url_label:'📋 Copy a product link from any brand site and paste it below — or use the side 📋 Paste tab:',
+      url_label:'📋 Need only the product webpage link — paste it here, or tap the side 📋 Paste tab.',
       btn_addurl:'+ Add URL', btn_paste:'📋 Paste Link & Auto-Fill', pp_tap:'Tap a product to add it — no copy-paste needed', pp_search:'🔍 Search this brand…', pp_site:'🌐 Open full brand site instead', fab_paste:'Paste link',
       nav_home:'Home', nav_brands:'Brands', nav_cart:'Cart', nav_how:'How To',
       tl_help:'New here? Start with these:', tl_faq:'❓ How it works & our promise', tl_track:'📦 Track an order', tl_weights:'⚖️ Shipping weights', tl_wa:'💬 Chat on WhatsApp',
@@ -3771,13 +3771,13 @@
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
       lbl_browse:'একটি ব্র্যান্ড দেখুন', search_ph:'🔍 ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
       tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন',
-      ps_price:'দাম (৳, ডেলিভারিসহ)', ps_category:'পণ্যের ক্যাটাগরি', ps_brands:'ব্র্যান্ড', ps_clear:'ফিল্টার মুছুন',
+      ps_price:'দাম (৳, ডেলিভারিসহ)', ps_price_short:'দাম ৳', ps_category:'পণ্যের ক্যাটাগরি', ps_brands:'ব্র্যান্ড', ps_clear:'মুছুন', ps_valueprop:'যেকোনো পাকিস্তানি ব্র্যান্ড → বাংলাদেশে ডেলিভারি 🇧🇩', ps_morebrands:'খুঁজে পাচ্ছেন না? সব ১৫৫টি ব্র্যান্ড দেখুন →',
       ps_allcats:'সব ক্যাটাগরি', ps_loading:'পণ্য আসছে…', ps_loadfail:'পণ্য আনা গেল না — আবার চেষ্টা করুন।',
       ps_results:'পণ্য', ps_add:'যোগ করুন', ps_prev:'আগের', ps_next:'পরের', ps_page:'পৃষ্ঠা',
       ps_enlarge:'ছবি বড় করুন', ps_avail_sizes:'স্টকে থাকা সাইজ', ps_unstitched:'আনস্টিচড · সাইজ লাগে না', ps_mto:'অর্ডারে তৈরি হবে', ps_d_loading:'আরও বিবরণ আসছে…', ps_d_open:'পুরো পেজ খুলুন', ps_d_nofetch:'সব ছবি ও বিবরণ ব্র্যান্ডের পেজে দেখুন →', ps_d_nodesc:'বাড়তি কোনো বিবরণ নেই।',
       ps_empty:'এই ফিল্টারে কোনো পণ্য নেই — ফিল্টার একটু কমিয়ে দেখুন।',
       ps_partial:'সব ব্র্যান্ড বা পণ্য এখনো এখানে যোগ হয়নি —', ps_partial_link:'আরও চান? “ব্র্যান্ড দেখুন”-এ যান →', ps_word_products:'পণ্য', ps_word_brands:'ব্র্যান্ড',
-      ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়', ps_sort_lh:'৳ কম→বেশি', ps_sort_hl:'৳ বেশি→কম', ps_sale:'সেল', ps_new:'নতুন', ps_lbl_sort:'সাজান', ps_lbl_filter:'ফিল্টার', ps_search_ph:'ব্র্যান্ড বা পণ্য খুঁজুন…', ps_search_nomatch:'কোনো ব্র্যান্ড বা ক্যাটাগরি মেলেনি',
+      ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়', ps_sort_lh:'৳ কম→বেশি', ps_sort_hl:'৳ বেশি→কম', ps_sale:'সেল', ps_new:'নতুন', ps_lbl_sort:'সাজান', ps_lbl_filter:'ফিল্টার', ps_search_ph:'খুঁজুন: ১২,০০০+ পণ্য, ৮০+ পাকিস্তানি ব্র্যান্ড', ps_search_nomatch:'কোনো ব্র্যান্ড বা ক্যাটাগরি মেলেনি',
       bb_store:'স্টোরের ধরন', bb_product:'পণ্যের ক্যাটাগরি', bb_women:'👗 মেয়েদের', bb_men:'👔 ছেলেদের', bb_kids:'🧸 বাচ্চাদের', bb_md:'🏬 মাল্টি-ডিপ', bb_premium:'💎 প্রিমিয়াম',
       bb_more:'আরও', bb_less:'কম', bb_all:'সব', bb_two_ways:'ব্র্যান্ড খোঁজার দুটি উপায়', bb_pick_gender:'উপরে মেয়েদের, ছেলেদের বা বাচ্চাদের বেছে নিন।', bb_pick_cat:'ব্র্যান্ড দেখতে উপরের একটি ক্যাটাগরিতে ট্যাপ করুন।', bb_prod_sub:'🔎 সরাসরি অর্ডার করতে ১৫০+ ব্র্যান্ড খুঁজুন:', bb_loading:'ব্র্যান্ড আসছে…', bb_prod_none:'এখানে এখনো কোনো ব্র্যান্ড নেই।',
       bb_smart_ph:'🔍 ১৫০+ ব্র্যান্ড খুঁজুন — যেমন Khaadi, lawn, casual', bb_search_lead:'🔎 ব্র্যান্ড জানা আছে? নাম দিয়ে ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন:',
@@ -3785,7 +3785,7 @@
       js_soldout_all:'ব্র্যান্ডের সাইটে স্টকে নেই', js_soldout_size:'এই সাইজটি স্টকে নেই',
       more_tab:'আরও', more_title:'আরও ব্র্যান্ড', more_sub:'এই ক্যাটাগরির সব ব্র্যান্ড — উপরের ট্যাবের মতোই, শুরু করতে যেকোনোটিতে ট্যাপ করুন।', more_back:'পেছনে',
       lbl_addproducts:'অর্ডারে পণ্য যোগ করুন',
-      url_label:'📋 যেকোনো ব্র্যান্ড সাইট থেকে পণ্যের লিংক কপি করে নিচে পেস্ট করুন — বা পাশের 📋 Paste ট্যাবটি ব্যবহার করুন:',
+      url_label:'📋 শুধু পণ্যের ওয়েবপেজ লিংক দরকার — এখানে পেস্ট করুন, বা কপি করে পাশের 📋 Paste ট্যাবে চাপুন।',
       btn_addurl:'+ লিংক যোগ করুন',
       btn_paste:'📋 লিংক পেস্ট করে অটো-ফিল', pp_tap:'পণ্যে ট্যাপ করেই যোগ করুন — কপি-পেস্ট লাগবে না', pp_search:'🔍 এই ব্র্যান্ডে খুঁজুন…', pp_site:'🌐 বদলে পুরো ব্র্যান্ড সাইট খুলুন', fab_paste:'লিংক পেস্ট',
       nav_home:'হোম', nav_brands:'ব্র্যান্ড', nav_cart:'কার্ট', nav_how:'গাইড',
@@ -6290,7 +6290,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-19d';
+  const PSB_BUILD = '2026-06-19f';
   console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
