@@ -12,7 +12,7 @@
  *                   the brand (brand order ref + which Gmail you used).
  *
  * ───────────────────────── HOW TO RE-DEPLOY (after editing) ──────────────────
- *  1. Open your tracking Google Sheet (PakStyle_BD_Order_Tracker)
+ *  1. Open your tracking Google Sheet (PakPoshak Order Tracker)
  *  2. Extensions → Apps Script
  *  3. Select ALL, delete, PASTE this whole file, 💾 Save
  *  4. Deploy → Manage deployments → ✏️ (edit) the existing Web app
@@ -32,7 +32,7 @@
 // ── CONFIG ──────────────────────────────────────────────────────────────
 var OWNER_EMAIL = 'pakposhakbd@gmail.com';   // where order emails go
 var SHEET_TAB   = 'Order Tracker';               // the tab with your columns
-var SLIP_FOLDER = 'PakStyle Payment Slips';      // Drive folder for receipts
+var SLIP_FOLDER = 'PakPoshak Payment Slips';      // Drive folder for receipts
 
 // Canonical column order. Position in this list = column (1 = A, 2 = B, …).
 var COLS = ['order_id','buyer_name','whatsapp','status','status_date','notes',
