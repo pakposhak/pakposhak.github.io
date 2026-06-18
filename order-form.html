@@ -131,6 +131,20 @@
       border:none; border-radius:12px; padding:14px; font-size:1rem; cursor:pointer;
       flex-shrink:0; margin-top:10px;
     }
+    /* ── iPhone visual install guide — auto-rolling Safari/Chrome carousel ── */
+    #iosGuide{display:none; flex:1 1 auto; overflow-y:auto; -webkit-overflow-scrolling:touch; min-height:0; text-align:center}
+    .iosg-tabs{display:flex; gap:8px; justify-content:center; margin:2px 0 14px}
+    .iosg-tab{flex:1; max-width:140px; padding:9px; border-radius:10px; border:1.5px solid var(--gold-bdr);
+      background:transparent; color:var(--txt-sec); font-weight:700; font-size:0.9rem; font-family:inherit; cursor:pointer}
+    .iosg-tab.on{background:var(--gold); color:#1a1206; border-color:var(--gold)}
+    .iosg-slide{display:none}
+    .iosg-slide svg{width:170px; height:auto; filter:drop-shadow(0 8px 22px rgba(0,0,0,0.22))}
+    .iosg-cap{margin-top:13px; font-size:1rem; font-weight:700; color:var(--txt)}
+    .iosg-dots{display:flex; gap:8px; justify-content:center; margin-top:13px}
+    .iosg-dot{width:9px; height:9px; border-radius:50%; background:var(--gold-bdr); cursor:pointer; transition:transform .15s}
+    .iosg-dot.on{background:var(--gold); transform:scale(1.3)}
+    @keyframes iosgPulse{0%,100%{opacity:1} 50%{opacity:.28}}
+    .iosg-ring{animation:iosgPulse 1.05s ease-in-out infinite}
 
     /* ── Sticky header ── */
     #appHeader{position:sticky;top:0;z-index:200;background:var(--surface);border-bottom:1px solid var(--bdr-med)}
@@ -1443,6 +1457,178 @@
   <div class="ios-card">
     <div class="ios-title" id="installHelpTitle">Install PakPoshak</div>
     <div id="installHelpBody"></div>
+
+    <!-- iPhone visual install guide: auto-rolling Safari/Chrome step screens -->
+    <div id="iosGuide" style="display:none">
+      <p style="color:var(--txt-sec); margin-bottom:12px; font-size:0.92rem">iPhone can't auto-install — but it's just <b>3 taps</b>. Watch 👇 (<b>Safari</b> is easiest)</p>
+      <div class="iosg-tabs">
+        <button class="iosg-tab on" id="iosgTabSafari" onclick="psbIosTrack('safari')">🧭 Safari</button>
+        <button class="iosg-tab" id="iosgTabChrome" onclick="psbIosTrack('chrome')">🌐 Chrome</button>
+      </div>
+      <div class="iosg-stage">
+
+        <!-- SAFARI 1 — tap Share -->
+        <div class="iosg-slide" data-track="safari" data-i="0">
+          <svg viewBox="0 0 200 412" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="3" width="194" height="406" rx="32" fill="#fff" stroke="#cbbf9f" stroke-width="3"/>
+            <rect x="11" y="12" width="178" height="388" rx="24" fill="#fbfaf6"/>
+            <rect x="79" y="18" width="42" height="10" rx="5" fill="#11161c"/>
+            <rect x="20" y="40" width="160" height="34" rx="8" fill="#F3ECD9"/>
+            <circle cx="34" cy="57" r="8" fill="#0B261C"/>
+            <rect x="48" y="50" width="64" height="7" rx="3.5" fill="#0B261C"/>
+            <rect x="48" y="61" width="46" height="5" rx="2.5" fill="#B8893B"/>
+            <rect x="20" y="84" width="76" height="58" rx="8" fill="#efe9da"/><rect x="104" y="84" width="76" height="58" rx="8" fill="#efe9da"/>
+            <rect x="20" y="150" width="76" height="58" rx="8" fill="#efe9da"/><rect x="104" y="150" width="76" height="58" rx="8" fill="#efe9da"/>
+            <rect x="34" y="336" width="132" height="22" rx="11" fill="#eceaf0"/>
+            <text x="100" y="351" text-anchor="middle" font-size="9" fill="#555" font-family="sans-serif">🔒 pakposhak.github.io</text>
+            <line x1="11" y1="368" x2="189" y2="368" stroke="#e2ddcf"/>
+            <text x="32" y="390" text-anchor="middle" font-size="17" fill="#9aa0a6">‹</text>
+            <text x="60" y="390" text-anchor="middle" font-size="17" fill="#d3d7dc">›</text>
+            <circle class="iosg-ring" cx="100" cy="383" r="17" fill="none" stroke="#B8893B" stroke-width="2.5"/>
+            <rect x="95" y="382" width="10" height="11" rx="2" fill="none" stroke="#0B261C" stroke-width="1.6"/>
+            <line x1="100" y1="373" x2="100" y2="388" stroke="#0B261C" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M96.5 377 l3.5 -3.5 l3.5 3.5" fill="none" stroke="#0B261C" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <text x="140" y="390" text-anchor="middle" font-size="15" fill="#9aa0a6">▢</text>
+            <text x="168" y="390" text-anchor="middle" font-size="13" fill="#9aa0a6">⧉</text>
+          </svg>
+          <div class="iosg-cap">1. Tap the <b>Share</b> button</div>
+        </div>
+
+        <!-- SAFARI 2 / CHROME 2 share sheet — Add to Home Screen -->
+        <div class="iosg-slide" data-track="safari" data-i="1">
+          <svg viewBox="0 0 200 412" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="3" width="194" height="406" rx="32" fill="#fff" stroke="#cbbf9f" stroke-width="3"/>
+            <rect x="11" y="12" width="178" height="388" rx="24" fill="#fbfaf6"/>
+            <rect x="79" y="18" width="42" height="10" rx="5" fill="#11161c"/>
+            <rect x="11" y="30" width="178" height="96" fill="#e9e4d6" opacity="0.55"/>
+            <rect x="14" y="120" width="172" height="280" rx="20" fill="#ffffff" stroke="#e7e2d4"/>
+            <rect x="93" y="130" width="14" height="4" rx="2" fill="#cdc9bd"/>
+            <rect x="26" y="146" width="30" height="30" rx="7" fill="#0B261C"/>
+            <text x="41" y="166" text-anchor="middle" font-size="9" fill="#E0C27E" font-family="sans-serif">PP</text>
+            <rect x="64" y="150" width="70" height="7" rx="3.5" fill="#333"/>
+            <rect x="64" y="162" width="96" height="5" rx="2.5" fill="#9aa0a6"/>
+            <line x1="26" y1="190" x2="174" y2="190" stroke="#eee"/>
+            <text x="30" y="212" font-size="10" fill="#333" font-family="sans-serif">Copy</text>
+            <text x="168" y="213" text-anchor="end" font-size="12" fill="#9aa0a6">⧉</text>
+            <line x1="26" y1="226" x2="174" y2="226" stroke="#f1f1f1"/>
+            <text x="30" y="247" font-size="10" fill="#333" font-family="sans-serif">Add Bookmark</text>
+            <text x="168" y="248" text-anchor="end" font-size="12" fill="#9aa0a6">★</text>
+            <rect x="20" y="260" width="160" height="36" rx="10" fill="#FBF3DF" stroke="#B8893B" stroke-width="2" class="iosg-ring"/>
+            <text x="30" y="282" font-size="11" font-weight="700" fill="#0B261C" font-family="sans-serif">Add to Home Screen</text>
+            <rect x="158" y="269" width="16" height="16" rx="3" fill="none" stroke="#0B261C" stroke-width="1.5"/>
+            <line x1="166" y1="272.5" x2="166" y2="281.5" stroke="#0B261C" stroke-width="1.5"/>
+            <line x1="161.5" y1="277" x2="170.5" y2="277" stroke="#0B261C" stroke-width="1.5"/>
+            <text x="30" y="320" font-size="10" fill="#333" font-family="sans-serif">Find on Page</text>
+            <text x="168" y="321" text-anchor="end" font-size="11" fill="#9aa0a6">🔍</text>
+          </svg>
+          <div class="iosg-cap">2. Tap <b>“Add to Home Screen”</b></div>
+        </div>
+
+        <!-- SAFARI 3 / CHROME 3 — Add -->
+        <div class="iosg-slide" data-track="safari" data-i="2">
+          <svg viewBox="0 0 200 412" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="3" width="194" height="406" rx="32" fill="#fff" stroke="#cbbf9f" stroke-width="3"/>
+            <rect x="11" y="12" width="178" height="388" rx="24" fill="#fbfaf6"/>
+            <rect x="79" y="18" width="42" height="10" rx="5" fill="#11161c"/>
+            <rect x="11" y="34" width="178" height="44" fill="#ffffff"/>
+            <line x1="11" y1="78" x2="189" y2="78" stroke="#eee"/>
+            <text x="28" y="61" font-size="11" fill="#9aa0a6" font-family="sans-serif">Cancel</text>
+            <text x="98" y="52" text-anchor="middle" font-size="9.5" font-weight="700" fill="#333" font-family="sans-serif">Add to Home Screen</text>
+            <rect x="146" y="46" width="38" height="24" rx="12" fill="#0B261C" class="iosg-ring"/>
+            <text x="165" y="62" text-anchor="middle" font-size="11" font-weight="700" fill="#E0C27E" font-family="sans-serif">Add</text>
+            <rect x="28" y="104" width="50" height="50" rx="12" fill="#0B261C"/>
+            <text x="53" y="135" text-anchor="middle" font-size="14" fill="#E0C27E" font-family="sans-serif">PP</text>
+            <rect x="90" y="108" width="92" height="20" rx="5" fill="#fff" stroke="#ddd"/>
+            <text x="98" y="122" font-size="10" fill="#333" font-family="sans-serif">PakPoshak</text>
+            <rect x="90" y="132" width="92" height="16" rx="4" fill="#f4f2ec"/>
+            <text x="98" y="143.5" font-size="7.5" fill="#9aa0a6" font-family="sans-serif">pakposhak.github.io</text>
+          </svg>
+          <div class="iosg-cap">3. Tap <b>“Add”</b> — done! ✅</div>
+        </div>
+
+        <!-- CHROME 1 — ⋮ menu → Share -->
+        <div class="iosg-slide" data-track="chrome" data-i="0">
+          <svg viewBox="0 0 200 412" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="3" width="194" height="406" rx="32" fill="#fff" stroke="#cbbf9f" stroke-width="3"/>
+            <rect x="11" y="12" width="178" height="388" rx="24" fill="#fbfaf6"/>
+            <rect x="79" y="18" width="42" height="10" rx="5" fill="#11161c"/>
+            <rect x="14" y="36" width="172" height="26" rx="13" fill="#eceaf0"/>
+            <text x="26" y="53" font-size="9" fill="#555" font-family="sans-serif">🔒 pakposhak.github.io</text>
+            <circle class="iosg-ring" cx="176" cy="49" r="11" fill="none" stroke="#B8893B" stroke-width="2"/>
+            <text x="176" y="54" text-anchor="middle" font-size="14" font-weight="700" fill="#0B261C">⋮</text>
+            <rect x="76" y="66" width="110" height="206" rx="12" fill="#ffffff" stroke="#e3e0d6"/>
+            <text x="88" y="88" font-size="10" fill="#333" font-family="sans-serif">New Tab</text>
+            <line x1="84" y1="98" x2="178" y2="98" stroke="#f1f1f1"/>
+            <text x="88" y="116" font-size="10" fill="#333" font-family="sans-serif">Bookmarks</text>
+            <line x1="84" y1="126" x2="178" y2="126" stroke="#f1f1f1"/>
+            <text x="88" y="144" font-size="10" fill="#333" font-family="sans-serif">History</text>
+            <rect x="80" y="156" width="102" height="32" rx="8" fill="#FBF3DF" stroke="#B8893B" stroke-width="2" class="iosg-ring"/>
+            <text x="88" y="176" font-size="11" font-weight="700" fill="#0B261C" font-family="sans-serif">Share…</text>
+            <rect x="160" y="164" width="13" height="14" rx="2" fill="none" stroke="#0B261C" stroke-width="1.4"/>
+            <line x1="166.5" y1="167" x2="166.5" y2="175" stroke="#0B261C" stroke-width="1.4"/>
+            <path d="M163.5 170 l3 -3 l3 3" fill="none" stroke="#0B261C" stroke-width="1.4" stroke-linejoin="round"/>
+            <text x="88" y="208" font-size="10" fill="#333" font-family="sans-serif">Find in Page</text>
+            <line x1="84" y1="218" x2="178" y2="218" stroke="#f1f1f1"/>
+            <text x="88" y="236" font-size="10" fill="#333" font-family="sans-serif">Settings</text>
+          </svg>
+          <div class="iosg-cap">1. Tap <b>⋮</b> (top-right), then <b>“Share…”</b></div>
+        </div>
+
+        <!-- CHROME 2 — share sheet (Add to Home Screen) -->
+        <div class="iosg-slide" data-track="chrome" data-i="1">
+          <svg viewBox="0 0 200 412" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="3" width="194" height="406" rx="32" fill="#fff" stroke="#cbbf9f" stroke-width="3"/>
+            <rect x="11" y="12" width="178" height="388" rx="24" fill="#fbfaf6"/>
+            <rect x="79" y="18" width="42" height="10" rx="5" fill="#11161c"/>
+            <rect x="11" y="30" width="178" height="96" fill="#e9e4d6" opacity="0.55"/>
+            <rect x="14" y="120" width="172" height="280" rx="20" fill="#ffffff" stroke="#e7e2d4"/>
+            <rect x="93" y="130" width="14" height="4" rx="2" fill="#cdc9bd"/>
+            <rect x="26" y="146" width="30" height="30" rx="7" fill="#0B261C"/>
+            <text x="41" y="166" text-anchor="middle" font-size="9" fill="#E0C27E" font-family="sans-serif">PP</text>
+            <rect x="64" y="150" width="70" height="7" rx="3.5" fill="#333"/>
+            <rect x="64" y="162" width="96" height="5" rx="2.5" fill="#9aa0a6"/>
+            <line x1="26" y1="190" x2="174" y2="190" stroke="#eee"/>
+            <text x="30" y="212" font-size="10" fill="#333" font-family="sans-serif">Copy</text>
+            <text x="168" y="213" text-anchor="end" font-size="12" fill="#9aa0a6">⧉</text>
+            <line x1="26" y1="226" x2="174" y2="226" stroke="#f1f1f1"/>
+            <text x="30" y="247" font-size="10" fill="#333" font-family="sans-serif">Add Bookmark</text>
+            <text x="168" y="248" text-anchor="end" font-size="12" fill="#9aa0a6">★</text>
+            <rect x="20" y="260" width="160" height="36" rx="10" fill="#FBF3DF" stroke="#B8893B" stroke-width="2" class="iosg-ring"/>
+            <text x="30" y="282" font-size="11" font-weight="700" fill="#0B261C" font-family="sans-serif">Add to Home Screen</text>
+            <rect x="158" y="269" width="16" height="16" rx="3" fill="none" stroke="#0B261C" stroke-width="1.5"/>
+            <line x1="166" y1="272.5" x2="166" y2="281.5" stroke="#0B261C" stroke-width="1.5"/>
+            <line x1="161.5" y1="277" x2="170.5" y2="277" stroke="#0B261C" stroke-width="1.5"/>
+            <text x="30" y="320" font-size="10" fill="#333" font-family="sans-serif">Find on Page</text>
+            <text x="168" y="321" text-anchor="end" font-size="11" fill="#9aa0a6">🔍</text>
+          </svg>
+          <div class="iosg-cap">2. Tap <b>“Add to Home Screen”</b></div>
+        </div>
+
+        <!-- CHROME 3 — Add -->
+        <div class="iosg-slide" data-track="chrome" data-i="2">
+          <svg viewBox="0 0 200 412" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="3" width="194" height="406" rx="32" fill="#fff" stroke="#cbbf9f" stroke-width="3"/>
+            <rect x="11" y="12" width="178" height="388" rx="24" fill="#fbfaf6"/>
+            <rect x="79" y="18" width="42" height="10" rx="5" fill="#11161c"/>
+            <rect x="11" y="34" width="178" height="44" fill="#ffffff"/>
+            <line x1="11" y1="78" x2="189" y2="78" stroke="#eee"/>
+            <text x="28" y="61" font-size="11" fill="#9aa0a6" font-family="sans-serif">Cancel</text>
+            <text x="98" y="52" text-anchor="middle" font-size="9.5" font-weight="700" fill="#333" font-family="sans-serif">Add to Home Screen</text>
+            <rect x="146" y="46" width="38" height="24" rx="12" fill="#0B261C" class="iosg-ring"/>
+            <text x="165" y="62" text-anchor="middle" font-size="11" font-weight="700" fill="#E0C27E" font-family="sans-serif">Add</text>
+            <rect x="28" y="104" width="50" height="50" rx="12" fill="#0B261C"/>
+            <text x="53" y="135" text-anchor="middle" font-size="14" fill="#E0C27E" font-family="sans-serif">PP</text>
+            <rect x="90" y="108" width="92" height="20" rx="5" fill="#fff" stroke="#ddd"/>
+            <text x="98" y="122" font-size="10" fill="#333" font-family="sans-serif">PakPoshak</text>
+            <rect x="90" y="132" width="92" height="16" rx="4" fill="#f4f2ec"/>
+            <text x="98" y="143.5" font-size="7.5" fill="#9aa0a6" font-family="sans-serif">pakposhak.github.io</text>
+          </svg>
+          <div class="iosg-cap">3. Tap <b>“Add”</b> — done! ✅</div>
+        </div>
+
+      </div>
+      <div class="iosg-dots" id="iosgDots"></div>
+    </div>
     <button class="ios-close" onclick="psbCloseIos()">Got it</button>
   </div>
 </div>
@@ -6029,7 +6215,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-19a';
+  const PSB_BUILD = '2026-06-19b';
   console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
@@ -6100,26 +6286,50 @@
     var isMobile = /android|iphone|ipad|ipod/i.test(navigator.userAgent);
     if (isMobile) pill.style.display = 'flex';
 
+    // ── iPhone visual guide carousel (auto-rolls; tabs switch Safari/Chrome) ──
+    var _iosTrack = 'safari', _iosIdx = 0, _iosTimer = null;
+    function iosgRender() {
+      var slides = document.querySelectorAll('#iosGuide .iosg-slide');
+      var n = 0;
+      slides.forEach(function (s) { if (s.getAttribute('data-track') === _iosTrack) n++; });
+      if (_iosIdx >= n) _iosIdx = 0;
+      if (_iosIdx < 0) _iosIdx = n - 1;
+      slides.forEach(function (s) {
+        var show = s.getAttribute('data-track') === _iosTrack && +s.getAttribute('data-i') === _iosIdx;
+        s.style.display = show ? 'block' : 'none';
+      });
+      var ts = document.getElementById('iosgTabSafari'), tc = document.getElementById('iosgTabChrome');
+      if (ts) ts.classList.toggle('on', _iosTrack === 'safari');
+      if (tc) tc.classList.toggle('on', _iosTrack === 'chrome');
+      var dots = document.getElementById('iosgDots');
+      if (dots) { var h = ''; for (var i = 0; i < n; i++) h += '<span class="iosg-dot' + (i === _iosIdx ? ' on' : '') + '" onclick="psbIosGo(' + i + ')"></span>'; dots.innerHTML = h; }
+    }
+    function iosgRestart() { if (_iosTimer) clearInterval(_iosTimer); _iosTimer = setInterval(function () { _iosIdx++; iosgRender(); }, 2600); }
+    function iosgStart() { _iosIdx = 0; iosgRender(); iosgRestart(); }
+    function iosgStop() { if (_iosTimer) { clearInterval(_iosTimer); _iosTimer = null; } }
+    window.psbIosTrack = function (t) { _iosTrack = t; _iosIdx = 0; iosgRender(); iosgRestart(); };
+    window.psbIosGo = function (i) { _iosIdx = i; iosgRender(); iosgRestart(); };
+
     function showInstallHelp() {
-      var title = 'Install PakPoshak', body;
+      var guide = document.getElementById('iosGuide');
+      var bodyEl = document.getElementById('installHelpBody');
       if (isIOS) {
-        body = '<p>Installs PakPoshak as an app on your iPhone — its own icon, opens full-screen:</p>'
-          + '<p style="margin:6px 0 2px;font-weight:600">In Safari:</p>'
-          + '<ol><li>Tap the <b>Share</b> button at the bottom of Safari</li>'
-          + '<li>Scroll down and tap <b>“Add to Home Screen”</b></li>'
-          + '<li>Tap <b>Add</b></li></ol>'
-          + '<p style="margin:6px 0 2px;font-weight:600">In Chrome (iPhone):</p>'
-          + '<ol><li>Tap the <b>Share</b> icon (or <b>⋯</b> menu)</li>'
-          + '<li>Tap <b>“Add to Home Screen”</b>, then <b>Add</b></li></ol>';
-      } else {
-        body = '<p>Installs PakPoshak as an app, with its own icon:</p>'
-          + '<ol><li>Tap <b>Install</b> on the prompt that appears — or open the <b>⋮ menu</b> (top-right in Chrome)</li>'
-          + '<li>Tap <b>“Install app”</b> (or <b>“Add to Home screen”</b>)</li>'
-          + '<li>Tap <b>Install</b></li></ol>'
-          + '<p style="font-size:0.84rem;color:var(--txt);background:var(--gold-dim);border:1px solid var(--gold-bdr);border-radius:8px;padding:8px 10px;margin-top:4px">💡 If you added an old PakiPoshak icon before, delete it first — then install again from here.</p>';
+        // Visual, auto-rolling step screens instead of a wall of text.
+        document.getElementById('installHelpTitle').textContent = 'Add PakPoshak to your iPhone';
+        if (bodyEl) { bodyEl.innerHTML = ''; bodyEl.style.display = 'none'; }
+        if (guide) { guide.style.display = 'block'; _iosTrack = 'safari'; iosgStart(); }
+        document.getElementById('iosInstallSheet').style.display = 'flex';
+        return;
       }
-      document.getElementById('installHelpTitle').textContent = title;
-      document.getElementById('installHelpBody').innerHTML = body;
+      if (guide) guide.style.display = 'none';
+      if (bodyEl) bodyEl.style.display = '';
+      document.getElementById('installHelpTitle').textContent = 'Install PakPoshak';
+      document.getElementById('installHelpBody').innerHTML =
+          '<p>Installs PakPoshak as an app, with its own icon:</p>'
+        + '<ol><li>Tap <b>Install</b> on the prompt that appears — or open the <b>⋮ menu</b> (top-right in Chrome)</li>'
+        + '<li>Tap <b>“Install app”</b> (or <b>“Add to Home screen”</b>)</li>'
+        + '<li>Tap <b>Install</b></li></ol>'
+        + '<p style="font-size:0.84rem;color:var(--txt);background:var(--gold-dim);border:1px solid var(--gold-bdr);border-radius:8px;padding:8px 10px;margin-top:4px">💡 If you added an old PakiPoshak icon before, delete it first — then install again from here.</p>';
       document.getElementById('iosInstallSheet').style.display = 'flex';
     }
 
@@ -6135,6 +6345,7 @@
       }                                      // always show manual steps, never a
     };                                       // dead button.
     window.psbCloseIos = function () {
+      iosgStop();
       var sheet = document.getElementById('iosInstallSheet');
       if (sheet) sheet.style.display = 'none';
     };
