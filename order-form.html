@@ -189,6 +189,13 @@
     .bnav-btn.active,.bnav-btn:hover{color:var(--gold)}
     .bnav-badge{position:absolute;top:4px;right:calc(50% - 18px);background:#c0392b;
       color:#fff;border-radius:10px;padding:1px 5px;font-size:0.6rem;font-weight:700;min-width:16px;text-align:center}
+    /* 1·2·3·4 order-progress indicator that lives in the centre of the bottom bar */
+    .bnav-steps{flex:1.5;display:flex;align-items:center;justify-content:center;gap:5px}
+    .bns{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--gold-bdr);color:var(--txt-muted);
+      font-size:0.74rem;font-weight:700;display:flex;align-items:center;justify-content:center;background:var(--surface)}
+    .bns.active{background:var(--gold);color:#0A1628;border-color:var(--gold)}
+    .bns.done{background:var(--gold-dim);color:var(--gold);border-color:var(--gold-bdr)}
+    .bns-sep{color:var(--txt-muted);font-size:0.72rem;opacity:0.55}
 
     /* ── Brand launch bottom sheet ── */
     #brandSheet{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.7)}
@@ -397,6 +404,8 @@
       .hiw-desktop{display:none}
       .hiw-mobile{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;min-width:0}
       .hiw-mobile .hiw-video,.hiw-mobile .hiw-guide{margin-left:0}
+      /* The 1·2·3·4 step indicator moves into the fixed bottom bar on mobile */
+      .steps-bar{display:none}
     }
     .show-more-btn{font-size:0.75rem;color:var(--gold);background:none;border:none;cursor:pointer;font-weight:600;padding:4px 0;text-decoration:underline}
 
@@ -698,6 +707,23 @@
     .ps-salebtn.on{background:#c0392b;color:#fff;border-color:#c0392b}
     [data-theme="dark"] .ps-salebtn{color:#e8897c;border-color:rgba(232,137,124,0.5)}
     [data-theme="dark"] .ps-salebtn.on{background:#c0392b;color:#fff;border-color:#c0392b}
+    /* View 4: value-prop banner — tells a first-time visitor what the site is */
+    .ps-valueprop{text-align:center;font-size:0.84rem;font-weight:700;color:var(--gold);background:var(--gold-dim);border:1px solid var(--gold-bdr);border-radius:9px;padding:9px 12px;margin-bottom:13px;line-height:1.4}
+    /* Count-row tools: compact Price popover + Clear, sharing the results bar */
+    .ps-resbar-tools{display:flex;align-items:center;gap:8px;flex-shrink:0}
+    .ps-pricedd{position:relative}
+    .ps-pricebtn{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border:1.5px solid var(--gold-bdr);border-radius:13px;background:var(--gold-dim);color:var(--gold);font-size:0.72rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+    .ps-pricebtn.on{background:var(--gold);color:#12122a;border-color:var(--gold)}
+    .ps-pricecar{font-size:0.6rem;opacity:0.8}
+    .ps-price-n{font-weight:800}
+    .ps-pricepop{display:none;position:absolute;right:0;top:calc(100% + 6px);z-index:60;background:var(--surface);border:1.5px solid var(--bdr-med);border-radius:10px;padding:10px;box-shadow:0 10px 28px rgba(0,0,0,0.22);width:232px}
+    .ps-pricepop.open{display:block}
+    .ps-clear-inline{padding:5px 11px;border:1.5px solid var(--bdr-med);border-radius:13px;background:none;color:var(--txt-muted);font-weight:700;font-size:0.72rem;cursor:pointer;font-family:inherit;white-space:nowrap}
+    .ps-clear-inline:hover{color:var(--gold);border-color:var(--gold-bdr)}
+    /* Partial-catalog escape hatch — always route to the full 155-brand directory */
+    .ps-morebrands{text-align:center;margin-top:18px;padding-top:14px;border-top:1px solid var(--bdr)}
+    .ps-morebrands a{color:var(--gold);font-weight:700;font-size:0.86rem;text-decoration:none}
+    .ps-morebrands a:hover{text-decoration:underline}
     .ps-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .ps-card{border:1px solid var(--bdr-med);border-radius:11px;overflow:hidden;background:var(--surface);display:flex;flex-direction:column}
     .ps-img{aspect-ratio:3/4;background:var(--raised);position:relative;overflow:hidden;cursor:pointer}
@@ -896,36 +922,36 @@
 
   <!-- BROWSE PRODUCTS — multi-brand search over catalog.json (price / category / brand filters) -->
   <div id="tabProducts">
-    <div class="ps-note">
-      <span id="psNoteCounts"><b>12,000+</b> products · <b>80+</b> brands</span> —
-      <a href="#" onclick="switchBrowse('brands');return false" data-i18n="ps_partial_link">want more? Browse by brands →</a>
-    </div>
+    <!-- Value-prop so a first-time visitor instantly gets what the site is -->
+    <div class="ps-valueprop" data-i18n="ps_valueprop">Any Pakistani brand → delivered to Bangladesh 🇧🇩</div>
     <div class="ps-wrap">
       <aside class="ps-rail">
         <div class="ps-searchblock ps-search-mobile">
-          <input id="psSearchMobile" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSmartSearch(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search brands or products…"/>
+          <input id="psSearchMobile" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSmartSearch(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search 12,000+ products, 80+ brands"/>
           <div class="ps-search-hint" id="psSearchHintM"></div>
         </div>
-        <div class="ps-rail-head" data-i18n="ps_rail_head">3 ways to search products</div>
         <div class="ps-fblock">
-          <div class="ps-flabel"><span class="ps-fnum">1</span> <span data-i18n="ps_price">Price (৳ delivered)</span></div>
-          <div class="ps-price" id="psPrice"></div>
-        </div>
-        <div class="ps-fblock">
-          <div class="ps-flabel"><span class="ps-fnum">2</span> <span data-i18n="ps_category">Product Category</span></div>
+          <div class="ps-flabel"><span data-i18n="ps_category">Product Category</span></div>
           <div class="ps-cats" id="psCat"></div>
         </div>
         <div class="ps-fblock">
-          <div class="ps-flabel"><span class="ps-fnum">3</span> <span data-i18n="ps_brands">Brands</span> <span id="psBrandCount" style="color:var(--txt-muted);font-weight:600"></span></div>
+          <div class="ps-flabel"><span data-i18n="ps_brands">Brands</span> <span id="psBrandCount" style="color:var(--txt-muted);font-weight:600"></span></div>
           <div class="ps-brands" id="psBrands"></div>
         </div>
-        <button type="button" class="ps-clear" onclick="psClearFilters()" data-i18n="ps_clear">Clear filters</button>
       </aside>
       <section class="ps-results">
+        <!-- Count + compact Price popover + Clear all share one row, just above the grid -->
         <div class="ps-resbar">
           <span id="psCount"></span>
+          <span class="ps-resbar-tools">
+            <div class="ps-pricedd" id="psPriceDd">
+              <button type="button" class="ps-pricebtn" id="psPriceBtn" onclick="psTogglePricePop()" aria-haspopup="true" aria-expanded="false"><span data-i18n="ps_price_short">Price ৳</span> <span class="ps-price-n" id="psPriceN"></span><span class="ps-pricecar">▾</span></button>
+              <div class="ps-pricepop" id="psPricePop"><div class="ps-price" id="psPrice"></div></div>
+            </div>
+            <button type="button" class="ps-clear-inline" onclick="psClearFilters()" data-i18n="ps_clear">Clear</button>
+          </span>
           <span class="ps-search-desktop" style="flex-direction:column;align-items:flex-end;min-width:0">
-            <input id="psSearchDesktop" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSmartSearch(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search brands or products…"/>
+            <input id="psSearchDesktop" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSmartSearch(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search 12,000+ products, 80+ brands"/>
             <span class="ps-search-hint" id="psSearchHintD"></span>
           </span>
         </div>
@@ -933,6 +959,8 @@
         <div class="ps-grid" id="psGrid"></div>
         <div class="ps-empty" id="psEmpty" style="display:none" data-i18n="ps_empty">No products match these filters — try widening them.</div>
         <div class="ps-pager" id="psPager"></div>
+        <!-- Catalog is PARTIAL — always offer the full brand directory (paste-link flow) -->
+        <div class="ps-morebrands"><a href="#" onclick="switchBrowse('brands');return false" data-i18n="ps_morebrands">Can't find it? Browse all 155 brands →</a></div>
       </section>
     </div>
   </div>
@@ -1429,21 +1457,21 @@
   <span class="pf-ic">📋</span><span class="pf-tx" data-i18n="fab_paste">Paste link</span>
 </button>
 
-<!-- BOTTOM NAVIGATION BAR -->
+<!-- BOTTOM NAVIGATION BAR — Home · 1·2·3·4 step indicator · Cart (mobile only; desktop uses the top steps-bar) -->
 <nav class="bottom-nav" id="bottomNav">
   <button class="bnav-btn active" id="bnav-home" onclick="bottomNavGo('home')">
     <span class="icon">🏠</span><span data-i18n="nav_home">Home</span>
   </button>
-  <button class="bnav-btn" id="bnav-brands" onclick="bottomNavGo('brands')">
-    <span class="icon">🏪</span><span data-i18n="nav_brands">Brands</span>
-  </button>
+  <div class="bnav-steps" id="bnavSteps" role="img" aria-label="Order progress">
+    <span class="bns active" id="bns_1">1</span><span class="bns-sep">›</span>
+    <span class="bns" id="bns_2">2</span><span class="bns-sep">›</span>
+    <span class="bns" id="bns_3">3</span><span class="bns-sep">›</span>
+    <span class="bns" id="bns_4">4</span>
+  </div>
   <button class="bnav-btn" id="bnav-cart" onclick="bottomNavGo('cart')">
     <span class="icon">🛒</span>
     <span class="bnav-badge" id="bnavBadge" style="display:none">0</span>
     <span data-i18n="nav_cart">Cart</span>
-  </button>
-  <button class="bnav-btn" id="bnav-how" onclick="bottomNavGo('how')">
-    <span class="icon">ℹ️</span><span data-i18n="nav_how">How To</span>
   </button>
 </nav>
 
@@ -4397,16 +4425,31 @@
   // Mobile BACK button / gesture: beforeunload is unreliable for it, so trap it with
   // the History API — keep one spare history entry; when Back pops it, confirm if
   // there's unsaved work and re-arm the trap if the buyer chooses to stay.
+  // Back button while a popup/overlay is open should CLOSE it (not pop the exit
+  // confirm — that left buyers stuck behind the enlarge popup). Topmost-likely first.
+  function psbCloseTopModal(){
+    var dt = document.getElementById('psDetail');
+    if(dt && dt.style.display && dt.style.display !== 'none'){ try{ psCloseDetail(); }catch(e){ dt.style.display='none'; } return true; }
+    var ios = document.getElementById('iosInstallSheet');
+    if(ios && ios.style.display && ios.style.display !== 'none'){ try{ psbCloseIos(); }catch(e){ ios.style.display='none'; } return true; }
+    var pp = document.getElementById('productPicker');
+    if(pp && pp.style.display && pp.style.display !== 'none'){ try{ closeProductPicker(); }catch(e){ pp.style.display='none'; } return true; }
+    var bs = document.getElementById('brandSheet');
+    if(bs && bs.style.display && bs.style.display !== 'none'){ try{ closeBrandSheet(); }catch(e){ bs.style.display='none'; } return true; }
+    var md = document.getElementById('moreDrawer');
+    if(md && md.classList.contains('open')){ try{ closeMoreDrawer(); }catch(e){ md.classList.remove('open'); } return true; }
+    return false;
+  }
   (function(){
     var armed = false;
     function arm(){ if(armed) return; try{ history.pushState({psbBack:1}, ''); armed = true; }catch(e){} }
     arm();
-    // ALWAYS confirm on the Back button — even with an empty cart, on every device
-    // (Danish: treat Back as an "exit app?" guard). Cart-specific copy when there's
-    // unsaved work, the plain exit prompt otherwise.
+    // Back button: if a popup is open, just close it. Otherwise confirm exit (always,
+    // even with an empty cart — Danish's choice). Cart-specific copy when unsaved.
     window.addEventListener('popstate', function(){
       armed = false;
-      const msg = psbHasUnsaved() ? tr('js_leave_confirm') : tr('js_exit_confirm');
+      if(psbCloseTopModal()){ arm(); return; }   // Back closed an open popup → stay in the app
+      var msg = psbHasUnsaved() ? tr('js_leave_confirm') : tr('js_exit_confirm');
       if(confirm(msg)){ history.back(); }   // OK → leave for real
       else { arm(); }                       // Cancel → stay, re-trap
     });
@@ -4572,19 +4615,23 @@
   function goToStep(n){
     [1,2,3,4].forEach(i => {
       const sec = document.getElementById('step' + i);
-      const si  = document.getElementById('si_' + i);
-      if(sec) sec.classList.toggle('active', i === n);
-      if(si){
-        si.classList.remove('active','done');
-        if(i === n)    si.classList.add('active');
-        else if(i < n) si.classList.add('done');
-      }
+      const on = (i === n), done = (i < n);
+      if(sec) sec.classList.toggle('active', on);
+      // Mirror active/done onto BOTH the top steps-bar (desktop) and the
+      // bottom-bar 1·2·3·4 dots (mobile) — same source of truth, no drift.
+      ['si_' + i, 'bns_' + i].forEach(id => {
+        const el = document.getElementById(id);
+        if(!el) return;
+        el.classList.remove('active','done');
+        if(on) el.classList.add('active');
+        else if(done) el.classList.add('done');
+      });
     });
     currentStep = n;
-    // The Home/Brands/Cart/How-To bar only navigates the first page's sections,
-    // so hide it on later steps where its buttons would do nothing.
-    const bn = document.getElementById('bottomNav');
-    if(bn) bn.style.display = (n === 1) ? '' : 'none';
+    // Bottom bar now stays visible on every step — it IS the order-progress
+    // indicator (Home · 1·2·3·4 · Cart); Home/Cart work from any step.
+    const bnSteps = document.getElementById('bnavSteps');
+    if(bnSteps) bnSteps.setAttribute('aria-label', 'Order progress: step ' + n + ' of 4');
     window.scrollTo({ top: 0, behavior: 'smooth' });
     updatePasteFab();
   }
@@ -5175,22 +5222,14 @@
 
   // ── BOTTOM NAV ───────────────────────────────────────────────────────────
   function bottomNavGo(tab){
-    ['home','brands','cart','how'].forEach(t =>
-      document.getElementById('bnav-'+t).classList.toggle('active', t===tab));
+    // Bottom bar is now Home · 1·2·3·4 steps · Cart (Brands/How-To were removed —
+    // Brands lives in the top toggle, How-It-Works in the strip below the header).
+    ['home','cart'].forEach(t => { const b = document.getElementById('bnav-'+t); if(b) b.classList.toggle('active', t===tab); });
     if(tab === 'home'){
+      if(currentStep !== 1) goToStep(1);
       window.scrollTo({top:0, behavior:'smooth'});
-    } else if(tab === 'brands'){
-      // Make sure the brand directory is the visible tab first — otherwise (when
-      // Browse Products is open) the brand section is display:none and scrolling
-      // there does nothing. THEN scroll to it.
-      if(typeof switchBrowse === 'function') switchBrowse('brands');
-      const bs = document.querySelector('.brand-section');
-      if(bs) bs.scrollIntoView({behavior:'smooth'});
     } else if(tab === 'cart'){
-      scrollToCart();
-    } else if(tab === 'how'){
-      // Open the full step-by-step guide in a new tab (keeps the order form intact).
-      window.open('how-to.html', '_blank', 'noopener');
+      gotoCart();   // jumps back to step 1 if needed, then scrolls to the cart
     }
   }
 
@@ -5678,8 +5717,26 @@
   function psBuildPriceFilter(){
     document.getElementById('psPrice').innerHTML = PS_BUCKETS.map((b,i) =>
       `<button type="button" class="ps-bucket${psSel.prices.has(i)?' on':''}" onclick="psTogglePrice(${i})">${b.lbl}</button>`).join('');
+    // Reflect the active price-bucket count on the compact "Price ৳" chip in the results bar
+    const n = document.getElementById('psPriceN'); if(n) n.textContent = psSel.prices.size ? '('+psSel.prices.size+')' : '';
+    const pb = document.getElementById('psPriceBtn'); if(pb) pb.classList.toggle('on', psSel.prices.size > 0);
   }
   function psTogglePrice(i){ if(psSel.prices.has(i)) psSel.prices.delete(i); else psSel.prices.add(i); psBuildPriceFilter(); psApply(); }
+  // Compact price filter: the 6 buckets live in a popover under the "Price ৳" chip on
+  // the results bar (keeps the first view product-first). Toggle + click-away to close.
+  function psTogglePricePop(){
+    const pop = document.getElementById('psPricePop'), btn = document.getElementById('psPriceBtn');
+    if(!pop) return;
+    const open = pop.classList.toggle('open');
+    if(btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  document.addEventListener('click', function(e){
+    const dd = document.getElementById('psPriceDd'), pop = document.getElementById('psPricePop');
+    if(pop && pop.classList.contains('open') && dd && !dd.contains(e.target)){
+      pop.classList.remove('open');
+      const btn = document.getElementById('psPriceBtn'); if(btn) btn.setAttribute('aria-expanded','false');
+    }
+  });
 
   function psCatalogBrands(){
     const set = new Set(PS_CATALOG.map(p => p.b));
@@ -6233,7 +6290,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-19c';
+  const PSB_BUILD = '2026-06-19d';
   console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');

@@ -896,36 +896,36 @@
 
   <!-- BROWSE PRODUCTS — multi-brand search over catalog.json (price / category / brand filters) -->
   <div id="tabProducts">
-    <div class="ps-note">
-      <span id="psNoteCounts"><b>12,000+</b> products · <b>80+</b> brands</span> —
-      <a href="#" onclick="switchBrowse('brands');return false" data-i18n="ps_partial_link">want more? Browse by brands →</a>
-    </div>
+    <!-- Value-prop so a first-time visitor instantly gets what the site is -->
+    <div class="ps-valueprop" data-i18n="ps_valueprop">Any Pakistani brand → delivered to Bangladesh 🇧🇩</div>
     <div class="ps-wrap">
       <aside class="ps-rail">
         <div class="ps-searchblock ps-search-mobile">
-          <input id="psSearchMobile" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSmartSearch(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search brands or products…"/>
+          <input id="psSearchMobile" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSmartSearch(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search 12,000+ products, 80+ brands"/>
           <div class="ps-search-hint" id="psSearchHintM"></div>
         </div>
-        <div class="ps-rail-head" data-i18n="ps_rail_head">3 ways to search products</div>
         <div class="ps-fblock">
-          <div class="ps-flabel"><span class="ps-fnum">1</span> <span data-i18n="ps_price">Price (৳ delivered)</span></div>
-          <div class="ps-price" id="psPrice"></div>
-        </div>
-        <div class="ps-fblock">
-          <div class="ps-flabel"><span class="ps-fnum">2</span> <span data-i18n="ps_category">Product Category</span></div>
+          <div class="ps-flabel"><span data-i18n="ps_category">Product Category</span></div>
           <div class="ps-cats" id="psCat"></div>
         </div>
         <div class="ps-fblock">
-          <div class="ps-flabel"><span class="ps-fnum">3</span> <span data-i18n="ps_brands">Brands</span> <span id="psBrandCount" style="color:var(--txt-muted);font-weight:600"></span></div>
+          <div class="ps-flabel"><span data-i18n="ps_brands">Brands</span> <span id="psBrandCount" style="color:var(--txt-muted);font-weight:600"></span></div>
           <div class="ps-brands" id="psBrands"></div>
         </div>
-        <button type="button" class="ps-clear" onclick="psClearFilters()" data-i18n="ps_clear">Clear filters</button>
       </aside>
       <section class="ps-results">
+        <!-- Count + compact Price popover + Clear all share one row, just above the grid -->
         <div class="ps-resbar">
           <span id="psCount"></span>
+          <span class="ps-resbar-tools">
+            <div class="ps-pricedd" id="psPriceDd">
+              <button type="button" class="ps-pricebtn" id="psPriceBtn" onclick="psTogglePricePop()" aria-haspopup="true" aria-expanded="false"><span data-i18n="ps_price_short">Price ৳</span> <span class="ps-price-n" id="psPriceN"></span><span class="ps-pricecar">▾</span></button>
+              <div class="ps-pricepop" id="psPricePop"><div class="ps-price" id="psPrice"></div></div>
+            </div>
+            <button type="button" class="ps-clear-inline" onclick="psClearFilters()" data-i18n="ps_clear">Clear</button>
+          </span>
           <span class="ps-search-desktop" style="flex-direction:column;align-items:flex-end;min-width:0">
-            <input id="psSearchDesktop" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSmartSearch(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search brands or products…"/>
+            <input id="psSearchDesktop" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSmartSearch(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search 12,000+ products, 80+ brands"/>
             <span class="ps-search-hint" id="psSearchHintD"></span>
           </span>
         </div>
@@ -933,6 +933,8 @@
         <div class="ps-grid" id="psGrid"></div>
         <div class="ps-empty" id="psEmpty" style="display:none" data-i18n="ps_empty">No products match these filters — try widening them.</div>
         <div class="ps-pager" id="psPager"></div>
+        <!-- Catalog is PARTIAL — always offer the full brand directory (paste-link flow) -->
+        <div class="ps-morebrands"><a href="#" onclick="switchBrowse('brands');return false" data-i18n="ps_morebrands">Can't find it? Browse all 155 brands →</a></div>
       </section>
     </div>
   </div>
@@ -4397,16 +4399,31 @@
   // Mobile BACK button / gesture: beforeunload is unreliable for it, so trap it with
   // the History API — keep one spare history entry; when Back pops it, confirm if
   // there's unsaved work and re-arm the trap if the buyer chooses to stay.
+  // Back button while a popup/overlay is open should CLOSE it (not pop the exit
+  // confirm — that left buyers stuck behind the enlarge popup). Topmost-likely first.
+  function psbCloseTopModal(){
+    var dt = document.getElementById('psDetail');
+    if(dt && dt.style.display && dt.style.display !== 'none'){ try{ psCloseDetail(); }catch(e){ dt.style.display='none'; } return true; }
+    var ios = document.getElementById('iosInstallSheet');
+    if(ios && ios.style.display && ios.style.display !== 'none'){ try{ psbCloseIos(); }catch(e){ ios.style.display='none'; } return true; }
+    var pp = document.getElementById('productPicker');
+    if(pp && pp.style.display && pp.style.display !== 'none'){ try{ closeProductPicker(); }catch(e){ pp.style.display='none'; } return true; }
+    var bs = document.getElementById('brandSheet');
+    if(bs && bs.style.display && bs.style.display !== 'none'){ try{ closeBrandSheet(); }catch(e){ bs.style.display='none'; } return true; }
+    var md = document.getElementById('moreDrawer');
+    if(md && md.classList.contains('open')){ try{ closeMoreDrawer(); }catch(e){ md.classList.remove('open'); } return true; }
+    return false;
+  }
   (function(){
     var armed = false;
     function arm(){ if(armed) return; try{ history.pushState({psbBack:1}, ''); armed = true; }catch(e){} }
     arm();
-    // ALWAYS confirm on the Back button — even with an empty cart, on every device
-    // (Danish: treat Back as an "exit app?" guard). Cart-specific copy when there's
-    // unsaved work, the plain exit prompt otherwise.
+    // Back button: if a popup is open, just close it. Otherwise confirm exit (always,
+    // even with an empty cart — Danish's choice). Cart-specific copy when unsaved.
     window.addEventListener('popstate', function(){
       armed = false;
-      const msg = psbHasUnsaved() ? tr('js_leave_confirm') : tr('js_exit_confirm');
+      if(psbCloseTopModal()){ arm(); return; }   // Back closed an open popup → stay in the app
+      var msg = psbHasUnsaved() ? tr('js_leave_confirm') : tr('js_exit_confirm');
       if(confirm(msg)){ history.back(); }   // OK → leave for real
       else { arm(); }                       // Cancel → stay, re-trap
     });
@@ -6233,7 +6250,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-19c';
+  const PSB_BUILD = '2026-06-19d';
   console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
