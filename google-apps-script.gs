@@ -30,7 +30,7 @@
  ****************************************************************************/
 
 // ── CONFIG ──────────────────────────────────────────────────────────────
-var OWNER_EMAIL = 'collectionmoors@gmail.com';   // where order emails go
+var OWNER_EMAIL = 'pakposhakbd@gmail.com';   // where order emails go
 var SHEET_TAB   = 'Order Tracker';               // the tab with your columns
 var SLIP_FOLDER = 'PakStyle Payment Slips';      // Drive folder for receipts
 

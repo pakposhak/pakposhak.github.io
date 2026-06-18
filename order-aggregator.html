@@ -63,7 +63,7 @@ You can paste several orders at once — paste straight from your order emails."
 <div style="margin-top:10px;background:#16162a;border:1px solid #2a2a40;border-radius:10px;padding:12px 14px">
   <div style="color:#c9a96e;font-size:0.82rem;font-weight:700;margin-bottom:6px">🔑 Ordering account</div>
   <label class="hint" style="display:block;margin-bottom:4px">Account used to place every brand order:</label>
-  <input id="acctDefault" type="text" placeholder="collectionmoors@gmail.com" style="width:100%;max-width:360px;background:#1a1a2e;border:1.5px solid #333;border-radius:8px;color:#eee;padding:9px 11px;font-size:0.85rem">
+  <input id="acctDefault" type="text" placeholder="pakposhakbd@gmail.com" style="width:100%;max-width:360px;background:#1a1a2e;border:1.5px solid #333;border-radius:8px;color:#eee;padding:9px 11px;font-size:0.85rem">
   <details style="margin-top:8px">
     <summary style="cursor:pointer;color:#888;font-size:0.78rem">＋ Per-brand overrides (optional — for when you add more accounts)</summary>
     <div class="hint" style="margin:6px 0 4px">One line per brand, e.g. <code>Khaadi = G1</code>. Overrides the default for that brand only.</div>
@@ -351,7 +351,7 @@ You can paste several orders at once — paste straight from your order emails."
 
   // ── Ordering account: one default for all brands + optional per-brand overrides ──
   let ACCOUNTS = {};
-  let DEFAULT_ACCT = 'collectionmoors@gmail.com';
+  let DEFAULT_ACCT = 'pakposhakbd@gmail.com';
   function parseAccounts(text){
     const m = {};
     (text||'').split(/\r?\n/).forEach(line => {
@@ -364,7 +364,7 @@ You can paste several orders at once — paste straight from your order emails."
   function loadAccounts(){
     try{
       const d = localStorage.getItem('psb_default_account');
-      DEFAULT_ACCT = (d !== null) ? d : 'collectionmoors@gmail.com';
+      DEFAULT_ACCT = (d !== null) ? d : 'pakposhakbd@gmail.com';
       const di = document.getElementById('acctDefault'); if(di) di.value = DEFAULT_ACCT;
       const t = localStorage.getItem('psb_brand_accounts')||''; const el = document.getElementById('acctMap'); if(el) el.value = t; ACCOUNTS = parseAccounts(t);
     }catch(e){}
