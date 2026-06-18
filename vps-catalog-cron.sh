@@ -29,13 +29,13 @@
 #       to cache it. Deploy key is cleaner — no expiry.)
 #
 #   B) Then run THIS script on the VPS:
-#        curl -fsSL https://raw.githubusercontent.com/pakiposhak/pakiposhak.github.io/main/vps-catalog-cron.sh -o /tmp/setup.sh
+#        curl -fsSL https://raw.githubusercontent.com/pakposhak/pakposhak.github.io/main/vps-catalog-cron.sh -o /tmp/setup.sh
 #        bash /tmp/setup.sh
 # ============================================================================
 set -euo pipefail
 
 REPO_DIR="${REPO_DIR:-/opt/pakiposhak}"
-REPO_URL="${REPO_URL:-git@github.com:pakiposhak/pakiposhak.github.io.git}"   # SSH (deploy key). For PAT use: https://github.com/pakiposhak/pakiposhak.github.io.git
+REPO_URL="${REPO_URL:-git@github.com:pakposhak/pakposhak.github.io.git}"   # SSH (deploy key). For PAT use: https://github.com/pakposhak/pakposhak.github.io.git
 RUNNER="/usr/local/bin/pakiposhak-harvest.sh"
 LOG="/var/log/pakiposhak-harvest.log"
 

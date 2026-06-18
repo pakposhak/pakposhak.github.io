@@ -258,7 +258,7 @@ function rateLimited(req){
 // CORS: echo the form's OWN origin for the (password-gated) write endpoints, so
 // another website can't drive them from a victim's browser. Public GET reads
 // (config/price/scrape) keep '*' so the live form never breaks.
-const ALLOWED_ORIGINS = ['https://pakiposhak.github.io'];
+const ALLOWED_ORIGINS = ['https://pakposhak.github.io', 'https://pakiposhak.github.io'];
 function corsOrigin(req, strict){
   const o = req.headers.origin;
   if(o && ALLOWED_ORIGINS.includes(o)) return o;

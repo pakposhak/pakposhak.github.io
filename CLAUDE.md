@@ -1,18 +1,18 @@
-# PakiPoshak — Claude Project Brief
-> Renamed from "PakStyle BD" → **PakiPoshak** (final). Live URL moved to a root user-site: `pakiposhak.github.io`.
+# PakPoshak — Claude Project Brief
+> Renamed from "PakStyle BD" → **PakPoshak** (final). Live URL moved to a root user-site: `pakposhak.github.io`.
 
 ## What this is
 Pakistani fashion import order form for Bangladeshi buyers. Customers paste Shopify product URLs,
 build a cart, and submit — Danish (operator) purchases & ships from Pakistan to Bangladesh.
 
-- **Live site:** https://pakiposhak.github.io/  (root user-site)
-- **GitHub repo:** https://github.com/pakiposhak/pakiposhak.github.io
+- **Live site:** https://pakposhak.github.io/  (root user-site)
+- **GitHub repo:** https://github.com/pakposhak/pakposhak.github.io
 - **Master file:** `order-form.html` (always sync to `index.html` before pushing)
 - **No build step** — pure HTML/JS/CSS, no frameworks, no npm
 
 ## About the operator
 - **Danish Wazir**, Dhaka, Bangladesh
-- Business name: **Moors Attire / PakiPoshak** · Email: collectionmoors@gmail.com
+- Business name: **Moors Attire / PakPoshak** · Email: collectionmoors@gmail.com
 - Also runs iGarage (automobile startup) and DW-Bridging (textile indenting)
 - Commission tiers are business-sensitive — **never expose to buyers**
 
