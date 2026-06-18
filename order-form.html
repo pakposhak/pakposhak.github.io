@@ -147,7 +147,7 @@
     .iosg-ring{animation:iosgPulse 1.05s ease-in-out infinite}
 
     /* ── Sticky header ── */
-    #appHeader{position:sticky;top:0;z-index:200;background:var(--surface);border-bottom:1px solid var(--bdr-med)}
+    #appHeader{position:sticky;top:0;z-index:200;background:var(--surface);border-bottom:1px solid var(--bdr-med);padding-top:env(safe-area-inset-top,0px)}
     .hdr-inner{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:11px 16px;max-width:700px;margin:0 auto}
     .hdr-logo{grid-column:2;justify-self:center;display:flex;align-items:center;gap:10px}
     .hdr-logo-img{width:40px;height:40px;border-radius:10px;object-fit:cover;flex-shrink:0;border:1px solid var(--gold-bdr)}
@@ -700,7 +700,7 @@
     [data-theme="dark"] .ps-salebtn.on{background:#c0392b;color:#fff;border-color:#c0392b}
     .ps-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .ps-card{border:1px solid var(--bdr-med);border-radius:11px;overflow:hidden;background:var(--surface);display:flex;flex-direction:column}
-    .ps-img{aspect-ratio:3/4;background:var(--raised);position:relative;overflow:hidden}
+    .ps-img{aspect-ratio:3/4;background:var(--raised);position:relative;overflow:hidden;cursor:pointer}
     .ps-img img{width:100%;height:100%;object-fit:cover;display:block}
     .ps-img-fail::after{content:'🛍️';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.7rem;opacity:0.4}
     .ps-img-fail img{display:none}
@@ -4209,6 +4209,21 @@
   async function pasteAndAdd(inputId, addFn){
     const inp = document.getElementById(inputId);
     if(!inp) return;
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const focusToPaste = () => {
+      inp.scrollIntoView({behavior:'smooth', block:'center'});
+      inp.focus();
+      inp.style.borderColor = 'var(--gold)';
+      inp.style.boxShadow   = '0 0 0 3px rgba(201,169,110,0.35)';
+      inp.placeholder = '⬆️ Long-press here → Paste your link';
+      setTimeout(()=>{ inp.style.borderColor=''; inp.style.boxShadow=''; }, 8000);
+    };
+    // iOS: navigator.clipboard.readText is unreliable AND `await`-ing it consumes
+    // the tap's user-activation, so a later inp.focus() can't open the keyboard.
+    // So on iOS bring the box into view + focus it NOW (inside the tap) — the user
+    // long-presses → Paste, and the box's paste-listener (below) auto-submits.
+    if(isIOS){ focusToPaste(); return; }
     let txt = '', readOk = false;
     try{
       if(navigator.clipboard && navigator.clipboard.readText){
@@ -4217,11 +4232,7 @@
       }
     }catch(e){ /* permission denied / not supported → fall back below */ }
     const m = txt && txt.match(/https?:\/\/[^\s"'<>]+/i);
-    if(m){
-      inp.value = m[0].trim();
-      addFn();
-      return;
-    }
+    if(m){ inp.value = m[0].trim(); addFn(); return; }
     if(readOk){
       // Clipboard WAS readable but holds no product link → they tapped Paste
       // without copying a product URL first. Tell them exactly what to do.
@@ -4229,14 +4240,15 @@
       showUrlError(tr(window.innerWidth >= 820 ? 'js_paste_nocopy_d' : 'js_paste_nocopy'));
       return;
     }
-    // Clipboard unreadable (iOS in-app browser, permission denied): focus +
-    // highlight so the user can long-press → Paste right here.
-    inp.focus();
-    inp.style.borderColor = 'var(--gold)';
-    inp.style.boxShadow   = '0 0 0 3px rgba(201,169,110,0.35)';
-    inp.placeholder = '⬆️ Long-press here → Paste';
-    setTimeout(()=>{ inp.style.borderColor=''; inp.style.boxShadow=''; }, 6000);
+    focusToPaste();   // clipboard unreadable → let them paste straight into the box
   }
+  // When a link is PASTED into the URL box (the reliable iOS path), auto-submit it.
+  (function(){
+    const ui = document.getElementById('urlInput');
+    if(ui) ui.addEventListener('paste', () => setTimeout(() => {
+      if(/https?:\/\//i.test(ui.value)){ try{ handleAddUrl(); }catch(e){} }
+    }, 40));
+  })();
 
   // ── SHARE TARGET ────────────────────────────────────────────────────────────
   // Installed as a PWA, the app registers in the phone's Share sheet (see
@@ -5513,9 +5525,9 @@
   }
   // Gender cue words. When a query NAMES a gender, it should NARROW the other words
   // to that gender (AND), not just add the whole gender (OR).
-  const PS_GENDER_TOK = { men:'m', mens:'m', gents:'m', gent:'m', man:'m', menswear:'m',
-    women:'w', womens:'w', ladies:'w', lady:'w', woman:'w', womenswear:'w',
-    kid:'k', kids:'k', children:'k', child:'k', baby:'k', girl:'k', girls:'k', boy:'k', boys:'k', infant:'k' };
+  const PS_GENDER_TOK = { men:'m', mens:'m', gents:'m', gent:'m', man:'m', menswear:'m', male:'m', males:'m', guy:'m', guys:'m', gentleman:'m', gentlemen:'m', boyswear:'m',
+    women:'w', womens:'w', ladies:'w', lady:'w', woman:'w', womenswear:'w', female:'w', females:'w', girlswear:'w',
+    kid:'k', kids:'k', kidswear:'k', children:'k', child:'k', baby:'k', babies:'k', girl:'k', girls:'k', boy:'k', boys:'k', infant:'k', infants:'k', toddler:'k', newborn:'k' };
   // Resolve the typed tokens to a category set with AND semantics across gender:
   //  "men unstitched" → ONLY men's unstitched (gender narrows the category), not
   //  every "unstitched" cat. A gender word ALONE → the whole gender. Returns {cats,genders}.
@@ -5555,7 +5567,13 @@
     // brand-name matches come from the NON-gender words only ("men" is not a brand)
     const brands = new Set();
     catToks.forEach(t => { if(t.length >= 3) presentBrands.forEach(bn => { if(psNorm(bn).indexOf(t) >= 0) brands.add(bn); }); });
-    if(rawN.length >= 3) presentBrands.forEach(bn => { if(psNorm(bn).indexOf(rawN) >= 0) brands.add(bn); });   // multi-word brand
+    // multi-word brand ("cross stitch" → "crossstitch") — but NEVER when the whole
+    // query is a gender word: "men" must not match "Republic Wo[men]swear" etc.
+    if(rawN.length >= 3 && !PS_GENDER_TOK[rawN]) presentBrands.forEach(bn => { if(psNorm(bn).indexOf(rawN) >= 0) brands.add(bn); });
+    // Safety net: if the matched brand(s) + categories together match NOTHING, the
+    // brand was a spurious substring hit (e.g. "men" → Womenswear) — drop it so the
+    // category results still show instead of an empty grid.
+    if(brands.size && cats.size && !PS_CATALOG.some(p => brands.has(p.b) && cats.has(p.cat))) brands.clear();
     psSel.cats = cats;
     psSel.brands = brands;
     psBuildCatFilter(); psBuildBrandFilter(); psApply();
@@ -5823,7 +5841,7 @@
         ? `<div class="ps-img-sizes"><b>${tr('ps_unstitched')}</b></div>`
         : `<div class="ps-img-sizes"><b>${tr('ps_avail_sizes')}</b>${list.slice(0,7).map(esc).join(' · ')}</div>`;
     return `<div class="ps-card">
-      <div class="ps-img">${p.sale?'<span class="ps-sale">SALE</span>':''}<button type="button" class="ps-info" onclick="psDetail(${idx})" aria-label="Enlarge pictures and details" title="Enlarge pics &amp; details">🔍<span class="ps-info-tx">${tr('ps_enlarge')}</span></button><img loading="lazy" src="${esc(p.img)}" alt="${esc(p.t)}" onerror="this.parentElement.classList.add('ps-img-fail')">${szOverlay}</div>
+      <div class="ps-img" onclick="psDetail(${idx})" role="button" tabindex="0" aria-label="${esc(p.t)} — enlarge">${p.sale?'<span class="ps-sale">SALE</span>':''}<button type="button" class="ps-info" onclick="event.stopPropagation();psDetail(${idx})" aria-label="Enlarge pictures and details" title="Enlarge pics &amp; details">🔍<span class="ps-info-tx">${tr('ps_enlarge')}</span></button><img loading="lazy" src="${esc(p.img)}" alt="${esc(p.t)}" onerror="this.parentElement.classList.add('ps-img-fail')">${szOverlay}</div>
       <div class="ps-cbody">
         <div class="ps-brand">${esc(p.b)}</div>
         <div class="ps-title">${esc(p.t)}</div>
@@ -6215,7 +6233,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-19b';
+  const PSB_BUILD = '2026-06-19c';
   console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
