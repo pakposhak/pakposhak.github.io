@@ -1,4 +1,4 @@
-// PakStyle BD — Pakistan Price Relay
+// PakPoshak — Pakistan Price Relay
 // Runs on a Pakistan-IP VPS. The order form calls this when a brand geo-serves
 // a foreign currency (USD) to a Bangladesh buyer; because THIS server's IP is
 // Pakistani, Shopify serves it real PKR prices + stock.
@@ -449,6 +449,6 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, '127.0.0.1', () => {
-  console.log(`PakStyle BD price relay listening on 127.0.0.1:${PORT}`);
+  console.log(`PakPoshak price relay listening on 127.0.0.1:${PORT}`);
   console.log(`${ALLOWED_HOSTS.length} brand domains whitelisted`);
 });
