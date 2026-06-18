@@ -10,7 +10,7 @@
  *  - NEVER touch cross-origin requests (Shopify product fetches, Apps Script order
  *    submission, Formspree). Those must always hit the network untouched.
  */
-const CACHE_VERSION = 'psb-v4';
+const CACHE_VERSION = 'psb-v5';
 const APP_SHELL = [
   './',
   './index.html',
@@ -54,27 +54,30 @@ self.addEventListener('fetch', (event) => {
     req.mode === 'navigate' ||
     req.destination === 'document' ||
     req.headers.get('accept')?.includes('text/html');
+  // The MANIFEST decides PWA installability. Serve it network-FIRST too, so an
+  // updated manifest (e.g. display:"browser" → "standalone") reaches the browser
+  // immediately instead of a stale cache-first copy silently blocking the one-tap
+  // "Install app" prompt — which is exactly the bug that broke install.
+  const isManifest = url.pathname.endsWith('manifest.json');
 
-  if (isHTML) {
-    // Network-first: always try to get the freshest page. Cache a copy for
-    // offline. Fall back to cache only when the network is unavailable.
+  if (isHTML || isManifest) {
+    // Network-first: always try to get the freshest page/manifest. Cache a copy
+    // for offline. Fall back to cache only when the network is unavailable.
     //
     // CRITICAL: fetch with {cache: 'reload'} so this request BYPASSES the
-    // browser's HTTP cache. GitHub Pages serves HTML with Cache-Control:
-    // max-age=600 (10 min). Without 'reload', a plain fetch(req) is served
-    // from that 10-min-stale HTTP cache — so "network-first" silently returns
-    // an OLD build (the zero-price / stale-build bug). 'reload' forces a real
-    // network round-trip to the CDN every navigation, then updates the cache.
-    // Use the URL string + {cache:'reload'} rather than new Request(req,…),
-    // which throws for navigation-mode requests in some browsers.
+    // browser's HTTP cache. GitHub Pages serves with Cache-Control: max-age=600
+    // (10 min). Without 'reload', a plain fetch(req) is served from that 10-min-
+    // stale HTTP cache — so "network-first" silently returns an OLD build.
+    // 'reload' forces a real network round-trip to the CDN, then updates the cache.
+    const cacheKey = isManifest ? './manifest.json' : './index.html';
     event.respondWith(
       fetch(req.url, { cache: 'reload' })
         .then((res) => {
           const copy = res.clone();
-          caches.open(CACHE_VERSION).then((c) => c.put('./index.html', copy));
+          caches.open(CACHE_VERSION).then((c) => c.put(cacheKey, copy));
           return res;
         })
-        .catch(() => caches.match(req).then((hit) => hit || caches.match('./index.html')))
+        .catch(() => caches.match(req).then((hit) => hit || caches.match(cacheKey)))
     );
     return;
   }
