@@ -76,8 +76,13 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
   const NOW = Date.now() / 1000, NEW_WINDOW = 45 * 86400;
   const sizeOf = p => Array.isArray(p.sz) ? p.sz.length : 0;
   const isNew  = p => p.pub && (NOW - p.pub) < NEW_WINDOW;
+  // Apparel is the hero; footwear/accessories/shawls/single-dupattas must NOT lead the
+  // landing — khussa footwear carries the most size options, so the best-stocked sort
+  // would otherwise float a wall of khussa colour-variants to the very top.
+  const heroRank = c => /^(footwear|accessories|shawl|dupatta_only)$/.test(c || '') ? 1 : 0;
   const qSort = (a, b) =>
-    (genderRank(a.cat) - genderRank(b.cat))    // women first
+    (heroRank(a.cat) - heroRank(b.cat))        // apparel before footwear/accessories
+    || (genderRank(a.cat) - genderRank(b.cat)) // women first
     || (sizeOf(b) - sizeOf(a))                 // MORE in-stock sizes first (better availability)
     || ((b.pub || 0) - (a.pub || 0))           // newer first
     || (a._bi - b._bi);                        // brand round-robin → variety
