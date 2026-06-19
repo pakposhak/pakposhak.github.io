@@ -68,17 +68,41 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
   // brand round-robin index (nth item of its brand, in source order) — for varied default order
   const seen = {};
   products.forEach(p => { p._bi = (seen[p.b] = (seen[p.b] || 0) + 1) - 1; });
-  const NOW = Date.now() / 1000, RECENT = 120 * 86400;
-  const recent = p => (p.pub && (NOW - p.pub) < RECENT) ? 0 : 1;
-  // Default front-page order: women first, then on-sale, then recently published, then brand
-  // round-robin for variety, then newest. (Mirrors the app's default ordering intent.)
-  products.sort((a, b) =>
-    (genderRank(a.cat) - genderRank(b.cat))
-    || ((b.sale ? 1 : 0) - (a.sale ? 1 : 0))
-    || (recent(a) - recent(b))
-    || (a._bi - b._bi)
-    || ((b.pub || 0) - (a.pub || 0))
-  );
+  // ── Default landing order (req: do NOT lead with sale — that reads like a clearance
+  // bin). Per page we lead with ~NEW_TARGET fresh arrivals, cap SALE at SALE_CAP and just
+  // sprinkle it, and fill the rest with the BEST-STOCKED (most in-stock sizes) non-sale
+  // items. Women-dept leads within each queue (the core audience); brand round-robin keeps
+  // it varied. Leftover sale trails at the very end. ──
+  const NOW = Date.now() / 1000, NEW_WINDOW = 45 * 86400;
+  const sizeOf = p => Array.isArray(p.sz) ? p.sz.length : 0;
+  const isNew  = p => p.pub && (NOW - p.pub) < NEW_WINDOW;
+  const qSort = (a, b) =>
+    (genderRank(a.cat) - genderRank(b.cat))    // women first
+    || (sizeOf(b) - sizeOf(a))                 // MORE in-stock sizes first (better availability)
+    || ((b.pub || 0) - (a.pub || 0))           // newer first
+    || (a._bi - b._bi);                        // brand round-robin → variety
+  const qNew   = products.filter(p => !p.sale &&  isNew(p)).sort(qSort);
+  const qStock = products.filter(p => !p.sale && !isNew(p)).sort(qSort);
+  const qSale  = products.filter(p =>  p.sale).sort(qSort);
+  const PAGE = 24, NEW_TARGET = 5, SALE_CAP = 4;   // per page: ≤5 new lead, ≤4 sale
+  const ordered = [];
+  let iN = 0, iK = 0, iS = 0;
+  while (iN < qNew.length || iK < qStock.length || iS < qSale.length) {
+    const start = ordered.length; let saleThis = 0;
+    for (let k = 0; k < NEW_TARGET && iN < qNew.length; k++) ordered.push(qNew[iN++]);   // fresh arrivals lead
+    while (ordered.length - start < PAGE) {
+      const slot = ordered.length - start;
+      if (iS < qSale.length && saleThis < SALE_CAP && (slot % 6 === 5 || (iK >= qStock.length && iN >= qNew.length))) {
+        ordered.push(qSale[iS++]); saleThis++;                 // sprinkle a capped few sale items
+      } else if (iK < qStock.length) { ordered.push(qStock[iK++]); }   // best-stocked non-sale fill
+      else if (iN < qNew.length)     { ordered.push(qNew[iN++]); }     // extra new if stock ran out
+      else if (iS < qSale.length && saleThis < SALE_CAP) { ordered.push(qSale[iS++]); saleThis++; }
+      else break;
+    }
+    if (ordered.length === start) break;   // safety: no progress
+  }
+  while (iS < qSale.length) ordered.push(qSale[iS++]);   // remaining sale trails at the end
+  products = ordered;
 
   const tmp = DB_PATH + '.new';
   ['', '-journal', '-wal', '-shm'].forEach(s => { try { fs.unlinkSync(tmp + s); } catch (e) {} });

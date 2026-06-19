@@ -255,18 +255,34 @@ function mapCatMen(s){
 // kids harvest) AND the product title; the title fills whatever the collection didn't
 // encode. eastern-first: an unknown type defaults to eastern.
 function kidGender(s){
-  if(/infant|new[\s-]?born|\bnb\b|\bmonths?\b|toddler|\bbaby\b|romper|\b0-2\b|\b1-2\s?y/.test(s)) return 'infant';
+  if(/infant|new[\s-]?born|\bnb\b|\bmonths?\b|\bbaby\b|romper|swaddle|\b0-2\b|\b1-2\s?y/.test(s)) return 'infant';
   if(/\bgirls?\b|girl[-\s]|\bfrock\b|\bgown\b/.test(s)) return 'girls';
   if(/\bboys?\b|boy[-\s]|sherwani|waist[\s-]?coat/.test(s)) return 'boys';
   return null;
 }
 function kidType(s){
-  // formal = FESTIVE / CEREMONIAL only. NOT plain "embroidered" — kids casual tees are
-  // routinely "embroidered" and must stay western (validation caught this).
-  if(/festive|\beid\b|ceremon|wedding|\bformal\b|\bparty\b|\bgown\b|sherwani|fancy[\s-]?frock/.test(s)) return 'formal';
-  if(/western|\btees?\b|t[-\s]?shirt|polo|\bshirts?\b|\bjeans?\b|denim|\bshorts?\b|trouser|\bpants?\b|hoodie|sweat|jacket|knit|woven|co-?ord|legging|tights|jogger|cargo|chino/.test(s)) return 'western';
-  if(/eastern|ethnic|kurta|shalwar|kameez|\bpret\b|\blawn\b|frock|kurti|[23][-\s]?(pc|piece)|\bsuit\b|\bmaxi\b|abaya|waist[\s-]?coat/.test(s)) return 'eastern';
-  return null;
+  // formal = FESTIVE / CEREMONIAL only (NOT plain "embroidered" — kids casual tees are
+  // routinely "embroidered" and must stay western).
+  if(/festive|\beid\b|ceremon|wedding|\bparty\b|\bgown\b|sherwani|fancy[\s-]?frock/.test(s)) return 'formal';
+  // TIERED so SILHOUETTE beats FABRIC (validation: jacquard/linen were dragging western
+  // garments into eastern). 1) an eastern GARMENT word (kurta/suit/frock/2-3pc…) is eastern
+  // outright. 2) a strong WESTERN garment (tee/coat/hoodie/jeans/sweater/blazer…) is western
+  // EVEN beside an eastern fabric word — "Jacquard Sweater"/"Woolen Coat" are western, the
+  // fabric doesn't make the cut eastern. 3) an eastern FABRIC alone (lawn/cambric/jacquard…)
+  // implies eastern — a "Cambric Shirt"/"Lawn Trouser" is a boy's kurta-shirt. 4) weak western
+  // words (shirt/trouser/pant alone) are western only when no eastern fabric is present. Else
+  // null → caller's eastern-first default decides.
+  const eastGarment = /eastern|ethnic|\bkurtas?\b|kurta[\s-]?pajama|shalwar|kameez|\bkurtis?\b|\bfrock\b|gharara|lehenga|\babaya\b|peshwas|anarkali|\bpret\b|dupatta|[23]\s?-?\s?(pc|piece|pcs)|\bsuit\b|\bmaxi\b|waist[\s-]?coat/.test(s);
+  const strongWest  = /\btees?\b|t[-\s]?shirt|\bpolo\b|\bjeans?\b|denim|\bshorts?\b|hoodie|sweat|jacket|\bblazer\b|cardigan|jogger|legging|tights?|cargo|chino|graphic|oxford|\bskirt\b|tracksuit|\bcoat\b|\bcapri\b|romper|jumpsuit|dungaree|\btrack\b|\bsports?\b/.test(s);
+  const eastFabric  = /\blawn\b|cambric|khaddar|karandi|\blinen\b|chiffon|organza|jacquard|wash[\s-]?n[\s-]?wear/.test(s);
+  // co-ord / dress lose to an eastern fabric ("Lawn Co-Ord"/"Lawn Dress" are eastern-casual)
+  // but read western otherwise.
+  const weakWest    = /\bshirts?\b|trouser|\bpants?\b|\bbottoms?\b|knit|woven|co-?ord|\bdress\b/.test(s);
+  if(eastGarment) return 'eastern';
+  if(strongWest)  return 'western';   // western silhouette beats an eastern fabric word
+  if(eastFabric)  return 'eastern';   // fabric-only (Cambric Shirt / Lawn Collection) → eastern
+  if(weakWest)    return 'western';
+  return null;                        // truly ambiguous → caller defaults eastern-first
 }
 function mapCatKids(s, hint){
   hint = hint || {};
@@ -280,7 +296,14 @@ function mapCatKids(s, hint){
   const tt = kidType(s);
   let t = tt || hint.t || 'eastern';
   if(hint.t === 'formal' && tt !== 'western') t = 'formal';
-  if(!g) g = /frock|\bmaxi\b|\bgown\b|\bdress\b|kurti|\bgirl/.test(s) ? 'girls' : 'boys';
+  if(!g){
+    // boy-garment words win; then girl cues; else genderless EASTERN/FORMAL → girls
+    // (girls' eastern suits dominate kidswear, so a plain "Kids Cotton 2PC" is girls),
+    // while genderless WESTERN basics (tee/sweatshirt) default boys.
+    if(/\bkurta\b|shalwar|kameez|sherwani|waist[\s-]?coat|kurta[\s-]?pajama|\bboys?\b/.test(s)) g = 'boys';
+    else if(/\bfrock\b|\bmaxi\b|\bgown\b|\bdress\b|kurti|lehenga|gharara|chiffon|organza|\bskirt\b|\btop\b|peplum|ruffle|\bbow\b|smock|flared|tunic|blouse|frill|\bnet\s?(?:suit|frock)|princess|fairy|unicorn|embellish|sequin|\bgirl/.test(s)) g = 'girls';
+    else g = (t === 'western') ? 'boys' : 'girls';
+  }
   if(t === 'formal')  return g === 'girls' ? 'kids_girls_formal'  : 'kids_boys_formal';
   if(t === 'western') return g === 'girls' ? 'kids_girls_western' : 'kids_boys_western';
   return g === 'girls' ? 'kids_girls_eastern' : 'kids_boys_eastern';
@@ -311,7 +334,13 @@ const BUNDLE_RE = /\bbundle\b|gift[\s-]?set|gift[\s-]?bundle|\bhamper\b|combo[\s
 // so (unlike mapCat) we don't require a garment word — we only drop the clearly
 // non-garment items. (Validation caught "Pack of 3-Briefs", "Low-Top Sneakers",
 // "Wayfarer Sunglasses" leaking in as apparel.)
-const KIDS_DROP = /\b(briefs?|boxer|panty|panties|trunks?|innerwear|under[\s-]?wear|undergarment|sunglass(?:es)?|eye[\s-]?wear|spectacles?|\bglasses\b|socks?|\bcaps?\b|beanie|\bhats?\b|\bbib\b|mittens?|booti(?:es)?|shoes?|sneakers?|sandals?|slippers?|loafers?|\bpumps?\b|\bbags?\b|backpack|bottle|feeder|sipper|diaper|nappy|toys?|\bcomb\b|towel|blanket|pillow|cushion|jewell?ery|earrings?|bangles?|bracelets?|hair[\s-]?(?:band|clip|tie|accessor)|head[\s-]?band|\bbelts?\b|watch|perfume|fragrance|deodorant)\b/;
+const KIDS_DROP = /\b(briefs?|boxer|panty|panties|trunks?|innerwear|under[\s-]?wear|undergarment|sunglass(?:es)?|eye[\s-]?wear|spectacles?|\bglasses\b|socks?|\bcaps?\b|beanie|\bhats?\b|\bbib\b|mittens?|booti(?:es)?|shoes?|sneakers?|sandals?|slippers?|loafers?|\bpumps?\b|\bheels?\b|\bbags?\b|backpack|bottle|feeder|sipper|\bmilk\b|container|diaper|nappy|toys?|teether|rattle|pacifier|soother|\bnail\b|\btrimmer\b|grooming|\bcomb\b|\bgift\b|towel|pillow|cushion|jewell?ery|earrings?|bangles?|bracelets?|hair[\s-]?(?:bands?|clips?|ties?|accessor)|head[\s-]?bands?|\bbelts?\b|neck[\s-]?tie|bow[\s-]?tie|watch|perfume|fragrance|deodorant)\b/;
+// BABY GEAR / non-worn textiles — "we ship WORN garments". Multiword/anchored so it can't
+// hit colours ("cream"/"powder blue"), fabrics ("tissue"/"lawn") or line names ("haml" is
+// Tifl's newborn-APPAREL line). Validation (full harvest) caught baby-gear stores leaking
+// feeding/bath/skincare gear + bedding (wrapping sheets, cot sets, swaddles) + neckties
+// into kids_infant. Worn baby clothing (rompers/bodysuits/sleepsuits/jhabla/frocks) survives.
+const GEAR_DROP = /tableware|dinnerware|\bsippy\b|spout\s?cup|straw\s?cup|feeding\s?(?:bowl|set|cup)|\bbowl\b|\bcutlery\b|crockery|lunch\s?box|lunchbox|bath\s?(?:tub|seat|stand|game|set)|bathtub|carry\s?nest|carrynest|\bcarrier\b|knee\s?pads?|wrapping\s?sheet|hooded\s?wrapping|baby\s?wrap\b|\bswaddle\b|wash\s?cloth|\bburp\b|quilt\s?blanket|hooded\s?blanket|\bblanket\b|\bcot\s?set\b|bed\s?set|\bwalker\b|shampoo|nexton|\bhankie\b|\bspoon\b|\bfork\b|silicon[e]?\s?feeding|fountain|\btie\s+[-–]/i;
 // Decide if a Shopify collection is a kids APPAREL collection; extract gender/type hint
 // from the handle+title. Returns null to skip (accessories / sale-duplicate / non-kids).
 const KIDS_COLL_SKIP = /accessor|sunglass|fragrance|perfume|\bshoe|footwear|sneaker|\bsock|\bcap\b|\bhat\b|\bbag\b|jewel|\bwatch\b|\bbelt\b|bottle|feeding|hygiene|diaper|\btoy|school|stationer|grooming|\bbib\b|mitten|booti|stroller|pram|\bgift|towel|blanket|bedding|skincare|\bsale\b|discount|flat[-\s]?\d|[-\s]off\b|clearance|\bunder-?\d|everything-under|\d{1,2}%/i;
@@ -362,12 +391,11 @@ function mapCat(group, type, title, tagStr){
   // check so a "Wardah Cotton Hijab – Baby pink" isn't misread as kids on the word "baby".
   if(/\bhijab\b|head[\s-]?scarf|\bshayla\b/.test(s)) return 'dupatta_only';
   // gender from the text — esp. multi-department brands that mix men's & kids in.
-  // Kids items must carry a GARMENT signal: a kids brand also stocks toys / baby
-  // gear / books (Bachaa Party: "R/C Car", "Building Blocks", "Piano Play Mat") and
-  // those have no garment word → drop them (we only list clothing).
-  // Keep/drop uses `s` (tags too); the eastern/frock/formal SUB-split uses `tt`
-  // (type+title) — tags are noisy ("3 piece Dresses" tag on a plain lawn 2pc).
-  if(/\b(boys?|girls?|infant|toddler|junior|newborn|\bbaby\b|\bkid|kids\b)\b/.test(s)) return GARMENT_SIG.test(s) ? mapCatKids(tt) : null;
+  // KIDS are harvested ONLY by the dedicated KIDS_BRANDS pass (collection-scoped, age-
+  // validated). The old inline "title contains boy/girl/kid → kids" rule is REMOVED — it
+  // leaked women's design-collection names ("A Girl In The Garden", "Who's That Girl",
+  // "Soft Girl Era") into kids from the ADULT whole-store harvest. Any real kids item in a
+  // multi-dept brand's main feed also appears in its kids collection (KIDS_BRANDS wins URL-dedup).
   if(group === 'k') return GARMENT_SIG.test(s) ? mapCatKids(tt) : null;
   if(group === 'm') return mapCatMen(s);
   if(group === 'md' && /\b(mens?|men's|gents?|\bpolo\b|waist[\s-]?coat|sherwani|boxer|\btie\b)\b/.test(s)) return mapCatMen(s);
@@ -383,6 +411,11 @@ function buildProduct(p, name, host, group, force, kidsHint){
   if(pkr < 500) return null;
   const img = (p.images && p.images[0] && p.images[0].src) || '';
   if(!img) return null;
+  // Installment listings (Maria B "Half Payment X" @ half price) are a payment-UX artifact,
+  // not a separate product → drop the part-payment duplicate. The "Full Payment"/plain
+  // listing carries the real price; its prefix is stripped from the title below.
+  const _tl = (p.title || '').toLowerCase();
+  if(/\b(?:half|advance|partial|down)\s+payment\b|\binstall?ment\b|\bbooking\s+amount\b|\btoken\s+(?:amount|payment)\b/.test(_tl)) return null;
   const tagStr = (Array.isArray(p.tags) ? p.tags.join(' ') : String(p.tags||'')).toLowerCase();
   let cat;
   if(force === 'bridal'){
@@ -394,7 +427,7 @@ function buildProduct(p, name, host, group, force, kidsHint){
     // clear non-garments (shoes/underwear/eyewear/accessories), then 7-cat classify
     // using the collection's gender/type hint + the title.
     const s2 = ((p.product_type||'') + ' ' + (p.title||'') + ' ' + tagStr).toLowerCase();
-    if(FRAGRANCE_STRONG.test(s2) || KIDS_DROP.test(s2)) return null;
+    if(FRAGRANCE_STRONG.test(s2) || KIDS_DROP.test(s2) || GEAR_DROP.test(s2)) return null;
     cat = mapCatKids((p.product_type||'') + ' ' + (p.title||''), kidsHint);
   }
   else { cat = mapCat(group, p.product_type, p.title, tagStr); }
@@ -405,9 +438,26 @@ function buildProduct(p, name, host, group, force, kidsHint){
   if(!force && isHandmadeFull(cat, desc)) cat = 'handmade_emb';   // only an explicit adda/full-hand description
   const sz = availSizes(p);
   if(!sz.length) return null;   // every size sold out (incl. made-to-order bridal) → drop
+  // Guard kids categories against WOMEN's items that slipped in (Sha Posh XL suits, Tifl
+  // "Mom" maternity loungewear, unstitched lawn): no age-size + a women/adult garment
+  // signal ⇒ not kids. And demote "infant" items that are really older kids (>=4Y, no
+  // month-size) down to the right boys/girls category.
+  if(/^kids_/.test(cat)){
+    const tl2 = ((p.product_type||'') + ' ' + (p.title||'')).toLowerCase();
+    // ADULT-LETTER sizes only (XS-XXL) = the women-leak signal; numeric (20/22) and age
+    // (3-4Y) sizes are legit kids and must NOT trip this.
+    const adultLetterOnly = sz.length && sz.every(z => /^(?:xs|s|m|l|xl|xxl|xxxl|free\s*size|one\s*size)$/i.test(String(z).trim()));
+    if(/\bmom\b|maternity/.test(tl2)) return null;   // mother / maternity wear = women's
+    if(adultLetterOnly && /\bmaxi\b|\bgown\b|chiffon\s*suit|silk\s*suit|\banarkali\b|\b3\s?(?:pc|piece)\b|\bpret\b/.test(tl2)) return null;  // adult-sized women's suit leaked into kids
+    if(cat === 'kids_infant'){
+      const hasMonth = sz.some(z => /\bmonths?\b|\bmo\b|\bnb\b|newborn|\b0-2\b/i.test(z)) || /newborn|\bnb\b|\bmonths?\b|romper|swaddle|blanket|\bwrap\b|hankie|bundle/i.test(tl2);
+      const maxAge = Math.max(0, ...sz.map(z => { const m = String(z).match(/(\d{1,2})\s*-?\s*(\d{0,2})\s*y/i); return m ? +(m[2] || m[1]) : 0; }));
+      if(!hasMonth && maxAge >= 4){ const c2 = mapCatKids(tl2, { g: (kidsHint && kidsHint.g !== 'infant') ? kidsHint.g : null, t: kidsHint && kidsHint.t }); if(c2 !== 'kids_infant') cat = c2; }
+    }
+  }
   const pub = Math.floor((Date.parse(p.published_at || p.updated_at || p.created_at || '') || 0) / 1000);
   const onSale = (p.variants||[]).some(v => v.compare_at_price && parseFloat(v.compare_at_price) > parseFloat(v.price||0));
-  const o = { b:name, t:(p.title||'').slice(0,80), u:`https://${host}/products/${p.handle}`, img, pkr, cat, sz, pub };
+  const o = { b:name, t:(p.title||'').replace(/^\s*full\s+payment\s+/i, '').slice(0,80), u:`https://${host}/products/${p.handle}`, img, pkr, cat, sz, pub };
   if(onSale) o.sale = 1;
   return o;
 }
@@ -534,6 +584,13 @@ const KIDS_BRANDS = [
   ['Alkaram Studio','www.alkaramstudio.com'],['Minnie Minors','minnieminors.com'],['Hopscotch','ilovehopscotch.com'],
   ['Tifl','tifl.pk'],['Baby Planet','babyplanet.pk'],['Buttoned On','buttonedon.pk'],['Preeto','preeto.pk'],
   ['One Kids','beoneshopone.com'],['Engine','engine.com.pk'],
+  // women's/lawn houses that ALSO run kids lines (found by the coverage sweep 2026-06-19) —
+  // their kids collections weren't being pulled; adults still come from SHOPIFY.
+  ['ETHNC','pk.ethnc.com'],['Sha Posh','shaposh.pk'],['Saya','saya.pk'],['Beechtree','beechtree.pk'],
+  ['Sitara Studio','sitarastudio.pk'],['Nureh','nureh.pk'],['Charizma','houseofcharizma.com'],
+  ['Zeen (by Cambridge)','zeenwoman.com'],['Alizeh','alizeh.pk'],['Gulaal','gulaal.pk'],['Motifz','motifz.com.pk'],
+  ['Agha Noor','pk.aghanoorofficial.com'],['Asim Jofa','asimjofa.com'],   // real age-sized '(Kids)' lines (audit-confirmed)
+  // Salitex DROPPED — its "girls" collection is a WOMEN'S line + fragrances (adult XS/S/M/L), not kids.
 ];
 async function harvestKidsCollection(name, host, handle, hint, need){
   const out = [];
