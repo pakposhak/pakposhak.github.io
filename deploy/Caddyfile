@@ -1,6 +1,14 @@
-# PakiPoshak PKR price relay — HTTPS front for the Node relay on 127.0.0.1:8787
+# PakPoshak — HTTPS front for:
+#   - the Node PKR relay     on 127.0.0.1:8787  (default: everything)
+#   - the product search API on 127.0.0.1:8788  (path /search and /search/*)
 # Hostname uses sslip.io (free wildcard DNS): 103.83.91.34.sslip.io -> 103.83.91.34
 # Caddy auto-provisions + renews a Let's Encrypt cert (HTTP-01 on :80 / TLS-ALPN on :443).
 103.83.91.34.sslip.io {
-	reverse_proxy 127.0.0.1:8787
+	@search path /search /search/*
+	handle @search {
+		reverse_proxy 127.0.0.1:8788
+	}
+	handle {
+		reverse_proxy 127.0.0.1:8787
+	}
 }

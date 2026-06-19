@@ -1,0 +1,22 @@
+[Unit]
+Description=PakPoshak product search API (SQLite FTS5)
+After=network.target psb-relay.service
+
+[Service]
+Type=simple
+User=psbrelay
+Environment=PSB_SEARCH_PORT=8788
+WorkingDirectory=/opt/psb-search
+ExecStart=/usr/bin/node /opt/psb-search/search-server.js
+Restart=always
+RestartSec=2
+# Hardening (mirrors psb-relay). The service only READS /opt/psb-search/search.db.
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+
+[Install]
+WantedBy=multi-user.target
