@@ -928,7 +928,7 @@
     <div class="ps-wrap">
       <aside class="ps-rail">
         <div class="ps-searchblock ps-search-mobile">
-          <input id="psSearchMobile" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSmartSearch(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search 12,000+ products, 80+ Pakistani brands"/>
+          <input id="psSearchMobile" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSearchInput(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search 12,000+ products, 80+ Pakistani brands"/>
           <div class="ps-search-hint" id="psSearchHintM"></div>
         </div>
         <div class="ps-fblock">
@@ -952,7 +952,7 @@
             <button type="button" class="ps-clear-inline" onclick="psClearFilters()" data-i18n="ps_clear">Clear</button>
           </span>
           <span class="ps-search-desktop" style="flex-direction:column;align-items:flex-end;min-width:0">
-            <input id="psSearchDesktop" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSmartSearch(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search 12,000+ products, 80+ Pakistani brands"/>
+            <input id="psSearchDesktop" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSearchInput(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search 12,000+ products, 80+ Pakistani brands"/>
             <span class="ps-search-hint" id="psSearchHintD"></span>
           </span>
         </div>
@@ -5593,6 +5593,18 @@
   }
   // Unified search → marks brands (by name) + categories (by synonym). REPLACES the
   // current cat/brand selection so "khaadi casual" fixes the filters to exactly that.
+  // Debounced search entry point (wired to both inputs' oninput). Mirrors the typed
+  // value to both fields INSTANTLY so the box feels live, but defers the expensive
+  // resolve+filter (~3 catalog passes + psApply) so a fast typer triggers it once, not
+  // once per character — the difference between snappy and laggy typing at 20k products.
+  let _psSearchT = null;
+  function psSearchInput(val){
+    const a = document.getElementById('psSearchMobile'), b = document.getElementById('psSearchDesktop');
+    if(a && a.value !== val) a.value = val;
+    if(b && b.value !== val) b.value = val;
+    clearTimeout(_psSearchT);
+    _psSearchT = setTimeout(() => psSmartSearch(val), 180);
+  }
   function psSmartSearch(val){
     const a = document.getElementById('psSearchMobile'), b = document.getElementById('psSearchDesktop');
     if(a && a.value !== val) a.value = val;
@@ -5690,7 +5702,13 @@
         // Keep the FULL catalog (incl. accessories) — the Browse-Brands product
         // view needs accessory brands; the Products grid hides them in psApply.
         PS_CATALOG = (j.products || []).filter(p => p && p.u && p.pkr && p.img);
-        PS_CATALOG.forEach(p => { p._bdt = estLandedBdt(p.pkr, p.cat); });   // landed ৳ once — filter + card both use it
+        // Landed ৳ for every item — but compute getRates() ONCE and memoize the weight
+        // per category, instead of calling estLandedBdt() per product (which re-reads the
+        // rates object + JSON.parses localStorage weights for EVERY item). At 20k that
+        // per-item localStorage parse was the real load-time cost. Identical formula/result.
+        { const _r = getRates(), _wW = {};
+          const _wOf = c => (_wW[c] != null ? _wW[c] : (_wW[c] = (typeof getWeight === 'function' ? getWeight(c) : 0.5)));
+          PS_CATALOG.forEach(p => { p._bdt = Math.round(p.pkr * _r.CONV_RATE * (1 + (_r.COMM_1 || 0)) + _wOf(p.cat) * _r.LOG_RATE); }); }
         // Default order: women's everyday first (men/kids to the back), then
         // round-robin by brand (_bi = nth item of its brand) so the first page is
         // a VARIED women's mix, not 8 articles from one label.
@@ -6322,7 +6340,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-19h';
+  const PSB_BUILD = '2026-06-19i';
   console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
