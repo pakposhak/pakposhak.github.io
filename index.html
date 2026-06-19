@@ -930,7 +930,7 @@
     <div class="ps-wrap">
       <aside class="ps-rail">
         <div class="ps-searchblock ps-search-mobile">
-          <input id="psSearchMobile" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSearchInput(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search 12,000+ products, 80+ Pakistani brands"/>
+          <input id="psSearchMobile" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSearchInput(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search 50,000+ products, 140+ Pakistani brands"/>
           <div class="ps-search-hint" id="psSearchHintM"></div>
         </div>
         <div class="ps-fblock">
@@ -954,7 +954,7 @@
             <button type="button" class="ps-clear-inline" onclick="psClearFilters()" data-i18n="ps_clear">Clear Filters</button>
           </span>
           <span class="ps-search-desktop" style="flex-direction:column;align-items:flex-end;min-width:0">
-            <input id="psSearchDesktop" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSearchInput(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search 12,000+ products, 80+ Pakistani brands"/>
+            <input id="psSearchDesktop" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSearchInput(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search 50,000+ products, 140+ Pakistani brands"/>
             <span class="ps-search-hint" id="psSearchHintD"></span>
           </span>
         </div>
@@ -3675,7 +3675,7 @@
     // ── Menswear & tailoring ──
     {n:'Amir Adnan',u:'https://amiradnan.com',p:false,c:'m'},
     {n:'Lakhany by LSM',u:'https://lakhanyonline.com',p:false,c:'m'},
-    {n:'Furor (by Eden Robe)',u:'https://furorjeans.com',p:false,c:'m'},
+    {n:'Furor',u:'https://furorjeans.com',p:false,c:'m'},
     {n:'Republic Menswear (Omar Farooq)',u:'https://republicbespoke.com',p:false,c:'m'},
     {n:'Naushemian (Nauman Arfeen)',u:'https://naushemian.com',p:false,c:'m'},
     {n:'Cambridge',u:'https://thecambridgeshop.com',p:false,c:'m'},
@@ -3754,7 +3754,20 @@
     {n:'Rollover Kids',u:'https://rollover.com.pk',p:true,c:'k',more:true},
     {n:'Cocobee',u:'https://cocobee.com.pk',p:true,c:'k',more:true},
     {n:'Kjunction',u:'https://kjunction.com.pk',p:true,c:'k',more:true},
-    {n:'TIFL',u:'https://tifl.pk',p:true,c:'k',more:true},
+    {n:'Tifl',u:'https://tifl.pk',p:true,c:'k',more:true},
+    // ── added 2026-06-19: brands activated into the catalog this session (names MATCH the
+    //    harvester/catalog so the brand-index count badges attach) ──
+    {n:'The Hijab Company',u:'https://thehijabcompany.pk',p:false,c:'w'},
+    {n:'KEF',u:'https://kefpk.com',p:false,c:'w'},
+    {n:'Black Camels',u:'https://blackcamels.com.pk',p:false,c:'w'},
+    {n:'The Women Zone',u:'https://thewomenzone.pk',p:false,c:'w'},
+    {n:'The Ummatis',u:'https://theummatispk.store',p:false,c:'w'},
+    {n:'Hijab-ul-Hareem',u:'https://hijabulhareem.com',p:false,c:'w'},
+    {n:"Kashee's Boutique",u:'https://kasheesboutique.pk',p:false,c:'p'},
+    {n:'Buttoned On',u:'https://buttonedon.pk',p:false,c:'k'},
+    {n:'Preeto',u:'https://preeto.pk',p:false,c:'k'},
+    {n:'One Kids',u:'https://beoneshopone.com',p:false,c:'k'},
+    {n:'Engine',u:'https://engine.com.pk',p:false,c:'k'},
   ];
   // Feed every brand's hostname into BRAND_MAP so pasted URLs auto-detect the name
   BRANDS.forEach(b => {
@@ -3776,7 +3789,7 @@
       ps_enlarge:'Enlarge', ps_avail_sizes:'Available sizes', ps_unstitched:'Unstitched · no size needed', ps_mto:'Made to order', ps_d_loading:'Loading more details…', ps_d_open:'Open full page', ps_d_nofetch:'See all photos &amp; details on the brand page →', ps_d_nodesc:'No extra description provided.',
       ps_empty:'No products match these filters — try widening them.',
       ps_partial:'Not every brand &amp; product is listed here yet —', ps_partial_link:'want more? Browse by brands →', ps_word_products:'products', ps_word_brands:'brands',
-      ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products', ps_sort_lh:'৳ Low→High', ps_sort_hl:'৳ High→Low', ps_sale:'Sale', ps_new:'New', ps_lbl_sort:'Sort', ps_lbl_filter:'Filter', ps_search_ph:'Search 12,000+ products, 80+ Pakistani brands', ps_search_nomatch:'No brand or category matched',
+      ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products', ps_sort_lh:'৳ Low→High', ps_sort_hl:'৳ High→Low', ps_sale:'Sale', ps_new:'New', ps_lbl_sort:'Sort', ps_lbl_filter:'Filter', ps_search_ph:'Search 50,000+ products, 140+ Pakistani brands', ps_search_nomatch:'No brand or category matched',
       bb_store:'Store Types', bb_product:'Product Category', bb_women:'👗 Women', bb_men:'👔 Men', bb_kids:'🧸 Kids', bb_md:'🏬 Multi-Dept', bb_premium:'💎 Premium',
       bb_more:'more', bb_less:'less', bb_all:'All', bb_two_ways:'Two ways to search brands', bb_pick_gender:'Pick women, men, or others above — or just type any brand name.', bb_pick_cat:'Pick a category above to see its brands.', bb_prod_sub:'🔎 Search 150+ brands to order directly from their page:', bb_loading:'Loading brands…', bb_prod_none:'No catalogued brands here yet.',
       bb_smart_ph:'🔍 Search 150+ brands — e.g. Khaadi, lawn, casual', bb_search_lead:'🔎 Know the brand? Search 150+ Pakistani brands by name:',
@@ -5459,6 +5472,7 @@
   //    Falls back to the proven catalog.json client path on ANY API failure.
   let psApiMode = true;          // use the search API; psApiFallback() flips this off on failure
   let psApiTotal = 0;            // total matching products the API reports (drives the pager)
+  let _psCatTotal = 0;           // largest total seen = the unfiltered catalogue size (for the count note)
   let psApiSeq = 0;              // request sequence — ignore out-of-order responses
   let psApiFellBack = false;     // true once we've degraded to catalog.json
   let psQuery = '';              // free-text keyword (API mode)
@@ -5914,6 +5928,7 @@
         if(seq !== psApiSeq) return;     // a newer request superseded this one
         if(j.error) throw new Error(j.error);
         psApiTotal = j.total || 0;
+        if(psApiTotal > _psCatTotal) _psCatTotal = psApiTotal;   // remember the unfiltered catalogue size for the count note
         psFiltered = (j.products || []).filter(p => !psIsHidden(p));   // drop locally-known sold-outs
         psRender();
       })
@@ -6124,11 +6139,22 @@
   // live catalogue (rounded down) so they grow/shrink with the listing automatically.
   function psUpdateNote(){
     const el = document.getElementById('psNoteCounts');
-    if(!el || !PS_CATALOG) return;
-    const prods = Math.floor(PS_CATALOG.length / 1000) * 1000;
-    const brands = Math.floor(new Set(PS_CATALOG.map(p => p.b)).size / 10) * 10;
-    el.innerHTML = '<b>' + prods.toLocaleString('en-US') + '+</b> ' + tr('ps_word_products')
-                 + ' · <b>' + brands + '+</b> ' + tr('ps_word_brands');
+    if(!el) return;
+    // API mode (PS_CATALOG null): use the API's reported total + the brand-index/facet brand
+    // count so the note reflects the live catalogue instead of the stale static placeholder.
+    let prodCount = 0, brandCount = 0;
+    if(psApiMode){
+      prodCount  = _psCatTotal || psApiTotal || 0;
+      brandCount = (psFacetBrands && psFacetBrands.length) || (_bbCnt && Object.keys(_bbCnt).length) || 0;
+    } else if(PS_CATALOG){
+      prodCount  = PS_CATALOG.length;
+      brandCount = new Set(PS_CATALOG.map(p => p.b)).size;
+    }
+    if(!prodCount) return;
+    const prods = Math.floor(prodCount / 1000) * 1000;
+    let s = '<b>' + prods.toLocaleString('en-US') + '+</b> ' + tr('ps_word_products');
+    if(brandCount >= 10) s += ' · <b>' + (Math.floor(brandCount / 10) * 10) + '+</b> ' + tr('ps_word_brands');
+    el.innerHTML = s;
   }
 
   function psPageSize(){ return window.innerWidth >= 820 ? 12 : 8; }
@@ -6473,7 +6499,7 @@
   function bbLoadIndex(cb){
     if(_bbIndex){ cb(); return; }
     if(psApiMode){
-      fetch(psSearchBase() + '/brand-index', { cache:'default' })
+      fetch(psSearchBase() + '/brand-index', { cache:'no-store' })
         .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
         .then(j => { if(j.error) throw new Error(j.error); bbBuildIndexFromApi(j.brands || {}); cb(); })
         .catch(e => { console.warn('brand-index failed — names only:', e.message); _bbIndex = {}; _bbCnt = {}; _bbCatCnt = {}; cb(); });
@@ -6629,7 +6655,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-19q';
+  const PSB_BUILD = '2026-06-19r';
   console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
