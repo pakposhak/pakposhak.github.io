@@ -65,9 +65,13 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
 
   let products = (cat.products || []).filter(p => p && p.u && p.pkr && p.img);
 
-  // brand round-robin index (nth item of its brand, in source order) — for varied default order
+  // brand round-robin index, SCOPED PER CATEGORY (nth item of this brand WITHIN this category,
+  // in source order). Category-scoped (not global) so any category filter OR keyword search
+  // round-robins brands one-per-round instead of clustering the brand whose first catalog
+  // items happen to match (req: "kids" returned 6/8 from one brand). Within a category tier in
+  // qSort, _bi=0 items (one per brand) sort first, then _bi=1, etc.
   const seen = {};
-  products.forEach(p => { p._bi = (seen[p.b] = (seen[p.b] || 0) + 1) - 1; });
+  products.forEach(p => { const k = (p.b || '') + '|' + (p.cat || ''); p._bi = (seen[k] = (seen[k] || 0) + 1) - 1; });
   // ── Default landing order (req 2026-06-20): NO new-first. A WOMEN-PRET hero feed with a
   // light, EVERY-PAGE accent of a couple sale + one-two girls items; everything else trails.
   // Brand round-robin is a HIGH-priority sort key so every page / category / search shows
