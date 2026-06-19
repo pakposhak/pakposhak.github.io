@@ -604,18 +604,18 @@
     /* "Not everything is here" notice on Browse Products */
     .ps-note{font-size:0.76rem;color:var(--txt-sec);background:var(--gold-dim);border:1px solid var(--gold-bdr);border-radius:9px;padding:8px 12px;margin-bottom:12px;line-height:1.5}
     .ps-note a{color:var(--gold);font-weight:700;text-decoration:none}
-    /* Collapsed one-row filter shells (Categories / Brands) — tap to drill down; reuse the .catdd dropdown idiom, themed for light+dark. No standalone heading (req). */
-    .ps-filt{margin-bottom:8px;border:1.5px solid var(--bdr-med);border-radius:10px;background:var(--input-bg);overflow:hidden}
-    .ps-filt:last-child{margin-bottom:0}
-    .ps-filt-sum{list-style:none;cursor:pointer;padding:11px 14px;font-size:0.9rem;font-weight:800;color:var(--txt);display:flex;align-items:center;gap:9px}
-    .ps-filt-sum::-webkit-details-marker{display:none}
-    .ps-filt-sum::marker{content:''}
-    .ps-filt-sum::after{content:'▾';margin-left:auto;color:var(--txt-muted);font-size:0.82rem}
-    .ps-filt[open] .ps-filt-sum::after{content:'▴'}
-    .ps-filt[open] .ps-filt-sum{border-bottom:1px solid var(--bdr-med);background:var(--raised);color:var(--gold)}
-    .ps-filt-n{font-size:0.7rem;font-weight:800;color:var(--gold);background:var(--gold-dim);border:1px solid var(--gold-bdr);padding:1px 9px;border-radius:11px;line-height:1.55}
+    /* One-row Categories + Brands filter pills with a full-width floating popover under the row (mirrors the Price-Filters popover; themed light+dark). Buyer picks categories, brands, or both. */
+    .ps-filtrow{position:relative;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+    .ps-filtbtn{flex:1 1 120px;min-width:0;display:flex;align-items:center;gap:7px;padding:11px 13px;border:1.5px solid var(--bdr-med);border-radius:10px;background:var(--input-bg);color:var(--txt);font-size:0.85rem;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap}
+    .ps-filtbtn.on{border-color:var(--gold-bdr2);color:var(--gold);background:var(--gold-dim)}
+    .ps-filtcar{margin-left:auto;font-size:0.62rem;color:var(--txt-muted)}
+    .ps-filtbtn.on .ps-filtcar{color:var(--gold)}
+    .ps-filt-n{font-size:0.7rem;font-weight:800;color:var(--gold);background:var(--gold-dim);border:1px solid var(--gold-bdr);padding:1px 8px;border-radius:11px;line-height:1.5}
+    .ps-filtbtn.on .ps-filt-n{background:var(--surface)}
     .ps-filt-n:empty{display:none}
-    .ps-filt>.ps-cats,.ps-filt>.ps-brands{border:none;border-radius:0;max-height:50vh;overflow-y:auto;background:transparent}
+    .ps-filtpop{display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:60;background:var(--surface);border:1.5px solid var(--gold-bdr);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,0.28);overflow:hidden}
+    .ps-filtpop.open{display:block}
+    .ps-filtpop .ps-cats,.ps-filtpop .ps-brands{border:none;border-radius:0;max-height:60vh;overflow-y:auto;background:transparent}
     /* Product-Category filter — collapsible 3-gender list mirroring the form's picker */
     .ps-cats{border:1px solid var(--bdr-med);border-radius:8px;overflow:hidden;background:var(--input-bg)}
     .ps-catclear{width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--bdr);font-family:inherit;font-size:0.8rem;color:var(--txt-muted);padding:7px 12px;cursor:pointer}
@@ -945,15 +945,13 @@
           <input id="psSearchMobile" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSearchInput(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search 50,000+ products, 140+ Pakistani brands"/>
           <div class="ps-search-hint" id="psSearchHintM"></div>
         </div>
-        <!-- Collapsed one-row filters (req): tap "Categories" → 3 majors (Women/Men/Kids) → drill into subcats; tap "Brands" → dept groups → brands. No top heading; a count badge shows when a filter is active. -->
-        <details class="ps-filt" id="psCatWrap">
-          <summary class="ps-filt-sum"><span data-i18n="ps_category_short">Categories</span><span class="ps-filt-n" id="psCatCount"></span></summary>
-          <div class="ps-cats" id="psCat"></div>
-        </details>
-        <details class="ps-filt" id="psBrandWrap">
-          <summary class="ps-filt-sum"><span data-i18n="ps_brands">Brands</span><span class="ps-filt-n" id="psBrandCount"></span></summary>
-          <div class="ps-brands" id="psBrands"></div>
-        </details>
+        <!-- One-row filters (req): Categories + Brands as side-by-side dropdown pills; tapping drops a full-width panel under the row (mirrors the Price-Filters popover). Pick either or both. -->
+        <div class="ps-filtrow">
+          <button type="button" class="ps-filtbtn" id="psCatBtn" onclick="psToggleFiltPop('cat')" aria-haspopup="true" aria-expanded="false"><span data-i18n="ps_category_short">Categories</span> <span class="ps-filt-n" id="psCatCount"></span><span class="ps-filtcar">▾</span></button>
+          <button type="button" class="ps-filtbtn" id="psBrandBtn" onclick="psToggleFiltPop('brand')" aria-haspopup="true" aria-expanded="false"><span data-i18n="ps_brands">Brands</span> <span class="ps-filt-n" id="psBrandCount"></span><span class="ps-filtcar">▾</span></button>
+          <div class="ps-filtpop" id="psCatPop"><div class="ps-cats" id="psCat"></div></div>
+          <div class="ps-filtpop" id="psBrandPop"><div class="ps-brands" id="psBrands"></div></div>
+        </div>
       </aside>
       <section class="ps-results">
         <!-- Count + compact Price popover + Clear all share one row, just above the grid -->
@@ -6367,6 +6365,25 @@
     }
   });
 
+  // Categories + Brands popovers (one-row pills; mirror the Price popover). Open either pill,
+  // pick categories / brands / both. Only one filter pop open at a time; clicking outside the
+  // row closes it (and clicking a filter pill closes the price pop via the price listener above).
+  function psToggleFiltPop(which){
+    const isCat = which === 'cat';
+    const pop = document.getElementById(isCat ? 'psCatPop' : 'psBrandPop'); if(!pop) return;
+    const other = document.getElementById(isCat ? 'psBrandPop' : 'psCatPop'); if(other) other.classList.remove('open');
+    const otherBtn = document.getElementById(isCat ? 'psBrandBtn' : 'psCatBtn'); if(otherBtn) otherBtn.setAttribute('aria-expanded','false');
+    const open = pop.classList.toggle('open');
+    const btn = document.getElementById(isCat ? 'psCatBtn' : 'psBrandBtn'); if(btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  document.addEventListener('click', function(e){
+    const row = document.querySelector('#tabProducts .ps-filtrow'); if(!row || row.contains(e.target)) return;
+    [['psCatPop','psCatBtn'], ['psBrandPop','psBrandBtn']].forEach(([popId, btnId]) => {
+      const p = document.getElementById(popId);
+      if(p && p.classList.contains('open')){ p.classList.remove('open'); const b = document.getElementById(btnId); if(b) b.setAttribute('aria-expanded','false'); }
+    });
+  });
+
   function psCatalogBrands(){
     if(psApiMode){
       const present = psFacetBrands || [];
@@ -6397,7 +6414,7 @@
     });
     document.getElementById('psBrands').innerHTML = html || `<div style="padding:10px;color:var(--txt-muted);font-size:0.78rem">—</div>`;
     const bc = document.getElementById('psBrandCount'); if(bc) bc.textContent = psSel.brands.size || '';
-    const bw = document.getElementById('psBrandWrap'); if(bw && psSel.brands.size) bw.open = true;
+    const bb = document.getElementById('psBrandBtn'); if(bb) bb.classList.toggle('on', psSel.brands.size > 0);
   }
   function psToggleBrand(name, on){ if(on) psSel.brands.add(name); else psSel.brands.delete(name); psApply(); }
 
@@ -6414,7 +6431,7 @@
   function psBuildCatFilter(){
     const present = psApiMode ? (psFacetCats || new Set()) : (PS_CATALOG ? new Set(PS_CATALOG.map(p => p.cat)) : new Set());
     const sel = psSel.cats;
-    let html = `<button type="button" class="ps-catclear${sel.size===0?' on':''}" onclick="psPickCat('')">${tr('ps_allcats')}</button>`;
+    let html = '';   // no "All categories" row (req) — open straight to the 3 majors; reset via re-tap or the resbar "Clear Filters"
     ['w','m','k'].forEach(g => {
       const tree = CAT_TREE[g]; if(!tree) return;
       let inner = '', lastSec = null;
@@ -6437,7 +6454,7 @@
     });
     document.getElementById('psCat').innerHTML = html;
     const cc = document.getElementById('psCatCount'); if(cc) cc.textContent = sel.size || '';
-    const cw = document.getElementById('psCatWrap'); if(cw && sel.size) cw.open = true;   // reveal the collapsed filter when something is selected (e.g. via smart search)
+    const cb = document.getElementById('psCatBtn'); if(cb) cb.classList.toggle('on', sel.size > 0);   // highlight the pill when a category filter is active
   }
   function psPickCat(v){
     if(v === '') psSel.cats.clear();                              // "All categories" → clear filter
@@ -7029,7 +7046,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-20u';
+  const PSB_BUILD = '2026-06-20w';
   console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
