@@ -67,7 +67,7 @@ const SHOPIFY = [
   ['Shahzeb Saeed','shahzebsaeed.com','m'],
   // Bachaa Party removed: its live /products.json is a general kids store (Toys,
   // Crockery, Baby Care, School Supplies) — no clothing in the feed, only pollution.
-  ['Minnie Minors','minnieminors.com','k'],['Hopscotch','ilovehopscotch.com','k'],
+  // NOTE: Minnie Minors & Hopscotch moved to KIDS_BRANDS (collection-scoped 7-cat harvest).
   // ── added 2026-06-17 (most-popular-in-BD + abaya) — all verified live Shopify /products.json in PKR ──
   ['Gul Ahmed','gulahmedshop.com','md'],['Alkaram Studio','www.alkaramstudio.com','md'],
   ['Edenrobe','edenrobe.com','md'],   // J. Junaid Jamshed moved to COLLECTIONS (menswear-only)
@@ -117,14 +117,8 @@ const COLLECTIONS = [
   ['Maryum N Maria','maryumnmaria.com','p',24,[['bridal-couture-1','bridal'],['bridals','bridal']]],
   ['Imrozia Premium','imroziapremium.com','p',15,[['imrozia-bridals','bridal'],['bridals','bridal']]],
   ['Elan','elan.pk','p',18,[['wedding-festive','bridal'],['festive','bridal']]],
-  // ── KIDS depth (req: ≥3 kids brands beyond Minnie Minors / Hopscotch). These are
-  //    the kids LINES of established houses — real kids clothing, mapped by group 'k'
-  //    (force=null → mapCatKids classifies eastern/frock/formal/western). They surface
-  //    as their own brand in the Kids view, so the Kids section now has 6 brands. ──
-  ['Edenrobe','edenrobe.com','k',320,[['kids',null],['girls',null],['boys',null]]],
-  ['Bonanza Satrangi','bonanzasatrangi.com','k',70,[['kids',null]]],
-  ['Gul Ahmed','gulahmedshop.com','k',70,[['kids',null]]],
-  ['Alkaram Studio','www.alkaramstudio.com','k',60,[['boys',null],['girls',null]]],
+  // KIDS are now harvested by the dedicated KIDS_BRANDS pass (auto-discovers each
+  // brand's boys/girls/infant collections → the 7-category taxonomy, eastern-first).
 ];
 
 // ── SFCC brands (no /products.json) — parse product tiles from listing pages ──
@@ -256,15 +250,40 @@ function mapCatMen(s){
   if(/suit/.test(s)) return 'mens_shalwar_kameez';
   return 'mens_kurta';
 }
-function mapCatKids(s){
-  // party / formal (embroidered, chiffon, organza, fancy, wedding/eid) — check first
-  if(/formal|party|\bemb\b|embroider|chiffon|organza|jamawar|fancy|wedding|eid[\s-]?special|festive/.test(s)) return 'kids_formal';
-  // girls' frock / maxi / one-piece dress
-  if(/frock|\bmaxi\b|\bgown\b|\bdress\b|jumpsuit/.test(s)) return 'kids_frock';
-  // western (tee / jeans / denim / shorts)
-  if(/western|jean|denim|trouser|\bpant|\btee\b|t[\s-]?shirt|\bshirt\b|polo|romper|legging|short|hoodie|sweat/.test(s)) return 'kids_western';
-  // eastern suits (kurta / shalwar / 2–3pc) — default
-  return 'kids_eastern';
+// ── KIDS: 7-category classifier — boys/girls × eastern/western/formal + infant ──
+// Gender + garment-type come from the COLLECTION handle (strong hint, passed in by the
+// kids harvest) AND the product title; the title fills whatever the collection didn't
+// encode. eastern-first: an unknown type defaults to eastern.
+function kidGender(s){
+  if(/infant|new[\s-]?born|\bnb\b|\bmonths?\b|toddler|\bbaby\b|romper|\b0-2\b|\b1-2\s?y/.test(s)) return 'infant';
+  if(/\bgirls?\b|girl[-\s]|\bfrock\b|\bgown\b/.test(s)) return 'girls';
+  if(/\bboys?\b|boy[-\s]|sherwani|waist[\s-]?coat/.test(s)) return 'boys';
+  return null;
+}
+function kidType(s){
+  // formal = FESTIVE / CEREMONIAL only. NOT plain "embroidered" — kids casual tees are
+  // routinely "embroidered" and must stay western (validation caught this).
+  if(/festive|\beid\b|ceremon|wedding|\bformal\b|\bparty\b|\bgown\b|sherwani|fancy[\s-]?frock/.test(s)) return 'formal';
+  if(/western|\btees?\b|t[-\s]?shirt|polo|\bshirts?\b|\bjeans?\b|denim|\bshorts?\b|trouser|\bpants?\b|hoodie|sweat|jacket|knit|woven|co-?ord|legging|tights|jogger|cargo|chino/.test(s)) return 'western';
+  if(/eastern|ethnic|kurta|shalwar|kameez|\bpret\b|\blawn\b|frock|kurti|[23][-\s]?(pc|piece)|\bsuit\b|\bmaxi\b|abaya|waist[\s-]?coat/.test(s)) return 'eastern';
+  return null;
+}
+function mapCatKids(s, hint){
+  hint = hint || {};
+  s = String(s||'').toLowerCase();
+  // gender: the collection hint is reliable; fall back to title, then a garment guess.
+  let g = hint.g || kidGender(s);
+  if(g === 'infant') return 'kids_infant';
+  // type: the TITLE wins (a jogger/tee in a "festive" collection is still western); a
+  // formal/festive COLLECTION only upgrades a NON-western title to formal. Unknown →
+  // collection hint → eastern-first default.
+  const tt = kidType(s);
+  let t = tt || hint.t || 'eastern';
+  if(hint.t === 'formal' && tt !== 'western') t = 'formal';
+  if(!g) g = /frock|\bmaxi\b|\bgown\b|\bdress\b|kurti|\bgirl/.test(s) ? 'girls' : 'boys';
+  if(t === 'formal')  return g === 'girls' ? 'kids_girls_formal'  : 'kids_boys_formal';
+  if(t === 'western') return g === 'girls' ? 'kids_girls_western' : 'kids_boys_western';
+  return g === 'girls' ? 'kids_girls_eastern' : 'kids_boys_eastern';
 }
 // khussa/kolhapuri/peshawari are traditional flats we CAN ship → keep as footwear.
 const KHUSSA_RE = /\b(khussa|kolhapuri|peshawari)/;
@@ -287,6 +306,21 @@ const FRAGRANCE_WEAK = /\bcologne\b|\battar\b|\bcandle\b|\bserum\b|\blotion\b/;
 // Gift/perfume BUNDLES (e.g. "Father's Day Bundle", tag=bundle) — these often contain
 // a perfume; drop when there's NO garment signal (a real "3-suit bundle" survives).
 const BUNDLE_RE = /\bbundle\b|gift[\s-]?set|gift[\s-]?bundle|\bhamper\b|combo[\s-]?(?:deal|pack|set)/;
+// Per-PRODUCT drop filter for KIDS collections. A kids collection mixes garments with
+// shoes / underwear / eyewear / accessories; the collection vouches the item is "kids"
+// so (unlike mapCat) we don't require a garment word — we only drop the clearly
+// non-garment items. (Validation caught "Pack of 3-Briefs", "Low-Top Sneakers",
+// "Wayfarer Sunglasses" leaking in as apparel.)
+const KIDS_DROP = /\b(briefs?|boxer|panty|panties|trunks?|innerwear|under[\s-]?wear|undergarment|sunglass(?:es)?|eye[\s-]?wear|spectacles?|\bglasses\b|socks?|\bcaps?\b|beanie|\bhats?\b|\bbib\b|mittens?|booti(?:es)?|shoes?|sneakers?|sandals?|slippers?|loafers?|\bpumps?\b|\bbags?\b|backpack|bottle|feeder|sipper|diaper|nappy|toys?|\bcomb\b|towel|blanket|pillow|cushion|jewell?ery|earrings?|bangles?|bracelets?|hair[\s-]?(?:band|clip|tie|accessor)|head[\s-]?band|\bbelts?\b|watch|perfume|fragrance|deodorant)\b/;
+// Decide if a Shopify collection is a kids APPAREL collection; extract gender/type hint
+// from the handle+title. Returns null to skip (accessories / sale-duplicate / non-kids).
+const KIDS_COLL_SKIP = /accessor|sunglass|fragrance|perfume|\bshoe|footwear|sneaker|\bsock|\bcap\b|\bhat\b|\bbag\b|jewel|\bwatch\b|\bbelt\b|bottle|feeding|hygiene|diaper|\btoy|school|stationer|grooming|\bbib\b|mitten|booti|stroller|pram|\bgift|towel|blanket|bedding|skincare|\bsale\b|discount|flat[-\s]?\d|[-\s]off\b|clearance|\bunder-?\d|everything-under|\d{1,2}%/i;
+function classifyKidsCollection(handle, title){
+  const s = (handle + ' ' + (title||'')).toLowerCase();
+  if(!/kid|boys?|girls?|infant|newborn|junior|teen|toddler|\bbaby\b/.test(s)) return null;   // not a kids collection
+  if(KIDS_COLL_SKIP.test(s)) return null;                                                       // accessories / sale-dup
+  return { g: kidGender(s), t: kidType(s) };
+}
 // Full HAND-embroidery (adda work) = heavy (~2.5kg), regardless of stitched/unstitched.
 // Detected from the product DESCRIPTION's hand/adda wording, plus a brand-default for
 // houses that are predominantly handmade (their feed often omits the wording).
@@ -343,7 +377,7 @@ function mapCat(group, type, title, tagStr){
 // ── Shared Shopify product → catalog object mapper ───────────────────────────
 // Used by BOTH the whole-store harvest and the collection harvest. `force`
 // overrides the category for collection-scoped pulls (null = normal mapCat).
-function buildProduct(p, name, host, group, force){
+function buildProduct(p, name, host, group, force, kidsHint){
   const v0 = p.variants[0];
   const pkr = Math.round(parseFloat(v0 && v0.price) || 0);
   if(pkr < 500) return null;
@@ -355,6 +389,14 @@ function buildProduct(p, name, host, group, force){
     const tt = ((p.product_type||'') + ' ' + (p.title||'')).toLowerCase();
     cat = /lehenga|gharara|sharara/.test(tt) ? 'lehenga' : (/\bsaree\b|\bsari\b/.test(tt) ? 'saree' : 'bridal');
   } else if(force){ cat = force; }
+  else if(group === 'k'){
+    // Kids (collection-scoped): the collection vouches it's apparel, so drop only the
+    // clear non-garments (shoes/underwear/eyewear/accessories), then 7-cat classify
+    // using the collection's gender/type hint + the title.
+    const s2 = ((p.product_type||'') + ' ' + (p.title||'') + ' ' + tagStr).toLowerCase();
+    if(FRAGRANCE_STRONG.test(s2) || KIDS_DROP.test(s2)) return null;
+    cat = mapCatKids((p.product_type||'') + ' ' + (p.title||''), kidsHint);
+  }
   else { cat = mapCat(group, p.product_type, p.title, tagStr); }
   if(!cat) return null;   // dropped (sneakers/heels/bags/perfume we can't ship)
   // Festive house with a too-light auto-guess → formal-embroidered weight floor.
@@ -477,42 +519,120 @@ async function harvestCollections(entry){
   return out.slice(0, cap);
 }
 
+// ── KIDS harvest — auto-discover each brand's kids collections, classify per product
+// (collection hint + title), dedupe by URL, EASTERN-FIRST (eastern/formal/infant
+// collections pulled before western, and western sub-capped per brand). ──
+const KIDS_CAP = parseInt(process.env.KIDS_CAP || '1400', 10);          // per-brand kids ceiling
+const KIDS_WEST_CAP = parseInt(process.env.KIDS_WEST_CAP || '240', 10); // western sub-cap → keeps kids eastern-led
+// Brands to pull KIDS from: family/multi houses (their boys/girls sections) + dedicated
+// kids/baby brands. Each [name, host]. Adult lines still come from SHOPIFY/SFCC/COLLECTIONS.
+const KIDS_BRANDS = [
+  ['Outfitters','outfitters.com.pk'],['Breakout','breakout.com.pk'],['Edenrobe','edenrobe.com'],
+  ['Diners','diners.com.pk'],['Eminent','eminent.pk'],['Limelight','www.limelight.pk'],
+  ['Zellbury','zellbury.com'],['Gul Ahmed','gulahmedshop.com'],['Maria B','mariab.pk'],
+  ['Sana Safinaz','www.sanasafinaz.com'],['Almirah','almirah.com.pk'],['Bonanza Satrangi','bonanzasatrangi.com'],
+  ['Alkaram Studio','www.alkaramstudio.com'],['Minnie Minors','minnieminors.com'],['Hopscotch','ilovehopscotch.com'],
+  ['Tifl','tifl.pk'],['Baby Planet','babyplanet.pk'],['Buttoned On','buttonedon.pk'],['Preeto','preeto.pk'],
+  ['One Kids','beoneshopone.com'],['Engine','engine.com.pk'],
+];
+async function harvestKidsCollection(name, host, handle, hint, need){
+  const out = [];
+  for(let page = 1; page <= 4 && out.length < need; page++){
+    let raw; try{ raw = await get(`https://${host}/collections/${handle}/products.json?limit=250&page=${page}`); }catch(e){ break; }
+    let prods; try{ prods = (JSON.parse(raw).products) || []; }catch(e){ break; }
+    if(!prods.length) break;
+    for(const p of prods){
+      if(!(p.variants && p.variants.length && p.handle)) continue;
+      const o = buildProduct(p, name, host, 'k', null, hint);
+      if(o) out.push(o);
+    }
+    if(prods.length < 250) break;
+    await sleep(350);
+  }
+  return out;
+}
+async function harvestKidsBrand(name, host){
+  let raw; try{ raw = await get(`https://${host}/collections.json?limit=250`); }catch(e){ return []; }
+  let cols; try{ cols = (JSON.parse(raw).collections) || []; }catch(e){ return []; }
+  const kc = cols.map(c => ({ handle:c.handle, n:c.products_count || 0, hint:classifyKidsCollection(c.handle, c.title) }))
+    .filter(c => c.hint && c.n > 0);
+  // eastern / formal / infant collections first, western last → eastern-first within the cap
+  kc.sort((a,b) => ((a.hint.t === 'western' ? 1 : 0) - (b.hint.t === 'western' ? 1 : 0)) || b.n - a.n);
+  const out = [], seen = new Set(); let west = 0;
+  for(const c of kc){
+    if(out.length >= KIDS_CAP) break;
+    const items = await harvestKidsCollection(name, host, c.handle, c.hint, 400);
+    for(const it of items){
+      if(seen.has(it.u)) continue; seen.add(it.u);
+      if(/_western$/.test(it.cat)){ if(west >= KIDS_WEST_CAP) continue; west++; }   // eastern-first cap
+      out.push(it);
+      if(out.length >= KIDS_CAP) break;
+    }
+    await sleep(300);
+  }
+  return out;
+}
+
 (async () => {
+  const KIDS_ONLY = process.env.KIDS_ONLY === '1';   // dry-run: kids brands only, report 7-cat split, no catalog.json write
   const all = [];
-  for(const [name, host, group] of SHOPIFY){
-    process.stdout.write(`• ${name} … `);
-    const items = await harvestShopify(name, host, group);
-    console.log(`${items.length}`);
-    all.push(...items);
-    await sleep(700);
-  }
-  for(const brand of SFCC){
-    process.stdout.write(`• ${brand.name} (SFCC) … `);
-    const items = await harvestSfcc(brand);
-    console.log(`${items.length}`);
-    all.push(...items);
-  }
-  for(const entry of COLLECTIONS){
-    process.stdout.write(`• ${entry[0]} (collection) … `);
-    const items = await harvestCollections(entry);
+  // KIDS first so the hint-based classification wins URL-dedup over any kids items that
+  // leak into a family brand's whole-store (adult) harvest.
+  for(const [name, host] of KIDS_BRANDS){
+    process.stdout.write(`• ${name} (kids) … `);
+    const items = await harvestKidsBrand(name, host);
     console.log(`${items.length}`);
     all.push(...items);
     await sleep(500);
+  }
+  if(!KIDS_ONLY){
+    for(const [name, host, group] of SHOPIFY){
+      process.stdout.write(`• ${name} … `);
+      const items = await harvestShopify(name, host, group);
+      console.log(`${items.length}`);
+      all.push(...items);
+      await sleep(700);
+    }
+    for(const brand of SFCC){
+      process.stdout.write(`• ${brand.name} (SFCC) … `);
+      const items = await harvestSfcc(brand);
+      console.log(`${items.length}`);
+      all.push(...items);
+    }
+    for(const entry of COLLECTIONS){
+      process.stdout.write(`• ${entry[0]} (collection) … `);
+      const items = await harvestCollections(entry);
+      console.log(`${items.length}`);
+      all.push(...items);
+      await sleep(500);
+    }
   }
   // de-dupe by product URL (a brand's bridal collection overlaps its main feed)
   const seenU = new Set();
   const deduped = all.filter(p => { if(seenU.has(p.u)) return false; seenU.add(p.u); return true; });
   const brands = [...new Set(deduped.map(p => p.b))];
   const out = { updated: new Date().toISOString(), count: deduped.length, brands: brands.length, products: deduped };
-  fs.writeFileSync('catalog.json', JSON.stringify(out));
-  console.log(`\n✓ catalog.json — ${deduped.length} products from ${brands.length} brands`);
+  const file = KIDS_ONLY ? 'catalog-kids-sample.json' : 'catalog.json';
+  fs.writeFileSync(file, JSON.stringify(out));
+  console.log(`\n✓ ${file} — ${deduped.length} products from ${brands.length} brands`);
   // gender mix (cat → gender): mens_* = men, kids_* = kids, else women.
   const genOf = c => /^mens_/.test(c) ? 'm' : /^kids_/.test(c) ? 'k' : 'w';
   const split = { w:0, m:0, k:0 };
   deduped.forEach(p => split[genOf(p.cat)]++);
   const pct = g => deduped.length ? Math.round(split[g] / deduped.length * 100) : 0;
   console.log(`  gender mix → women ${split.w} (${pct('w')}%) · men ${split.m} (${pct('m')}%) · kids ${split.k} (${pct('k')}%)`);
-  // kids brands present (so we can confirm the kids variety requirement)
-  const kidsBrands = [...new Set(deduped.filter(p => /^kids_/.test(p.cat)).map(p => p.b))];
-  console.log(`  kids brands (${kidsBrands.length}): ${kidsBrands.join(', ')}`);
+  // KIDS 7-category breakdown (the new taxonomy) + eastern-vs-western check.
+  const KCATS = ['kids_boys_eastern','kids_girls_eastern','kids_boys_western','kids_girls_western','kids_boys_formal','kids_girls_formal','kids_infant'];
+  const kc = {}; KCATS.forEach(c => kc[c] = 0);
+  deduped.forEach(p => { if(kc[p.cat] != null) kc[p.cat]++; });
+  const kTot = KCATS.reduce((s,c) => s + kc[c], 0);
+  if(kTot){
+    console.log('  kids 7-cat:');
+    KCATS.forEach(c => console.log(`    ${c.padEnd(20)} ${kc[c]}`));
+    const east = kc.kids_boys_eastern + kc.kids_girls_eastern + kc.kids_boys_formal + kc.kids_girls_formal;
+    const west = kc.kids_boys_western + kc.kids_girls_western;
+    console.log(`    → eastern+formal ${east} vs western ${west} | infant ${kc.kids_infant}  (kids total ${kTot})`);
+    const kb = [...new Set(deduped.filter(p => /^kids_/.test(p.cat)).map(p => p.b))];
+    console.log(`    kids brands (${kb.length}): ${kb.join(', ')}`);
+  }
 })();
