@@ -5383,6 +5383,17 @@
   let psFiltered = [], psPage = 0, psSort = '';   // '' | 'asc' | 'desc' | 'new' — sorts (one at a time, keep ALL items)
   let psSaleOnly = false;                          // Sale filter: show only discounted items (combines with any sort)
 
+  // ── Search-API mode ── Browse Products served by the VPS /search endpoint (returns only
+  //    the filtered page) instead of downloading the whole catalog.json — scales to 100k+.
+  //    Falls back to the proven catalog.json client path on ANY API failure.
+  let psApiMode = true;          // use the search API; psApiFallback() flips this off on failure
+  let psApiTotal = 0;            // total matching products the API reports (drives the pager)
+  let psApiSeq = 0;              // request sequence — ignore out-of-order responses
+  let psApiFellBack = false;     // true once we've degraded to catalog.json
+  let psQuery = '';              // free-text keyword (API mode)
+  let psFacetBrands = null;      // brand names present (from /search/facets)
+  let psFacetCats = null;        // Set of categories present (from /search/facets)
+
   // ── Sold-out auto-hide ──────────────────────────────────────────────────
   // When the LIVE add pipeline finds a product fully sold out (it sold out AFTER
   // the catalogue's last harvest), hide it from the Browse-Products grid right
@@ -5607,7 +5618,10 @@
     if(a && a.value !== val) a.value = val;
     if(b && b.value !== val) b.value = val;
     clearTimeout(_psSearchT);
-    _psSearchT = setTimeout(() => psSmartSearch(val), 180);
+    _psSearchT = setTimeout(() => {
+      if(psApiMode){ psQuery = (val || '').trim(); psApply(); psSearchHint('', new Set(), new Set()); }
+      else psSmartSearch(val);
+    }, 180);
   }
   function psSmartSearch(val){
     const a = document.getElementById('psSearchMobile'), b = document.getElementById('psSearchDesktop');
@@ -5756,10 +5770,71 @@
     if(psLoaded && typeof psApply === 'function') psApply();
   }
 
+  // ── Search-API mode functions ──────────────────────────────────────────────
+  function psSearchBase(){ return relayBase() + '/search'; }
+  function psApiParams(){
+    const p = new URLSearchParams();
+    if(psSel.cats.size)   p.set('cat',   Array.from(psSel.cats).join(','));
+    if(psSel.brands.size) p.set('brand', Array.from(psSel.brands).join(','));
+    if(psSel.prices.size) p.set('price', Array.from(psSel.prices).join(','));
+    if(psSaleOnly)        p.set('sale', '1');
+    if(psSort)            p.set('sort', psSort);
+    if(psQuery)           p.set('q', psQuery);
+    p.set('page', psPage);
+    p.set('pageSize', psPageSize());
+    return p.toString();
+  }
+  // First entry: pull brand/category facets (to build the filter UI) then the first page.
+  function psApiInit(){
+    fetch(psSearchBase() + '/facets', { cache:'default' })
+      .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+      .then(j => {
+        if(j.error) throw new Error(j.error);
+        psFacetBrands = (j.brands || []).map(x => x.b);
+        psFacetCats   = new Set((j.cats || []).map(x => x.cat));
+        psLoaded = true; psLoading = false;
+        psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort();
+        psApply();                       // fetch the first page
+        psFlushReady();
+      })
+      .catch(e => { console.warn('search facets failed — using catalog.json:', e.message); psApiFallback(); });
+  }
+  // Fetch the current filtered page. psFiltered holds JUST this page (the server filtered/sorted/paged).
+  function psApiFetch(){
+    const seq = ++psApiSeq;
+    fetch(psSearchBase() + '?' + psApiParams(), { cache:'default' })
+      .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+      .then(j => {
+        if(seq !== psApiSeq) return;     // a newer request superseded this one
+        if(j.error) throw new Error(j.error);
+        psApiTotal = j.total || 0;
+        psFiltered = (j.products || []).filter(p => !psIsHidden(p));   // drop locally-known sold-outs
+        psRender();
+      })
+      .catch(e => { console.warn('search query failed — using catalog.json:', e.message); psApiFallback(); });
+  }
+  // Graceful degradation: if the API is unreachable, fall back to the proven catalog.json path.
+  function psApiFallback(){
+    if(psApiFellBack) return;
+    psApiFellBack = true; psApiMode = false;
+    psLoaded = false; psLoading = false; PS_CATALOG = null;
+    psEnsureLoaded();
+  }
+  // Pager HTML — shared by the client-render and API-render paths.
+  function psPagerHtml(pages){
+    if(pages <= 1) return '';
+    const jump = Array.from({length:pages}, (_,i) =>
+      `<div class="ps-pgdd-item${i===psPage?' on':''}" onclick="psJump(${i})">${tr('ps_page')} ${i+1} / ${pages}</div>`).join('');
+    return `<button class="ps-pg-btn" ${psPage<=0?'disabled':''} onclick="psGo(-1)">‹ ${tr('ps_prev')}</button>`
+      + `<details class="ps-pgdd" id="psPgDd" ontoggle="psPgDdToggle(this)"><summary class="ps-pgdd-sum">${tr('ps_page')} ${psPage+1} / ${pages} ▾</summary><div class="ps-pgdd-panel">${jump}</div></details>`
+      + `<button class="ps-pg-btn" ${psPage>=pages-1?'disabled':''} onclick="psGo(1)">${tr('ps_next')} ›</button>`;
+  }
+
   function psEnsureLoaded(){
     if(psLoaded || psLoading) return;
     psLoading = true;
     const c = document.getElementById('psCount'); if(c) c.textContent = tr('ps_loading');
+    if(psApiMode) return psApiInit();
     // Stable URL + HTTP revalidation. GitHub Pages serves catalog.json with a strong
     // ETag + Cache-Control max-age=600 (10 min), so cache:'default' serves it INSTANTLY
     // from cache within the window and sends a conditional request after (304 when
@@ -5803,6 +5878,13 @@
   });
 
   function psCatalogBrands(){
+    if(psApiMode){
+      const present = psFacetBrands || [];
+      const set = new Set(present);
+      const ordered = BRANDS.map(b => b.n).filter(n => set.has(n));   // directory order first
+      present.forEach(n => { if(ordered.indexOf(n) < 0) ordered.push(n); });
+      return ordered;
+    }
     const set = new Set(PS_CATALOG.map(p => p.b));
     const ordered = BRANDS.map(b => b.n).filter(n => set.has(n));
     set.forEach(n => { if(ordered.indexOf(n) < 0) ordered.push(n); });
@@ -5838,7 +5920,7 @@
   // MULTI-SELECT (req): pick several categories — they combine as OR. Re-tapping a
   // category clears just that one; "All categories" clears the whole category filter.
   function psBuildCatFilter(){
-    const present = PS_CATALOG ? new Set(PS_CATALOG.map(p => p.cat)) : new Set();
+    const present = psApiMode ? (psFacetCats || new Set()) : (PS_CATALOG ? new Set(PS_CATALOG.map(p => p.cat)) : new Set());
     const sel = psSel.cats;
     let html = `<button type="button" class="ps-catclear${sel.size===0?' on':''}" onclick="psPickCat('')">${tr('ps_allcats')}</button>`;
     ['w','m','k'].forEach(g => {
@@ -5882,6 +5964,7 @@
     psSel = { prices:new Set(), cats:new Set(), brands:new Set() };
     psSort = '';
     psSaleOnly = false;
+    psQuery = '';
     ['psSearchMobile','psSearchDesktop'].forEach(idd => { const e = document.getElementById(idd); if(e) e.value = ''; });
     psSearchHint('', new Set(), new Set());
     psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply();
@@ -5890,6 +5973,7 @@
   // All three filters combine with AND; price buckets OR within themselves.
   function psApply(){
     psPage = 0;
+    if(psApiMode) return psApiFetch();   // API mode: server filters/sorts/pages; psFiltered = the page
     psFiltered = PS_CATALOG.filter(p => {
       if(PS_HIDE_CATS.has(p.cat)) return false;   // accessories/jewellery not shown on the Products grid
       if(psIsHidden(p)) return false;             // found SOLD OUT via the live add → hidden from the grid
@@ -6002,6 +6086,17 @@
   function psRender(){
     const grid = document.getElementById('psGrid');
     const empty = document.getElementById('psEmpty');
+    if(psApiMode){
+      // API mode: psFiltered IS the current page; psApiTotal is the grand total for the pager.
+      const total = psApiTotal;
+      document.getElementById('psCount').textContent = total ? (total.toLocaleString() + ' ' + tr('ps_results')) : '';
+      document.getElementById('psBrandCount').textContent = psSel.brands.size ? '('+psSel.brands.size+')' : '';
+      if(!psFiltered.length){ grid.innerHTML = ''; empty.style.display = total ? 'none' : ''; document.getElementById('psPager').innerHTML = ''; return; }
+      empty.style.display = 'none';
+      grid.innerHTML = psFiltered.map((p,i) => psCard(p, i)).join('');   // page-relative idx — psAdd/psDetail index psFiltered
+      document.getElementById('psPager').innerHTML = psPagerHtml(Math.max(1, Math.ceil(total / psPageSize())));
+      return;
+    }
     const total = psFiltered.length;
     document.getElementById('psCount').textContent = total ? (total.toLocaleString() + ' ' + tr('ps_results')) : '';
     document.getElementById('psBrandCount').textContent = psSel.brands.size ? '('+psSel.brands.size+')' : '';
@@ -6011,18 +6106,7 @@
     if(psPage >= pages) psPage = pages - 1;
     const start = psPage * ps;
     grid.innerHTML = psFiltered.slice(start, start + ps).map((p,i) => psCard(p, start + i)).join('');
-    // Page jump: the "X / Y" is a dropdown so a buyer can hop to any page directly
-    // instead of tapping Next/Prev many times.
-    const jump = Array.from({length:pages}, (_,i) =>
-      `<div class="ps-pgdd-item${i===psPage?' on':''}" onclick="psJump(${i})">${tr('ps_page')} ${i+1} / ${pages}</div>`).join('');
-    document.getElementById('psPager').innerHTML = pages > 1
-      ? `<button class="ps-pg-btn" ${psPage<=0?'disabled':''} onclick="psGo(-1)">‹ ${tr('ps_prev')}</button>`
-        + `<details class="ps-pgdd" id="psPgDd" ontoggle="psPgDdToggle(this)">`
-        +   `<summary class="ps-pgdd-sum">${tr('ps_page')} ${psPage+1} / ${pages} ▾</summary>`
-        +   `<div class="ps-pgdd-panel">${jump}</div>`
-        + `</details>`
-        + `<button class="ps-pg-btn" ${psPage>=pages-1?'disabled':''} onclick="psGo(1)">${tr('ps_next')} ›</button>`
-      : '';
+    document.getElementById('psPager').innerHTML = psPagerHtml(pages);
   }
   // When the page dropdown opens: scroll the current page into view (365 pages → long
   // list) and close it on an outside click/tap (so it behaves like a native select).
@@ -6034,8 +6118,8 @@
   }
   // Next/Prev: scroll to the RESULTS (not the page top) so the buyer keeps seeing
   // products instead of being thrown back up to the filters every time.
-  function psGo(d){ psPage += d; psRender(); psScrollToResults(); }
-  function psJump(v){ psPage = parseInt(v, 10) || 0; psRender(); psScrollToResults(); }
+  function psGo(d){ psPage += d; if(psPage < 0) psPage = 0; if(psApiMode) psApiFetch(); else psRender(); psScrollToResults(); }
+  function psJump(v){ psPage = parseInt(v, 10) || 0; if(psApiMode) psApiFetch(); else psRender(); psScrollToResults(); }
   function psScrollToResults(){ const g=document.getElementById('psCount'); if(g) window.scrollTo({top: g.getBoundingClientRect().top + window.scrollY - 64, behavior:'smooth'}); }
 
   // Tap a product → hand its URL to the proven live add pipeline (verifies
@@ -6380,7 +6464,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-19j';
+  const PSB_BUILD = '2026-06-19k-searchapi';
   console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');

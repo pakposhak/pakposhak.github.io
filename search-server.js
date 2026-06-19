@@ -57,6 +57,18 @@ function send(res, code, obj){
   res.end(JSON.stringify(obj));
 }
 
+// Facets: the brand + category universe (grid-visible only) so the frontend can build its
+// filter checkboxes/counts without downloading the whole catalog. Small, cacheable.
+function handleFacets(res){
+  if (!db) return send(res, 503, { error: 'search db not ready' });
+  try {
+    const brands = db.prepare("SELECT b, count(*) n FROM products WHERE cat <> 'accessories' GROUP BY b ORDER BY n DESC, b").all();
+    const cats = db.prepare("SELECT cat, count(*) n FROM products WHERE cat <> 'accessories' GROUP BY cat").all();
+    const total = db.prepare("SELECT count(*) c FROM products WHERE cat <> 'accessories'").get().c;
+    send(res, 200, { total, brands, cats });
+  } catch (e) { send(res, 500, { error: e.message }); }
+}
+
 function handleSearch(u, res){
   if (!db) return send(res, 503, { error: 'search db not ready' });
   const q = u.searchParams;
@@ -108,6 +120,7 @@ http.createServer((req, res) => {
   if (req.method === 'OPTIONS') { res.writeHead(204, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET,OPTIONS', 'Access-Control-Max-Age': '86400' }); return res.end(); }
   if (req.method !== 'GET') return send(res, 405, { error: 'GET only' });
   if (u.pathname === '/search' || u.pathname === '/search/') return handleSearch(u, res);
+  if (u.pathname === '/search/facets') return handleFacets(res);
   if (u.pathname === '/search/health') return send(res, 200, { ok: true, products: db ? db.prepare('SELECT count(*) c FROM products').get().c : 0 });
   send(res, 404, { error: 'not found' });
 }).listen(PORT, '127.0.0.1', () => console.log('psb-search listening on 127.0.0.1:' + PORT));
