@@ -10,7 +10,7 @@
  *  - NEVER touch cross-origin requests (Shopify product fetches, Apps Script order
  *    submission, Formspree). Those must always hit the network untouched.
  */
-const CACHE_VERSION = 'psb-v5';
+const CACHE_VERSION = 'psb-v6';
 const APP_SHELL = [
   './',
   './index.html',
@@ -78,6 +78,25 @@ self.addEventListener('fetch', (event) => {
           return res;
         })
         .catch(() => caches.match(req).then((hit) => hit || caches.match(cacheKey)))
+    );
+    return;
+  }
+
+  // catalog.json: stale-while-revalidate. Serve the cached copy INSTANTLY for a snappy
+  // Browse-Products open, but ALWAYS kick off a background network fetch ({cache:'reload'}
+  // bypasses the 10-min HTTP cache) and refresh the SW cache, so the next open is fresh.
+  // This is why the client can safely switch to the stable catalog.json URL: plain
+  // cache-first (below) would pin the first cached copy forever; this never does.
+  if (url.pathname.endsWith('catalog.json')) {
+    event.respondWith(
+      caches.open(CACHE_VERSION).then((cache) =>
+        cache.match('./catalog.json').then((hit) => {
+          const net = fetch(req.url, { cache: 'reload' })
+            .then((res) => { cache.put('./catalog.json', res.clone()); return res; })
+            .catch(() => hit);
+          return hit || net;
+        })
+      )
     );
     return;
   }

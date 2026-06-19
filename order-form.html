@@ -5677,9 +5677,14 @@
     if(psLoaded || psLoading) return;
     psLoading = true;
     const c = document.getElementById('psCount'); if(c) c.textContent = tr('ps_loading');
-    // cache-bust so a CDN/browser never serves a stale catalog (it refreshes 3×/day)
-    const cbUrl = PSB_CATALOG_URL + (PSB_CATALOG_URL.indexOf('?') >= 0 ? '&' : '?') + 't=' + Date.now();
-    fetch(cbUrl, { cache:'no-store' })
+    // Stable URL + HTTP revalidation. GitHub Pages serves catalog.json with a strong
+    // ETag + Cache-Control max-age=600 (10 min), so cache:'default' serves it INSTANTLY
+    // from cache within the window and sends a conditional request after (304 when
+    // unchanged, fresh 200 only when the harvest changed it). This replaces the old
+    // ?t=Date.now() + {cache:'no-store'}, which re-downloaded the whole multi-MB catalog
+    // on EVERY visit. sw.js gives catalog.json stale-while-revalidate so the service
+    // worker can never pin a stale copy past the ~10-min window. Worst-case staleness ≈10 min.
+    fetch(PSB_CATALOG_URL, { cache:'default' })
       .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
       .then(j => {
         // Keep the FULL catalog (incl. accessories) — the Browse-Brands product
@@ -5886,6 +5891,32 @@
     return Math.round(product * (1 + (r.COMM_1 || 0)) + logistics);
   }
 
+  // Return a ~400px-wide thumbnail URL for the grid (full-res stays in the enlarge view).
+  // 92% of catalog images are Shopify (?width=400); Khaadi/Sapphire are SFCC dw/image (?sw=400).
+  // Unknown/unsafe hosts are returned UNCHANGED, and it never throws.
+  function thumbUrl(url){
+    try {
+      if (typeof url !== 'string' || !url) return url;
+      var u;
+      try { u = new URL(url); } catch (e) { return url; }
+      if (u.protocol !== 'http:' && u.protocol !== 'https:') return url;
+      var host = u.hostname.toLowerCase();
+      if (host === 'cdn.shopify.com' || host.endsWith('.cdn.shopify.com')) {
+        if (u.searchParams.has('width')) return url;
+        u.searchParams.set('width', '400');
+        return u.toString();
+      }
+      if (host === 'pk.sapphireonline.pk' || host === 'pk.khaadi.com') {
+        if (u.pathname.indexOf('/dw/image/') !== -1) {
+          if (u.searchParams.has('sw') || u.searchParams.has('sh')) return url;
+          u.searchParams.set('sw', '400');
+          return u.toString();
+        }
+        return url;
+      }
+      return url;
+    } catch (e) { return url; }
+  }
   function psCard(p, idx){
     const bdt = (p._bdt != null) ? p._bdt : estLandedBdt(p.pkr, p.cat);
     // ONLY in-stock sizes (the catalog already lists available sizes only); labelled
@@ -5899,7 +5930,7 @@
         ? `<div class="ps-img-sizes"><b>${tr('ps_unstitched')}</b></div>`
         : `<div class="ps-img-sizes"><b>${tr('ps_avail_sizes')}</b>${list.slice(0,7).map(esc).join(' · ')}</div>`;
     return `<div class="ps-card">
-      <div class="ps-img" onclick="psDetail(${idx})" role="button" tabindex="0" aria-label="${esc(p.t)} — enlarge">${p.sale?'<span class="ps-sale">SALE</span>':''}<button type="button" class="ps-info" onclick="event.stopPropagation();psDetail(${idx})" aria-label="Enlarge pictures and details" title="Enlarge pics &amp; details">🔍<span class="ps-info-tx">${tr('ps_enlarge')}</span></button><img loading="lazy" src="${esc(p.img)}" alt="${esc(p.t)}" onerror="this.parentElement.classList.add('ps-img-fail')">${szOverlay}</div>
+      <div class="ps-img" onclick="psDetail(${idx})" role="button" tabindex="0" aria-label="${esc(p.t)} — enlarge">${p.sale?'<span class="ps-sale">SALE</span>':''}<button type="button" class="ps-info" onclick="event.stopPropagation();psDetail(${idx})" aria-label="Enlarge pictures and details" title="Enlarge pics &amp; details">🔍<span class="ps-info-tx">${tr('ps_enlarge')}</span></button><img loading="lazy" src="${esc(thumbUrl(p.img))}" data-full="${esc(p.img)}" alt="${esc(p.t)}" onerror="if(!this.dataset.f){this.dataset.f=1;this.src=this.dataset.full;}else{this.parentElement.classList.add('ps-img-fail');}">${szOverlay}</div>
       <div class="ps-cbody">
         <div class="ps-brand">${esc(p.b)}</div>
         <div class="ps-title">${esc(p.t)}</div>
@@ -6291,7 +6322,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-19g';
+  const PSB_BUILD = '2026-06-19h';
   console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
