@@ -390,12 +390,20 @@ function mapCat(group, type, title, tagStr){
   // Hijab / headscarf — a women's scarf-class item. Classify BEFORE the kids/gender
   // check so a "Wardah Cotton Hijab – Baby pink" isn't misread as kids on the word "baby".
   if(/\bhijab\b|head[\s-]?scarf|\bshayla\b/.test(s)) return 'dupatta_only';
-  // gender from the text — esp. multi-department brands that mix men's & kids in.
-  // KIDS are harvested ONLY by the dedicated KIDS_BRANDS pass (collection-scoped, age-
-  // validated). The old inline "title contains boy/girl/kid → kids" rule is REMOVED — it
-  // leaked women's design-collection names ("A Girl In The Garden", "Who's That Girl",
-  // "Soft Girl Era") into kids from the ADULT whole-store harvest. Any real kids item in a
-  // multi-dept brand's main feed also appears in its kids collection (KIDS_BRANDS wins URL-dedup).
+  // STRONG kids signal in an ADULT/multi-dept feed → route to the kids classifier. The old
+  // blanket "title has boy/girl/kid → kids" rule was removed because it leaked women's design
+  // names ("A Girl In The Garden", "Soft Girl Era"). This replacement is ANCHORED: only a
+  // LEADING boys/girls/kids/infant token, or an explicit (kids)/"for kids"/infant/newborn/
+  // toddler marker — never a bare mid-title "girl"/"boy". Validation: multi-dept brands
+  // (Breakout/Eminent/Agha Noor) had 180+ "BOYS … TEE"/"(Kids) … Suit" items mis-landing in
+  // women/men because their main feed is NOT URL-deduped against the KIDS_BRANDS pass.
+  if(group !== 'k' && group !== 'f' && GARMENT_SIG.test(s) &&
+     (/^\s*(?:boys?|girls?|kids?|infants?|newborns?|toddlers?|juniors?)\b/.test(tt) ||
+      /\(\s*kids?\s*\)|\bfor\s+kids?\b|\binfants?\b|\bnewborns?\b|\btoddlers?\b/.test(tt))){
+    const k = mapCatKids(tt);
+    if(k) return k;
+  }
+  // KIDS pass (collection-scoped, age-validated). Old inline detection removed (see above).
   if(group === 'k') return GARMENT_SIG.test(s) ? mapCatKids(tt) : null;
   if(group === 'm') return mapCatMen(s);
   if(group === 'md' && /\b(mens?|men's|gents?|\bpolo\b|waist[\s-]?coat|sherwani|boxer|\btie\b)\b/.test(s)) return mapCatMen(s);
