@@ -608,7 +608,8 @@
     .ps-filtrow{position:relative;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
     .ps-filtbtn{flex:1 1 120px;min-width:0;display:flex;align-items:center;gap:7px;padding:11px 13px;border:1.5px solid var(--bdr-med);border-radius:10px;background:var(--input-bg);color:var(--txt);font-size:0.85rem;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap}
     .ps-filtbtn.on{border-color:var(--gold-bdr2);color:var(--gold);background:var(--gold-dim)}
-    .ps-filtcar{margin-left:auto;font-size:0.62rem;color:var(--txt-muted)}
+    .ps-filtcar{margin-left:auto;font-size:0.98rem;line-height:1;color:var(--txt-muted)}
+    .ps-filtbtn[aria-expanded="true"] .ps-filtcar{color:var(--gold)}
     .ps-filtbtn.on .ps-filtcar{color:var(--gold)}
     .ps-filt-n{font-size:0.7rem;font-weight:800;color:var(--gold);background:var(--gold-dim);border:1px solid var(--gold-bdr);padding:1px 8px;border-radius:11px;line-height:1.5}
     .ps-filtbtn.on .ps-filt-n{background:var(--surface)}
@@ -6368,19 +6369,31 @@
   // Categories + Brands popovers (one-row pills; mirror the Price popover). Open either pill,
   // pick categories / brands / both. Only one filter pop open at a time; clicking outside the
   // row closes it (and clicking a filter pill closes the price pop via the price listener above).
+  // Set a filter pill's open state: aria + caret glyph (▾ closed / ▴ open). A CSS transform on the
+  // inline caret proved unreliable here, so we swap the glyph directly — always correct.
+  function psFiltCaret(btn, open){ if(!btn) return; btn.setAttribute('aria-expanded', open ? 'true' : 'false'); const c = btn.querySelector('.ps-filtcar'); if(c) c.textContent = open ? '▴' : '▾'; }
   function psToggleFiltPop(which){
     const isCat = which === 'cat';
     const pop = document.getElementById(isCat ? 'psCatPop' : 'psBrandPop'); if(!pop) return;
     const other = document.getElementById(isCat ? 'psBrandPop' : 'psCatPop'); if(other) other.classList.remove('open');
-    const otherBtn = document.getElementById(isCat ? 'psBrandBtn' : 'psCatBtn'); if(otherBtn) otherBtn.setAttribute('aria-expanded','false');
+    psFiltCaret(document.getElementById(isCat ? 'psBrandBtn' : 'psCatBtn'), false);   // collapse the other pill
     const open = pop.classList.toggle('open');
-    const btn = document.getElementById(isCat ? 'psCatBtn' : 'psBrandBtn'); if(btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    psFiltCaret(document.getElementById(isCat ? 'psCatBtn' : 'psBrandBtn'), open);
   }
+  // Picking a category rebuilds the panel's innerHTML, which DETACHES the clicked element — so a
+  // plain click-target test would then read the click as "outside" and wrongly collapse the panel.
+  // Record on pointerdown (fires BEFORE the rebuild) whether the press began inside the row; only
+  // close when it truly began outside. This lets the buyer pick MANY categories in one go.
+  let psFiltDownInRow = false;
+  document.addEventListener('pointerdown', function(e){
+    const row = document.querySelector('#tabProducts .ps-filtrow');
+    psFiltDownInRow = !!(row && row.contains(e.target));
+  }, true);
   document.addEventListener('click', function(e){
-    const row = document.querySelector('#tabProducts .ps-filtrow'); if(!row || row.contains(e.target)) return;
+    if(psFiltDownInRow) return;   // interaction began inside the filter row → keep the panel open
     [['psCatPop','psCatBtn'], ['psBrandPop','psBrandBtn']].forEach(([popId, btnId]) => {
       const p = document.getElementById(popId);
-      if(p && p.classList.contains('open')){ p.classList.remove('open'); const b = document.getElementById(btnId); if(b) b.setAttribute('aria-expanded','false'); }
+      if(p && p.classList.contains('open')){ p.classList.remove('open'); psFiltCaret(document.getElementById(btnId), false); }
     });
   });
 
@@ -7046,7 +7059,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-20w';
+  const PSB_BUILD = '2026-06-20x';
   console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
