@@ -5574,7 +5574,13 @@
       if((t.length >= 4 && k.indexOf(t) === 0) || t.indexOf(k) === 0) cats.forEach(c => { if(present.has(c)) out.push(c); });
     });
     Object.keys(PS_CAT_LABELS).forEach(c => {
-      if(present.has(c) && !PS_HIDE_CATS.has(c) && psNorm(PS_CAT_LABELS[c]).indexOf(t) >= 0) out.push(c);
+      if(!present.has(c) || PS_HIDE_CATS.has(c)) return;
+      // Match t against WHOLE WORDS of the label (a label word that STARTS WITH t), NOT a
+      // mid-word substring — so "stitched" never matches "un[stitched]", while "emb"→Embroidered,
+      // "lawn"→Lawn, "formal"→Formal still work. (The synonym map above already separates
+      // stitched↔unstitched correctly; this was the one place the two blurred together.)
+      const words = String(PS_CAT_LABELS[c]).toLowerCase().split(/[^a-z0-9]+/);
+      if(words.some(w => w && w.indexOf(t) === 0)) out.push(c);
     });
     return out;
   }
@@ -5618,17 +5624,15 @@
     if(a && a.value !== val) a.value = val;
     if(b && b.value !== val) b.value = val;
     clearTimeout(_psSearchT);
-    _psSearchT = setTimeout(() => {
-      if(psApiMode){ psQuery = (val || '').trim(); psApply(); psSearchHint('', new Set(), new Set()); }
-      else psSmartSearch(val);
-    }, 180);
+    _psSearchT = setTimeout(() => psSmartSearch(val), 180);
   }
   function psSmartSearch(val){
     const a = document.getElementById('psSearchMobile'), b = document.getElementById('psSearchDesktop');
     if(a && a.value !== val) a.value = val;
     if(b && b.value !== val) b.value = val;
-    if(!PS_CATALOG) return;
-    const present = new Set(PS_CATALOG.map(p => p.cat));
+    // Categories/brands present — from the full catalog (client mode) or the facets (API mode).
+    const present = psApiMode ? (psFacetCats || new Set()) : (PS_CATALOG ? new Set(PS_CATALOG.map(p => p.cat)) : null);
+    if(!present) return;                          // client mode: catalog not loaded yet
     const presentBrands = psCatalogBrands();
     const raw = (val || '').trim().toLowerCase();
     const rawN = psNorm(raw);
@@ -5640,10 +5644,20 @@
     // multi-word brand ("cross stitch" → "crossstitch") — but NEVER when the whole
     // query is a gender word: "men" must not match "Republic Wo[men]swear" etc.
     if(rawN.length >= 3 && !PS_GENDER_TOK[rawN]) presentBrands.forEach(bn => { if(psNorm(bn).indexOf(rawN) >= 0) brands.add(bn); });
-    // Safety net: if the matched brand(s) + categories together match NOTHING, the
-    // brand was a spurious substring hit (e.g. "men" → Womenswear) — drop it so the
-    // category results still show instead of an empty grid.
-    if(brands.size && cats.size && !PS_CATALOG.some(p => brands.has(p.b) && cats.has(p.cat))) brands.clear();
+    // Safety net (client mode only — needs the full catalog): drop a spurious brand whose
+    // brand×category combo matches NOTHING (e.g. "men" → Womenswear) so the grid isn't empty.
+    if(!psApiMode && brands.size && cats.size && !PS_CATALOG.some(p => brands.has(p.b) && cats.has(p.cat))) brands.clear();
+    // API mode: any word that matched NO category and NO brand becomes a free product-TITLE
+    // keyword (FTS) — so the search also looks inside product names ("khaadi blue" = Khaadi
+    // brand + "blue" in the title; "stitched" = the stitched categories, never unstitched).
+    if(psApiMode){
+      const matched = new Set();
+      catToks.forEach(t => {
+        if(psMatchCatsToken(t, present).length) matched.add(t);
+        else if(t.length >= 3 && presentBrands.some(bn => psNorm(bn).indexOf(t) >= 0)) matched.add(t);
+      });
+      psQuery = catToks.filter(t => !matched.has(t)).join(' ');
+    }
     psSel.cats = cats;
     psSel.brands = brands;
     psBuildCatFilter(); psBuildBrandFilter(); psApply();
@@ -6464,7 +6478,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-19k-searchapi';
+  const PSB_BUILD = '2026-06-19l-searchapi';
   console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
