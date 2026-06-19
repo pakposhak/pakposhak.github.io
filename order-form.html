@@ -615,6 +615,7 @@
     .ps-cdept>summary::after{content:'▾';margin-left:auto;color:var(--txt-muted);font-size:0.7rem}
     .ps-cdept[open]>summary::after{content:'▴'}
     .ps-cdept[open]>summary{color:var(--gold)}
+    .ps-cgrp-section{font-size:0.7rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:var(--gold);padding:9px 12px 4px;margin-top:3px;border-top:1px solid var(--bdr-soft,rgba(201,169,110,0.25))}
     .ps-cgrp-h{font-size:0.62rem;font-weight:800;letter-spacing:0.6px;text-transform:uppercase;color:var(--txt-muted);padding:7px 12px 2px}
     .ps-cat-row{display:block;width:100%;text-align:left;background:none;border:none;font-family:inherit;font-size:0.8rem;color:var(--txt-sec);padding:6px 12px 6px 16px;cursor:pointer}
     .ps-cat-row:hover{background:var(--raised)}
@@ -6030,10 +6031,11 @@
     let html = `<button type="button" class="ps-catclear${sel.size===0?' on':''}" onclick="psPickCat('')">${tr('ps_allcats')}</button>`;
     ['w','m','k'].forEach(g => {
       const tree = CAT_TREE[g]; if(!tree) return;
-      let inner = '';
+      let inner = '', lastSec = null;
       tree.groups.forEach(grp => {
         const items = grp.items.filter(([k]) => !PS_HIDE_CATS.has(k) && present.has(k));
         if(!items.length) return;
+        if(grp.section && grp.section !== lastSec){ inner += `<div class="ps-cgrp-section">${esc(grp.section)}</div>`; lastSec = grp.section; }
         if(grp.h) inner += `<div class="ps-cgrp-h">${esc(grp.h)}</div>`;
         inner += items.map(([k,lbl]) => `<button type="button" class="ps-cat-row${sel.has(k)?' on':''}" onclick="psPickCat('${k}')">${esc(lbl)}</button>`).join('');
       });
@@ -6627,7 +6629,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-19p';
+  const PSB_BUILD = '2026-06-19q';
   console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
