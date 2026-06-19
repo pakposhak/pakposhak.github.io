@@ -2011,11 +2011,14 @@
     mens_suit         : 1.81,
     mens_sherwani     : 2.24,
     mens_unstitched   : 1.30,
-    // ── Kids ──
-    kids_eastern      : 0.50,
-    kids_western      : 0.56,
-    kids_frock        : 0.45,
-    kids_formal       : 0.65,
+    // ── Kids (boys/girls × eastern/western/formal + infant) ──
+    kids_boys_eastern : 0.50,
+    kids_girls_eastern: 0.48,
+    kids_boys_western : 0.50,
+    kids_girls_western: 0.45,
+    kids_boys_formal  : 0.60,
+    kids_girls_formal : 0.60,
+    kids_infant       : 0.35,
   };
 
   const WEIGHT_LABELS = {
@@ -2056,10 +2059,13 @@
     mens_sherwani     : "Men's Sherwani / Prince Coat",
     mens_unstitched   : "Men's Unstitched Fabric",
     maxi_dress        : 'Maxi / Dress / Jumpsuit (1pc)',
-    kids_eastern      : 'Kids Eastern (kurta / 2–3pc)',
-    kids_western      : 'Kids Western (tee / jeans)',
-    kids_frock        : 'Kids Frock / Maxi (1pc)',
-    kids_formal       : 'Kids Party / Formal (embroidered)',
+    kids_boys_eastern : 'Kids Boys — Eastern (kurta / 2–3pc)',
+    kids_girls_eastern: 'Kids Girls — Eastern (frock / 2–3pc)',
+    kids_boys_western : 'Kids Boys — Western (tee / jeans)',
+    kids_girls_western: 'Kids Girls — Western (tee / dress)',
+    kids_boys_formal  : 'Kids Boys — Party / Formal',
+    kids_girls_formal : 'Kids Girls — Party / Formal',
+    kids_infant       : 'Infant / Baby (0–2y)',
     footwear          : 'Footwear / Shoes / Khussa',
   };
 
@@ -2135,7 +2141,7 @@
     return /\badda[\s-]?work|\badda\b|fully hand[\s-]?embroider|all[\s-]?over hand[\s-]?embroider|complete(?:ly)? hand[\s-]?embroider|entirely hand[\s-]?embroider|pure hand[\s-]?embroider/i.test(desc);
   }
   const MENS_CATS = new Set(['mens_shirt','mens_trouser','mens_jeans','mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_suit','mens_sherwani','mens_unstitched']);
-  const KIDS_CATS = new Set(['kids_eastern','kids_western','kids_frock','kids_formal']);
+  const KIDS_CATS = new Set(['kids_boys_eastern','kids_girls_eastern','kids_boys_western','kids_girls_western','kids_boys_formal','kids_girls_formal','kids_infant']);
 
   // ── DRAFT CARD SYSTEM — each URL gets its own card ───────────────────────
   let drafts      = {};  // id → {currency, sizeCounter}
@@ -2199,11 +2205,18 @@
       ]},
     ]},
     k: { label:"🧸 Kids category", groups:[
-      { h:'', items:[
-        ['kids_eastern','Kids Eastern (kurta / 2–3pc)'],
-        ['kids_frock','Kids Frock / Maxi (1pc)'],
-        ['kids_formal','Kids Party / Formal (embroidered)'],
-        ['kids_western','Kids Western (tee / jeans)'],
+      { h:'Boys', items:[
+        ['kids_boys_eastern','Boys — Eastern (kurta / 2–3pc)'],
+        ['kids_boys_western','Boys — Western (tee / jeans)'],
+        ['kids_boys_formal','Boys — Party / Formal'],
+      ]},
+      { h:'Girls', items:[
+        ['kids_girls_eastern','Girls — Eastern (frock / 2–3pc)'],
+        ['kids_girls_western','Girls — Western (tee / dress)'],
+        ['kids_girls_formal','Girls — Party / Formal'],
+      ]},
+      { h:'Baby', items:[
+        ['kids_infant','Infant / Baby (0–2y)'],
       ]},
     ]},
   };
@@ -2232,15 +2245,21 @@
   // info ("Clothing", "Summer 2026") fall through; the caller then retries
   // with the product TITLE which usually carries the garment words.
   const PT_CAT = [
-    // Kids BEFORE bottoms/tops — "Boys Trousers" must hit kids, not trousers.
-    // Order: party/formal → frock/maxi → western → generic eastern (mirrors mapCatKids).
-    [/(kid|boy|girl|infant|toddler|junior|newborn|teen)s?\b.*(formal|party|embroider|chiffon|organza|fancy)/i, 'kids_formal'],
-    [/(formal|party|embroider|chiffon|organza|fancy)\b.*(kid|boy|girl|infant|toddler|junior|newborn)/i, 'kids_formal'],
-    [/(kid|boy|girl|infant|toddler|junior|newborn|teen)s?\b.*(frock|maxi|gown|dress|jumpsuit)/i, 'kids_frock'],
-    [/(frock|maxi|gown|dress|jumpsuit)\b.*(kid|boy|girl|infant|toddler|junior|newborn)/i, 'kids_frock'],
-    [/(kid|boy|girl|infant|toddler|junior|newborn|teen)s?\b.*(tee|t[\s-]?shirt|polo|jean|denim|trouser|pant|short|romper|western|legging)/i, 'kids_western'],
-    [/(tee|t[\s-]?shirt|polo|jean|denim|trouser|pant|short|romper)s?\b.*(kid|boy|girl|infant|toddler|junior|newborn)/i, 'kids_western'],
-    [/kid|boys|girls|infant|toddler|junior|newborn/i,          'kids_eastern'],
+    // Kids BEFORE bottoms/tops — "Boys Trousers" must hit kids, not trousers. Mirrors
+    // the harvester's 7-cat mapCatKids: infant first, then gender+type (order-independent
+    // lookaheads), then gender-only (eastern default), then generic kid. formal = festive
+    // only (NOT plain "embroidered" — kids casual tees are routinely embroidered).
+    [/\binfant\b|new[\s-]?born|\bnb\b|\b\d{1,2}[\s-]?months?\b|\bromper\b|\btoddler\b|baby[\s-]?(?:boy|girl|wear|set|frock|suit|romper)/i, 'kids_infant'],
+    [/(?=.*\bgirls?\b)(?=.*(formal|party|festive|\beid\b|ceremon|wedding|\bgown\b))/i, 'kids_girls_formal'],
+    [/(?=.*\bboys?\b)(?=.*(formal|party|festive|\beid\b|ceremon|wedding|sherwani|waist[\s-]?coat))/i, 'kids_boys_formal'],
+    [/(?=.*\bgirls?\b)(?=.*(tee|t[\s-]?shirt|polo|jean|denim|trouser|\bpant|short|legging|tights|jogger|hoodie|sweat|\bskirt\b|western))/i, 'kids_girls_western'],
+    [/(?=.*\bboys?\b)(?=.*(tee|t[\s-]?shirt|polo|jean|denim|trouser|\bpant|short|legging|jogger|hoodie|sweat|jacket|western))/i, 'kids_boys_western'],
+    [/\bgirls?\b/i, 'kids_girls_eastern'],
+    [/\bboys?\b/i, 'kids_boys_eastern'],
+    [/(?=.*(kid|junior|teen))(?=.*(formal|party|festive|\beid\b|ceremon|wedding|\bgown\b|sherwani))/i, 'kids_boys_formal'],
+    [/(?=.*(kid|junior|teen))(?=.*(tee|t[\s-]?shirt|polo|jean|denim|trouser|\bpant|short|western|legging|jogger))/i, 'kids_boys_western'],
+    [/(?=.*(kid|junior|teen))(?=.*(frock|maxi|gown|\bdress\b))/i, 'kids_girls_eastern'],
+    [/kid|junior|teen/i,                                       'kids_boys_eastern'],
     [/shoe|sneaker|sandal|chappal|khussa|kolhapuri|heel|slipper|loafer|peshawari|moccasin|footwear|mule\b/i, 'footwear'],
     // Festive eastern — split out from bridal so weights are correct.
     [/lehenga|gharara|sharara/i,                                'lehenga'],
@@ -4477,8 +4496,10 @@
     mens_kurta:"Men's Kurta 1pc", mens_shalwar_kameez:"Men's Shalwar Kameez 2pc",
     mens_waistcoat:"Men's Waistcoat", mens_suit:"Men's Suit/Pant-Coat",
     mens_sherwani:"Men's Sherwani", mens_unstitched:"Men's Unstitched",
-    kids_eastern:'Kids Eastern', kids_western:'Kids Western',
-    kids_frock:'Kids Frock/Maxi', kids_formal:'Kids Party/Formal',
+    kids_boys_eastern:'Boys Eastern', kids_girls_eastern:'Girls Eastern',
+    kids_boys_western:'Boys Western', kids_girls_western:'Girls Western',
+    kids_boys_formal:'Boys Formal', kids_girls_formal:'Girls Formal',
+    kids_infant:'Infant / Baby',
   };
 
   function removeItem(idx){
@@ -5373,8 +5394,10 @@
     mens_shirt:'Men — shirt', mens_kurta:'Men — kurta', mens_shalwar_kameez:'Men — shalwar kameez',
     mens_trouser:'Men — trousers', mens_jeans:'Men — jeans', mens_suit:'Men — suit',
     mens_waistcoat:'Men — waistcoat', mens_sherwani:'Men — sherwani', mens_unstitched:'Men — unstitched',
-    kids_eastern:'Kids — eastern', kids_western:'Kids — western',
-    kids_frock:'Kids — frock / maxi', kids_formal:'Kids — party / formal'
+    kids_boys_eastern:'Boys — eastern', kids_girls_eastern:'Girls — eastern',
+    kids_boys_western:'Boys — western', kids_girls_western:'Girls — western',
+    kids_boys_formal:'Boys — party / formal', kids_girls_formal:'Girls — party / formal',
+    kids_infant:'Infant / Baby (0–2y)'
   };
   function psLabel(cat){ return PS_CAT_LABELS[cat] || cat; }
 
@@ -5437,9 +5460,22 @@
   const PS_M = Object.keys(PS_CAT_GENDER).filter(k => PS_CAT_GENDER[k]==='m');
   const PS_K = Object.keys(PS_CAT_GENDER).filter(k => PS_CAT_GENDER[k]==='k');
   const PS_CAT_SYNONYMS = [
-    ['casual', ['kurti_1pc','kaftan','shirt_dupatta_2pc','shirt_trouser_2pc','lawn_3pc_unstitch','pret_3pc','loungewear','coord_western','mens_shirt','mens_trouser','mens_jeans','kids_eastern','kids_western']],
-    ['everyday', ['kurti_1pc','shirt_dupatta_2pc','shirt_trouser_2pc','lawn_3pc_unstitch','pret_3pc','mens_shirt','mens_trouser','kids_eastern']],
-    ['daily', ['kurti_1pc','shirt_dupatta_2pc','lawn_3pc_unstitch','pret_3pc','mens_shirt','kids_eastern']],
+    ['casual', ['kurti_1pc','kaftan','shirt_dupatta_2pc','shirt_trouser_2pc','lawn_3pc_unstitch','pret_3pc','loungewear','coord_western','mens_shirt','mens_trouser','mens_jeans','kids_boys_eastern','kids_girls_eastern','kids_boys_western','kids_girls_western']],
+    ['everyday', ['kurti_1pc','shirt_dupatta_2pc','shirt_trouser_2pc','lawn_3pc_unstitch','pret_3pc','mens_shirt','mens_trouser','kids_boys_eastern','kids_girls_eastern']],
+    ['daily', ['kurti_1pc','shirt_dupatta_2pc','lawn_3pc_unstitch','pret_3pc','mens_shirt','kids_boys_eastern','kids_girls_eastern']],
+    // Kids gender / age search words → the 7 kids categories
+    ['boy', ['kids_boys_eastern','kids_boys_western','kids_boys_formal']],
+    ['boys', ['kids_boys_eastern','kids_boys_western','kids_boys_formal']],
+    ['girl', ['kids_girls_eastern','kids_girls_western','kids_girls_formal']],
+    ['girls', ['kids_girls_eastern','kids_girls_western','kids_girls_formal']],
+    ['kid', ['kids_boys_eastern','kids_girls_eastern','kids_boys_western','kids_girls_western','kids_boys_formal','kids_girls_formal','kids_infant']],
+    ['kids', ['kids_boys_eastern','kids_girls_eastern','kids_boys_western','kids_girls_western','kids_boys_formal','kids_girls_formal','kids_infant']],
+    ['children', ['kids_boys_eastern','kids_girls_eastern','kids_boys_western','kids_girls_western','kids_boys_formal','kids_girls_formal','kids_infant']],
+    ['infant', ['kids_infant']],
+    ['baby', ['kids_infant']],
+    ['newborn', ['kids_infant']],
+    ['toddler', ['kids_infant']],
+    ['junior', ['kids_boys_eastern','kids_girls_eastern','kids_boys_western','kids_girls_western']],
     ['basic', ['kurti_1pc','shirt_dupatta_2pc','mens_shirt']],
     ['1pc', ['kurti_1pc','kaftan','maxi_dress','womens_trouser','mens_shirt','mens_trouser','mens_jeans','mens_kurta']],
     ['1piece', ['kurti_1pc','kaftan','maxi_dress','womens_trouser','mens_shirt','mens_kurta']],
@@ -5461,21 +5497,21 @@
     ['tunic', ['kurti_1pc']],
     ['kaftan', ['kaftan']],
     ['caftan', ['kaftan']],
-    ['kameez', ['mens_shalwar_kameez','kids_eastern']],
-    ['shalwar', ['mens_shalwar_kameez','kids_eastern']],
+    ['kameez', ['mens_shalwar_kameez','kids_boys_eastern','kids_girls_eastern']],
+    ['shalwar', ['mens_shalwar_kameez','kids_boys_eastern','kids_girls_eastern']],
     ['trouser', ['womens_trouser','mens_trouser','mens_jeans']],
     ['pant', ['womens_trouser','mens_trouser']],
     ['bottom', ['womens_trouser','mens_trouser']],
     ['palazzo', ['womens_trouser']],
     ['plazo', ['womens_trouser']],
-    ['jeans', ['mens_jeans','kids_western']],
-    ['denim', ['mens_jeans','kids_western']],
-    ['dress', ['maxi_dress','kids_frock']],
+    ['jeans', ['mens_jeans','kids_boys_western','kids_girls_western']],
+    ['denim', ['mens_jeans','kids_boys_western','kids_girls_western']],
+    ['dress', ['maxi_dress','kids_girls_eastern']],
     ['maxi', ['maxi_dress']],
     ['gown', ['maxi_dress','heavy_formal_3pc']],
-    ['frock', ['kids_frock','maxi_dress']],
+    ['frock', ['kids_girls_eastern','maxi_dress']],
     ['jumpsuit', ['maxi_dress']],
-    ['western', ['coord_western','maxi_dress','mens_jeans','mens_trouser','mens_shirt','kids_western']],
+    ['western', ['coord_western','maxi_dress','mens_jeans','mens_trouser','mens_shirt','kids_boys_western','kids_girls_western']],
     ['unstitch', ['lawn_3pc_unstitch','unstitch_3pc_emb','winter_2pc_unstitch','winter_3pc_unstitch','mens_unstitched']],
     ['unstitched', ['lawn_3pc_unstitch','unstitch_3pc_emb','winter_2pc_unstitch','winter_3pc_unstitch','mens_unstitched']],
     ['fabric', ['lawn_3pc_unstitch','unstitch_3pc_emb','mens_unstitched']],
@@ -5485,12 +5521,12 @@
     ['ready', ['pret_3pc','pret_3pc_emb','pret_2pc_emb','shirt_dupatta_2pc']],
     ['readymade', ['pret_3pc','pret_3pc_emb','pret_2pc_emb']],
     ['rtw', ['pret_3pc','pret_3pc_emb','pret_2pc_emb']],
-    ['formal', ['formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','pret_3pc_emb','saree','lehenga','kids_formal']],
-    ['party', ['formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','pret_3pc_emb','maxi_dress','kids_formal']],
+    ['formal', ['formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','pret_3pc_emb','saree','lehenga','kids_boys_formal','kids_girls_formal']],
+    ['party', ['formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','pret_3pc_emb','maxi_dress','kids_boys_formal','kids_girls_formal']],
     ['wedding', ['bridal','lehenga','heavy_formal_3pc','formal_emb_3pc','saree']],
     ['guest', ['formal_emb_2pc','formal_emb_3pc','saree','lehenga']],
-    ['festive', ['formal_emb_3pc','heavy_formal_3pc','lehenga','kids_formal']],
-    ['eid', ['formal_emb_3pc','pret_3pc_emb','lehenga','kids_formal']],
+    ['festive', ['formal_emb_3pc','heavy_formal_3pc','lehenga','kids_boys_formal','kids_girls_formal']],
+    ['eid', ['formal_emb_3pc','pret_3pc_emb','lehenga','kids_boys_formal','kids_girls_formal']],
     ['embroidered', ['pret_3pc_emb','pret_2pc_emb','unstitch_3pc_emb','formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','handmade_emb']],
     ['embroidery', ['pret_3pc_emb','pret_2pc_emb','unstitch_3pc_emb','formal_emb_2pc','formal_emb_3pc','handmade_emb']],
     ['heavy', ['heavy_formal_3pc','bridal']],
@@ -6263,11 +6299,18 @@
       ]},
     ],
     k: [
-      { h:'Kids', clubs:[
-        ['Eastern (kurta / 2–3pc)', ['kids_eastern']],
-        ['Frock / Maxi', ['kids_frock']],
-        ['Party / Formal', ['kids_formal']],
-        ['Western (tee / jeans)', ['kids_western']],
+      { h:'Boys', clubs:[
+        ['Boys Eastern', ['kids_boys_eastern']],
+        ['Boys Western', ['kids_boys_western']],
+        ['Boys Party / Formal', ['kids_boys_formal']],
+      ]},
+      { h:'Girls', clubs:[
+        ['Girls Eastern', ['kids_girls_eastern']],
+        ['Girls Western', ['kids_girls_western']],
+        ['Girls Party / Formal', ['kids_girls_formal']],
+      ]},
+      { h:'Baby', clubs:[
+        ['Infant / Baby (0–2y)', ['kids_infant']],
       ]},
     ],
   };
@@ -6529,7 +6572,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-19o';
+  const PSB_BUILD = '2026-06-19p';
   console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');

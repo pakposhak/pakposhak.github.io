@@ -52,7 +52,14 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
   const conv = rates.conv != null ? rates.conv : 0.455;
   const log  = rates.log  != null ? rates.log  : 1600;
   const comm1 = (rates.comm_1 != null ? rates.comm_1 : 22) / 100;   // config stores percent
-  const wOf = c => (weights[c] != null ? weights[c] : 0.6);
+  // Per-category fallback weights (kg) for when the relay config doesn't carry one —
+  // must match the app's DEFAULT_WEIGHTS for the kids 7-cat taxonomy so the search.db
+  // landed ৳ equals what the app computes. Relay config weights still override these.
+  const DEFAULT_WEIGHTS = {
+    kids_boys_eastern: 0.50, kids_girls_eastern: 0.48, kids_boys_western: 0.50,
+    kids_girls_western: 0.45, kids_boys_formal: 0.60, kids_girls_formal: 0.60, kids_infant: 0.35,
+  };
+  const wOf = c => (weights[c] != null ? weights[c] : (DEFAULT_WEIGHTS[c] != null ? DEFAULT_WEIGHTS[c] : 0.6));
   // landed ৳ — identical to the app's estLandedBdt: pkr*conv*(1+comm1) + weight*log
   const landed = (pkr, c) => Math.round(pkr * conv * (1 + comm1) + wOf(c) * log);
 
