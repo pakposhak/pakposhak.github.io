@@ -80,9 +80,14 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
   // landing — khussa footwear carries the most size options, so the best-stocked sort
   // would otherwise float a wall of khussa colour-variants to the very top.
   const heroRank = c => /^(footwear|accessories|shawl|dupatta_only)$/.test(c || '') ? 1 : 0;
+  // Within MEN, show EASTERN wear first (req): kurta / shalwar kameez / sherwani / waistcoat /
+  // unstitched lead over western shirts / trousers / jeans. No effect on women/kids ordering.
+  const MENS_EAST = new Set(['mens_kurta', 'mens_shalwar_kameez', 'mens_sherwani', 'mens_waistcoat', 'mens_unstitched']);
+  const menEastRank = c => /^mens_/.test(c || '') ? (MENS_EAST.has(c) ? 0 : 1) : 0;
   const qSort = (a, b) =>
     (heroRank(a.cat) - heroRank(b.cat))        // apparel before footwear/accessories
     || (genderRank(a.cat) - genderRank(b.cat)) // women first
+    || (menEastRank(a.cat) - menEastRank(b.cat)) // within men: eastern wear first
     || (sizeOf(b) - sizeOf(a))                 // MORE in-stock sizes first (better availability)
     || ((b.pub || 0) - (a.pub || 0))           // newer first
     || (a._bi - b._bi);                        // brand round-robin → variety

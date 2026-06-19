@@ -35,9 +35,12 @@ const BRAND_CAP = {
   'Breakout':400, 'Zara Shahjahan':500, 'Afrozeh':400, 'Baroque':400, 'Mushq':400,
   'Charizma':500, 'Rang Rasiya':500, 'Motifz':500, 'Saya':500, 'Sha Posh':500,
   'Republic Womenswear':500, 'Iznik Fashions':500, 'Coco by Zara Shahjahan':500,
-  // ── men (kept modest — women is the focus of this expansion) ──
-  'Amir Adnan':240, 'Cambridge':220, 'Charcoal':200, 'Cougar':190, 'Dynasty Fabrics':170,
-  'Royal Tag':190, 'Monark':160, 'Shahnameh':130, 'Shahzeb Saeed':130, 'Lawrencepur':130,
+  // ── men (DEEP — 2026-06-19 men expansion → target 15k+; new brands default to PER_BRAND) ──
+  'Amir Adnan':800, 'Cambridge':1000, 'Charcoal':800, 'Cougar':700, 'Dynasty Fabrics':600,
+  'Royal Tag':800, 'Monark':600, 'Shahnameh':400, 'Shahzeb Saeed':500, 'Lawrencepur':400,
+  'Uniworth':1000, 'CRUSH Menswear':800, 'Edge Republic':800, 'Furor':800, 'Riwaj Menswear':700,
+  'Bareeze Man':600, 'Innerlines':600, 'Kurta Corner':600, 'Ismail Farid':400,
+  'Humayun Alamgir':300, 'Arsalan Iqbal':400,
   // ── kids (PAUSED per req — kept as-is, not deepened) ──
   'Minnie Minors':320, 'Hopscotch':280,
   'Stylo':250,  // footwear-only — scan deep, only WOMEN'S khussa/peshawari are kept anyway
@@ -138,6 +141,16 @@ const SHOPIFY = [
   ['Tawakkal Fabrics','tawakkalfabrics.co','w'],
   ['Vanya','vanya.pk','w'],
   ['Wear Ochre','wearochre.com','w'],
+  // ── added 2026-06-19 (MEN expansion → target 15k, eastern-first): all 27 directory men
+  //    brands; verified live Shopify PKR (Naushemian/Deepak Perwani/Savoir not Shopify,
+  //    Republic Menswear empty — skipped). Multi-dept men (Gul Ahmed/Alkaram/etc.) still
+  //    come from their whole-store harvest via the md→men detection below. ──
+  ['Furor','furorjeans.com','m'],['Ismail Farid','www.ismailfarid.com','m'],
+  ['Uniworth','uniworthshop.com','m'],['Bareeze Man','bareezeman.com','m'],
+  ['Humayun Alamgir','humayunalamgir.com','m'],['Arsalan Iqbal','arsalaniqbal.com','m'],
+  ['CRUSH Menswear','crushmenswear.com','m'],['Edge Republic','edge.pk','m'],
+  ['Riwaj Menswear','riwajmenswear.com','m'],['Kurta Corner','kurtacorner.com','m'],
+  ['Innerlines','innerlines.com.pk','m'],
 ];
 
 // ── Collection-scoped harvests: pull SPECIFIC Shopify collections (not whole
@@ -475,7 +488,10 @@ function mapCat(group, type, title, tagStr){
   // KIDS pass (collection-scoped, age-validated). Old inline detection removed (see above).
   if(group === 'k') return GARMENT_SIG.test(s) ? mapCatKids(tt) : null;
   if(group === 'm') return mapCatMen(s);
-  if(group === 'md' && /\b(mens?|men's|gents?|\bpolo\b|waist[\s-]?coat|sherwani|boxer|\btie\b)\b/.test(s)) return mapCatMen(s);
+  // Multi-dept → MEN when the text carries a MEN-SPECIFIC signal. The eastern/formal terms
+  // added here (kurta-pajama / prince-coat / pathani / jubba / tuxedo …) are things women
+  // don't wear, so they can't mis-gender a women's item.
+  if(group === 'md' && /\b(mens?|men's|gents?|mardana|\bpolo\b|waist[\s-]?coat|sherwani|boxer|\btie\b|kurta[\s-]?pajama|kurta[\s-]?shalwar|prince[\s-]?coat|nehru|pathani|\bjubba\b|tuxedo|pant[\s-]?coat)\b/.test(s)) return mapCatMen(s);
   return mapCatWomen(tt, tags);
 }
 
