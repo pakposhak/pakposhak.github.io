@@ -112,6 +112,16 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
     if (ordered.length === start) break;   // safety: no progress
   }
   while (iS < qSale.length) ordered.push(qSale[iS++]);   // remaining sale trails at the end
+
+  // MEN eastern-first (req): the new/sale interleave above mixes eastern & western men, so do
+  // a FINAL pass that reorders ONLY the men items among their own landing slots — eastern wear
+  // (kurta/shalwar kameez/sherwani/waistcoat/unstitched) leads over western shirts/jeans. This
+  // leaves the women-first / kids-last gender order untouched. (Array.sort is stable, so within
+  // eastern and within western the best-stocked/new ranking from qSort is preserved.)
+  const menPos = [], menItems = [];
+  ordered.forEach((p, i) => { if (genderOf(p.cat) === 'm') { menPos.push(i); menItems.push(p); } });
+  menItems.sort((a, b) => menEastRank(a.cat) - menEastRank(b.cat));
+  menPos.forEach((pos, k) => { ordered[pos] = menItems[k]; });
   products = ordered;
 
   const tmp = DB_PATH + '.new';
