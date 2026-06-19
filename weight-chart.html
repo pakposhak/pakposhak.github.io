@@ -29,7 +29,7 @@
 <div class="wrap">
 
   <div class="header">
-    <div class="logo">Paki<span>Poshak</span></div>
+    <div class="logo">Pak<span>Poshak</span></div>
     <div class="sub">Estimated parcel weights per item — packaging included</div>
   </div>
 
@@ -57,38 +57,45 @@
 
   // [key, customer-friendly label, default kg] — grouped for display.
   var GROUPS = [
-    { title: '👗 Women — Everyday & Pret', rows: [
+    { title: '👗 Women · Stitched — 1-Piece', rows: [
       ['kurti_1pc',        'Kurti / Shirt (1pc)',              0.61],
-      ['womens_trouser',   "Women's Trouser / Pants (1pc)",    0.70],
-      ['kaftan',           'Kaftan (1pc long shirt)',          0.90],
+      ['western_top',      'Western Top / Tank / Tee',         0.45],
+      ['kaftan',           'Kaftan',                           0.90],
+      ['maxi_dress',       'Maxi / Gown / Dress (1pc)',        0.80],
+      ['womens_trouser',   'Trouser / Pants (1pc)',            0.70]
+    ]},
+    { title: '👗 Women · Stitched — 2-Piece', rows: [
       ['shirt_dupatta_2pc','2pc – Shirt + Dupatta',            0.70],
       ['shirt_trouser_2pc','2pc Co-ord – Shirt + Trouser',     0.85],
-      ['pret_2pc_emb',     '2pc Pret – Embroidered',           0.95],
-      ['pret_3pc',         '3pc Pret – Printed / Plain',       1.04],
-      ['pret_3pc_emb',     '3pc Pret – Embroidered',           1.25],
-      ['maxi_dress',       'Maxi / Dress / Jumpsuit (1pc)',    0.80],
-      ['loungewear',       'Loungewear / Nightwear',           0.75],
-      ['coord_western',    'Co-ord / Western 2pc',             0.80]
+      ['coord_western',    '2pc – Western Co-ord',             0.80],
+      ['pret_2pc_emb',     '2pc – Embroidered (pret)',         0.95],
+      ['formal_emb_2pc',   '2pc – Formal Embroidered',         1.18]
     ]},
-    { title: '🧵 Women — Unstitched Fabric', rows: [
-      ['lawn_3pc_unstitch','3pc Unstitched – Printed / Plain', 0.94],
-      ['unstitch_3pc_emb', '3pc Unstitched – Embroidered',     1.10]
+    { title: '👗 Women · Stitched — 3-Piece', rows: [
+      ['pret_3pc',         '3pc – Printed / Plain',            1.04],
+      ['pret_3pc_emb',     '3pc – Embroidered',                1.25],
+      ['formal_emb_3pc',   '3pc – Formal Embroidered',         1.45],
+      ['heavy_formal_3pc', '3pc – Heavy Formal (organza / silk)',1.73],
+      ['handmade_emb',     'Handmade Full Embroidery (adda)',  2.50]
     ]},
-    { title: '❄️ Winter', rows: [
-      ['winter_2pc_unstitch','Winter 2pc – Unstitched (karandi / khaddar)', 0.99],
-      ['winter_2pc_stitch',  'Winter 2pc – Stitched / Pret',               1.19],
-      ['winter_3pc_unstitch','Winter 3pc – Unstitched',                    1.23],
-      ['winter_3pc_stitch',  'Winter 3pc – Stitched / Pret',               1.43]
-    ]},
-    { title: '✨ Women — Formal, Festive & Bridal', rows: [
-      ['formal_emb_2pc',   'Formal Embroidered 2pc',           1.18],
-      ['formal_emb_3pc',   'Formal Embroidered 3pc',           1.45],
-      ['heavy_formal_3pc', 'Heavy Formal 3pc (organza / silk)',1.73],
-      ['handmade_emb',     'Handmade Full Embroidery (adda)',  2.50],
+    { title: '✨ Women · Festive / Bridal', rows: [
       ['saree',            'Saree',                            1.15],
       ['lehenga',          'Lehenga / Gharara / Sharara',      1.80],
-      ['abaya',            'Abaya',                            0.95],
-      ['bridal',           'Bridal / Velvet / Full Embroidery',2.55]
+      ['bridal',           'Bridal / Velvet',                  2.55],
+      ['abaya',            'Abaya / Hijab',                    0.95]
+    ]},
+    { title: '🧵 Women · Unstitched Fabric', rows: [
+      ['kurti_1pc_unstitch',        '1pc – Shirt fabric',           0.55],
+      ['shirt_dupatta_2pc_unstitch','2pc – Shirt + Dupatta',        0.62],
+      ['shirt_trouser_2pc_unstitch','2pc – Shirt + Trouser',        0.75],
+      ['lawn_3pc_unstitch',         '3pc – Printed / Plain',        0.94],
+      ['unstitch_3pc_emb',          '3pc – Embroidered',            1.10]
+    ]},
+    { title: '❄️ Winter', rows: [
+      ['winter_2pc_stitch',  'Winter 2pc – Stitched / Pret',               1.19],
+      ['winter_2pc_unstitch','Winter 2pc – Unstitched (karandi / khaddar)', 0.99],
+      ['winter_3pc_stitch',  'Winter 3pc – Stitched / Pret',               1.43],
+      ['winter_3pc_unstitch','Winter 3pc – Unstitched',                    1.23]
     ]},
     { title: '👔 Men', rows: [
       ['mens_shirt',        "Men's Shirt / Polo / T-Shirt (1pc)", 0.63],
@@ -110,11 +117,10 @@
       ['kids_girls_formal',  'Girls — Party / Formal',          0.60],
       ['kids_infant',        'Infant / Baby (0–2y)',            0.35]
     ]},
-    { title: '➕ Separates & Accessories', rows: [
-      ['dupatta_only',     'Dupatta / Stole only',             0.46],
+    { title: '➕ Separates', rows: [
+      ['dupatta_only',     'Dupatta / Stole',                  0.46],
       ['shawl',            'Shawl (winter)',                   0.87],
-      ['accessories',      'Accessories / Jewellery',          0.49],
-      ['footwear',         'Footwear / Shoes / Khussa',        1.10]
+      ['footwear',         'Footwear / Khussa',                1.10]
     ]}
   ];
 
