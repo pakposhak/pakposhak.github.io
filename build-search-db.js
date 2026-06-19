@@ -84,9 +84,13 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
   // unstitched lead over western shirts / trousers / jeans. No effect on women/kids ordering.
   const MENS_EAST = new Set(['mens_kurta', 'mens_shalwar_kameez', 'mens_sherwani', 'mens_waistcoat', 'mens_unstitched']);
   const menEastRank = c => /^mens_/.test(c || '') ? (MENS_EAST.has(c) ? 0 : 1) : 0;
+  // Within WOMEN, lead the landing with PRET (ready-to-wear stitched suits) — req.
+  const WOMEN_PRET = new Set(['pret_3pc', 'pret_3pc_emb', 'pret_2pc_emb']);
+  const womenPretRank = c => (genderOf(c) === 'w' && WOMEN_PRET.has(c)) ? 0 : 1;
   const qSort = (a, b) =>
     (heroRank(a.cat) - heroRank(b.cat))        // apparel before footwear/accessories
     || (genderRank(a.cat) - genderRank(b.cat)) // women first
+    || (womenPretRank(a.cat) - womenPretRank(b.cat)) // within women: PRET first
     || (menEastRank(a.cat) - menEastRank(b.cat)) // within men: eastern wear first
     || (sizeOf(b) - sizeOf(a))                 // MORE in-stock sizes first (better availability)
     || ((b.pub || 0) - (a.pub || 0))           // newer first
@@ -94,7 +98,7 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
   const qNew   = products.filter(p => !p.sale &&  isNew(p)).sort(qSort);
   const qStock = products.filter(p => !p.sale && !isNew(p)).sort(qSort);
   const qSale  = products.filter(p =>  p.sale).sort(qSort);
-  const PAGE = 24, NEW_TARGET = 5, SALE_CAP = 4;   // per page: ≤5 new lead, ≤4 sale
+  const PAGE = 24, NEW_TARGET = 5, SALE_CAP = 3;   // per page: ≤5 new lead, ≤3 sale (req)
   const ordered = [];
   let iN = 0, iK = 0, iS = 0;
   while (iN < qNew.length || iK < qStock.length || iS < qSale.length) {
