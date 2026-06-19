@@ -69,6 +69,22 @@ function handleFacets(res){
   } catch (e) { send(res, 500, { error: e.message }); }
 }
 
+// Brand → {category: count} map for the WHOLE catalogue. Lets Browse Brands build its
+// brand-index (which brand makes what, + strength counts) WITHOUT the browser ever
+// downloading catalog.json — the same data the in-page bbBuildIndex() derived from
+// PS_CATALOG. Bounded by brand×category (~155 brands), so it stays tiny as the product
+// count grows toward 100k. Accessories are KEPT here (unlike the grid) so brand totals
+// match the old PS_CATALOG-based counts exactly.
+function handleBrandIndex(res){
+  if (!db) return send(res, 503, { error: 'search db not ready' });
+  try {
+    const rows = db.prepare('SELECT b, cat, count(*) n FROM products GROUP BY b, cat').all();
+    const brands = {};
+    for (const r of rows){ (brands[r.b] = brands[r.b] || {})[r.cat] = r.n; }
+    send(res, 200, { brands });
+  } catch (e) { send(res, 500, { error: e.message }); }
+}
+
 function handleSearch(u, res){
   if (!db) return send(res, 503, { error: 'search db not ready' });
   const q = u.searchParams;
@@ -121,6 +137,7 @@ http.createServer((req, res) => {
   if (req.method !== 'GET') return send(res, 405, { error: 'GET only' });
   if (u.pathname === '/search' || u.pathname === '/search/') return handleSearch(u, res);
   if (u.pathname === '/search/facets') return handleFacets(res);
+  if (u.pathname === '/search/brand-index') return handleBrandIndex(res);
   if (u.pathname === '/search/health') return send(res, 200, { ok: true, products: db ? db.prepare('SELECT count(*) c FROM products').get().c : 0 });
   send(res, 404, { error: 'not found' });
 }).listen(PORT, '127.0.0.1', () => console.log('psb-search listening on 127.0.0.1:' + PORT));
