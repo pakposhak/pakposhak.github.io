@@ -88,6 +88,7 @@
     .catdd[open] .catdd-sum::after{content:'▴'}
     .catdd[open] .catdd-sum{border-bottom:1px solid var(--bdr-med);background:var(--raised)}
     .catdd-panel{max-height:46vh;overflow-y:auto;padding:3px 0}
+    .catdd-section{position:sticky;top:0;z-index:1;font-size:0.8rem;font-weight:900;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;padding:8px 13px 6px;background:var(--raised);border-top:2px solid var(--gold);border-bottom:1px solid var(--bdr-med)}
     .catdd-sub{font-size:0.7rem;font-weight:800;color:var(--gold);letter-spacing:1px;text-transform:uppercase;padding:9px 13px 4px;background:var(--surface)}
     .catdd-item{font-size:0.98rem;font-weight:400;color:var(--txt);padding:9px 16px;cursor:pointer}
     .catdd-item:hover{background:rgba(201,169,110,0.12)}
@@ -1971,11 +1972,15 @@
     // Final SHIPPING weights (packing included). Safety margin added 2026-06-15:
     // +0.20 kg on 1-piece garments, kids & separates (vary most); +0.15 kg on
     // multi-piece. Footwear unchanged (boxed = consistent). Admin can override.
-    kurti_1pc         : 0.61,
+    kurti_1pc            : 0.61,   // 1pc kurti/shirt — STITCHED
+    kurti_1pc_unstitch   : 0.55,   // NEW — 1pc shirt fabric, UNSTITCHED
+    western_top          : 0.45,   // NEW — western top / tank / tee (1pc)
     womens_trouser    : 0.70,
     kaftan            : 0.90,
-    shirt_dupatta_2pc : 0.70,
-    shirt_trouser_2pc : 0.85,
+    shirt_dupatta_2pc          : 0.70,   // 2pc shirt+dupatta — STITCHED
+    shirt_dupatta_2pc_unstitch : 0.62,   // NEW — 2pc shirt+dupatta, UNSTITCHED
+    shirt_trouser_2pc          : 0.85,   // 2pc co-ord — STITCHED
+    shirt_trouser_2pc_unstitch : 0.75,   // NEW — 2pc co-ord, UNSTITCHED
     pret_2pc_emb      : 0.95,   // NEW — 2pc pret, embroidered
     lawn_3pc_unstitch : 0.94,   // 3pc unstitched, printed/plain
     unstitch_3pc_emb  : 1.10,   // NEW — 3pc unstitched, embroidered
@@ -1998,7 +2003,6 @@
     maxi_dress        : 0.80,
     dupatta_only      : 0.46,
     shawl             : 0.87,
-    accessories       : 0.49,
     footwear          : 1.10,   // unchanged — boxed, consistent
     // ── Men — Western / Casual ──
     mens_shirt        : 0.63,
@@ -2022,11 +2026,15 @@
   };
 
   const WEIGHT_LABELS = {
-    kurti_1pc         : 'Kurti / Shirt (1pc)',
+    kurti_1pc            : 'Kurti / Shirt (1pc) – Stitched',
+    kurti_1pc_unstitch   : 'Kurti / Shirt (1pc) – Unstitched',
+    western_top          : 'Western Top / Tank / Tee (1pc)',
     womens_trouser    : "Women's Trouser / Pants (1pc)",
     kaftan            : 'Kaftan (1pc long shirt)',
-    shirt_dupatta_2pc : '2pc – Shirt + Dupatta (printed)',
-    shirt_trouser_2pc : '2pc Co-ord – Shirt + Trouser (printed)',
+    shirt_dupatta_2pc          : '2pc Shirt + Dupatta – Stitched',
+    shirt_dupatta_2pc_unstitch : '2pc Shirt + Dupatta – Unstitched',
+    shirt_trouser_2pc          : '2pc Co-ord (Shirt+Trouser) – Stitched',
+    shirt_trouser_2pc_unstitch : '2pc Co-ord (Shirt+Trouser) – Unstitched',
     pret_2pc_emb      : '2pc Pret – Embroidered',
     lawn_3pc_unstitch : '3pc Unstitched – Printed/Plain',
     unstitch_3pc_emb  : '3pc Unstitched – Embroidered',
@@ -2048,7 +2056,6 @@
     abaya             : 'Abaya',
     dupatta_only      : 'Dupatta / Stole only',
     shawl             : 'Shawl (winter)',
-    accessories       : 'Accessories / Jewellery',
     mens_shirt        : "Men's Shirt / Polo / T-Shirt (1pc)",
     mens_trouser      : "Men's Trouser / Chinos / Cargo (1pc)",
     mens_jeans        : "Men's Jeans / Denim (1pc)",
@@ -2151,42 +2158,57 @@
   // catalogues later. Each gender → ordered groups → [key, label] items.
   const CAT_TREE = {
     w: { label:"👗 Women's category", groups:[
-      { h:'Everyday / Lawn', items:[
+      // ════ STITCHED (Ready-to-wear) ════
+      { section:'Stitched · Ready-to-wear', h:'1-Piece', items:[
         ['kurti_1pc','Kurti / Shirt (1pc)'],
-        ['kaftan','Kaftan (1pc long shirt)'],
-        ['shirt_dupatta_2pc','2pc – Shirt + Dupatta (printed)'],
-        ['shirt_trouser_2pc','2pc Co-ord – Shirt + Trouser (printed)'],
-        ['pret_2pc_emb','2pc Pret – Embroidered'],
-        ['lawn_3pc_unstitch','3pc Unstitched – Printed/Plain'],
-        ['unstitch_3pc_emb','3pc Unstitched – Embroidered'],
-        ['pret_3pc','3pc Pret – Printed/Plain'],
-        ['pret_3pc_emb','3pc Pret – Embroidered'],
-        ['maxi_dress','Maxi / Dress / Jumpsuit (1pc)'],
-        ['coord_western','Co-ord / Western 2pc'],
-        ['loungewear','Loungewear / Nightwear'],
+        ['western_top','Western Top / Tank / Tee'],
+        ['kaftan','Kaftan'],
+        ['maxi_dress','Maxi / Gown / Dress (1pc)'],
+        ['womens_trouser',"Trouser / Pants (1pc)"],
       ]},
-      { h:'Winter', items:[
-        ['winter_2pc_unstitch','Winter 2pc – Unstitched (karandi/khaddar)'],
-        ['winter_2pc_stitch','Winter 2pc – Stitched / Pret'],
-        ['winter_3pc_unstitch','Winter 3pc – Unstitched'],
-        ['winter_3pc_stitch','Winter 3pc – Stitched / Pret'],
+      { section:'Stitched · Ready-to-wear', h:'2-Piece', items:[
+        ['shirt_dupatta_2pc','2pc – Shirt + Dupatta'],
+        ['shirt_trouser_2pc','2pc Co-ord – Shirt + Trouser'],
+        ['coord_western','2pc – Western Co-ord'],
+        ['pret_2pc_emb','2pc – Embroidered (pret)'],
+        ['formal_emb_2pc','2pc – Formal Embroidered'],
       ]},
-      { h:'Formal / Festive / Bridal', items:[
-        ['formal_emb_2pc','Formal Embroidered 2pc'],
-        ['formal_emb_3pc','Formal Embroidered 3pc'],
-        ['heavy_formal_3pc','Heavy Formal 3pc (organza/silk)'],
+      { section:'Stitched · Ready-to-wear', h:'3-Piece', items:[
+        ['pret_3pc','3pc – Printed / Plain'],
+        ['pret_3pc_emb','3pc – Embroidered'],
+        ['formal_emb_3pc','3pc – Formal Embroidered'],
+        ['heavy_formal_3pc','3pc – Heavy Formal (organza/silk)'],
         ['handmade_emb','Handmade Full Embroidery (adda)'],
+      ]},
+      { section:'Stitched · Ready-to-wear', h:'Festive / Bridal', items:[
         ['saree','Saree'],
         ['lehenga','Lehenga / Gharara / Sharara'],
-        ['bridal','Bridal / Velvet / Full Embroidery'],
+        ['bridal','Bridal / Velvet'],
+        ['abaya','Abaya / Hijab'],
       ]},
-      { h:'Modest', items:[ ['abaya','Abaya'] ]},
-      { h:'Separates & Accessories', items:[
-        ['womens_trouser',"Women's Trouser / Pants (1pc)"],
+      { section:'Stitched · Ready-to-wear', h:'Winter', items:[
+        ['winter_2pc_stitch','Winter 2pc – Stitched'],
+        ['winter_3pc_stitch','Winter 3pc – Stitched'],
+      ]},
+      { section:'Stitched · Ready-to-wear', h:'Other', items:[
+        ['loungewear','Loungewear / Nightwear'],
         ['dupatta_only','Dupatta / Stole / Scarf'],
-        ['shawl','Shawl (winter)'],
-        ['footwear','Footwear / Shoes / Khussa'],
-        ['accessories','Accessories / Jewellery'],
+        ['shawl','Shawl'],
+        ['footwear','Footwear / Khussa'],
+      ]},
+      // ════ UNSTITCHED (Fabric) ════
+      { section:'Unstitched · Fabric', h:'1 & 2-Piece', items:[
+        ['kurti_1pc_unstitch','1pc – Shirt fabric'],
+        ['shirt_dupatta_2pc_unstitch','2pc – Shirt + Dupatta'],
+        ['shirt_trouser_2pc_unstitch','2pc – Shirt + Trouser'],
+      ]},
+      { section:'Unstitched · Fabric', h:'3-Piece', items:[
+        ['lawn_3pc_unstitch','3pc – Printed / Plain'],
+        ['unstitch_3pc_emb','3pc – Embroidered'],
+      ]},
+      { section:'Unstitched · Fabric', h:'Winter', items:[
+        ['winter_2pc_unstitch','Winter 2pc – Unstitched'],
+        ['winter_3pc_unstitch','Winter 3pc – Unstitched'],
       ]},
     ]},
     m: { label:"👔 Men's category", groups:[
@@ -2226,10 +2248,14 @@
   // native <select>/<optgroup> ignores CSS for that.
   function buildCatDropdown(id, g){
     const t = CAT_TREE[g];
-    const body = t.groups.map(grp =>
-      (grp.h ? `<div class="catdd-sub">${_catEsc(grp.h)}</div>` : '') +
-      grp.items.map(([k,lbl]) => `<div class="catdd-item" data-k="${k}" onclick="pickCatCustom(${id},'${g}','${k}')">${_catEsc(lbl)}</div>`).join('')
-    ).join('');
+    let lastSec = null;
+    const body = t.groups.map(grp => {
+      let pre = '';
+      if(grp.section && grp.section !== lastSec){ pre += `<div class="catdd-section">${_catEsc(grp.section)}</div>`; lastSec = grp.section; }
+      return pre
+        + (grp.h ? `<div class="catdd-sub">${_catEsc(grp.h)}</div>` : '')
+        + grp.items.map(([k,lbl]) => `<div class="catdd-item" data-k="${k}" onclick="pickCatCustom(${id},'${g}','${k}')">${_catEsc(lbl)}</div>`).join('');
+    }).join('');
     return `<details class="catdd" name="catdd_${id}" id="dc_catdd${g}_${id}" ontoggle="if(this.open)closeOtherCatdd(${id},'${g}')">`
       + `<summary class="catdd-sum" id="dc_catsum${g}_${id}">${t.label}…</summary>`
       + `<div class="catdd-panel">${body}</div></details>`;
@@ -2305,39 +2331,52 @@
   // depend on it). Piece-count & garment type come from type+title (reliable);
   // tags give unstitched/embroidery signals. Order matters: accessories & 2-piece
   // BEFORE the generic suit/3pc rule; "\bstitched\b" so it never matches "unstitched".
+  // MIRRORS harvest-catalog.js mapCatWomen exactly (keep in sync) — top-level stitched vs
+  // unstitched: 1pc & 2pc each split; embroidered 2pc = pret_2pc_emb; western_top; hijab→abaya.
   function classifyWomenCat(s, tags){
     tags = tags || ''; const both = s + ' ' + tags;
     const stitched = /\bpret\b|\bstitched\b|ready[\s-]?to[\s-]?wear|\brtw\b/.test(s);
-    const unstitch = !stitched && (/\bunstitch/.test(both) || /\buns\b/.test(tags) || /\bun[\s-]?stitched\b/.test(s));
+    const unstitch = !stitched && (/\bunstitch/.test(both) || /\buns\b/.test(tags) || /\b(un[\s-]?stitch(?:ed)?)\b/.test(s) || /\bunstiched\b/.test(s));
     const emb = /embroid|\bemb\b|chikankari|zari|schiffli|adda/.test(both);
+    const two   = /\b2[\s-]?(pc|piece|pcs)\b/.test(s);
+    const three = /\b3[\s-]?(pc|piece|pcs)\b/.test(s);
     if(/\bshawl\b|pashmina|\bstole\b/.test(s)) return 'shawl';
     if(/\bdupatta\b|\bscarf\b/.test(s) && !/shirt|kurti|kurta|kameez|suit|[23][\s-]?(pc|piece)|trouser|bottom/.test(s)) return 'dupatta_only';
     if(/\bsaree\b|\bsari\b/.test(s)) return 'saree';
     if(/lehenga|gharara|sharara/.test(s)) return 'lehenga';
-    if(/abaya|jilbab|burqa|niqab/.test(s)) return 'abaya';
-    if(/bridal|nikah|barat|walima/.test(s)) return 'bridal';
-    // WINTER (khaddar/karandi/velvet/wool) — split by piece count AND stitched vs
-    // unstitched (stitched weighs ~200g more). Default to 3pc unstitched.
+    if(/abaya|jilbab|burqa|niqab|niqaab|\bhijab\b|khimar|\bnaqab\b/.test(s)) return 'abaya';
+    if(/kaftan|kaftaan|caftan/.test(s)) return 'kaftan';
+    if(/bridal|nikah|barat|walima|dulhan/.test(s)) return 'bridal';
     if(/\bwinter\b|khaddar|khadar|karandi|\bwool|woolen|velvet|marina|corduroy/.test(both)){
-      const two = /\b2[\s-]?(pc|piece|pcs)\b/.test(s);
-      const st = stitched && !unstitch;
-      if(two) return st ? 'winter_2pc_stitch' : 'winter_2pc_unstitch';
-      return st ? 'winter_3pc_stitch' : 'winter_3pc_unstitch';
+      if(two) return unstitch ? 'winter_2pc_unstitch' : 'winter_2pc_stitch';
+      return unstitch ? 'winter_3pc_unstitch' : 'winter_3pc_stitch';
     }
-    if(unstitch) return emb ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch';
+    if(/\btank\b|crop[\s-]?top|t[\s-]?shirt|\btee\b|camisole|\bcami\b|western[\s-]?top|halter|\bbodysuit\b/.test(s)
+       && !/kurti|kurta|kameez|\bsuit\b|dupatta|[23][\s-]?(pc|piece)|trouser|shalwar/.test(s)) return 'western_top';
     if(/heavy[\s-]?formal|organza|tissue|jamawar/.test(s)) return 'heavy_formal_3pc';
-    if(/\bformal\b|chiffon|party[\s-]?wear/.test(s)) return 'formal_emb_3pc';
-    if(/night|sleep[\s-]?wear|lounge|pyjama|pajama/.test(s)) return 'loungewear';
-    if(/\b3[\s-]?(pc|piece|pcs)\b|(shirt|kameez|suit|kurta)[\s\w]*dupatta|dupatta[\s\w]*(shirt|kameez|suit|kurta)/.test(s)) return emb ? 'pret_3pc_emb' : 'pret_3pc';
-    if(/\b2[\s-]?(pc|piece|pcs)\b|shirt[\s-]?dupatta/.test(s)) return emb ? 'pret_2pc_emb' : 'shirt_dupatta_2pc';
-    if(/shalwar[\s-]?kameez|kameez[\s-]?shalwar|(shirt|kurti|kurta|kameez)\b[\s\w]{0,12}\b(trouser|bottom|pant|shalwar)\b|\b(trouser|bottom|pant|shalwar)\b[\s\w]{0,12}\b(shirt|kurti|kurta|kameez)\b/.test(s)) return emb ? 'pret_2pc_emb' : 'shirt_trouser_2pc';
-    if(/\bsuit\b/.test(s)) return emb ? 'pret_3pc_emb' : 'pret_3pc';
-    if(/co[\s-]?ord|coord/.test(s)) return 'coord_western';
+    if(/\bformal\b|party[\s-]?wear/.test(s)) return two ? 'formal_emb_2pc' : 'formal_emb_3pc';
+    if(/night|sleep[\s-]?wear|lounge|loungewear|pyjama|pajama|\bnighty\b/.test(s)) return 'loungewear';
+    if(three || /(shalwar|trouser|pant|bottom|gharara)[\s\w]*dupatta|dupatta[\s\w]*(shalwar|trouser|pant|bottom)/.test(s)){
+      if(unstitch) return emb ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch';
+      return emb ? 'pret_3pc_emb' : 'pret_3pc';
+    }
+    if(two || /shirt[\s-]?dupatta|(shirt|kameez|kurti)[\s\w]{0,10}dupatta/.test(s)){
+      if(emb && !unstitch) return 'pret_2pc_emb';
+      const coord = /co[\s-]?ord|coord|(shirt|kameez)[\s\w]{0,10}(trouser|pant|shalwar)|(trouser|pant|shalwar)[\s\w]{0,10}(shirt|kameez)/.test(s);
+      if(coord) return unstitch ? 'shirt_trouser_2pc_unstitch' : 'shirt_trouser_2pc';
+      return unstitch ? 'shirt_dupatta_2pc_unstitch' : 'shirt_dupatta_2pc';
+    }
+    if(/shalwar[\s-]?kameez|kameez[\s-]?shalwar|(shirt|kurti|kurta|kameez)\b[\s\w]{0,12}\b(trouser|bottom|pant|shalwar)\b|\b(trouser|bottom|pant|shalwar)\b[\s\w]{0,12}\b(shirt|kurti|kurta|kameez)\b/.test(s)){
+      if(emb && !unstitch) return 'pret_2pc_emb';
+      return unstitch ? 'shirt_trouser_2pc_unstitch' : 'shirt_trouser_2pc';
+    }
+    if(/\bsuit\b/.test(s)){ if(unstitch) return emb ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch'; return emb ? 'pret_3pc_emb' : 'pret_3pc'; }
+    if(/co[\s-]?ord|coord/.test(s)) return unstitch ? 'shirt_trouser_2pc_unstitch' : 'coord_western';
     if(/trouser|pant|palazzo|plazo|capri|culotte|tights|leggings?/.test(s) && !/shirt|kurti|kurta|kameez/.test(s)) return 'womens_trouser';
-    if(/dress|maxi|gown|jumpsuit/.test(s)) return 'maxi_dress';
-    if(/kurti|kurta|shirt|top|tunic|\btee\b|blouse|\bcape\b/.test(s)) return 'kurti_1pc';
-    if(/\blawn\b|cambric|voile|khaddar|karandi|fabric|piece[\s-]?goods/.test(s)) return 'lawn_3pc_unstitch';
-    return 'pret_3pc';
+    if(/dress|maxi|gown|jumpsuit|\bfrock\b|anarkali/.test(s)) return 'maxi_dress';
+    if(/kurti|kurta|shirt|tunic|\bcape\b|\btop\b|peplum|blouse/.test(s)) return unstitch ? 'kurti_1pc_unstitch' : 'kurti_1pc';
+    if(/\blawn\b|cambric|voile|khaddar|karandi|fabric|piece[\s-]?goods/.test(s)) return emb ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch';
+    return unstitch ? 'lawn_3pc_unstitch' : 'pret_3pc';
   }
 
   // Men's product_type / title → men's category
@@ -4480,8 +4519,11 @@
   })();
 
   const CAT_LABELS = {
-    kurti_1pc:'Kurti / 1pc', kaftan:'Kaftan (1pc)', shirt_dupatta_2pc:'2pc Shirt+Dupatta',
-    shirt_trouser_2pc:'2pc Co-ord', pret_2pc_emb:'2pc Pret Emb',
+    kurti_1pc:'Kurti / 1pc Stitched', kurti_1pc_unstitch:'Kurti / 1pc Unstitched',
+    western_top:'Western Top', kaftan:'Kaftan (1pc)',
+    shirt_dupatta_2pc:'2pc Shirt+Dupatta', shirt_dupatta_2pc_unstitch:'2pc Shirt+Dupatta Unstitched',
+    shirt_trouser_2pc:'2pc Co-ord', shirt_trouser_2pc_unstitch:'2pc Co-ord Unstitched',
+    pret_2pc_emb:'2pc Pret Emb',
     lawn_3pc_unstitch:'3pc Unstitched', unstitch_3pc_emb:'3pc Unstitched Emb',
     pret_3pc:'3pc Pret', pret_3pc_emb:'3pc Pret Emb',
     winter_2pc_unstitch:'Winter 2pc Unstitched', winter_2pc_stitch:'Winter 2pc Stitched',
@@ -4489,9 +4531,9 @@
     formal_emb_2pc:'Formal 2pc', formal_emb_3pc:'Formal 3pc',
     heavy_formal_3pc:'Heavy Formal 3pc', bridal:'Bridal',
     saree:'Saree', lehenga:'Lehenga/Gharara', coord_western:'Co-ord/Western',
-    loungewear:'Loungewear', abaya:'Abaya', maxi_dress:'Maxi / Dress',
+    loungewear:'Loungewear', abaya:'Abaya / Hijab', maxi_dress:'Maxi / Dress',
     womens_trouser:"Women's Trouser", dupatta_only:'Dupatta / Stole', shawl:'Shawl',
-    accessories:'Accessories', footwear:'Footwear',
+    footwear:'Footwear',
     mens_shirt:"Men's Shirt 1pc", mens_trouser:"Men's Trouser 1pc", mens_jeans:"Men's Jeans 1pc",
     mens_kurta:"Men's Kurta 1pc", mens_shalwar_kameez:"Men's Shalwar Kameez 2pc",
     mens_waistcoat:"Men's Waistcoat", mens_suit:"Men's Suit/Pant-Coat",
@@ -5385,11 +5427,16 @@
   const PS_CAT_LABELS = {
     pret_3pc:'Stitched 3-piece', pret_3pc_emb:'Stitched 3pc — embroidered', pret_2pc_emb:'Stitched 2pc — embroidered',
     lawn_3pc_unstitch:'Unstitched 3-piece', unstitch_3pc_emb:'Unstitched 3pc — embroidered',
-    shirt_dupatta_2pc:'2-piece (shirt + dupatta)', shirt_trouser_2pc:'2-piece (shirt + trouser)',
-    kurti_1pc:'Kurti / 1-piece', womens_trouser:'Trousers / bottoms', maxi_dress:'Dress / maxi',
+    shirt_dupatta_2pc:'2pc shirt+dupatta — stitched', shirt_dupatta_2pc_unstitch:'2pc shirt+dupatta — unstitched',
+    shirt_trouser_2pc:'2pc co-ord — stitched', shirt_trouser_2pc_unstitch:'2pc co-ord — unstitched',
+    kurti_1pc:'Kurti / 1-piece — stitched', kurti_1pc_unstitch:'Kurti / 1-piece — unstitched',
+    western_top:'Western top / tank / tee', womens_trouser:'Trousers / bottoms', maxi_dress:'Dress / maxi',
     formal_emb_3pc:'Formal 3-piece', formal_emb_2pc:'Formal 2-piece', heavy_formal_3pc:'Heavy formal 3pc',
     handmade_emb:'Handmade full embroidery (adda)',
-    bridal:'Bridal', lehenga:'Lehenga', saree:'Saree', abaya:'Abaya', kaftan:'Kaftan',
+    bridal:'Bridal', lehenga:'Lehenga', saree:'Saree', abaya:'Abaya / Hijab', kaftan:'Kaftan',
+    winter_2pc_stitch:'Winter 2pc — stitched', winter_2pc_unstitch:'Winter 2pc — unstitched',
+    winter_3pc_stitch:'Winter 3pc — stitched', winter_3pc_unstitch:'Winter 3pc — unstitched',
+    dupatta_only:'Dupatta / stole', shawl:'Shawl', footwear:'Footwear / khussa',
     loungewear:'Loungewear', coord_western:'Co-ord set',
     mens_shirt:'Men — shirt', mens_kurta:'Men — kurta', mens_shalwar_kameez:'Men — shalwar kameez',
     mens_trouser:'Men — trousers', mens_jeans:'Men — jeans', mens_suit:'Men — suit',
@@ -5481,19 +5528,27 @@
     ['1piece', ['kurti_1pc','kaftan','maxi_dress','womens_trouser','mens_shirt','mens_kurta']],
     ['onepiece', ['kurti_1pc','kaftan','maxi_dress']],
     ['single', ['kurti_1pc','kaftan','maxi_dress','womens_trouser']],
-    ['2pc', ['shirt_dupatta_2pc','shirt_trouser_2pc','pret_2pc_emb','coord_western','formal_emb_2pc','winter_2pc_stitch','winter_2pc_unstitch','mens_shalwar_kameez','mens_suit']],
-    ['2piece', ['shirt_dupatta_2pc','shirt_trouser_2pc','pret_2pc_emb','coord_western','formal_emb_2pc','mens_shalwar_kameez']],
+    ['2pc', ['shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc','shirt_trouser_2pc_unstitch','pret_2pc_emb','coord_western','formal_emb_2pc','winter_2pc_stitch','winter_2pc_unstitch','mens_shalwar_kameez','mens_suit']],
+    ['2piece', ['shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc','shirt_trouser_2pc_unstitch','pret_2pc_emb','coord_western','formal_emb_2pc','mens_shalwar_kameez']],
     ['twopiece', ['shirt_dupatta_2pc','shirt_trouser_2pc','pret_2pc_emb']],
-    ['coord', ['shirt_trouser_2pc','coord_western']],
+    ['coord', ['shirt_trouser_2pc','shirt_trouser_2pc_unstitch','coord_western']],
     ['coords', ['shirt_trouser_2pc','coord_western']],
     ['3pc', ['pret_3pc','pret_3pc_emb','lawn_3pc_unstitch','unstitch_3pc_emb','formal_emb_3pc','heavy_formal_3pc','winter_3pc_stitch','winter_3pc_unstitch']],
     ['3piece', ['pret_3pc','pret_3pc_emb','lawn_3pc_unstitch','unstitch_3pc_emb','formal_emb_3pc']],
     ['threepiece', ['pret_3pc','pret_3pc_emb','lawn_3pc_unstitch']],
     ['suit', ['pret_3pc','pret_3pc_emb','lawn_3pc_unstitch','formal_emb_3pc','mens_suit','mens_shalwar_kameez']],
-    ['kurti', ['kurti_1pc']],
-    ['kurta', ['kurti_1pc','mens_kurta']],
-    ['shirt', ['kurti_1pc','shirt_dupatta_2pc','mens_shirt']],
-    ['top', ['kurti_1pc']],
+    ['kurti', ['kurti_1pc','kurti_1pc_unstitch']],
+    ['kurta', ['kurti_1pc','kurti_1pc_unstitch','mens_kurta']],
+    ['shirt', ['kurti_1pc','kurti_1pc_unstitch','western_top','shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','mens_shirt']],
+    ['top', ['kurti_1pc','western_top']],
+    ['tank', ['western_top']],
+    ['tee', ['western_top','kids_boys_western','kids_girls_western']],
+    ['tshirt', ['western_top','mens_shirt','kids_boys_western','kids_girls_western']],
+    ['crop', ['western_top']],
+    ['camisole', ['western_top']],
+    ['westerntop', ['western_top']],
+    ['hijab', ['abaya']],
+    ['niqab', ['abaya']],
     ['tunic', ['kurti_1pc']],
     ['kaftan', ['kaftan']],
     ['caftan', ['kaftan']],
@@ -5511,12 +5566,12 @@
     ['gown', ['maxi_dress','heavy_formal_3pc']],
     ['frock', ['kids_girls_eastern','maxi_dress']],
     ['jumpsuit', ['maxi_dress']],
-    ['western', ['coord_western','maxi_dress','mens_jeans','mens_trouser','mens_shirt','kids_boys_western','kids_girls_western']],
-    ['unstitch', ['lawn_3pc_unstitch','unstitch_3pc_emb','winter_2pc_unstitch','winter_3pc_unstitch','mens_unstitched']],
-    ['unstitched', ['lawn_3pc_unstitch','unstitch_3pc_emb','winter_2pc_unstitch','winter_3pc_unstitch','mens_unstitched']],
-    ['fabric', ['lawn_3pc_unstitch','unstitch_3pc_emb','mens_unstitched']],
-    ['cloth', ['lawn_3pc_unstitch','unstitch_3pc_emb','mens_unstitched']],
-    ['stitched', ['pret_3pc','pret_3pc_emb','pret_2pc_emb','shirt_dupatta_2pc','formal_emb_3pc','winter_2pc_stitch','winter_3pc_stitch']],
+    ['western', ['western_top','coord_western','shirt_trouser_2pc','maxi_dress','mens_jeans','mens_trouser','mens_shirt','kids_boys_western','kids_girls_western']],
+    ['unstitch', ['lawn_3pc_unstitch','unstitch_3pc_emb','kurti_1pc_unstitch','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc_unstitch','winter_2pc_unstitch','winter_3pc_unstitch','mens_unstitched']],
+    ['unstitched', ['lawn_3pc_unstitch','unstitch_3pc_emb','kurti_1pc_unstitch','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc_unstitch','winter_2pc_unstitch','winter_3pc_unstitch','mens_unstitched']],
+    ['fabric', ['lawn_3pc_unstitch','unstitch_3pc_emb','kurti_1pc_unstitch','shirt_dupatta_2pc_unstitch','mens_unstitched']],
+    ['cloth', ['lawn_3pc_unstitch','unstitch_3pc_emb','kurti_1pc_unstitch','mens_unstitched']],
+    ['stitched', ['pret_3pc','pret_3pc_emb','pret_2pc_emb','kurti_1pc','western_top','shirt_dupatta_2pc','shirt_trouser_2pc','coord_western','formal_emb_3pc','winter_2pc_stitch','winter_3pc_stitch']],
     ['pret', ['pret_3pc','pret_3pc_emb','pret_2pc_emb']],
     ['ready', ['pret_3pc','pret_3pc_emb','pret_2pc_emb','shirt_dupatta_2pc']],
     ['readymade', ['pret_3pc','pret_3pc_emb','pret_2pc_emb']],

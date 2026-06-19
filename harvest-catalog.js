@@ -19,27 +19,28 @@
 const https = require('https');
 const fs    = require('fs');
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36';
-const PER_BRAND = parseInt(process.env.PER_BRAND || '110', 10);
+const PER_BRAND = parseInt(process.env.PER_BRAND || '700', 10);   // deep default (2026-06-19 women expansion → 70k-scale stress test)
 // Per-brand depth. Shopify brands now PAGINATE (/products.json?page=N), so caps
 // above 250 pull multiple pages. SFCC (Khaadi/Sapphire) paginate via &start=.
 // Target a ~9,000-product catalog at roughly 70% women / 15% men / 15% kids, with
 // the priority lawn / first-tier houses (Khaadi, Sapphire, ETHNC, Nishat, Gul
 // Ahmed, Alkaram, Maria B …) contributing the deepest.
 const BRAND_CAP = {
-  // ── priority women lawn / multi-department (paginated → hundreds each) ──
-  'Khaadi':460, 'Sapphire':520, 'ETHNC':340, 'Nishat Linen':340, 'Gul Ahmed':340,
-  'Alkaram Studio':320, 'Maria B':280, 'Limelight':260, 'Edenrobe':240, 'Outfitters':220,
-  'Bonanza Satrangi':220, 'Sana Safinaz':240, 'Asim Jofa':240, 'Cross Stitch':200,
-  'Beechtree':190, 'Generation':190, 'Zellbury':190, 'Almirah':180, 'Eminent':180,
-  'Breakout':170, 'Zara Shahjahan':180, 'Afrozeh':150, 'Baroque':150, 'Mushq':140,
-  'Charizma':150, 'Rang Rasiya':150, 'Motifz':150, 'Saya':140, 'Sha Posh':150,
-  'Republic Womenswear':180, 'Iznik Fashions':170, 'Coco by Zara Shahjahan':170,
-  // ── men (boosted to reach ~15% men) ──
+  // ── priority women lawn / multi-department — harvest DEEP (2026-06-19 women expansion →
+  //    70k-scale stress test). Caps are a MAX, not a target: brands with less just yield less. ──
+  'Khaadi':1500, 'Sapphire':1500, 'ETHNC':900, 'Nishat Linen':1000, 'Gul Ahmed':1200,
+  'Alkaram Studio':1000, 'Maria B':900, 'Limelight':800, 'Edenrobe':700, 'Outfitters':600,
+  'Bonanza Satrangi':700, 'Sana Safinaz':700, 'Asim Jofa':700, 'Cross Stitch':600,
+  'Beechtree':600, 'Generation':600, 'Zellbury':600, 'Almirah':600, 'Eminent':500,
+  'Breakout':400, 'Zara Shahjahan':500, 'Afrozeh':400, 'Baroque':400, 'Mushq':400,
+  'Charizma':500, 'Rang Rasiya':500, 'Motifz':500, 'Saya':500, 'Sha Posh':500,
+  'Republic Womenswear':500, 'Iznik Fashions':500, 'Coco by Zara Shahjahan':500,
+  // ── men (kept modest — women is the focus of this expansion) ──
   'Amir Adnan':240, 'Cambridge':220, 'Charcoal':200, 'Cougar':190, 'Dynasty Fabrics':170,
   'Royal Tag':190, 'Monark':160, 'Shahnameh':130, 'Shahzeb Saeed':130, 'Lawrencepur':130,
-  // ── kids (boosted; limited live sources — paginate the two kids houses) ──
+  // ── kids (PAUSED per req — kept as-is, not deepened) ──
   'Minnie Minors':320, 'Hopscotch':280,
-  'Stylo':250,  // footwear-only — scan deep, only khussa/peshawari are kept anyway
+  'Stylo':250,  // footwear-only — scan deep, only WOMEN'S khussa/peshawari are kept anyway
 };
 function capFor(name){ return BRAND_CAP[name] || PER_BRAND; }
 
@@ -86,6 +87,57 @@ const SHOPIFY = [
   ['Republic Womenswear','republicwomenswear.com','p'],
   ['Iznik Fashions','iznikfashions.com','p'],
   ['Coco by Zara Shahjahan','www.cocobyzarashahjahan.com','p'],
+  // ── added 2026-06-19 (women expansion): hijab/abaya + festive/lehenga, verified live Shopify in PKR ──
+  ['The Hijab Company','thehijabcompany.pk','w'],['KEF','kefpk.com','w'],
+  ['Black Camels','blackcamels.com.pk','w'],['The Women Zone','thewomenzone.pk','w'],
+  ['The Ummatis','theummatispk.store','w'],['Hijab-ul-Hareem','hijabulhareem.com','w'],
+  ['Akbar Aslam','akbaraslam.com','p'],["Kashee's Boutique",'kasheesboutique.pk','p'],
+  // ── added 2026-06-19 (women expansion → 120+ brands): activated from the in-app Browse-Brands
+  //    directory, each verified live Shopify in PKR (USD-base Suffuse + made-to-order Tena Durrani
+  //    skipped; 404/SSL-dead Image/LAAM/Thredz/Warda/Rang Ja/Farah Talib Aziz/Nomi Ansari skipped) ──
+  ['ChenOne','chenone.com','md'],
+  ['Khas Stores','khasstores.com','md'],
+  ['MTJ (Tariq Jameel)','mtjonline.com','md'],
+  ['Ammara Khan','ammarakhan.com','p'],
+  ['Asifa & Nabeel','asifaandnabeel.pk','p'],
+  ['Azure','azureofficial.pk','p'],
+  ['Hussain Rehar','hussainrehar.com','p'],
+  ['Jeem','jeem.pk','p'],
+  ['Maria Osama Khan','mariaosamakhan.com','p'],
+  ['Mina Hasan','minahasan.com','p'],
+  ['Naqshi','naqshiofficial.com','p'],
+  ['Saad Bin Shahzad','www.saadbinshahzad.com','p'],
+  ['Sadaf Fawad Khan','sadaffawadkhan.com','p'],
+  ['Saira Rizwan','sairarizwan.pk','p'],
+  ['Sobia Nazir','sobianazir.net','p'],
+  ['Threads & Motifs','threadsandmotifs.com','p'],
+  ['Wardha Saleem','wardhasaleem.com','p'],
+  ['Abaya.pk','abaya.pk','w'],
+  ['Al-Deebaj','aldeebaj.com','w'],
+  ['Armas','armasclothing.com','w'],
+  ['Bin Ilyas','binilyas.com','w'],
+  ['Bin Saeed','binsaeedfabric.com','w'],
+  ['Dhanak','dhanak.com.pk','w'],
+  ['Ego','wearego.com','w'],
+  ['Elaya Prints','elayaprints.com','w'],
+  ['Firdous','firdouscloth.com','w'],
+  ['Garnet','garnetclothing.com','w'],
+  ['Hijab & Co','hijabandco.com','w'],
+  ['Ittehad Textiles','ittehadtextile.com','w'],
+  ['Jade','jadeonline.pk','w'],
+  ['Kross Kulture','krosskulture.com','w'],
+  ['Mohagni','mohagni.com','w'],
+  ['Paarsa','paarsa.pk','w'],
+  ['Qalamkar','qalamkar.com.pk','w'],
+  ['RajBari','rajbari.pk','w'],
+  ['Roheenaz','roheenaz.com','w'],
+  ['Senorita','senorita.pk','w'],
+  ['SHAAL','shaal.com.pk','w'],
+  ['Sifa','sifa.pk','w'],
+  ['Tassels','tassels.pk','w'],
+  ['Tawakkal Fabrics','tawakkalfabrics.co','w'],
+  ['Vanya','vanya.pk','w'],
+  ['Wear Ochre','wearochre.com','w'],
 ];
 
 // ── Collection-scoped harvests: pull SPECIFIC Shopify collections (not whole
@@ -192,49 +244,65 @@ function availSizes(p){
 function mapCatWomen(s, tags){
   const both = s + ' ' + tags;
   const stitched = /\bpret\b|\bstitched\b|ready[\s-]?to[\s-]?wear|\brtw\b/.test(s);  // \bstitched\b so it does NOT match "unstitched"
-  const unstitch = !stitched && (/\bunstitch/.test(both) || /\buns\b/.test(tags) || /\b(un[\s-]?stitched)\b/.test(s));
+  const unstitch = !stitched && (/\bunstitch/.test(both) || /\buns\b/.test(tags) || /\b(un[\s-]?stitch(?:ed)?)\b/.test(s) || /\bunstiched\b/.test(s));
   const emb = /embroid|\bemb\b|chikankari|zari|schiffli|adda/.test(both);
-  // 1) standalone accessories / single dupatta (NOT a suit-with-dupatta)
+  const two   = /\b2[\s-]?(pc|piece|pcs)\b/.test(s);
+  const three = /\b3[\s-]?(pc|piece|pcs)\b/.test(s);
+  // STITCHED-vs-UNSTITCHED is the top-level axis now (req 2026-06-19): 1pc & 2pc each split
+  // into stitched/pret vs unstitched. Embroidered 2pc stays its own cat (pret_2pc_emb).
+  // 1) standalone CLOTH separates (dupatta/shawl). Jewellery & hard accessories are dropped
+  //    upstream in mapCat (PS_NON_APPAREL → null), so no 'accessories' category any more.
   if(/\bshawl\b|pashmina|\bstole\b/.test(s)) return 'shawl';
   if(/\bdupatta\b|\bscarf\b/.test(s) && !/shirt|kurti|kurta|kameez|suit|[23][\s-]?(pc|piece)|trouser|bottom/.test(s)) return 'dupatta_only';
-  // 2) festive / occasion
+  // 2) festive / occasion (stitched) — hijab routes to the abaya/modest cat
   if(/\bsaree\b|\bsari\b/.test(s)) return 'saree';
   if(/lehenga|gharara|sharara/.test(s)) return 'lehenga';
-  if(/abaya|jilbab|burqa|niqab/.test(s)) return 'abaya';
+  if(/abaya|jilbab|burqa|niqab|niqaab|\bhijab\b|khimar|\bnaqab\b/.test(s)) return 'abaya';
   if(/kaftan|kaftaan|caftan/.test(s)) return 'kaftan';
-  if(/bridal|nikah|barat|walima/.test(s)) return 'bridal';
-  // WINTER (khaddar/karandi/velvet/wool) — split by piece count AND stitched vs
-  // unstitched (stitched ~+200g). Default 3pc unstitched. MUST mirror the form's
-  // classifyWomenCat so a browsed card and the carted line agree.
+  if(/bridal|nikah|barat|walima|dulhan/.test(s)) return 'bridal';
+  // 3) WINTER — split by piece count AND stitched vs unstitched (stitched ~+200g).
   if(/\bwinter\b|khaddar|khadar|karandi|\bwool|woolen|velvet|marina|corduroy/.test(both)){
-    const two = /\b2[\s-]?(pc|piece|pcs)\b/.test(s);
-    const st = stitched && !unstitch;
-    if(two) return st ? 'winter_2pc_stitch' : 'winter_2pc_unstitch';
-    return st ? 'winter_3pc_stitch' : 'winter_3pc_unstitch';
+    if(two) return unstitch ? 'winter_2pc_unstitch' : 'winter_2pc_stitch';
+    return unstitch ? 'winter_3pc_unstitch' : 'winter_3pc_stitch';
   }
-  // 3) unstitched (explicit signal, and not a stitched/pret item)
-  if(unstitch) return emb ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch';
-  // 4) formal / festive-wear tiers
+  // 4) WESTERN TOP (1pc western: tank/tee/crop/cami) — before the eastern kurti catch.
+  if(/\btank\b|crop[\s-]?top|t[\s-]?shirt|\btee\b|camisole|\bcami\b|western[\s-]?top|halter|\bbodysuit\b/.test(s)
+     && !/kurti|kurta|kameez|\bsuit\b|dupatta|[23][\s-]?(pc|piece)|trouser|shalwar/.test(s)) return 'western_top';
+  // 5) formal / festive-wear tiers (stitched)
   if(/heavy[\s-]?formal|organza|tissue|jamawar/.test(s)) return 'heavy_formal_3pc';
-  if(/\bformal\b|chiffon|party[\s-]?wear/.test(s)) return 'formal_emb_3pc';
-  if(/night|sleep[\s-]?wear|lounge|pyjama|pajama/.test(s)) return 'loungewear';
-  // 5) PIECE COUNT (drives weight) — explicit 3-piece: number 3, OR a suit/kameez
-  //    that names a dupatta (the 3rd piece).
-  if(/\b3[\s-]?(pc|piece|pcs)\b|(shirt|kameez|suit|kurta)[\s\w]*dupatta|dupatta[\s\w]*(shirt|kameez|suit|kurta)/.test(s)) return emb ? 'pret_3pc_emb' : 'pret_3pc';
-  // explicit 2-piece / shirt+dupatta
-  if(/\b2[\s-]?(pc|piece|pcs)\b|shirt[\s-]?dupatta/.test(s)) return emb ? 'pret_2pc_emb' : 'shirt_dupatta_2pc';
-  // kameez+shalwar or shirt+trouser with NO 3rd piece = 2-piece, NOT a 3pc suit
-  if(/shalwar[\s-]?kameez|kameez[\s-]?shalwar|(shirt|kurti|kurta|kameez)\b[\s\w]{0,12}\b(trouser|bottom|pant|shalwar)\b|\b(trouser|bottom|pant|shalwar)\b[\s\w]{0,12}\b(shirt|kurti|kurta|kameez)\b/.test(s)) return emb ? 'pret_2pc_emb' : 'shirt_trouser_2pc';
-  // a generic "suit" with no piece number defaults to 3-piece (most lawn suits)
-  if(/\bsuit\b/.test(s)) return emb ? 'pret_3pc_emb' : 'pret_3pc';
-  // 6) single garments / separates
-  if(/co[\s-]?ord|coord/.test(s)) return 'coord_western';
+  if(/\bformal\b|party[\s-]?wear/.test(s)) return two ? 'formal_emb_2pc' : 'formal_emb_3pc';
+  if(/night|sleep[\s-]?wear|lounge|loungewear|pyjama|pajama|\bnighty\b/.test(s)) return 'loungewear';
+  // 6) 3-PIECE: explicit "3 piece", OR a BOTTOM (shalwar/trouser) named alongside a dupatta
+  //    (= 3 distinct pieces). A bare "shirt + dupatta" (no bottom) is 2-piece, handled below.
+  if(three || /(shalwar|trouser|pant|bottom|gharara)[\s\w]*dupatta|dupatta[\s\w]*(shalwar|trouser|pant|bottom)/.test(s)){
+    if(unstitch) return emb ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch';
+    return emb ? 'pret_3pc_emb' : 'pret_3pc';
+  }
+  // 7) 2-PIECE — embroidered = pret_2pc_emb; else co-ord (shirt+trouser) vs shirt+dupatta,
+  //    each split stitched vs unstitched.
+  if(two || /shirt[\s-]?dupatta|(shirt|kameez|kurti)[\s\w]{0,10}dupatta/.test(s)){
+    if(emb && !unstitch) return 'pret_2pc_emb';
+    const coord = /co[\s-]?ord|coord|(shirt|kameez)[\s\w]{0,10}(trouser|pant|shalwar)|(trouser|pant|shalwar)[\s\w]{0,10}(shirt|kameez)/.test(s);
+    if(coord) return unstitch ? 'shirt_trouser_2pc_unstitch' : 'shirt_trouser_2pc';
+    return unstitch ? 'shirt_dupatta_2pc_unstitch' : 'shirt_dupatta_2pc';
+  }
+  // 8) implicit 2-piece (kameez+shalwar / shirt+trouser, no piece number)
+  if(/shalwar[\s-]?kameez|kameez[\s-]?shalwar|(shirt|kurti|kurta|kameez)\b[\s\w]{0,12}\b(trouser|bottom|pant|shalwar)\b|\b(trouser|bottom|pant|shalwar)\b[\s\w]{0,12}\b(shirt|kurti|kurta|kameez)\b/.test(s)){
+    if(emb && !unstitch) return 'pret_2pc_emb';
+    return unstitch ? 'shirt_trouser_2pc_unstitch' : 'shirt_trouser_2pc';
+  }
+  // 9) generic "suit" → 3-piece (stitched/unstitched)
+  if(/\bsuit\b/.test(s)){ if(unstitch) return emb ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch'; return emb ? 'pret_3pc_emb' : 'pret_3pc'; }
+  // 10) western 2pc co-ord (stitched assumed; unstitched co-ord → unstitched 2pc)
+  if(/co[\s-]?ord|coord/.test(s)) return unstitch ? 'shirt_trouser_2pc_unstitch' : 'coord_western';
+  // 11) 1pc separates
   if(/trouser|pant|palazzo|plazo|capri|culotte|tights|leggings?/.test(s) && !/shirt|kurti|kurta|kameez/.test(s)) return 'womens_trouser';
-  if(/dress|maxi|gown|jumpsuit/.test(s)) return 'maxi_dress';
-  if(/kurti|kurta|shirt|top|tunic|\btee\b|blouse|\bcape\b/.test(s)) return 'kurti_1pc';
-  // 7) bare fabric name with no garment word = unstitched
-  if(/\blawn\b|cambric|voile|khaddar|karandi|fabric|piece[\s-]?goods/.test(s)) return 'lawn_3pc_unstitch';
-  return 'pret_3pc';
+  if(/dress|maxi|gown|jumpsuit|\bfrock\b|anarkali/.test(s)) return 'maxi_dress';
+  // 12) 1pc kurti / shirt — stitched vs unstitched
+  if(/kurti|kurta|shirt|tunic|\bcape\b|\btop\b|peplum|blouse/.test(s)) return unstitch ? 'kurti_1pc_unstitch' : 'kurti_1pc';
+  // 13) bare fabric name, no garment word → unstitched
+  if(/\blawn\b|cambric|voile|khaddar|karandi|fabric|piece[\s-]?goods/.test(s)) return emb ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch';
+  return unstitch ? 'lawn_3pc_unstitch' : 'pret_3pc';
 }
 function mapCatMen(s){
   if(/sherwani|prince/.test(s)) return 'mens_sherwani';
@@ -313,7 +381,7 @@ const KHUSSA_RE = /\b(khussa|kolhapuri|peshawari)/;
 // Modern shoes we can't ship → dropped from the catalog entirely (return null).
 // Word-boundaried so "bootcut"/"sandali" (garment names) are NOT caught as shoes.
 const SHOE_RE = /\bshoe|sneaker|\bsandals?\b|chappal|\bheels?\b|slipper|loafer|\bmule\b|footwear|\bpump\b|\bboots?\b|slip[\s-]?on|wedge|stiletto|flip[\s-]?flop/;
-const PS_NON_APPAREL = /\b(bed|mattress|\bnet\b|blanket|quilt|pillow|cushion|towel|bottle|feeder|diaper|nappy|\btoy|stroller|pram|\bcomb\b|\bsocks?\b|\bcap\b|\bhat\b|\bbib\b|mitten|booties|booti|headband|hair[\s-]?band|\bbag\b|clutch|purse|wallet|jewel|earring|necklace|\bring\b|bangle|bracelet|brooch|perfume|fragrance|\battar\b|\bwatch\b|sunglass|\bbelt\b|key[\s-]?chain|gift[\s-]?set|hamper|pouch|cufflink)\b/;
+const PS_NON_APPAREL = /\b(bed|mattress|\bnet\b|blanket|quilt|pillow|cushion|towel|bottle|feeder|diaper|nappy|\btoy|stroller|pram|\bcomb\b|\bsocks?\b|\bcap\b|\bhat\b|\bbib\b|mitten|booties|booti|headband|hair[\s-]?band|\bbag\b|clutch|purse|wallet|jewel|earrings?|necklaces?|\bring\b|bangles?|bracelets?|brooch(?:es)?|pendants?|anklets?|chokers?|cufflinks?|perfume|fragrance|\battar\b|\bwatch(?:es)?\b|sunglass|\bbelt\b|key[\s-]?chain|gift[\s-]?set|hamper|pouch)\b/;
 // STRONG garment signals — if present, the item is apparel even when its NAME
 // contains a shoe/non-apparel word ("Sandali" lawn collection, "Net 3PC" suit).
 // `\b[23]…\b` so "22Pcs"/"42Pcs" (toy quantities) do NOT read as a 2pc/3pc suit.
@@ -376,16 +444,17 @@ function mapCat(group, type, title, tagStr){
   if(FRAGRANCE_STRONG.test(s)) return null;                         // perfume/cologne-spray etc. — never a garment
   if(FRAGRANCE_WEAK.test(s) && !GARMENT_SIG.test(s)) return null;   // ambiguous (cologne/attar) only if not a suit
   if(BUNDLE_RE.test(s) && !GARMENT_SIG.test(s)) return null;
-  // Footwear-only brand (e.g. Stylo): keep ONLY khussa/peshawari, drop everything
-  // else (so a vaguely-named shoe never defaults to a women's 3pc suit).
-  if(group === 'f') return KHUSSA_RE.test(s) ? 'footwear' : null;
+  // MEN'S FOOTWEAR is dropped entirely (req 2026-06-19) — keep only WOMEN'S khussa/peshawari.
+  const mensFoot = group === 'm' || /\bmen'?s?\b|\bgents?\b|mardana|\bmale\b/.test(s);
+  // Footwear-only brand (e.g. Stylo): keep ONLY women's khussa/peshawari, drop everything else.
+  if(group === 'f') return (KHUSSA_RE.test(s) && !mensFoot) ? 'footwear' : null;
   // Non-garment classification ONLY when there is NO real garment signal — so a
   // suit/lawn whose NAME happens to contain "sandal"/"net" is never mis-flagged.
   if(!GARMENT_SIG.test(s)){
-    if(KHUSSA_RE.test(s)) return 'footwear';      // khussa etc. — shippable
+    if(KHUSSA_RE.test(s)) return mensFoot ? null : 'footwear';   // women's khussa kept; men's dropped
     if(SHOE_RE.test(s)) return null;              // sneakers/heels/sandals — drop (we can't ship)
     if(BAG_RE.test(s)) return null;               // bags removed from listings entirely (req)
-    if(PS_NON_APPAREL.test(s)) return 'accessories';
+    if(PS_NON_APPAREL.test(s)) return null;       // jewellery / accessories — DELETED (req 2026-06-19)
   }
   // Hijab / headscarf — a women's scarf-class item. Classify BEFORE the kids/gender
   // check so a "Wardah Cotton Hijab – Baby pink" isn't misread as kids on the word "baby".
@@ -590,7 +659,7 @@ const KIDS_BRANDS = [
   ['Zellbury','zellbury.com'],['Gul Ahmed','gulahmedshop.com'],['Maria B','mariab.pk'],
   ['Sana Safinaz','www.sanasafinaz.com'],['Almirah','almirah.com.pk'],['Bonanza Satrangi','bonanzasatrangi.com'],
   ['Alkaram Studio','www.alkaramstudio.com'],['Minnie Minors','minnieminors.com'],['Hopscotch','ilovehopscotch.com'],
-  ['Tifl','tifl.pk'],['Baby Planet','babyplanet.pk'],['Buttoned On','buttonedon.pk'],['Preeto','preeto.pk'],
+  ['Tifl','tifl.pk'],['Buttoned On','buttonedon.pk'],['Preeto','preeto.pk'],   // Baby Planet dropped 2026-06-19 (~87% baby gear, not clothing — req)
   ['One Kids','beoneshopone.com'],['Engine','engine.com.pk'],
   // women's/lawn houses that ALSO run kids lines (found by the coverage sweep 2026-06-19) —
   // their kids collections weren't being pulled; adults still come from SHOPIFY.
