@@ -5476,6 +5476,7 @@
   let psApiSeq = 0;              // request sequence — ignore out-of-order responses
   let psApiFellBack = false;     // true once we've degraded to catalog.json
   let psQuery = '';              // free-text keyword (API mode)
+  let psSizeQ = '';              // a bare age/size number typed ("boys 14") → boost that size to the top
   let psFacetBrands = null;      // brand names present (from /search/facets)
   let psFacetCats = null;        // Set of categories present (from /search/facets)
 
@@ -5522,148 +5523,386 @@
   const PS_M = Object.keys(PS_CAT_GENDER).filter(k => PS_CAT_GENDER[k]==='m');
   const PS_K = Object.keys(PS_CAT_GENDER).filter(k => PS_CAT_GENDER[k]==='k');
   const PS_CAT_SYNONYMS = [
-    ['casual', ['kurti_1pc','kaftan','shirt_dupatta_2pc','shirt_trouser_2pc','lawn_3pc_unstitch','pret_3pc','loungewear','coord_western','mens_shirt','mens_trouser','mens_jeans','kids_boys_eastern','kids_girls_eastern','kids_boys_western','kids_girls_western']],
-    ['everyday', ['kurti_1pc','shirt_dupatta_2pc','shirt_trouser_2pc','lawn_3pc_unstitch','pret_3pc','mens_shirt','mens_trouser','kids_boys_eastern','kids_girls_eastern']],
-    ['daily', ['kurti_1pc','shirt_dupatta_2pc','lawn_3pc_unstitch','pret_3pc','mens_shirt','kids_boys_eastern','kids_girls_eastern']],
-    // Kids gender / age search words → the 7 kids categories
+    ['1 piece', ['kurti_1pc','kurti_1pc_unstitch']],
+    ['1pc', ['kurti_1pc','kaftan','maxi_dress','womens_trouser','mens_shirt','mens_trouser','mens_jeans','mens_kurta','kurti_1pc_unstitch','western_top']],
+    ['1pc unstitched', ['kurti_1pc_unstitch','mens_unstitched']],
+    ['1piece', ['kurti_1pc','kaftan','maxi_dress','womens_trouser','mens_shirt','mens_kurta']],
+    ['2 piece', ['shirt_dupatta_2pc','shirt_trouser_2pc','pret_2pc_emb']],
+    ['2pc', ['shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc','shirt_trouser_2pc_unstitch','pret_2pc_emb','coord_western','formal_emb_2pc','winter_2pc_stitch','winter_2pc_unstitch','mens_shalwar_kameez','mens_suit']],
+    ['2pc embroidered', ['pret_2pc_emb']],
+    ['2pc unstitched', ['shirt_dupatta_2pc_unstitch','shirt_trouser_2pc_unstitch']],
+    ['2piece', ['shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc','shirt_trouser_2pc_unstitch','pret_2pc_emb','coord_western','formal_emb_2pc','mens_shalwar_kameez']],
+    ['3 piece', ['pret_3pc','pret_3pc_emb','lawn_3pc_unstitch']],
+    ['3pc', ['pret_3pc','pret_3pc_emb','lawn_3pc_unstitch','unstitch_3pc_emb','formal_emb_3pc','heavy_formal_3pc','winter_3pc_stitch','winter_3pc_unstitch','mens_suit']],
+    ['3pc embroidered', ['pret_3pc_emb','unstitch_3pc_emb']],
+    ['3pc stitched', ['pret_3pc','pret_3pc_emb']],
+    ['3pc suit', ['mens_suit']],
+    ['3pc unstitched', ['lawn_3pc_unstitch','unstitch_3pc_emb']],
+    ['3piece', ['pret_3pc','pret_3pc_emb','lawn_3pc_unstitch','unstitch_3pc_emb','formal_emb_3pc']],
+    ['a-line', ['kurti_1pc','maxi_dress','pret_3pc']],
+    ['abaya', ['abaya']],
+    ['abayas', ['abaya']],
+    ['adda', ['handmade_emb','formal_emb_3pc','heavy_formal_3pc','bridal','lehenga']],
+    ['adda work', ['handmade_emb','formal_emb_3pc','heavy_formal_3pc','bridal']],
+    ['aline', ['kurti_1pc','maxi_dress','pret_3pc']],
+    ['anarkali', ['maxi_dress','formal_emb_3pc','heavy_formal_3pc','pret_3pc_emb']],
+    ['angrakha', ['maxi_dress','pret_3pc','formal_emb_3pc','kurti_1pc']],
+    ['baby', ['kids_infant']],
+    ['banarasi', ['heavy_formal_3pc','formal_emb_3pc','saree','lehenga','bridal','mens_sherwani','dupatta_only']],
+    ['banarsi', ['pret_3pc_emb','formal_emb_3pc','heavy_formal_3pc','saree','lehenga','bridal','mens_sherwani','mens_waistcoat','dupatta_only']],
+    ['baraat', ['bridal','lehenga','heavy_formal_3pc','formal_emb_3pc','handmade_emb','saree','mens_sherwani','mens_suit']],
+    ['barat', ['bridal','lehenga','heavy_formal_3pc','formal_emb_3pc','handmade_emb','saree','mens_sherwani','mens_suit','mens_waistcoat']],
+    ['basic', ['kurti_1pc','shirt_dupatta_2pc','mens_shirt']],
+    ['basic wear', ['kurti_1pc','pret_3pc','mens_kurta']],
+    ['blazer', ['mens_suit']],
+    ['block', ['kurti_1pc','pret_3pc','lawn_3pc_unstitch','dupatta_only']],
+    ['block print', ['kurti_1pc','kurti_1pc_unstitch','shirt_dupatta_2pc','pret_3pc','lawn_3pc_unstitch','maxi_dress','dupatta_only','kids_girls_eastern']],
+    ['blouse', ['kurti_1pc','saree','western_top']],
+    ['boski', ['mens_unstitched','mens_kurta']],
+    ['bottom', ['womens_trouser','mens_trouser']],
     ['boy', ['kids_boys_eastern','kids_boys_western','kids_boys_formal']],
     ['boys', ['kids_boys_eastern','kids_boys_western','kids_boys_formal']],
+    ['boys eastern', ['kids_boys_eastern']],
+    ['boys eid', ['kids_boys_formal','kids_boys_eastern']],
+    ['boys formal', ['kids_boys_formal']],
+    ['boys jeans', ['kids_boys_western']],
+    ['boys kurta', ['kids_boys_eastern']],
+    ['boys party', ['kids_boys_formal']],
+    ['boys shalwar kameez', ['kids_boys_eastern']],
+    ['boys sherwani', ['kids_boys_formal']],
+    ['boys shirt', ['kids_boys_western']],
+    ['boys western', ['kids_boys_western']],
+    ['bridal', ['bridal','lehenga','heavy_formal_3pc']],
+    ['bridal wear', ['bridal','lehenga']],
+    ['bride', ['bridal','lehenga']],
+    ['burqa', ['abaya']],
+    ['caftan', ['kaftan','maxi_dress']],
+    ['cambric', ['kurti_1pc','kurti_1pc_unstitch','shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc','shirt_trouser_2pc_unstitch','pret_3pc','lawn_3pc_unstitch','mens_unstitched','mens_kurta','mens_shalwar_kameez','kids_girls_eastern','kids_boys_eastern']],
+    ['camisole', ['western_top']],
+    ['cape', ['kurti_1pc','coord_western','maxi_dress','western_top','formal_emb_3pc']],
+    ['capri', ['womens_trouser']],
+    ['cargo', ['mens_trouser','kids_boys_western']],
+    ['casual', ['kurti_1pc','kaftan','shirt_dupatta_2pc','shirt_trouser_2pc','lawn_3pc_unstitch','pret_3pc','loungewear','coord_western','mens_shirt','mens_trouser','mens_jeans','kids_boys_eastern','kids_girls_eastern','kids_boys_western','kids_girls_western','western_top','maxi_dress','womens_trouser','mens_kurta']],
+    ['casual shirt', ['mens_shirt']],
+    ['chaddar', ['dupatta_only','shawl']],
+    ['chamois', ['maxi_dress','pret_3pc','pret_3pc_emb','formal_emb_3pc','heavy_formal_3pc','winter_3pc_stitch','lehenga']],
+    ['chappal', ['footwear']],
+    ['chiffon', ['formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','pret_3pc_emb','kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_2pc_emb','pret_3pc','saree','lehenga','bridal','dupatta_only']],
+    ['chiffon dupatta', ['dupatta_only']],
+    ['chikankari', ['kurti_1pc','pret_2pc_emb','pret_3pc_emb','formal_emb_2pc','formal_emb_3pc','unstitch_3pc_emb','handmade_emb']],
+    ['children', ['kids_boys_eastern','kids_girls_eastern','kids_boys_western','kids_girls_western','kids_boys_formal','kids_girls_formal','kids_infant']],
+    ['chino', ['mens_trouser']],
+    ['chinos', ['mens_trouser']],
+    ['choli', ['lehenga','bridal']],
+    ['cigarette', ['womens_trouser']],
+    ['cigarette pants', ['womens_trouser']],
+    ['cloth', ['lawn_3pc_unstitch','unstitch_3pc_emb','kurti_1pc_unstitch','mens_unstitched']],
+    ['co ord', ['shirt_trouser_2pc','coord_western','shirt_trouser_2pc_unstitch']],
+    ['co ord set', ['shirt_trouser_2pc','coord_western']],
+    ['co-ord', ['shirt_trouser_2pc','coord_western']],
+    ['coat pant', ['mens_suit']],
+    ['coord', ['shirt_trouser_2pc','shirt_trouser_2pc_unstitch','coord_western']],
+    ['coord set', ['shirt_trouser_2pc','coord_western']],
+    ['coords', ['shirt_trouser_2pc','coord_western']],
+    ['cotton', ['lawn_3pc_unstitch','pret_3pc','kurti_1pc','shirt_dupatta_2pc','kurti_1pc_unstitch','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc','shirt_trouser_2pc_unstitch','mens_unstitched','mens_kurta','mens_shalwar_kameez','mens_shirt','kids_girls_eastern','kids_boys_eastern']],
+    ['cotton dupatta', ['dupatta_only']],
+    ['cotton net', ['maxi_dress','pret_2pc_emb','pret_3pc_emb','formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','lehenga','bridal','dupatta_only']],
+    ['crop', ['western_top']],
+    ['crop top', ['western_top']],
+    ['culotte', ['womens_trouser']],
+    ['culottes', ['womens_trouser']],
+    ['daily', ['kurti_1pc','shirt_dupatta_2pc','lawn_3pc_unstitch','pret_3pc','mens_shirt','kids_boys_eastern','kids_girls_eastern','loungewear','mens_kurta','kids_boys_western','kids_girls_western']],
+    ['daily wear', ['kurti_1pc','pret_3pc','lawn_3pc_unstitch','mens_kurta']],
+    ['denim', ['mens_jeans','kids_boys_western','kids_girls_western','mens_trouser','mens_shirt','womens_trouser','western_top','coord_western']],
+    ['desi casuals', ['mens_kurta','mens_shalwar_kameez']],
+    ['desi coats', ['mens_waistcoat','mens_sherwani']],
+    ['desi formals', ['mens_sherwani','mens_suit','mens_waistcoat']],
+    ['dholak', ['formal_emb_3pc','formal_emb_2pc','lehenga','maxi_dress']],
+    ['dholki', ['formal_emb_3pc','formal_emb_2pc','lehenga','maxi_dress','handmade_emb','mens_kurta','mens_shalwar_kameez']],
+    ['dhoti', ['womens_trouser','maxi_dress']],
+    ['digital', ['kurti_1pc','pret_3pc','lawn_3pc_unstitch','maxi_dress','mens_shirt']],
+    ['digital print', ['kurti_1pc','kurti_1pc_unstitch','shirt_dupatta_2pc','pret_3pc','lawn_3pc_unstitch','maxi_dress','mens_shirt','kids_girls_eastern','kids_boys_eastern']],
+    ['dobby', ['kurti_1pc','kurti_1pc_unstitch','shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','pret_3pc','lawn_3pc_unstitch','mens_unstitched','mens_kurta','mens_shirt','kids_boys_eastern']],
+    ['dress', ['maxi_dress','kids_girls_eastern','kids_girls_western','kids_girls_formal']],
+    ['dress pants', ['mens_trouser']],
+    ['dress shirt', ['mens_shirt']],
+    ['dulhan', ['bridal','lehenga']],
+    ['dupatta', ['dupatta_only']],
+    ['duppatta', ['dupatta_only']],
+    ['dyed', ['kurti_1pc','kurti_1pc_unstitch','shirt_dupatta_2pc_unstitch','pret_3pc','lawn_3pc_unstitch','womens_trouser','mens_shirt','mens_kurta','mens_unstitched','kids_boys_eastern']],
+    ['eid', ['formal_emb_3pc','pret_3pc_emb','lehenga','kids_boys_formal','kids_girls_formal','maxi_dress','pret_3pc','heavy_formal_3pc','pret_2pc_emb','formal_emb_2pc','saree','kurti_1pc','shirt_dupatta_2pc','handmade_emb','mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_sherwani','mens_suit','kids_boys_eastern','kids_girls_eastern']],
+    ['eid collection', ['pret_3pc','pret_3pc_emb','formal_emb_3pc','pret_2pc_emb','maxi_dress','lehenga','mens_kurta','mens_shalwar_kameez','kids_boys_eastern','kids_girls_eastern']],
+    ['emb', ['pret_2pc_emb','pret_3pc_emb','formal_emb_2pc','formal_emb_3pc','unstitch_3pc_emb','handmade_emb','kurti_1pc']],
+    ['embroidered', ['pret_3pc_emb','pret_2pc_emb','unstitch_3pc_emb','formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','handmade_emb','kurti_1pc','kurti_1pc_unstitch','bridal','lehenga','mens_kurta','mens_sherwani','mens_waistcoat','kids_girls_formal','kids_boys_formal']],
+    ['embroidered 2pc', ['pret_2pc_emb','formal_emb_2pc']],
+    ['embroidery', ['pret_3pc_emb','pret_2pc_emb','unstitch_3pc_emb','formal_emb_2pc','formal_emb_3pc','handmade_emb','heavy_formal_3pc','kurti_1pc','bridal','lehenga','mens_kurta','mens_sherwani','kids_girls_formal','kids_boys_formal']],
+    ['embroydered', ['pret_3pc_emb','formal_emb_3pc','unstitch_3pc_emb','kurti_1pc','mens_kurta']],
+    ['engagement', ['formal_emb_3pc','heavy_formal_3pc','maxi_dress','lehenga','saree','handmade_emb','mens_suit','mens_sherwani','mens_waistcoat']],
+    ['everyday', ['kurti_1pc','shirt_dupatta_2pc','shirt_trouser_2pc','lawn_3pc_unstitch','pret_3pc','mens_shirt','mens_trouser','kids_boys_eastern','kids_girls_eastern','loungewear','mens_kurta','kids_boys_western','kids_girls_western']],
+    ['fabric', ['lawn_3pc_unstitch','unstitch_3pc_emb','kurti_1pc_unstitch','shirt_dupatta_2pc_unstitch','mens_unstitched','winter_3pc_unstitch','dupatta_only']],
+    ['festive', ['formal_emb_3pc','heavy_formal_3pc','lehenga','kids_boys_formal','kids_girls_formal','pret_3pc_emb','formal_emb_2pc','maxi_dress','saree','winter_3pc_stitch','mens_kurta','mens_shalwar_kameez','mens_sherwani','kids_boys_eastern','kids_girls_eastern']],
+    ['fit-and-flare', ['maxi_dress','kurti_1pc']],
+    ['flared', ['maxi_dress','womens_trouser','kurti_1pc']],
+    ['fleece', ['western_top','loungewear','mens_shirt','kids_boys_western','kids_girls_western','kids_infant','shawl']],
+    ['footwear', ['footwear']],
+    ['formal', ['formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','pret_3pc_emb','saree','lehenga','kids_boys_formal','kids_girls_formal','pret_2pc_emb','maxi_dress','mens_suit','mens_sherwani','mens_waistcoat']],
+    ['formal 2pc', ['formal_emb_2pc']],
+    ['formal shirt', ['mens_shirt']],
+    ['formals', ['formal_emb_3pc','formal_emb_2pc','heavy_formal_3pc','mens_suit','kids_girls_formal','kids_boys_formal']],
+    ['frock', ['kids_girls_eastern','maxi_dress','kids_girls_formal']],
+    ['georgette', ['maxi_dress','pret_2pc_emb','pret_3pc','pret_3pc_emb','formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','saree','lehenga','bridal','dupatta_only']],
+    ['gharara', ['lehenga','formal_emb_3pc']],
+    ['ghrara', ['lehenga']],
     ['girl', ['kids_girls_eastern','kids_girls_western','kids_girls_formal']],
     ['girls', ['kids_girls_eastern','kids_girls_western','kids_girls_formal']],
+    ['girls dress', ['kids_girls_western','kids_girls_formal']],
+    ['girls eastern', ['kids_girls_eastern']],
+    ['girls festive', ['kids_girls_formal']],
+    ['girls formal', ['kids_girls_formal']],
+    ['girls frock', ['kids_girls_eastern','kids_girls_formal']],
+    ['girls gown', ['kids_girls_formal']],
+    ['girls kameez', ['kids_girls_eastern']],
+    ['girls party', ['kids_girls_formal']],
+    ['girls top', ['kids_girls_western']],
+    ['girls western', ['kids_girls_western']],
+    ['gota', ['formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','handmade_emb','bridal','lehenga','kids_girls_formal']],
+    ['gota patti', ['formal_emb_3pc','heavy_formal_3pc','handmade_emb','bridal','lehenga','kids_girls_formal']],
+    ['gown', ['maxi_dress','heavy_formal_3pc','formal_emb_3pc','kids_girls_formal']],
+    ['grip', ['kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_3pc','pret_3pc_emb','formal_emb_3pc','womens_trouser']],
+    ['groom', ['mens_sherwani','mens_suit']],
+    ['groom wear', ['mens_sherwani','mens_suit']],
+    ['guest', ['formal_emb_2pc','formal_emb_3pc','saree','lehenga','maxi_dress','heavy_formal_3pc','mens_suit','mens_sherwani']],
+    ['guest wear', ['formal_emb_3pc','heavy_formal_3pc','lehenga']],
+    ['hand embroidered', ['handmade_emb','formal_emb_3pc','heavy_formal_3pc','bridal','lehenga','mens_sherwani']],
+    ['hand painted', ['kurti_1pc','maxi_dress','pret_3pc','pret_3pc_emb','formal_emb_3pc','dupatta_only','shawl']],
+    ['handmade', ['handmade_emb','formal_emb_3pc','heavy_formal_3pc','bridal']],
+    ['handpainted', ['kurti_1pc','maxi_dress','pret_3pc_emb','formal_emb_3pc','dupatta_only','shawl']],
+    ['handwork', ['handmade_emb','formal_emb_3pc','heavy_formal_3pc','bridal','lehenga','mens_sherwani']],
+    ['heavy', ['heavy_formal_3pc','bridal']],
+    ['heavy formal', ['heavy_formal_3pc']],
+    ['heel', ['footwear']],
+    ['hijab', ['dupatta_only','abaya']],
+    ['infant', ['kids_infant']],
+    ['jacquard', ['kurti_1pc','shirt_dupatta_2pc','pret_3pc','pret_3pc_emb','formal_emb_3pc','heavy_formal_3pc','winter_2pc_stitch','winter_3pc_stitch','lehenga','bridal','mens_kurta','mens_sherwani','mens_waistcoat','kids_boys_formal']],
+    ['jamavar', ['heavy_formal_3pc','formal_emb_3pc','lehenga','bridal','mens_sherwani']],
+    ['jamawar', ['heavy_formal_3pc','formal_emb_3pc','pret_3pc_emb','lehenga','bridal','mens_sherwani','mens_waistcoat','kids_boys_formal']],
+    ['jeans', ['mens_jeans','kids_boys_western','kids_girls_western']],
+    ['jersey', ['western_top','loungewear','womens_trouser','mens_shirt','mens_trouser','kids_boys_western','kids_girls_western','kids_infant']],
+    ['jilbab', ['abaya']],
+    ['jumpsuit', ['maxi_dress','coord_western']],
+    ['junior', ['kids_boys_eastern','kids_girls_eastern','kids_boys_western','kids_girls_western']],
+    ['kaftaan', ['kaftan','maxi_dress']],
+    ['kaftan', ['kaftan','maxi_dress']],
+    ['kalidar', ['maxi_dress','pret_3pc','kurti_1pc']],
+    ['kameez', ['mens_shalwar_kameez','kids_boys_eastern','kids_girls_eastern','mens_kurta']],
+    ['kameez shalwar', ['mens_shalwar_kameez']],
+    ['karandi', ['winter_2pc_unstitch','winter_3pc_unstitch','kurti_1pc','shirt_dupatta_2pc','winter_2pc_stitch','winter_3pc_stitch','mens_unstitched','mens_kurta','mens_shalwar_kameez','kids_boys_eastern','kids_girls_eastern']],
+    ['khadar', ['winter_2pc_stitch','winter_2pc_unstitch','winter_3pc_stitch','winter_3pc_unstitch','mens_unstitched','kids_boys_eastern']],
+    ['khaddar', ['winter_2pc_unstitch','winter_3pc_unstitch','kurti_1pc','kurti_1pc_unstitch','shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','winter_2pc_stitch','winter_3pc_stitch','mens_unstitched','mens_kurta','mens_shalwar_kameez','kids_boys_eastern','kids_girls_eastern']],
+    ['khussa', ['footwear']],
     ['kid', ['kids_boys_eastern','kids_girls_eastern','kids_boys_western','kids_girls_western','kids_boys_formal','kids_girls_formal','kids_infant']],
     ['kids', ['kids_boys_eastern','kids_girls_eastern','kids_boys_western','kids_girls_western','kids_boys_formal','kids_girls_formal','kids_infant']],
-    ['children', ['kids_boys_eastern','kids_girls_eastern','kids_boys_western','kids_girls_western','kids_boys_formal','kids_girls_formal','kids_infant']],
-    ['infant', ['kids_infant']],
-    ['baby', ['kids_infant']],
-    ['newborn', ['kids_infant']],
-    ['toddler', ['kids_infant']],
-    ['junior', ['kids_boys_eastern','kids_girls_eastern','kids_boys_western','kids_girls_western']],
-    ['basic', ['kurti_1pc','shirt_dupatta_2pc','mens_shirt']],
-    ['1pc', ['kurti_1pc','kaftan','maxi_dress','womens_trouser','mens_shirt','mens_trouser','mens_jeans','mens_kurta']],
-    ['1piece', ['kurti_1pc','kaftan','maxi_dress','womens_trouser','mens_shirt','mens_kurta']],
-    ['onepiece', ['kurti_1pc','kaftan','maxi_dress']],
-    ['single', ['kurti_1pc','kaftan','maxi_dress','womens_trouser']],
-    ['2pc', ['shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc','shirt_trouser_2pc_unstitch','pret_2pc_emb','coord_western','formal_emb_2pc','winter_2pc_stitch','winter_2pc_unstitch','mens_shalwar_kameez','mens_suit']],
-    ['2piece', ['shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc','shirt_trouser_2pc_unstitch','pret_2pc_emb','coord_western','formal_emb_2pc','mens_shalwar_kameez']],
-    ['twopiece', ['shirt_dupatta_2pc','shirt_trouser_2pc','pret_2pc_emb']],
-    ['coord', ['shirt_trouser_2pc','shirt_trouser_2pc_unstitch','coord_western']],
-    ['coords', ['shirt_trouser_2pc','coord_western']],
-    ['3pc', ['pret_3pc','pret_3pc_emb','lawn_3pc_unstitch','unstitch_3pc_emb','formal_emb_3pc','heavy_formal_3pc','winter_3pc_stitch','winter_3pc_unstitch']],
-    ['3piece', ['pret_3pc','pret_3pc_emb','lawn_3pc_unstitch','unstitch_3pc_emb','formal_emb_3pc']],
-    ['threepiece', ['pret_3pc','pret_3pc_emb','lawn_3pc_unstitch']],
-    ['suit', ['pret_3pc','pret_3pc_emb','lawn_3pc_unstitch','formal_emb_3pc','mens_suit','mens_shalwar_kameez']],
+    ['kohlapuri', ['footwear']],
+    ['kolhapuri', ['footwear']],
+    ['kurta', ['kurti_1pc','kurti_1pc_unstitch','mens_kurta','kids_boys_eastern']],
+    ['kurta set', ['shirt_trouser_2pc','shirt_dupatta_2pc','pret_3pc']],
+    ['kurta shalwar', ['mens_shalwar_kameez','mens_kurta']],
     ['kurti', ['kurti_1pc','kurti_1pc_unstitch']],
-    ['kurta', ['kurti_1pc','kurti_1pc_unstitch','mens_kurta']],
-    ['shirt', ['kurti_1pc','kurti_1pc_unstitch','western_top','shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','mens_shirt']],
-    ['top', ['kurti_1pc','western_top']],
-    ['tank', ['western_top']],
-    ['tee', ['western_top','kids_boys_western','kids_girls_western']],
-    ['tshirt', ['western_top','mens_shirt','kids_boys_western','kids_girls_western']],
-    ['crop', ['western_top']],
-    ['camisole', ['western_top']],
-    ['westerntop', ['western_top']],
-    ['hijab', ['abaya']],
+    ['kurti 1pc', ['kurti_1pc']],
+    ['langa', ['lehenga']],
+    ['latha', ['mens_unstitched']],
+    ['lawn', ['lawn_3pc_unstitch','pret_3pc','kurti_1pc','kurti_1pc_unstitch','shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc','shirt_trouser_2pc_unstitch','pret_2pc_emb','pret_3pc_emb','unstitch_3pc_emb','mens_unstitched','mens_kurta','mens_shalwar_kameez','kids_girls_eastern','kids_boys_eastern']],
+    ['lawn slub', ['kurti_1pc','kurti_1pc_unstitch','shirt_dupatta_2pc_unstitch','lawn_3pc_unstitch','pret_3pc','mens_unstitched','kids_boys_eastern']],
+    ['lehenga', ['lehenga','bridal']],
+    ['lehnga', ['lehenga','bridal']],
+    ['linen', ['kurti_1pc','kurti_1pc_unstitch','shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc','shirt_trouser_2pc_unstitch','pret_3pc','lawn_3pc_unstitch','winter_2pc_stitch','winter_2pc_unstitch','winter_3pc_stitch','winter_3pc_unstitch','mens_unstitched','mens_kurta','mens_shalwar_kameez','kids_girls_eastern','kids_boys_eastern']],
+    ['long dress', ['maxi_dress']],
+    ['lounge', ['loungewear']],
+    ['lounge wear', ['loungewear']],
+    ['loungewear', ['loungewear']],
+    ['marina', ['kurti_1pc','shirt_dupatta_2pc','winter_2pc_stitch','winter_2pc_unstitch','winter_3pc_stitch','winter_3pc_unstitch','mens_unstitched','mens_kurta','mens_shalwar_kameez','kids_boys_eastern']],
+    ['masoori', ['pret_3pc_emb','formal_emb_3pc','heavy_formal_3pc','lehenga','bridal']],
+    ['masuri', ['maxi_dress','pret_3pc','pret_3pc_emb','formal_emb_3pc','heavy_formal_3pc','saree','lehenga','bridal']],
+    ['maxi', ['maxi_dress','kids_girls_formal']],
+    ['maxi dress', ['maxi_dress']],
+    ['mayoun', ['lehenga','formal_emb_3pc','heavy_formal_3pc','handmade_emb']],
+    ['mayun', ['lehenga','formal_emb_3pc','heavy_formal_3pc','handmade_emb','maxi_dress']],
+    ['mehendi', ['lehenga','formal_emb_3pc','heavy_formal_3pc','handmade_emb','saree','maxi_dress']],
+    ['mehndi', ['lehenga','formal_emb_3pc','heavy_formal_3pc','saree','handmade_emb','maxi_dress','mens_kurta','mens_shalwar_kameez','mens_waistcoat','kids_girls_formal','kids_boys_formal']],
+    ['mens kurta', ['mens_kurta']],
+    ['mens shirt', ['mens_shirt']],
+    ['mens trouser', ['mens_trouser']],
+    ['mens unstitched', ['mens_unstitched']],
+    ['mirror', ['formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','handmade_emb','pret_3pc_emb','bridal','lehenga','kids_girls_formal']],
+    ['mirror work', ['formal_emb_3pc','heavy_formal_3pc','handmade_emb','bridal','lehenga','kids_girls_formal']],
+    ['modest', ['abaya','maxi_dress']],
+    ['modest wear', ['abaya']],
+    ['naqab', ['abaya']],
+    ['nehru', ['mens_waistcoat']],
+    ['nehru jacket', ['mens_waistcoat']],
+    ['net', ['formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','pret_3pc_emb','maxi_dress','pret_2pc_emb','saree','lehenga','bridal','dupatta_only','kids_girls_formal']],
+    ['net dupatta', ['dupatta_only']],
+    ['new arrivals', ['kurti_1pc','pret_3pc','mens_shirt','kids_boys_eastern']],
+    ['new born', ['kids_infant']],
+    ['newborn', ['kids_infant']],
+    ['night', ['loungewear']],
+    ['night wear', ['loungewear']],
+    ['nightdress', ['loungewear']],
+    ['nightwear', ['loungewear']],
+    ['nighty', ['loungewear']],
+    ['nikah', ['bridal','lehenga','heavy_formal_3pc','formal_emb_3pc','handmade_emb','maxi_dress','saree','mens_sherwani','mens_suit','mens_kurta']],
+    ['nikkah', ['bridal','lehenga','heavy_formal_3pc','formal_emb_3pc','handmade_emb','maxi_dress','saree','mens_sherwani','mens_suit']],
     ['niqab', ['abaya']],
-    ['tunic', ['kurti_1pc']],
-    ['kaftan', ['kaftan']],
-    ['caftan', ['kaftan']],
-    ['kameez', ['mens_shalwar_kameez','kids_boys_eastern','kids_girls_eastern']],
-    ['shalwar', ['mens_shalwar_kameez','kids_boys_eastern','kids_girls_eastern']],
-    ['trouser', ['womens_trouser','mens_trouser','mens_jeans']],
-    ['pant', ['womens_trouser','mens_trouser']],
-    ['bottom', ['womens_trouser','mens_trouser']],
+    ['office', ['kurti_1pc','shirt_dupatta_2pc','shirt_trouser_2pc','womens_trouser','western_top','mens_shirt','mens_trouser','mens_suit']],
+    ['one piece', ['kurti_1pc','kurti_1pc_unstitch']],
+    ['onepiece', ['kurti_1pc','kaftan','maxi_dress']],
+    ['onesie', ['kids_infant']],
+    ['organza', ['formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','maxi_dress','pret_2pc_emb','pret_3pc_emb','saree','lehenga','bridal','dupatta_only','kids_girls_formal']],
+    ['outerwear', ['mens_waistcoat','mens_suit']],
+    ['pajama', ['loungewear']],
+    ['pajama set', ['loungewear']],
     ['palazzo', ['womens_trouser']],
+    ['palazzos', ['womens_trouser']],
+    ['pant', ['womens_trouser','mens_trouser']],
+    ['pant coat', ['mens_suit']],
+    ['pant-coat', ['mens_suit']],
+    ['pants', ['womens_trouser','mens_trouser']],
+    ['paranda', ['dupatta_only']],
+    ['party', ['formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','pret_3pc_emb','maxi_dress','kids_boys_formal','kids_girls_formal','pret_2pc_emb','saree','lehenga','handmade_emb','western_top','coord_western','mens_suit','mens_sherwani','mens_waistcoat']],
+    ['party wear', ['formal_emb_3pc','formal_emb_2pc','heavy_formal_3pc','maxi_dress','saree','lehenga','mens_suit']],
+    ['partywear', ['formal_emb_3pc','formal_emb_2pc','heavy_formal_3pc','maxi_dress','saree','lehenga','handmade_emb','mens_suit','kids_girls_formal','kids_boys_formal']],
+    ['pashmina', ['shawl']],
+    ['peplum', ['kurti_1pc','formal_emb_2pc','western_top','pret_2pc_emb','maxi_dress']],
+    ['peshawari chappal', ['footwear']],
+    ['peshwas', ['maxi_dress','formal_emb_3pc']],
+    ['pishwas', ['maxi_dress','formal_emb_3pc','lehenga']],
+    ['plain', ['kurti_1pc','kurti_1pc_unstitch','shirt_dupatta_2pc','shirt_trouser_2pc','pret_3pc','lawn_3pc_unstitch','womens_trouser','western_top','mens_shirt','mens_kurta','mens_shalwar_kameez','mens_unstitched','kids_boys_western','kids_girls_western','kids_infant']],
     ['plazo', ['womens_trouser']],
-    ['jeans', ['mens_jeans','kids_boys_western','kids_girls_western']],
-    ['denim', ['mens_jeans','kids_boys_western','kids_girls_western']],
-    ['dress', ['maxi_dress','kids_girls_eastern']],
-    ['maxi', ['maxi_dress']],
-    ['gown', ['maxi_dress','heavy_formal_3pc']],
-    ['frock', ['kids_girls_eastern','maxi_dress']],
-    ['jumpsuit', ['maxi_dress']],
-    ['western', ['western_top','coord_western','shirt_trouser_2pc','maxi_dress','mens_jeans','mens_trouser','mens_shirt','kids_boys_western','kids_girls_western']],
-    ['unstitch', ['lawn_3pc_unstitch','unstitch_3pc_emb','kurti_1pc_unstitch','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc_unstitch','winter_2pc_unstitch','winter_3pc_unstitch','mens_unstitched']],
-    ['unstitched', ['lawn_3pc_unstitch','unstitch_3pc_emb','kurti_1pc_unstitch','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc_unstitch','winter_2pc_unstitch','winter_3pc_unstitch','mens_unstitched']],
-    ['fabric', ['lawn_3pc_unstitch','unstitch_3pc_emb','kurti_1pc_unstitch','shirt_dupatta_2pc_unstitch','mens_unstitched']],
-    ['cloth', ['lawn_3pc_unstitch','unstitch_3pc_emb','kurti_1pc_unstitch','mens_unstitched']],
-    ['stitched', ['pret_3pc','pret_3pc_emb','pret_2pc_emb','kurti_1pc','western_top','shirt_dupatta_2pc','shirt_trouser_2pc','coord_western','formal_emb_3pc','winter_2pc_stitch','winter_3pc_stitch']],
-    ['pret', ['pret_3pc','pret_3pc_emb','pret_2pc_emb']],
+    ['polo', ['mens_shirt','kids_boys_western']],
+    ['polo shirt', ['mens_shirt']],
+    ['pret', ['pret_3pc','pret_3pc_emb','pret_2pc_emb','kurti_1pc','shirt_dupatta_2pc','maxi_dress']],
+    ['prince', ['mens_sherwani']],
+    ['prince coat', ['mens_sherwani','mens_waistcoat','mens_suit']],
+    ['print', ['kurti_1pc','pret_3pc','lawn_3pc_unstitch','mens_shirt','kids_boys_western','kids_girls_western']],
+    ['printed', ['kurti_1pc','kurti_1pc_unstitch','shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc','pret_3pc','lawn_3pc_unstitch','maxi_dress','western_top','mens_shirt','mens_kurta','kids_boys_eastern','kids_girls_eastern','kids_boys_western','kids_girls_western','kids_infant']],
+    ['printed 3pc', ['pret_3pc','lawn_3pc_unstitch']],
+    ['pyjama', ['loungewear']],
+    ['raw silk', ['maxi_dress','pret_2pc_emb','pret_3pc','pret_3pc_emb','formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','lehenga','bridal','mens_kurta','mens_sherwani','mens_waistcoat','kids_boys_formal','kids_girls_formal']],
+    ['rawsilk', ['maxi_dress','pret_3pc_emb','formal_emb_3pc','heavy_formal_3pc','lehenga','bridal','mens_sherwani','mens_waistcoat']],
     ['ready', ['pret_3pc','pret_3pc_emb','pret_2pc_emb','shirt_dupatta_2pc']],
+    ['ready to wear', ['pret_3pc','pret_2pc_emb','kurti_1pc','shirt_dupatta_2pc','maxi_dress','mens_shalwar_kameez']],
+    ['ready-to-wear', ['pret_3pc','pret_2pc_emb','kurti_1pc','pret_3pc_emb','shirt_dupatta_2pc','maxi_dress','mens_kurta','mens_shalwar_kameez']],
     ['readymade', ['pret_3pc','pret_3pc_emb','pret_2pc_emb']],
-    ['rtw', ['pret_3pc','pret_3pc_emb','pret_2pc_emb']],
-    ['formal', ['formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','pret_3pc_emb','saree','lehenga','kids_boys_formal','kids_girls_formal']],
-    ['party', ['formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','pret_3pc_emb','maxi_dress','kids_boys_formal','kids_girls_formal']],
-    ['wedding', ['bridal','lehenga','heavy_formal_3pc','formal_emb_3pc','saree']],
-    ['guest', ['formal_emb_2pc','formal_emb_3pc','saree','lehenga']],
-    ['festive', ['formal_emb_3pc','heavy_formal_3pc','lehenga','kids_boys_formal','kids_girls_formal']],
-    ['eid', ['formal_emb_3pc','pret_3pc_emb','lehenga','kids_boys_formal','kids_girls_formal']],
-    ['embroidered', ['pret_3pc_emb','pret_2pc_emb','unstitch_3pc_emb','formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','handmade_emb']],
-    ['embroidery', ['pret_3pc_emb','pret_2pc_emb','unstitch_3pc_emb','formal_emb_2pc','formal_emb_3pc','handmade_emb']],
-    ['heavy', ['heavy_formal_3pc','bridal']],
-    ['bridal', ['bridal','lehenga','heavy_formal_3pc']],
-    ['bride', ['bridal','lehenga']],
-    ['dulhan', ['bridal','lehenga']],
-    ['shadi', ['bridal','lehenga','formal_emb_3pc']],
-    ['lehenga', ['lehenga']],
-    ['gharara', ['lehenga']],
-    ['sharara', ['lehenga']],
+    ['romper', ['kids_infant']],
+    ['rtw', ['pret_3pc','pret_3pc_emb','pret_2pc_emb','kurti_1pc','shirt_dupatta_2pc','maxi_dress']],
+    ['sandal', ['footwear']],
+    ['sandals', ['footwear']],
     ['saree', ['saree']],
     ['sari', ['saree']],
-    ['handmade', ['handmade_emb']],
-    ['adda', ['handmade_emb']],
-    ['abaya', ['abaya']],
-    ['modest', ['abaya']],
-    ['hijab', ['dupatta_only','abaya']],
-    ['burqa', ['abaya']],
-    ['winter', ['winter_2pc_unstitch','winter_2pc_stitch','winter_3pc_unstitch','winter_3pc_stitch','shawl']],
-    ['khaddar', ['winter_2pc_unstitch','winter_3pc_unstitch']],
-    ['karandi', ['winter_2pc_unstitch','winter_3pc_unstitch']],
-    ['velvet', ['winter_2pc_stitch','winter_3pc_stitch','bridal']],
-    ['warm', ['winter_2pc_stitch','winter_3pc_stitch','shawl']],
-    ['summer', ['lawn_3pc_unstitch','pret_3pc','kurti_1pc','shirt_dupatta_2pc']],
-    ['lawn', ['lawn_3pc_unstitch','pret_3pc']],
-    ['loungewear', ['loungewear']],
-    ['lounge', ['loungewear']],
-    ['night', ['loungewear']],
-    ['nightwear', ['loungewear']],
-    ['sleep', ['loungewear']],
-    ['pajama', ['loungewear']],
-    ['pyjama', ['loungewear']],
-    ['dupatta', ['dupatta_only']],
+    ['satin', ['maxi_dress','pret_2pc_emb','pret_3pc','pret_3pc_emb','formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','lehenga','bridal','loungewear','dupatta_only','mens_sherwani','mens_waistcoat','kids_girls_formal']],
     ['scarf', ['dupatta_only']],
-    ['stole', ['dupatta_only']],
+    ['schiffli', ['pret_2pc_emb','pret_3pc_emb','formal_emb_2pc','formal_emb_3pc','unstitch_3pc_emb','kurti_1pc']],
+    ['screen print', ['kurti_1pc','kurti_1pc_unstitch','shirt_dupatta_2pc','pret_3pc','lawn_3pc_unstitch','mens_shirt','kids_boys_western','kids_girls_western']],
+    ['sequin', ['formal_emb_3pc','heavy_formal_3pc','bridal','lehenga','kids_girls_formal']],
+    ['sequins', ['formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','pret_3pc_emb','bridal','lehenga','saree','kids_girls_formal']],
+    ['shaadi', ['bridal','lehenga','heavy_formal_3pc','formal_emb_3pc','handmade_emb','saree','mens_sherwani','mens_suit']],
+    ['shadi', ['bridal','lehenga','formal_emb_3pc','heavy_formal_3pc','handmade_emb','saree','mens_sherwani','mens_suit','kids_boys_formal','kids_girls_formal']],
+    ['shalwar', ['mens_shalwar_kameez','kids_boys_eastern','kids_girls_eastern','womens_trouser']],
+    ['shalwar kameez', ['mens_shalwar_kameez','mens_kurta']],
+    ['shalwar qameez', ['mens_shalwar_kameez']],
+    ['sharara', ['lehenga','formal_emb_3pc']],
     ['shawl', ['shawl']],
+    ['shawls', ['shawl']],
+    ['sheesha', ['formal_emb_3pc','heavy_formal_3pc','handmade_emb','bridal','lehenga','kids_girls_formal']],
+    ['sherwani', ['mens_sherwani','kids_boys_formal']],
+    ['shirt', ['kurti_1pc','kurti_1pc_unstitch','western_top','shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','mens_shirt']],
+    ['shirt dupatta', ['shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch']],
+    ['shirt fabric', ['kurti_1pc_unstitch']],
+    ['shirt trouser', ['shirt_trouser_2pc','shirt_trouser_2pc_unstitch']],
+    ['shisha', ['formal_emb_3pc','heavy_formal_3pc','handmade_emb','bridal','lehenga']],
     ['shoe', ['footwear']],
-    ['footwear', ['footwear']],
-    ['khussa', ['footwear']],
-    ['heel', ['footwear']],
-    ['sandal', ['footwear']],
-    ['kolhapuri', ['footwear']],
+    ['shoes', ['footwear']],
+    ['shrara', ['lehenga']],
+    ['shrug', ['kurti_1pc','western_top','coord_western']],
+    ['silk', ['formal_emb_3pc','heavy_formal_3pc','saree','bridal','kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_2pc_emb','pret_3pc','pret_3pc_emb','formal_emb_2pc','lehenga','mens_kurta','mens_sherwani','mens_waistcoat','mens_unstitched','kids_girls_formal','kids_boys_formal']],
+    ['silk dupatta', ['dupatta_only']],
+    ['single', ['kurti_1pc','kaftan','maxi_dress','womens_trouser']],
+    ['single piece', ['kurti_1pc','kurti_1pc_unstitch','western_top','maxi_dress']],
+    ['single shirt', ['kurti_1pc','kurti_1pc_unstitch']],
+    ['sitara', ['formal_emb_3pc','heavy_formal_3pc','pret_3pc_emb','bridal','lehenga','saree','kids_girls_formal']],
+    ['sleep', ['loungewear']],
+    ['sleep wear', ['loungewear']],
+    ['sleepwear', ['loungewear']],
+    ['slub', ['kurti_1pc','kurti_1pc_unstitch','lawn_3pc_unstitch','pret_3pc','mens_unstitched']],
+    ['spring', ['kurti_1pc','pret_3pc','lawn_3pc_unstitch','shirt_dupatta_2pc','western_top','maxi_dress','mens_shirt','mens_kurta']],
+    ['spring wear', ['lawn_3pc_unstitch','pret_3pc']],
+    ['stitched', ['pret_3pc','pret_3pc_emb','pret_2pc_emb','kurti_1pc','western_top','shirt_dupatta_2pc','shirt_trouser_2pc','coord_western','formal_emb_3pc','winter_2pc_stitch','winter_3pc_stitch','formal_emb_2pc','maxi_dress']],
+    ['stole', ['dupatta_only']],
+    ['straight', ['kurti_1pc','pret_3pc','shirt_dupatta_2pc']],
+    ['suede', ['maxi_dress','pret_3pc','pret_3pc_emb','formal_emb_3pc','winter_2pc_stitch','winter_3pc_stitch','mens_kurta','mens_unstitched','footwear','kids_boys_formal']],
+    ['suit', ['pret_3pc','pret_3pc_emb','lawn_3pc_unstitch','formal_emb_3pc','mens_suit','mens_shalwar_kameez']],
+    ['suiting', ['mens_unstitched','mens_suit']],
+    ['summer', ['lawn_3pc_unstitch','pret_3pc','kurti_1pc','shirt_dupatta_2pc','kurti_1pc_unstitch','western_top','maxi_dress','loungewear','mens_shirt','mens_kurta','mens_unstitched','kids_boys_western','kids_girls_western']],
+    ['summer lawn', ['lawn_3pc_unstitch','pret_3pc']],
+    ['summer wear', ['lawn_3pc_unstitch','pret_3pc']],
+    ['swiss', ['kurti_1pc','kurti_1pc_unstitch','shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','pret_3pc','lawn_3pc_unstitch','pret_2pc_emb']],
+    ['swiss lawn', ['kurti_1pc','kurti_1pc_unstitch','lawn_3pc_unstitch','pret_3pc','pret_2pc_emb']],
+    ['t-shirt', ['western_top','mens_shirt','kids_boys_western','kids_girls_western']],
+    ['tank', ['western_top']],
+    ['tank top', ['western_top']],
+    ['tee', ['western_top','kids_boys_western','kids_girls_western','mens_shirt']],
+    ['three piece', ['pret_3pc','pret_3pc_emb','formal_emb_3pc','heavy_formal_3pc','lawn_3pc_unstitch','mens_suit']],
+    ['threepiece', ['pret_3pc','pret_3pc_emb','lawn_3pc_unstitch']],
+    ['tights', ['womens_trouser']],
+    ['tilla', ['formal_emb_3pc','heavy_formal_3pc','handmade_emb']],
+    ['tissue', ['pret_3pc_emb','formal_emb_3pc','heavy_formal_3pc','saree','lehenga','bridal','dupatta_only']],
+    ['toddler', ['kids_infant','kids_boys_eastern','kids_girls_eastern']],
+    ['top', ['kurti_1pc','western_top']],
+    ['trouser', ['womens_trouser','mens_trouser','mens_jeans']],
+    ['trousers', ['womens_trouser','mens_trouser']],
+    ['tshirt', ['mens_shirt','western_top','kids_boys_western','kids_girls_western']],
+    ['tulip', ['womens_trouser']],
+    ['tunic', ['kurti_1pc','western_top']],
+    ['tuxedo', ['mens_suit']],
+    ['two piece', ['shirt_dupatta_2pc','shirt_trouser_2pc','pret_2pc_emb','formal_emb_2pc','coord_western','mens_shalwar_kameez']],
+    ['two piece suit', ['mens_suit']],
+    ['twopiece', ['shirt_dupatta_2pc','shirt_trouser_2pc','pret_2pc_emb']],
+    ['unstiched', ['lawn_3pc_unstitch','unstitch_3pc_emb','mens_unstitched']],
+    ['unstitch', ['lawn_3pc_unstitch','unstitch_3pc_emb','kurti_1pc_unstitch','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc_unstitch','winter_2pc_unstitch','winter_3pc_unstitch','mens_unstitched']],
+    ['unstitched', ['lawn_3pc_unstitch','unstitch_3pc_emb','kurti_1pc_unstitch','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc_unstitch','winter_2pc_unstitch','winter_3pc_unstitch','mens_unstitched']],
+    ['unstitched 3pc', ['lawn_3pc_unstitch','unstitch_3pc_emb']],
+    ['unstitched embroidered', ['unstitch_3pc_emb']],
+    ['valima', ['heavy_formal_3pc','formal_emb_3pc','handmade_emb','saree','lehenga','mens_suit','mens_sherwani']],
+    ['velvet', ['winter_2pc_stitch','winter_3pc_stitch','bridal','maxi_dress','pret_3pc_emb','formal_emb_3pc','heavy_formal_3pc','winter_2pc_unstitch','winter_3pc_unstitch','lehenga','shawl','mens_sherwani','mens_waistcoat','kids_boys_formal','kids_girls_formal']],
+    ['viscose', ['kurti_1pc','shirt_dupatta_2pc','pret_3pc','winter_2pc_stitch','winter_3pc_stitch','mens_kurta','mens_shirt','kids_girls_eastern','kids_boys_eastern']],
+    ['voile', ['kurti_1pc','kurti_1pc_unstitch','shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','pret_3pc','lawn_3pc_unstitch','dupatta_only','kids_girls_eastern']],
+    ['waist coat', ['mens_waistcoat']],
     ['waistcoat', ['mens_waistcoat']],
-    ['nehru', ['mens_waistcoat']],
-    ['sherwani', ['mens_sherwani']],
-    ['prince', ['mens_sherwani']],
-    ['polo', ['mens_shirt']],
-    ['tshirt', ['mens_shirt']],
-    ['cotton', ['lawn_3pc_unstitch','pret_3pc','kurti_1pc','shirt_dupatta_2pc']],
-    ['silk', ['formal_emb_3pc','heavy_formal_3pc','saree','bridal']],
-    ['chiffon', ['formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','pret_3pc_emb']],
-    ['organza', ['formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc']],
-    ['net', ['formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','pret_3pc_emb']],
-    ['jamawar', ['heavy_formal_3pc','formal_emb_3pc']],
-    ['anarkali', ['maxi_dress','formal_emb_3pc','heavy_formal_3pc']],
-    ['peplum', ['kurti_1pc','formal_emb_2pc']],
-    ['shrug', ['kurti_1pc']],
-    ['cape', ['kurti_1pc']],
-    ['blouse', ['kurti_1pc','saree']],
-    ['mehndi', ['lehenga','formal_emb_3pc','heavy_formal_3pc','saree']],
-    ['nikkah', ['bridal','lehenga','heavy_formal_3pc','formal_emb_3pc']],
-    ['nikah', ['bridal','lehenga','heavy_formal_3pc','formal_emb_3pc']],
-    ['walima', ['bridal','lehenga','heavy_formal_3pc','formal_emb_3pc','saree']],
-    ['barat', ['bridal','lehenga','heavy_formal_3pc']],
-    ['men', PS_M], ['mens', PS_M], ['gents', PS_M], ['gent', PS_M],
-    ['women', PS_W], ['womens', PS_W], ['ladies', PS_W], ['lady', PS_W],
-    ['kid', PS_K], ['kids', PS_K], ['children', PS_K], ['child', PS_K], ['baby', PS_K], ['girl', PS_K], ['girls', PS_K], ['boy', PS_K], ['boys', PS_K],
+    ['walima', ['bridal','lehenga','heavy_formal_3pc','formal_emb_3pc','saree','handmade_emb','maxi_dress','mens_suit','mens_sherwani','mens_waistcoat']],
+    ['warm', ['winter_2pc_stitch','winter_3pc_stitch','shawl']],
+    ['wash and wear', ['mens_unstitched']],
+    ['wash n wear', ['mens_unstitched']],
+    ['wedding', ['bridal','lehenga','heavy_formal_3pc','formal_emb_3pc','saree','handmade_emb','maxi_dress','mens_sherwani','mens_suit','mens_waistcoat','kids_boys_formal','kids_girls_formal']],
+    ['wedding wear', ['bridal','lehenga','heavy_formal_3pc']],
+    ['west', ['western_top','coord_western','maxi_dress']],
+    ['western', ['western_top','coord_western','shirt_trouser_2pc','maxi_dress','mens_jeans','mens_trouser','mens_shirt','kids_boys_western','kids_girls_western']],
+    ['western co ord', ['coord_western']],
+    ['western coord', ['coord_western']],
+    ['western top', ['western_top']],
+    ['western wear', ['western_top','coord_western','maxi_dress']],
+    ['westerntop', ['western_top']],
+    ['winter', ['winter_2pc_unstitch','winter_2pc_stitch','winter_3pc_unstitch','winter_3pc_stitch','shawl','mens_unstitched','mens_suit','mens_waistcoat']],
+    ['winter 2pc', ['winter_2pc_stitch','winter_2pc_unstitch']],
+    ['winter 3pc', ['winter_3pc_stitch','winter_3pc_unstitch']],
+    ['winter warmers', ['shawl']],
+    ['winter wear', ['winter_2pc_stitch','winter_3pc_stitch','winter_3pc_unstitch']],
+    ['wool', ['winter_2pc_stitch','winter_2pc_unstitch','winter_3pc_stitch','winter_3pc_unstitch','shawl','mens_unstitched','mens_suit','kids_boys_formal','kids_girls_formal']],
+    ['woolen', ['winter_2pc_stitch','winter_3pc_stitch','shawl','mens_unstitched','mens_suit']],
+    ['work', ['kurti_1pc','shirt_dupatta_2pc','womens_trouser','western_top','mens_shirt','mens_trouser','mens_suit']],
+    ['workwear', ['kurti_1pc','shirt_dupatta_2pc','womens_trouser','mens_shirt','mens_trouser','mens_suit']],
+    ['zardozi', ['formal_emb_3pc','heavy_formal_3pc','handmade_emb','bridal','lehenga','mens_sherwani','kids_boys_formal']],
+    ['zari', ['formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','pret_3pc_emb','handmade_emb','bridal','lehenga','saree','mens_sherwani','mens_waistcoat','kids_boys_formal','kids_girls_formal']],
+
   ];
   const psNorm = s => (s||'').toLowerCase().replace(/[^a-z0-9]/g,'');
   // Connector/stop words a buyer types between real terms — never a category cue.
@@ -5692,28 +5931,111 @@
   }
   // Gender cue words. When a query NAMES a gender, it should NARROW the other words
   // to that gender (AND), not just add the whole gender (OR).
-  const PS_GENDER_TOK = { men:'m', mens:'m', gents:'m', gent:'m', man:'m', menswear:'m', male:'m', males:'m', guy:'m', guys:'m', gentleman:'m', gentlemen:'m', boyswear:'m',
-    women:'w', womens:'w', ladies:'w', lady:'w', woman:'w', womenswear:'w', female:'w', females:'w', girlswear:'w',
-    kid:'k', kids:'k', kidswear:'k', children:'k', child:'k', baby:'k', babies:'k', girl:'k', girls:'k', boy:'k', boys:'k', infant:'k', infants:'k', toddler:'k', newborn:'k' };
+  const PS_GENDER_TOK = { women:'w', woman:'w', womens:'w', ladies:'w', lady:'w', female:'w', girl:'girls', girls:'girls', boy:'boys', boys:'boys', men:'m', man:'m', mens:'m', male:'m', gents:'m', gent:'m', kids:'k', kid:'k', child:'k', children:'k', infant:'infant', baby:'infant', newborn:'infant', toddler:'infant' };
+  // People/relationship words → {gender, default category set}. A relationship word sets a
+  // gender (to NARROW other typed words) and, when typed alone, selects its default cats.
+  const PS_REL = {
+    'abba': { g:'m', cats:['mens_shirt','mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_suit','mens_sherwani','mens_unstitched'] },
+    'abbu': { g:'m', cats:['mens_shirt','mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_suit','mens_sherwani','mens_unstitched'] },
+    'abu': { g:'m', cats:['mens_shirt','mens_kurta','mens_shalwar_kameez','mens_suit','mens_unstitched'] },
+    'ami': { g:'w', cats:['kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_3pc','formal_emb_3pc','lawn_3pc_unstitch','saree','shawl'] },
+    'amma': { g:'w', cats:['kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_3pc','formal_emb_3pc','lawn_3pc_unstitch','saree','shawl'] },
+    'amman': { g:'w', cats:['kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_3pc','formal_emb_3pc','saree','shawl'] },
+    'ammi': { g:'w', cats:['kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_3pc','pret_3pc_emb','formal_emb_3pc','heavy_formal_3pc','lawn_3pc_unstitch','saree','abaya','shawl'] },
+    'ammu': { g:'w', cats:['kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_3pc','formal_emb_3pc','lawn_3pc_unstitch','saree','shawl'] },
+    'apa': { g:'w', cats:['kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_3pc','formal_emb_3pc','saree'] },
+    'appi': { g:'w', cats:['kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_3pc','formal_emb_3pc','saree'] },
+    'baaji': { g:'w', cats:['kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_3pc','formal_emb_3pc','saree'] },
+    'baba': { g:'m', cats:['mens_shirt','mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_suit','mens_sherwani','mens_unstitched'] },
+    'baji': { g:'w', cats:['kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_3pc','formal_emb_3pc','lawn_3pc_unstitch','saree','lehenga'] },
+    'begum': { g:'w', cats:['kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_3pc','formal_emb_3pc','heavy_formal_3pc','saree','lehenga'] },
+    'behan': { g:'w', cats:['kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_3pc','formal_emb_3pc','lawn_3pc_unstitch','lehenga'] },
+    'behen': { g:'w', cats:['kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_3pc','formal_emb_3pc','lawn_3pc_unstitch','lehenga'] },
+    'behn': { g:'w', cats:['kurti_1pc','western_top','maxi_dress','shirt_dupatta_2pc','pret_3pc','formal_emb_3pc','lawn_3pc_unstitch','lehenga'] },
+    'beta': { g:'boys', cats:['kids_boys_eastern','kids_boys_western','kids_boys_formal'] },
+    'beti': { g:'girls', cats:['kids_girls_eastern','kids_girls_western','kids_girls_formal'] },
+    'bhai': { g:'m', cats:['mens_shirt','mens_trouser','mens_jeans','mens_kurta','mens_shalwar_kameez','mens_suit','mens_unstitched'] },
+    'bhaiya': { g:'m', cats:['mens_shirt','mens_jeans','mens_kurta','mens_shalwar_kameez','mens_suit'] },
+    'bibi': { g:'w', cats:['kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_3pc','formal_emb_3pc','saree'] },
+    'birader': { g:'m', cats:['mens_kurta','mens_shalwar_kameez','mens_suit'] },
+    'bivi': { g:'w', cats:['kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_3pc','formal_emb_3pc','saree','lehenga'] },
+    'biwi': { g:'w', cats:['kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_3pc','formal_emb_3pc','heavy_formal_3pc','lawn_3pc_unstitch','saree','lehenga','loungewear'] },
+    'bro': { g:'m', cats:['mens_shirt','mens_trouser','mens_jeans','mens_kurta','mens_suit'] },
+    'brother': { g:'m', cats:['mens_shirt','mens_trouser','mens_jeans','mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_suit','mens_sherwani','mens_unstitched'] },
+    'dad': { g:'m', cats:['mens_shirt','mens_trouser','mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_suit','mens_unstitched'] },
+    'dada': { g:'m', cats:['mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_unstitched'] },
+    'daddy': { g:'m', cats:['mens_shirt','mens_trouser','mens_kurta','mens_shalwar_kameez','mens_suit','mens_unstitched'] },
+    'daughter': { g:'girls', cats:['kids_girls_eastern','kids_girls_western','kids_girls_formal'] },
+    'father': { g:'m', cats:['mens_shirt','mens_trouser','mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_suit','mens_sherwani','mens_unstitched'] },
+    'grandfather': { g:'m', cats:['mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_shirt','mens_unstitched'] },
+    'hubby': { g:'m', cats:['mens_shirt','mens_trouser','mens_kurta','mens_suit','mens_unstitched'] },
+    'husband': { g:'m', cats:['mens_shirt','mens_trouser','mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_suit','mens_sherwani','mens_unstitched'] },
+    'khawind': { g:'m', cats:['mens_kurta','mens_shalwar_kameez','mens_suit','mens_unstitched'] },
+    'ladka': { g:'boys', cats:['kids_boys_eastern','kids_boys_western','kids_boys_formal'] },
+    'ladki': { g:'girls', cats:['kids_girls_eastern','kids_girls_western','kids_girls_formal'] },
+    'larka': { g:'boys', cats:['kids_boys_eastern','kids_boys_western','kids_boys_formal'] },
+    'larkay': { g:'boys', cats:['kids_boys_eastern','kids_boys_western','kids_boys_formal'] },
+    'larki': { g:'girls', cats:['kids_girls_eastern','kids_girls_western','kids_girls_formal'] },
+    'larkiyan': { g:'girls', cats:['kids_girls_eastern','kids_girls_western','kids_girls_formal'] },
+    'maa': { g:'w', cats:['kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_3pc','formal_emb_3pc','lawn_3pc_unstitch','saree','shawl'] },
+    'maan': { g:'w', cats:['kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_3pc','formal_emb_3pc','saree','shawl'] },
+    'mian': { g:'m', cats:['mens_shirt','mens_kurta','mens_shalwar_kameez','mens_suit','mens_unstitched'] },
+    'miya': { g:'m', cats:['mens_kurta','mens_shalwar_kameez','mens_suit','mens_unstitched'] },
+    'mom': { g:'w', cats:['kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_2pc_emb','pret_3pc','pret_3pc_emb','formal_emb_3pc','lawn_3pc_unstitch','saree','shawl'] },
+    'mother': { g:'w', cats:['kurti_1pc','maxi_dress','shirt_dupatta_2pc','shirt_trouser_2pc','pret_2pc_emb','pret_3pc','pret_3pc_emb','formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','lawn_3pc_unstitch','shirt_dupatta_2pc_unstitch','saree','abaya','shawl'] },
+    'mum': { g:'w', cats:['kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_3pc','formal_emb_3pc','lawn_3pc_unstitch','saree','shawl'] },
+    'mummy': { g:'w', cats:['kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_3pc','formal_emb_3pc','lawn_3pc_unstitch','saree','shawl'] },
+    'papa': { g:'m', cats:['mens_shirt','mens_trouser','mens_kurta','mens_shalwar_kameez','mens_suit','mens_unstitched'] },
+    'shohar': { g:'m', cats:['mens_shirt','mens_kurta','mens_shalwar_kameez','mens_suit','mens_sherwani','mens_unstitched'] },
+    'sis': { g:'w', cats:['kurti_1pc','western_top','maxi_dress','shirt_dupatta_2pc','pret_3pc','lehenga'] },
+    'sister': { g:'w', cats:['kurti_1pc','western_top','maxi_dress','womens_trouser','shirt_dupatta_2pc','coord_western','pret_2pc_emb','pret_3pc','formal_emb_3pc','lawn_3pc_unstitch','lehenga','loungewear'] },
+    'son': { g:'boys', cats:['kids_boys_eastern','kids_boys_western','kids_boys_formal'] },
+    'walid': { g:'m', cats:['mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_suit','mens_sherwani','mens_unstitched'] },
+    'walida': { g:'w', cats:['kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_3pc','formal_emb_3pc','heavy_formal_3pc','lawn_3pc_unstitch','saree','abaya','shawl'] },
+    'wife': { g:'w', cats:['kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_2pc_emb','pret_3pc','pret_3pc_emb','formal_emb_3pc','heavy_formal_3pc','lawn_3pc_unstitch','saree','lehenga','loungewear'] },
+    'zoja': { g:'w', cats:['kurti_1pc','maxi_dress','shirt_dupatta_2pc','pret_3pc','formal_emb_3pc','saree'] },
+  };
+
   // Resolve the typed tokens to a category set with AND semantics across gender:
   //  "men unstitched" → ONLY men's unstitched (gender narrows the category), not
   //  every "unstitched" cat. A gender word ALONE → the whole gender. Returns {cats,genders}.
+  // Fine gender code (w / m / k / boys / girls / infant) → does category c belong to it?
+  // boys/girls/infant narrow WITHIN kids so "boys" never pulls girls' cats, etc.
+  function psCatInGender(c, g){
+    if(g === 'w') return PS_CAT_GENDER[c] === 'w';
+    if(g === 'm') return PS_CAT_GENDER[c] === 'm';
+    if(g === 'k') return PS_CAT_GENDER[c] === 'k';
+    if(g === 'boys')   return /^kids_boys_/.test(c);
+    if(g === 'girls')  return /^kids_girls_/.test(c);
+    if(g === 'infant') return c === 'kids_infant';
+    return false;
+  }
+  function psCatsForGender(g, present){
+    return Object.keys(PS_CAT_GENDER).filter(c => present.has(c) && !PS_HIDE_CATS.has(c) && psCatInGender(c, g));
+  }
   function psResolveCats(tokens, raw, present){
-    const genders = new Set(), catToks = [];
-    tokens.forEach(t => { if(PS_GENDER_TOK[t]) genders.add(PS_GENDER_TOK[t]); else catToks.push(t); });
+    const genders = new Set(), catToks = [], relCats = new Set();
+    let relSeen = false;
+    tokens.forEach(t => {
+      if(PS_GENDER_TOK[t]) genders.add(PS_GENDER_TOK[t]);
+      else if(PS_REL[t]){ genders.add(PS_REL[t].g); relSeen = true; PS_REL[t].cats.forEach(c => { if(present.has(c) && !PS_HIDE_CATS.has(c)) relCats.add(c); }); }
+      else catToks.push(t);
+    });
     const cats = new Set();
     catToks.forEach(t => psMatchCatsToken(t, present).forEach(c => cats.add(c)));
-    // multi-word concept from the NON-gender words ("1 piece" → "1piece"). Excludes
-    // gender words so "men unstitched" doesn't re-add every men cat via "menunstitched".
-    const conceptN = psNorm((raw || '').split(/[\s,]+/).filter(w => !PS_GENDER_TOK[psNorm(w)]).join(''));
+    // multi-word concept ("1 piece" → "1piece"), excluding gender & relationship words.
+    const conceptN = psNorm((raw || '').split(/[\s,]+/).filter(w => { const n = psNorm(w); return !PS_GENDER_TOK[n] && !PS_REL[n]; }).join(''));
     if(conceptN.length >= 2) psMatchCatsToken(conceptN, present).forEach(c => cats.add(c));
     if(genders.size){
       if(cats.size){
-        // a category WAS named → keep only the cats that belong to the named gender(s)
-        [...cats].forEach(c => { if(!genders.has(PS_CAT_GENDER[c])) cats.delete(c); });
+        // a category WAS named → keep only cats of the named (fine) gender(s) — AND semantics
+        [...cats].forEach(c => { if(![...genders].some(g => psCatInGender(c, g))) cats.delete(c); });
+      } else if(relSeen && relCats.size){
+        // relationship word(s) typed ALONE → their curated default category set
+        relCats.forEach(c => cats.add(c));
       } else {
-        // gender word ALONE → the whole gender
-        Object.keys(PS_CAT_GENDER).forEach(c => { if(genders.has(PS_CAT_GENDER[c]) && present.has(c) && !PS_HIDE_CATS.has(c)) cats.add(c); });
+        // pure gender word(s) alone → the whole (fine) gender
+        [...genders].forEach(g => psCatsForGender(g, present).forEach(c => cats.add(c)));
       }
     }
     return { cats, genders, catToks };
@@ -5732,6 +6054,8 @@
     clearTimeout(_psSearchT);
     _psSearchT = setTimeout(() => psSmartSearch(val), 180);
   }
+  // Store-tier words → select every brand of that Browse-Brands directory tier.
+  const PS_TIER = { premium:'p', premiums:'p', luxury:'p', luxe:'p', designer:'p', designers:'p', highend:'p', couture:'p' };
   function psSmartSearch(val){
     const a = document.getElementById('psSearchMobile'), b = document.getElementById('psSearchDesktop');
     if(a && a.value !== val) a.value = val;
@@ -5750,6 +6074,10 @@
     // multi-word brand ("cross stitch" → "crossstitch") — but NEVER when the whole
     // query is a gender word: "men" must not match "Republic Wo[men]swear" etc.
     if(rawN.length >= 3 && !PS_GENDER_TOK[rawN]) presentBrands.forEach(bn => { if(psNorm(bn).indexOf(rawN) >= 0) brands.add(bn); });
+    // Tier words ("premium" / "luxury" / "designer") → select EVERY brand of that directory
+    // tier. They're brands, not categories, and must not fall through to free-text.
+    const tierTok = new Set();
+    catToks.forEach(t => { const tier = PS_TIER[t]; if(tier){ tierTok.add(t); BRANDS.forEach(bd => { if(bd.c === tier && presentBrands.indexOf(bd.n) >= 0) brands.add(bd.n); }); } });
     // Safety net (client mode only — needs the full catalog): drop a spurious brand whose
     // brand×category combo matches NOTHING (e.g. "men" → Womenswear) so the grid isn't empty.
     if(!psApiMode && brands.size && cats.size && !PS_CATALOG.some(p => brands.has(p.b) && cats.has(p.cat))) brands.clear();
@@ -5759,10 +6087,12 @@
     if(psApiMode){
       const matched = new Set();
       catToks.forEach(t => {
-        if(psMatchCatsToken(t, present).length) matched.add(t);
+        if(tierTok.has(t) || psMatchCatsToken(t, present).length) matched.add(t);
         else if(t.length >= 3 && presentBrands.some(bn => psNorm(bn).indexOf(t) >= 0)) matched.add(t);
       });
-      psQuery = catToks.filter(t => !matched.has(t)).join(' ');
+      // a bare 1–2 digit number ("boys 14") = an age/size to BOOST to the top, not a title keyword.
+      psSizeQ = (catToks.find(t => /^\d{1,2}$/.test(t)) || '');
+      psQuery = catToks.filter(t => !matched.has(t) && !/^\d{1,2}$/.test(t)).join(' ');
     }
     psSel.cats = cats;
     psSel.brands = brands;
@@ -5894,12 +6224,19 @@
   function psSearchBase(){ return relayBase() + '/search'; }
   function psApiParams(){
     const p = new URLSearchParams();
-    if(psSel.cats.size)   p.set('cat',   Array.from(psSel.cats).join(','));
+    if(psSel.cats.size){
+      // Expand the "All Men's / Women's / Kids" pseudo-categories (all:w|m|k) into the real
+      // category keys — the server filters by exact cat, so all:m alone would match nothing.
+      const ex = [];
+      psSel.cats.forEach(c => { if(c==='all:w') ex.push(...PS_W); else if(c==='all:m') ex.push(...PS_M); else if(c==='all:k') ex.push(...PS_K); else ex.push(c); });
+      p.set('cat', Array.from(new Set(ex)).join(','));
+    }
     if(psSel.brands.size) p.set('brand', Array.from(psSel.brands).join(','));
     if(psSel.prices.size) p.set('price', Array.from(psSel.prices).join(','));
     if(psSaleOnly)        p.set('sale', '1');
     if(psSort)            p.set('sort', psSort);
     if(psQuery)           p.set('q', psQuery);
+    if(psSizeQ)           p.set('size', psSizeQ);   // boost products that have this age/size
     p.set('page', psPage);
     p.set('pageSize', psPageSize());
     return p.toString();
@@ -6087,6 +6424,7 @@
     psSort = '';
     psSaleOnly = false;
     psQuery = '';
+    psSizeQ = '';
     ['psSearchMobile','psSearchDesktop'].forEach(idd => { const e = document.getElementById(idd); if(e) e.value = ''; });
     psSearchHint('', new Set(), new Set());
     psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply();
@@ -6655,7 +6993,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-19r';
+  const PSB_BUILD = '2026-06-19s';
   console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');

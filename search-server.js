@@ -114,6 +114,12 @@ function handleSearch(u, res){
   else if (sort === 'desc') orderBy = 'p.bdt DESC, p.ord ASC';
   else if (sort === 'new') { where.push('p.sale = 0'); orderBy = 'p.pub DESC, p.ord ASC'; }
 
+  // Age/size BOOST ("boys 14" → 14Y-sized boys items first). Floats products whose size list
+  // contains the typed token to the top, keeping everything else after. Alphanumeric-validated
+  // (1–4 chars) so it's safe to inline into the ORDER BY.
+  const sizeBoost = (q.get('size') || '').trim().toLowerCase();
+  if (/^[a-z0-9]{1,4}$/.test(sizeBoost)) orderBy = "(instr(lower(p.sz), '" + sizeBoost + "') > 0) DESC, " + orderBy;
+
   const fts = ftsQuery(q.get('q'));
   if (fts) { where.push('p.id IN (SELECT rowid FROM products_fts WHERE products_fts MATCH ?)'); args.push(fts); }
 
