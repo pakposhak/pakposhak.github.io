@@ -604,6 +604,18 @@
     /* "Not everything is here" notice on Browse Products */
     .ps-note{font-size:0.76rem;color:var(--txt-sec);background:var(--gold-dim);border:1px solid var(--gold-bdr);border-radius:9px;padding:8px 12px;margin-bottom:12px;line-height:1.5}
     .ps-note a{color:var(--gold);font-weight:700;text-decoration:none}
+    /* Collapsed one-row filter shells (Categories / Brands) — tap to drill down; reuse the .catdd dropdown idiom, themed for light+dark. No standalone heading (req). */
+    .ps-filt{margin-bottom:8px;border:1.5px solid var(--bdr-med);border-radius:10px;background:var(--input-bg);overflow:hidden}
+    .ps-filt:last-child{margin-bottom:0}
+    .ps-filt-sum{list-style:none;cursor:pointer;padding:11px 14px;font-size:0.9rem;font-weight:800;color:var(--txt);display:flex;align-items:center;gap:9px}
+    .ps-filt-sum::-webkit-details-marker{display:none}
+    .ps-filt-sum::marker{content:''}
+    .ps-filt-sum::after{content:'▾';margin-left:auto;color:var(--txt-muted);font-size:0.82rem}
+    .ps-filt[open] .ps-filt-sum::after{content:'▴'}
+    .ps-filt[open] .ps-filt-sum{border-bottom:1px solid var(--bdr-med);background:var(--raised);color:var(--gold)}
+    .ps-filt-n{font-size:0.7rem;font-weight:800;color:var(--gold);background:var(--gold-dim);border:1px solid var(--gold-bdr);padding:1px 9px;border-radius:11px;line-height:1.55}
+    .ps-filt-n:empty{display:none}
+    .ps-filt>.ps-cats,.ps-filt>.ps-brands{border:none;border-radius:0;max-height:50vh;overflow-y:auto;background:transparent}
     /* Product-Category filter — collapsible 3-gender list mirroring the form's picker */
     .ps-cats{border:1px solid var(--bdr-med);border-radius:8px;overflow:hidden;background:var(--input-bg)}
     .ps-catclear{width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--bdr);font-family:inherit;font-size:0.8rem;color:var(--txt-muted);padding:7px 12px;cursor:pointer}
@@ -933,14 +945,15 @@
           <input id="psSearchMobile" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSearchInput(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search 50,000+ products, 140+ Pakistani brands"/>
           <div class="ps-search-hint" id="psSearchHintM"></div>
         </div>
-        <div class="ps-fblock">
-          <div class="ps-flabel"><span data-i18n="ps_category">Product Category</span></div>
+        <!-- Collapsed one-row filters (req): tap "Categories" → 3 majors (Women/Men/Kids) → drill into subcats; tap "Brands" → dept groups → brands. No top heading; a count badge shows when a filter is active. -->
+        <details class="ps-filt" id="psCatWrap">
+          <summary class="ps-filt-sum"><span data-i18n="ps_category_short">Categories</span><span class="ps-filt-n" id="psCatCount"></span></summary>
           <div class="ps-cats" id="psCat"></div>
-        </div>
-        <div class="ps-fblock">
-          <div class="ps-flabel"><span data-i18n="ps_brands">Brands</span> <span id="psBrandCount" style="color:var(--txt-muted);font-weight:600"></span></div>
+        </details>
+        <details class="ps-filt" id="psBrandWrap">
+          <summary class="ps-filt-sum"><span data-i18n="ps_brands">Brands</span><span class="ps-filt-n" id="psBrandCount"></span></summary>
           <div class="ps-brands" id="psBrands"></div>
-        </div>
+        </details>
       </aside>
       <section class="ps-results">
         <!-- Count + compact Price popover + Clear all share one row, just above the grid -->
@@ -3783,7 +3796,7 @@
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search 150+ Pakistani brands…',
       tab_brands:'Browse brands', tab_products:'Browse products',
-      ps_price:'Price (৳ delivered)', ps_price_short:'Price Filters', ps_category:'Product Category', ps_brands:'Brands', ps_clear:'Clear Filters', ps_valueprop:'Any Pakistani brand → delivered to Bangladesh 🇧🇩', ps_morebrands:"Can't find it? Browse all 155 brands →",
+      ps_price:'Price (৳ delivered)', ps_price_short:'Price Filters', ps_category:'Product Category', ps_category_short:'Categories', ps_brands:'Brands', ps_clear:'Clear Filters', ps_valueprop:'Any Pakistani brand → delivered to Bangladesh 🇧🇩', ps_morebrands:"Can't find it? Browse all 155 brands →",
       ps_allcats:'All categories', ps_loading:'Loading products…', ps_loadfail:'Could not load products — please try again.',
       ps_results:'products', ps_add:'Add', ps_prev:'Prev', ps_next:'Next', ps_page:'Page',
       ps_enlarge:'Enlarge', ps_avail_sizes:'Available sizes', ps_unstitched:'Unstitched · no size needed', ps_mto:'Made to order', ps_d_loading:'Loading more details…', ps_d_open:'Open full page', ps_d_nofetch:'See all photos &amp; details on the brand page →', ps_d_nodesc:'No extra description provided.',
@@ -3848,7 +3861,7 @@
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
       lbl_browse:'একটি ব্র্যান্ড দেখুন', search_ph:'🔍 ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
       tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন',
-      ps_price:'দাম (৳, ডেলিভারিসহ)', ps_price_short:'দাম ফিল্টার', ps_category:'পণ্যের ক্যাটাগরি', ps_brands:'ব্র্যান্ড', ps_clear:'ফিল্টার মুছুন', ps_valueprop:'যেকোনো পাকিস্তানি ব্র্যান্ড → বাংলাদেশে ডেলিভারি 🇧🇩', ps_morebrands:'খুঁজে পাচ্ছেন না? সব ১৫৫টি ব্র্যান্ড দেখুন →',
+      ps_price:'দাম (৳, ডেলিভারিসহ)', ps_price_short:'দাম ফিল্টার', ps_category:'পণ্যের ক্যাটাগরি', ps_category_short:'ক্যাটাগরি', ps_brands:'ব্র্যান্ড', ps_clear:'ফিল্টার মুছুন', ps_valueprop:'যেকোনো পাকিস্তানি ব্র্যান্ড → বাংলাদেশে ডেলিভারি 🇧🇩', ps_morebrands:'খুঁজে পাচ্ছেন না? সব ১৫৫টি ব্র্যান্ড দেখুন →',
       ps_allcats:'সব ক্যাটাগরি', ps_loading:'পণ্য আসছে…', ps_loadfail:'পণ্য আনা গেল না — আবার চেষ্টা করুন।',
       ps_results:'পণ্য', ps_add:'যোগ করুন', ps_prev:'আগের', ps_next:'পরের', ps_page:'পৃষ্ঠা',
       ps_enlarge:'ছবি বড় করুন', ps_avail_sizes:'স্টকে থাকা সাইজ', ps_unstitched:'আনস্টিচড · সাইজ লাগে না', ps_mto:'অর্ডারে তৈরি হবে', ps_d_loading:'আরও বিবরণ আসছে…', ps_d_open:'পুরো পেজ খুলুন', ps_d_nofetch:'সব ছবি ও বিবরণ ব্র্যান্ডের পেজে দেখুন →', ps_d_nodesc:'বাড়তি কোনো বিবরণ নেই।',
@@ -6383,6 +6396,8 @@
         + `</details>`;
     });
     document.getElementById('psBrands').innerHTML = html || `<div style="padding:10px;color:var(--txt-muted);font-size:0.78rem">—</div>`;
+    const bc = document.getElementById('psBrandCount'); if(bc) bc.textContent = psSel.brands.size || '';
+    const bw = document.getElementById('psBrandWrap'); if(bw && psSel.brands.size) bw.open = true;
   }
   function psToggleBrand(name, on){ if(on) psSel.brands.add(name); else psSel.brands.delete(name); psApply(); }
 
@@ -6421,6 +6436,8 @@
         + `</details>`;
     });
     document.getElementById('psCat').innerHTML = html;
+    const cc = document.getElementById('psCatCount'); if(cc) cc.textContent = sel.size || '';
+    const cw = document.getElementById('psCatWrap'); if(cw && sel.size) cw.open = true;   // reveal the collapsed filter when something is selected (e.g. via smart search)
   }
   function psPickCat(v){
     if(v === '') psSel.cats.clear();                              // "All categories" → clear filter
@@ -6580,7 +6597,7 @@
       // API mode: psFiltered IS the current page; psApiTotal is the grand total for the pager.
       const total = psApiTotal;
       document.getElementById('psCount').textContent = total ? (total.toLocaleString() + ' ' + tr('ps_results')) : '';
-      document.getElementById('psBrandCount').textContent = psSel.brands.size ? '('+psSel.brands.size+')' : '';
+      document.getElementById('psBrandCount').textContent = psSel.brands.size || '';
       if(!psFiltered.length){ grid.innerHTML = ''; empty.style.display = total ? 'none' : ''; document.getElementById('psPager').innerHTML = ''; return; }
       empty.style.display = 'none';
       grid.innerHTML = psFiltered.map((p,i) => psCard(p, i)).join('');   // page-relative idx — psAdd/psDetail index psFiltered
@@ -6589,7 +6606,7 @@
     }
     const total = psFiltered.length;
     document.getElementById('psCount').textContent = total ? (total.toLocaleString() + ' ' + tr('ps_results')) : '';
-    document.getElementById('psBrandCount').textContent = psSel.brands.size ? '('+psSel.brands.size+')' : '';
+    document.getElementById('psBrandCount').textContent = psSel.brands.size || '';
     if(!total){ grid.innerHTML = ''; empty.style.display = ''; document.getElementById('psPager').innerHTML = ''; return; }
     empty.style.display = 'none';
     const ps = psPageSize(), pages = Math.ceil(total / ps);
@@ -7012,7 +7029,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-19t';
+  const PSB_BUILD = '2026-06-20u';
   console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
