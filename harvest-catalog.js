@@ -548,6 +548,23 @@ function buildProduct(p, name, host, group, force, kidsHint){
       if(!hasMonth && maxAge >= 4){ const c2 = mapCatKids(tl2, { g: (kidsHint && kidsHint.g !== 'infant') ? kidsHint.g : null, t: kidsHint && kidsHint.t }); if(c2 !== 'kids_infant') cat = c2; }
     }
   }
+  // SIZE = the gender authority (post-classification correction). Catches items the title-based
+  // routing missed: a multi-dept "Character Graphic Dress" sized ONLY "18-24M" has no gender
+  // word but is unmistakably KIDS; an adult "2 Pc Suit" sized S–XL sitting in a kids cat is women.
+  {
+    const _tt2 = (p.product_type||'') + ' ' + (p.title||'');
+    const _age = sz.length && sz.every(z => /\b\d{1,2}\s*[-\/]?\s*\d{0,2}\s*(?:y|yr|year|m|mo|month)s?\b/i.test(String(z).trim()) || /^\d{1,2}\s*(?:y|m)$/i.test(String(z).trim()));
+    if(_age && !/^kids_/.test(cat)){
+      const _monthsOnly = sz.every(z => /m|month/i.test(z) && !/y|year/i.test(z));
+      const k = _monthsOnly ? 'kids_infant' : mapCatKids(_tt2);
+      if(k && /^kids_/.test(k)) cat = k;
+    } else if(/^kids_(?:boys|girls)_/.test(cat)
+              && sz.length && sz.every(z => /^(?:xs|s|m|l|xl|xxl|xxxl|free\s*size|one\s*size)$/i.test(String(z).trim()))
+              && /\b[23]\s*-?\s*(?:pc|piece|pcs)\b|\bsuit\b|\bpret\b|\bmaxi\b|\bgown\b|anarkali|saree|lehenga|\bkurti\b/i.test(_tt2)){
+      const w = mapCatWomen(_tt2.toLowerCase(), tagStr || '');
+      if(w && !/^kids_/.test(w)) cat = w;
+    }
+  }
   const pub = Math.floor((Date.parse(p.published_at || p.updated_at || p.created_at || '') || 0) / 1000);
   const onSale = (p.variants||[]).some(v => v.compare_at_price && parseFloat(v.compare_at_price) > parseFloat(v.price||0));
   const o = { b:name, t:(p.title||'').replace(/^\s*full\s+payment\s+/i, '').slice(0,80), u:`https://${host}/products/${p.handle}`, img, pkr, cat, sz, pub };
