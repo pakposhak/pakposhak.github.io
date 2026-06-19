@@ -8,7 +8,7 @@
        handlers); object/base/form are locked down. connect/img stay broad because
        the app legitimately fetches products.json from arbitrary brand sites + the
        PK relay — all over https (http/data exfil is blocked). -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self' https:"/>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https:"/>
   <meta name="referrer" content="strict-origin-when-cross-origin"/>
   <!-- Clickjacking guard: GitHub Pages can't send X-Frame-Options, so refuse to run inside a frame. -->
   <script>if(self!==top){try{top.location=self.location;}catch(e){document.documentElement.style.visibility='hidden';}}</script>
@@ -1808,6 +1808,10 @@
     if(cfg){ PSB_CFG = cfg; try{ localStorage.setItem('psb_cfg_cache', JSON.stringify(cfg)); }catch(e){} }
     else { try{ const c = JSON.parse(localStorage.getItem('psb_cfg_cache') || 'null'); if(c && c.ok) PSB_CFG = c; }catch(e){} }
     if(PSB_CFG && typeof renderCart === 'function') renderCart();   // refresh any totals shown before config arrived
+    // Catalog grid prices (_bdt) were computed with whatever rates were current when the
+    // catalog loaded; if config arrived AFTER that, recompute them so the grid + price
+    // filter/sort reflect the live rates instead of stale defaults.
+    if(typeof psRecomputeBdt === 'function') psRecomputeBdt();
   }
   // NOTE: loadPsbConfig() is invoked at the END of the script — calling it here
   // would hit DEFAULT_RELAY_URL while it's still in the temporal dead zone.
@@ -5685,6 +5689,73 @@
   function psOnReady(cb){ if(psLoaded){ cb(); return; } psReadyCbs.push(cb); psEnsureLoaded(); }
   function psFlushReady(){ const cbs = psReadyCbs; psReadyCbs = []; cbs.forEach(fn => { try{ fn(); }catch(e){} }); }
 
+  // Pure transform: parsed catalog -> ordered PS_CATALOG (WITHOUT _bdt, which is
+  // rate-dependent and computed on the main thread). ONE implementation used by BOTH
+  // the Web Worker and the main-thread fallback, so the default order can never drift.
+  // GEN/GRP are the PS_CAT_GENDER / PS_CAT_GROUPIDX maps (the worker has no main globals).
+  function psProcessCatalog(products, GEN, GRP){
+    var cat = (products || []).filter(function(p){ return p && p.u && p.pkr && p.img; });
+    var seen = {};
+    cat.forEach(function(p, i){ p._ord = i; p._bi = (seen[p.b] = (seen[p.b] || 0) + 1) - 1; });
+    var NOW = Date.now() / 1000, RECENT = 120 * 86400;
+    function rank(c){ var g = GEN[c] || 'w'; if(g === 'w') return (GRP[c] === 0) ? 0 : 1; return g === 'm' ? 2 : 3; }
+    function recent(p){ return (p.pub && (NOW - p.pub) < RECENT) ? 0 : 1; }
+    cat.sort(function(a, b){
+      return (rank(a.cat) - rank(b.cat))
+        || ((b.sale ? 1 : 0) - (a.sale ? 1 : 0))
+        || (recent(a) - recent(b))
+        || (a._bi - b._bi)
+        || ((b.pub || 0) - (a.pub || 0))
+        || (a._ord - b._ord);
+    });
+    return cat;
+  }
+  // Worker source = the SAME psProcessCatalog (stringified) + a tiny message harness.
+  var _psWorkerSrc = psProcessCatalog.toString() +
+    '\nself.onmessage=function(e){try{var d=e.data;var arr=psProcessCatalog(JSON.parse(d.text).products,d.gen,d.grp);self.postMessage({ok:true,products:arr});}catch(err){self.postMessage({ok:false,error:String(err)});}};';
+
+  // Parse + order the catalog in a Web Worker so a 20k-product JSON.parse + sort never
+  // freezes the UI. Falls back to the main thread on ANY failure (Worker/Blob missing,
+  // or CSP blocking blob: workers). _bdt + filters are then built on the main thread.
+  function psBootCatalog(text){
+    var GEN = PS_CAT_GENDER, GRP = PS_CAT_GROUPIDX, done = false;
+    function finish(arr){
+      PS_CATALOG = arr;
+      var _r = getRates(), _wW = {};
+      var _wOf = function(c){ return _wW[c] != null ? _wW[c] : (_wW[c] = (typeof getWeight === 'function' ? getWeight(c) : 0.5)); };
+      PS_CATALOG.forEach(function(p){ p._bdt = Math.round(p.pkr * _r.CONV_RATE * (1 + (_r.COMM_1 || 0)) + _wOf(p.cat) * _r.LOG_RATE); });
+      psLoaded = true; psLoading = false;
+      psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psPruneSoldOut(); psApply(); psUpdateNote();
+      psFlushReady();
+    }
+    function mainThread(){
+      try { finish(psProcessCatalog(JSON.parse(text).products, GEN, GRP)); }
+      catch(err){ psLoading = false; var e = document.getElementById('psCount'); if(e) e.textContent = tr('ps_loadfail'); psFlushReady(); }
+    }
+    try {
+      if (typeof Worker !== 'undefined' && typeof Blob !== 'undefined' && typeof URL !== 'undefined' && URL.createObjectURL) {
+        var w = new Worker(URL.createObjectURL(new Blob([_psWorkerSrc], { type: 'application/javascript' })));
+        var fb = function(){ if(done) return; done = true; try{ w.terminate(); }catch(_){} mainThread(); };
+        w.onmessage = function(ev){ if(done) return; done = true; try{ w.terminate(); }catch(_){} if(ev.data && ev.data.ok){ finish(ev.data.products); } else { mainThread(); } };
+        w.onerror = fb;
+        w.postMessage({ text: text, gen: GEN, grp: GRP });
+        return;
+      }
+    } catch(e){ /* fall through */ }
+    mainThread();
+  }
+
+  // Recompute every catalog item's landed ৳ with the CURRENT rates, then refresh the
+  // grid/filters. Called when config loads after the catalog (loadPsbConfig) so prices
+  // never stay stale. Cheap: getRates() once + weight memoized per category.
+  function psRecomputeBdt(){
+    if(!PS_CATALOG || !PS_CATALOG.length) return;
+    var _r = getRates(), _wW = {};
+    var _wOf = function(c){ return _wW[c] != null ? _wW[c] : (_wW[c] = (typeof getWeight === 'function' ? getWeight(c) : 0.5)); };
+    PS_CATALOG.forEach(function(p){ p._bdt = Math.round(p.pkr * _r.CONV_RATE * (1 + (_r.COMM_1 || 0)) + _wOf(p.cat) * _r.LOG_RATE); });
+    if(psLoaded && typeof psApply === 'function') psApply();
+  }
+
   function psEnsureLoaded(){
     if(psLoaded || psLoading) return;
     psLoading = true;
@@ -5697,39 +5768,8 @@
     // on EVERY visit. sw.js gives catalog.json stale-while-revalidate so the service
     // worker can never pin a stale copy past the ~10-min window. Worst-case staleness ≈10 min.
     fetch(PSB_CATALOG_URL, { cache:'default' })
-      .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-      .then(j => {
-        // Keep the FULL catalog (incl. accessories) — the Browse-Brands product
-        // view needs accessory brands; the Products grid hides them in psApply.
-        PS_CATALOG = (j.products || []).filter(p => p && p.u && p.pkr && p.img);
-        // Landed ৳ for every item — but compute getRates() ONCE and memoize the weight
-        // per category, instead of calling estLandedBdt() per product (which re-reads the
-        // rates object + JSON.parses localStorage weights for EVERY item). At 20k that
-        // per-item localStorage parse was the real load-time cost. Identical formula/result.
-        { const _r = getRates(), _wW = {};
-          const _wOf = c => (_wW[c] != null ? _wW[c] : (_wW[c] = (typeof getWeight === 'function' ? getWeight(c) : 0.5)));
-          PS_CATALOG.forEach(p => { p._bdt = Math.round(p.pkr * _r.CONV_RATE * (1 + (_r.COMM_1 || 0)) + _wOf(p.cat) * _r.LOG_RATE); }); }
-        // Default order: women's everyday first (men/kids to the back), then
-        // round-robin by brand (_bi = nth item of its brand) so the first page is
-        // a VARIED women's mix, not 8 articles from one label.
-        const _seen = {};
-        PS_CATALOG.forEach((p, i) => { p._ord = i; p._bi = (_seen[p.b] = (_seen[p.b]||0) + 1) - 1; });
-        // Default order: women's everyday first → on-SALE first → recently published
-        // (bucketed, last ~120 days) → brand round-robin for variety → newest within.
-        // Surfaces current / discounted stock while keeping the women-first front page.
-        const NOW = Date.now() / 1000, RECENT = 120 * 86400;
-        const recentRank = p => ((p.pub && (NOW - p.pub) < RECENT) ? 0 : 1);
-        PS_CATALOG.sort((a, b) =>
-          (psDefaultRank(a.cat) - psDefaultRank(b.cat))
-          || ((b.sale ? 1 : 0) - (a.sale ? 1 : 0))
-          || (recentRank(a) - recentRank(b))
-          || (a._bi - b._bi)
-          || ((b.pub || 0) - (a.pub || 0))
-          || (a._ord - b._ord));
-        psLoaded = true; psLoading = false;
-        psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psPruneSoldOut(); psApply(); psUpdateNote();
-        psFlushReady();
-      })
+      .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); })  // text → JSON.parse + sort happen off the main thread in a Worker
+      .then(text => psBootCatalog(text))
       .catch(() => { psLoading = false; const e=document.getElementById('psCount'); if(e) e.textContent = tr('ps_loadfail'); psFlushReady(); });
   }
 
@@ -6340,7 +6380,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-19i';
+  const PSB_BUILD = '2026-06-19j';
   console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
