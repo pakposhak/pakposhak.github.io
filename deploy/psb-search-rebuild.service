@@ -1,0 +1,12 @@
+[Unit]
+Description=Rebuild PakPoshak search.db from the latest catalog.json + relay rates
+After=network-online.target psb-relay.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=psbrelay
+WorkingDirectory=/opt/psb-search
+ExecStart=/usr/bin/node /opt/psb-search/build-search-db.js
+# Don't disrupt anything if a single rebuild fails — the old search.db keeps serving.
+TimeoutStartSec=120

@@ -1,0 +1,10 @@
+[Unit]
+Description=Periodically rebuild the PakPoshak search database (keeps /search in sync with catalog.json)
+
+[Timer]
+OnBootSec=8min
+OnUnitActiveSec=3h
+Persistent=true
+
+[Install]
+WantedBy=timers.target
