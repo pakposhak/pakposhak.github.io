@@ -266,6 +266,16 @@ function cleanupProducts(ps) {
       if (_g === 'g' && /^kids_boys_/.test(p.cat)) { p.cat = 'kids_girls_' + _suf; girlsKidN++; out.push(p); continue; }
       if (_g === 'b' && /^kids_girls_/.test(p.cat)) { p.cat = 'kids_boys_' + _suf; girlsKidN++; out.push(p); continue; }
     }
+    // Bonanza Satrangi: slug first letter = gender (m=men, w=women, k=kids). Fix any item whose slug
+    // gender contradicts its cat — vision-confirmed: 6 women's 3pc/lawn ("WP…/WU…") sat in men cats.
+    if (p.b === 'Bonanza Satrangi' && p.cat !== 'footwear') {
+      const _c = (p.u.toLowerCase().match(/\/products\/([a-z])/) || [, ''])[1];
+      const _sg = _c === 'm' ? 'm' : _c === 'w' ? 'w' : _c === 'k' ? 'k' : '';
+      if (_sg && coarseGender(_sg) !== catGenderOf(p.cat)) {
+        p.cat = _sg === 'm' ? menCatFor(p.t) : _sg === 'w' ? womenCatFor(p) : kidsCatFor(p.t, null);
+        slugN++; out.push(p); continue;
+      }
+    }
     if (/^kids_boys_/.test(p.cat)) {
       const _tb = (p.t||'').toLowerCase();
       const _sz0 = Array.isArray(p.sz) && p.sz.length ? (p.sz[0]||'').trim() : '';
