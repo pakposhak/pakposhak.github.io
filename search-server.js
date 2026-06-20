@@ -108,11 +108,15 @@ function handleSearch(u, res){
 
   if (q.get('sale') === '1') where.push('p.sale = 1');
 
+  // Women-PRET always leads (brand identity), even when the buyer sorts by New or price or
+  // filters Sale — then the chosen intent orders WITHIN that, and p.ord (which carries the
+  // women-pret-first + girls/sale interleave + brand diversity) is the final tiebreaker.
+  const PRETLEAD = "(CASE WHEN p.cat IN ('pret_3pc','pret_3pc_emb','pret_2pc_emb') THEN 0 ELSE 1 END)";
   const sort = q.get('sort') || '';
-  let orderBy = 'p.ord ASC';
-  if (sort === 'asc') orderBy = 'p.bdt ASC, p.ord ASC';
-  else if (sort === 'desc') orderBy = 'p.bdt DESC, p.ord ASC';
-  else if (sort === 'new') { where.push('p.sale = 0'); orderBy = 'p.pub DESC, p.ord ASC'; }
+  let orderBy = 'p.ord ASC';   // default landing already leads women-pret via p.ord
+  if (sort === 'asc') orderBy = PRETLEAD + ' ASC, p.bdt ASC, p.ord ASC';
+  else if (sort === 'desc') orderBy = PRETLEAD + ' ASC, p.bdt DESC, p.ord ASC';
+  else if (sort === 'new') { where.push('p.sale = 0'); orderBy = PRETLEAD + ' ASC, p.pub DESC, p.ord ASC'; }
 
   // Age/size BOOST ("boys 14" → 14Y-sized boys items first). Floats products whose size list
   // contains the typed token to the top, keeping everything else after. Alphanumeric-validated
