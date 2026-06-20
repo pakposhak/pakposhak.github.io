@@ -86,6 +86,17 @@ function menType(p){
 // western_top. The "baby blue/pink" colour guard stops a women's lawn shirt going to infant.
 function womenType(p){
   const s = (p.t || '').toLowerCase();
+  // explicit MEN markers in a women cat -> route to the right men cat (image-confirmed: Gul Ahmed
+  // "Dress Shirts" image = a man; Sitara "…Men's Unstitched Suit" = men's suiting fabric). "women's"
+  // is NOT matched (no word boundary before "men" in "women's").
+  if (/\bmen[’'`]?s\b|\bmens\b|\bfor men\b|\bgents\b|dress shirt|tuxedo shirt/.test(s)) {
+    if (isUnstitched(p) || /\bunstitch/.test(s)) return 'mens_unstitched';
+    if (/dress shirt|tuxedo shirt|\bshirt\b|\bpolo\b|t-?shirt|\bhenley\b/.test(s)) return 'mens_shirt';
+    if (/\btrouser\b|\bpants?\b|\bchino|\bcargo\b/.test(s)) return 'mens_trouser';
+    if (/(kameez|kurta)[\s\S]*(shalwar|trouser|pajama)|shalwar kameez|kameez shalwar/.test(s)) return 'mens_shalwar_kameez';
+    if (/\btuxedo\b|\bblazer\b|\bsuit\b|pant ?coat/.test(s)) return 'mens_suit';
+    return 'mens_kurta';
+  }
   if (/\bkids?\b|\binfant\b|\bnewborn\b|\btoddler\b|\bbaby\b/.test(s) && !/baby ?(blue|pink|peach|green|yellow|purple|lilac|colou?r|.?s breath)|maybe ?baby/.test(s)) {
     if (/\binfant\b|\bnewborn\b|\btoddler\b|\bbaby\b|\b0-?2 ?y/.test(s)) return 'kids_infant';
     const boy = /\bboys?\b/.test(s);
@@ -94,8 +105,8 @@ function womenType(p){
     return boy ? 'kids_boys_eastern' : 'kids_girls_eastern';
   }
   if (/\bniqab\b|\bjilbab\b|\bburqa\b|\bburka\b|\babaya\b/.test(s) && p.cat !== 'abaya') return 'abaya';
-  if (/^(?:[\w&'-]+ ){0,3}(trouser|straight pants?|culottes?|tights|palazzo|cigarette pants?|farshi shalwar)\b/.test(s)
-      && !/(shirt|kameez|kurti|kurta|dupatta|\bsuit\b|3 ?pc|2 ?pc|3 ?piece|2 ?piece|\btop\b|co-?ord)/.test(s)) return isUnstitched(p) ? 'kurti_1pc_unstitch' : 'womens_trouser';
+  if (/\b(trouser|straight pants?|culottes?|tights|palazzo|cigarette pants?|farshi shalwar|pants?)\b/.test(s)
+      && !/(shirt|kameez|kurti|kurta|dupatta|\bsuit\b|3 ?pc|2 ?pc|3 ?piece|2 ?piece|\btop\b|co-?ord|frock|\bmaxi\b|gown|saree|lehenga|abaya|kaftan|peplum)/.test(s)) return isUnstitched(p) ? 'kurti_1pc_unstitch' : 'womens_trouser';
   if (/\bt-?shirt\b|tank top/.test(s) && !/(\bsuit\b|3 ?pc|2 ?pc|dupatta|trouser|kameez)/.test(s)) return 'western_top';
   return null;
 }
