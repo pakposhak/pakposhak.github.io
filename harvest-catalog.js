@@ -18,6 +18,7 @@
 'use strict';
 const https = require('https');
 const fs    = require('fs');
+const { cleanupProducts } = require('./catalog-cleanup');   // multi-tier auto-correction applied before write
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36';
 const PER_BRAND = parseInt(process.env.PER_BRAND || '700', 10);   // deep default (2026-06-19 women expansion → 70k-scale stress test)
 // Per-brand depth. Shopify brands now PAGINATE (/products.json?page=N), so caps
@@ -776,7 +777,13 @@ async function harvestKidsBrand(name, host){
   }
   // de-dupe by product URL (a brand's bridal collection overlaps its main feed)
   const seenU = new Set();
-  const deduped = all.filter(p => { if(seenU.has(p.u)) return false; seenU.add(p.u); return true; });
+  let deduped = all.filter(p => { if(seenU.has(p.u)) return false; seenU.add(p.u); return true; });
+  // Multi-tier auto-correction (Tier-1 stitched/unstitched -> Tier-2 piece-count) + accessory
+  // drop BEFORE writing, so the title-based classifier's leaks never reach the live catalogue.
+  // Idempotent — identical to running `node catalog-cleanup.js apply`. See catalog-cleanup.js.
+  const _clean = cleanupProducts(deduped);
+  console.log('  catalog-cleanup:', JSON.stringify(_clean.stats));
+  deduped = _clean.products;
   const brands = [...new Set(deduped.map(p => p.b))];
   const out = { updated: new Date().toISOString(), count: deduped.length, brands: brands.length, products: deduped };
   const file = KIDS_ONLY ? 'catalog-kids-sample.json' : 'catalog.json';

@@ -21,10 +21,6 @@
  * Re-run any time after a harvest. Safe to run repeatedly (idempotent).
  */
 const fs = require('fs');
-const APPLY = process.argv[2] === 'apply';
-const FILE = process.env.PSB_CATALOG || 'catalog.json';
-const cat = JSON.parse(fs.readFileSync(FILE, 'utf8'));
-const ps = cat.products || [];
 
 const txt = p => ((p.t || '') + ' ' + (p.u || '')).toLowerCase();
 const isUnsSz = p => Array.isArray(p.sz) && p.sz.length === 1 && /unstitch/i.test(p.sz[0]);
@@ -68,29 +64,46 @@ const GARMENT = /shirt|kameez|kurti|kurta|\bdress\b|gown|frock|trouser|\bpant|\b
 const ACC = /\bsunglass|\beyewear\b|\bgoggles?\b|jewell?ery|\bearrings?\b|\bnecklace|\bbangles?\b|\bbracelet|\bpendant|\bbrooch|\bperfume\b|\bfragrance\b|\battar\b|\bwrist ?watch|\bwatch\b|\bbeanie\b|\bscrunchie|\bhair ?band|\bhair ?clip|\bkeychain|\bkey ?chain|\bsocks?\b|\bwallet\b|\bcard ?holder|\bcufflink|\btote\b|\bbackpack|\bsling ?bag|\bhand ?bag|\bclutch\b|\bpouch\b|\bbelt\b|\bcap\b/i;
 const FOOT = /\bshoes?\b|\bheels?\b|\bsandal|\bslipper|\bsneaker|\bpump\b|\bwedge|\bmule\b|khussa|\bloafer|\bjutt?i\b|kolhapuri/i;
 
-let del = 0, footDel = 0, footMove = 0, fwdN = 0, revN = 0, pieceN = 0, menUnsN = 0, menPcN = 0;
-const out = [];
-for (const p of ps) {
-  if (ACC.test(p.t || '') && !GARMENT.test(p.t || '') && p.cat !== 'footwear') { del++; continue; }
-  if (FOOT.test(p.t || '') && p.cat !== 'footwear') { if (/^mens_/.test(p.cat)) { footDel++; continue; } p.cat = 'footwear'; footMove++; out.push(p); continue; }
-  if (isUnstitched(p) && STITCHED.has(p.cat)) { p.cat = fwdCat(p); fwdN++; out.push(p); continue; }
-  if (szLetter(p) && REV[p.cat] && !unsTitle(p)) { p.cat = REV[p.cat]; revN++; out.push(p); continue; }
-  // ── MEN: Tier-1 stitched/unstitched, then Tier-2 piece-count ──
-  if (MEN_STITCHED.has(p.cat) && menUns(p)) { p.cat = 'mens_unstitched'; menUnsN++; out.push(p); continue; }
-  if (p.cat === 'mens_shalwar_kameez') {   // 2pc: standalone top -> kurta, standalone bottom -> trouser
-    const s = txt(p), top = /(kameez|kurta|shirt)/.test(s), bottom = /(shalwar|trouser|pajama|\bpant)/.test(s), pair = /(suit|2 ?pc|two[\s-]?piece|\bset\b|waistcoat|prince)/.test(s);
-    if (!pair) { if (top && !bottom) { p.cat = 'mens_kurta'; menPcN++; } else if (bottom && !top) { p.cat = 'mens_trouser'; menPcN++; } }
-    out.push(p); continue;
+// Apply the full multi-tier cleanup to a products array → { products, stats }. Pure &
+// idempotent. MUTATES each kept product's .cat in place and drops accessories / men footwear.
+// Call from the harvester (right before it writes catalog.json) or from the CLI below.
+function cleanupProducts(ps) {
+  let del = 0, footDel = 0, footMove = 0, fwdN = 0, revN = 0, pieceN = 0, menUnsN = 0, menPcN = 0;
+  const out = [];
+  for (const p of ps) {
+    if (ACC.test(p.t || '') && !GARMENT.test(p.t || '') && p.cat !== 'footwear') { del++; continue; }
+    if (FOOT.test(p.t || '') && p.cat !== 'footwear') { if (/^mens_/.test(p.cat)) { footDel++; continue; } p.cat = 'footwear'; footMove++; out.push(p); continue; }
+    if (isUnstitched(p) && STITCHED.has(p.cat)) { p.cat = fwdCat(p); fwdN++; out.push(p); continue; }
+    if (szLetter(p) && REV[p.cat] && !unsTitle(p)) { p.cat = REV[p.cat]; revN++; out.push(p); continue; }
+    // ── MEN: Tier-1 stitched/unstitched, then Tier-2 piece-count ──
+    if (MEN_STITCHED.has(p.cat) && menUns(p)) { p.cat = 'mens_unstitched'; menUnsN++; out.push(p); continue; }
+    if (p.cat === 'mens_shalwar_kameez') {   // 2pc: standalone top -> kurta, standalone bottom -> trouser
+      const s = txt(p), top = /(kameez|kurta|shirt)/.test(s), bottom = /(shalwar|trouser|pajama|\bpant)/.test(s), pair = /(suit|2 ?pc|two[\s-]?piece|\bset\b|waistcoat|prince)/.test(s);
+      if (!pair) { if (top && !bottom) { p.cat = 'mens_kurta'; menPcN++; } else if (bottom && !top) { p.cat = 'mens_trouser'; menPcN++; } }
+      out.push(p); continue;
+    }
+    if (p.cat === 'mens_kurta') {             // 1pc: a kurta+pajama/shalwar pair is really 2pc
+      const s = txt(p);
+      if (/(kurta|kameez)[\s\S]*(pajama|shalwar)|(pajama|shalwar)[\s\S]*(kurta|kameez)|kurta ?pajama|\b2 ?pc|two[\s-]?piece/.test(s)) { p.cat = 'mens_shalwar_kameez'; menPcN++; }
+      out.push(p); continue;
+    }
+    if (ONE.has(p.cat)) { const nc = pieceCat(p); if (nc && nc !== p.cat) { p.cat = nc; pieceN++; } }
+    out.push(p);
   }
-  if (p.cat === 'mens_kurta') {             // 1pc: a kurta+pajama/shalwar pair is really 2pc
-    const s = txt(p);
-    if (/(kurta|kameez)[\s\S]*(pajama|shalwar)|(pajama|shalwar)[\s\S]*(kurta|kameez)|kurta ?pajama|\b2 ?pc|two[\s-]?piece/.test(s)) { p.cat = 'mens_shalwar_kameez'; menPcN++; }
-    out.push(p); continue;
-  }
-  if (ONE.has(p.cat)) { const nc = pieceCat(p); if (nc && nc !== p.cat) { p.cat = nc; pieceN++; } }
-  out.push(p);
+  return { products: out, stats: { del, footDel, footMove, fwdN, revN, pieceN, menUnsN, menPcN, before: ps.length, after: out.length } };
 }
-console.log(`delete-accessories=${del} delete-men-footwear=${footDel} move-footwear=${footMove} fwd-unstitch=${fwdN} rev-stitch=${revN} piece-count=${pieceN} men-unstitch=${menUnsN} men-piece=${menPcN}`);
-console.log(`total ${ps.length} -> ${out.length}`);
-if (APPLY) { cat.products = out; fs.writeFileSync(FILE, JSON.stringify(cat)); console.log('*** WROTE ' + FILE + ' ***'); }
-else console.log('(dry-run — pass "apply" to write)');
+
+module.exports = { cleanupProducts };
+
+// ── CLI: node catalog-cleanup.js [apply] ──
+if (require.main === module) {
+  const APPLY = process.argv[2] === 'apply';
+  const FILE = process.env.PSB_CATALOG || 'catalog.json';
+  const cat = JSON.parse(fs.readFileSync(FILE, 'utf8'));
+  const r = cleanupProducts(cat.products || []);
+  const s = r.stats;
+  console.log(`delete-accessories=${s.del} delete-men-footwear=${s.footDel} move-footwear=${s.footMove} fwd-unstitch=${s.fwdN} rev-stitch=${s.revN} piece-count=${s.pieceN} men-unstitch=${s.menUnsN} men-piece=${s.menPcN}`);
+  console.log(`total ${s.before} -> ${s.after}`);
+  if (APPLY) { cat.products = r.products; fs.writeFileSync(FILE, JSON.stringify(cat)); console.log('*** WROTE ' + FILE + ' ***'); }
+  else console.log('(dry-run — pass "apply" to write)');
+}
