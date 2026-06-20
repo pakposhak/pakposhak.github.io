@@ -60,6 +60,26 @@ function pieceCat(p){   // for a 1-piece kurti cat that's really 2/3pc
   if (two) return (shirt && trouser && !dup) ? 'shirt_trouser_2pc' : (emb(s) ? 'pret_2pc_emb' : 'shirt_dupatta_2pc');
   return null;
 }
+// MEN garment-type correction (tier-2/3), image-validated on the brand audit. Returns the correct
+// men cat for a product currently in some men (non-fabric) category, or null to leave it. Order
+// matters: the 2pc kurta+bottom rule runs BEFORE jeans so a "Jeans Kurta Pajama" stays a 2pc
+// kurta-pajama; prince/sherwani are never moved to shalwar-kameez or suit.
+function menType(p){
+  const s = txt(p);
+  if (!/\bprince\b|\bsherwani\b/.test(s)
+      && /(kurta|kameez)[\s\S]{0,30}(trouser|pajama|pyjama|shalwar|drawstring)|(shalwar|pajama|trouser)[\s\S]{0,30}(kurta|kameez)|kameez shalwar|shalwar kameez|kurta pajama|kurta trouser/.test(s))
+    return 'mens_shalwar_kameez';                                            // 2pc kameez+shalwar / kurta+bottom
+  if (/\bjeans?\b|\bdenim\b/.test(s) && !/(kurta|kameez|shalwar)/.test(s)) return 'mens_jeans';
+  if (/\bhenley\b|\bpolo\b|t-?shirt|dress shirt|formal shirt|tuxedo shirt|casual shirt|\bsweat ?shirt\b/.test(s)) return 'mens_shirt';
+  if (/\btuxedo\b|\bblazer\b|pant ?coat|coat ?pant|bespoke suit/.test(s) && !/(shalwar|kameez|kurta|sherwani|prince)/.test(s)) return 'mens_suit';
+  if ((p.cat === 'mens_kurta' || p.cat === 'mens_shalwar_kameez')
+      && /\btrouser|\bchino|\bcargo\b|dress pant|\bshorts?\b|\bpants?\b|\bshalwar\b/.test(s)
+      && !/(kurta|kameez|shirt|\bsuit\b|kurti|waistcoat)/.test(s)) return 'mens_trouser';   // standalone bottom
+  if (p.cat === 'mens_shalwar_kameez'
+      && /(kameez|kurta)/.test(s)
+      && !/(shalwar|trouser|pajama|pyjama|\bpant|\bsuit\b|\bset\b|waistcoat|2 ?pc|two[\s-]?piece|prince)/.test(s)) return 'mens_kurta';  // standalone top
+  return null;
+}
 const GARMENT = /shirt|kameez|kurti|kurta|\bdress\b|gown|frock|trouser|\bpant|\btop\b|abaya|hijab|shalwar|\bsuit\b|\blawn\b|saree|lehenga|dupatta|kaftan|maxi|peplum|blouse|tunic|\bcape\b|co-?ord|jumpsuit|romper|\btee\b|t-?shirt|polo|jeans|waistcoat|sweater|cardigan|hoodie|jacket|\bcoat\b|sweatshirt|nightwear|loungewear|pajama|angrakha|gharara|sharara|outfit|ensemble|\d ?piece|\d ?pc\b|unstitch|fabric/i;
 const ACC = /\bsunglass|\beyewear\b|\bgoggles?\b|jewell?ery|\bearrings?\b|\bnecklace|\bbangles?\b|\bbracelet|\bpendant|\bbrooch|\bperfume\b|\bfragrance\b|\battar\b|\bwrist ?watch|\bwatch\b|\bbeanie\b|\bscrunchie|\bhair ?band|\bhair ?clip|\bkeychain|\bkey ?chain|\bsocks?\b|\bwallet\b|\bcard ?holder|\bcufflink|\btote\b|\bbackpack|\bsling ?bag|\bhand ?bag|\bclutch\b|\bpouch\b|\bbelt\b|\bcap\b/i;
 const FOOT = /\bshoes?\b|\bheels?\b|\bsandal|\bslipper|\bsneaker|\bpump\b|\bwedge|\bmule\b|khussa|\bloafer|\bjutt?i\b|kolhapuri/i;
@@ -87,16 +107,11 @@ function cleanupProducts(ps) {
     if (FOOT.test(p.t || '') && p.cat !== 'footwear') { if (/^mens_/.test(p.cat)) { footDel++; continue; } p.cat = 'footwear'; footMove++; out.push(p); continue; }
     if (isUnstitched(p) && STITCHED.has(p.cat)) { p.cat = fwdCat(p); fwdN++; out.push(p); continue; }
     if (szLetter(p) && REV[p.cat] && !unsTitle(p)) { p.cat = REV[p.cat]; revN++; out.push(p); continue; }
-    // ── MEN: Tier-1 stitched/unstitched, then Tier-2 piece-count ──
+    // ── MEN: Tier-1 stitched/unstitched, then Tier-2/3 garment-type + piece-count ──
     if (MEN_STITCHED.has(p.cat) && menUns(p)) { p.cat = 'mens_unstitched'; menUnsN++; out.push(p); continue; }
-    if (p.cat === 'mens_shalwar_kameez') {   // 2pc: standalone top -> kurta, standalone bottom -> trouser
-      const s = txt(p), top = /(kameez|kurta|shirt)/.test(s), bottom = /(shalwar|trouser|pajama|\bpant)/.test(s), pair = /(suit|2 ?pc|two[\s-]?piece|\bset\b|waistcoat|prince)/.test(s);
-      if (!pair) { if (top && !bottom) { p.cat = 'mens_kurta'; menPcN++; } else if (bottom && !top) { p.cat = 'mens_trouser'; menPcN++; } }
-      out.push(p); continue;
-    }
-    if (p.cat === 'mens_kurta') {             // 1pc: a kurta+pajama/shalwar pair is really 2pc
-      const s = txt(p);
-      if (/(kurta|kameez)[\s\S]*(pajama|shalwar)|(pajama|shalwar)[\s\S]*(kurta|kameez)|kurta ?pajama|\b2 ?pc|two[\s-]?piece/.test(s)) { p.cat = 'mens_shalwar_kameez'; menPcN++; }
+    if (/^mens_/.test(p.cat) && p.cat !== 'mens_unstitched') {
+      const nc = menType(p);
+      if (nc && nc !== p.cat) { p.cat = nc; menPcN++; }
       out.push(p); continue;
     }
     if (ONE.has(p.cat)) { const nc = pieceCat(p); if (nc && nc !== p.cat) { p.cat = nc; pieceN++; } }
