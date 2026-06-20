@@ -80,6 +80,25 @@ function menType(p){
       && !/(shalwar|trouser|pajama|pyjama|\bpant|\bsuit\b|\bset\b|waistcoat|2 ?pc|two[\s-]?piece|prince)/.test(s)) return 'mens_kurta';  // standalone top
   return null;
 }
+// WOMEN-category corrector (title-based, image-validated on the audit): routes kids items
+// mis-parked in women cats to kids (girls default — brands like Senorita/Sha Posh confirmed via
+// product image), niqab/abaya -> abaya, standalone bottoms -> womens_trouser, lone tees ->
+// western_top. The "baby blue/pink" colour guard stops a women's lawn shirt going to infant.
+function womenType(p){
+  const s = (p.t || '').toLowerCase();
+  if (/\bkids?\b|\binfant\b|\bnewborn\b|\btoddler\b|\bbaby\b/.test(s) && !/baby ?(blue|pink|peach|green|yellow|purple|lilac|colou?r|.?s breath)|maybe ?baby/.test(s)) {
+    if (/\binfant\b|\bnewborn\b|\btoddler\b|\bbaby\b|\b0-?2 ?y/.test(s)) return 'kids_infant';
+    const boy = /\bboys?\b/.test(s);
+    if (/\bformal\b|wedding|party ?wear|festive|frock/.test(s)) return boy ? 'kids_boys_formal' : 'kids_girls_formal';
+    if (/\bjeans?\b|t-?shirt|\btop\b|\bdress\b|\bmaxi\b|skirt|legging|jumpsuit|co-?ord|\bpolo\b|\btee\b|\bshort/.test(s)) return boy ? 'kids_boys_western' : 'kids_girls_western';
+    return boy ? 'kids_boys_eastern' : 'kids_girls_eastern';
+  }
+  if (/\bniqab\b|\bjilbab\b|\bburqa\b|\bburka\b|\babaya\b/.test(s) && p.cat !== 'abaya') return 'abaya';
+  if (/^(?:[\w&'-]+ ){0,3}(trouser|straight pants?|culottes?|tights|palazzo|cigarette pants?|farshi shalwar)\b/.test(s)
+      && !/(shirt|kameez|kurti|kurta|dupatta|\bsuit\b|3 ?pc|2 ?pc|3 ?piece|2 ?piece|\btop\b|co-?ord)/.test(s)) return 'womens_trouser';
+  if (/\bt-?shirt\b|tank top/.test(s) && !/(\bsuit\b|3 ?pc|2 ?pc|dupatta|trouser|kameez)/.test(s)) return 'western_top';
+  return null;
+}
 const GARMENT = /shirt|kameez|kurti|kurta|\bdress\b|gown|frock|trouser|\bpant|\btop\b|abaya|hijab|shalwar|\bsuit\b|\blawn\b|saree|lehenga|dupatta|kaftan|maxi|peplum|blouse|tunic|\bcape\b|co-?ord|jumpsuit|romper|\btee\b|t-?shirt|polo|jeans|waistcoat|sweater|cardigan|hoodie|jacket|\bcoat\b|sweatshirt|nightwear|loungewear|pajama|angrakha|gharara|sharara|outfit|ensemble|\d ?piece|\d ?pc\b|unstitch|fabric/i;
 const ACC = /\bsunglass|\beyewear\b|\bgoggles?\b|jewell?ery|\bearrings?\b|\bnecklace|\bbangles?\b|\bbracelet|\bpendant|\bbrooch|\bperfume\b|\bfragrance\b|\battar\b|\bwrist ?watch|\bwatch\b|\bbeanie\b|\bscrunchie|\bhair ?band|\bhair ?clip|\bkeychain|\bkey ?chain|\bsocks?\b|\bwallet\b|\bcard ?holder|\bcufflink|\btote\b|\bbackpack|\bsling ?bag|\bhand ?bag|\bclutch\b|\bpouch\b|\bbelt\b|\bcap\b/i;
 const FOOT = /\bshoes?\b|\bheels?\b|\bsandal|\bslipper|\bsneaker|\bpump\b|\bwedge|\bmule\b|khussa|\bloafer|\bjutt?i\b|kolhapuri/i;
@@ -99,12 +118,13 @@ const GARMENT_NOUN = /\b(kurti|kurta|kameez|shirt|t-?shirt|tee|polo|dress|gown|f
 // idempotent. MUTATES each kept product's .cat in place and drops accessories / men footwear.
 // Call from the harvester (right before it writes catalog.json) or from the CLI below.
 function cleanupProducts(ps) {
-  let del = 0, footDel = 0, footMove = 0, fwdN = 0, revN = 0, pieceN = 0, menUnsN = 0, menPcN = 0, junkN = 0;
+  let del = 0, footDel = 0, footMove = 0, fwdN = 0, revN = 0, pieceN = 0, menUnsN = 0, menPcN = 0, junkN = 0, womenN = 0;
   const out = [];
   for (const p of ps) {
     { const _t = p.t || ''; if (NONAPPAREL_STRONG.test(_t) || (NONAPPAREL_WEAK.test(_t) && !GARMENT_NOUN.test(_t))) { junkN++; continue; } }   // homeware/cosmetics/headwear/innerwear/gifting -> delete
     if (ACC.test(p.t || '') && !GARMENT.test(p.t || '') && p.cat !== 'footwear') { del++; continue; }
     if (FOOT.test(p.t || '') && p.cat !== 'footwear') { if (/^mens_/.test(p.cat)) { footDel++; continue; } p.cat = 'footwear'; footMove++; out.push(p); continue; }
+    if (!/^mens_|^kids_/.test(p.cat)) { const wc = womenType(p); if (wc && wc !== p.cat) { p.cat = wc; womenN++; out.push(p); continue; } }   // women: kids/niqab/bottom/tee corrections
     if (isUnstitched(p) && STITCHED.has(p.cat)) { p.cat = fwdCat(p); fwdN++; out.push(p); continue; }
     if (szLetter(p) && REV[p.cat] && !unsTitle(p)) { p.cat = REV[p.cat]; revN++; out.push(p); continue; }
     // ── MEN: Tier-1 stitched/unstitched, then Tier-2/3 garment-type + piece-count ──
@@ -117,7 +137,7 @@ function cleanupProducts(ps) {
     if (ONE.has(p.cat)) { const nc = pieceCat(p); if (nc && nc !== p.cat) { p.cat = nc; pieceN++; } }
     out.push(p);
   }
-  return { products: out, stats: { junkN, del, footDel, footMove, fwdN, revN, pieceN, menUnsN, menPcN, before: ps.length, after: out.length } };
+  return { products: out, stats: { junkN, del, footDel, footMove, fwdN, revN, pieceN, menUnsN, menPcN, womenN, before: ps.length, after: out.length } };
 }
 
 module.exports = { cleanupProducts };
@@ -129,7 +149,7 @@ if (require.main === module) {
   const cat = JSON.parse(fs.readFileSync(FILE, 'utf8'));
   const r = cleanupProducts(cat.products || []);
   const s = r.stats;
-  console.log(`delete-nonapparel=${s.junkN} delete-accessories=${s.del} delete-men-footwear=${s.footDel} move-footwear=${s.footMove} fwd-unstitch=${s.fwdN} rev-stitch=${s.revN} piece-count=${s.pieceN} men-unstitch=${s.menUnsN} men-piece=${s.menPcN}`);
+  console.log(`delete-nonapparel=${s.junkN} delete-accessories=${s.del} delete-men-footwear=${s.footDel} move-footwear=${s.footMove} fwd-unstitch=${s.fwdN} rev-stitch=${s.revN} piece-count=${s.pieceN} men-unstitch=${s.menUnsN} men-piece=${s.menPcN} women-type=${s.womenN}`);
   console.log(`total ${s.before} -> ${s.after}`);
   if (APPLY) { cat.products = r.products; fs.writeFileSync(FILE, JSON.stringify(cat)); console.log('*** WROTE ' + FILE + ' ***'); }
   else console.log('(dry-run — pass "apply" to write)');
