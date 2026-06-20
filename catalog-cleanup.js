@@ -150,11 +150,34 @@ function cleanupProducts(ps) {
         p.cat = /trouser|pant|jeans|legging|tight|shorts|capri|bottom|\bskinny\b/i.test(p.t||'') ? 'womens_trouser' : 'western_top';
         womenN++; out.push(p); continue;
       }
+      // prince coat (eastern-style embroidered sherwani coat) mis-placed in western → eastern
+      if (p.cat === 'kids_boys_western' && /\bprince[\s-]?coat\b/i.test(_tb)) { p.cat = 'kids_boys_eastern'; girlsKidN++; out.push(p); continue; }
+      // tuxedo (western suit with bow-tie) in eastern → formal (image-confirmed)
+      if (p.cat === 'kids_boys_eastern' && /\btuxedo\b/i.test(_tb)) { p.cat = 'kids_boys_formal'; girlsKidN++; out.push(p); continue; }
     }
     if (!/^mens_|^kids_/.test(p.cat)) { const wc = womenType(p); if (wc && wc !== p.cat) { p.cat = wc; womenN++; out.push(p); continue; } }   // women: kids/niqab/bottom/tee corrections
     if (isUnstitched(p) && STITCHED.has(p.cat)) { p.cat = fwdCat(p); fwdN++; out.push(p); continue; }
     if (szLetter(p) && REV[p.cat] && !unsTitle(p)) { p.cat = REV[p.cat]; revN++; out.push(p); continue; }
     // ── MEN: Tier-1 stitched/unstitched, then Tier-2/3 garment-type + piece-count ──
+    // Women's garments wrongly in mens cats (Amir Adnan lehenga/choli, image-confirmed)
+    if (/^mens_/.test(p.cat) && /\blehenga\b|\bcholi\b/i.test(p.t||'')) { p.cat = 'lehenga'; womenN++; out.push(p); continue; }
+    // mens_unstitched REVERSE: stitched sizes (S/M/L or trouser waist/suit chest 28-60) → correct stitched cat
+    if (p.cat === 'mens_unstitched' && !isUnstitched(p)) {
+      const _sz0m = Array.isArray(p.sz) && p.sz.length ? (p.sz[0]||'').trim() : '';
+      if (szLetter(p) || /^(2[8-9]|3[0-9]|4[0-9]|5[0-9])$/.test(_sz0m)) {
+        const _ts = (p.t||'').toLowerCase();
+        let nc = 'mens_shalwar_kameez';
+        if (/\bsherwani\b/.test(_ts)) nc = 'mens_sherwani';
+        else if (/\bwaistcoat\b|\btalpuri\b/.test(_ts)) nc = 'mens_waistcoat';
+        else if (/\btuxedo\b|\bblazer\b|pant[\s-]?coat|coat[\s-]?pant|bespoke suit/.test(_ts) && !/kameez|shalwar|kurta|sherwani/.test(_ts)) nc = 'mens_suit';
+        else if (/\bjeans?\b|\bdenim\b/.test(_ts) && !/kameez|shalwar|kurta|shirt/.test(_ts)) nc = 'mens_jeans';
+        else if (/\btrouser\b|\bchino\b|\bcargo\b|\bpants?\b|\bshalwar\b/.test(_ts) && !/kameez|kurta|\bsuit\b|waistcoat|\bjeans?\b|\bdenim\b/.test(_ts)) nc = 'mens_trouser';
+        else if (/\bshirt\b|\bhenley\b|\bpolo\b|t-?shirt|\bhoodie\b|\bsweat[\s-]?shirt\b/.test(_ts) && !/kameez|shalwar|kurta/.test(_ts)) nc = 'mens_shirt';
+        else if (/(kameez|kurta)[\s\S]{0,30}(shalwar|trouser|pajama|pyjama)|(shalwar|pajama|trouser)[\s\S]{0,30}(kameez|kurta)|kameez[\s-]?shalwar|shalwar[\s-]?kameez|kurta[\s-]?pajama|kurta[\s-]?trouser/.test(_ts)) nc = 'mens_shalwar_kameez';
+        else if (/\bkurta\b|\bkameez\b/.test(_ts)) nc = 'mens_kurta';
+        p.cat = nc; menUnsN++; out.push(p); continue;
+      }
+    }
     if (MEN_STITCHED.has(p.cat) && menUns(p)) { p.cat = 'mens_unstitched'; menUnsN++; out.push(p); continue; }
     if (/^mens_/.test(p.cat) && p.cat !== 'mens_unstitched') {
       const nc = menType(p);
