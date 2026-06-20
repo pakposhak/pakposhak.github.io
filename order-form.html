@@ -796,6 +796,9 @@
     .ps-d-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
     .ps-d-open{flex:1;min-width:130px;text-align:center;padding:11px;background:var(--gold-dim);border:1.5px solid var(--gold-bdr);color:var(--gold);border-radius:9px;font-weight:700;font-size:0.84rem;text-decoration:none;cursor:pointer}
     .ps-d-add{flex:1;min-width:130px;padding:11px;background:var(--gold);color:#12122a;border:none;border-radius:9px;font-weight:700;font-size:0.84rem;cursor:pointer;font-family:inherit}
+    .ps-d-szlabel{font-size:0.62rem;font-weight:800;letter-spacing:0.6px;text-transform:uppercase;color:var(--gold);margin-top:8px}
+    .ps-d-more{width:100%;margin-top:8px;padding:10px;background:var(--surface);border:1.5px solid var(--gold-bdr2);color:var(--gold);border-radius:9px;font-weight:800;font-size:0.82rem;cursor:pointer;font-family:inherit}
+    .ps-d-more:hover{background:var(--gold-dim)}
     @media (min-width:820px){
       .ps-wrap{display:flex;gap:18px;align-items:flex-start}
       .ps-rail{width:212px;flex-shrink:0;margin-bottom:0;position:sticky;top:12px}
@@ -3798,7 +3801,7 @@
       ps_price:'Price (৳ delivered)', ps_price_short:'Price Filters', ps_category:'Product Category', ps_category_short:'Categories', ps_brands:'Brands', ps_clear:'Clear Filters', ps_valueprop:'Any Pakistani brand → delivered to Bangladesh 🇧🇩', ps_morebrands:"Can't find it? Browse all 155 brands →",
       ps_allcats:'All categories', ps_loading:'Loading products…', ps_loadfail:'Could not load products — please try again.',
       ps_results:'products', ps_add:'Add', ps_prev:'Prev', ps_next:'Next', ps_page:'Page',
-      ps_enlarge:'Enlarge', ps_avail_sizes:'Available sizes', ps_unstitched:'Unstitched · no size needed', ps_mto:'Made to order', ps_d_loading:'Loading more details…', ps_d_open:'Open full page', ps_d_nofetch:'See all photos &amp; details on the brand page →', ps_d_nodesc:'No extra description provided.',
+      ps_enlarge:'Enlarge', ps_avail_sizes:'Available sizes', ps_unstitched:'Unstitched · no size needed', ps_mto:'Made to order', ps_d_loading:'Loading more details…', ps_d_open:'Open full page', ps_d_more:'More from', ps_d_nofetch:'See all photos &amp; details on the brand page →', ps_d_nodesc:'No extra description provided.',
       ps_empty:'No products match these filters — try widening them.',
       ps_partial:'Not every brand &amp; product is listed here yet —', ps_partial_link:'want more? Browse by brands →', ps_word_products:'products', ps_word_brands:'brands',
       ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products', ps_sort_lh:'৳ Low→High', ps_sort_hl:'৳ High→Low', ps_sale:'Sale', ps_new:'New', ps_lbl_sort:'Sort', ps_lbl_filter:'Filter', ps_search_ph:'Search 50,000+ products, 140+ Pakistani brands', ps_search_nomatch:'No brand or category matched',
@@ -3863,7 +3866,7 @@
       ps_price:'দাম (৳, ডেলিভারিসহ)', ps_price_short:'দাম ফিল্টার', ps_category:'পণ্যের ক্যাটাগরি', ps_category_short:'ক্যাটাগরি', ps_brands:'ব্র্যান্ড', ps_clear:'ফিল্টার মুছুন', ps_valueprop:'যেকোনো পাকিস্তানি ব্র্যান্ড → বাংলাদেশে ডেলিভারি 🇧🇩', ps_morebrands:'খুঁজে পাচ্ছেন না? সব ১৫৫টি ব্র্যান্ড দেখুন →',
       ps_allcats:'সব ক্যাটাগরি', ps_loading:'পণ্য আসছে…', ps_loadfail:'পণ্য আনা গেল না — আবার চেষ্টা করুন।',
       ps_results:'পণ্য', ps_add:'যোগ করুন', ps_prev:'আগের', ps_next:'পরের', ps_page:'পৃষ্ঠা',
-      ps_enlarge:'ছবি বড় করুন', ps_avail_sizes:'স্টকে থাকা সাইজ', ps_unstitched:'আনস্টিচড · সাইজ লাগে না', ps_mto:'অর্ডারে তৈরি হবে', ps_d_loading:'আরও বিবরণ আসছে…', ps_d_open:'পুরো পেজ খুলুন', ps_d_nofetch:'সব ছবি ও বিবরণ ব্র্যান্ডের পেজে দেখুন →', ps_d_nodesc:'বাড়তি কোনো বিবরণ নেই।',
+      ps_enlarge:'ছবি বড় করুন', ps_avail_sizes:'স্টকে থাকা সাইজ', ps_unstitched:'আনস্টিচড · সাইজ লাগে না', ps_mto:'অর্ডারে তৈরি হবে', ps_d_loading:'আরও বিবরণ আসছে…', ps_d_open:'পুরো পেজ খুলুন', ps_d_more:'আরও দেখুন —', ps_d_nofetch:'সব ছবি ও বিবরণ ব্র্যান্ডের পেজে দেখুন →', ps_d_nodesc:'বাড়তি কোনো বিবরণ নেই।',
       ps_empty:'এই ফিল্টারে কোনো পণ্য নেই — ফিল্টার একটু কমিয়ে দেখুন।',
       ps_partial:'সব ব্র্যান্ড বা পণ্য এখনো এখানে যোগ হয়নি —', ps_partial_link:'আরও চান? “ব্র্যান্ড দেখুন”-এ যান →', ps_word_products:'পণ্য', ps_word_brands:'ব্র্যান্ড',
       ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়', ps_sort_lh:'৳ কম→বেশি', ps_sort_hl:'৳ বেশি→কম', ps_sale:'সেল', ps_new:'নতুন', ps_lbl_sort:'সাজান', ps_lbl_filter:'ফিল্টার', ps_search_ph:'খুঁজুন: ১২,০০০+ পণ্য, ৮০+ পাকিস্তানি ব্র্যান্ড', ps_search_nomatch:'কোনো ব্র্যান্ড বা ক্যাটাগরি মেলেনি',
@@ -6686,15 +6689,28 @@
       +   `<div class="ps-d-title">${esc(p.t)}</div>`
       +   `<div class="ps-d-price">≈ ৳${bdt.toLocaleString()}</div>`
       +   `<div class="ps-d-pkr">PKR ${p.pkr.toLocaleString()}</div>`
+      +   `${sz ? `<div class="ps-d-szlabel">${tr('ps_avail_sizes')}</div>` : ''}`
       +   `<div class="ps-d-szrow">${sz}</div>`
       +   `<div class="ps-d-loading" id="psDDesc">${tr('ps_d_loading')}</div>`
       +   `<div class="ps-d-actions">`
       +     `<a class="ps-d-open" href="${esc(p.u)}" target="_blank" rel="noopener">${tr('ps_d_open')} ↗</a>`
       +     `<button type="button" class="ps-d-add" onclick="psCloseDetail();psAdd(${idx})">+ ${tr('ps_add')}</button>`
       +   `</div>`
+      +   `<button type="button" class="ps-d-more" onclick="psMoreFromBrand(${idx})">${tr('ps_d_more')} ${esc(p.b)} →</button>`
       + `</div>`;
     document.getElementById('psDetail').style.display = 'flex';
     psEnrichDetail(p);
+  }
+  // "More from this brand" (req): filter Browse Products to the SAME brand + SAME category as
+  // the shown product, then close the popup and jump to the results.
+  function psMoreFromBrand(idx){
+    const p = psFiltered[idx]; if(!p) return;
+    psSel.cats.clear(); psSel.brands.clear();
+    if(p.cat) psSel.cats.add(p.cat);
+    if(p.b)   psSel.brands.add(p.b);
+    psBuildCatFilter(); psBuildBrandFilter();
+    psApply();
+    psCloseDetail(); psScrollToResults();
   }
   // Pull the product's gallery + description from its own Shopify .js. SFCC /
   // non-Shopify products keep the single catalog image + the "open page" link.
@@ -7059,7 +7075,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-20x';
+  const PSB_BUILD = '2026-06-20y';
   console.log('%cPakPoshak · build '+PSB_BUILD, 'color:var(--gold);font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
