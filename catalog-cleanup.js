@@ -38,6 +38,13 @@ const MEN_STITCHED = new Set(['mens_shirt','mens_trouser','mens_jeans','mens_kur
 // (e.g. Alizeh "AFK-..." design codes, no gender word) to BOYS; the product image confirms they
 // are girls eastern festive. So their kids_boys_* items -> kids_girls_eastern. (Extend as found.)
 const GIRLS_KIDS_BRANDS = new Set(['Alizeh']);
+// Women-first brands that ALSO carry a men's line which the harvester (no men cat for them) dumps
+// into the women 2-piece cats. Vision-confirmed WHOLE-category (not per image): every "Shalwar
+// Kameez" / "Kurta Shalwar" / "Kurta with Trouser" 2pc listing of these brands is their MENSWEAR.
+// (Azure shirt_trouser_2pc = 13 men's; Al-Deebaj = 27 men's "Kurta Shalwar".) Extend as found.
+const MENS_2PC_BRANDS = new Set(['Azure', 'Al-Deebaj']);
+const MENS_2PC_TITLE = /shalwar kameez|kameez shalwar|kurta shalwar|kurta with[\s\S]*(trouser|shalwar)/i;
+const MENS_2PC_GUARD = /dupatta|chunri|3 ?pc|3 ?piece|2 ?piece\b|\bsuit\b|lehenga|saree|\bfrock\b|\bgown\b|\bmaxi\b|\babaya\b|co-?ord/i;   // women 3pc/suit/dupatta → NOT the men's 2pc line
 // GIRL-garment markers for kids items the harvester defaulted to BOYS (no gender word in title).
 // Image-confirmed on One Kids / Hopscotch / Wear Ochre / Beechtree / ETHNC western kids lines.
 // STRONG = girl-only garments a boys' item would never carry → move even if the title says "boys"
@@ -233,6 +240,10 @@ function cleanupProducts(ps) {
       if (sg === 'm' && !womanTitle) { p.cat = menCatFor(p.t);        slugN++; out.push(p); continue; }
       if (sg === 'kb') { p.cat = kidsCatFor(p.t, true);  slugN++; out.push(p); continue; }
       if (sg === 'kg') { p.cat = kidsCatFor(p.t, false); slugN++; out.push(p); continue; }
+      // women-first brand's MEN line dumped into women 2pc cats (Azure/Al-Deebaj, vision-confirmed)
+      if (MENS_2PC_BRANDS.has(p.b) && !womanTitle && MENS_2PC_TITLE.test(p.t || '') && !MENS_2PC_GUARD.test(p.t || '')) {
+        p.cat = menCatFor(p.t); slugN++; out.push(p); continue;
+      }
     }
     if (!/^mens_|^kids_/.test(p.cat)) { const wc = womenType(p); if (wc && wc !== p.cat) { p.cat = wc; womenN++; out.push(p); continue; } }   // women: kids/niqab/bottom/tee corrections
     if (isUnstitched(p) && STITCHED.has(p.cat)) { p.cat = fwdCat(p); fwdN++; out.push(p); continue; }
