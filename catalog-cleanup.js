@@ -110,7 +110,7 @@ function womenType(p){
   // explicit MEN markers in a women cat -> route to the right men cat (image-confirmed: Gul Ahmed
   // "Dress Shirts" image = a man; Sitara "…Men's Unstitched Suit" = men's suiting fabric). "women's"
   // is NOT matched (no word boundary before "men" in "women's").
-  if (/\bmen[’'`]?s\b|\bmens\b|\bfor men\b|\bgents\b|dress shirt|tuxedo shirt/.test(s)) {
+  if (/\bmen[’'`]?s\b|\bmens\b|\bfor men\b|\bgents\b|dress shirt|tuxedo shirt/.test(s) && !/\bwomen|\bwoman\b|\bladies\b|\bgirls?\b/.test(s)) {   // "Women's & Men's Couple Dress" is NOT men's
     if (isUnstitched(p) || /\bunstitch/.test(s)) return 'mens_unstitched';
     if (/dress shirt|tuxedo shirt|\bshirt\b|\bpolo\b|t-?shirt|\bhenley\b/.test(s)) return 'mens_shirt';
     if (/\btrouser\b|\bpants?\b|\bchino|\bcargo\b/.test(s)) return 'mens_trouser';
@@ -279,8 +279,10 @@ function cleanupProducts(ps) {
     if (/^kids_boys_/.test(p.cat)) {
       const _tb = (p.t||'').toLowerCase();
       const _sz0 = Array.isArray(p.sz) && p.sz.length ? (p.sz[0]||'').trim() : '';
-      // (a) ADULT-sized item parked in kids_boys → women (vision: crop hoodies/skinny jeans on adult models)
-      if (szLetter(p) || /^(2[4-9]|3[0-9]|4[0-2])$/.test(_sz0)) {
+      // (a) ADULT-sized item parked in kids_boys → women (vision: crop hoodies/skinny jeans on adult
+      // models). Guard: skip if title explicitly says boys/girls/kids — a "Boys Kurta Pajama" size 32
+      // is a KID measurement, not an adult waist.
+      if ((szLetter(p) || /^(2[4-9]|3[0-9]|4[0-2])$/.test(_sz0)) && !/\bboys?\b|\bgirls?\b|\bkids?\b/.test(_tb)) {
         p.cat = /trouser|pant|jeans|legging|tight|shorts|capri|bottom|\bskinny\b/i.test(_tb) ? 'womens_trouser' : 'western_top';
         womenN++; out.push(p); continue;
       }
