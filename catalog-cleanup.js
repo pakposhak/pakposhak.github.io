@@ -95,7 +95,7 @@ function womenType(p){
   }
   if (/\bniqab\b|\bjilbab\b|\bburqa\b|\bburka\b|\babaya\b/.test(s) && p.cat !== 'abaya') return 'abaya';
   if (/^(?:[\w&'-]+ ){0,3}(trouser|straight pants?|culottes?|tights|palazzo|cigarette pants?|farshi shalwar)\b/.test(s)
-      && !/(shirt|kameez|kurti|kurta|dupatta|\bsuit\b|3 ?pc|2 ?pc|3 ?piece|2 ?piece|\btop\b|co-?ord)/.test(s)) return 'womens_trouser';
+      && !/(shirt|kameez|kurti|kurta|dupatta|\bsuit\b|3 ?pc|2 ?pc|3 ?piece|2 ?piece|\btop\b|co-?ord)/.test(s)) return isUnstitched(p) ? 'kurti_1pc_unstitch' : 'womens_trouser';
   if (/\bt-?shirt\b|tank top/.test(s) && !/(\bsuit\b|3 ?pc|2 ?pc|dupatta|trouser|kameez)/.test(s)) return 'western_top';
   return null;
 }
