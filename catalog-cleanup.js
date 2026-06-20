@@ -63,14 +63,26 @@ function pieceCat(p){   // for a 1-piece kurti cat that's really 2/3pc
 const GARMENT = /shirt|kameez|kurti|kurta|\bdress\b|gown|frock|trouser|\bpant|\btop\b|abaya|hijab|shalwar|\bsuit\b|\blawn\b|saree|lehenga|dupatta|kaftan|maxi|peplum|blouse|tunic|\bcape\b|co-?ord|jumpsuit|romper|\btee\b|t-?shirt|polo|jeans|waistcoat|sweater|cardigan|hoodie|jacket|\bcoat\b|sweatshirt|nightwear|loungewear|pajama|angrakha|gharara|sharara|outfit|ensemble|\d ?piece|\d ?pc\b|unstitch|fabric/i;
 const ACC = /\bsunglass|\beyewear\b|\bgoggles?\b|jewell?ery|\bearrings?\b|\bnecklace|\bbangles?\b|\bbracelet|\bpendant|\bbrooch|\bperfume\b|\bfragrance\b|\battar\b|\bwrist ?watch|\bwatch\b|\bbeanie\b|\bscrunchie|\bhair ?band|\bhair ?clip|\bkeychain|\bkey ?chain|\bsocks?\b|\bwallet\b|\bcard ?holder|\bcufflink|\btote\b|\bbackpack|\bsling ?bag|\bhand ?bag|\bclutch\b|\bpouch\b|\bbelt\b|\bcap\b/i;
 const FOOT = /\bshoes?\b|\bheels?\b|\bsandal|\bslipper|\bsneaker|\bpump\b|\bwedge|\bmule\b|khussa|\bloafer|\bjutt?i\b|kolhapuri/i;
+// Clearly NON-APPAREL (homeware / cosmetics / fragrance / headwear / innerwear / gifting /
+// neckwear) — delete outright. These are unambiguous (a gift box / lampshade / beard oil never
+// names a garment), so no garment-exclusion is needed. Surfaced by the brand-by-brand audit.
+// NON-APPAREL -> delete (from the brand audit). STRONG terms never appear in a garment title
+// (gift box/lampshade/ceramic jar/pocket square/koofi) -> delete unconditionally. WEAK terms also
+// double as colour/scent names ("Incense","Oud","Musk") or set components ("Sando shirt","Turban
+// ...Kurta") -> delete ONLY when the title has no garment NOUN (nouns, not piece-counts, so a
+// "Seamless Boxers 2pc" still goes).
+const NONAPPAREL_STRONG = /gift ?(box|card|set|hamper|voucher|pack)\b|\bhamper\b|beard ?oil|\bcologne\b|body ?spray|lip ?(&|and|n) ?cheek|lip ?tint|cheek ?tint|argan ?oil|\bconditioner\b|\bshampoo\b|hair ?(serum|oil|catcher|grip|band|clip|tie)|\bdiffuser\b|room ?spray|scented ?candle|\bcandle\b|\bbukhoor\b|\blampshade\b|\bcomforter\b|\bduvet\b|bed ?sheet|bedsheet|\bcushion\b|coffee ?table|table ?set|brass ?table|\bfurniture\b|ceramic ?(jar|mug|vase|plate|bowl|pot|ware)|\bcrockery\b|\btumbler\b|water ?bottle|\bzamzam\b|\bcooler\b|\bperfume\b|\bfragrance\b|gift ?wrap|hijab ?(crown ?)?grip/i;
+const NONAPPAREL_WEAK = /\bmusk\b|\boud\b|\bincense\b|\bturban\b|\bimamah\b|\bkoofi\b|\bkufi\b|\btopi\b|prayer ?cap|pocket ?square|bow ?tie|bowtie|\bnecktie\b|\bboxers?\b|\bbriefs?\b|boy ?shorts|\bsando\b|\bundershirt\b|cotton ?vest|vest ?pack|pack of \d+ ?(vest|boxer|brief)|undergarment|seamless ?boxer|\bmuffler\b/i;
+const GARMENT_NOUN = /\b(kurti|kurta|kameez|shirt|t-?shirt|tee|polo|dress|gown|frock|trouser|pants?|abaya|hijab|shalwar|saree|lehenga|dupatta|kaftan|maxi|peplum|blouse|tunic|sherwani|waistcoat|jacket|sweater|cardigan|hoodie|outfit|romper|jumpsuit|suit|blazer|coat|tuxedo)\b/i;
 
 // Apply the full multi-tier cleanup to a products array → { products, stats }. Pure &
 // idempotent. MUTATES each kept product's .cat in place and drops accessories / men footwear.
 // Call from the harvester (right before it writes catalog.json) or from the CLI below.
 function cleanupProducts(ps) {
-  let del = 0, footDel = 0, footMove = 0, fwdN = 0, revN = 0, pieceN = 0, menUnsN = 0, menPcN = 0;
+  let del = 0, footDel = 0, footMove = 0, fwdN = 0, revN = 0, pieceN = 0, menUnsN = 0, menPcN = 0, junkN = 0;
   const out = [];
   for (const p of ps) {
+    { const _t = p.t || ''; if (NONAPPAREL_STRONG.test(_t) || (NONAPPAREL_WEAK.test(_t) && !GARMENT_NOUN.test(_t))) { junkN++; continue; } }   // homeware/cosmetics/headwear/innerwear/gifting -> delete
     if (ACC.test(p.t || '') && !GARMENT.test(p.t || '') && p.cat !== 'footwear') { del++; continue; }
     if (FOOT.test(p.t || '') && p.cat !== 'footwear') { if (/^mens_/.test(p.cat)) { footDel++; continue; } p.cat = 'footwear'; footMove++; out.push(p); continue; }
     if (isUnstitched(p) && STITCHED.has(p.cat)) { p.cat = fwdCat(p); fwdN++; out.push(p); continue; }
@@ -90,7 +102,7 @@ function cleanupProducts(ps) {
     if (ONE.has(p.cat)) { const nc = pieceCat(p); if (nc && nc !== p.cat) { p.cat = nc; pieceN++; } }
     out.push(p);
   }
-  return { products: out, stats: { del, footDel, footMove, fwdN, revN, pieceN, menUnsN, menPcN, before: ps.length, after: out.length } };
+  return { products: out, stats: { junkN, del, footDel, footMove, fwdN, revN, pieceN, menUnsN, menPcN, before: ps.length, after: out.length } };
 }
 
 module.exports = { cleanupProducts };
@@ -102,7 +114,7 @@ if (require.main === module) {
   const cat = JSON.parse(fs.readFileSync(FILE, 'utf8'));
   const r = cleanupProducts(cat.products || []);
   const s = r.stats;
-  console.log(`delete-accessories=${s.del} delete-men-footwear=${s.footDel} move-footwear=${s.footMove} fwd-unstitch=${s.fwdN} rev-stitch=${s.revN} piece-count=${s.pieceN} men-unstitch=${s.menUnsN} men-piece=${s.menPcN}`);
+  console.log(`delete-nonapparel=${s.junkN} delete-accessories=${s.del} delete-men-footwear=${s.footDel} move-footwear=${s.footMove} fwd-unstitch=${s.fwdN} rev-stitch=${s.revN} piece-count=${s.pieceN} men-unstitch=${s.menUnsN} men-piece=${s.menPcN}`);
   console.log(`total ${s.before} -> ${s.after}`);
   if (APPLY) { cat.products = r.products; fs.writeFileSync(FILE, JSON.stringify(cat)); console.log('*** WROTE ' + FILE + ' ***'); }
   else console.log('(dry-run — pass "apply" to write)');
