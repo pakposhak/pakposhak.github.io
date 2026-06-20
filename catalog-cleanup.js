@@ -124,6 +124,51 @@ function womenType(p){
   if (/\bt-?shirt\b|tank top/.test(s) && !/(\bsuit\b|3 ?pc|2 ?pc|dupatta|trouser|kameez)/.test(s)) return 'western_top';
   return null;
 }
+// ── BRAND SLUG-GENDER (req 2026-06-21): some multi-gender brands tag gender in the product SLUG,
+// and the harvester mis-genders chunks of them into WOMEN categories. Trust the slug to fix the
+// WHOLE brand at once (not one image): returns 'm'|'kb'|'kg' for an item that should NOT be in a
+// women cat, or '' to leave it. VERIFIED: Zellbury SKU lead letter (m=men, w=women, g=kids-boys);
+// Diners prefix (w*=women, kb*=boys, kg*=girls, else men). Extend as new brands are confirmed. ──
+function slugGender(p) {
+  const seg = ((p.u || '').toLowerCase().match(/\/products\/(.+?)(?:\?|$)/) || [, ''])[1];
+  if (p.b === 'Zellbury') {
+    let lead = '';
+    for (const t of seg.split('-')) { const a = t.match(/^([a-z]{1,6})\d{3,}/); if (a) { lead = a[1][0]; break; } }
+    return lead === 'm' ? 'm' : '';   // w=women & g=kids-boys are already placed right; only m-coded leak into women
+  }
+  if (p.b === 'Diners') {
+    if (/ladies|women|woman/.test(seg)) return '';          // explicit women slug ("ladies-trouser-…") wins
+    const pre = (seg.match(/^([a-z]+)/) || [, ''])[1];
+    if (/^kb/.test(pre)) return 'kb';
+    if (/^kg/.test(pre)) return 'kg';
+    if (/^(w|k)/.test(pre)) return '';                      // women (wtr/wkl/wu/wk) & kids lines already right
+    if (/for[\s-]?men|[-_]men[-_]|\bmens\b|gents/.test(seg) || /^(ad|us|eg|ab|ba|ag|formal)/.test(pre)) return 'm';   // verified men lines
+    return '';                                              // unknown prefix → don't guess
+  }
+  return '';
+}
+// garment → men's category (for a slug-confirmed men's item sitting in a women cat)
+function menCatFor(t) {
+  const s = (t || '').toLowerCase();
+  if (/unstitch|\brts\b/.test(s)) return 'mens_unstitched';
+  if (/sherwani/.test(s)) return 'mens_sherwani';
+  if (/waistcoat/.test(s)) return 'mens_waistcoat';
+  if (/tuxedo|blazer|pant ?coat|coat ?pant/.test(s) && !/kameez|shalwar|kurta/.test(s)) return 'mens_suit';
+  if (/jeans?|denim/.test(s) && !/kameez|shalwar|kurta|shirt/.test(s)) return 'mens_jeans';
+  if (/shalwar|kameez/.test(s)) return 'mens_shalwar_kameez';
+  if (/kurta/.test(s)) return /trouser|pajama|pyjama|shalwar/.test(s) ? 'mens_shalwar_kameez' : 'mens_kurta';
+  if (/trouser|\bchino|\bcargo\b|\bpants?\b/.test(s) && !/shirt/.test(s)) return 'mens_trouser';
+  if (/polo|t-?shirt|\bshirt\b|henley|sweat ?shirt|hoodie/.test(s)) return 'mens_shirt';
+  return 'mens_shalwar_kameez';
+}
+// garment → kids category (boy=true → boys, else girls)
+function kidsCatFor(t, boy) {
+  const s = (t || '').toLowerCase();
+  const g = boy ? 'boys' : 'girls';
+  if (/tuxedo|\bsuit\b|blazer|\bformal\b|prince ?coat/.test(s)) return 'kids_' + g + '_formal';
+  if (/kurta|kameez|shalwar|sherwani|waistcoat|pajama|pyjama|sharara|gharara|lehenga|frock|anarkali/.test(s)) return 'kids_' + g + '_eastern';
+  return 'kids_' + g + '_western';
+}
 const GARMENT = /shirt|kameez|kurti|kurta|\bdress\b|gown|frock|trouser|\bpant|\btop\b|abaya|hijab|shalwar|\bsuit\b|\blawn\b|saree|lehenga|dupatta|kaftan|maxi|peplum|blouse|tunic|\bcape\b|co-?ord|jumpsuit|romper|\btee\b|t-?shirt|polo|jeans|waistcoat|sweater|cardigan|hoodie|jacket|\bcoat\b|sweatshirt|nightwear|loungewear|pajama|angrakha|gharara|sharara|outfit|ensemble|\d ?piece|\d ?pc\b|unstitch|fabric/i;
 const ACC = /\bsunglass|\beyewear\b|\bgoggles?\b|jewell?ery|\bearrings?\b|\bnecklace|\bbangles?\b|\bbracelet|\bpendant|\bbrooch|\bperfume\b|\bfragrance\b|\battar\b|\bwrist ?watch|\bwatch\b|\bbeanie\b|\bscrunchie|\bhair ?band|\bhair ?clip|\bkeychain|\bkey ?chain|\bsocks?\b|\bwallet\b|\bcard ?holder|\bcufflink|\btote\b|\bbackpack|\bsling ?bag|\bhand ?bag|\bclutch\b|\bpouch\b|\bbelt\b|\bcap\b/i;
 const FOOT = /\bshoes?\b|\bheels?\b|\bsandal|\bslipper|\bsneaker|\bpump\b|\bwedge|\bmule\b|khussa|\bloafer|\bjutt?i\b|kolhapuri/i;
@@ -143,7 +188,7 @@ const GARMENT_NOUN = /\b(kurti|kurta|kameez|shirt|t-?shirt|tee|polo|dress|gown|f
 // idempotent. MUTATES each kept product's .cat in place and drops accessories / men footwear.
 // Call from the harvester (right before it writes catalog.json) or from the CLI below.
 function cleanupProducts(ps) {
-  let del = 0, footDel = 0, footMove = 0, fwdN = 0, revN = 0, pieceN = 0, menUnsN = 0, menPcN = 0, junkN = 0, womenN = 0, girlsKidN = 0;
+  let del = 0, footDel = 0, footMove = 0, fwdN = 0, revN = 0, pieceN = 0, menUnsN = 0, menPcN = 0, junkN = 0, womenN = 0, girlsKidN = 0, slugN = 0;
   const out = [];
   for (const p of ps) {
     { const _t = p.t || ''; if (NONAPPAREL_STRONG.test(_t) || (NONAPPAREL_WEAK.test(_t) && !GARMENT_NOUN.test(_t))) { junkN++; continue; } }   // homeware/cosmetics/headwear/innerwear/gifting -> delete
@@ -179,6 +224,16 @@ function cleanupProducts(ps) {
       if (p.cat === 'kids_boys_western' && /\bprince[\s-]?coat\b/.test(_tb)) { p.cat = 'kids_boys_eastern'; girlsKidN++; out.push(p); continue; }
       if (p.cat === 'kids_boys_eastern' && /\btuxedo\b/.test(_tb)) { p.cat = 'kids_boys_formal'; girlsKidN++; out.push(p); continue; }
     }
+    // BRAND SLUG-GENDER: a women-cat item whose brand slug says men/boys/girls → route by garment
+    // (Zellbury men's shalwar-kameez/shirts, Diners boys' kurta-pajama & men's shirts, etc.). Fixes
+    // the whole brand at once, not per image. Runs before womenType (title-only) — slug wins.
+    if (!/^mens_|^kids_/.test(p.cat)) {
+      const sg = slugGender(p);
+      const womanTitle = /\bladies\b|\bwomen[’'`]?s?\b|\bwoman\b|\bgirls?\b/i.test(p.t || '');   // explicit women/girl title overrides a men slug-code collision (e.g. colour-prefix)
+      if (sg === 'm' && !womanTitle) { p.cat = menCatFor(p.t);        slugN++; out.push(p); continue; }
+      if (sg === 'kb') { p.cat = kidsCatFor(p.t, true);  slugN++; out.push(p); continue; }
+      if (sg === 'kg') { p.cat = kidsCatFor(p.t, false); slugN++; out.push(p); continue; }
+    }
     if (!/^mens_|^kids_/.test(p.cat)) { const wc = womenType(p); if (wc && wc !== p.cat) { p.cat = wc; womenN++; out.push(p); continue; } }   // women: kids/niqab/bottom/tee corrections
     if (isUnstitched(p) && STITCHED.has(p.cat)) { p.cat = fwdCat(p); fwdN++; out.push(p); continue; }
     if (szLetter(p) && REV[p.cat] && !unsTitle(p)) { p.cat = REV[p.cat]; revN++; out.push(p); continue; }
@@ -211,7 +266,7 @@ function cleanupProducts(ps) {
     if (ONE.has(p.cat)) { const nc = pieceCat(p); if (nc && nc !== p.cat) { p.cat = nc; pieceN++; } }
     out.push(p);
   }
-  return { products: out, stats: { junkN, del, footDel, footMove, fwdN, revN, pieceN, menUnsN, menPcN, womenN, girlsKidN, before: ps.length, after: out.length } };
+  return { products: out, stats: { junkN, del, footDel, footMove, fwdN, revN, pieceN, menUnsN, menPcN, womenN, girlsKidN, slugN, before: ps.length, after: out.length } };
 }
 
 module.exports = { cleanupProducts };
@@ -223,7 +278,7 @@ if (require.main === module) {
   const cat = JSON.parse(fs.readFileSync(FILE, 'utf8'));
   const r = cleanupProducts(cat.products || []);
   const s = r.stats;
-  console.log(`delete-nonapparel=${s.junkN} delete-accessories=${s.del} delete-men-footwear=${s.footDel} move-footwear=${s.footMove} fwd-unstitch=${s.fwdN} rev-stitch=${s.revN} piece-count=${s.pieceN} men-unstitch=${s.menUnsN} men-piece=${s.menPcN} women-type=${s.womenN} girls-kid=${s.girlsKidN}`);
+  console.log(`delete-nonapparel=${s.junkN} delete-accessories=${s.del} delete-men-footwear=${s.footDel} move-footwear=${s.footMove} fwd-unstitch=${s.fwdN} rev-stitch=${s.revN} piece-count=${s.pieceN} men-unstitch=${s.menUnsN} men-piece=${s.menPcN} women-type=${s.womenN} girls-kid=${s.girlsKidN} slug-gender=${s.slugN}`);
   console.log(`total ${s.before} -> ${s.after}`);
   if (APPLY) { cat.products = r.products; fs.writeFileSync(FILE, JSON.stringify(cat)); console.log('*** WROTE ' + FILE + ' ***'); }
   else console.log('(dry-run — pass "apply" to write)');
