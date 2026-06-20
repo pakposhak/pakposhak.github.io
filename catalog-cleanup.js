@@ -168,14 +168,53 @@ function menCatFor(t) {
   if (/polo|t-?shirt|\bshirt\b|henley|sweat ?shirt|hoodie/.test(s)) return 'mens_shirt';
   return 'mens_shalwar_kameez';
 }
-// garment → kids category (boy=true → boys, else girls)
+// garment → kids category. boy: true→boys, false→girls, null→infer from garment (frock/dress=girl).
 function kidsCatFor(t, boy) {
   const s = (t || '').toLowerCase();
+  if (boy == null) boy = !/frock|\bdress\b|gown|lehenga|gharara|sharara|peplum|skirt|\bbarbie\b|princess|unicorn/.test(s);
   const g = boy ? 'boys' : 'girls';
   if (/tuxedo|\bsuit\b|blazer|\bformal\b|prince ?coat/.test(s)) return 'kids_' + g + '_formal';
   if (/kurta|kameez|shalwar|sherwani|waistcoat|pajama|pyjama|sharara|gharara|lehenga|frock|anarkali/.test(s)) return 'kids_' + g + '_eastern';
   return 'kids_' + g + '_western';
 }
+// garment → WOMEN category (for an item whose title explicitly says women but sits in men/kids)
+function womenCatFor(p) {
+  const s = (p.t || '').toLowerCase();
+  if (/\bsaree\b|\bsari\b/.test(s)) return 'saree';
+  if (/\blehenga\b/.test(s)) return 'lehenga';
+  if (/\b(abaya|niqab|jilbab|burqa)\b/.test(s)) return 'abaya';
+  if (/(\bdupatta\b|\bhijab\b|\bscarf\b|\bshawl\b|\bstole\b)/.test(s) && !/(shirt|kameez|kurta|\bsuit\b|3 ?pc|2 ?pc)/.test(s)) return 'dupatta_only';
+  const uns = isUnstitched(p);
+  const three = /\b3 ?pc\b|\b3 ?piece\b|three[\s-]?piece/.test(s);
+  const two = /\b2 ?pc\b|\b2 ?piece\b|two[\s-]?piece/.test(s);
+  if (uns || /\bfabric\b|unstitch/.test(s)) { if (three) return emb(s) ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch'; if (two) return 'shirt_dupatta_2pc_unstitch'; return 'lawn_3pc_unstitch'; }
+  if (three) return emb(s) ? 'pret_3pc_emb' : 'pret_3pc';
+  if (two) return emb(s) ? 'pret_2pc_emb' : 'shirt_dupatta_2pc';
+  if (/\bdress\b|\bgown\b|\bmaxi\b|frock/.test(s)) return 'maxi_dress';
+  if (/jacket|\bcoat\b|cardigan|sweater|hoodie|sweatshirt/.test(s)) return 'western_top';
+  if (/trouser|\bpants?\b|culotte|palazzo|tights/.test(s) && !/(shirt|kameez|kurti|kurta|\bsuit\b)/.test(s)) return 'womens_trouser';
+  if (/kurti|\bkurta\b|\bshirt\b|tunic|\btop\b/.test(s)) return uns ? 'kurti_1pc_unstitch' : 'kurti_1pc';
+  return 'pret_3pc';
+}
+// EXPLICIT-title gender (high-confidence, guarded): returns m|w|kb|kg|ki|k or null. Guards strip
+// superhero names ("Iron Man") and require possessive/plural or garment-adjacency for girl/boy so
+// collection NAMES ("A Girl In The Garden", "It Girl", "Who's That Girl") don't trip it; "baby" is
+// only kids when it's not a colour ("Baby Blue").
+const SUPERHERO = /iron ?man|spider ?man|super ?man|bat ?man|he-?man|ant ?man|wonder ?woman|sales ?man|chair ?man/g;
+const BABYCOLOR = /baby ?(blue|pink|peach|green|yellow|purple|lilac|white|grey|gray|brown|mint|sky|colou?r|.?s? ?breath)|maybe ?baby/;
+function explicitGender(t) {
+  const s = (t || '').toLowerCase().replace(SUPERHERO, ' ');
+  if (/\bwomen[’'`]?s?\b|\bwoman[’'`]?s?\b|\bladies\b|\bfor women\b/.test(s)) return 'w';
+  if (/\bgirls[’'`]?\b|\bgirl[’'`]s\b/.test(s) || /\b(\d ?pc|\d ?piece|2pc|3pc) girl\b/.test(s) || /\bgirl (suit|kurta|frock|dress|lawn|kameez|shalwar|2 ?pc|3 ?pc)\b/.test(s)) return 'kg';
+  if (/\bboys[’'`]?\b|\bboy[’'`]s\b/.test(s) || /\bboy (suit|kurta|shirt|shalwar|kameez|pajama|trouser)\b/.test(s)) return 'kb';
+  if (/\b(infant|newborn|toddler)\b/.test(s)) return 'ki';
+  if (/\bkids?[’'`]?\b/.test(s)) return 'k';
+  if (/\bmen[’'`]?s\b|\bgents\b|\bfor men\b/.test(s)) return 'm';
+  if (/\bbaby\b/.test(s) && !BABYCOLOR.test(s)) return 'ki';
+  return null;
+}
+const coarseGender = g => (g === 'kb' || g === 'kg' || g === 'ki' || g === 'k') ? 'k' : g;
+const catGenderOf = c => /^mens_/.test(c) ? 'm' : /^kids_/.test(c) ? 'k' : 'w';
 const GARMENT = /shirt|kameez|kurti|kurta|\bdress\b|gown|frock|trouser|\bpant|\btop\b|abaya|hijab|shalwar|\bsuit\b|\blawn\b|saree|lehenga|dupatta|kaftan|maxi|peplum|blouse|tunic|\bcape\b|co-?ord|jumpsuit|romper|\btee\b|t-?shirt|polo|jeans|waistcoat|sweater|cardigan|hoodie|jacket|\bcoat\b|sweatshirt|nightwear|loungewear|pajama|angrakha|gharara|sharara|outfit|ensemble|\d ?piece|\d ?pc\b|unstitch|fabric/i;
 const ACC = /\bsunglass|\beyewear\b|\bgoggles?\b|jewell?ery|\bearrings?\b|\bnecklace|\bbangles?\b|\bbracelet|\bpendant|\bbrooch|\bperfume\b|\bfragrance\b|\battar\b|\bwrist ?watch|\bwatch\b|\bbeanie\b|\bscrunchie|\bhair ?band|\bhair ?clip|\bkeychain|\bkey ?chain|\bsocks?\b|\bwallet\b|\bcard ?holder|\bcufflink|\btote\b|\bbackpack|\bsling ?bag|\bhand ?bag|\bclutch\b|\bpouch\b|\bbelt\b|\bcap\b/i;
 const FOOT = /\bshoes?\b|\bheels?\b|\bsandal|\bslipper|\bsneaker|\bpump\b|\bwedge|\bmule\b|khussa|\bloafer|\bjutt?i\b|kolhapuri/i;
@@ -195,12 +234,26 @@ const GARMENT_NOUN = /\b(kurti|kurta|kameez|shirt|t-?shirt|tee|polo|dress|gown|f
 // idempotent. MUTATES each kept product's .cat in place and drops accessories / men footwear.
 // Call from the harvester (right before it writes catalog.json) or from the CLI below.
 function cleanupProducts(ps) {
-  let del = 0, footDel = 0, footMove = 0, fwdN = 0, revN = 0, pieceN = 0, menUnsN = 0, menPcN = 0, junkN = 0, womenN = 0, girlsKidN = 0, slugN = 0;
+  let del = 0, footDel = 0, footMove = 0, fwdN = 0, revN = 0, pieceN = 0, menUnsN = 0, menPcN = 0, junkN = 0, womenN = 0, girlsKidN = 0, slugN = 0, explicitN = 0;
   const out = [];
   for (const p of ps) {
     { const _t = p.t || ''; if (NONAPPAREL_STRONG.test(_t) || (NONAPPAREL_WEAK.test(_t) && !GARMENT_NOUN.test(_t))) { junkN++; continue; } }   // homeware/cosmetics/headwear/innerwear/gifting -> delete
     if (ACC.test(p.t || '') && !GARMENT.test(p.t || '') && p.cat !== 'footwear') { del++; continue; }
     if (FOOT.test(p.t || '') && p.cat !== 'footwear') { if (/^mens_/.test(p.cat)) { footDel++; continue; } p.cat = 'footwear'; footMove++; out.push(p); continue; }
+    // EXPLICIT-TITLE gender corrector (highest-confidence, guarded). Footwear stays footwear (a
+    // "Boys Peshawari" is still a shoe). Catches cross-gender mislabels any direction: Edge Republic
+    // "Women's 3-Piece" in mens, Wear Ochre "Women's Dress" in kids, Kurta Corner "Kids Kurta Pajama"
+    // in mens, Kross Kulture "2PC Girl" in women, etc.
+    if (p.cat !== 'footwear') {
+      const eg = explicitGender(p.t);
+      if (eg && coarseGender(eg) !== catGenderOf(p.cat)) {
+        const cg = coarseGender(eg);
+        if (cg === 'w') p.cat = womenCatFor(p);
+        else if (cg === 'm') p.cat = menCatFor(p.t);
+        else p.cat = eg === 'ki' ? 'kids_infant' : kidsCatFor(p.t, eg === 'kb' ? true : eg === 'kg' ? false : null);
+        explicitN++; out.push(p); continue;
+      }
+    }
     if (/^kids_boys_/.test(p.cat) && GIRLS_KIDS_BRANDS.has(p.b)) { p.cat = 'kids_girls_eastern'; girlsKidN++; out.push(p); continue; }   // girls-only brand mis-tagged boys (image-confirmed)
     // One Kids (beoneshopone) encodes kids' gender in the product SLUG: /products/g… = GIRL,
     // /products/b… = BOY. The harvester defaults its code-named kids to BOYS, so trust the slug:
@@ -277,7 +330,7 @@ function cleanupProducts(ps) {
     if (ONE.has(p.cat)) { const nc = pieceCat(p); if (nc && nc !== p.cat) { p.cat = nc; pieceN++; } }
     out.push(p);
   }
-  return { products: out, stats: { junkN, del, footDel, footMove, fwdN, revN, pieceN, menUnsN, menPcN, womenN, girlsKidN, slugN, before: ps.length, after: out.length } };
+  return { products: out, stats: { junkN, del, footDel, footMove, fwdN, revN, pieceN, menUnsN, menPcN, womenN, girlsKidN, slugN, explicitN, before: ps.length, after: out.length } };
 }
 
 module.exports = { cleanupProducts };
@@ -289,7 +342,7 @@ if (require.main === module) {
   const cat = JSON.parse(fs.readFileSync(FILE, 'utf8'));
   const r = cleanupProducts(cat.products || []);
   const s = r.stats;
-  console.log(`delete-nonapparel=${s.junkN} delete-accessories=${s.del} delete-men-footwear=${s.footDel} move-footwear=${s.footMove} fwd-unstitch=${s.fwdN} rev-stitch=${s.revN} piece-count=${s.pieceN} men-unstitch=${s.menUnsN} men-piece=${s.menPcN} women-type=${s.womenN} girls-kid=${s.girlsKidN} slug-gender=${s.slugN}`);
+  console.log(`delete-nonapparel=${s.junkN} delete-accessories=${s.del} delete-men-footwear=${s.footDel} move-footwear=${s.footMove} fwd-unstitch=${s.fwdN} rev-stitch=${s.revN} piece-count=${s.pieceN} men-unstitch=${s.menUnsN} men-piece=${s.menPcN} women-type=${s.womenN} girls-kid=${s.girlsKidN} slug-gender=${s.slugN} explicit-gender=${s.explicitN}`);
   console.log(`total ${s.before} -> ${s.after}`);
   if (APPLY) { cat.products = r.products; fs.writeFileSync(FILE, JSON.stringify(cat)); console.log('*** WROTE ' + FILE + ' ***'); }
   else console.log('(dry-run — pass "apply" to write)');
