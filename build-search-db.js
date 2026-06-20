@@ -79,16 +79,23 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
   const sizeOf = p => Array.isArray(p.sz) ? p.sz.length : 0;
   // Apparel is the hero; footwear/accessories/shawls/single-dupattas must NOT lead the landing.
   const heroRank = c => /^(footwear|accessories|shawl|dupatta_only)$/.test(c || '') ? 1 : 0;
-  // Within MEN, EASTERN wear leads over western. Within WOMEN, PRET leads.
-  const MENS_EAST = new Set(['mens_kurta', 'mens_shalwar_kameez', 'mens_sherwani', 'mens_waistcoat', 'mens_unstitched']);
-  const menEastRank = c => /^mens_/.test(c || '') ? (MENS_EAST.has(c) ? 0 : 1) : 0;
+  // EASTERN (desi) wear leads WESTERN within EVERY gender (req 2026-06-21: "if no specs given,
+  // eastern shows first"). Western cats are the explicit minority — everything else
+  // (kurta/shalwar/lawn/abaya/saree/sherwani/eastern-kids/etc.) is eastern. Within women, PRET
+  // still leads the rest of eastern (brand-identity hero).
+  const WESTERN = new Set([
+    'western_top', 'maxi_dress', 'womens_trouser', 'coord_western', 'gown',
+    'mens_shirt', 'mens_jeans', 'mens_trouser', 'mens_suit',
+    'kids_boys_western', 'kids_girls_western',
+  ]);
+  const eastRank = c => WESTERN.has(c || '') ? 1 : 0;   // eastern (0) before western (1), all genders
   const WOMEN_PRET = new Set(['pret_3pc', 'pret_3pc_emb', 'pret_2pc_emb']);
   const womenPretRank = c => (genderOf(c) === 'w' && WOMEN_PRET.has(c)) ? 0 : 1;
   const qSort = (a, b) =>
     (heroRank(a.cat) - heroRank(b.cat))          // apparel before footwear/accessories
     || (genderRank(a.cat) - genderRank(b.cat))   // women first
     || (womenPretRank(a.cat) - womenPretRank(b.cat)) // within women: PRET first
-    || (menEastRank(a.cat) - menEastRank(b.cat)) // within men: eastern wear first
+    || (eastRank(a.cat) - eastRank(b.cat))       // EASTERN wear before western (every gender)
     || (a._bi - b._bi)                           // BRAND round-robin → varied suppliers (high priority)
     || (sizeOf(b) - sizeOf(a))                   // then best-stocked
     || ((b.pub || 0) - (a.pub || 0));            // then newer
@@ -113,15 +120,18 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
     if (ordered.length === start) break;   // safety: no progress
   }
 
-  // MEN eastern-first (req): the new/sale interleave above mixes eastern & western men, so do
-  // a FINAL pass that reorders ONLY the men items among their own landing slots — eastern wear
-  // (kurta/shalwar kameez/sherwani/waistcoat/unstitched) leads over western shirts/jeans. This
-  // leaves the women-first / kids-last gender order untouched. (Array.sort is stable, so within
-  // eastern and within western the best-stocked/new ranking from qSort is preserved.)
-  const menPos = [], menItems = [];
-  ordered.forEach((p, i) => { if (genderOf(p.cat) === 'm') { menPos.push(i); menItems.push(p); } });
-  menItems.sort((a, b) => menEastRank(a.cat) - menEastRank(b.cat));
-  menPos.forEach((pos, k) => { ordered[pos] = menItems[k]; });
+  // EASTERN-FIRST final pass (req): the sale/girls interleave above can drop a western item into
+  // an early slot, so reorder WITHIN EACH gender's own landing slots to put eastern wear ahead of
+  // western. Done per-gender so the women-first → men → kids gender order is untouched; Array.sort
+  // is stable so the best-stocked/new (and women-PRET-first) ranking from qSort is preserved within
+  // each eastern/western run. This makes category-filtered + keyword views (which read p.ord) lead
+  // eastern when the buyer gives no sort/category spec.
+  ['w', 'm', 'k'].forEach(g => {
+    const pos = [], items = [];
+    ordered.forEach((p, i) => { if (genderOf(p.cat) === g) { pos.push(i); items.push(p); } });
+    items.sort((a, b) => eastRank(a.cat) - eastRank(b.cat));
+    pos.forEach((p, k) => { ordered[p] = items[k]; });
+  });
   products = ordered;
 
   const tmp = DB_PATH + '.new';

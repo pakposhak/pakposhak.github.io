@@ -38,6 +38,16 @@ const MEN_STITCHED = new Set(['mens_shirt','mens_trouser','mens_jeans','mens_kur
 // (e.g. Alizeh "AFK-..." design codes, no gender word) to BOYS; the product image confirms they
 // are girls eastern festive. So their kids_boys_* items -> kids_girls_eastern. (Extend as found.)
 const GIRLS_KIDS_BRANDS = new Set(['Alizeh']);
+// GIRL-garment markers for kids items the harvester defaulted to BOYS (no gender word in title).
+// Image-confirmed on One Kids / Hopscotch / Wear Ochre / Beechtree / ETHNC western kids lines.
+// STRONG = girl-only garments a boys' item would never carry → move even if the title says "boys"
+// (titles are often mis-tagged). SOFT = feminine prints/silhouettes that rarely-but-can appear on
+// boys → move ONLY when the title does NOT say boy/boys (so "Boys floral polo" stays a boy).
+// \b guards stop false hits (rainbow≠bow, elbow≠bow). GUARD excludes a boy's dress-shirt/fancy-dress.
+const KGIRL_STRONG = /\bfrock\b|\bgown\b|\bpeplum\b|pinafore|\btutu\b|princess|\bbarbie\b|unicorn|fairy|jasmine|\bblouse\b|lehenga|sharara|gharara|\btulle\b|lace (dress|frock|top|gown)/;
+const KGIRL_SOFT = /\bdress\b|\bskirt\b|\bfloral\b|\bflower\b|smock|gathered|\bpoof\b|sequin|ruffl|butterfly|cold[\s-]?shoulder|crop[\s-]?(tee|top|polo)|jegging|bow (top|dress|frock|blouse)/;
+const KGIRL_GUARD = /dress shirt|dress pant|fancy dress/;
+const KGIRL_EAST = /\bfrock\b|kaftan|kameez|shalwar|\bkurta\b|\bkurti\b|anarkali|lehenga|gharara|sharara|peshwas|abaya/;   // eastern girls' garment → kids_girls_eastern (else western)
 const menUns = p => isUnsSz(p) || /\bunstitch|un-?stitch|unstiched|ready[\s-]?to[\s-]?stitch|\brts\b/.test(txt(p));
 const REV = {kurti_1pc_unstitch:'kurti_1pc',shirt_dupatta_2pc_unstitch:'shirt_dupatta_2pc',shirt_trouser_2pc_unstitch:'shirt_trouser_2pc',lawn_3pc_unstitch:'pret_3pc',unstitch_3pc_emb:'pret_3pc_emb',winter_2pc_unstitch:'winter_2pc_stitch',winter_3pc_unstitch:'winter_3pc_stitch'};
 const ONE = new Set(['kurti_1pc','western_top','kaftan']);
@@ -142,18 +152,21 @@ function cleanupProducts(ps) {
     if (/^kids_boys_/.test(p.cat) && GIRLS_KIDS_BRANDS.has(p.b)) { p.cat = 'kids_girls_eastern'; girlsKidN++; out.push(p); continue; }   // girls-only brand mis-tagged boys (image-confirmed)
     if (/^kids_boys_/.test(p.cat)) {
       const _tb = (p.t||'').toLowerCase();
-      // title-confirmed girls items in kids_boys (ruffles, cold-shoulder, cropped strap/tee = visual audit)
-      if (/ruffled?|cold[\s-]?shoulder|cropped[\s-]?strap|crop[\s-]?tee/.test(_tb)) { p.cat = 'kids_girls_western'; girlsKidN++; out.push(p); continue; }
-      // adult-sized item parked in kids_boys: waist-number sizes (24,26,28,30,32) or adult letters → move to women
       const _sz0 = Array.isArray(p.sz) && p.sz.length ? (p.sz[0]||'').trim() : '';
+      // (a) ADULT-sized item parked in kids_boys → women (vision: crop hoodies/skinny jeans on adult models)
       if (szLetter(p) || /^(2[4-9]|3[0-9]|4[0-2])$/.test(_sz0)) {
-        p.cat = /trouser|pant|jeans|legging|tight|shorts|capri|bottom|\bskinny\b/i.test(p.t||'') ? 'womens_trouser' : 'western_top';
+        p.cat = /trouser|pant|jeans|legging|tight|shorts|capri|bottom|\bskinny\b/i.test(_tb) ? 'womens_trouser' : 'western_top';
         womenN++; out.push(p); continue;
       }
-      // prince coat (eastern-style embroidered sherwani coat) mis-placed in western → eastern
-      if (p.cat === 'kids_boys_western' && /\bprince[\s-]?coat\b/i.test(_tb)) { p.cat = 'kids_boys_eastern'; girlsKidN++; out.push(p); continue; }
-      // tuxedo (western suit with bow-tie) in eastern → formal (image-confirmed)
-      if (p.cat === 'kids_boys_eastern' && /\btuxedo\b/i.test(_tb)) { p.cat = 'kids_boys_formal'; girlsKidN++; out.push(p); continue; }
+      // (b) GIRL-garment titled (kid-sized) → kids_girls. STRONG words move even if title says "boys";
+      // SOFT cues move only when title has no explicit boy. GUARD keeps boy dress-shirt/fancy-dress.
+      if (!KGIRL_GUARD.test(_tb) && (KGIRL_STRONG.test(_tb) || (KGIRL_SOFT.test(_tb) && !/\bboys?\b/.test(_tb)))) {
+        p.cat = KGIRL_EAST.test(_tb) ? 'kids_girls_eastern' : 'kids_girls_western';
+        girlsKidN++; out.push(p); continue;
+      }
+      // (c) prince coat (eastern sherwani coat) in western → eastern; tuxedo (western suit) in eastern → formal
+      if (p.cat === 'kids_boys_western' && /\bprince[\s-]?coat\b/.test(_tb)) { p.cat = 'kids_boys_eastern'; girlsKidN++; out.push(p); continue; }
+      if (p.cat === 'kids_boys_eastern' && /\btuxedo\b/.test(_tb)) { p.cat = 'kids_boys_formal'; girlsKidN++; out.push(p); continue; }
     }
     if (!/^mens_|^kids_/.test(p.cat)) { const wc = womenType(p); if (wc && wc !== p.cat) { p.cat = wc; womenN++; out.push(p); continue; } }   // women: kids/niqab/bottom/tee corrections
     if (isUnstitched(p) && STITCHED.has(p.cat)) { p.cat = fwdCat(p); fwdN++; out.push(p); continue; }
