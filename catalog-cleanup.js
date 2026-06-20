@@ -65,13 +65,13 @@ function pieceCat(p){   // for a 1-piece kurti cat that's really 2/3pc
 // matters: the 2pc kurta+bottom rule runs BEFORE jeans so a "Jeans Kurta Pajama" stays a 2pc
 // kurta-pajama; prince/sherwani are never moved to shalwar-kameez or suit.
 function menType(p){
-  const s = txt(p);
+  const s = (p.t || '').toLowerCase();   // TITLE only — product URLs carry collection names ("...kameez-collection") that wrongly trip the rules
   if (!/\bprince\b|\bsherwani\b/.test(s)
       && /(kurta|kameez)[\s\S]{0,30}(trouser|pajama|pyjama|shalwar|drawstring)|(shalwar|pajama|trouser)[\s\S]{0,30}(kurta|kameez)|kameez shalwar|shalwar kameez|kurta pajama|kurta trouser/.test(s))
     return 'mens_shalwar_kameez';                                            // 2pc kameez+shalwar / kurta+bottom
   if (/\btuxedo\b|\bblazer\b|pant ?coat|coat ?pant|bespoke suit/.test(s) && !/(shalwar|kameez|kurta|sherwani|prince)/.test(s)) return 'mens_suit';   // western suit BEFORE jeans ("Blazer | Denim" is a suit)
-  if (/\bjeans?\b|\bdenim\b/.test(s) && !/(kurta|kameez|shalwar)/.test(s)) return 'mens_jeans';
-  if (/\bhenley\b|\bpolo\b|t-?shirt|dress shirt|formal shirt|tuxedo shirt|casual shirt|\bsweat ?shirt\b/.test(s)) return 'mens_shirt';
+  if (/\bjeans?\b|\bdenim\b/.test(s) && !/(kurta|kameez|shalwar|shirt)/.test(s)) return 'mens_jeans';   // a "Denim Casual Shirt" is a shirt, not jeans
+  if (/\bhenley\b|\bpolo\b|t-?shirt|dress shirt|formal shirt|tuxedo shirt|casual shirt|button ?down|\bsweat ?shirt\b|\bhoodie\b|track ?suit/.test(s)) return 'mens_shirt';
   if ((p.cat === 'mens_kurta' || p.cat === 'mens_shalwar_kameez' || p.cat === 'mens_jeans')
       && /\btrouser|\bchino|\bcargo\b|dress pant|\bshorts?\b|\bpants?\b|\bshalwar\b|sleepwear|sleep ?wear/.test(s)
       && !/(kurta|kameez|shirt|\bsuit\b|kurti|waistcoat|\bjeans?\b|\bdenim\b)/.test(s)) return 'mens_trouser';   // standalone bottom
@@ -92,8 +92,8 @@ const FOOT = /\bshoes?\b|\bheels?\b|\bsandal|\bslipper|\bsneaker|\bpump\b|\bwedg
 // ...Kurta") -> delete ONLY when the title has no garment NOUN (nouns, not piece-counts, so a
 // "Seamless Boxers 2pc" still goes).
 const NONAPPAREL_STRONG = /gift ?(box|card|set|hamper|voucher|pack)\b|\bhamper\b|beard ?oil|\bcologne\b|body ?spray|lip ?(&|and|n) ?cheek|lip ?tint|cheek ?tint|argan ?oil|\bconditioner\b|\bshampoo\b|hair ?(serum|oil|catcher|grip|band|clip|tie)|\bdiffuser\b|room ?spray|scented ?candle|\bcandle\b|\bbukhoor\b|\blampshade\b|\bcomforter\b|\bduvet\b|bed ?sheet|bedsheet|\bcushion\b|coffee ?table|table ?set|brass ?table|\bfurniture\b|ceramic ?(jar|mug|vase|plate|bowl|pot|ware)|\bcrockery\b|\btumbler\b|water ?bottle|\bzamzam\b|\bcooler\b|\bperfume\b|\bfragrance\b|gift ?wrap|ear ?cuff|tasbeeh|tasbih|misbaha|placemat|place ?mat|table ?runner|table ?cloth|tablecloth|\bcoaster|\bnapkin|prayer ?mat|jaye ?namaz|janamaz|\bmiswak\b|hijab ?(crown ?)?grip/i;
-const NONAPPAREL_WEAK = /\bmusk\b|\boud\b|\bincense\b|\bturban\b|\bimamah\b|\bkoofi\b|\bkufi\b|\btopi\b|prayer ?cap|pocket ?square|bow ?tie|bowtie|\bnecktie\b|\bboxers?\b|\bbriefs?\b|boy ?shorts|\bsando\b|\bundershirt\b|cotton ?vest|vest ?pack|pack of \d+ ?(vest|boxer|brief)|undergarment|seamless ?boxer|\bmuffler\b|\bcharm\b|\bhipster\b|\btrunks?\b|men'?s vest|vest with sleeves/i;
-const GARMENT_NOUN = /\b(kurti|kurta|kameez|shirt|t-?shirt|tee|polo|dress|gown|frock|trouser|pants?|abaya|hijab|shalwar|saree|lehenga|dupatta|kaftan|maxi|peplum|blouse|tunic|sherwani|waistcoat|jacket|sweater|cardigan|hoodie|outfit|romper|jumpsuit|suit|blazer|coat|tuxedo)\b/i;
+const NONAPPAREL_WEAK = /\bmusk\b|\boud\b|\bincense\b|\bturban\b|\bimamah\b|\bkoofi\b|\bkufi\b|\btopi\b|prayer ?cap|pocket ?square|bow ?tie|bowtie|\bnecktie\b|\bboxers?\b|\bbriefs?\b|boy ?shorts|\bsando\b|\bundershirt\b|cotton ?vest|vest ?pack|pack of \d+ ?(vest|boxer|brief)|undergarment|seamless ?boxer|\bmuffler\b|\bcharm\b|\bhipster\b|\btrunks?\b|men'?s vest|vest with sleeves|jersey vest|seamless ?(jersey )?vest|sleeveless vest|\bcaps?\b/i;
+const GARMENT_NOUN = /\b(kurti|kurta|kameez|shirt|t-?shirt|tee|polo|dress|gown|frock|trouser|pants?|abaya|hijab|shalwar|saree|lehenga|dupatta|kaftan|maxi|peplum|blouse|top|tank|tunic|sherwani|waistcoat|jacket|sweater|cardigan|hoodie|outfit|romper|jumpsuit|suit|blazer|coat|tuxedo)\b/i;
 
 // Apply the full multi-tier cleanup to a products array → { products, stats }. Pure &
 // idempotent. MUTATES each kept product's .cat in place and drops accessories / men footwear.
