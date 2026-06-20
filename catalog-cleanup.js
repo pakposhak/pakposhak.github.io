@@ -150,6 +150,17 @@ function cleanupProducts(ps) {
     if (ACC.test(p.t || '') && !GARMENT.test(p.t || '') && p.cat !== 'footwear') { del++; continue; }
     if (FOOT.test(p.t || '') && p.cat !== 'footwear') { if (/^mens_/.test(p.cat)) { footDel++; continue; } p.cat = 'footwear'; footMove++; out.push(p); continue; }
     if (/^kids_boys_/.test(p.cat) && GIRLS_KIDS_BRANDS.has(p.b)) { p.cat = 'kids_girls_eastern'; girlsKidN++; out.push(p); continue; }   // girls-only brand mis-tagged boys (image-confirmed)
+    // One Kids (beoneshopone) encodes kids' gender in the product SLUG: /products/g… = GIRL,
+    // /products/b… = BOY. The harvester defaults its code-named kids to BOYS, so trust the slug:
+    // vision-confirmed 28/30 g-slug items sitting in kids_boys are girls (incl. title-impossible
+    // ones like "Raglan Tee"/"Birds Tee"/"Boiler Suit"); 2 b-slug items sat in kids_girls.
+    if (p.b === 'One Kids' && /^kids_(boys|girls)_/.test(p.cat)) {
+      const _m = (p.u || '').match(/\/products\/([a-z])/i);
+      const _g = _m ? _m[1].toLowerCase() : '';
+      const _suf = (p.cat.match(/_(eastern|western|formal)$/) || [, 'western'])[1];
+      if (_g === 'g' && /^kids_boys_/.test(p.cat)) { p.cat = 'kids_girls_' + _suf; girlsKidN++; out.push(p); continue; }
+      if (_g === 'b' && /^kids_girls_/.test(p.cat)) { p.cat = 'kids_boys_' + _suf; girlsKidN++; out.push(p); continue; }
+    }
     if (/^kids_boys_/.test(p.cat)) {
       const _tb = (p.t||'').toLowerCase();
       const _sz0 = Array.isArray(p.sz) && p.sz.length ? (p.sz[0]||'').trim() : '';
