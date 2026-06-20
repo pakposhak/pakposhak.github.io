@@ -34,6 +34,10 @@ const FWD = {kurti_1pc:'kurti_1pc_unstitch',western_top:'kurti_1pc_unstitch',kaf
 // the title — NOT fabric-material words (suiting / wash-n-wear / gabardine describe a STITCHED
 // men's garment's cloth, so they must NOT flag it unstitched).
 const MEN_STITCHED = new Set(['mens_shirt','mens_trouser','mens_jeans','mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_suit','mens_sherwani']);
+// Girls-only festive brands whose KIDS line is girls — the harvester defaults code-named kids
+// (e.g. Alizeh "AFK-..." design codes, no gender word) to BOYS; the product image confirms they
+// are girls eastern festive. So their kids_boys_* items -> kids_girls_eastern. (Extend as found.)
+const GIRLS_KIDS_BRANDS = new Set(['Alizeh']);
 const menUns = p => isUnsSz(p) || /\bunstitch|un-?stitch|unstiched|ready[\s-]?to[\s-]?stitch|\brts\b/.test(txt(p));
 const REV = {kurti_1pc_unstitch:'kurti_1pc',shirt_dupatta_2pc_unstitch:'shirt_dupatta_2pc',shirt_trouser_2pc_unstitch:'shirt_trouser_2pc',lawn_3pc_unstitch:'pret_3pc',unstitch_3pc_emb:'pret_3pc_emb',winter_2pc_unstitch:'winter_2pc_stitch',winter_3pc_unstitch:'winter_3pc_stitch'};
 const ONE = new Set(['kurti_1pc','western_top','kaftan']);
@@ -129,12 +133,13 @@ const GARMENT_NOUN = /\b(kurti|kurta|kameez|shirt|t-?shirt|tee|polo|dress|gown|f
 // idempotent. MUTATES each kept product's .cat in place and drops accessories / men footwear.
 // Call from the harvester (right before it writes catalog.json) or from the CLI below.
 function cleanupProducts(ps) {
-  let del = 0, footDel = 0, footMove = 0, fwdN = 0, revN = 0, pieceN = 0, menUnsN = 0, menPcN = 0, junkN = 0, womenN = 0;
+  let del = 0, footDel = 0, footMove = 0, fwdN = 0, revN = 0, pieceN = 0, menUnsN = 0, menPcN = 0, junkN = 0, womenN = 0, girlsKidN = 0;
   const out = [];
   for (const p of ps) {
     { const _t = p.t || ''; if (NONAPPAREL_STRONG.test(_t) || (NONAPPAREL_WEAK.test(_t) && !GARMENT_NOUN.test(_t))) { junkN++; continue; } }   // homeware/cosmetics/headwear/innerwear/gifting -> delete
     if (ACC.test(p.t || '') && !GARMENT.test(p.t || '') && p.cat !== 'footwear') { del++; continue; }
     if (FOOT.test(p.t || '') && p.cat !== 'footwear') { if (/^mens_/.test(p.cat)) { footDel++; continue; } p.cat = 'footwear'; footMove++; out.push(p); continue; }
+    if (/^kids_boys_/.test(p.cat) && GIRLS_KIDS_BRANDS.has(p.b)) { p.cat = 'kids_girls_eastern'; girlsKidN++; out.push(p); continue; }   // girls-only brand mis-tagged boys (image-confirmed)
     if (!/^mens_|^kids_/.test(p.cat)) { const wc = womenType(p); if (wc && wc !== p.cat) { p.cat = wc; womenN++; out.push(p); continue; } }   // women: kids/niqab/bottom/tee corrections
     if (isUnstitched(p) && STITCHED.has(p.cat)) { p.cat = fwdCat(p); fwdN++; out.push(p); continue; }
     if (szLetter(p) && REV[p.cat] && !unsTitle(p)) { p.cat = REV[p.cat]; revN++; out.push(p); continue; }
@@ -148,7 +153,7 @@ function cleanupProducts(ps) {
     if (ONE.has(p.cat)) { const nc = pieceCat(p); if (nc && nc !== p.cat) { p.cat = nc; pieceN++; } }
     out.push(p);
   }
-  return { products: out, stats: { junkN, del, footDel, footMove, fwdN, revN, pieceN, menUnsN, menPcN, womenN, before: ps.length, after: out.length } };
+  return { products: out, stats: { junkN, del, footDel, footMove, fwdN, revN, pieceN, menUnsN, menPcN, womenN, girlsKidN, before: ps.length, after: out.length } };
 }
 
 module.exports = { cleanupProducts };
@@ -160,7 +165,7 @@ if (require.main === module) {
   const cat = JSON.parse(fs.readFileSync(FILE, 'utf8'));
   const r = cleanupProducts(cat.products || []);
   const s = r.stats;
-  console.log(`delete-nonapparel=${s.junkN} delete-accessories=${s.del} delete-men-footwear=${s.footDel} move-footwear=${s.footMove} fwd-unstitch=${s.fwdN} rev-stitch=${s.revN} piece-count=${s.pieceN} men-unstitch=${s.menUnsN} men-piece=${s.menPcN} women-type=${s.womenN}`);
+  console.log(`delete-nonapparel=${s.junkN} delete-accessories=${s.del} delete-men-footwear=${s.footDel} move-footwear=${s.footMove} fwd-unstitch=${s.fwdN} rev-stitch=${s.revN} piece-count=${s.pieceN} men-unstitch=${s.menUnsN} men-piece=${s.menPcN} women-type=${s.womenN} girls-kid=${s.girlsKidN}`);
   console.log(`total ${s.before} -> ${s.after}`);
   if (APPLY) { cat.products = r.products; fs.writeFileSync(FILE, JSON.stringify(cat)); console.log('*** WROTE ' + FILE + ' ***'); }
   else console.log('(dry-run — pass "apply" to write)');
