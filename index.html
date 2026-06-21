@@ -744,6 +744,10 @@
     .ps-morebrands a{color:var(--gold);font-weight:700;font-size:0.86rem;text-decoration:none}
     .ps-morebrands a:hover{text-decoration:underline}
     .ps-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @keyframes psSwipeNudge{0%,100%{transform:translateX(0)}15%{transform:translateX(-22px)}30%{transform:translateX(0)}45%{transform:translateX(-13px)}60%{transform:translateX(0)}}
+    .ps-grid.ps-swipenudge{animation:psSwipeNudge 1.5s ease-in-out}
+    #psSwipeCue{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:rgba(11,38,28,0.92);color:#E0C27E;font-size:0.82rem;font-weight:700;padding:8px 16px;border-radius:22px;z-index:60;pointer-events:none;white-space:nowrap;opacity:0;transition:opacity .35s;box-shadow:0 4px 16px rgba(0,0,0,0.28)}
+    #psSwipeCue.show{opacity:1}
     .ps-card{border:1px solid var(--bdr-med);border-radius:11px;overflow:hidden;background:var(--surface);display:flex;flex-direction:column}
     .ps-img{aspect-ratio:3/4;background:var(--raised);position:relative;overflow:hidden;cursor:pointer}
     .ps-img img{width:100%;height:100%;object-fit:cover;display:block}
@@ -6646,6 +6650,7 @@
       empty.style.display = 'none';
       grid.innerHTML = psFiltered.map((p,i) => psCard(p, i)).join('');   // page-relative idx — psAdd/psDetail index psFiltered
       document.getElementById('psPager').innerHTML = psPagerHtml(Math.max(1, Math.ceil(total / psPageSize())));
+      psSwipeHintMaybe();
       return;
     }
     const total = psFiltered.length;
@@ -6658,6 +6663,7 @@
     const start = psPage * ps;
     grid.innerHTML = psFiltered.slice(start, start + ps).map((p,i) => psCard(p, start + i)).join('');
     document.getElementById('psPager').innerHTML = psPagerHtml(pages);
+    psSwipeHintMaybe();
   }
   // When the page dropdown opens: scroll the current page into view (365 pages → long
   // list) and close it on an outside click/tap (so it behaves like a native select).
@@ -6695,6 +6701,26 @@
       else { if(psPage > 0) psGo(-1); }                                     // swipe right → previous
     }, { passive: true });
   })();
+  // Discoverability: the first few times a buyer lands on a multi-page grid (touch
+  // devices), nudge it sideways + flash a cue so they learn they can swipe. ≤3×/session.
+  function psSwipeHintMaybe(){
+    try{
+      if(!(navigator.maxTouchPoints > 0 || 'ontouchstart' in window)) return;   // swipe is touch-only
+      if(psPage !== 0 || psMaxPage() < 1) return;                                 // only on page 1 when more pages exist
+      var n = +(sessionStorage.getItem('psb_swipehint') || 0);
+      if(n >= 3) return;
+      sessionStorage.setItem('psb_swipehint', n + 1);
+      var g = document.getElementById('psGrid');
+      if(g){ g.classList.remove('ps-swipenudge'); void g.offsetWidth; g.classList.add('ps-swipenudge');
+        setTimeout(function(){ if(g) g.classList.remove('ps-swipenudge'); }, 1700); }
+      var cue = document.getElementById('psSwipeCue');
+      if(!cue){ cue = document.createElement('div'); cue.id = 'psSwipeCue'; document.body.appendChild(cue); }
+      cue.textContent = (typeof _lang !== 'undefined' && _lang === 'bn') ? '👈 আরও দেখতে সোয়াইপ করুন' : '👈 Swipe for more';
+      cue.classList.add('show');
+      clearTimeout(window._psCueT);
+      window._psCueT = setTimeout(function(){ cue.classList.remove('show'); }, 2400);
+    }catch(e){}
+  }
 
   // Tap a product → hand its URL to the proven live add pipeline (verifies
   // price/stock/category live, then the buyer picks size and saves to the cart).
@@ -7109,7 +7135,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-20z';
+  const PSB_BUILD = '2026-06-20z2';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
