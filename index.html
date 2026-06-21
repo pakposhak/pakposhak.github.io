@@ -2762,7 +2762,12 @@
       // catalogue (new / unharvested products). See search-server.js /search/by-url.
       let catalogCat = null;
       try{
-        const _cr = await fetch(relayBase() + '/search/by-url?u=' + encodeURIComponent(url), { signal: ctrl.signal, cache: 'no-store' });
+        // Use a fresh AbortController — the page's `ctrl` is block-scoped to the fetch branch above
+        // and is OUT OF SCOPE here; referencing ctrl.signal threw a ReferenceError that the empty
+        // catch swallowed, so by-url silently never ran and every item fell back to the guesser.
+        const _bc = new AbortController(); const _bt = setTimeout(() => _bc.abort(), 8000);
+        const _cr = await fetch(relayBase() + '/search/by-url?u=' + encodeURIComponent(url), { signal: _bc.signal, cache: 'no-store' });
+        clearTimeout(_bt);
         if(_cr.ok){ const _cj = await _cr.json(); if(_cj && _cj.found && _cj.cat) catalogCat = _cj.cat; }
       }catch(e){}
       // Women/kids fallback: classify from type+title+tags with the SAME logic the catalog
@@ -7183,7 +7188,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-21c';
+  const PSB_BUILD = '2026-06-21d';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
