@@ -141,10 +141,15 @@ function handleSearch(u, res){
   // women-pret-first + girls/sale interleave + brand diversity) is the final tiebreaker.
   const PRETLEAD = "(CASE WHEN p.cat IN ('pret_3pc','pret_3pc_emb','pret_2pc_emb') THEN 0 ELSE 1 END)";
   const sort = q.get('sort') || '';
+  // New is a FILTER (newest non-sale items) that the price sort orders WITHIN — so New and a
+  // ৳ price sort STACK (multilevel: New + Low→High = newest arrivals, cheapest first). Legacy
+  // clients that still send sort=new are treated as the same New filter (newest-first).
+  const newOnly = q.get('new') === '1' || sort === 'new';
+  if (newOnly) where.push('p.sale = 0');
   let orderBy = 'p.ord ASC';   // default landing already leads women-pret via p.ord
   if (sort === 'asc') orderBy = PRETLEAD + ' ASC, p.bdt ASC, p.ord ASC';
   else if (sort === 'desc') orderBy = PRETLEAD + ' ASC, p.bdt DESC, p.ord ASC';
-  else if (sort === 'new') { where.push('p.sale = 0'); orderBy = PRETLEAD + ' ASC, p.pub DESC, p.ord ASC'; }
+  else if (newOnly) orderBy = PRETLEAD + ' ASC, p.pub DESC, p.ord ASC';   // New + no price sort → newest first
 
   // Age/size BOOST ("boys 14" → 14Y-sized boys items first). Floats products whose size list
   // contains the typed token to the top, keeping everything else after. Alphanumeric-validated
@@ -161,7 +166,7 @@ function handleSearch(u, res){
   // re-harvesting. The multiplier is always large so low-ord women-pret items actually rotate,
   // and consecutive seeds jump far apart. Seed-gated → no seed = byte-identical to the default.
   const _seed = q.get('seed');
-  if (_seed != null && /^[0-9]{1,15}$/.test(_seed) && !sort && !fts && !cats.length && !brands.length && !pidx.length && q.get('sale') !== '1' && !/^[a-z0-9]{1,4}$/.test(sizeBoost) && ORD_N > 1) {
+  if (_seed != null && /^[0-9]{1,15}$/.test(_seed) && !sort && q.get('new') !== '1' && !fts && !cats.length && !brands.length && !pidx.length && q.get('sale') !== '1' && !/^[a-z0-9]{1,4}$/.test(sizeBoost) && ORD_N > 1) {
     const _mult = 2000003 + ((parseInt(_seed, 10) * 524287) % 1000000);
     orderBy = PRETLEAD + ' ASC, (((p.ord + 1) * ' + _mult + ') % 2147483647) ASC, p.ord ASC';
   }
