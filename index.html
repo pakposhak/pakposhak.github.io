@@ -1881,10 +1881,6 @@
       return s + (it.sizes || [{qty:1}]).reduce(function(a, q){ return a + (q.qty || 0); }, 0);
     }, 0);
   }
-  // ── PER-SIZE PRICING ─────────────────────────────────────────────────────
-  // Size-priced products (kids age-sizing) store each size row's OWN pkr. These helpers make every
-  // total / summary / order payload bill each size at its own price. Falls back to item.pkr for
-  // single-price products + old saved carts (rows without a .pkr).
   function _rowPkr(item, row){ return (row && row.pkr != null) ? row.pkr : item.pkr; }
   function itemPkrSubtotal(item){ return (item.sizes || [{qty:1}]).reduce(function(s, row){ return s + (_rowPkr(item, row) * (row.qty || 0)); }, 0); }
   function itemPriceVaries(item){ const real = (item.sizes || []).filter(function(r){ return r.size; }); return new Set(real.map(function(r){ return _rowPkr(item, r); })).size > 1; }
