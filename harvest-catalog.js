@@ -171,8 +171,11 @@ const COLLECTIONS = [
   ['Zuruj','www.zuruj.com','w',20,[['casual-khussa','footwear'],['bow-khussa','footwear'],['casual-kolhapuri','footwear']]],
   ['Zuruj','www.zuruj.com','w',30,[['stiched',null],['3-piece-unstitched',null],['co-ord-sets',null]]],
   // Kaftans — a hot category; force the collection (titles are kaftan design names)
-  ['Silayi Pret','silayipret.com','w',80,[['kaftaan','kaftan']]],
+  ['Silayi Pret','silayipret.com','w',80,[['kaftaan','kaftan'],['kaftaans','kaftan']]],   // 2 handles union-merge → ~21 unique
   ['Lulusar','lulusar.com','w',35,[['kaftan','kaftan'],['flat-70-kaftan','kaftan']]],
+  ['Ammara Khan','ammarakhan.com','p',30,[['luxury-kaftans','kaftan']]],                   // AK Kaftans: 24 live, only 10 in catalog
+  ['Mina Hasan','minahasan.com','p',35,[['kaftan','kaftan'],['luxury-pret-kaftan','kaftan'],['signature-pret-kaftan','kaftan']]],  // 3 handles ~25-30 unique; 7 in catalog
+  ['Saira Rizwan','sairarizwan.pk','p',15,[['kaftan-edit-2026','kaftan'],['co-ords-kaftan',null]]],  // 7+5; co-ords-kaftan → mapCat decides
   // J. Junaid Jamshed — menswear ONLY (req)
   ['J. Junaid Jamshed','www.junaidjamshed.com','m',60,[['men-collections',null]]],
   // bridal / lehenga top-ups — the COLLECTION is the category, so force it
@@ -773,6 +776,15 @@ async function harvestKidsBrand(name, host){
     await sleep(500);
   }
   if(!KIDS_ONLY){
+    // COLLECTIONS before SHOPIFY so force-category entries (kaftan, bridal, lehenga)
+    // win the URL-dedup over the whole-store generic mapCat result. (KIDS still leads.)
+    for(const entry of COLLECTIONS){
+      process.stdout.write(`• ${entry[0]} (collection) … `);
+      const items = await harvestCollections(entry);
+      console.log(`${items.length}`);
+      all.push(...items);
+      await sleep(500);
+    }
     for(const [name, host, group] of SHOPIFY){
       process.stdout.write(`• ${name} … `);
       const items = await harvestShopify(name, host, group);
@@ -785,13 +797,6 @@ async function harvestKidsBrand(name, host){
       const items = await harvestSfcc(brand);
       console.log(`${items.length}`);
       all.push(...items);
-    }
-    for(const entry of COLLECTIONS){
-      process.stdout.write(`• ${entry[0]} (collection) … `);
-      const items = await harvestCollections(entry);
-      console.log(`${items.length}`);
-      all.push(...items);
-      await sleep(500);
     }
   }
   // de-dupe by product URL (a brand's bridal collection overlaps its main feed)
