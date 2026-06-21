@@ -37,7 +37,11 @@ const MEN_STITCHED = new Set(['mens_shirt','mens_trouser','mens_jeans','mens_kur
 // Girls-only festive brands whose KIDS line is girls — the harvester defaults code-named kids
 // (e.g. Alizeh "AFK-..." design codes, no gender word) to BOYS; the product image confirms they
 // are girls eastern festive. So their kids_boys_* items -> kids_girls_eastern. (Extend as found.)
-const GIRLS_KIDS_BRANDS = new Set(['Alizeh']);
+// Girls-only kids labels the harvester defaults to BOYS (code-named items, no gender word).
+// Alizeh = festive girls brand. ETHNC (Ethnic by Outfitters) = women's + girls' label with NO
+// boys line — vision-confirmed its kids_boys (co-ord sets, jumpsuits, tights, tees) are all on
+// girl models, and 0 ETHNC items carry a "boy" title. Move kids_boys_* → kids_girls_* (keep suffix).
+const GIRLS_KIDS_BRANDS = new Set(['Alizeh', 'ETHNC']);
 // Women-first brands that ALSO carry a men's line which the harvester (no men cat for them) dumps
 // into the women 2-piece cats. Vision-confirmed WHOLE-category (not per image): every "Shalwar
 // Kameez" / "Kurta Shalwar" / "Kurta with Trouser" 2pc listing of these brands is their MENSWEAR.
@@ -262,7 +266,7 @@ function cleanupProducts(ps) {
         explicitN++; out.push(p); continue;
       }
     }
-    if (/^kids_boys_/.test(p.cat) && GIRLS_KIDS_BRANDS.has(p.b)) { p.cat = 'kids_girls_eastern'; girlsKidN++; out.push(p); continue; }   // girls-only brand mis-tagged boys (image-confirmed)
+    if (/^kids_boys_/.test(p.cat) && GIRLS_KIDS_BRANDS.has(p.b)) { p.cat = p.cat.replace('kids_boys_', 'kids_girls_'); girlsKidN++; out.push(p); continue; }   // girls-only brand mis-tagged boys (image-confirmed); keep eastern/western/formal suffix
     // One Kids (beoneshopone) encodes kids' gender in the product SLUG: /products/g… = GIRL,
     // /products/b… = BOY. The harvester defaults its code-named kids to BOYS, so trust the slug:
     // vision-confirmed 28/30 g-slug items sitting in kids_boys are girls (incl. title-impossible
