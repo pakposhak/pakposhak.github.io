@@ -1778,6 +1778,11 @@
         font-weight:700;font-size:0.88rem;cursor:pointer;height:36px">
         Save Rates
       </button>
+      <button id="changePwBtn" onclick="changeAdminPassword()"
+        style="padding:8px 16px;background:transparent;color:var(--gold);border:1px solid var(--gold);border-radius:6px;
+        font-weight:700;font-size:0.82rem;cursor:pointer;height:36px;margin-left:8px">
+        🔑 Change password
+      </button>
     </div>
     <div style="font-size:0.7rem;color:var(--txt-muted);margin-top:8px">
       🌐 Saved to your Pakistan VPS — changes apply to <strong>every customer and device instantly</strong>. Protected by your admin password. Open anytime via <em>your-form-url<strong>?admin</strong></em>.
@@ -1977,6 +1982,23 @@
         else alert('Wrong password.');
       }
     }catch(e){ alert('Could not reach the relay to check the password — try again in a moment.'); }
+  }
+
+  // Rotate the admin password (relay-backed). Verifies the CURRENT password on the relay,
+  // then sets the new one — applies to every device. Needs the relay's /admin/change endpoint.
+  async function changeAdminPassword(){
+    const cur = prompt('Enter your CURRENT admin password:'); if(!cur) return;
+    const np1 = prompt('Enter a NEW admin password:'); if(!np1) return;
+    const np2 = prompt('Re-enter the NEW password:'); if(np2 !== np1){ alert('The new passwords did not match — nothing changed. Try again.'); return; }
+    try{
+      const curH = await sha256hex(cur), newH = await sha256hex(np1);
+      const res = await fetch(relayBase()+'/admin/change',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash:curH,newHash:newH})});
+      if(res.status === 404){ alert('Your relay needs updating first. Update relay-server.js on your VPS and restart it (sudo systemctl restart psb-relay), then try again.'); return; }
+      if(res.status === 401){ alert('That CURRENT password is wrong — nothing was changed.'); return; }
+      const j = await res.json();
+      if(j && j.ok){ sessionStorage.setItem('psb_admin_h', newH); alert('✓ Password changed. Use your NEW password from now on — it applies on every device.'); }
+      else alert('Could not change the password: ' + ((j && j.error) || 'relay error'));
+    }catch(e){ alert('Could not reach the relay — check your internet and try again.'); }
   }
 
   // NOTE: the ?admin auto-open is fired at the very END of the script — calling
