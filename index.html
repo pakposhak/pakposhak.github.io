@@ -663,9 +663,11 @@
     .bb-search-hint{font-size:0.74rem;color:var(--txt-muted);margin-top:7px}
     .bb-search-hint:empty{display:none}
     .bb-search-hint b{color:var(--gold)}
-    /* MOBILE (req): Browse Brands is ONE view — hide the Store-Types sub-tab toggle
-       and the "two ways" line; the 5 department tabs live in the Product view. */
-    @media(max-width:819px){ .bb-subtabs, .bb-two-ways{display:none} }
+    /* Browse Brands is ONE unified view on EVERY width now (Store Types retired from the
+       page — its source is kept in-file + git-tagged `store-types-model-20260621` for a
+       future restore). Hide the sub-tab toggle, the "two ways" line, the Store-Types
+       mega-menu, and its brand-name search at all widths. */
+    .bb-subtabs, .bb-two-ways, #bbStore, #brandSearchSection{display:none}
     .bb-grp{margin-bottom:16px}
     .bb-grp-h{font-size:0.8rem;font-weight:800;color:var(--gold);margin-bottom:8px;letter-spacing:0.3px}
     .bb-prow{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
@@ -6232,9 +6234,9 @@
     if(tp) tp.style.display = brands ? 'none' : '';
     document.getElementById('bt-brands').classList.toggle('on', brands);
     document.getElementById('bt-products').classList.toggle('on', !brands);
-    // Mobile: Browse Brands is the single unified Product-Category view (no Store
-    // Types sub-tab), so force it active when entering (req). Desktop keeps both.
-    if(brands && bbIsMobile()) bbSwitch('product');
+    // Browse Brands is the single unified Product-Category view on EVERY width now
+    // (Store Types retired from the page; its source is kept + git-tagged for restore).
+    if(brands) bbSwitch('product');
     if(!brands) psEnsureLoaded();
     updatePasteFab();
     try{ localStorage.setItem('psb_browse', which); }catch(e){}   // remember tab so we return to it (req #7)
@@ -7196,10 +7198,10 @@
       body.innerHTML = `<div class="bb-prod-empty">${tr('bb_loading')}</div>`;
       return;
     }
-    // Tab row — mobile shows the 5 store-type departments (Kids first); desktop the
-    // 3 gender tabs. Keep the active key valid if the viewport crossed the boundary.
+    // Tab row — the 5 store-type departments (Kids first) on EVERY width, so desktop
+    // matches mobile exactly. Keep the active key valid if it isn't in this set.
     _bbWasMobile = bbIsMobile();
-    const tabs = _bbWasMobile ? BB_TABS_MOBILE : BB_GENDERS;
+    const tabs = BB_TABS_MOBILE;
     if(_bbGender && !tabs.some(t => t[0] === _bbGender)) _bbGender = 'w';
     gtabs.innerHTML = tabs.map(([g,k]) =>
       `<button type="button" class="bb-gtab${_bbGender===g?' on':''}" onclick="bbPickGender('${g}')">${tr(k)}</button>`).join('');
@@ -7223,7 +7225,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-21e';
+  const PSB_BUILD = '2026-06-21f';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
