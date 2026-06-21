@@ -310,6 +310,19 @@ const server = http.createServer(async (req, res) => {
     return send(res, 200, { ok: !!CONFIG.adminHash && !!b && isHash(b.hash) && b.hash.toLowerCase() === CONFIG.adminHash }, co);
   }
 
+  // Rotate the admin password. Authenticated by the CURRENT password hash (so only the
+  // existing admin can change it) → replaces it with newHash. Lets the password be rotated
+  // anytime without a VPS edit (setup is locked once a password exists). Rate-limited.
+  if(u.pathname === '/admin/change' && req.method === 'POST'){
+    const co = corsOrigin(req, true);
+    if(rateLimited(req)) return send(res, 429, { ok:false, error:'too many attempts — try again later' }, co);
+    const b = await readBody(req);
+    if(!b || !isHash(b.hash) || !isHash(b.newHash)) return send(res, 400, { ok:false, error:'bad hash' }, co);
+    if(!CONFIG.adminHash || b.hash.toLowerCase() !== CONFIG.adminHash) return send(res, 401, { ok:false, error:'unauthorized' }, co);
+    CONFIG.adminHash = b.newHash.toLowerCase(); CONFIG.updatedAt = new Date().toISOString();
+    return send(res, saveConfig() ? 200 : 500, { ok: !!CONFIG.adminHash }, co);
+  }
+
   if(u.pathname === '/config' && req.method === 'POST'){
     const co = corsOrigin(req, true);
     if(rateLimited(req)) return send(res, 429, { ok:false, error:'too many attempts — try again later' }, co);
