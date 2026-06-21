@@ -674,6 +674,7 @@
     .bb-chip:hover{border-color:var(--gold);color:var(--gold)}
     .bb-chip.bb-more{background:var(--gold-dim);border-color:var(--gold-bdr);color:var(--gold);font-weight:700}
     .bb-prod-empty{font-size:0.84rem;color:var(--txt-muted);padding:18px 4px}
+    .bb-prod-empty.bb-pickprompt{text-align:center;font-size:1.08rem;font-weight:700;color:var(--txt);padding:36px 20px;line-height:1.55;max-width:440px;margin:0 auto}
     /* third-tier club dropdown beside each group heading */
     .bb-grp-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;flex-wrap:wrap}
     .bb-grp-head .bb-grp-h{margin-bottom:0}
@@ -4343,7 +4344,17 @@
     // the tap's user-activation, so a later inp.focus() can't open the keyboard.
     // So on iOS bring the box into view + focus it NOW (inside the tap) — the user
     // long-presses → Paste, and the box's paste-listener (below) auto-submits.
-    if(isIOS){ focusToPaste(); return; }
+    if(isIOS){
+      // Try the clipboard first (iOS 13.4+ shows a "Paste" button → returns the link
+      // → one tap). If it yields no link / is blocked, fall back to the manual box.
+      if(navigator.clipboard && navigator.clipboard.readText){
+        navigator.clipboard.readText().then(function(txt){
+          var mm = txt && txt.match(/https?:\/\/[^\s"'<>]+/i);
+          if(mm){ inp.value = mm[0].trim(); addFn(); } else { focusToPaste(); }
+        }).catch(function(){ focusToPaste(); });
+      } else { focusToPaste(); }
+      return;
+    }
     let txt = '', readOk = false;
     try{
       if(navigator.clipboard && navigator.clipboard.readText){
@@ -6661,6 +6672,29 @@
   function psGo(d){ psPage += d; if(psPage < 0) psPage = 0; if(psApiMode) psApiFetch(); else psRender(); psScrollToResults(); }
   function psJump(v){ psPage = parseInt(v, 10) || 0; if(psApiMode) psApiFetch(); else psRender(); psScrollToResults(); }
   function psScrollToResults(){ const g=document.getElementById('psCount'); if(g) window.scrollTo({top: g.getBoundingClientRect().top + window.scrollY - 64, behavior:'smooth'}); }
+  // Swipe LEFT on the product grid → next page, swipe RIGHT → previous (alongside the
+  // Prev/Next buttons). Guarded so it never pages past the ends.
+  function psMaxPage(){
+    var per = (typeof psPageSize === 'function' ? psPageSize() : 12);
+    var total = psApiMode ? (psApiTotal || 0) : ((psFiltered && psFiltered.length) || 0);
+    return Math.max(0, Math.ceil(total / per) - 1);
+  }
+  (function(){
+    var x0 = null, y0 = null;
+    document.addEventListener('touchstart', function(e){
+      var g = document.getElementById('psGrid');
+      if(!g || !g.contains(e.target) || e.touches.length !== 1){ x0 = null; return; }
+      x0 = e.touches[0].clientX; y0 = e.touches[0].clientY;
+    }, { passive: true });
+    document.addEventListener('touchend', function(e){
+      if(x0 === null) return;
+      var t = e.changedTouches[0], dx = t.clientX - x0, dy = t.clientY - y0;
+      x0 = null;
+      if(Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.7) return;   // not a clean horizontal swipe
+      if(dx < 0){ if(psPage < psMaxPage()) psGo(1); }                       // swipe left → next page
+      else { if(psPage > 0) psGo(-1); }                                     // swipe right → previous
+    }, { passive: true });
+  })();
 
   // Tap a product → hand its URL to the proven live add pipeline (verifies
   // price/stock/category live, then the buyer picks size and saves to the cart).
@@ -7057,7 +7091,7 @@
       `<button type="button" class="bb-gtab${_bbGender===g?' on':''}" onclick="bbPickGender('${g}')">${tr(k)}</button>`).join('');
     // No tab picked AND nothing typed → the search-first prompt. With a query we fall
     // through and search across ALL brands (req — the search works without a tab).
-    if(!_bbGender && (_bbQuery || '').trim().length < 2){ bbSetHint('', null, null); body.innerHTML = `<div class="bb-prod-empty">${tr('bb_pick_gender')}</div>`; return; }
+    if(!_bbGender && (_bbQuery || '').trim().length < 2){ bbSetHint('', null, null); body.innerHTML = `<div class="bb-prod-empty bb-pickprompt">${tr('bb_pick_gender')}</div>`; return; }
     const brands = bbBrandsForView();
     const cats = (_bbGender === 'w' || _bbGender === 'm' || _bbGender === 'k') ? [...bbGenderCats(_bbGender)] : null;
     const cntOf = b => cats ? bbStrength(b.n, cats) : ((_bbCnt && _bbCnt[b.n]) || 0);   // count shown = strength in THIS category
@@ -7075,7 +7109,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-20y';
+  const PSB_BUILD = '2026-06-20z';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
