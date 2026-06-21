@@ -25,6 +25,7 @@ const DB_PATH = process.env.PSB_DB || path.join(__dirname, 'search.db');
 const BUCKETS = [[0, 3000], [3000, 4500], [4500, 6000], [6000, 8000], [8000, 10000], [10000, 1e12]];
 
 let db = null;
+let ORD_N = 0;   // MAX(ord)+1 — rotation modulus base; recomputed on each DB (re)open
 function openDb(){
   try {
     const ndb = new Database(DB_PATH, { readonly: true, fileMustExist: true });
@@ -32,6 +33,7 @@ function openDb(){
     const old = db; db = ndb;
     if (old) { try { old.close(); } catch (e) {} }
     console.log('opened', DB_PATH, '—', db.prepare('SELECT count(*) c FROM products').get().c, 'products');
+    try { ORD_N = db.prepare('SELECT IFNULL(MAX(ord),0)+1 n FROM products').get().n; } catch (e) { ORD_N = 0; }
   } catch (e) { console.error('openDb failed:', e.message); }
 }
 openDb();
@@ -149,6 +151,17 @@ function handleSearch(u, res){
 
   const fts = ftsQuery(q.get('q'));
   if (fts) { where.push('p.id IN (SELECT rowid FROM products_fts WHERE products_fts MATCH ?)'); args.push(fts); }
+
+  // 90s landing rotation: ?seed=N on the PLAIN landing (no q / sort / filter / sale / size)
+  // rotates WHICH curated products lead — women-pret still leads (PRETLEAD), but a seeded
+  // multiplicative hash of p.ord shuffles the order so the page feels fresh ~every 90s without
+  // re-harvesting. The multiplier is always large so low-ord women-pret items actually rotate,
+  // and consecutive seeds jump far apart. Seed-gated → no seed = byte-identical to the default.
+  const _seed = q.get('seed');
+  if (_seed != null && /^[0-9]{1,15}$/.test(_seed) && !sort && !fts && !cats.length && !brands.length && !pidx.length && q.get('sale') !== '1' && !/^[a-z0-9]{1,4}$/.test(sizeBoost) && ORD_N > 1) {
+    const _mult = 2000003 + ((parseInt(_seed, 10) * 524287) % 1000000);
+    orderBy = PRETLEAD + ' ASC, (((p.ord + 1) * ' + _mult + ') % 2147483647) ASC, p.ord ASC';
+  }
 
   const whereSql = where.length ? ('WHERE ' + where.join(' AND ')) : '';
   let page = parseInt(q.get('page') || '0', 10); if (!(page >= 0)) page = 0;
