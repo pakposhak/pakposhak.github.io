@@ -6255,7 +6255,7 @@
       PS_CATALOG = arr;
       var _r = getRates(), _wW = {};
       var _wOf = function(c){ return _wW[c] != null ? _wW[c] : (_wW[c] = (typeof getWeight === 'function' ? getWeight(c) : 0.5)); };
-      PS_CATALOG.forEach(function(p){ var _pb = Math.round(p.pkr * _r.CONV_RATE); p._bdt = _pb + Math.round(_pb * (_r.COMM_1 || 0)) + Math.round(_wOf(p.cat) * _r.LOG_RATE) + (_r.TRANS_FEE || 0); });
+      PS_CATALOG.forEach(function(p){ var _pb = Math.round(p.pkr * _r.CONV_RATE); p._bdt = _pb + Math.round(_pb * (_r.COMM_1 || 0)) + Math.round(_wOf(p.cat) * _r.LOG_RATE); });
       psLoaded = true; psLoading = false;
       psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psPruneSoldOut(); psApply(); psUpdateNote();
       psFlushReady();
@@ -6284,7 +6284,7 @@
     if(!PS_CATALOG || !PS_CATALOG.length) return;
     var _r = getRates(), _wW = {};
     var _wOf = function(c){ return _wW[c] != null ? _wW[c] : (_wW[c] = (typeof getWeight === 'function' ? getWeight(c) : 0.5)); };
-    PS_CATALOG.forEach(function(p){ var _pb = Math.round(p.pkr * _r.CONV_RATE); p._bdt = _pb + Math.round(_pb * (_r.COMM_1 || 0)) + Math.round(_wOf(p.cat) * _r.LOG_RATE) + (_r.TRANS_FEE || 0); });
+    PS_CATALOG.forEach(function(p){ var _pb = Math.round(p.pkr * _r.CONV_RATE); p._bdt = _pb + Math.round(_pb * (_r.COMM_1 || 0)) + Math.round(_wOf(p.cat) * _r.LOG_RATE); });
     if(psLoaded && typeof psApply === 'function') psApply();
   }
 
@@ -6626,14 +6626,14 @@
   // Per-card estimated landed ৳BDT (product + base commission + weight×logistics).
   function estLandedBdt(pkr, cat){
     const r = getRates();
-    // Compute component-wise with the SAME rounding the basket total uses (renderCart), and include
-    // the flat transaction fee, so the Browse card price == the order total for a single item
-    // (100% match). For multi-item carts the fee is charged once, so the basket total is slightly
-    // LESS than the sum of per-item cards — never more.
+    // The PRODUCT price delivered to Bangladesh, BEFORE the per-order ৳100 transaction fee — this is
+    // the number shown on the Browse card. Component-wise rounding MATCHES the basket total
+    // (renderCart) so the basket = this card price + ৳100 exactly for a single item (buyer sees the
+    // listed price, then +৳100 transaction fee at checkout).
     const productBdt = Math.round(pkr * r.CONV_RATE);
     const commission = Math.round(productBdt * (r.COMM_1 || 0));
     const logistics  = Math.round((typeof getWeight === 'function' ? getWeight(cat) : 0.5) * r.LOG_RATE);
-    return productBdt + commission + logistics + (r.TRANS_FEE || 0);
+    return productBdt + commission + logistics;
   }
 
   // Return a ~400px-wide thumbnail URL for the grid (full-res stays in the enlarge view).

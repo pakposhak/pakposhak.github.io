@@ -76,11 +76,11 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
     kids_boys_eastern:0.50, kids_girls_eastern:0.48, kids_boys_western:0.50, kids_girls_western:0.45,
     kids_boys_formal:0.60, kids_girls_formal:0.60, kids_infant:0.35,
   };
-  const TRANS_FEE = 100;
   const wOf = c => (weights[c] != null ? weights[c] : (DEFAULT_WEIGHTS[c] != null ? DEFAULT_WEIGHTS[c] : 0.6));
-  // landed ৳ — IDENTICAL to the app's estLandedBdt + basket total: component-wise rounding
-  // (productBdt, commission, logistics rounded separately) + the flat transaction fee.
-  const landed = (pkr, c) => { const pb = Math.round(pkr * conv); return pb + Math.round(pb * comm1) + Math.round(wOf(c) * log) + TRANS_FEE; };
+  // landed ৳ — IDENTICAL to the app's estLandedBdt (the Browse card "product price"): component-wise
+  // rounding (productBdt, commission, logistics rounded separately), BEFORE the per-order ৳100 fee.
+  // The basket adds the fee once → basket total = this + ৳100 for a single item.
+  const landed = (pkr, c) => { const pb = Math.round(pkr * conv); return pb + Math.round(pb * comm1) + Math.round(wOf(c) * log); };
 
   let products = (cat.products || []).filter(p => p && p.u && p.pkr && p.img);
 
