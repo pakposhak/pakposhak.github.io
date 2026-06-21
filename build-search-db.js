@@ -60,16 +60,27 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
   const conv = rates.conv != null ? rates.conv : 0.455;
   const log  = rates.log  != null ? rates.log  : 1600;
   const comm1 = (rates.comm_1 != null ? rates.comm_1 : 22) / 100;   // config stores percent
-  // Per-category fallback weights (kg) for when the relay config doesn't carry one —
-  // must match the app's DEFAULT_WEIGHTS for the kids 7-cat taxonomy so the search.db
-  // landed ৳ equals what the app computes. Relay config weights still override these.
+  // Per-category fallback weights (kg) for when the relay config doesn't carry one. MUST match the
+  // app's DEFAULT_WEIGHTS (index.html) exactly so the search.db landed ৳ (price filter) equals what
+  // the app computes. Relay config weights still override these (config has all 53 → fallback rare).
   const DEFAULT_WEIGHTS = {
-    kids_boys_eastern: 0.50, kids_girls_eastern: 0.48, kids_boys_western: 0.50,
-    kids_girls_western: 0.45, kids_boys_formal: 0.60, kids_girls_formal: 0.60, kids_infant: 0.35,
+    kurti_1pc:0.61, kurti_1pc_unstitch:0.55, western_top:0.45, womens_trouser:0.70, kaftan:0.90,
+    shirt_dupatta_2pc:0.70, shirt_dupatta_2pc_unstitch:0.62, shirt_trouser_2pc:0.85, shirt_trouser_2pc_unstitch:0.75,
+    pret_2pc_emb:0.95, lawn_3pc_unstitch:0.94, unstitch_3pc_emb:1.10, pret_3pc:1.04, pret_3pc_emb:1.25,
+    winter_2pc_unstitch:0.99, winter_2pc_stitch:1.19, winter_3pc_unstitch:1.23, winter_3pc_stitch:1.43,
+    formal_emb_2pc:1.18, formal_emb_3pc:1.45, heavy_formal_3pc:1.73, handmade_emb:2.50, bridal:2.55,
+    saree:1.15, lehenga:1.80, coord_western:0.80, loungewear:0.75, abaya:0.95, maxi_dress:0.80,
+    dupatta_only:0.46, shawl:0.87, footwear:1.10, accessories:0.50,
+    mens_shirt:0.63, mens_trouser:0.85, mens_jeans:1.04, mens_kurta:0.85, mens_shalwar_kameez:1.18,
+    mens_waistcoat:0.78, mens_suit:1.81, mens_sherwani:2.24, mens_unstitched:1.30,
+    kids_boys_eastern:0.50, kids_girls_eastern:0.48, kids_boys_western:0.50, kids_girls_western:0.45,
+    kids_boys_formal:0.60, kids_girls_formal:0.60, kids_infant:0.35,
   };
+  const TRANS_FEE = 100;
   const wOf = c => (weights[c] != null ? weights[c] : (DEFAULT_WEIGHTS[c] != null ? DEFAULT_WEIGHTS[c] : 0.6));
-  // landed ৳ — identical to the app's estLandedBdt: pkr*conv*(1+comm1) + weight*log
-  const landed = (pkr, c) => Math.round(pkr * conv * (1 + comm1) + wOf(c) * log);
+  // landed ৳ — IDENTICAL to the app's estLandedBdt + basket total: component-wise rounding
+  // (productBdt, commission, logistics rounded separately) + the flat transaction fee.
+  const landed = (pkr, c) => { const pb = Math.round(pkr * conv); return pb + Math.round(pb * comm1) + Math.round(wOf(c) * log) + TRANS_FEE; };
 
   let products = (cat.products || []).filter(p => p && p.u && p.pkr && p.img);
 

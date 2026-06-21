@@ -90,19 +90,22 @@ function handleBrandIndex(res){
 // AUTHORITATIVE category-by-URL lookup. Given a product URL (or PK-twin URL) the order form
 // returns the SAME catalogue category the Browse card shows — so the basket weight/price matches
 // the pic exactly, instead of the order form re-guessing (which has no kids signal for neutral
-// titles like "Basic T-Shirt"). Matches on the Shopify /products/<handle> (host-disambiguated),
-// ignoring ?variant= and www/twin-host differences. Returns {found, cat, bdt, b, sz}.
+// titles like "Basic T-Shirt"). Matches on the LAST path segment (the product handle for Shopify
+// /products/<handle> AND the .html file for SFCC brands like Khaadi/Sapphire) → 100% URL coverage,
+// host-disambiguated, ignoring ?variant= and www/twin-host differences. Returns {found,cat,bdt,b,sz}.
+function lastSeg(pathname){ const s = (pathname || '').split('/').filter(Boolean); return s.length ? s[s.length - 1].toLowerCase() : ''; }
 function handleByUrl(u, res){
   if (!db) return send(res, 503, { error: 'search db not ready' });
   const raw = u.searchParams.get('u') || '';
-  let handle = '', host = '';
-  try { const x = new URL(raw); host = x.hostname.replace(/^www\./, '').toLowerCase(); const m = x.pathname.match(/\/products\/([^\/?#]+)/i); handle = m ? m[1].toLowerCase() : ''; }
-  catch (e) { const m = String(raw).match(/\/products\/([^\/?#]+)/i); handle = m ? m[1].toLowerCase() : ''; }
-  if (!/^[a-z0-9._-]{2,140}$/.test(handle)) return send(res, 200, { found: false });
+  let seg = '', host = '';
+  try { const x = new URL(raw); host = x.hostname.replace(/^www\./, '').toLowerCase(); seg = lastSeg(x.pathname); }
+  catch (e) { seg = lastSeg(String(raw).replace(/[?#].*$/, '')); }
+  if (!/^[a-z0-9._%+-]{2,160}$/.test(seg)) return send(res, 200, { found: false });
   try {
-    const cand = db.prepare("SELECT b,u,cat,bdt,sz FROM products WHERE u LIKE ? COLLATE NOCASE").all('%/products/' + handle + '%');
-    // keep only EXACT-handle matches (LIKE '%handle%' could prefix-match a longer handle)
-    const exact = cand.filter(r => { const m = (r.u || '').toLowerCase().match(/\/products\/([^\/?#]+)/); return m && m[1] === handle; });
+    // LIKE is a cheap prefilter (its _ / % wildcards may over-match); the exact lastSeg=== check below
+    // is the authority. Parameterised → no injection.
+    const cand = db.prepare("SELECT b,u,cat,bdt,sz FROM products WHERE u LIKE ? COLLATE NOCASE").all('%' + seg + '%');
+    const exact = cand.filter(r => { try { return lastSeg(new URL(r.u).pathname) === seg; } catch (e) { return false; } });
     if (!exact.length) return send(res, 200, { found: false });
     let pick = exact[0];
     if (host && exact.length > 1) { const h = exact.find(r => (r.u || '').toLowerCase().includes(host)); if (h) pick = h; }
