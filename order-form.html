@@ -1855,6 +1855,9 @@
       return s + (it.sizes || [{qty:1}]).reduce(function(a, q){ return a + (q.qty || 0); }, 0);
     }, 0);
   }
+  function _rowPkr(item, row){ return (row && row.pkr != null) ? row.pkr : item.pkr; }
+  function itemPkrSubtotal(item){ return (item.sizes || [{qty:1}]).reduce(function(s, row){ return s + (_rowPkr(item, row) * (row.qty || 0)); }, 0); }
+  function itemPriceVaries(item){ const real = (item.sizes || []).filter(function(r){ return r.size; }); return new Set(real.map(function(r){ return _rowPkr(item, r); })).size > 1; }
 
   // --- REMEMBER ME (localStorage) ---
   function loadSavedDetails(){
@@ -4557,7 +4560,18 @@
       const pkr = cur==='USD' ? Math.round(priceRaw * usdRate) : priceRaw;
       const isUnstitched = UNSTITCHED_CATS.has(cat);
       const uQty = isUnstitched ? (Math.min(maxPerSizeFor(cat), Math.max(1, parseInt(document.getElementById(`dc_uqty_${id}`)?.value)||1))) : 1;   // category-aware cap (unstitched=10)
-      const sizes = isUnstitched ? [{size:'',qty:uQty}] : getDraftSizeRows(id);
+      const baseSizes = isUnstitched ? [{size:'',qty:uQty}] : getDraftSizeRows(id);
+      // SIZE-PRICED products: stamp each size row with ITS OWN pkr from the variant map so the cart
+      // bills every size correctly (e.g. 8/9-Y 4290 + 15/16-Y 4990). Single-price → every row = pkr.
+      const dft = drafts[id];
+      const varies = !!(dft && dft.priceVaries && dft.sizePrice);
+      const sizes = baseSizes.map(rw => {
+        let rp = pkr;
+        if(varies && rw.size && dft.sizePrice[rw.size] != null){
+          rp = cur==='USD' ? Math.round(dft.sizePrice[rw.size] * usdRate) : Math.round(dft.sizePrice[rw.size]);
+        }
+        return { size: rw.size, qty: rw.qty, pkr: rp };
+      });
       cart.push({ url, brand, cat, sizes, pkr, weight: getWeight(cat) });
     });
     // Clear all drafts
@@ -4686,6 +4700,10 @@
     document.getElementById(`dc_price_${id}`).value = item.pkr;
     updateDraftPriceHint(id);
     showDraftCurrencyNote(id, isPk);
+    // Restore the per-size price map so editing a size-priced item keeps per-size billing on re-save.
+    drafts[id].sizePrice = {};
+    (item.sizes || []).forEach(r => { if(r.size && r.pkr != null) drafts[id].sizePrice[r.size] = r.pkr; });
+    drafts[id].priceVaries = itemPriceVaries(item);
     if(UNSTITCHED_CATS.has(item.cat)){
       // Restore unstitched qty
       const uqtyEl = document.getElementById(`dc_uqty_${id}`);
@@ -4728,16 +4746,28 @@
     let html = '';
     cart.forEach((item, i) => {
       const totalQty = (item.sizes || [{qty:1}]).reduce((s,r) => s + r.qty, 0);
-      totalPkr    += item.pkr * totalQty;
+      const varies  = itemPriceVaries(item);
+      const itemPkr = itemPkrSubtotal(item);   // Σ per-size price × qty
+      totalPkr    += itemPkr;
       totalWeight += item.weight * totalQty;
-      const bdtEach = Math.round(item.pkr * r.CONV_RATE);
       const catTag  = CAT_LABELS[item.cat] || item.cat;
 
-      // Size tags: "M×1", "L×2" — or blank for unstitched
-      const sizeTags = (item.sizes || [])
-        .filter(r => r.size || !UNSTITCHED_CATS.has(item.cat))
-        .map(r => r.size ? `<span class="item-tag">${esc(r.size)}×${r.qty}</span>` : '')
-        .join('');
+      // Size tags. When sizes are priced differently, show EACH size on its own ROW with its PKR
+      // price (only where applicable); otherwise the compact "M×1 L×2" chips.
+      const sizeTags = varies
+        ? (item.sizes || []).filter(r => r.size).map(r =>
+            `<span class="item-tag" style="display:block;width:fit-content;margin:2px 0">${esc(r.size)} × ${r.qty} · PKR ${_rowPkr(item,r).toLocaleString()}</span>`).join('')
+        : (item.sizes || [])
+            .filter(r => r.size || !UNSTITCHED_CATS.has(item.cat))
+            .map(r => r.size ? `<span class="item-tag">${esc(r.size)}×${r.qty}</span>` : '')
+            .join('');
+
+      // Right price block: single-price → "PKR X each"; varies → item PKR subtotal + a "(by size)" note.
+      const priceBlock = varies
+        ? `<div class="item-price">PKR ${itemPkr.toLocaleString()}</div>
+           <div class="item-bdt">≈ ৳${Math.round(itemPkr * r.CONV_RATE).toLocaleString()} <span style="font-size:0.62rem;color:var(--txt-muted)">(by size)</span></div>`
+        : `<div class="item-price">PKR ${item.pkr.toLocaleString()} <span style="font-size:0.68rem;font-weight:400;color:var(--txt-muted)">each</span></div>
+           <div class="item-bdt">≈ ৳${Math.round(item.pkr * r.CONV_RATE).toLocaleString()} each</div>`;
 
       html += `<div class="cart-item">
         <div class="item-num">#${i+1}</div>
@@ -4751,8 +4781,7 @@
           </div>
         </div>
         <div>
-          <div class="item-price">PKR ${item.pkr.toLocaleString()} <span style="font-size:0.68rem;font-weight:400;color:var(--txt-muted)">each</span></div>
-          <div class="item-bdt">≈ ৳${bdtEach.toLocaleString()} each</div>
+          ${priceBlock}
           <div style="display:flex;gap:4px;margin-top:4px;justify-content:flex-end">
             <button class="remove-item" onclick="editItem(${i})" title="Edit" style="color:var(--gold);font-size:0.8rem">✏️</button>
             <button class="remove-item" onclick="removeItem(${i})" title="Remove">✕</button>
@@ -4865,11 +4894,15 @@
     let siHtml = '';
     cart.forEach((item, i) => {
       const totalQty = (item.sizes || [{qty:1}]).reduce((s,r) => s + r.qty, 0);
-      totalPkr    += item.pkr * totalQty;
+      const varies   = itemPriceVaries(item);
+      const itemPkr  = itemPkrSubtotal(item);
+      totalPkr    += itemPkr;
       totalWeight += item.weight * totalQty;
-      const bdtTotal = Math.round(item.pkr * totalQty * r.CONV_RATE);
-      const sizeSummary = (item.sizes || []).filter(r => r.size)
-        .map(r => `${esc(r.size)}×${r.qty}`).join(', ') || '—';
+      const bdtTotal = Math.round(itemPkr * r.CONV_RATE);
+      // Size summary — per-size price listed when sizes are priced differently.
+      const sizeSummary = varies
+        ? (item.sizes || []).filter(r => r.size).map(r => `${esc(r.size)}×${r.qty} (PKR ${_rowPkr(item,r).toLocaleString()})`).join(', ')
+        : ((item.sizes || []).filter(r => r.size).map(r => `${esc(r.size)}×${r.qty}`).join(', ') || '—');
       const tags = [CAT_LABELS[item.cat] || item.cat];
       if(sizeSummary !== '—') tags.push(sizeSummary);
       tags.push('Total qty: ' + totalQty);
@@ -4881,7 +4914,7 @@
         </div>
         <div class="si-price">
           <div class="si-bdt">৳ ${bdtTotal.toLocaleString()}</div>
-          <div class="si-pkr">PKR ${item.pkr.toLocaleString()} × ${totalQty}</div>
+          <div class="si-pkr">${varies ? 'PKR ' + itemPkr.toLocaleString() + ' (by size)' : 'PKR ' + item.pkr.toLocaleString() + ' × ' + totalQty}</div>
         </div>
       </div>`;
     });
@@ -4914,7 +4947,7 @@
     let totalPkr = 0, totalWeight = 0;
     cart.forEach(item => {
       const totalQty = (item.sizes || [{qty:1}]).reduce((s,r) => s + r.qty, 0);
-      totalPkr    += item.pkr * totalQty;
+      totalPkr    += itemPkrSubtotal(item);
       totalWeight += item.weight * totalQty;
     });
     const productBdt = Math.round(totalPkr * r.CONV_RATE);
@@ -4933,11 +4966,17 @@
 
     const itemsText = cart.map((item, i) => {
       const totalQty = (item.sizes || [{qty:1}]).reduce((s,r) => s + r.qty, 0);
-      const sizeSummary = (item.sizes || []).filter(r => r.size)
-        .map(r => `${r.size}×${r.qty}`).join(', ');
+      const varies = itemPriceVaries(item);
+      // Per-size price in the operator's order text when sizes are priced differently, so the packet
+      // is prepared at the right price per size. Single-price → the usual "PKR X each".
+      const sizeSummary = varies
+        ? (item.sizes || []).filter(r => r.size).map(r => `${r.size}×${r.qty}@PKR${_rowPkr(item,r).toLocaleString()}`).join(', ')
+        : (item.sizes || []).filter(r => r.size).map(r => `${r.size}×${r.qty}`).join(', ');
       const parts = [`#${i+1} ${item.brand}`, CAT_LABELS[item.cat] || item.cat];
       if(sizeSummary) parts.push('Sizes: ' + sizeSummary);
-      parts.push('Total qty: ' + totalQty, 'PKR ' + item.pkr.toLocaleString() + ' each', item.url);
+      parts.push('Total qty: ' + totalQty,
+        varies ? 'PKR ' + itemPkrSubtotal(item).toLocaleString() + ' (per-size)' : 'PKR ' + item.pkr.toLocaleString() + ' each',
+        item.url);
       return parts.join(' | ');
     }).join('\n');
 
