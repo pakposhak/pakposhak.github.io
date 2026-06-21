@@ -6304,6 +6304,14 @@
     if(psSort)            p.set('sort', psSort);
     if(psQuery)           p.set('q', psQuery);
     if(psSizeQ)           p.set('size', psSizeQ);   // boost products that have this age/size
+    // 90s landing rotation: on the PLAIN landing (no search / sort / filter) send a seed that
+    // advances every 90 seconds. The server keeps women-pret leading but rotates WHICH curated
+    // products lead, so the page feels fresh on each visit / auto-refresh — without re-harvesting
+    // or changing the catalogue. Filtered / searched / sorted views never send it (they stay
+    // exact and stable).
+    if(!psSel.cats.size && !psSel.brands.size && !psSel.prices.size && !psSaleOnly && !psSort && !psQuery && !psSizeQ){
+      p.set('seed', Math.floor(Date.now() / 90000));
+    }
     p.set('page', psPage);
     p.set('pageSize', psPageSize());
     return p.toString();
@@ -6345,6 +6353,18 @@
     psLoaded = false; psLoading = false; PS_CATALOG = null;
     psEnsureLoaded();
   }
+  // Landing auto-rotation: every 90s, if the buyer is sitting on the PLAIN landing (Browse
+  // Products visible, first page, no search / sort / filter, tab in the foreground, not
+  // scrolled deep), re-fetch — psApiParams' seed has advanced one 90s window, so the server
+  // returns a fresh curated lead set. Guarded so it never yanks an active search or a scroll.
+  function psLandingIsActive(){
+    if(!psApiMode || document.hidden) return false;
+    if(typeof psOnProductsTab === 'function' && !psOnProductsTab()) return false;
+    if(psPage !== 0) return false;
+    if((window.scrollY || window.pageYOffset || 0) > 600) return false;
+    return !psSel.cats.size && !psSel.brands.size && !psSel.prices.size && !psSaleOnly && !psSort && !psQuery && !psSizeQ;
+  }
+  setInterval(function(){ if(psLandingIsActive()) psApiFetch(); }, 90000);
   // Pager HTML — shared by the client-render and API-render paths.
   function psPagerHtml(pages){
     if(pages <= 1) return '';
@@ -7153,7 +7173,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-20z2';
+  const PSB_BUILD = '2026-06-21a';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
