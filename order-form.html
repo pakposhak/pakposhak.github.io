@@ -377,9 +377,9 @@
       #tabProducts, #tabBrands, .browse-tabs{width:min(1440px,96vw);margin-left:calc((100% - min(1440px,96vw))/2)}
       /* Browse-Brands search: centered + larger on desktop (req). ID/scoped selectors so these
          win over the base .bb-* rules that appear LATER in the stylesheet (equal specificity). */
-      #bbProduct .bb-smartwrap, #bbProduct .bb-prod-sub{max-width:860px;margin-left:auto;margin-right:auto}
+      #bbProduct .bb-smartwrap, #bbProduct .bb-prod-sub{max-width:1040px;margin-left:auto;margin-right:auto}
       #bbProduct .bb-prod-sub{text-align:center;font-size:0.98rem}
-      #bbSmartSearch{padding:18px 24px;font-size:1.12rem;border-radius:14px}
+      #bbSmartSearch{padding:12px 24px;font-size:1.12rem;border-radius:14px}
       /* No floating bottom bar on desktop — Cart & How-To sit beside the 1·2·3·4 steps */
       .bottom-nav{display:none !important}
       .steps-bar{position:relative}
@@ -7301,7 +7301,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-21j';
+  const PSB_BUILD = '2026-06-21k';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
