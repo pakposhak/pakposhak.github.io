@@ -2168,6 +2168,21 @@
     }catch(e){}
     return DEFAULT_WEIGHTS[key] || 0.66;
   }
+  // Age-based weight multiplier for kids items. The base weight (DEFAULT_WEIGHTS / relay)
+  // is calibrated for 0–6y garments; older children's garments are physically larger.
+  // Brackets: 0–6y × 1.0 (base) | 6–10y × 1.2 | 10–12y × 1.3 | 12y+ × 1.4.
+  function kidsAgeMultiplier(sizeStr) {
+    if (!sizeStr) return 1.0;
+    const s = String(sizeStr).replace(/\s+/g,'').toLowerCase();
+    if (/^\d+(-\d+)?m/i.test(s)) return 1.0;    // infant months → 0–6y bracket
+    const ym = s.match(/(\d+).*y/i);
+    if (!ym) return 1.0;
+    const age = parseInt(ym[1]);                  // lower bound of the size range
+    if (age >= 12) return 1.4;
+    if (age >= 10) return 1.3;
+    if (age >= 6)  return 1.2;
+    return 1.0;
+  }
 
   function buildWeightEditor(){
     const grid = document.getElementById('weightEditorGrid');
@@ -4815,7 +4830,9 @@
       const varies  = itemPriceVaries(item);
       const itemPkr = itemPkrSubtotal(item);   // Σ per-size price × qty
       totalPkr    += itemPkr;
-      totalWeight += item.weight * totalQty;
+      totalWeight += KIDS_CATS.has(item.cat)
+        ? (item.sizes||[{size:'',qty:1}]).reduce((s,z)=>s+item.weight*kidsAgeMultiplier(z.size)*z.qty, 0)
+        : item.weight * totalQty;
       const catTag  = CAT_LABELS[item.cat] || item.cat;
 
       // Size tags. When sizes are priced differently, show EACH size on its own ROW with its PKR
@@ -4963,7 +4980,9 @@
       const varies   = itemPriceVaries(item);
       const itemPkr  = itemPkrSubtotal(item);
       totalPkr    += itemPkr;
-      totalWeight += item.weight * totalQty;
+      totalWeight += KIDS_CATS.has(item.cat)
+        ? (item.sizes||[{size:'',qty:1}]).reduce((s,z)=>s+item.weight*kidsAgeMultiplier(z.size)*z.qty, 0)
+        : item.weight * totalQty;
       const bdtTotal = Math.round(itemPkr * r.CONV_RATE);
       // Size summary — per-size price listed when sizes are priced differently.
       const sizeSummary = varies
@@ -5014,7 +5033,9 @@
     cart.forEach(item => {
       const totalQty = (item.sizes || [{qty:1}]).reduce((s,r) => s + r.qty, 0);
       totalPkr    += itemPkrSubtotal(item);
-      totalWeight += item.weight * totalQty;
+      totalWeight += KIDS_CATS.has(item.cat)
+        ? (item.sizes||[{size:'',qty:1}]).reduce((s,z)=>s+item.weight*kidsAgeMultiplier(z.size)*z.qty, 0)
+        : item.weight * totalQty;
     });
     const productBdt = Math.round(totalPkr * r.CONV_RATE);
     const commission = Math.round(productBdt * commRate(r, cartTotalQty()));
