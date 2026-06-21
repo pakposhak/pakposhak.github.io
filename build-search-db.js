@@ -17,6 +17,12 @@ const path = require('path');
 const http = require('http');
 const https = require('https');
 const Database = require('better-sqlite3');
+// SAFETY NET: re-apply the gender/category corrector at index time so the search index users
+// actually see is ALWAYS cleaned — regardless of how products entered catalog.json (a stale/failed
+// harvest, a manual edit, a daily VPS harvest running an old harvester). Idempotent: a no-op when
+// catalog.json is already clean. This guarantees "every product, checked on the same basis" even if
+// the harvest step ever skips cleanup. Requires catalog-cleanup.js alongside this file on the VPS.
+const { cleanupProducts } = require('./catalog-cleanup');
 
 const CATALOG_URL = process.env.PSB_CATALOG_URL || 'https://pakposhak.github.io/catalog.json';
 const CONFIG_URL  = process.env.PSB_CONFIG_URL  || 'http://127.0.0.1:8787/config';
@@ -46,6 +52,8 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
     fetchText(CONFIG_URL).catch(() => '{}'),   // rates are best-effort; fall back to defaults
   ]);
   const cat = JSON.parse(catRaw);
+  // Re-run the catalog corrector before indexing (safety net — see require above). Idempotent.
+  { const _c = cleanupProducts(cat.products || []); cat.products = _c.products; console.log('search-db cleanup:', JSON.stringify(_c.stats)); }
   const cfg = JSON.parse(cfgRaw) || {};
   const rates = (cfg && cfg.rates) || {};
   const weights = (cfg && cfg.weights) || {};
