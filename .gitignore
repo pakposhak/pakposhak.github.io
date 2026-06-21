@@ -1,1 +1,14 @@
 .~lock.*
+
+# Local dev / preview tooling (not part of the app)
+_preview_serve.js
+_preview_serve.log
+*.log
+
+# Throwaway audit/scratch artifacts
+_audit_agg.jsonl
+_vis6/
+_vis_hop/
+_vis_spot/
+_vis_tmp/
+_vis_wsweep/
