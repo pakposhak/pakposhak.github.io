@@ -500,8 +500,17 @@ function mapCat(group, type, title, tagStr){
 // Used by BOTH the whole-store harvest and the collection harvest. `force`
 // overrides the category for collection-scoped pulls (null = normal mapCat).
 function buildProduct(p, name, host, group, force, kidsHint){
-  const v0 = p.variants[0];
-  const pkr = Math.round(parseFloat(v0 && v0.price) || 0);
+  // PRICE = cheapest IN-STOCK variant — NOT variants[0]. variants[0] is the first/smallest
+  // size, which is often SOLD OUT (e.g. Minnie Minors MSKZ-39: 9/12-M @ PKR 3,390 sold out,
+  // cheapest buyable size 8/9-Y @ PKR 4,290). Using variants[0] made the Browse card show a
+  // price the buyer can NEVER be billed — the basket only ever charges an in-stock size. This
+  // uses the SAME in-stock filter as availSizes() below, so the card price == the cheapest size
+  // chip the buyer can actually pick. Falls back to the cheapest of ALL variants only when no
+  // stock flag is set (e.g. single-variant unstitched products that carry no size option).
+  const _instock = (p.variants || []).filter(v => v && v.available !== false)
+    .map(v => Math.round(parseFloat(v.price) || 0)).filter(n => n > 0);
+  const _allp = (p.variants || []).map(v => Math.round(parseFloat(v && v.price) || 0)).filter(n => n > 0);
+  const pkr = _instock.length ? Math.min(..._instock) : (_allp.length ? Math.min(..._allp) : 0);
   if(pkr < 500) return null;
   const img = (p.images && p.images[0] && p.images[0].src) || '';
   if(!img) return null;
