@@ -23,6 +23,13 @@
 const fs = require('fs');
 
 const txt = p => ((p.t || '') + ' ' + (p.u || '')).toLowerCase();
+// Bare metre lengths of ≥2 ("6M", "2.5 M", "4M") = fabric sold by the METRE, never an infant age.
+// The ≥2 floor is critical: infant sizes start at "0 M"/"1 M" (0–1 months, newborn) — those are
+// months, NOT metres (you can't buy 0 metres of cloth). A genuine infant size is also a RANGE
+// ("0-3M"/"3-6M") or carries NB/Newborn — never a lone "6M".
+const meterSz = p => Array.isArray(p.sz) && p.sz.length > 0 && p.sz.every(z => { const m = /^(\d{1,2}(?:\.\d)?)\s*m$/i.exec(String(z || '').trim()); return m && parseFloat(m[1]) >= 2; });
+// Words that mark a GENUINE infant/baby garment (so we never mistake real baby clothes for cloth).
+const INFANT_WORD = /\bromper|bodysuit|sleep[\s-]?suit|jhabla|\bonesie|swaddle|\bbib\b|booties|\bbaby\b|\binfant\b|newborn|\bnb\b|toddler|\bfrock\b|\bpram\b|overall|dungaree|jumpsuit|\bvest\b|mitten|smocking/i;
 const isUnsSz = p => Array.isArray(p.sz) && p.sz.length === 1 && /unstitch/i.test(p.sz[0]);
 const unsTitle = p => /\bunstitch|un-?stitch|unstiched|ready[\s-]?to[\s-]?stitch|\brts\b|raw fabric|\bgreige\b/.test(txt(p));
 const isUnstitched = p => isUnsSz(p) || unsTitle(p);
@@ -265,6 +272,11 @@ function cleanupProducts(ps) {
     { const _t = p.t || ''; if (NONAPPAREL_STRONG.test(_t) || (NONAPPAREL_WEAK.test(_t) && !GARMENT_NOUN.test(_t))) { junkN++; continue; } }   // homeware/cosmetics/headwear/innerwear/gifting -> delete
     if (ACC.test(p.t || '') && !GARMENT.test(p.t || '') && p.cat !== 'footwear') { del++; continue; }
     if (FOOT.test(p.t || '') && p.cat !== 'footwear') { if (/^mens_/.test(p.cat)) { footDel++; continue; } p.cat = 'footwear'; footMove++; out.push(p); continue; }
+    // FABRIC-by-the-metre mis-filed as an infant size: a bare "<N>M" means N METRES of cloth
+    // (6M = 6 metres), but the size reader treats "M" as months and dumps it in kids_infant.
+    // Every size a bare metre length + no infant/baby word in the title ⇒ unstitched cloth →
+    // men's unstitched (e.g. Dynasty Fabrics "Egyptian Delight … 6M"). Runs before kids rules.
+    if (/^kids_/.test(p.cat) && meterSz(p) && !INFANT_WORD.test(p.t || '')) { p.cat = 'mens_unstitched'; menUnsN++; out.push(p); continue; }
     // EXPLICIT-TITLE gender corrector (highest-confidence, guarded). Footwear stays footwear (a
     // "Boys Peshawari" is still a shoe). Catches cross-gender mislabels any direction: Edge Republic
     // "Women's 3-Piece" in mens, Wear Ochre "Women's Dress" in kids, Kurta Corner "Kids Kurta Pajama"
@@ -373,6 +385,12 @@ function cleanupProducts(ps) {
         p.cat = finalMenCat(p); slugN++; out.push(p); continue;
       }
     }
+    // AUDIT FIX (category audit, 2026-06-22): western JEANS dumped into women's 3pc/suit cats —
+    // "jeans" in a title is a western bottom, never a 3-piece pret. Move to women's bottoms.
+    // (Runs after the slug/brand rules so a kids brand's jeans is placed in kids first.)
+    if (/\bjeans\b/i.test(p.t || '') && !/\b(boys?|girls?|kids?|infant|junior|toddler|baby)\b/i.test(p.t || '') && /^(pret_3pc|pret_3pc_emb|kurti_1pc|shirt_dupatta_2pc|shirt_dupatta_2pc_unstitch|lawn_3pc_unstitch)$/.test(p.cat)) { p.cat = 'womens_trouser'; womenN++; out.push(p); continue; }
+    // AUDIT FIX: a JUBBAH / THOBE is a men's robe — move it out of women's pret to men's.
+    if (/\bjubb?ah?\b|\bthobe\b/i.test(p.t || '') && catGenderOf(p.cat) !== 'm') { p.cat = 'mens_kurta'; slugN++; out.push(p); continue; }
     if (!/^mens_|^kids_/.test(p.cat)) { const wc = womenType(p); if (wc && wc !== p.cat) { p.cat = wc; womenN++; out.push(p); continue; } }   // women: kids/niqab/bottom/tee corrections
     if (isUnstitched(p) && STITCHED.has(p.cat)) { p.cat = fwdCat(p); fwdN++; out.push(p); continue; }
     if (szLetter(p) && REV[p.cat] && !unsTitle(p)) { p.cat = REV[p.cat]; revN++; out.push(p); continue; }

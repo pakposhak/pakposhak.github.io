@@ -577,7 +577,12 @@ function buildProduct(p, name, host, group, force, kidsHint){
   {
     const _tt2 = (p.product_type||'') + ' ' + (p.title||'');
     const _age = sz.length && sz.every(z => /\b\d{1,2}\s*[-\/]?\s*\d{0,2}\s*(?:y|yr|year|m|mo|month)s?\b/i.test(String(z).trim()) || /^\d{1,2}\s*(?:y|m)$/i.test(String(z).trim()));
-    if(_age && !/^kids_/.test(cat)){
+    // "<N>M" on a fabric = N METRES (6M = 6 metres of cloth), not N months — never an infant size.
+    // A bare metre length (no range, no NB/baby word) is unstitched cloth, so it must NOT be pulled
+    // into kids by the size→gender rule below (Dynasty Fabrics "Egyptian Delight … 6M" was landing
+    // in kids_infant; catalog-cleanup.js mirrors this guard at index time).
+    const _fabricMeters = sz.length && sz.every(z => { const _m = /^(\d{1,2}(?:\.\d)?)\s*m$/i.exec(String(z).trim()); return _m && parseFloat(_m[1]) >= 2; }) && !/\bromper|bodysuit|\bbaby\b|\binfant\b|newborn|\bnb\b|toddler|\bfrock\b|swaddle|overall|dungaree|jumpsuit|\bvest\b|smocking/i.test(_tt2);
+    if(_age && !/^kids_/.test(cat) && !_fabricMeters){
       const _monthsOnly = sz.every(z => /m|month/i.test(z) && !/y|year/i.test(z));
       const k = _monthsOnly ? 'kids_infant' : mapCatKids(_tt2);
       if(k && /^kids_/.test(k)) cat = k;
