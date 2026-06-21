@@ -6217,6 +6217,20 @@
     return 0;   // no clear piece dimension (kids cats, dupatta, shawl, abaya, saree, sherwani, fabric…)
   }
   function psCatUnstitched(c){ return /unstitch/.test(c) || c==='mens_unstitched'; }
+  // ADULT-INTENT phrases. Each adds curated ADULT cats AND adult gender(s) so the gender
+  // narrowing in psResolveCats removes ANY kids cat — including ones a prefix-match would
+  // sneak in ("girlfriend" must NOT pull kids_girls via the 'girl' synonym; "boyfriend" not
+  // kids_boys). Matched on the raw query (handles spaced + joined forms). g: w=women, m=men.
+  const PS_ADULT_CONCEPTS = [
+    { re:/\bgirl\s*friend\b/,                          g:['w'],     cats:['kurti_1pc','shirt_dupatta_2pc','shirt_trouser_2pc','pret_3pc','maxi_dress','western_top','coord_western','formal_emb_3pc','pret_3pc_emb','saree','lehenga','womens_trouser'] },
+    { re:/\bboy\s*friend\b/,                           g:['m'],     cats:['mens_shirt','mens_trouser','mens_jeans','mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_suit'] },
+    { re:/\b(daily|every\s*day|casual)\s*wear\b/,      g:['w','m'], cats:['kurti_1pc','shirt_dupatta_2pc','shirt_trouser_2pc','lawn_3pc_unstitch','pret_3pc','loungewear','western_top','coord_western','womens_trouser','mens_shirt','mens_trouser','mens_kurta','mens_jeans'] },
+    { re:/\b(party|evening|wedding|festive)\s*wear\b/, g:['w','m'], cats:['formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','pret_3pc_emb','pret_2pc_emb','maxi_dress','saree','lehenga','coord_western','western_top','mens_suit','mens_sherwani','mens_waistcoat','mens_kurta','mens_shalwar_kameez'] },
+    { re:/\bmodern\s*(clothing|clothes|wear|dress|outfit|fashion)?\b|\bwestern\s*wear\b/, g:['w','m'], cats:['western_top','coord_western','maxi_dress','shirt_trouser_2pc','womens_trouser','mens_shirt','mens_trouser','mens_jeans'] },
+    { re:/\bwife\b/,                                   g:['w'],     cats:['kurti_1pc','shirt_dupatta_2pc','pret_3pc','formal_emb_3pc','pret_3pc_emb','maxi_dress','saree','lehenga','western_top'] },
+    { re:/\bhusband\b/,                                g:['m'],     cats:['mens_shirt','mens_trouser','mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_suit','mens_jeans'] },
+    { re:/\b(office|work)\s*wear\b/,                   g:['w','m'], cats:['kurti_1pc','shirt_dupatta_2pc','western_top','shirt_trouser_2pc','womens_trouser','mens_shirt','mens_trouser','mens_kurta'] },
+  ];
   function psResolveCats(tokens, raw, present){
     const genders = new Set(), catToks = [], relCats = new Set();
     let relSeen = false;
@@ -6230,6 +6244,9 @@
     // multi-word concept ("1 piece" → "1piece"), excluding gender & relationship words.
     const conceptN = psNorm((raw || '').split(/[\s,]+/).filter(w => { const n = psNorm(w); return !PS_GENDER_TOK[n] && !PS_REL[n]; }).join(''));
     if(conceptN.length >= 2) psMatchCatsToken(conceptN, present).forEach(c => cats.add(c));
+    // Adult-intent phrases ("girlfriend"/"daily wear"/"party wear"/"modern clothing"…): add their
+    // curated adult cats + adult gender(s) so the narrowing below drops any kids cat.
+    PS_ADULT_CONCEPTS.forEach(ac => { if(ac.re.test(raw)){ ac.g.forEach(g => genders.add(g)); ac.cats.forEach(c => { if(present.has(c) && !PS_HIDE_CATS.has(c)) cats.add(c); }); } });
     if(genders.size){
       if(cats.size){
         // a category WAS named → keep only cats of the named (fine) gender(s) — AND semantics
