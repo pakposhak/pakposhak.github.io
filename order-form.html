@@ -2877,7 +2877,14 @@
       const combined = pickDims.length >= 2;   // multiple dims ⇒ "A / B" chips
 
       // ── PRICE ─────────────────────────────────────────────────────────────
-      const refVar = avail[0] || vars[0];
+      // Default the shown price to the CHEAPEST in-stock variant — NOT avail[0] (first in
+      // document order) — so the basket's opening price EQUALS the Browse card price, which
+      // also uses cheapest-in-stock (harvest buildProduct). avail[] is the in-stock set; the
+      // buyer's actual size pick then refines the price via onDraftSizeChange + sizePrice.
+      const _availPriced = avail.filter(v => moneyOf(v.price) > 0);
+      const refVar = _availPriced.length
+        ? _availPriced.reduce((lo, v) => moneyOf(v.price) < moneyOf(lo.price) ? v : lo)
+        : (avail[0] || vars[0]);
       if(refVar){
         const salePrice = moneyOf(refVar.price);
         const origPrice = moneyOf(refVar.compare_at_price);
@@ -7264,7 +7271,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-21f';
+  const PSB_BUILD = '2026-06-21g';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
