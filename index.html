@@ -655,6 +655,14 @@
     .ps-smartsearch{width:100%;box-sizing:border-box;padding:14px 16px;border:2.5px solid var(--gold);border-radius:12px;background:var(--input-bg);color:var(--txt);font-size:0.95rem;font-weight:600;font-family:inherit;box-shadow:0 0 0 4px rgba(201,169,110,0.10)}
     .ps-smartsearch::placeholder{color:var(--txt-muted);font-weight:500;font-size:0.78rem}
     .ps-smartsearch:focus{outline:none;box-shadow:0 0 0 4px rgba(201,169,110,0.22)}
+    /* Rolling example-search overlay — JS wraps each smart-search in .ps-phwrap and layers
+       an opaque .ps-phroll over it so the placeholder visibly cycles (mobile + desktop). */
+    .ps-phwrap{position:relative;display:block;width:100%}
+    .ps-phroll{position:absolute;inset:3px;display:flex;align-items:center;padding:0 13px;background:var(--input-bg);border-radius:10px;overflow:hidden;pointer-events:none;color:var(--txt-muted);font-weight:500;font-size:0.78rem;transition:opacity .16s ease}
+    .ps-phroll.is-off{opacity:0}                       /* field focused or has text → reveal native placeholder / typed text */
+    .ps-phroll-txt{display:block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transform:translateY(0);opacity:1;transition:transform .42s cubic-bezier(.22,.61,.36,1),opacity .42s ease}
+    .ps-phroll-txt.roll-out{transform:translateY(-120%);opacity:0}      /* current line rolls up & out */
+    .ps-phroll-txt.roll-pre{transform:translateY(120%);opacity:0;transition:none}  /* next line waits below, no transition */
     .ps-search-hint{font-size:0.68rem;color:var(--txt-muted);margin-top:5px;min-height:0}
     .ps-search-hint:empty{display:none}
     .ps-search-hint b{color:var(--gold)}
@@ -4018,7 +4026,7 @@
       ps_enlarge:'ছবি বড় করুন', ps_avail_sizes:'স্টকে থাকা সাইজ', ps_unstitched:'আনস্টিচড · সাইজ লাগে না', ps_mto:'অর্ডারে তৈরি হবে', ps_d_loading:'আরও বিবরণ আসছে…', ps_d_open:'পুরো পেজ খুলুন', ps_d_more:'আরও দেখুন —', ps_d_nofetch:'সব ছবি ও বিবরণ ব্র্যান্ডের পেজে দেখুন →', ps_d_nodesc:'বাড়তি কোনো বিবরণ নেই।',
       ps_empty:'এই ফিল্টারে কোনো পণ্য নেই — ফিল্টার একটু কমিয়ে দেখুন।',
       ps_partial:'সব ব্র্যান্ড বা পণ্য এখনো এখানে যোগ হয়নি —', ps_partial_link:'আরও চান? “ব্র্যান্ড দেখুন”-এ যান →', ps_word_products:'পণ্য', ps_word_brands:'ব্র্যান্ড',
-      ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়', ps_sort_lh:'৳ কম→বেশি', ps_sort_hl:'৳ বেশি→কম', ps_sale:'সেল', ps_new:'নতুন', ps_lbl_sort:'সাজান', ps_lbl_filter:'ফিল্টার', ps_search_ph:'খুঁজুন: ১২,০০০+ পণ্য, ৮০+ পাকিস্তানি ব্র্যান্ড', ps_search_nomatch:'কোনো ব্র্যান্ড বা ক্যাটাগরি মেলেনি',
+      ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়', ps_sort_lh:'৳ কম→বেশি', ps_sort_hl:'৳ বেশি→কম', ps_sale:'সেল', ps_new:'নতুন', ps_lbl_sort:'সাজান', ps_lbl_filter:'ফিল্টার', ps_search_ph:'খুঁজুন: ৫০,০০০+ পণ্য, ১৪০+ পাকিস্তানি ব্র্যান্ড', ps_search_nomatch:'কোনো ব্র্যান্ড বা ক্যাটাগরি মেলেনি',
       bb_store:'স্টোরের ধরন', bb_product:'পণ্যের ক্যাটাগরি', bb_women:'👗 মেয়েদের', bb_men:'👔 ছেলেদের', bb_kids:'🧸 বাচ্চাদের', bb_md:'🏬 মাল্টি-ডিপ', bb_premium:'💎 প্রিমিয়াম',
       bb_more:'আরও', bb_less:'কম', bb_all:'সব', bb_two_ways:'ব্র্যান্ড খোঁজার দুটি উপায়', bb_pick_gender:'উপরে মেয়ে, ছেলে বা অন্যান্য বেছে নিন — অথবা যেকোনো ব্র্যান্ডের নাম লিখুন।', bb_pick_cat:'ব্র্যান্ড দেখতে উপরের একটি ক্যাটাগরিতে ট্যাপ করুন।', bb_prod_sub:'🔎 সরাসরি অর্ডার করতে ১৫০+ ব্র্যান্ড খুঁজুন:', bb_loading:'ব্র্যান্ড আসছে…', bb_prod_none:'এখানে এখনো কোনো ব্র্যান্ড নেই।',
       bb_smart_ph:'🔍 ১৫০+ ব্র্যান্ড খুঁজুন — যেমন Khaadi, lawn, casual', bb_search_lead:'🔎 ব্র্যান্ড জানা আছে? নাম দিয়ে ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন:',
@@ -4081,6 +4089,7 @@
     document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = tr(el.getAttribute('data-i18n')); });
     document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = tr(el.getAttribute('data-i18n-ph')); });
     try{ psUpdateNote(); }catch(e){}
+    try{ psPhRebuild(); psPhSync(); }catch(e){}   // keep the rolling search-hint in the current language
     document.querySelectorAll('.cat-tab').forEach(tb => { if(tb.dataset.cat) tb.textContent = catLabel(tb.dataset.cat); });
     if(_catOpen){
       const h = document.getElementById('catHead');
@@ -4129,8 +4138,87 @@
   let _catOpen = false;                          // flips true on the initial render below
   let _catPage = 0;                              // in-panel pager: current page index
   let _catPageH = [];                            // cached page heights (measured at transform:0)
+  /* ── Rolling search-hint for Browse Products (mobile + desktop) ──────────────
+     Buyers don't realise the search understands garments, relationships and
+     occasions. The native placeholder stays the static base sentence (i18n — shown
+     on focus and to screen-readers); an opaque overlay rolls through a few example
+     searches so the field visibly "keeps changing". Pauses while the field is
+     focused/typed and when the tab is hidden. Every advertised term is a real,
+     resolvable search (kurti/kaftan/lehenga/pret · ammi/abbu/wife · eid/festive…). */
+  const PS_PH_DWELL0 = 25000, PS_PH_DWELL = 15000;   // base sentence dwells 25s; the rest 15s each
+  const PS_PH_TXT = {
+    en: [
+      'Search 50,000+ products, 140+ Pakistani brands',
+      'Try “kurti”, “kaftan”, “2 pcs pret”, “lehenga”',
+      'Shop for “ammi”, “abbu”, “wife”, “boys 14”',
+      'Occasions: “bridal”, “eid”, “festive”, “formal”'
+    ],
+    bn: [
+      'খুঁজুন: ৫০,০০০+ পণ্য, ১৪০+ পাকিস্তানি ব্র্যান্ড',
+      'লিখুন “kurti”, “kaftan”, “2 pcs pret”, “lehenga”',
+      'যার জন্য: “ammi”, “abbu”, “wife”, “boys 14”',
+      'অনুষ্ঠান: “bridal”, “eid”, “festive”, “formal”'
+    ]
+  };
+  let _psPhRolls = [], _psPhIdx = 0, _psPhTimer = null, _psPhBound = false;
+  function psPhList(){ return PS_PH_TXT[_lang === 'bn' ? 'bn' : 'en']; }
+  function psPhInit(){
+    ['psSearchMobile','psSearchDesktop'].forEach(id => {
+      const inp = document.getElementById(id);
+      if(!inp || inp.dataset.phRoll) return;
+      inp.dataset.phRoll = '1';
+      const wrap = document.createElement('span'); wrap.className = 'ps-phwrap';
+      inp.parentNode.insertBefore(wrap, inp); wrap.appendChild(inp);
+      const roll = document.createElement('span'); roll.className = 'ps-phroll'; roll.setAttribute('aria-hidden','true');
+      const t = document.createElement('span'); t.className = 'ps-phroll-txt';
+      roll.appendChild(t); wrap.appendChild(roll);
+      inp.addEventListener('focus', psPhSync); inp.addEventListener('blur', psPhSync);
+      _psPhRolls.push({ inp:inp, txt:t, roll:roll });
+    });
+    if(!_psPhRolls.length) return;
+    _psPhIdx = 0;
+    const first = psPhList()[0];
+    _psPhRolls.forEach(r => { r.txt.textContent = first; });
+    psPhSync();
+    if(!_psPhBound){ document.addEventListener('visibilitychange', psPhSchedule); _psPhBound = true; }
+    psPhSchedule();
+  }
+  function psPhSync(){   // overlay shows only when the field is empty AND not focused
+    _psPhRolls.forEach(r => {
+      const off = (r.inp.value && r.inp.value.length) || document.activeElement === r.inp;
+      r.roll.classList.toggle('is-off', !!off);
+    });
+  }
+  function psPhRebuild(){   // language toggled → re-text in place, no animation
+    if(!_psPhRolls.length) return;
+    const list = psPhList();
+    _psPhRolls.forEach(r => { r.txt.classList.remove('roll-out','roll-pre'); r.txt.textContent = list[_psPhIdx] || list[0]; });
+  }
+  function psPhSchedule(){
+    clearTimeout(_psPhTimer);
+    if(document.hidden) return;                       // pause when the tab is backgrounded
+    _psPhTimer = setTimeout(psPhAdvance, _psPhIdx === 0 ? PS_PH_DWELL0 : PS_PH_DWELL);
+  }
+  function psPhAdvance(){
+    if(document.hidden){ psPhSchedule(); return; }
+    const list = psPhList(), next = (_psPhIdx + 1) % list.length;
+    _psPhRolls.forEach(r => r.txt.classList.add('roll-out'));        // current line rolls up + fades
+    setTimeout(() => {
+      _psPhIdx = next;
+      _psPhRolls.forEach(r => {
+        r.txt.classList.remove('roll-out');
+        r.txt.classList.add('roll-pre');                            // drop below the field (no transition)
+        r.txt.textContent = list[next];
+        void r.txt.offsetWidth;                                     // force reflow so the new line animates in
+        r.txt.classList.remove('roll-pre');                         // …then roll up into place
+      });
+      psPhSchedule();
+    }, 420);
+  }
+
   renderCatBar();   // build the category bar + brand columns now (DOM above this script exists)
   setLang(_lang);   // apply the saved language to all tagged elements
+  try{ psPhInit(); }catch(e){}   // start the rolling Browse-Products search-hint
 
   function renderCatBar(){
     const bar = document.getElementById('catBar');
@@ -5847,6 +5935,12 @@
     ['dupatta', ['dupatta_only']],
     ['duppatta', ['dupatta_only']],
     ['dyed', ['kurti_1pc','kurti_1pc_unstitch','shirt_dupatta_2pc_unstitch','pret_3pc','lawn_3pc_unstitch','womens_trouser','mens_shirt','mens_kurta','mens_unstitched','kids_boys_eastern']],
+    // 'eastern' = ALL traditional/desi cats across women+men+kids (the mirror of 'western').
+    // Alone → every eastern cat; with a gender word psResolveCats narrows it (AND): "eastern
+    // women"→women's eastern, "eastern boys"→kids_boys_eastern only. Western cats deliberately
+    // excluded (coord_western/maxi_dress/shirt_trouser_2pc/western_top/womens_trouser/mens_jeans/
+    // mens_shirt/mens_suit/mens_trouser) so eastern↔western stay complementary.
+    ['eastern', ['kurti_1pc','kurti_1pc_unstitch','shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','pret_3pc','pret_3pc_emb','pret_2pc_emb','formal_emb_2pc','formal_emb_3pc','heavy_formal_3pc','lawn_3pc_unstitch','unstitch_3pc_emb','handmade_emb','kaftan','saree','lehenga','bridal','abaya','shawl','dupatta_only','winter_2pc_stitch','winter_2pc_unstitch','winter_3pc_stitch','winter_3pc_unstitch','mens_kurta','mens_shalwar_kameez','mens_sherwani','mens_waistcoat','mens_unstitched','kids_boys_eastern','kids_girls_eastern']],
     ['eid', ['formal_emb_3pc','pret_3pc_emb','lehenga','kids_boys_formal','kids_girls_formal','maxi_dress','pret_3pc','heavy_formal_3pc','pret_2pc_emb','formal_emb_2pc','saree','kurti_1pc','shirt_dupatta_2pc','handmade_emb','mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_sherwani','mens_suit','kids_boys_eastern','kids_girls_eastern']],
     ['eid collection', ['pret_3pc','pret_3pc_emb','formal_emb_3pc','pret_2pc_emb','maxi_dress','lehenga','mens_kurta','mens_shalwar_kameez','kids_boys_eastern','kids_girls_eastern']],
     ['emb', ['pret_2pc_emb','pret_3pc_emb','formal_emb_2pc','formal_emb_3pc','unstitch_3pc_emb','handmade_emb','kurti_1pc']],
@@ -6123,7 +6217,11 @@
   ];
   const psNorm = s => (s||'').toLowerCase().replace(/[^a-z0-9]/g,'');
   // Connector/stop words a buyer types between real terms — never a category cue.
-  const PS_STOP = new Set(['for','to','me','on','we','he','go','the','and','my','in','of','at','is','it','or','by','an','as','so','up','no','do','with','from','want','need','some','any','that','this']);
+  // Piece-count words ('pc'/'pcs'/'piece'/'pieces') are read off the RAW query by the piece
+  // refiner (wantP) and via the '2pc'/'2 piece' concept synonyms — so they must NOT survive as
+  // standalone tokens, else they leak into the FTS free-text query ("2 pcs pret" → title:"pcs")
+  // and AND the result down to nothing.
+  const PS_STOP = new Set(['for','to','me','on','we','he','go','the','and','my','in','of','at','is','it','or','by','an','as','so','up','no','do','with','from','want','need','some','any','that','this','pc','pcs','piece','pieces']);
   // One token → category keys. The "keyword starts with token" branch is gated to
   // tokens >=4 chars so short connectors ("for"→formal, "me"→men, "to"→top) can't
   // hijack the selection; the reverse branch (token starts with keyword) stays open
@@ -6269,6 +6367,13 @@
     // Adult-intent phrases ("girlfriend"/"daily wear"/"party wear"/"modern clothing"…): add their
     // curated adult cats + adult gender(s) so the narrowing below drops any kids cat.
     PS_ADULT_CONCEPTS.forEach(ac => { if(ac.re.test(raw)){ ac.g.forEach(g => genders.add(g)); ac.cats.forEach(c => { if(present.has(c) && !PS_HIDE_CATS.has(c)) cats.add(c); }); } });
+    // 'pret' = WOMEN'S STITCHED ready-to-wear (the buyer's definition). Add the women gender +
+    // EVERY stitched women's category (all 'w' cats except unstitched fabric and footwear), so
+    // "pret" alone selects all women's stitched, and "2 pcs pret"/"3 pcs pret" then narrow by the
+    // gender (→women) and the piece refiner (→2pc/3pc). Computed live so it stays complete as the
+    // catalogue grows. ('pret' is also kept out of brand-matching below so it can't false-match
+    // the "Silayi Pret" brand and AND the grid down to nothing.)
+    if(/\bpret\b/.test(raw)){ genders.add('w'); psCatsForGender('w', present).forEach(c => { if(!psCatUnstitched(c) && c !== 'footwear') cats.add(c); }); }
     if(genders.size){
       if(cats.size){
         // a category WAS named → keep only cats of the named (fine) gender(s) — AND semantics
@@ -6309,6 +6414,10 @@
   }
   // Store-tier words → select every brand of that Browse-Brands directory tier.
   const PS_TIER = { premium:'p', premiums:'p', luxury:'p', luxe:'p', designer:'p', designers:'p', highend:'p', couture:'p' };
+  // Generic garment-state words that are CATEGORY cues, never brand names — even though they
+  // appear inside a niche brand name (e.g. "pret" ⊂ "Silayi Pret"). Brand-matching them would
+  // AND a real category query down to that one brand's (usually empty) overlap → blank grid.
+  const PS_BRAND_STOP = new Set(['pret','stitched','unstitched']);
   function psSmartSearch(val){
     const a = document.getElementById('psSearchMobile'), b = document.getElementById('psSearchDesktop');
     if(a && a.value !== val) a.value = val;
@@ -6323,10 +6432,10 @@
     const { cats, catToks } = psResolveCats(tokens, raw, present);
     // brand-name matches come from the NON-gender words only ("men" is not a brand)
     const brands = new Set();
-    catToks.forEach(t => { if(t.length >= 3) presentBrands.forEach(bn => { if(psNorm(bn).indexOf(t) >= 0) brands.add(bn); }); });
+    catToks.forEach(t => { if(t.length >= 3 && !PS_BRAND_STOP.has(t)) presentBrands.forEach(bn => { if(psNorm(bn).indexOf(t) >= 0) brands.add(bn); }); });
     // multi-word brand ("cross stitch" → "crossstitch") — but NEVER when the whole
     // query is a gender word: "men" must not match "Republic Wo[men]swear" etc.
-    if(rawN.length >= 3 && !PS_GENDER_TOK[rawN]) presentBrands.forEach(bn => { if(psNorm(bn).indexOf(rawN) >= 0) brands.add(bn); });
+    if(rawN.length >= 3 && !PS_GENDER_TOK[rawN] && !PS_BRAND_STOP.has(rawN)) presentBrands.forEach(bn => { if(psNorm(bn).indexOf(rawN) >= 0) brands.add(bn); });
     // Tier words ("premium" / "luxury" / "designer") → select EVERY brand of that directory
     // tier. They're brands, not categories, and must not fall through to free-text.
     const tierTok = new Set();
@@ -7368,7 +7477,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-21l';
+  const PSB_BUILD = '2026-06-22a';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
