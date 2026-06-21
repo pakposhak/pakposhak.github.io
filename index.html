@@ -2945,6 +2945,12 @@
         d0.soldOutSizes  = soldOutSizes.slice();
         d0.allSoldOut    = !!allSoldOut;   // whole product sold out → block saving (req #7)
         d0.pickWhat      = combined ? 'colour & size' : 'size';
+        // Per-SIZE price map (size-priced products — kids age-sizing where bigger sizes cost more).
+        // Keyed by the SAME chip label as stockSizes (variantLabel), value = price in the draft's
+        // currency unit (moneyOf). Drives: price-follows-picked-size + per-size price on each chip.
+        d0.sizePrice = {};
+        if(d0.stockVerified){ avail.forEach(v => { const lb = variantLabel(v, pickDims); if(lb && d0.sizePrice[lb] == null) d0.sizePrice[lb] = moneyOf(v.price); }); }
+        d0.priceVaries = new Set(Object.values(d0.sizePrice).map(p => Math.round(p))).size > 1;
       }
 
       if(!allSoldOut && sizesToAdd.length){
@@ -3498,17 +3504,33 @@
         else chosen.add(s);
       });
     }
+    const dd = drafts[id];
+    const varies = !!(dd && dd.priceVaries && dd.sizePrice);
+    const _scat = (document.getElementById(`dc_cat_${id}`)||{}).value || '';
+    // Replace the "(same price for all adult sizes)" subtitle with a price-varies note when sizes
+    // are priced differently — this span is persistent (unlike the tap-hint, which a stock warning
+    // can overwrite).
+    const _noteEl = document.getElementById(`dc_sz_note_${id}`);
+    if(_noteEl) _noteEl.textContent = varies ? '(prices vary by size — shown on each; total follows your pick)' : '(same price for all adult sizes)';
     const hintDiv = wrap.querySelector('div:first-child');
     if(hintDiv){
-      hintDiv.textContent = groupLabel
+      hintDiv.innerHTML = (groupLabel
         ? `👇 ${groupLabel} — tap your combination(s):`
-        : '👇 Tap your size(s) — choose as many as you need:';
+        : '👇 Tap your size(s) — choose as many as you need:')
+        + (varies ? ` <span style="color:var(--gold);font-weight:700">💡 Prices vary by size — bigger sizes cost more; the total updates when you pick.</span>` : '');
       hintDiv.style.cssText = 'font-size:0.71rem;color:var(--txt-muted);margin-bottom:6px';
     }
-    inner.innerHTML = sizes.map(sz =>
-      `<button type="button" id="szchip_${id}_${safeSz(sz)}"
+    // Per-size price label (only when sizes are priced differently) so the buyer sees what each size
+    // costs in ৳BDT before picking; the picked size then drives the order total (onDraftSizeChange).
+    inner.innerHTML = sizes.map(sz => {
+      let tag = '';
+      if(varies && dd.sizePrice[sz] != null && typeof estLandedBdt === 'function'){
+        tag = `<span style="display:block;font-size:0.62rem;font-weight:600;opacity:0.9;margin-top:1px">≈৳${estLandedBdt(dd.sizePrice[sz], _scat).toLocaleString()}</span>`;
+      }
+      return `<button type="button" id="szchip_${id}_${safeSz(sz)}"
         onclick="toggleSizeChip(${id},'${String(sz).replace(/'/g,"\\'")}')"
-        style="${chosen.has(sz) ? CHIP_ON : CHIP_OFF}">${esc(sz)}</button>`).join('');
+        style="${chosen.has(sz) ? CHIP_ON : CHIP_OFF}">${esc(sz)}${tag}</button>`;
+    }).join('');
     if(Array.isArray(soldOutSizes) && soldOutSizes.length){
       inner.innerHTML += soldOutSizes.map(sz =>
         `<span title="Sold out — not available to order"
@@ -3534,6 +3556,19 @@
     if(getDraftSizeRows(draftId).some(r=>r.size)){
       document.getElementById(`dc_sremind_${draftId}`).style.display='none';
       document.getElementById(`dc_szbox_${draftId}`)?.classList.remove('psb-missing');
+    }
+    // SIZE-PRICED products: make the PKR price follow the picked size so the BDT total is right
+    // (kids age-sizing etc.). One size → its exact price; several different-priced sizes selected
+    // → the highest (never undercharge) and the "prices vary" note explains it. Single-price
+    // products (priceVaries=false) are untouched — the fetched price stands.
+    const d = drafts[draftId];
+    if(d && d.priceVaries && d.sizePrice){
+      const sel = getDraftSizeRows(draftId).map(r=>r.size).filter(s => d.sizePrice[s] != null);
+      if(sel.length){
+        const chosen = Math.max.apply(null, sel.map(s => d.sizePrice[s]));
+        const priceEl = document.getElementById(`dc_price_${draftId}`);
+        if(priceEl){ priceEl.value = (d.currency === 'USD') ? chosen.toFixed(2) : Math.round(chosen); updateDraftPriceHint(draftId); }
+      }
     }
     checkAddUrlLock();
   }
@@ -7188,7 +7223,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-21d';
+  const PSB_BUILD = '2026-06-21e';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
