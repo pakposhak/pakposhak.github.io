@@ -130,6 +130,10 @@ function womenType(p){
     return boy ? 'kids_boys_eastern' : 'kids_girls_eastern';
   }
   if (/\bniqab\b|\bjilbab\b|\bburqa\b|\bburka\b|\babaya\b/.test(s) && p.cat !== 'abaya') return 'abaya';
+  // Groom formalwear (sherwani / prince-coat) parked in a women cat → men. These titles carry NO
+  // "men's" word so the men-marker rule above misses them (Zainab Chottani / Asim Jofa bridal groom
+  // pieces in pret_3pc). Guard against women's "sherwani-style kurti" and bridal lehengas.
+  if (/\bsherwani\b|\bprince[\s-]?coat\b/.test(s) && !/\bwomen|\bladies\b|\bgirls?\b|\bkurti\b|\bstyle\b|inspired|lehenga|gharara|sharara|\bfrock\b|\bsaree\b|\bmaxi\b|\bgown\b/.test(s)) return 'mens_sherwani';
   if (/\b(trouser|straight pants?|culottes?|tights|palazzo|cigarette pants?|farshi shalwar|pants?)\b/.test(s)
       && !/(shirt|kameez|kurti|kurta|dupatta|\bsuit\b|3 ?pc|2 ?pc|3 ?piece|2 ?piece|\btop\b|co-?ord|frock|\bmaxi\b|gown|saree|lehenga|abaya|kaftan|peplum)/.test(s)) return isUnstitched(p) ? 'kurti_1pc_unstitch' : 'womens_trouser';
   if (/\bt-?shirt\b|tank top/.test(s) && !/(\bsuit\b|3 ?pc|2 ?pc|dupatta|trouser|kameez)/.test(s)) return 'western_top';
