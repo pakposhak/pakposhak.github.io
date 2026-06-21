@@ -5512,8 +5512,9 @@
 
   let PS_CATALOG = null, psLoaded = false, psLoading = false;
   let psSel = { prices:new Set(), cats:new Set(), brands:new Set() };
-  let psFiltered = [], psPage = 0, psSort = '';   // '' | 'asc' | 'desc' | 'new' — sorts (one at a time, keep ALL items)
-  let psSaleOnly = false;                          // Sale filter: show only discounted items (combines with any sort)
+  let psFiltered = [], psPage = 0, psSort = '';   // '' | 'asc' | 'desc' — ৳ price sort (combines with the Sale/New filters)
+  let psSaleOnly = false;                          // Sale filter: show only discounted items
+  let psNewOnly = false;                           // New filter: newest NON-sale items (⇄ Sale; the ৳ price sort orders within)
 
   // ── Search-API mode ── Browse Products served by the VPS /search endpoint (returns only
   //    the filtered page) instead of downloading the whole catalog.json — scales to 100k+.
@@ -6301,6 +6302,7 @@
     if(psSel.brands.size) p.set('brand', Array.from(psSel.brands).join(','));
     if(psSel.prices.size) p.set('price', Array.from(psSel.prices).join(','));
     if(psSaleOnly)        p.set('sale', '1');
+    if(psNewOnly)         p.set('new', '1');     // New filter: newest non-sale items (stacks with the ৳ price sort)
     if(psSort)            p.set('sort', psSort);
     if(psQuery)           p.set('q', psQuery);
     if(psSizeQ)           p.set('size', psSizeQ);   // boost products that have this age/size
@@ -6309,7 +6311,7 @@
     // products lead, so the page feels fresh on each visit / auto-refresh — without re-harvesting
     // or changing the catalogue. Filtered / searched / sorted views never send it (they stay
     // exact and stable).
-    if(!psSel.cats.size && !psSel.brands.size && !psSel.prices.size && !psSaleOnly && !psSort && !psQuery && !psSizeQ){
+    if(!psSel.cats.size && !psSel.brands.size && !psSel.prices.size && !psSaleOnly && !psNewOnly && !psSort && !psQuery && !psSizeQ){
       p.set('seed', Math.floor(Date.now() / 90000));
     }
     p.set('page', psPage);
@@ -6362,7 +6364,7 @@
     if(typeof psOnProductsTab === 'function' && !psOnProductsTab()) return false;
     if(psPage !== 0) return false;
     if((window.scrollY || window.pageYOffset || 0) > 600) return false;
-    return !psSel.cats.size && !psSel.brands.size && !psSel.prices.size && !psSaleOnly && !psSort && !psQuery && !psSizeQ;
+    return !psSel.cats.size && !psSel.brands.size && !psSel.prices.size && !psSaleOnly && !psNewOnly && !psSort && !psQuery && !psSizeQ;
   }
   setInterval(function(){ if(psLandingIsActive()) psApiFetch(); }, 90000);
   // Pager HTML — shared by the client-render and API-render paths.
@@ -6545,6 +6547,7 @@
     psSel = { prices:new Set(), cats:new Set(), brands:new Set() };
     psSort = '';
     psSaleOnly = false;
+    psNewOnly = false;
     psQuery = '';
     psSizeQ = '';
     ['psSearchMobile','psSearchDesktop'].forEach(idd => { const e = document.getElementById(idd); if(e) e.value = ''; });
@@ -6567,13 +6570,14 @@
         if(!ok) return false;
       }
       if(psSaleOnly && !p.sale) return false;        // Sale filter: discounted items only
-      if(psSort === 'new' && p.sale) return false;   // New = newest NON-sale items (Sale & New mutually exclusive)
+      if(psNewOnly && p.sale) return false;          // New filter: newest NON-sale items (Sale & New mutually exclusive)
       return true;
     });
-    // Optional sort (overrides the default order) — price OR newest. New = non-sale items only.
+    // Price sort orders the current view — including WITHIN the Sale/New filter (multilevel).
+    // With New on and no price sort, default to newest-first; otherwise keep the curated order.
     if(psSort === 'asc')       psFiltered.sort((a,b) => a._bdt - b._bdt);          // ৳ landed price ↑
     else if(psSort === 'desc') psFiltered.sort((a,b) => b._bdt - a._bdt);          // ৳ landed price ↓
-    else if(psSort === 'new')  psFiltered.sort((a,b) => (b.pub||0) - (a.pub||0));  // newest → oldest (non-sale)
+    else if(psNewOnly)         psFiltered.sort((a,b) => (b.pub||0) - (a.pub||0));  // New, no price sort → newest first
     psRender();
   }
   // Filter + sort chip row beneath the count (Option C): Sale (filter) · New · ৳↑ · ৳↓.
@@ -6587,14 +6591,15 @@
       + `</span>`
       + `<span class="ps-sortgrp"><span class="ps-grouplbl">${tr('ps_lbl_filter')}</span>`
       +   `<button type="button" class="ps-sortbtn ps-salebtn${psSaleOnly?' on':''}" onclick="psToggleSale()">${tr('ps_sale')}</button>`
-      +   `<button type="button" class="ps-sortbtn${psSort==='new'?' on':''}" onclick="psSetSort('new')">${tr('ps_new')}</button>`
+      +   `<button type="button" class="ps-sortbtn${psNewOnly?' on':''}" onclick="psToggleNew()">${tr('ps_new')}</button>`
       + `</span>`;
   }
-  // ৳ Low→High, ৳ High→Low and New are SORTS (one at a time, re-tap clears). New shows
-  // newest NON-sale items, so New ⇄ the Sale filter are MUTUALLY EXCLUSIVE; the ৳ price
-  // sorts DO combine with Sale.
-  function psSetSort(s){ psSort = (psSort === s) ? '' : s; if(psSort === 'new') psSaleOnly = false; psBuildSort(); psApply(); }
-  function psToggleSale(){ psSaleOnly = !psSaleOnly; if(psSaleOnly && psSort === 'new') psSort = ''; psBuildSort(); psApply(); }
+  // ৳ Low→High / ৳ High→Low are the PRICE sort (one at a time, re-tap clears). Sale and New are
+  // FILTERS: Sale ⇄ New are opposite (mutually exclusive), and the ৳ price sort orders WITHIN
+  // whichever is active — so New + ৳ Low→High = newest non-sale items, cheapest first (multilevel).
+  function psSetSort(s){ psSort = (psSort === s) ? '' : s; psBuildSort(); psApply(); }
+  function psToggleSale(){ psSaleOnly = !psSaleOnly; if(psSaleOnly) psNewOnly = false; psBuildSort(); psApply(); }   // Sale ⇄ New
+  function psToggleNew(){ psNewOnly = !psNewOnly; if(psNewOnly) psSaleOnly = false; psBuildSort(); psApply(); }       // New = newest non-sale; price sorts within
   // Dynamic "12,000+ products · 80+ brands — want more?" note; counts come from the
   // live catalogue (rounded down) so they grow/shrink with the listing automatically.
   function psUpdateNote(){
@@ -7178,7 +7183,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-21a';
+  const PSB_BUILD = '2026-06-21b';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
