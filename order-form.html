@@ -720,9 +720,9 @@
     .ps-bdept[open]>summary{color:var(--gold)}
     .ps-brand-chk input{accent-color:var(--gold);width:15px;height:15px;flex-shrink:0}
     .ps-clear{width:100%;padding:8px;background:none;border:1.5px solid var(--bdr-med);border-radius:8px;color:var(--txt-muted);font-weight:600;font-size:0.78rem;cursor:pointer;font-family:inherit}
-    .ps-resbar{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:0.8rem;color:var(--txt-muted);margin-bottom:8px;font-weight:600;min-height:22px}
+    .ps-resbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;font-size:0.8rem;color:var(--txt-muted);margin-bottom:8px;font-weight:600;min-height:22px}
     /* Sort/filter chip row beneath the count: price-sorts (left, "Sort") | Sale+New (right, "Filter") */
-    .ps-sortrow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;border-top:1px solid var(--bdr);padding:9px 0 2px;margin-bottom:11px}
+    .ps-sortrow{display:flex;flex-basis:100%;justify-content:space-between;align-items:center;gap:10px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;border-top:1px solid var(--bdr);padding:9px 0 2px;margin-bottom:11px}
     .ps-sortrow::-webkit-scrollbar{display:none}
     .ps-sortgrp{display:flex;align-items:center;gap:6px;flex-shrink:0}
     .ps-grouplbl{font-size:0.58rem;letter-spacing:0.5px;color:var(--txt-muted);font-weight:700;text-transform:uppercase;opacity:0.85;margin-right:1px}
@@ -825,7 +825,12 @@
       .ps-resbar{align-items:center;flex-wrap:wrap;justify-content:flex-start;row-gap:10px}
       #psCount{order:1;flex:0 0 auto}
       .ps-search-desktop{order:2;flex:1 1 auto;margin-left:18px}
-      .ps-resbar-tools{order:3;flex-basis:100%}
+      .ps-resbar::after{content:"";order:3;flex:0 0 100%;height:0}   /* row break: all filters drop to row 2 together */
+      .ps-resbar-tools{order:4;flex:0 0 auto;margin-left:0}
+      .ps-resbar #psSortTabs{order:5;flex:1 1 0;min-width:0;border-top:none;justify-content:space-between;margin:0;padding:0}
+      .ps-sortgrp{gap:8px}                                  /* a touch more room between chips */
+      .ps-sortbtn{font-size:0.78rem;padding:6px 15px;border-radius:15px}   /* roomier chips on the wide desktop row */
+      .ps-grouplbl{font-size:0.62rem}
       /* Faceted sidebar (req): show Categories + Brands OPEN in the rail to use its vertical
          space instead of leaving it empty. The dropdown buttons become static section headers;
          `order` pairs each header above its own list (DOM lists both buttons before both lists). */
@@ -1000,8 +1005,8 @@
             <input id="psSearchDesktop" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSearchInput(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search 50,000+ products, 140+ Pakistani brands"/>
             <span class="ps-search-hint" id="psSearchHintD"></span>
           </span>
+          <div class="ps-sortrow" id="psSortTabs"></div>
         </div>
-        <div class="ps-sortrow" id="psSortTabs"></div>
         <div class="ps-grid" id="psGrid"></div>
         <div class="ps-empty" id="psEmpty" style="display:none" data-i18n="ps_empty">No products match these filters — try widening them.</div>
         <div class="ps-pager" id="psPager"></div>
@@ -7292,7 +7297,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-21h';
+  const PSB_BUILD = '2026-06-21i';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
