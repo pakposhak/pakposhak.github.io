@@ -136,7 +136,15 @@ function womenType(p){
     if (/\bjeans?\b|t-?shirt|\btop\b|\bdress\b|\bmaxi\b|skirt|legging|jumpsuit|co-?ord|\bpolo\b|\btee\b|\bshort/.test(s)) return boy ? 'kids_boys_western' : 'kids_girls_western';
     return boy ? 'kids_boys_eastern' : 'kids_girls_eastern';
   }
+  // Loungewear false-positive: luxury brands name formal collections "Night Affair"/"Night Edit"/etc.
+  // and the word "night" alone triggers loungewear routing. Only reroute when "night" is present
+  // WITHOUT an actual sleepwear/lounge-garment qualifier (suit, wear, dress, gown, set, pyjama …).
+  if (p.cat === 'loungewear' && /\bnight\b/i.test(p.t||'') && !/nightsuit|night[\s-]?(?:suit|wear|dress|gown|shirt|shorts?|pants?|set)|pyjama|pyajma|pajama|sleepwear|sleep[\s-]?(?:set|wear)|lounge[\s-]?(?:wear|set)|loungewear|\bnighty\b/i.test(p.t||'')) {
+    const _wc = womenCatFor(p); return _wc !== 'loungewear' ? _wc : null;
+  }
   if (/\bniqab\b|\bjilbab\b|\bburqa\b|\bburka\b|\babaya\b/.test(s) && p.cat !== 'abaya') return 'abaya';
+  // Hijab head-coverings routed to dupatta_only → abaya (modest wear garment, not a fashion accessory)
+  if (p.cat === 'dupatta_only' && /\bhijab\b|\bhead[\s-]?(?:scarf|veil|cover)\b|\bkhimar\b/i.test(s)) return 'abaya';
   // Groom formalwear (sherwani / prince-coat) parked in a women cat → men. These titles carry NO
   // "men's" word so the men-marker rule above misses them (Zainab Chottani / Asim Jofa bridal groom
   // pieces in pret_3pc). Guard against women's "sherwani-style kurti" and bridal lehengas.
@@ -197,7 +205,7 @@ function kidsCatFor(t, boy) {
   if (boy == null) boy = !/frock|\bdress\b|gown|lehenga|gharara|sharara|peplum|skirt|\bbarbie\b|princess|unicorn/.test(s);
   const g = boy ? 'boys' : 'girls';
   if (/tuxedo|\bsuit\b|blazer|\bformal\b|prince ?coat/.test(s)) return 'kids_' + g + '_formal';
-  if (/kurta|kameez|shalwar|sherwani|waistcoat|pajama|pyjama|sharara|gharara|lehenga|frock|anarkali/.test(s)) return 'kids_' + g + '_eastern';
+  if (/kurta|kameez|shalwar|sherwani|waistcoat|pajama|pyjama|sharara|gharara|lehenga|frock|anarkali|\bthobe\b|\bjhuba\b/.test(s)) return 'kids_' + g + '_eastern';
   return 'kids_' + g + '_western';
 }
 // garment → WOMEN category (for an item whose title explicitly says women but sits in men/kids)
@@ -256,7 +264,7 @@ const DOMAIN_REWRITE = {
 // double as colour/scent names ("Incense","Oud","Musk") or set components ("Sando shirt","Turban
 // ...Kurta") -> delete ONLY when the title has no garment NOUN (nouns, not piece-counts, so a
 // "Seamless Boxers 2pc" still goes).
-const NONAPPAREL_STRONG = /gift ?(box|card|set|hamper|voucher|pack)\b|\bhamper\b|beard ?oil|\bcologne\b|body ?spray|lip ?(&|and|n) ?cheek|lip ?tint|cheek ?tint|argan ?oil|\bconditioner\b|\bshampoo\b|hair ?(serum|oil|catcher|grip|band|clip|tie)|\bdiffuser\b|room ?spray|scented ?candle|\bcandle\b|\bbukhoor\b|\blampshade\b|\bcomforter\b|\bduvet\b|bed ?sheet|bedsheet|\bcushion\b|coffee ?table|table ?set|brass ?table|\bfurniture\b|ceramic ?(jar|mug|vase|plate|bowl|pot|ware)|\bcrockery\b|\btumbler\b|water ?bottle|\bzamzam\b|\bcooler\b|\bperfume\b|\bfragrance\b|gift ?wrap|ear ?cuff|tasbeeh|tasbih|misbaha|placemat|place ?mat|table ?runner|table ?cloth|tablecloth|\bcoaster|\bnapkin|prayer ?mat|jaye ?namaz|janamaz|\bmiswak\b|hijab ?(crown ?)?grip|\bself[\s-]?tie\b|\(TIE-\d+\)|designer[\s-]?tie\b|\[\+\s*rs\.?|\bstorage[\s-]+basket\b|\bwicker\s+basket\b|\blaundry\s+basket\b|\brattan\s+basket\b/i;
+const NONAPPAREL_STRONG = /gift ?(box|card|set|hamper|voucher|pack)\b|\bhamper\b|beard ?oil|\bcologne\b|body ?spray|lip ?(&|and|n) ?cheek|lip ?tint|cheek ?tint|argan ?oil|\bconditioner\b|\bshampoo\b|hair ?(serum|oil|catcher|grip|band|clip|tie)|\bdiffuser\b|room ?spray|scented ?candle|\bcandle\b|\bbukhoor\b|\blampshade\b|\bcomforter\b|\bduvet\b|bed ?sheet|bedsheet|\bcushion\b|coffee ?table|table ?set|brass ?table|\bfurniture\b|ceramic ?(jar|mug|vase|plate|bowl|pot|ware)|\bcrockery\b|\btumbler\b|water ?bottle|\bzamzam\b|\bcooler\b|\bperfume\b|\bfragrance\b|gift ?wrap|ear ?cuff|tasbeeh|tasbih|misbaha|placemat|place ?mat|table ?runner|table ?cloth|tablecloth|\bcoaster|\bnapkin|prayer ?mat|jaye ?namaz|janamaz|\bmiswak\b|hijab ?(crown ?)?grip|\bself[\s-]?tie\b|\(TIE-\d+\)|designer[\s-]?tie\b|\[\+\s*rs\.?|\bstorage[\s-]+basket\b|\bwicker\s+basket\b|\blaundry\s+basket\b|\brattan\s+basket\b|\blapel\s*pin\b|\beyeliner\b|\bmascara\b|\bburp[\s-]*cloth\b|\bburp[\s-]*bib\b|\bpotli\s*bag\b/i;
 const NONAPPAREL_WEAK = /\bmusk\b|\boud\b|\bincense\b|\bturban\b|\bimamah\b|\bkoofi\b|\bkufi\b|\btopi\b|prayer ?cap|pocket ?square|bow ?tie|bowtie|\bnecktie\b|\bboxers?\b|\bbriefs?\b|boy ?shorts|\bsando\b|\bundershirt\b|cotton ?vest|vest ?pack|pack of \d+ ?(vest|boxer|brief)|undergarment|seamless ?boxer|\bmuffler\b|\bcharm\b|\bhipster\b|\btrunks?\b|men'?s vest|vest with sleeves|jersey vest|seamless ?(jersey )?vest|sleeveless vest|\bcaps?\b|\bsofa\b|\bottoman\b|recliner|\bcouch\b|dining ?table|cente?r ?table|coff?e?e? ?table|breakfast ?table|console ?table|room ?chair|bed ?spread|bedspread|l-?shape ?sofa|sideboard|\bmattress\b|\bdresser\b|\benvelope\b/i;
 const GARMENT_NOUN = /\b(kurti|kurta|kameez|shirt|t-?shirt|sweat ?shirt|sweat ?pants?|tee|polo|dress|gown|frock|trousers?|pants?|joggers?|leggings?|shorts?|skirt|abaya|hijab|shalwar|saree|lehenga|dupatta|kaftan|maxi|peplum|blouse|top|tank|tunic|sherwani|waistcoat|jacket|bomber|sweater|cardigan|hoodie|pullover|outfit|romper|jumpsuit|suit|blazer|coat|tuxedo)\b/i;
 
@@ -277,6 +285,8 @@ function cleanupProducts(ps) {
     // Every size a bare metre length + no infant/baby word in the title ⇒ unstitched cloth →
     // men's unstitched (e.g. Dynasty Fabrics "Egyptian Delight … 6M"). Runs before kids rules.
     if (/^kids_/.test(p.cat) && meterSz(p) && !INFANT_WORD.test(p.t || '')) { p.cat = 'mens_unstitched'; menUnsN++; out.push(p); continue; }
+    // Footwear cat with S/M/L clothing sizes (not shoe sizes) = garment misfiled as footwear.
+    if (p.cat === 'footwear' && szLetter(p) && !FOOT.test(p.t||'')) { p.cat = womenCatFor(p); womenN++; out.push(p); continue; }
     // EXPLICIT-TITLE gender corrector (highest-confidence, guarded). Footwear stays footwear (a
     // "Boys Peshawari" is still a shoe). Catches cross-gender mislabels any direction: Edge Republic
     // "Women's 3-Piece" in mens, Wear Ochre "Women's Dress" in kids, Kurta Corner "Kids Kurta Pajama"
@@ -331,6 +341,30 @@ function cleanupProducts(ps) {
     // Asim Jofa: AJMRW slug prefix = Asim Jofa Men's Ready-to-Wear (vision-confirmed: "AJMRW-27"
     // 2pc stitched kurta+shalwar on male model, lands in shirt_dupatta_2pc from women's harvest).
     if (p.b === 'Asim Jofa' && /\/products\/ajmrw/i.test(p.u) && catGenderOf(p.cat) !== 'm') { p.cat = finalMenCat(p); slugN++; out.push(p); continue; }
+    // Asim Jofa: AJUBM slug prefix = Asim Jofa Unstitched Bundle for Men (men's fabric sets in winter cats).
+    if (p.b === 'Asim Jofa' && /\/products\/ajubm/i.test(p.u) && p.cat !== 'mens_unstitched') { p.cat = 'mens_unstitched'; slugN++; out.push(p); continue; }
+    // Senorita: K[A-Z]{2}-xxxxx SKU code in title = children's girls clothing (sizes 16-32 = ages 2-10y,
+    // vision-confirmed on audit: KAC/KBC casual 2pc, KDD/KBD festive 3pc sat in adult women cats).
+    if (p.b === 'Senorita' && /\bK[A-Z]{2}-\d+/.test(p.t||'') && !/^kids_/.test(p.cat)) {
+      const _ts = (p.t||'').toLowerCase();
+      p.cat = /formal|party|wedding|festive|3\s*(?:pc|piece)/i.test(_ts) ? 'kids_girls_formal' : 'kids_girls_eastern';
+      girlsKidN++; out.push(p); continue;
+    }
+    // SHAAL: luxury Kashmiri shawl brand. Gender-aware: men's shawls → mens_unstitched (we have no
+    // mens_shawl cat); women's/unisex shawls → shawl. Unicode-aware apostrophe (U+2019 = ’).
+    if (p.b === 'SHAAL') {
+      const _smens = /\bmen[’''`]?s\b|\bgents\b|\bfor men\b/i.test(p.t||'');
+      if (_smens && p.cat !== 'mens_unstitched') { p.cat = 'mens_unstitched'; slugN++; out.push(p); continue; }
+      if (!_smens && p.cat !== 'shawl') { p.cat = 'shawl'; slugN++; out.push(p); continue; }
+    }
+    // Dynasty Fabrics: men's suiting brand with no kids line — kids-misclassified items → mens_unstitched.
+    if (p.b === 'Dynasty Fabrics' && /^kids_/.test(p.cat)) { p.cat = 'mens_unstitched'; slugN++; out.push(p); continue; }
+    // Diners Autograph: formal menswear shirt collection wrongly landing in women's formal/emb cats.
+    if (p.b === 'Diners' && /\bautograph\b/i.test(p.t||'') && catGenderOf(p.cat) !== 'm') { p.cat = 'mens_shirt'; slugN++; out.push(p); continue; }
+    // Royal Tag LP/GT/FT/DOT SKU codes = lapel pins / formal ties / grooming sets (accessories, not garments).
+    if (p.b === 'Royal Tag' && /\b(LP|GT|FT|DOT)-\d/i.test(p.t||'') && !/\bshirt\b|\bkurta\b|\bsuit\b/i.test(p.t||'')) { junkN++; continue; }
+    // Charcoal menswear scarves/ties in unstitched cat → delete (fashion accessories, not fabric).
+    if (p.b === 'Charcoal' && /\bscarf\b|\btie\b/i.test(p.t||'') && !/\bshirt\b|\bkurta\b|\bshalwar\b|\bsuit\b/i.test(p.t||'')) { junkN++; continue; }
     // Bonanza Satrangi: slug first letter = gender (m=men, w=women, k=kids). Fix any item whose slug
     // gender contradicts its cat — vision-confirmed: 6 women's 3pc/lawn ("WP…/WU…") sat in men cats.
     if (p.b === 'Bonanza Satrangi' && p.cat !== 'footwear') {
@@ -362,6 +396,7 @@ function cleanupProducts(ps) {
       }
       // (c) prince coat (eastern sherwani coat) in western → eastern; tuxedo (western suit) in eastern → formal
       if (p.cat === 'kids_boys_western' && /\bprince[\s-]?coat\b/.test(_tb)) { p.cat = 'kids_boys_eastern'; girlsKidN++; out.push(p); continue; }
+      if (p.cat === 'kids_boys_western' && /\bthobe\b|\bjhuba\b/.test(_tb)) { p.cat = 'kids_boys_eastern'; girlsKidN++; out.push(p); continue; }
       if (p.cat === 'kids_boys_eastern' && /\btuxedo\b/.test(_tb)) { p.cat = 'kids_boys_formal'; girlsKidN++; out.push(p); continue; }
       // (d) western garments in kids_boys_eastern → kids_boys_western.
       // Polo/henley/t-shirt = western tops (Engine, Preeto); standalone pajama without kurta = sleepwear
@@ -390,7 +425,8 @@ function cleanupProducts(ps) {
     // (Runs after the slug/brand rules so a kids brand's jeans is placed in kids first.)
     if (/\bjeans\b/i.test(p.t || '') && !/\b(boys?|girls?|kids?|infant|junior|toddler|baby)\b/i.test(p.t || '') && /^(pret_3pc|pret_3pc_emb|kurti_1pc|shirt_dupatta_2pc|shirt_dupatta_2pc_unstitch|lawn_3pc_unstitch)$/.test(p.cat)) { p.cat = 'womens_trouser'; womenN++; out.push(p); continue; }
     // AUDIT FIX: a JUBBAH / THOBE is a men's robe — move it out of women's pret to men's.
-    if (/\bjubb?ah?\b|\bthobe\b/i.test(p.t || '') && catGenderOf(p.cat) !== 'm') { p.cat = 'mens_kurta'; slugN++; out.push(p); continue; }
+    // Guard: keep kids thobes in kids cats (children's Islamic robes are valid kidswear).
+    if (/\bjubb?ah?\b|\bthobe\b/i.test(p.t || '') && catGenderOf(p.cat) !== 'm' && !/^kids_/.test(p.cat)) { p.cat = 'mens_kurta'; slugN++; out.push(p); continue; }
     if (!/^mens_|^kids_/.test(p.cat)) { const wc = womenType(p); if (wc && wc !== p.cat) { p.cat = wc; womenN++; out.push(p); continue; } }   // women: kids/niqab/bottom/tee corrections
     if (isUnstitched(p) && STITCHED.has(p.cat)) { p.cat = fwdCat(p); fwdN++; out.push(p); continue; }
     if (szLetter(p) && REV[p.cat] && !unsTitle(p)) { p.cat = REV[p.cat]; revN++; out.push(p); continue; }
