@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <!-- Open the TLS connection to the search/relay API early so the first /config,
+       /search/facets and /search calls don't pay the DNS+TLS handshake (helps distant
+       Bangladesh users most). Purely a hint — no behaviour change. -->
+  <link rel="preconnect" href="https://103.83.91.34.sslip.io" crossorigin/>
+  <link rel="dns-prefetch" href="https://103.83.91.34.sslip.io"/>
   <!-- ── Security hardening ── Content-Security-Policy: the app loads NO external
        JS, so scripts are locked to this origin (inline allowed for the app's own
        handlers); object/base/form are locked down. connect/img stay broad because
