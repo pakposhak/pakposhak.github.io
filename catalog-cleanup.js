@@ -91,7 +91,7 @@ function menType(p){
       && /(kurta|kameez)[\s\S]{0,30}(trouser|pajama|pyjama|shalwar|drawstring)|(shalwar|pajama|trouser)[\s\S]{0,30}(kurta|kameez)|kameez shalwar|shalwar kameez|kurta pajama|kurta trouser/.test(s))
     return 'mens_shalwar_kameez';                                            // 2pc kameez+shalwar / kurta+bottom
   if (/\btuxedo\b|\bblazer\b|pant ?coat|coat ?pant|bespoke suit/.test(s) && !/(shalwar|kameez|kurta|sherwani|prince)/.test(s)) return 'mens_suit';   // western suit BEFORE jeans ("Blazer | Denim" is a suit)
-  if (/\bjeans?\b|\bdenim\b/.test(s) && !/(kurta|kameez|shalwar|shirt)/.test(s)) return 'mens_jeans';   // a "Denim Casual Shirt" is a shirt, not jeans
+  if (/\bjeans?\b|\bdenim\b/.test(s) && !/(kurta|kameez|shalwar|shirt|jacket)/.test(s)) return 'mens_jeans';   // a "Denim Casual Shirt"/"Denim Jacket" is not jeans
   if (/\bhenley\b|\bpolo\b|t-?shirt|dress shirt|formal shirt|tuxedo shirt|casual shirt|button ?down|\bsweat ?shirt\b|\bhoodie\b|track ?suit/.test(s)) return 'mens_shirt';
   if ((p.cat === 'mens_kurta' || p.cat === 'mens_shalwar_kameez' || p.cat === 'mens_jeans')
       && /\btrouser|\bchino|\bcargo\b|dress pant|\bshorts?\b|\bpants?\b|\bshalwar\b|sleepwear|sleep ?wear/.test(s)
@@ -161,12 +161,20 @@ function menCatFor(t) {
   if (/sherwani/.test(s)) return 'mens_sherwani';
   if (/waistcoat/.test(s)) return 'mens_waistcoat';
   if (/tuxedo|blazer|pant ?coat|coat ?pant/.test(s) && !/kameez|shalwar|kurta/.test(s)) return 'mens_suit';
-  if (/jeans?|denim/.test(s) && !/kameez|shalwar|kurta|shirt/.test(s)) return 'mens_jeans';
+  if (/jeans?|denim/.test(s) && !/kameez|shalwar|kurta|shirt|jacket/.test(s)) return 'mens_jeans';   // "Denim Jacket" is a jacket, not jeans
   if (/shalwar|kameez/.test(s)) return 'mens_shalwar_kameez';
   if (/kurta/.test(s)) return /trouser|pajama|pyjama|shalwar/.test(s) ? 'mens_shalwar_kameez' : 'mens_kurta';
-  if (/trouser|\bchino|\bcargo\b|\bpants?\b/.test(s) && !/shirt/.test(s)) return 'mens_trouser';
-  if (/polo|t-?shirt|\bshirt\b|henley|sweat ?shirt|hoodie/.test(s)) return 'mens_shirt';
+  if (/trouser|\bchino|\bcargo\b|\bpants?\b|\bshorts?\b/.test(s) && !/shirt/.test(s)) return 'mens_trouser';
+  if (/polo|t-?shirt|\btee\b|\bshirt\b|henley|sweat ?shirt|hoodie|sweater|jacket|bomber|puffer|track|\bvest\b|cardigan|pullover|mock ?neck|high ?neck/.test(s)) return 'mens_shirt';
   return 'mens_shalwar_kameez';
+}
+// FULLY-resolved men's category for a brand-rule move — applies the SAME unstitched + garment-type
+// refinement the men pipeline would, so the move is idempotent (no flip on the next harvest pass).
+function finalMenCat(p) {
+  if (isUnstitched(p)) return 'mens_unstitched';
+  const base = menCatFor(p.t);
+  const ref = menType({ t: p.t, cat: base });
+  return ref || base;
 }
 // garment → kids category. boy: true→boys, false→girls, null→infer from garment (frock/dress=girl).
 function kidsCatFor(t, boy) {
@@ -226,9 +234,9 @@ const FOOT = /\bshoes?\b|\bheels?\b|\bsandal|\bslipper|\bsneaker|\bpump\b|\bwedg
 // double as colour/scent names ("Incense","Oud","Musk") or set components ("Sando shirt","Turban
 // ...Kurta") -> delete ONLY when the title has no garment NOUN (nouns, not piece-counts, so a
 // "Seamless Boxers 2pc" still goes).
-const NONAPPAREL_STRONG = /gift ?(box|card|set|hamper|voucher|pack)\b|\bhamper\b|beard ?oil|\bcologne\b|body ?spray|lip ?(&|and|n) ?cheek|lip ?tint|cheek ?tint|argan ?oil|\bconditioner\b|\bshampoo\b|hair ?(serum|oil|catcher|grip|band|clip|tie)|\bdiffuser\b|room ?spray|scented ?candle|\bcandle\b|\bbukhoor\b|\blampshade\b|\bcomforter\b|\bduvet\b|bed ?sheet|bedsheet|\bcushion\b|coffee ?table|table ?set|brass ?table|\bfurniture\b|ceramic ?(jar|mug|vase|plate|bowl|pot|ware)|\bcrockery\b|\btumbler\b|water ?bottle|\bzamzam\b|\bcooler\b|\bperfume\b|\bfragrance\b|gift ?wrap|ear ?cuff|tasbeeh|tasbih|misbaha|placemat|place ?mat|table ?runner|table ?cloth|tablecloth|\bcoaster|\bnapkin|prayer ?mat|jaye ?namaz|janamaz|\bmiswak\b|hijab ?(crown ?)?grip|\bself[\s-]?tie\b|\(TIE-\d+\)|designer[\s-]?tie\b/i;
-const NONAPPAREL_WEAK = /\bmusk\b|\boud\b|\bincense\b|\bturban\b|\bimamah\b|\bkoofi\b|\bkufi\b|\btopi\b|prayer ?cap|pocket ?square|bow ?tie|bowtie|\bnecktie\b|\bboxers?\b|\bbriefs?\b|boy ?shorts|\bsando\b|\bundershirt\b|cotton ?vest|vest ?pack|pack of \d+ ?(vest|boxer|brief)|undergarment|seamless ?boxer|\bmuffler\b|\bcharm\b|\bhipster\b|\btrunks?\b|men'?s vest|vest with sleeves|jersey vest|seamless ?(jersey )?vest|sleeveless vest|\bcaps?\b/i;
-const GARMENT_NOUN = /\b(kurti|kurta|kameez|shirt|t-?shirt|tee|polo|dress|gown|frock|trouser|pants?|abaya|hijab|shalwar|saree|lehenga|dupatta|kaftan|maxi|peplum|blouse|top|tank|tunic|sherwani|waistcoat|jacket|sweater|cardigan|hoodie|outfit|romper|jumpsuit|suit|blazer|coat|tuxedo)\b/i;
+const NONAPPAREL_STRONG = /gift ?(box|card|set|hamper|voucher|pack)\b|\bhamper\b|beard ?oil|\bcologne\b|body ?spray|lip ?(&|and|n) ?cheek|lip ?tint|cheek ?tint|argan ?oil|\bconditioner\b|\bshampoo\b|hair ?(serum|oil|catcher|grip|band|clip|tie)|\bdiffuser\b|room ?spray|scented ?candle|\bcandle\b|\bbukhoor\b|\blampshade\b|\bcomforter\b|\bduvet\b|bed ?sheet|bedsheet|\bcushion\b|coffee ?table|table ?set|brass ?table|\bfurniture\b|ceramic ?(jar|mug|vase|plate|bowl|pot|ware)|\bcrockery\b|\btumbler\b|water ?bottle|\bzamzam\b|\bcooler\b|\bperfume\b|\bfragrance\b|gift ?wrap|ear ?cuff|tasbeeh|tasbih|misbaha|placemat|place ?mat|table ?runner|table ?cloth|tablecloth|\bcoaster|\bnapkin|prayer ?mat|jaye ?namaz|janamaz|\bmiswak\b|hijab ?(crown ?)?grip|\bself[\s-]?tie\b|\(TIE-\d+\)|designer[\s-]?tie\b|\[\+\s*rs\.?/i;
+const NONAPPAREL_WEAK = /\bmusk\b|\boud\b|\bincense\b|\bturban\b|\bimamah\b|\bkoofi\b|\bkufi\b|\btopi\b|prayer ?cap|pocket ?square|bow ?tie|bowtie|\bnecktie\b|\bboxers?\b|\bbriefs?\b|boy ?shorts|\bsando\b|\bundershirt\b|cotton ?vest|vest ?pack|pack of \d+ ?(vest|boxer|brief)|undergarment|seamless ?boxer|\bmuffler\b|\bcharm\b|\bhipster\b|\btrunks?\b|men'?s vest|vest with sleeves|jersey vest|seamless ?(jersey )?vest|sleeveless vest|\bcaps?\b|\bsofa\b|\bottoman\b|recliner|\bcouch\b|dining ?table|cente?r ?table|coff?e?e? ?table|breakfast ?table|console ?table|room ?chair|bed ?spread|bedspread|l-?shape ?sofa|sideboard|\bmattress\b|\bdresser\b/i;
+const GARMENT_NOUN = /\b(kurti|kurta|kameez|shirt|t-?shirt|sweat ?shirt|sweat ?pants?|tee|polo|dress|gown|frock|trousers?|pants?|joggers?|leggings?|shorts?|skirt|abaya|hijab|shalwar|saree|lehenga|dupatta|kaftan|maxi|peplum|blouse|top|tank|tunic|sherwani|waistcoat|jacket|bomber|sweater|cardigan|hoodie|pullover|outfit|romper|jumpsuit|suit|blazer|coat|tuxedo)\b/i;
 
 // Apply the full multi-tier cleanup to a products array → { products, stats }. Pure &
 // idempotent. MUTATES each kept product's .cat in place and drops accessories / men footwear.
@@ -249,7 +257,7 @@ function cleanupProducts(ps) {
       if (eg && coarseGender(eg) !== catGenderOf(p.cat)) {
         const cg = coarseGender(eg);
         if (cg === 'w') p.cat = womenCatFor(p);
-        else if (cg === 'm') p.cat = menCatFor(p.t);
+        else if (cg === 'm') p.cat = finalMenCat(p);
         else p.cat = eg === 'ki' ? 'kids_infant' : kidsCatFor(p.t, eg === 'kb' ? true : eg === 'kg' ? false : null);
         explicitN++; out.push(p); continue;
       }
@@ -259,20 +267,34 @@ function cleanupProducts(ps) {
     // /products/b… = BOY. The harvester defaults its code-named kids to BOYS, so trust the slug:
     // vision-confirmed 28/30 g-slug items sitting in kids_boys are girls (incl. title-impossible
     // ones like "Raglan Tee"/"Birds Tee"/"Boiler Suit"); 2 b-slug items sat in kids_girls.
-    if (p.b === 'One Kids' && /^kids_(boys|girls)_/.test(p.cat)) {
+    // One Kids is a FAMILY brand: slug first letter = g(girl) b(boy) m(MEN) w(women). Trust it for
+    // every gender. g/b swap within kids; m→men (vision-confirmed 12/12: polos/tees/bomber/cargo on
+    // adult male models); w→women.
+    if (p.b === 'One Kids' && p.cat !== 'footwear') {
       const _m = (p.u || '').match(/\/products\/([a-z])/i);
       const _g = _m ? _m[1].toLowerCase() : '';
-      const _suf = (p.cat.match(/_(eastern|western|formal)$/) || [, 'western'])[1];
-      if (_g === 'g' && /^kids_boys_/.test(p.cat)) { p.cat = 'kids_girls_' + _suf; girlsKidN++; out.push(p); continue; }
-      if (_g === 'b' && /^kids_girls_/.test(p.cat)) { p.cat = 'kids_boys_' + _suf; girlsKidN++; out.push(p); continue; }
+      if (_g === 'm' && catGenderOf(p.cat) !== 'm') { p.cat = finalMenCat(p); slugN++; out.push(p); continue; }
+      if (_g === 'w' && catGenderOf(p.cat) !== 'w') { p.cat = womenCatFor(p); slugN++; out.push(p); continue; }
+      if (/^kids_(boys|girls)_/.test(p.cat)) {
+        const _suf = (p.cat.match(/_(eastern|western|formal)$/) || [, 'western'])[1];
+        if (_g === 'g' && /^kids_boys_/.test(p.cat)) { p.cat = 'kids_girls_' + _suf; girlsKidN++; out.push(p); continue; }
+        if (_g === 'b' && /^kids_girls_/.test(p.cat)) { p.cat = 'kids_boys_' + _suf; girlsKidN++; out.push(p); continue; }
+      }
     }
+    // Maria B: slug "mbm"=Maria B Man (→men, vision-confirmed 12/12), "mbk"=kids. Fix mbm in women cats.
+    if (p.b === 'Maria B' && /\/products\/mbm/i.test(p.u) && catGenderOf(p.cat) !== 'm') { p.cat = finalMenCat(p); slugN++; out.push(p); continue; }
+    // Nishat Linen: "Naqsh" is its MENSWEAR line (vision-confirmed) — 2pc kurta+shalwar on male models.
+    if (p.b === 'Nishat Linen' && /\bnaqsh\b/i.test(p.t) && catGenderOf(p.cat) !== 'm') { p.cat = finalMenCat(p); slugN++; out.push(p); continue; }
+    // Sadaf Fawad Khan: standalone "X Kurta" (not kurti, not part of a suit) = its MEN's kurta line
+    // (vision-confirmed). The "Kurta [+Rs.…]" add-on variants are deleted by NONAPPAREL above.
+    if (p.b === 'Sadaf Fawad Khan' && /\bkurta\b/i.test(p.t) && !/kurti|\bsuit\b|\b[23] ?pc\b|\b[23] ?piece\b|dupatta/i.test(p.t) && catGenderOf(p.cat) !== 'm') { p.cat = finalMenCat(p); slugN++; out.push(p); continue; }
     // Bonanza Satrangi: slug first letter = gender (m=men, w=women, k=kids). Fix any item whose slug
     // gender contradicts its cat — vision-confirmed: 6 women's 3pc/lawn ("WP…/WU…") sat in men cats.
     if (p.b === 'Bonanza Satrangi' && p.cat !== 'footwear') {
       const _c = (p.u.toLowerCase().match(/\/products\/([a-z])/) || [, ''])[1];
       const _sg = _c === 'm' ? 'm' : _c === 'w' ? 'w' : _c === 'k' ? 'k' : '';
       if (_sg && coarseGender(_sg) !== catGenderOf(p.cat)) {
-        p.cat = _sg === 'm' ? menCatFor(p.t) : _sg === 'w' ? womenCatFor(p) : kidsCatFor(p.t, null);
+        p.cat = _sg === 'm' ? finalMenCat(p) : _sg === 'w' ? womenCatFor(p) : kidsCatFor(p.t, null);
         slugN++; out.push(p); continue;
       }
     }
@@ -302,12 +324,12 @@ function cleanupProducts(ps) {
     if (!/^mens_|^kids_/.test(p.cat)) {
       const sg = slugGender(p);
       const womanTitle = /\bladies\b|\bwomen[’'`]?s?\b|\bwoman\b|\bgirls?\b/i.test(p.t || '');   // explicit women/girl title overrides a men slug-code collision (e.g. colour-prefix)
-      if (sg === 'm' && !womanTitle) { p.cat = menCatFor(p.t);        slugN++; out.push(p); continue; }
+      if (sg === 'm' && !womanTitle) { p.cat = finalMenCat(p);        slugN++; out.push(p); continue; }
       if (sg === 'kb') { p.cat = kidsCatFor(p.t, true);  slugN++; out.push(p); continue; }
       if (sg === 'kg') { p.cat = kidsCatFor(p.t, false); slugN++; out.push(p); continue; }
       // women-first brand's MEN line dumped into women 2pc cats (Azure/Al-Deebaj, vision-confirmed)
       if (MENS_2PC_BRANDS.has(p.b) && !womanTitle && MENS_2PC_TITLE.test(p.t || '') && !MENS_2PC_GUARD.test(p.t || '')) {
-        p.cat = menCatFor(p.t); slugN++; out.push(p); continue;
+        p.cat = finalMenCat(p); slugN++; out.push(p); continue;
       }
     }
     if (!/^mens_|^kids_/.test(p.cat)) { const wc = womenType(p); if (wc && wc !== p.cat) { p.cat = wc; womenN++; out.push(p); continue; } }   // women: kids/niqab/bottom/tee corrections
