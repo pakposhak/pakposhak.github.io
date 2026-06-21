@@ -67,7 +67,7 @@ const SHOPIFY = [
   ['Faiza Saqlain','www.faizasaqlain.pk','p'],['Sania Maskatiya','pk.saniamaskatiya.com','p'],
   ['Zaha by Elan','www.zaha.pk','p'],['Zainab Chottani','pk.zainabchottani.com','p'],['Zellbury','zellbury.com','md'],
   ['Bonanza Satrangi','bonanzasatrangi.com','md'],
-  ['Charcoal','charcoal.com.pk','m'],['Cougar','cougar.com.pk','m'],['Dynasty Fabrics','dynastyfabrics.com','m'],
+  ['Charcoal','charcoal.com.pk','m'],['Cougar','www.cougar.com.pk','m'],['Dynasty Fabrics','dynastyfabrics.com','m'],
   ['Monark','monark.com.pk','m'],['Royal Tag','royaltag.com.pk','m'],['Shahnameh','shahnameh.pk','m'],
   ['Shahzeb Saeed','shahzebsaeed.com','m'],
   // Bachaa Party removed: its live /products.json is a general kids store (Toys,
@@ -504,9 +504,19 @@ function buildProduct(p, name, host, group, force, kidsHint){
   // size, which is often SOLD OUT (e.g. Minnie Minors MSKZ-39: 9/12-M @ PKR 3,390 sold out,
   // cheapest buyable size 8/9-Y @ PKR 4,290). Using variants[0] made the Browse card show a
   // price the buyer can NEVER be billed — the basket only ever charges an in-stock size. This
-  // uses the SAME in-stock filter as availSizes() below, so the card price == the cheapest size
-  // chip the buyer can actually pick. Falls back to the cheapest of ALL variants only when no
-  // stock flag is set (e.g. single-variant unstitched products that carry no size option).
+  // uses the SAME in-stock filter as availSizes() + the order-form basket, so the card price ==
+  // the cheapest size chip the buyer can actually pick (card == basket parity).
+  //
+  // ⚠️ DO NOT "drop products whose every variant is available:false" — they are NOT unbuyable.
+  // Proven via the Shopify /cart/add.js probe (200=buyable, 422=sold out): across Edenrobe,
+  // Motifz, Zellbury, Bonanza, Asim Jofa, Sana Safinaz, EVERY available:false product still
+  // adds to cart (HTTP 200). These are MADE-TO-ORDER / oversell items (zero inventory but
+  // purchasable — how PK embroidered-suit brands operate). `available:false` means
+  // "0 in inventory", NOT "cannot buy". A multi-agent audit mistook the un-hydrated HTML
+  // "Sold out" label (a JS-hydration artifact) for unbuyability and recommended dropping them —
+  // that would have deleted THOUSANDS of buyable products (Zellbury 40%, Motifz 35% of a page).
+  // So when no variant is available:true we KEEP the product and fall back to the cheapest of
+  // ALL variants (still a real, buyable price). See [[browse-products]].
   const _instock = (p.variants || []).filter(v => v && v.available !== false)
     .map(v => Math.round(parseFloat(v.price) || 0)).filter(n => n > 0);
   const _allp = (p.variants || []).map(v => Math.round(parseFloat(v && v.price) || 0)).filter(n => n > 0);
