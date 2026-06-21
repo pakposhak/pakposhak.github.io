@@ -85,6 +85,29 @@ function handleBrandIndex(res){
   } catch (e) { send(res, 500, { error: e.message }); }
 }
 
+// AUTHORITATIVE category-by-URL lookup. Given a product URL (or PK-twin URL) the order form
+// returns the SAME catalogue category the Browse card shows — so the basket weight/price matches
+// the pic exactly, instead of the order form re-guessing (which has no kids signal for neutral
+// titles like "Basic T-Shirt"). Matches on the Shopify /products/<handle> (host-disambiguated),
+// ignoring ?variant= and www/twin-host differences. Returns {found, cat, bdt, b, sz}.
+function handleByUrl(u, res){
+  if (!db) return send(res, 503, { error: 'search db not ready' });
+  const raw = u.searchParams.get('u') || '';
+  let handle = '', host = '';
+  try { const x = new URL(raw); host = x.hostname.replace(/^www\./, '').toLowerCase(); const m = x.pathname.match(/\/products\/([^\/?#]+)/i); handle = m ? m[1].toLowerCase() : ''; }
+  catch (e) { const m = String(raw).match(/\/products\/([^\/?#]+)/i); handle = m ? m[1].toLowerCase() : ''; }
+  if (!/^[a-z0-9._-]{2,140}$/.test(handle)) return send(res, 200, { found: false });
+  try {
+    const cand = db.prepare("SELECT b,u,cat,bdt,sz FROM products WHERE u LIKE ? COLLATE NOCASE").all('%/products/' + handle + '%');
+    // keep only EXACT-handle matches (LIKE '%handle%' could prefix-match a longer handle)
+    const exact = cand.filter(r => { const m = (r.u || '').toLowerCase().match(/\/products\/([^\/?#]+)/); return m && m[1] === handle; });
+    if (!exact.length) return send(res, 200, { found: false });
+    let pick = exact[0];
+    if (host && exact.length > 1) { const h = exact.find(r => (r.u || '').toLowerCase().includes(host)); if (h) pick = h; }
+    send(res, 200, { found: true, cat: pick.cat, bdt: pick.bdt, b: pick.b, sz: JSON.parse(pick.sz || '[]') });
+  } catch (e) { send(res, 500, { error: e.message }); }
+}
+
 function handleSearch(u, res){
   if (!db) return send(res, 503, { error: 'search db not ready' });
   const q = u.searchParams;
@@ -148,6 +171,7 @@ http.createServer((req, res) => {
   if (u.pathname === '/search' || u.pathname === '/search/') return handleSearch(u, res);
   if (u.pathname === '/search/facets') return handleFacets(res);
   if (u.pathname === '/search/brand-index') return handleBrandIndex(res);
+  if (u.pathname === '/search/by-url') return handleByUrl(u, res);
   if (u.pathname === '/search/health') return send(res, 200, { ok: true, products: db ? db.prepare('SELECT count(*) c FROM products').get().c : 0 });
   send(res, 404, { error: 'not found' });
 }).listen(PORT, '127.0.0.1', () => console.log('psb-search listening on 127.0.0.1:' + PORT));
