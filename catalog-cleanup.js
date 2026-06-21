@@ -55,10 +55,10 @@ const MENS_2PC_GUARD = /dupatta|chunri|3 ?pc|3 ?piece|2 ?piece\b|\bsuit\b|leheng
 // (titles are often mis-tagged). SOFT = feminine prints/silhouettes that rarely-but-can appear on
 // boys → move ONLY when the title does NOT say boy/boys (so "Boys floral polo" stays a boy).
 // \b guards stop false hits (rainbow≠bow, elbow≠bow). GUARD excludes a boy's dress-shirt/fancy-dress.
-const KGIRL_STRONG = /\bfrock\b|\bgown\b|\bpeplum\b|pinafore|\btutu\b|princess|\bbarbie\b|unicorn|fairy|jasmine|\bblouse\b|lehenga|sharara|gharara|\btulle\b|lace (dress|frock|top|gown)/;
+const KGIRL_STRONG = /\bfrock\b|\bgown\b|\bpeplum\b|pinafore|\btutu\b|princess|\bbarbie\b|unicorn|fairy|jasmine|\bblouse\b|lehenga|sharara|gharara|\btulle\b|lace (dress|frock|top|gown)|\babaya\b|\bmakhna\b|\bhijab\b|\bniqab\b|\bjilbab\b|\bburqa\b|\bburka\b|\bkhimar\b/;   // …+ girls' modest wear (abaya/makhna/hijab/niqab — a boy's item never carries these; were leaking into kids_boys_western from Hijabi.pk/Hijab-ul-Hareem/Abaya.pk)
 const KGIRL_SOFT = /\bdress\b|\bskirt\b|\bfloral\b|\bflower\b|smock|gathered|\bpoof\b|sequin|ruffl|butterfly|cold[\s-]?shoulder|crop[\s-]?(tee|top|polo)|jegging|bow (top|dress|frock|blouse)/;
 const KGIRL_GUARD = /dress shirt|dress pant|fancy dress/;
-const KGIRL_EAST = /\bfrock\b|kaftan|kameez|shalwar|\bkurta\b|\bkurti\b|anarkali|lehenga|gharara|sharara|peshwas|abaya/;   // eastern girls' garment → kids_girls_eastern (else western)
+const KGIRL_EAST = /\bfrock\b|kaftan|kameez|shalwar|\bkurta\b|\bkurti\b|anarkali|lehenga|gharara|sharara|peshwas|abaya|makhna|hijab|niqab|jilbab|burqa|burka|khimar/;   // eastern girls' garment / modest wear → kids_girls_eastern (else western)
 const menUns = p => isUnsSz(p) || /\bunstitch|un-?stitch|unstiched|ready[\s-]?to[\s-]?stitch|\brts\b/.test(txt(p));
 const REV = {kurti_1pc_unstitch:'kurti_1pc',shirt_dupatta_2pc_unstitch:'shirt_dupatta_2pc',shirt_trouser_2pc_unstitch:'shirt_trouser_2pc',lawn_3pc_unstitch:'pret_3pc',unstitch_3pc_emb:'pret_3pc_emb',winter_2pc_unstitch:'winter_2pc_stitch',winter_3pc_unstitch:'winter_3pc_stitch'};
 const ONE = new Set(['kurti_1pc','western_top','kaftan']);
