@@ -2755,22 +2755,40 @@
       const ptStr  = product.product_type || product.type || '';
       const tagsRaw = product.tags;
       const tagStr  = (Array.isArray(tagsRaw) ? tagsRaw.join(' ') : String(tagsRaw || '')).toLowerCase();
-      // Women/kids: classify from type+title+tags with the SAME logic the catalog
+      // AUTHORITATIVE: the catalogue already classified this exact product (the SAME category the
+      // Browse card shows). Use it so the basket weight/price matches the pic — the client guesser
+      // below has no "kids" signal for neutral titles ("Basic T-Shirt") and would mis-weight them
+      // (e.g. a "Boys Kurta Pajama" read as men's). Fall back to guessing only for links NOT in the
+      // catalogue (new / unharvested products). See search-server.js /search/by-url.
+      let catalogCat = null;
+      try{
+        const _cr = await fetch(relayBase() + '/search/by-url?u=' + encodeURIComponent(url), { signal: ctrl.signal, cache: 'no-store' });
+        if(_cr.ok){ const _cj = await _cr.json(); if(_cj && _cj.found && _cj.cat) catalogCat = _cj.cat; }
+      }catch(e){}
+      // Women/kids fallback: classify from type+title+tags with the SAME logic the catalog
       // harvester uses, so a browsed card and the added cart line match. (Garment
       // type/piece-count beat the generic "pret"; accessories & 2-piece first.)
-      let fetchedCat = gender === 'men'
+      let fetchedCat = catalogCat || (gender === 'men'
         ? (mapPtToCatMen(ptStr) || mapPtToCatMen(product.title || '') || 'mens_shalwar_kameez')
-        : classifyWomenCat((ptStr + ' ' + (product.title || '')).toLowerCase(), tagStr);
-      // Host overrides so the carted weight matches the catalog: khussa stores →
-      // footwear; festive houses (Emaan) → formal-embroidered floor (not 2.5kg);
-      // an explicit adda / full-hand description → handmade_emb (2.5kg).
+        : classifyWomenCat((ptStr + ' ' + (product.title || '')).toLowerCase(), tagStr));
+      // Host overrides (GUESS path only — the catalogue already applies these): khussa stores →
+      // footwear; festive houses (Emaan) → formal-embroidered floor (not 2.5kg); an explicit
+      // adda / full-hand description → handmade_emb (2.5kg).
       const _host = _hostOf(url);
-      if(FOOTWEAR_HOSTS.has(_host)){ fetchedCat = 'footwear'; }
-      else if(gender !== 'men' && fetchedCat){
-        if(FESTIVE_HOSTS.has(_host) && (fetchedCat==='pret_3pc'||fetchedCat==='kurti_1pc'||fetchedCat==='pret_3pc_emb')) fetchedCat = 'formal_emb_3pc';
-        if(isHandmadeFullForm(product, fetchedCat)) fetchedCat = 'handmade_emb';
+      if(!catalogCat){
+        if(FOOTWEAR_HOSTS.has(_host)){ fetchedCat = 'footwear'; }
+        else if(gender !== 'men' && fetchedCat){
+          if(FESTIVE_HOSTS.has(_host) && (fetchedCat==='pret_3pc'||fetchedCat==='kurti_1pc'||fetchedCat==='pret_3pc_emb')) fetchedCat = 'formal_emb_3pc';
+          if(isHandmadeFullForm(product, fetchedCat)) fetchedCat = 'handmade_emb';
+        }
       }
       const catEl = document.getElementById(`dc_cat_${id}`);
+      // Catalogue category is authoritative — set it and lock it (so the guess-overrides below and
+      // the pre-fetch URL guess can't change the carted weight). The buyer can still pick manually.
+      if(catalogCat && catEl && !(drafts[id] && drafts[id].catUserSet)){
+        setDraftCat(id, catalogCat);
+        if(drafts[id]) drafts[id].catUserSet = true;
+      }
       // Overwrite a wrong women's auto-guess if this is clearly a men's product
       const womensGuess = catEl && catEl.value && !MENS_CATS.has(catEl.value);
       if(catEl && fetchedCat && !(drafts[id] && drafts[id].catUserSet) && (!catEl.value || (gender === 'men' && womensGuess))){
