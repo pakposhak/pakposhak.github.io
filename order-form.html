@@ -371,6 +371,9 @@
       .hdr-inner{max-width:980px}
       .hiw-inner{max-width:980px}
       .container{max-width:980px;padding:30px 32px 44px}
+      /* Browse Products breaks OUT of the narrow 980px form column to fill the desktop screen
+         (≤1440px) so the grid shows 4 per row; the order form / steps stay the readable 980px. */
+      #tabProducts{width:min(1440px,96vw);margin-left:calc((100% - min(1440px,96vw))/2)}
       /* No floating bottom bar on desktop — Cart & How-To sit beside the 1·2·3·4 steps */
       .bottom-nav{display:none !important}
       .steps-bar{position:relative}
@@ -810,7 +813,7 @@
       .ps-wrap{display:flex;gap:18px;align-items:flex-start}
       .ps-rail{width:212px;flex-shrink:0;margin-bottom:0;position:sticky;top:12px}
       .ps-results{flex:1;min-width:0}
-      .ps-grid{grid-template-columns:repeat(auto-fill,minmax(178px,1fr))}
+      .ps-grid{grid-template-columns:repeat(4,1fr)}
       .ps-brands{max-height:260px}
       .ps-price{grid-template-columns:repeat(2,1fr)}   /* narrow rail → 2 per row */
       .ps-search-mobile{display:none}                  /* mobile search (rail top) hidden on desktop */
