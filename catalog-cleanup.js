@@ -281,6 +281,17 @@ function cleanupProducts(ps) {
         if (_g === 'b' && /^kids_girls_/.test(p.cat)) { p.cat = 'kids_boys_' + _suf; girlsKidN++; out.push(p); continue; }
       }
     }
+    // Hopscotch encodes kids gender in the SKU code "h026-[g/b]" (g=girl, b=boy), vision-confirmed
+    // (g-coded "Pink Striped Tights"/"Plum Pull-up Trousers"/floral "Bloomer" shirt sat in boys).
+    // Trust the code: swap to the matching kids gender, keeping the eastern/western/formal suffix.
+    if (p.b === 'Hopscotch' && /^kids_(boys|girls)_/.test(p.cat)) {
+      const _hc = (p.u || '').toLowerCase().match(/h026-([gb])/);
+      if (_hc) {
+        const _suf = (p.cat.match(/_(eastern|western|formal)$/) || [, 'western'])[1];
+        if (_hc[1] === 'g' && /^kids_boys_/.test(p.cat)) { p.cat = 'kids_girls_' + _suf; girlsKidN++; out.push(p); continue; }
+        if (_hc[1] === 'b' && /^kids_girls_/.test(p.cat)) { p.cat = 'kids_boys_' + _suf; girlsKidN++; out.push(p); continue; }
+      }
+    }
     // Maria B: slug "mbm"=Maria B Man (→men, vision-confirmed 12/12), "mbk"=kids. Fix mbm in women cats.
     if (p.b === 'Maria B' && /\/products\/mbm/i.test(p.u) && catGenderOf(p.cat) !== 'm') { p.cat = finalMenCat(p); slugN++; out.push(p); continue; }
     // Nishat Linen: "Naqsh" is its MENSWEAR line (vision-confirmed) — 2pc kurta+shalwar on male models.
