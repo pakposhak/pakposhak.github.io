@@ -248,7 +248,7 @@ const coarseGender = g => (g === 'kb' || g === 'kg' || g === 'ki' || g === 'k') 
 const catGenderOf = c => /^mens_/.test(c) ? 'm' : /^kids_/.test(c) ? 'k' : 'w';
 const GARMENT = /shirt|kameez|kurti|kurta|\bdress\b|gown|frock|trouser|\bpant|\btop\b|abaya|hijab|shalwar|\bsuit\b|\blawn\b|saree|lehenga|dupatta|kaftan|maxi|peplum|blouse|tunic|\bcape\b|co-?ord|jumpsuit|romper|\btee\b|t-?shirt|polo|jeans|waistcoat|sweater|cardigan|hoodie|jacket|\bcoat\b|sweatshirt|nightwear|loungewear|pajama|angrakha|gharara|sharara|outfit|ensemble|\d ?piece|\d ?pc\b|unstitch|fabric/i;
 const ACC = /\bsunglass|\beyewear\b|\bgoggles?\b|jewell?ery|\bearrings?\b|\bnecklace|\bbangles?\b|\bbracelet|\bpendant|\bbrooch|\bperfume\b|\bfragrance\b|\battar\b|\bwrist ?watch|\bwatch\b|\bbeanie\b|\bscrunchie|\bhair ?band|\bhair ?clip|\bkeychain|\bkey ?chain|\bsocks?\b|\bwallet\b|\bcard ?holder|\bcufflink|\btote\b|\bbackpack|\bsling ?bag|\bhand ?bag|\bclutch\b|\bpouch\b|\bbelt\b|\bcap\b/i;
-const FOOT = /\bshoes?\b|\bheels?\b|\bsandal|\bslipper|\bsneaker|\bpump\b|\bwedge|\bmule\b|khussa|\bloafer|\bjutt?i\b|kolhapuri/i;
+const FOOT = /\bshoes?\b|\bheels?\b|\bsandal|\bslipper|\bslides?\b|\bsneaker|\bpump\b|\bwedge|\bmule\b|khussa|\bloafer|\bjutt?i\b|kolhapuri/i;
 // ── CATALOG URL REWRITE: known intl-twin domains → PK store ──
 // Mirrors order-form.html TWIN_MAP but applied at cleanup time so browse-product links
 // always point to the PKR store, not a USD international twin.
@@ -265,7 +265,7 @@ const DOMAIN_REWRITE = {
 // ...Kurta") -> delete ONLY when the title has no garment NOUN (nouns, not piece-counts, so a
 // "Seamless Boxers 2pc" still goes).
 const NONAPPAREL_STRONG = /gift ?(box|card|set|hamper|voucher|pack)\b|\bhamper\b|beard ?oil|\bcologne\b|body ?spray|lip ?(&|and|n) ?cheek|lip ?tint|cheek ?tint|argan ?oil|\bconditioner\b|\bshampoo\b|hair ?(serum|oil|catcher|grip|band|clip|tie)|\bdiffuser\b|room ?spray|scented ?candle|\bcandle\b|\bbukhoor\b|\blampshade\b|\bcomforter\b|\bduvet\b|bed ?sheet|bedsheet|\bcushion\b|coffee ?table|table ?set|brass ?table|\bfurniture\b|ceramic ?(jar|mug|vase|plate|bowl|pot|ware)|\bcrockery\b|\btumbler\b|water ?bottle|\bzamzam\b|\bcooler\b|\bperfume\b|\bfragrance\b|gift ?wrap|ear ?cuff|tasbeeh|tasbih|misbaha|placemat|place ?mat|table ?runner|table ?cloth|tablecloth|\bcoaster|\bnapkin|prayer ?mat|jaye ?namaz|janamaz|\bmiswak\b|hijab ?(crown ?)?grip|\bself[\s-]?tie\b|\(TIE-\d+\)|designer[\s-]?tie\b|\[\+\s*rs\.?|\bstorage[\s-]+basket\b|\bwicker\s+basket\b|\blaundry\s+basket\b|\brattan\s+basket\b|\blapel\s*pin\b|\beyeliner\b|\bmascara\b|\bburp[\s-]*cloth\b|\bburp[\s-]*bib\b|\bpotli\s*bag\b|\bhand[\s-]?crafted\s+phool\b|\bmirchi\s+sahara\b/i;
-const NONAPPAREL_WEAK = /\bmusk\b|\boud\b|\bincense\b|\bturban\b|\bimamah\b|\bkoofi\b|\bkufi\b|\btopi\b|prayer ?cap|pocket ?square|bow ?tie|bowtie|\bnecktie\b|\bboxers?\b|\bbriefs?\b|boy ?shorts|\bsando\b|\bundershirt\b|cotton ?vest|vest ?pack|pack of \d+ ?(vest|boxer|brief)|undergarment|seamless ?boxer|\bmuffler\b|\bcharm\b|\bhipster\b|\btrunks?\b|men'?s vest|vest with sleeves|jersey vest|seamless ?(jersey )?vest|sleeveless vest|\bcaps?\b|\bsofa\b|\bottoman\b|recliner|\bcouch\b|dining ?table|cente?r ?table|coff?e?e? ?table|breakfast ?table|console ?table|room ?chair|bed ?spread|bedspread|l-?shape ?sofa|sideboard|\bmattress\b|\bdresser\b|\benvelop(?:e)?\b|\bpotli\b/i;
+const NONAPPAREL_WEAK = /\bmusk\b|\boud\b|\bincense\b|\bturban\b|\bimamah\b|\bkoofi\b|\bkufi\b|\btopi\b|prayer ?cap|pocket ?square|bow ?tie|bowtie|\bnecktie\b|^tie\b|\btie[\s-]?pin\b|\bboxers?\b|\bbriefs?\b|boy ?shorts|\bsando\b|\bundershirt\b|cotton ?vest|vest ?pack|pack of \d+ ?(vest|boxer|brief)|undergarment|seamless ?boxer|\bmuffler\b|\bcharm\b|\bhipster\b|\btrunks?\b|men'?s vest|vest with sleeves|jersey vest|seamless ?(jersey )?vest|sleeveless vest|\bcaps?\b|\bsofa\b|\bottoman\b|recliner|\bcouch\b|dining ?table|cente?r ?table|coff?e?e? ?table|breakfast ?table|console ?table|room ?chair|bed ?spread|bedspread|l-?shape ?sofa|sideboard|\bmattress\b|\bdresser\b|\benvelop(?:e)?\b|\bpotli\b/i;
 const GARMENT_NOUN = /\b(kurti|kurta|kameez|shirt|t-?shirt|sweat ?shirt|sweat ?pants?|tee|polo|dress|gown|frock|trousers?|pants?|joggers?|leggings?|shorts?|skirt|abaya|hijab|shalwar|saree|lehenga|dupatta|kaftan|maxi|peplum|blouse|top|tank|tunic|sherwani|waistcoat|jacket|bomber|sweater|cardigan|hoodie|pullover|outfit|romper|jumpsuit|suit|blazer|coat|tuxedo)\b/i;
 
 // Apply the full multi-tier cleanup to a products array → { products, stats }. Pure &
@@ -382,6 +382,16 @@ function cleanupProducts(ps) {
         slugN++; out.push(p); continue;
       }
     }
+    // Senorita is a GIRLS eastern/festive brand (image-verified: every sampled item is a girl in a
+    // frock/gharara/shalwar-kameez 3pc). The harvester scatters it into kids_boys_formal AND
+    // kids_girls_formal, but its "Casual … 3 Piece Suit" line is everyday EASTERN, not formal.
+    // Route the whole brand: casual/summer → girls eastern; formal/party → girls formal; else eastern.
+    if (p.b === 'Senorita' && /^kids_/.test(p.cat)) {
+      p.cat = /\bcasual\b|\bsummer\b/i.test(p.t || '') ? 'kids_girls_eastern'
+            : /\bformal\b|\bparty\b|\bwedding\b|\bfancy\b/i.test(p.t || '') ? 'kids_girls_formal'
+            : 'kids_girls_eastern';
+      girlsKidN++; out.push(p); continue;
+    }
     if (/^kids_boys_/.test(p.cat)) {
       const _tb = (p.t||'').toLowerCase();
       const _sz0 = Array.isArray(p.sz) && p.sz.length ? (p.sz[0]||'').trim() : '';
@@ -411,9 +421,23 @@ function cleanupProducts(ps) {
       // Polo/henley/t-shirt = western tops (Engine, Preeto); standalone pajama without kurta = sleepwear
       // not shalwar, so it's western too (Minnie Minors). "except shalwar" = guard below.
       if (p.cat === 'kids_boys_eastern') {
-        if (/\bhenley\b|\bpolo\b|t-?shirt|\btee\b|\bhoodie\b|\bsweat[\s-]?shirt\b|\btrack\b/.test(_tb) && !/(kurta|kameez|shalwar)/.test(_tb)) { p.cat='kids_boys_western'; girlsKidN++; out.push(p); continue; }
+        if (/\bhenley\b|polo|t-?shirt|\btee\b|\bhoodie\b|\bsweat[\s-]?shirt\b|\btrack\b|button[\s-]?down|\bjeans\b|\bdenim\b|\bshorts?\b|\bjogger|\bcargo\b|camp[\s-]?collar/.test(_tb) && !/(kurta|kameez|shalwar|waist[\s-]?coat|sherwani)/.test(_tb)) { p.cat='kids_boys_western'; girlsKidN++; out.push(p); continue; }
         if (/\bpajama\b|\bpyjama\b|\bsleepwear\b|\bnightsuit\b|\bnight[\s-]?suit\b/.test(_tb) && !/(kurta|kameez|\bpajama[\s-]?suit\b)/.test(_tb)) { p.cat='kids_boys_western'; girlsKidN++; out.push(p); continue; }
       }
+    }
+    // Girls' WESTERN garments mislabeled kids_girls_eastern (Engine tops, Eminent camisoles, playsuits)
+    // → kids_girls_western. Specific western nouns only (bare "top" is ambiguous with an eastern kurti).
+    if (p.cat === 'kids_girls_eastern') {
+      const _tg = (p.t||'').toLowerCase();
+      if (/\btank[\s-]?top\b|\bcamisole\b|\bcami\b|t-?shirt|\btee\b|\bjeans\b|\bdenim\b|\blegging|\bplaysuit\b|\bjumpsuit\b|\bskirt\b|\bhoodie\b|\bsweat[\s-]?shirt\b|\bshorts?\b/.test(_tg)
+          && !/kurta|kameez|shalwar|frock|dupatta|lehenga|abaya|gharara|peshwas|angrakha|\bkurti\b|makhna|hijab|niqab|jilbab/.test(_tg)) { p.cat='kids_girls_western'; girlsKidN++; out.push(p); continue; }
+    }
+    // Men's WESTERN tees/polos mislabeled as shalwar-kameez/kurta (One Kids "mtt/mtp" knit basics) →
+    // men's shirt; a pajama/trouser-only listing mislabeled as kurta → men's trouser.
+    if (p.cat === 'mens_shalwar_kameez' || p.cat === 'mens_kurta') {
+      const _tm = (p.t||'').toLowerCase();
+      if (/t-?shirt|\btee\b|\bpolo\b|crew[\s-]?neck|v-?neck/.test(_tm) && !/kurta|kameez|shalwar|sherwani|waist[\s-]?coat/.test(_tm)) { p.cat='mens_shirt'; menPcN++; out.push(p); continue; }
+      if (p.cat === 'mens_kurta' && /\bpajama\b|\bpyjama\b|\bpayjama\b|\btrouser/.test(_tm) && !/kurta|kameez|shirt|\bsuit\b|sherwani/.test(_tm)) { p.cat='mens_trouser'; menPcN++; out.push(p); continue; }
     }
     // BRAND SLUG-GENDER: a women-cat item whose brand slug says men/boys/girls → route by garment
     // (Zellbury men's shalwar-kameez/shirts, Diners boys' kurta-pajama & men's shirts, etc.). Fixes
