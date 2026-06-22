@@ -4601,14 +4601,18 @@
     // So on iOS bring the box into view + focus it NOW (inside the tap) — the user
     // long-presses → Paste, and the box's paste-listener (below) auto-submits.
     if(isIOS){
-      // Try the clipboard first (iOS 13.4+ shows a "Paste" button → returns the link
-      // → one tap). If it yields no link / is blocked, fall back to the manual box.
+      // FIX (iPhone paste tab): focus the box SYNCHRONOUSLY inside the tap so iOS
+      // opens the keyboard and the long-press → Paste works. Reading the clipboard
+      // first is async and consumes the tap's user-activation, so the later focus()
+      // became a no-op — that was the "paste tab does nothing on iPhone" bug.
+      focusToPaste();
+      // Bonus: if the clipboard yields a link (iOS 13.4+), auto-fill + submit.
       if(navigator.clipboard && navigator.clipboard.readText){
         navigator.clipboard.readText().then(function(txt){
           var mm = txt && txt.match(/https?:\/\/[^\s"'<>]+/i);
-          if(mm){ inp.value = mm[0].trim(); addFn(); } else { focusToPaste(); }
-        }).catch(function(){ focusToPaste(); });
-      } else { focusToPaste(); }
+          if(mm){ inp.value = mm[0].trim(); inp.blur(); addFn(); }
+        }).catch(function(){});
+      }
       return;
     }
     let txt = '', readOk = false;
