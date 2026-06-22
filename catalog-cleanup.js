@@ -248,7 +248,7 @@ const coarseGender = g => (g === 'kb' || g === 'kg' || g === 'ki' || g === 'k') 
 const catGenderOf = c => /^mens_/.test(c) ? 'm' : /^kids_/.test(c) ? 'k' : 'w';
 const GARMENT = /shirt|kameez|kurti|kurta|\bdress\b|gown|frock|trouser|\bpant|\btop\b|abaya|hijab|shalwar|\bsuit\b|\blawn\b|saree|lehenga|dupatta|kaftan|maxi|peplum|blouse|tunic|\bcape\b|co-?ord|jumpsuit|romper|\btee\b|t-?shirt|polo|jeans|waistcoat|sweater|cardigan|hoodie|jacket|\bcoat\b|sweatshirt|nightwear|loungewear|pajama|angrakha|gharara|sharara|outfit|ensemble|\d ?piece|\d ?pc\b|unstitch|fabric/i;
 const ACC = /\bsunglass|\beyewear\b|\bgoggles?\b|jewell?ery|\bearrings?\b|\bnecklace|\bbangles?\b|\bbracelet|\bpendant|\bbrooch|\bperfume\b|\bfragrance\b|\battar\b|\bwrist ?watch|\bwatch\b|\bbeanie\b|\bscrunchie|\bhair ?band|\bhair ?clip|\bkeychain|\bkey ?chain|\bsocks?\b|\bwallet\b|\bcard ?holder|\bcufflink|\btote\b|\bbackpack|\bsling ?bag|\bhand ?bag|\bclutch\b|\bpouch\b|\bbelt\b|\bcap\b/i;
-const FOOT = /\bshoes?\b|\bheels?\b|\bsandal|\bslipper|\bslides?\b|\bsneaker|\bpump\b|\bwedge|\bmule\b|khussa|\bloafer|\bjutt?i\b|kolhapuri/i;
+const FOOT = /\bshoes?\b|\bheels?\b|\bsandal|\bslipper|\bslides?\b|\bsneaker|\bpump\b|\bwedge|\bmule\b|khussa|\bloafer|\bjutt?i\b|kolhapuri|\bchappal|\bpeshawari\b|\bmojari|\bmojri|\bkohati|\bnagra\b|\bkheri\b|stiletto|espadrille|moccasin|\bbrogue/i;
 // ── CATALOG URL REWRITE: known intl-twin domains → PK store ──
 // Mirrors order-form.html TWIN_MAP but applied at cleanup time so browse-product links
 // always point to the PKR store, not a USD international twin.
@@ -279,7 +279,13 @@ function cleanupProducts(ps) {
   for (const p of ps) {
     { const _t = p.t || ''; if (NONAPPAREL_STRONG.test(_t) || (NONAPPAREL_WEAK.test(_t) && !GARMENT_NOUN.test(_t))) { junkN++; continue; } }   // homeware/cosmetics/headwear/innerwear/gifting -> delete
     if (ACC.test(p.t || '') && !GARMENT.test(p.t || '') && p.cat !== 'footwear') { del++; continue; }
-    if (FOOT.test(p.t || '') && p.cat !== 'footwear') { if (/^mens_/.test(p.cat)) { footDel++; continue; } p.cat = 'footwear'; footMove++; out.push(p); continue; }
+    // Footwear: MEN'S and KIDS' shoes are DELETED entirely (policy — we don't ship them); only women's
+    // footwear is kept (moved to the footwear cat). Guard: a garment that merely has a shoe word in its
+    // name (e.g. "Sneaker Print Dress") has a GARMENT_NOUN and is NOT treated as footwear.
+    if (FOOT.test(p.t || '') && !GARMENT_NOUN.test(p.t || '')) {
+      if (/^mens_|^kids_/.test(p.cat) || /\bmen'?s?\b|\bgents\b|\bboys?\b|\bgirls?\b|\bkids?\b|\binfants?\b/i.test(p.t || '')) { footDel++; continue; }
+      if (p.cat !== 'footwear') { p.cat = 'footwear'; footMove++; out.push(p); continue; }
+    }
     // FABRIC-by-the-metre mis-filed as an infant size: a bare "<N>M" means N METRES of cloth
     // (6M = 6 metres), but the size reader treats "M" as months and dumps it in kids_infant.
     // Every size a bare metre length + no infant/baby word in the title ⇒ unstitched cloth →
@@ -541,6 +547,17 @@ function cleanupProducts(ps) {
     if (p.b==='ETHNC' && /\/products\/western-/i.test(p.u||'') && /^(kurti_1pc|pret_3pc)$/.test(p.cat)) { p.cat='western_top'; womenN++; out.push(p); continue; }
     // wool/cashmere SCARVES (The Hijab Company) mis-filed as suit fabric → shawl.
     if (p.cat!=='shawl' && /\bscarf|\bscarves\b|\bscarfs\b/i.test(p.t||'') && /wool|cashmere|pashmina|shahmina/i.test(p.t||'') && !/\bsuit\b|kameez|kurta/i.test(p.t||'')) { p.cat='shawl'; womenN++; out.push(p); continue; }
+    // ── VISUAL-AUDIT wave 6 (low-volume edge cases) ──
+    // a women's SAREE / KAFTAN mis-filed in a men's cat → its women's category (e.g. Humayun Alamgir
+    // women's pieces sitting in mens_kurta).
+    if (/^mens_/.test(p.cat) && /\bsaree\b|\bsari\b/i.test(p.t||'')) { p.cat='saree'; womenN++; out.push(p); continue; }
+    if (/^mens_/.test(p.cat) && /\bkaftan\b|\bkaftaan\b|\bcaftan\b/i.test(p.t||'')) { p.cat='kaftan'; womenN++; out.push(p); continue; }
+    // a PRINCE COAT (men's sherwani-style coat) mis-filed as a shirt/kurta/trouser → men's sherwani.
+    if (/^(mens_shirt|mens_kurta|mens_trouser|mens_unstitched)$/.test(p.cat) && /prince[\s-]?coat/i.test(p.t||'')) { p.cat='mens_sherwani'; menPcN++; out.push(p); continue; }
+    // western fusion co-ords (bomber+cargo / cape+drape / jumpsuit) mis-filed as eastern 2pc → western co-ord.
+    if (p.cat==='shirt_dupatta_2pc' && /\bbomber\b|cargo pants?|cape with drape|\bjumpsuit\b/i.test(p.t||'')) { p.cat='coord_western'; womenN++; out.push(p); continue; }
+    // Ammara Khan "D-…" slugged designer gowns mis-filed as a 1pc kurti → heavy formal.
+    if (p.b==='Ammara Khan' && p.cat==='kurti_1pc' && /[-/]d-?\d/i.test(p.u||'')) { p.cat='heavy_formal_3pc'; womenN++; out.push(p); continue; }
     // BRAND SLUG-GENDER: a women-cat item whose brand slug says men/boys/girls → route by garment
     // (Zellbury men's shalwar-kameez/shirts, Diners boys' kurta-pajama & men's shirts, etc.). Fixes
     // the whole brand at once, not per image. Runs before womenType (title-only) — slug wins.
