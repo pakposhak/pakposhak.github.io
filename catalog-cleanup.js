@@ -287,10 +287,11 @@ function cleanupProducts(ps) {
     if (/^kids_/.test(p.cat) && meterSz(p) && !INFANT_WORD.test(p.t || '')) { p.cat = 'mens_unstitched'; menUnsN++; out.push(p); continue; }
     // Footwear cat with S/M/L clothing sizes (not shoe sizes) = garment misfiled as footwear.
     if (p.cat === 'footwear' && szLetter(p) && !FOOT.test(p.t||'')) { p.cat = womenCatFor(p); womenN++; out.push(p); continue; }
-    // Sha Posh uses "Kids" in ALL product titles including adult-sized garments. Once an adult-sized
-    // item has been moved to a women's cat (by the brand rule below), keep it there — don't let
-    // the explicit-gender check see "Kids" and route it back to a kids_ cat.
-    if (p.b === 'Sha Posh' && !/^kids_/.test(p.cat) && (p.sz || []).some(s => { const n = parseInt(s); return !isNaN(n) && n >= 36; })) { out.push(p); continue; }
+    // Sha Posh is a KIDS (girls') brand — image-verified (14 product photos): every "Kids …"/ck2p
+    // item is a young girl, INCLUDING the larger numeric sizes. Its frock size chart runs 20→40, so
+    // 36–40 are the OLDER-KIDS end, NOT adult. Route "Kids"-titled Sha Posh to girls'. (Supersedes an
+    // earlier size>=36 heuristic that kept these in women's cats — the photos disprove it.)
+    if (p.b === 'Sha Posh' && !/^kids_/.test(p.cat) && /\bkids?\b/i.test(p.t || '')) { p.cat = /\bformal\b|\bparty\b|\bwedding\b|\bfancy\b/i.test(p.t || '') ? 'kids_girls_formal' : 'kids_girls_eastern'; girlsKidN++; out.push(p); continue; }
     // EXPLICIT-TITLE gender corrector (highest-confidence, guarded). Footwear stays footwear (a
     // "Boys Peshawari" is still a shoe). Catches cross-gender mislabels any direction: Edge Republic
     // "Women's 3-Piece" in mens, Wear Ochre "Women's Dress" in kids, Kurta Corner "Kids Kurta Pajama"
@@ -454,8 +455,6 @@ function cleanupProducts(ps) {
     // Al-Deebaj "Printed Cotton Co-Ord Set" = women's EASTERN kameez+shalwar 2pc (hijab-styled), not a
     // western co-ord → eastern 2pc.
     if (p.b === 'Al-Deebaj' && p.cat === 'coord_western') { p.cat = 'shirt_trouser_2pc'; womenN++; out.push(p); continue; }
-    // Sha Posh "Kids …" (ck2p-slug girls' frocks/suits) leaking into women's cats → girls' eastern.
-    if (p.b === 'Sha Posh' && (/\bkids?\b/i.test(p.t||'') || /ck2p/i.test(p.u||'')) && !/^kids_/.test(p.cat)) { p.cat = 'kids_girls_eastern'; girlsKidN++; out.push(p); continue; }
     // men's shawls dumped into mens_unstitched (which is for FABRIC) → the shawl category.
     if (p.cat === 'mens_unstitched' && /\bshawl\b/i.test(p.t||'')) { p.cat = 'shawl'; womenN++; out.push(p); continue; }
     // a "shirt"-titled top mis-filed as jeans → men's shirt (Diners/Eminent "… Shirt" in mens_jeans).
