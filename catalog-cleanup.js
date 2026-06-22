@@ -248,7 +248,7 @@ const coarseGender = g => (g === 'kb' || g === 'kg' || g === 'ki' || g === 'k') 
 const catGenderOf = c => /^mens_/.test(c) ? 'm' : /^kids_/.test(c) ? 'k' : 'w';
 const GARMENT = /shirt|kameez|kurti|kurta|\bdress\b|gown|frock|trouser|\bpant|\btop\b|abaya|hijab|shalwar|\bsuit\b|\blawn\b|saree|lehenga|dupatta|kaftan|maxi|peplum|blouse|tunic|\bcape\b|co-?ord|jumpsuit|romper|\btee\b|t-?shirt|polo|jeans|waistcoat|sweater|cardigan|hoodie|jacket|\bcoat\b|sweatshirt|nightwear|loungewear|pajama|angrakha|gharara|sharara|outfit|ensemble|\d ?piece|\d ?pc\b|unstitch|fabric/i;
 const ACC = /\bsunglass|\beyewear\b|\bgoggles?\b|jewell?ery|\bearrings?\b|\bnecklace|\bbangles?\b|\bbracelet|\bpendant|\bbrooch|\bperfume\b|\bfragrance\b|\battar\b|\bwrist ?watch|\bwatch\b|\bbeanie\b|\bscrunchie|\bhair ?band|\bhair ?clip|\bkeychain|\bkey ?chain|\bsocks?\b|\bwallet\b|\bcard ?holder|\bcufflink|\btote\b|\bbackpack|\bsling ?bag|\bhand ?bag|\bclutch\b|\bpouch\b|\bbelt\b|\bcap\b/i;
-const FOOT = /\bshoes?\b|\bheels?\b|\bsandal|\bslipper|\bslides?\b|\bsneaker|\bpump\b|\bwedge|\bmule\b|khussa|\bloafer|\bjutt?i\b|kolhapuri|\bchappal|\bpeshawari\b|\bmojari|\bmojri|\bkohati|\bnagra\b|\bkheri\b|stiletto|espadrille|moccasin|\bbrogue/i;
+const FOOT = /\bshoes?\b|\bheels?\b|\bsandal|\bslipper|\bslides?\b|\bsneaker|\bpump\b|\bwedge|\bmule\b|khussa|\bloafer|\bjutt?i\b|kolhapuri|\bchappal|\bmojari|\bmojri|\bkohati|\bnagra\b|\bkheri\b|stiletto|espadrille|moccasin|\bbrogue/i;
 // ── CATALOG URL REWRITE: known intl-twin domains → PK store ──
 // Mirrors order-form.html TWIN_MAP but applied at cleanup time so browse-product links
 // always point to the PKR store, not a USD international twin.
@@ -279,6 +279,9 @@ function cleanupProducts(ps) {
   for (const p of ps) {
     { const _t = p.t || ''; if (NONAPPAREL_STRONG.test(_t) || (NONAPPAREL_WEAK.test(_t) && !GARMENT_NOUN.test(_t))) { junkN++; continue; } }   // homeware/cosmetics/headwear/innerwear/gifting -> delete
     if (ACC.test(p.t || '') && !GARMENT.test(p.t || '') && p.cat !== 'footwear') { del++; continue; }
+    // PESHAWARI footwear → DELETED for EVERY gender (Danish's call — it's men's-style). The GARMENT_NOUN
+    // guard keeps a "Peshawari Kurta"/suit (clothing). Kolhapuri / chappal / khussa are kept (women's).
+    if (/\bpeshawari\b/i.test(p.t || '') && !GARMENT_NOUN.test(p.t || '')) { footDel++; continue; }
     // Footwear: MEN'S and KIDS' shoes are DELETED entirely (policy — we don't ship them); only women's
     // footwear is kept (moved to the footwear cat). Guard: a garment that merely has a shoe word in its
     // name (e.g. "Sneaker Print Dress") has a GARMENT_NOUN and is NOT treated as footwear.
