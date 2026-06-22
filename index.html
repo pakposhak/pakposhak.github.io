@@ -1998,8 +1998,12 @@
   // showing the panel. First open (no password yet) → create one. Buyers who hit
   // ?admin get a prompt they can't pass. Unlock lasts the browser-tab session.
   async function openAdminPanel(){
+    // ALWAYS pull the latest saved config first, so the panel's fields show what is REALLY
+    // stored on the relay — not the built-in defaults. (Bug fix: opening the panel right after a
+    // page refresh, before the on-load /config fetch had finished, showed defaults — making a
+    // saved change look "lost"/reverted. It also risked overwriting the live values with defaults.)
+    try{ const r = await fetch(relayBase()+'/config',{cache:'no-store'}); const j = await r.json(); if(j && j.ok){ PSB_CFG = j; try{ localStorage.setItem('psb_cfg_cache', JSON.stringify(j)); }catch(e){} } }catch(e){}
     if(sessionStorage.getItem('psb_admin_h')) return showAdminPanel();
-    if(PSB_CFG == null){ try{ const r = await fetch(relayBase()+'/config',{cache:'no-store'}); const j = await r.json(); if(j && j.ok) PSB_CFG = j; }catch(e){} }
     const hasPw = !!(PSB_CFG && PSB_CFG.hasPassword);
     try{
       if(!hasPw){
@@ -7512,7 +7516,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-22a';
+  const PSB_BUILD = '2026-06-22b';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
