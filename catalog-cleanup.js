@@ -423,7 +423,14 @@ function cleanupProducts(ps) {
     // AUDIT FIX (category audit, 2026-06-22): western JEANS dumped into women's 3pc/suit cats —
     // "jeans" in a title is a western bottom, never a 3-piece pret. Move to women's bottoms.
     // (Runs after the slug/brand rules so a kids brand's jeans is placed in kids first.)
-    if (/\bjeans\b/i.test(p.t || '') && !/\b(boys?|girls?|kids?|infant|junior|toddler|baby)\b/i.test(p.t || '') && /^(pret_3pc|pret_3pc_emb|kurti_1pc|shirt_dupatta_2pc|shirt_dupatta_2pc_unstitch|lawn_3pc_unstitch)$/.test(p.cat)) { p.cat = 'womens_trouser'; womenN++; out.push(p); continue; }
+    if (/\bjeans?\b/i.test(p.t || '') && !/\b(boys?|girls?|kids?|infant|junior|toddler|baby)\b/i.test(p.t || '') && /^(pret_3pc|pret_3pc_emb|kurti_1pc|shirt_dupatta_2pc|shirt_dupatta_2pc_unstitch|lawn_3pc_unstitch|womens_trouser)$/.test(p.cat)) {
+      // Western jeans dumped into women's pret. Split by gender: a men's SKU/word (Gul Ahmed
+      // "MNJNS…"/"mn-jns", "Salt-Men-Jeans") → mens_jeans; everything else → women's bottoms.
+      // (Image-verified: Gul Ahmed mn-jns = male model; Outfitters/Sapphire/One-Kids "WBJ" = women.)
+      const s = txt(p);
+      const men = /mn-?jns|salt-men|\bmens?\b|\bgents\b/.test(s) && !/wm-?jns|wm-ndj|salt-women|\bwomen|\bladies\b|\bgirls?\b/.test(s);
+      p.cat = men ? 'mens_jeans' : 'womens_trouser'; if (men) slugN++; else womenN++; out.push(p); continue;
+    }
     // AUDIT FIX: a JUBBAH / THOBE is a men's robe — move it out of women's pret to men's.
     // Guard: keep kids thobes in kids cats (children's Islamic robes are valid kidswear).
     if (/\bjubb?ah?\b|\bthobe\b/i.test(p.t || '') && catGenderOf(p.cat) !== 'm' && !/^kids_/.test(p.cat)) { p.cat = 'mens_kurta'; slugN++; out.push(p); continue; }
