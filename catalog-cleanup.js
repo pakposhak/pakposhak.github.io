@@ -318,6 +318,19 @@ function cleanupProducts(ps) {
       const _m = (p.u || '').match(/\/products\/([a-z])/i);
       const _g = _m ? _m[1].toLowerCase() : '';
       if (_g === 'm' && catGenderOf(p.cat) !== 'm') { p.cat = finalMenCat(p); slugN++; out.push(p); continue; }
+      // One Kids' WOMEN's line is WESTERN (jeans/tees/tops/co-ords/jackets/shorts) — image-verified.
+      // Route every w-slug item by GARMENT, including those already sitting in a women's EASTERN cat
+      // (pret_3pc etc.): their descriptive titles ("Slitted Skinny Indigo", "Baggy Tee") gave the
+      // harvester no garment signal, so it defaulted them to 3pc pret. (Eastern-keyword items, if any,
+      // are left to womenCatFor.)
+      if (_g === 'w' && !/kurta|kameez|\bshalwar\b|dupatta|\bkurti\b|\bfrock\b|lehenga|\babaya\b|anarkali|gharara/i.test(txt(p))) {
+        const s = txt(p);
+        const nc = /skinny|\bjeans?\b|denim|jegging|\btrouser|\bpant|legging|\bshorts?\b|culotte|jogger/i.test(s) ? 'womens_trouser'
+                 : /co-?ord|\bset\b/i.test(s) ? 'coord_western'
+                 : /\bdress\b|\bmaxi\b|\bgown\b|jumpsuit/i.test(s) ? 'maxi_dress'
+                 : 'western_top';
+        p.cat = nc; womenN++; out.push(p); continue;
+      }
       if (_g === 'w' && catGenderOf(p.cat) !== 'w') { p.cat = womenCatFor(p); slugN++; out.push(p); continue; }
       if (/^kids_(boys|girls)_/.test(p.cat)) {
         const _suf = (p.cat.match(/_(eastern|western|formal)$/) || [, 'western'])[1];
@@ -470,6 +483,15 @@ function cleanupProducts(ps) {
     if (p.b === 'ChenOne' && /lds/i.test(p.u||'') && /\btop\b|\bshirt\b|western|blouse/i.test(p.t||'') && !/\bsuit\b|[23] ?pc|kameez|dupatta|kurta/i.test(p.t||'') && !/^(western_top|kurti_1pc)$/.test(p.cat)) { p.cat='western_top'; womenN++; out.push(p); continue; }
     // Salitex "1Pc … Bottom" embroidered trousers mis-filed as 3-piece suits → women's bottoms.
     if (/^(pret_3pc|pret_3pc_emb|pret_2pc_emb|formal_emb_3pc|formal_emb_2pc|lawn_3pc_unstitch)$/.test(p.cat) && /\b1 ?pc\b|\b1 ?piece\b|\bsingle\b/i.test(p.t||'') && /\bbottom\b|\btrouser\b/i.test(p.t||'') && !/shirt|kameez|kurta|dupatta/i.test(p.t||'')) { p.cat='womens_trouser'; womenN++; out.push(p); continue; }
+    // a standalone RTW SHALWAR / trouser / pajama (no shirt/kameez/kurta/dupatta) is a BOTTOM, not a
+    // 3-piece suit (Alkaram "RTW | SHALWAR"). Men SKU/word → men's trouser; kids-numeric sizes (≤16)
+    // → girls' eastern; else women's bottoms.
+    if (/^(pret_3pc|pret_3pc_emb|lawn_3pc_unstitch)$/.test(p.cat) && /\bshalwar\b|\btrouser\b|\bpajama\b|\bpyjama\b|\bculottes?\b/i.test(p.t||'') && !/kameez|kurta|\bshirt\b|dupatta|\bsuit\b|kurti|\b[23] ?pc\b|\b[23] ?piece\b|co-?ord/i.test(p.t||'')) {
+      if (/gmss|\bmens?\b|gents|\bmen'?s\b/i.test(txt(p))) p.cat = 'mens_trouser';
+      else if (Array.isArray(p.sz) && p.sz.length && p.sz.every(z => /^\d{1,2}$/.test(String(z).trim()) && +z <= 16)) p.cat = 'kids_girls_eastern';
+      else p.cat = 'womens_trouser';
+      womenN++; out.push(p); continue;
+    }
     // a standalone SHAWL mis-filed in a suit/fabric cat → the shawl category.
     if (p.cat !== 'shawl' && /\bshawl\b/i.test(p.t||'') && !/shawl[\s-]?collar|\bsuit\b|[23] ?pc|kameez|kurta|\bshirt\b|blazer|\bcoat\b|cardigan/i.test(p.t||'')) { p.cat='shawl'; womenN++; out.push(p); continue; }
     // a standalone DUPATTA mis-filed as a suit → dupatta_only.
