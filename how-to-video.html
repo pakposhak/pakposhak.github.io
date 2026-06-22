@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-<title>How to Order — PakPoshak (50-sec guide)</title>
+<title>Video Guide — PakPoshak</title>
 <style>
   :root{
     --bg:#080E1C; --surface:#0F1929; --raised:#162035; --input-bg:#0A1320;
@@ -12,219 +12,207 @@
     --txt:#EEE4CE; --txt-sec:#A0B2C8; --txt-muted:#5A6E84; --bdr:#1E2D45; --green:#34d27b;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%}
   body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
-    display:flex;flex-direction:column;align-items:center;overflow:hidden}
+    min-height:100vh;-webkit-tap-highlight-color:transparent}
   /* ── top bar ── */
-  .top{width:100%;max-width:480px;padding:12px 14px 6px;display:flex;align-items:center;gap:10px}
-  .top .brand{font-weight:800;color:var(--gold);font-size:0.95rem;letter-spacing:0.5px;flex:1}
+  .top{position:sticky;top:0;z-index:5;background:rgba(8,14,28,.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:10px;padding:12px 16px}
+  .top .brand{font-weight:800;color:var(--gold);font-size:0.98rem;letter-spacing:0.4px;flex:1}
   .lang-tg{display:flex;border:1px solid var(--gold-bdr);border-radius:16px;overflow:hidden}
   .lang-tg button{background:none;border:none;color:var(--txt-sec);font-weight:700;font-size:0.78rem;
     padding:5px 13px;cursor:pointer;font-family:inherit}
   .lang-tg button.on{background:var(--gold);color:#0A1628}
-  .close-x{color:var(--txt-muted);text-decoration:none;font-size:1.3rem;line-height:1;padding:4px 8px}
-  /* ── progress bars (story style) ── */
-  .bars{width:100%;max-width:480px;display:flex;gap:4px;padding:6px 14px}
-  .bar{flex:1;height:3px;background:var(--bdr);border-radius:2px;overflow:hidden}
-  .bar i{display:block;height:100%;width:0;background:var(--gold)}
-  .bar.done i{width:100%}
-  .bar.live i{animation:fill var(--dur) linear forwards}
-  @keyframes fill{from{width:0}to{width:100%}}
-  body.paused .bar.live i{animation-play-state:paused}
-  /* ── stage ── */
-  .stage{position:relative;width:100%;max-width:480px;flex:1;min-height:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
-  .slide{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;
-    justify-content:flex-start;padding:14px 22px;text-align:center}
-  .slide.on{display:flex;animation:pop .45s ease}
-  @keyframes pop{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-  .stepno{font-size:0.7rem;font-weight:800;letter-spacing:2px;color:var(--gold);margin-bottom:4px}
-  .slide h2{font-size:1.25rem;line-height:1.3;margin-bottom:6px}
-  .slide p{font-size:0.9rem;color:var(--txt-sec);line-height:1.5;max-width:340px;margin-bottom:14px}
-  /* ── phone mockup ── */
-  .phone{width:min(250px,62vw);flex:1;min-height:0;max-height:380px;border:2px solid var(--bdr);
-    border-radius:22px;background:var(--surface);padding:12px 10px;overflow:hidden;
-    box-shadow:0 16px 50px rgba(0,0,0,0.5);text-align:left;font-size:0.66rem}
-  .m-row{background:var(--raised);border:1px solid var(--bdr);border-radius:8px;padding:7px 9px;margin-bottom:7px;color:var(--txt-sec)}
-  .m-gold{background:var(--gold);color:#0A1628;font-weight:800;text-align:center;border:none}
-  .m-green{border-color:rgba(52,210,123,.5);color:var(--green)}
-  .m-title{color:var(--gold);font-weight:800;font-size:0.7rem;margin-bottom:7px;letter-spacing:0.6px}
-  .m-chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px}
-  .m-chip{border:1.3px solid var(--gold-bdr);color:var(--gold);background:var(--gold-dim);border-radius:11px;padding:3px 10px;font-weight:700}
-  .m-chip.sel{background:var(--gold);color:#0A1628}
-  .m-chip.out{color:var(--txt-muted);background:var(--surface);border-color:var(--bdr);text-decoration:line-through}
-  .m-input{background:var(--input-bg);border:1.3px solid var(--bdr);border-radius:8px;padding:7px 9px;color:var(--txt-muted);margin-bottom:7px}
-  .m-input.glow{border-color:var(--gold);box-shadow:0 0 0 2px rgba(201,169,110,.3);color:var(--txt)}
-  .m-big{font-size:0.92rem;font-weight:800;color:var(--txt)}
-  .m-cur{color:var(--green);font-weight:800}
-  .m-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:7px}
-  .m-brand{background:var(--raised);border:1px solid var(--bdr);border-radius:8px;padding:8px 6px;text-align:center;color:var(--txt-sec);font-weight:600}
-  .m-pulse{animation:pulse 1.4s ease infinite}
-  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(201,169,110,.5)}50%{box-shadow:0 0 0 7px rgba(201,169,110,0)}}
-  .m-check{color:var(--green);font-weight:800}
-  .m-id{letter-spacing:1.5px;color:var(--gold);font-weight:800;text-align:center;font-size:0.82rem}
-  .truck{font-size:3.2rem;animation:drive 2.6s ease-in-out infinite}
-  @keyframes drive{0%,100%{transform:translateX(-14px)}50%{transform:translateX(14px)}}
-  /* ── bottom controls ── */
-  .ctrl{width:100%;max-width:480px;display:flex;align-items:center;justify-content:center;gap:14px;padding:10px 14px 16px}
-  .ctrl button{background:var(--raised);border:1px solid var(--bdr);color:var(--txt-sec);border-radius:50%;
-    width:42px;height:42px;font-size:1rem;cursor:pointer;font-family:inherit}
-  .ctrl button.play{background:var(--gold);color:#0A1628;border:none;font-size:1.1rem;width:50px;height:50px}
-  .hint{font-size:0.68rem;color:var(--txt-muted);text-align:center;padding-bottom:8px}
-  .cta{display:none;background:var(--gold);color:#0A1628;font-weight:800;border:none;border-radius:22px;
-    padding:11px 26px;font-size:0.95rem;cursor:pointer;font-family:inherit;text-decoration:none;margin-top:10px}
-  .slide.on .cta{display:inline-block}
+  .close-x{color:var(--txt-muted);text-decoration:none;font-size:1.35rem;line-height:1;padding:4px 8px}
+  /* ── layout ── */
+  .wrap{max-width:820px;margin:0 auto;padding:16px 16px 40px}
+  .hint{background:var(--gold-dim);border:1px solid var(--gold-bdr);border-radius:12px;
+    padding:10px 14px;font-size:0.86rem;color:var(--txt);margin-bottom:20px;line-height:1.45}
+  .hint b{color:var(--gold)}
+  .sec{margin-bottom:26px}
+  .sec h3{font-size:0.82rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);
+    margin-bottom:4px;font-weight:800}
+  .sec .sub{font-size:0.82rem;color:var(--txt-muted);margin-bottom:14px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+  /* ── card ── */
+  .vcard{display:flex;flex-direction:column;text-align:left;background:var(--surface);
+    border:1px solid var(--bdr);border-radius:14px;overflow:hidden;cursor:pointer;font-family:inherit;
+    color:var(--txt);padding:0;transition:border-color .15s,transform .12s}
+  .vcard:hover{border-color:var(--gold-bdr);transform:translateY(-2px)}
+  .vcard.rec{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold-bdr)}
+  .thumb{position:relative;height:230px;background-size:cover;background-position:top center;background-color:#000}
+  .thumb .play{position:absolute;inset:0;margin:auto;width:52px;height:52px;display:flex;
+    align-items:center;justify-content:center;background:rgba(201,169,110,.92);color:#0A1628;
+    border-radius:50%;font-size:1.25rem;box-shadow:0 4px 16px rgba(0,0,0,.5)}
+  .thumb .dur{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.72);color:#fff;
+    font-size:0.72rem;font-weight:700;padding:2px 7px;border-radius:6px}
+  .thumb .badge{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.62);color:var(--txt);
+    font-size:0.68rem;font-weight:700;padding:3px 8px;border-radius:7px}
+  .vcard.rec .thumb .badge{background:var(--gold);color:#0A1628}
+  .vinfo{padding:11px 12px 13px}
+  .vinfo .vttl{font-weight:700;font-size:0.92rem;display:block;line-height:1.3}
+  /* ── modal player ── */
+  .modal{position:fixed;inset:0;z-index:20;background:rgba(4,7,14,.94);display:none;
+    align-items:center;justify-content:center;padding:16px;flex-direction:column}
+  .modal.show{display:flex}
+  .modal video{max-width:min(420px,92vw);max-height:80vh;width:auto;border-radius:14px;
+    background:#000;box-shadow:0 18px 60px rgba(0,0,0,.7)}
+  .modal .mttl{color:var(--txt);font-weight:700;font-size:0.95rem;margin-bottom:10px;text-align:center;max-width:92vw}
+  .modal .mclose{position:absolute;top:14px;right:16px;color:var(--txt);background:var(--raised);
+    border:1px solid var(--bdr);border-radius:50%;width:40px;height:40px;font-size:1.2rem;cursor:pointer;font-family:inherit}
+  .modal .cc-note{color:var(--txt-muted);font-size:0.74rem;margin-top:10px}
+  video::cue{background:rgba(0,0,0,.78);color:#fff;font-size:0.92em;line-height:1.35;font-family:inherit}
+  .start-cta{display:block;text-align:center;background:var(--gold);color:#0A1628;font-weight:800;
+    text-decoration:none;border-radius:22px;padding:13px;margin-top:8px;font-size:0.98rem}
 </style>
 </head>
 <body>
   <div class="top">
-    <span class="brand">🪡 PakPoshak — <span data-t="guide">How to Order</span></span>
+    <span class="brand">🪡 PakPoshak — <span id="hd">Video Guide</span></span>
     <div class="lang-tg">
       <button id="lg-en" onclick="setL('en')">EN</button>
       <button id="lg-bn" onclick="setL('bn')">বাংলা</button>
     </div>
-    <a class="close-x" href="./" title="Back to order form">✕</a>
+    <a class="close-x" href="./" title="Back to PakPoshak">✕</a>
   </div>
-  <div class="bars" id="bars"></div>
-  <div class="stage" id="stage"></div>
-  <div class="ctrl">
-    <button onclick="step(-1);event.stopPropagation()" title="Previous">⏮</button>
-    <button class="play" id="playBtn" onclick="togglePlay();event.stopPropagation()">⏸</button>
-    <button onclick="step(1);event.stopPropagation()" title="Next">⏭</button>
+
+  <div class="wrap">
+    <div class="hint" id="hint"></div>
+
+    <div class="sec">
+      <h3 id="h-start"></h3>
+      <div class="sub" id="s-start"></div>
+      <div class="grid" id="startGrid"></div>
+    </div>
+
+    <div class="sec">
+      <h3 id="h-more"></h3>
+      <div class="sub" id="s-more"></div>
+      <div class="grid" id="moreGrid"></div>
+    </div>
+
+    <a class="start-cta" id="startCta" href="./"></a>
   </div>
-  <div class="hint" data-t="hint">Tap right side for next · left for back</div>
+
+  <div class="modal" id="modal">
+    <button class="mclose" onclick="closeVideo()" aria-label="Close">✕</button>
+    <div class="mttl" id="mttl"></div>
+    <video id="player" controls playsinline preload="none"></video>
+    <div class="cc-note" id="ccNote"></div>
+  </div>
 
 <script>
 'use strict';
+const MEDIA = 'media/guide/';
+const VIDS = [
+  {id:'intro-android',         grp:'start', dur:'0:41', dev:'android', badge:'🤖 Android'},
+  {id:'install-iphone-chrome', grp:'start', dur:'0:17', dev:'ios',     badge:'🍎 iPhone · Chrome'},
+  {id:'install-iphone-safari', grp:'start', dur:'0:12', dev:'ios',     badge:'🍎 iPhone · Safari'},
+  {id:'order-browse-products', grp:'more',  dur:'0:35', badge:'🛍️ Browse Products'},
+  {id:'order-browse-brands',   grp:'more',  dur:'2:30', badge:'🏷️ Browse Brands'},
+  {id:'smart-search',          grp:'more',  dur:'1:22', badge:'🔎 Search'},
+];
 const T = {
-  en: {
-    guide:'How to Order', hint:'Tap right side for next · left for back',
-    s1t:'Order in 4 Easy Steps', s1p:'Add Items, your Details, Review, Pay. Browse 150+ Pakistani brands — Khaadi, Sapphire, Maria B & more — or search products by price, category & brand. Or paste any link.',
-    s2t:'Find Your Item', s2p:'Tap a brand to open its website, choose your article and COPY the product link — or paste a link you already have.',
-    s3t:'We Read It Instantly', s3p:'Paste the link and PakPoshak auto-fills the category, the real price in PKR, and only the sizes that are actually in stock.',
-    s4t:'Pick Size & Quantity', s4p:'Tap an in-stock size and choose how many pieces. Save to your order list — add more products the same way.',
-    s5t:'A Clear, Honest Total', s5p:'See your full price in Taka — product, shipping by weight, and a small fee. What you see is what you pay. No hidden charges.',
-    s6t:'Your Details', s6p:'Name, WhatsApp number and your delivery address in Bangladesh. Saved on your phone for next time.',
-    s7t:'Review & Confirm', s7p:'Check everything and confirm — you instantly get an Order ID to track your order anytime.',
-    s8t:"Pay & It's On Its Way", s8p:'Pay easily with bKash, Nagad, Upay or Rocket. Delivered in 2–3 weeks. We only message you on WhatsApp if something is out of stock.',
+  en:{
+    hd:'Video Guide',
+    h_start:'Start here · install the app', s_start:'A quick install so PakPoshak sits on your home screen like an app.',
+    h_more:'Learn more · ordering & search', s_more:'Tap any guide to watch how it works.',
     cta:'Start My Order →',
-    m_paste:'PASTE PRODUCT LINK', m_price:'Price', m_cat:'Category', m_size:'SIZES IN STOCK', m_qty:'Qty', m_save:'✓ Save to Order List',
-    m_products:'Products', m_ship:'Shipping (weight)', m_fee:'Transaction fee', m_total:'TOTAL (BDT)',
-    m_details:'MY DETAILS', m_name:'Full name', m_wa:'WhatsApp number', m_addr:'Delivery address (Dhaka…)',
-    m_review:'ORDER SUMMARY', m_submit:'✓ Confirm & Submit', m_orderid:'ORDER ID', m_submitted:'Order placed! Pay below', m_pay:'Pay now — tap a number to copy',
-    m_copy:'Copy link', m_added:'✓ Fetched: PKR 5,590 · 4 sizes in stock',
+    ccNote:'Captions: English — switch to বাংলা at the top.',
+    hintIos:'Looks like you\'re on <b>iPhone</b> — start with the Safari or Chrome install guide below.',
+    hintAndroid:'Looks like you\'re on <b>Android</b> — start with the Android guide below.',
+    hintGeneric:'New here? Start with the <b>install</b> guide for your phone, then see how to order.',
+    titles:{
+      'intro-android':'Introduction (Android)',
+      'install-iphone-chrome':'Install on iPhone — Chrome',
+      'install-iphone-safari':'Install on iPhone — Safari',
+      'order-browse-products':'Order via Browse Products',
+      'order-browse-brands':'Full order via Browse Brands',
+      'smart-search':'Smart Search made easy',
+    }
   },
-  bn: {
-    guide:'কীভাবে অর্ডার করবেন', hint:'পরের জন্য ডানে ট্যাপ করুন · আগেরটির জন্য বামে',
-    s1t:'৪টি সহজ ধাপে অর্ডার', s1p:'পণ্য যোগ, আপনার তথ্য, রিভিউ, পেমেন্ট। ১৫০+ পাকিস্তানি ব্র্যান্ড ব্রাউজ করুন — খাদি, স্যাফায়ার, মারিয়া বি — অথবা দাম, ক্যাটাগরি ও ব্র্যান্ড দিয়ে পণ্য খুঁজুন। বা যেকোনো লিংক পেস্ট করুন।',
-    s2t:'আপনার পণ্য বেছে নিন', s2p:'ব্র্যান্ডে ট্যাপ করলে তার ওয়েবসাইট খুলবে — পছন্দের পণ্য বেছে লিংক কপি করুন, বা আগে থেকে থাকা কোনো লিংক পেস্ট করুন।',
-    s3t:'সাথে সাথেই পড়ে নেয়', s3p:'লিংক পেস্ট করুন — PakPoshak নিজেই ক্যাটাগরি, PKR-এ আসল দাম, আর শুধু স্টকে থাকা সাইজগুলো বসিয়ে দেয়।',
-    s4t:'সাইজ ও পরিমাণ নির্বাচন', s4p:'স্টকে থাকা সাইজে ট্যাপ করুন, কত পিস চান বেছে নিন। অর্ডার লিস্টে সেভ করুন — একইভাবে আরও পণ্য যোগ করুন।',
-    s5t:'পরিষ্কার, সৎ মোট দাম', s5p:'টাকায় পুরো দাম দেখুন — পণ্য, ওজন অনুযায়ী শিপিং, আর সামান্য ফি। যা দেখছেন তাই দেবেন। কোনো লুকানো খরচ নেই।',
-    s6t:'আপনার তথ্য', s6p:'নাম, হোয়াটসঅ্যাপ নম্বর ও বাংলাদেশে ডেলিভারির ঠিকানা। পরেরবারের জন্য ফোনে সেভ থাকবে।',
-    s7t:'রিভিউ করে নিশ্চিত করুন', s7p:'সবকিছু দেখে নিশ্চিত করুন — সাথে সাথেই একটি অর্ডার আইডি পাবেন, যা দিয়ে যেকোনো সময় ট্র্যাক করা যায়।',
-    s8t:'পেমেন্ট, আর পথে রওনা', s8p:'বিকাশ, নগদ, উপায় বা রকেটে সহজে পেমেন্ট করুন। ২–৩ সপ্তাহে ডেলিভারি। কোনো পণ্য স্টকে না থাকলে শুধু তখনই হোয়াটসঅ্যাপে জানাই।',
+  bn:{
+    hd:'ভিডিও গাইড',
+    h_start:'শুরু করুন · অ্যাপ ইনস্টল', s_start:'অল্প সময়ে ইনস্টল করুন — PakPoshak হোম স্ক্রিনে app-এর মতো থাকবে।',
+    h_more:'আরও জানুন · অর্ডার ও সার্চ', s_more:'কীভাবে কাজ করে দেখতে যেকোনো গাইডে ট্যাপ করুন।',
     cta:'অর্ডার শুরু করুন →',
-    m_paste:'প্রোডাক্ট লিংক পেস্ট করুন', m_price:'দাম', m_cat:'ক্যাটাগরি', m_size:'স্টকে থাকা সাইজ', m_qty:'পরিমাণ', m_save:'✓ অর্ডার লিস্টে সেভ',
-    m_products:'পণ্য', m_ship:'শিপিং (ওজন)', m_fee:'ট্রান্সঅ্যাকশন ফি', m_total:'মোট (টাকা)',
-    m_details:'আমার তথ্য', m_name:'পুরো নাম', m_wa:'হোয়াটসঅ্যাপ নম্বর', m_addr:'ডেলিভারি ঠিকানা (ঢাকা…)',
-    m_review:'অর্ডার সারসংক্ষেপ', m_submit:'✓ নিশ্চিত করে সাবমিট', m_orderid:'অর্ডার আইডি', m_submitted:'অর্ডার হয়েছে! নিচে পেমেন্ট করুন', m_pay:'এখন পেমেন্ট — নম্বরে ট্যাপ করে কপি',
-    m_copy:'লিংক কপি', m_added:'✓ পাওয়া গেছে: PKR 5,590 · ৪টি সাইজ স্টকে',
+    ccNote:'ক্যাপশন: বাংলা — উপরে থেকে English-এ পাল্টান।',
+    hintIos:'আপনি সম্ভবত <b>iPhone</b> ব্যবহার করছেন — নিচের Safari বা Chrome ইনস্টল গাইড দিয়ে শুরু করুন।',
+    hintAndroid:'আপনি সম্ভবত <b>Android</b> ব্যবহার করছেন — নিচের Android গাইড দিয়ে শুরু করুন।',
+    hintGeneric:'নতুন? আপনার ফোনের <b>install</b> গাইড দিয়ে শুরু করুন, তারপর কীভাবে অর্ডার করবেন দেখুন।',
+    titles:{
+      'intro-android':'পরিচিতি (Android)',
+      'install-iphone-chrome':'iPhone-এ ইনস্টল — Chrome',
+      'install-iphone-safari':'iPhone-এ ইনস্টল — Safari',
+      'order-browse-products':'Browse Products দিয়ে অর্ডার',
+      'order-browse-brands':'Browse Brands দিয়ে সম্পূর্ণ অর্ডার',
+      'smart-search':'স্মার্ট সার্চ — সহজে',
+    }
   }
 };
 let L = (localStorage.getItem('psb_lang') === 'bn') ? 'bn' : 'en';
-const t = k => (T[L][k] !== undefined ? T[L][k] : T.en[k]);
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+const isAndroid = /Android/.test(navigator.userAgent);
+const tt = k => T[L][k];
 
-const DUR = 6000;            // 6s × 8 slides = 48s
-function slides(){ return [
-  {n:1, h:t('s1t'), p:t('s1p'), m:`
-    <div class="m-title">🪡 PakPoshak</div>
-    <div class="m-chips" style="font-size:0.56rem"><span class="m-chip sel">1 Items</span><span class="m-chip">2 Details</span><span class="m-chip">3 Review</span><span class="m-chip">4 Pay</span></div>
-    <div class="m-grid"><div class="m-brand">Khaadi</div><div class="m-brand">Sapphire</div>
-      <div class="m-brand m-pulse" style="border-color:var(--gold);color:var(--gold)">Zellbury</div><div class="m-brand">Gul Ahmed</div>
-      <div class="m-brand">Alkaram</div><div class="m-brand">Limelight</div></div>`},
-  {n:2, h:t('s2t'), p:t('s2p'), m:`
-    <div class="m-input" style="font-size:0.58rem">🔒 pk.sapphireonline.pk/products/…</div>
-    <div class="m-row" style="height:78px;display:flex;align-items:center;justify-content:center;font-size:2rem">👗</div>
-    <div class="m-row"><b style="color:var(--txt)">2pc Embroidered Lawn</b><br/>Rs. 5,590</div>
-    <div class="m-row m-gold m-pulse">📋 ${t('m_copy')}</div>`},
-  {n:3, h:t('s3t'), p:t('s3p'), m:`
-    <div class="m-title">${t('m_paste')}</div>
-    <div class="m-input glow" style="font-size:0.58rem">pk.sapphireonline.pk/products/…</div>
-    <div class="m-row m-green">${t('m_added')}</div>
-    <div class="m-row" style="display:flex;justify-content:space-between">${t('m_cat')} <b style="color:var(--txt)">3pc Pret Emb <span class="m-check">✓</span></b></div>
-    <div class="m-row" style="display:flex;justify-content:space-between">${t('m_price')} <span class="m-big">PKR 5,590 <span class="m-check">✓</span></span></div>`},
-  {n:4, h:t('s4t'), p:t('s4p'), m:`
-    <div class="m-title">${t('m_size')}</div>
-    <div class="m-chips"><span class="m-chip">XS</span><span class="m-chip">S</span><span class="m-chip sel m-pulse">M</span><span class="m-chip">L</span><span class="m-chip out">XL</span></div>
-    <div class="m-row">${t('m_qty')}: <b style="color:var(--txt)">1</b> &nbsp; ➖ &nbsp; ➕</div>
-    <div class="m-row m-gold">${t('m_save')}</div>`},
-  {n:5, h:t('s5t'), p:t('s5p'), m:`
-    <div class="m-title">🛍️ ${t('m_review')}</div>
-    <div class="m-row" style="display:flex;justify-content:space-between">${t('m_products')}<span>PKR 5,590</span></div>
-    <div class="m-row" style="display:flex;justify-content:space-between">${t('m_ship')}<span>৳ 2,000</span></div>
-    <div class="m-row" style="display:flex;justify-content:space-between">${t('m_fee')}<span>৳ 100</span></div>
-    <div class="m-row m-green" style="display:flex;justify-content:space-between"><b>${t('m_total')}</b><span class="m-big m-cur">৳ 5,202</span></div>`},
-  {n:6, h:t('s6t'), p:t('s6p'), m:`
-    <div class="m-title">${t('m_details')}</div>
-    <div class="m-input glow">${t('m_name')}</div>
-    <div class="m-input">+880 1XXX-XXXXXX</div>
-    <div class="m-input">${t('m_addr')}</div>`},
-  {n:7, h:t('s7t'), p:t('s7p'), m:`
-    <div class="m-title">${t('m_review')}</div>
-    <div class="m-row">1 × Sapphire — M</div>
-    <div class="m-row m-green" style="display:flex;justify-content:space-between"><b>${t('m_total')}</b><span class="m-big m-cur">৳ 5,202</span></div>
-    <div class="m-row m-gold m-pulse">${t('m_submit')}</div>
-    <div class="m-id" style="margin-top:6px">${t('m_orderid')}: PSB-260617-A7K</div>`},
-  {n:8, h:t('s8t'), p:t('s8p'), m:`
-    <div class="m-row m-green" style="text-align:center">✅ ${t('m_submitted')}</div>
-    <div class="m-row" style="display:flex;gap:7px;justify-content:center;flex-wrap:wrap;font-size:0.62rem">
-      <b style="color:#e2136e">bKash</b><b style="color:#f7941d">Nagad</b><b style="color:#eb6123">Upay</b><b style="color:#8e44ad">Rocket</b></div>
-    <div style="text-align:center;padding-top:6px"><div class="truck">🇵🇰 🚚 🇧🇩</div>
-    <div class="m-id" style="margin-top:10px">2–3 ${L==='bn'?'সপ্তাহ':'WEEKS'}</div></div>`, cta:true},
-];}
-
-let idx = 0, timer = null, playing = true;
-const stage = document.getElementById('bars');
-
+function card(v){
+  const title = T[L].titles[v.id];
+  const rec = (v.dev==='ios'&&isIOS) || (v.dev==='android'&&isAndroid);
+  return `<button class="vcard${rec?' rec':''}" onclick="openVideo('${v.id}')">
+    <div class="thumb" style="background-image:url('${MEDIA}${v.id}.jpg')">
+      <span class="badge">${rec?'⭐ ':''}${v.badge}</span>
+      <span class="play">▶</span>
+      <span class="dur">${v.dur}</span>
+    </div>
+    <div class="vinfo"><span class="vttl">${title}</span></div>
+  </button>`;
+}
 function render(){
-  const S = slides();
-  document.getElementById('bars').innerHTML = S.map(()=>`<div class="bar"><i></i></div>`).join('');
-  document.getElementById('stage').innerHTML = S.map((s,i)=>`
-    <div class="slide${i===idx?' on':''}" data-i="${i}">
-      <div class="stepno">${L==='bn'?'ধাপ':'STEP'} ${s.n} / 8</div>
-      <h2>${s.h}</h2><p>${s.p}</p>
-      <div class="phone">${s.m}</div>
-      ${s.cta?`<a class="cta" href="./">${t('cta')}</a>`:''}
-    </div>`).join('');
-  document.querySelector('[data-t="guide"]').textContent = t('guide');
-  document.querySelector('[data-t="hint"]').textContent = t('hint');
+  document.documentElement.lang = L;
+  document.getElementById('hd').textContent = tt('hd');
+  document.getElementById('h-start').textContent = tt('h_start');
+  document.getElementById('s-start').textContent = tt('s_start');
+  document.getElementById('h-more').textContent = tt('h_more');
+  document.getElementById('s-more').textContent = tt('s_more');
+  const cta = document.getElementById('startCta'); cta.textContent = tt('cta');
+  document.getElementById('ccNote').textContent = tt('ccNote');
+  document.getElementById('hint').innerHTML = isIOS?tt('hintIos'):isAndroid?tt('hintAndroid'):tt('hintGeneric');
+  document.getElementById('startGrid').innerHTML = VIDS.filter(v=>v.grp==='start').map(card).join('');
+  document.getElementById('moreGrid').innerHTML  = VIDS.filter(v=>v.grp==='more').map(card).join('');
   document.getElementById('lg-en').classList.toggle('on', L==='en');
   document.getElementById('lg-bn').classList.toggle('on', L==='bn');
-  paint();
+  if(document.getElementById('modal').classList.contains('show') && currentId)
+    document.getElementById('mttl').textContent = T[L].titles[currentId];
+  applyCC();
 }
-function paint(){
-  document.querySelectorAll('.slide').forEach((el,i)=>el.classList.toggle('on', i===idx));
-  document.querySelectorAll('.bar').forEach((b,i)=>{
-    b.classList.toggle('done', i<idx);
-    b.classList.toggle('live', i===idx);
-    b.style.setProperty('--dur', DUR+'ms');
-    if(i===idx){ const f=b.querySelector('i'); f.style.animation='none'; void f.offsetWidth; f.style.animation=''; }
-  });
-  clearTimeout(timer);
-  if(playing && idx < 7) timer = setTimeout(()=>{ idx++; paint(); }, DUR);
-  if(idx === 7 && playing) timer = setTimeout(()=>{ playing=false; updPlay(); }, DUR);
+let currentId = null;
+const player = document.getElementById('player');
+function openVideo(id){
+  currentId = id;
+  player.setAttribute('poster', MEDIA+id+'.jpg');
+  player.innerHTML =
+    `<source src="${MEDIA}${id}.mp4" type="video/mp4">`+
+    `<track kind="captions" srclang="en" label="English" src="${MEDIA}${id}.en.vtt"${L==='en'?' default':''}>`+
+    `<track kind="captions" srclang="bn" label="বাংলা" src="${MEDIA}${id}.bn.vtt"${L==='bn'?' default':''}>`;
+  document.getElementById('mttl').textContent = T[L].titles[id];
+  document.getElementById('modal').classList.add('show');
+  player.load();
+  player.play().catch(()=>{});
+  setTimeout(applyCC, 250);
 }
-function step(d){ idx = Math.max(0, Math.min(7, idx+d)); if(!playing){ playing=true; updPlay(); } paint(); }
-function togglePlay(){ playing = !playing; updPlay(); if(playing) paint(); else clearTimeout(timer); }
-function updPlay(){
-  document.getElementById('playBtn').textContent = playing ? '⏸' : '▶';
-  document.body.classList.toggle('paused', !playing);
+function closeVideo(){
+  player.pause();
+  document.getElementById('modal').classList.remove('show');
+  player.removeAttribute('src'); player.innerHTML=''; player.load();
+  currentId = null;
 }
-function setL(l){ L=l; localStorage.setItem('psb_lang', l); document.documentElement.lang=l; render(); }
-document.getElementById('stage').addEventListener('click', e=>{
-  const x = e.clientX - e.currentTarget.getBoundingClientRect().left;
-  step(x > e.currentTarget.offsetWidth/2 ? 1 : -1);
-});
+function applyCC(){
+  const trk = player.textTracks; if(!trk) return;
+  for(let i=0;i<trk.length;i++) trk[i].mode = (trk[i].language===L) ? 'showing' : 'disabled';
+}
+player.addEventListener('loadeddata', applyCC);
+function setL(l){ L=l; localStorage.setItem('psb_lang', l); render(); }
+document.getElementById('modal').addEventListener('click', e=>{ if(e.target.id==='modal') closeVideo(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeVideo(); });
 render();
 </script>
 </body>
