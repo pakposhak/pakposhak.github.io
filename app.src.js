@@ -36,7 +36,9 @@
       LOG_RATE  : cfgRate('log')      ?? lsNum('psb_log', 1600),
       COMM_1    : (cfgRate('comm_1')  ?? lsNum('psb_comm_1', 20))  / 100,
       COMM_23   : (cfgRate('comm_23') ?? lsNum('psb_comm_23', 18)) / 100,
-      COMM_4P   : (cfgRate('comm_4p') ?? lsNum('psb_comm_4p', 15)) / 100,
+      COMM_4P           : (cfgRate('comm_4p') ?? lsNum('psb_comm_4p', 15)) / 100,
+      PKR_LOW_THRESHOLD : cfgRate('pkr_low_threshold') ?? lsNum('psb_pkr_low_threshold', 2100),
+      COMM_LOW_BDT      : cfgRate('comm_low_bdt') ?? lsNum('psb_comm_low_bdt', 200),
       TRANS_FEE : 100
     };
   }
@@ -74,6 +76,27 @@
   function _rowPkr(item, row){ return (row && row.pkr != null) ? row.pkr : item.pkr; }
   function itemPkrSubtotal(item){ return (item.sizes || [{qty:1}]).reduce(function(s, row){ return s + (_rowPkr(item, row) * (row.qty || 0)); }, 0); }
   function itemPriceVaries(item){ const real = (item.sizes || []).filter(function(r){ return r.size; }); return new Set(real.map(function(r){ return _rowPkr(item, r); })).size > 1; }
+
+  // Per-item, per-unit commission that respects the low-value rule:
+  // items with unitPkr < PKR_LOW_THRESHOLD → flat COMM_LOW_BDT each;
+  // items at/above threshold → percentage of converted BDT (tier = whole-cart qty).
+  function cartCommission(r) {
+    var LOW_PKR = r.PKR_LOW_THRESHOLD || 2100;
+    var LOW_BDT = r.COMM_LOW_BDT      || 200;
+    var tier    = commRate(r, cartTotalQty());
+    var total   = 0;
+    cart.forEach(function(item) {
+      (item.sizes || [{qty:1}]).forEach(function(row) {
+        var unitPkr = _rowPkr(item, row);
+        var units   = row.qty || 0;
+        if (!units) return;
+        total += unitPkr < LOW_PKR
+          ? LOW_BDT * units
+          : Math.round(unitPkr * r.CONV_RATE * tier) * units;
+      });
+    });
+    return total;
+  }
 
   // --- REMEMBER ME (localStorage) ---
   function loadSavedDetails(){
@@ -125,8 +148,10 @@
     document.getElementById('adm_usd_pkr').value = getUsdRate();
     document.getElementById('adm_comm_1').value  = +(r.COMM_1  * 100).toFixed(2);
     document.getElementById('adm_comm_23').value = +(r.COMM_23 * 100).toFixed(2);
-    document.getElementById('adm_comm_4p').value = +(r.COMM_4P * 100).toFixed(2);
-    document.getElementById('adm_relay').value   = localStorage.getItem('psb_relay_url') || '';
+    document.getElementById('adm_comm_4p').value       = +(r.COMM_4P * 100).toFixed(2);
+    document.getElementById('adm_pkr_threshold').value = r.PKR_LOW_THRESHOLD || 2100;
+    document.getElementById('adm_comm_low_bdt').value  = r.COMM_LOW_BDT      || 200;
+    document.getElementById('adm_relay').value         = localStorage.getItem('psb_relay_url') || '';
     document.getElementById('adm_maxqty').value  = maxPerSize();
     buildWeightEditor();
     panel.scrollIntoView({ behavior: 'smooth' });
@@ -200,7 +225,9 @@
     if(!(conv > 0) || !(log > 0)){ alert('Please enter valid numbers.'); return; }
     const c1  = parseFloat(document.getElementById('adm_comm_1').value);
     const c23 = parseFloat(document.getElementById('adm_comm_23').value);
-    const c4p = parseFloat(document.getElementById('adm_comm_4p').value);
+    const c4p          = parseFloat(document.getElementById('adm_comm_4p').value);
+    const pkrThreshold = parseFloat(document.getElementById('adm_pkr_threshold').value);
+    const commLowBdt   = parseFloat(document.getElementById('adm_comm_low_bdt').value);
     const maxq = parseInt(document.getElementById('adm_maxqty').value);
     // The relay URL is how to REACH the relay, so it stays per-device (localStorage).
     const relayUrl = document.getElementById('adm_relay').value.trim();
@@ -209,7 +236,9 @@
     const h = sessionStorage.getItem('psb_admin_h');
     if(!h){ alert('Session expired — close and reopen the admin panel to re-enter your password.'); return; }
     const rates = { conv, log, usd_pkr: usdPkr > 0 ? usdPkr : 278,
-      comm_1: c1 >= 0 ? c1 : 20, comm_23: c23 >= 0 ? c23 : 18, comm_4p: c4p >= 0 ? c4p : 15, maxqty: maxq > 0 ? maxq : 5 };
+      comm_1: c1 >= 0 ? c1 : 20, comm_23: c23 >= 0 ? c23 : 18, comm_4p: c4p >= 0 ? c4p : 15, maxqty: maxq > 0 ? maxq : 5,
+      pkr_low_threshold: pkrThreshold > 0 ? pkrThreshold : 2100,
+      comm_low_bdt: commLowBdt >= 0 ? commLowBdt : 200 };
     const btn = document.getElementById('saveRatesBtn'); btn.textContent = 'Saving…';
     try{
       const res = await fetch(relayBase()+'/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash:h, rates})});
@@ -3151,7 +3180,7 @@
 
     // Running total
     const productBdt = Math.round(totalPkr * r.CONV_RATE);
-    const commission = Math.round(productBdt * commRate(r, cartTotalQty()));
+    const commission = cartCommission(r);
     const logistics  = Math.round(totalWeight * r.LOG_RATE);
     const totalBdt   = productBdt + commission + logistics + TRANS_FEE;
     document.getElementById('rt-item-count').textContent = cart.length;
@@ -3280,7 +3309,7 @@
     });
     document.getElementById('summaryItems').innerHTML = siHtml;
     const productBdt = Math.round(totalPkr * r.CONV_RATE);
-    const commission = Math.round(productBdt * commRate(r, cartTotalQty()));
+    const commission = cartCommission(r);
     const logistics  = Math.round(totalWeight * r.LOG_RATE);
     const totalBdt   = productBdt + commission + logistics + TRANS_FEE;
     document.getElementById('sum-pkr').textContent       = 'PKR ' + totalPkr.toLocaleString();
@@ -3313,7 +3342,7 @@
         : item.weight * totalQty;
     });
     const productBdt = Math.round(totalPkr * r.CONV_RATE);
-    const commission = Math.round(productBdt * commRate(r, cartTotalQty()));
+    const commission = cartCommission(r);
     const logistics  = Math.round(totalWeight * r.LOG_RATE);
     const totalBdt   = productBdt + commission + logistics + TRANS_FEE;
 
@@ -4736,7 +4765,7 @@
       PS_CATALOG = arr;
       var _r = getRates(), _wW = {};
       var _wOf = function(c){ return _wW[c] != null ? _wW[c] : (_wW[c] = (typeof getWeight === 'function' ? getWeight(c) : 0.5)); };
-      PS_CATALOG.forEach(function(p){ var _pb = Math.round(p.pkr * _r.CONV_RATE); p._bdt = _pb + Math.round(_pb * (_r.COMM_1 || 0)) + Math.round(_wOf(p.cat) * _r.LOG_RATE); });
+      PS_CATALOG.forEach(function(p){ var _pb = Math.round(p.pkr * _r.CONV_RATE); var _cm = p.pkr < (_r.PKR_LOW_THRESHOLD||2100) ? (_r.COMM_LOW_BDT||200) : Math.round(_pb * (_r.COMM_1||0)); p._bdt = _pb + _cm + Math.round(_wOf(p.cat) * _r.LOG_RATE); });
       psLoaded = true; psLoading = false;
       psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psPruneSoldOut(); psApply(); psUpdateNote();
       psFlushReady();
@@ -4765,7 +4794,7 @@
     if(!PS_CATALOG || !PS_CATALOG.length) return;
     var _r = getRates(), _wW = {};
     var _wOf = function(c){ return _wW[c] != null ? _wW[c] : (_wW[c] = (typeof getWeight === 'function' ? getWeight(c) : 0.5)); };
-    PS_CATALOG.forEach(function(p){ var _pb = Math.round(p.pkr * _r.CONV_RATE); p._bdt = _pb + Math.round(_pb * (_r.COMM_1 || 0)) + Math.round(_wOf(p.cat) * _r.LOG_RATE); });
+    PS_CATALOG.forEach(function(p){ var _pb = Math.round(p.pkr * _r.CONV_RATE); var _cm = p.pkr < (_r.PKR_LOW_THRESHOLD||2100) ? (_r.COMM_LOW_BDT||200) : Math.round(_pb * (_r.COMM_1||0)); p._bdt = _pb + _cm + Math.round(_wOf(p.cat) * _r.LOG_RATE); });
     if(psLoaded && typeof psApply === 'function') psApply();
   }
 
@@ -5112,7 +5141,9 @@
     // (renderCart) so the basket = this card price + ৳100 exactly for a single item (buyer sees the
     // listed price, then +৳100 transaction fee at checkout).
     const productBdt = Math.round(pkr * r.CONV_RATE);
-    const commission = Math.round(productBdt * (r.COMM_1 || 0));
+    const commission = pkr < (r.PKR_LOW_THRESHOLD || 2100)
+      ? (r.COMM_LOW_BDT || 200)
+      : Math.round(productBdt * (r.COMM_1 || 0));
     const logistics  = Math.round((typeof getWeight === 'function' ? getWeight(cat) : 0.5) * r.LOG_RATE);
     return productBdt + commission + logistics;
   }

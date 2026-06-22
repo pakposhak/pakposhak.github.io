@@ -963,6 +963,16 @@
           style="width:80px;padding:8px 10px;border-radius:6px;border:none;font-size:0.9rem"/>
       </div>
       <div>
+        <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">Low-value threshold (PKR) <span style="color:#777">— below this = flat ৳</span></label>
+        <input id="adm_pkr_threshold" type="number" step="100" min="0" placeholder="2100"
+          style="width:80px;padding:8px 10px;border-radius:6px;border:none;font-size:0.9rem"/>
+      </div>
+      <div>
+        <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">Commission &lt; threshold (৳ flat/unit)</label>
+        <input id="adm_comm_low_bdt" type="number" step="10" min="0" placeholder="200"
+          style="width:80px;padding:8px 10px;border-radius:6px;border:none;font-size:0.9rem"/>
+      </div>
+      <div>
         <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">Max qty / size <span style="color:#777">(stock cap)</span></label>
         <input id="adm_maxqty" type="number" min="1" step="1" placeholder="5"
           style="width:80px;padding:8px 10px;border-radius:6px;border:none;font-size:0.9rem"/>
@@ -1001,6 +1011,22 @@
       <button onclick="resetWeights()"
         style="margin-top:12px;margin-left:8px;padding:8px 16px;background:transparent;color:var(--txt-muted);border:1px solid var(--bdr-med);border-radius:6px;font-size:0.82rem;cursor:pointer">
         Reset to Defaults</button>
+    </div>
+
+    <!-- Kids Age Weight Multipliers (read-only info) -->
+    <div style="margin-top:14px;border-top:1px solid #333;padding-top:12px">
+      <div style="font-size:0.7rem;letter-spacing:1.5px;color:var(--gold);font-weight:700;margin-bottom:8px">👶 KIDS AGE WEIGHT MULTIPLIERS (auto-applied at checkout)</div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:4px 12px;max-width:320px">
+        <div style="font-size:0.72rem;color:#ccc;padding:3px 0;border-bottom:1px solid #2a2a3e">0 – 6 years</div>
+        <div style="font-size:0.72rem;color:#aaa;padding:3px 0;border-bottom:1px solid #2a2a3e">× 1.0 &nbsp;<span style="color:#666">(base — same as table)</span></div>
+        <div style="font-size:0.72rem;color:#ccc;padding:3px 0;border-bottom:1px solid #2a2a3e">6 – 10 years</div>
+        <div style="font-size:0.72rem;color:#aaa;padding:3px 0;border-bottom:1px solid #2a2a3e">× 1.2 &nbsp;<span style="color:#666">(+20%)</span></div>
+        <div style="font-size:0.72rem;color:#ccc;padding:3px 0;border-bottom:1px solid #2a2a3e">10 – 12 years</div>
+        <div style="font-size:0.72rem;color:#aaa;padding:3px 0;border-bottom:1px solid #2a2a3e">× 1.3 &nbsp;<span style="color:#666">(+30%)</span></div>
+        <div style="font-size:0.72rem;color:#ccc;padding:3px 0">12 years +</div>
+        <div style="font-size:0.72rem;color:#aaa;padding:3px 0">× 1.4 &nbsp;<span style="color:#666">(+40%)</span></div>
+      </div>
+      <div style="font-size:0.68rem;color:var(--txt-muted);margin-top:6px">These multipliers are hardcoded — edit <code>kidsAgeMultiplier()</code> in app.src.js to change them.</div>
     </div>
   </div>
 </div>

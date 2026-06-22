@@ -227,7 +227,7 @@ function saveConfig(){
   try{ fs.mkdirSync(CONFIG_DIR, { recursive: true }); fs.writeFileSync(CONFIG_FILE, JSON.stringify(CONFIG)); return true; }
   catch(e){ console.error('config save failed:', e.message); return false; }
 }
-const RATE_KEYS = ['conv','log','usd_pkr','comm_1','comm_23','comm_4p','maxqty'];
+const RATE_KEYS = ['conv','log','usd_pkr','comm_1','comm_23','comm_4p','maxqty','pkr_low_threshold','comm_low_bdt'];
 function sanitizeRates(r){ if(!r || typeof r !== 'object') return null; const o = {};
   for(const k of RATE_KEYS){ const n = parseFloat(r[k]); if(isFinite(n) && n >= 0) o[k] = n; } return Object.keys(o).length ? o : null; }
 function sanitizeWeights(w){ if(!w || typeof w !== 'object') return null; const o = {};
