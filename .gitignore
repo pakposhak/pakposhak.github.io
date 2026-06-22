@@ -7,6 +7,7 @@ _preview_serve.log
 
 # Throwaway audit/scratch artifacts
 _audit_agg.jsonl
+_auditcat/
 _vis6/
 _vis_hop/
 _vis_spot/

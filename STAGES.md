@@ -13,6 +13,23 @@ Naming scheme going forward: `<short-name>-stable-YYYYMMDD` (tag) + a "Stage N" 
 
 ---
 
+## Stage 9 — Catalog-Accuracy Stable  ·  tag `catalog-accuracy-stable-20260622`  ·  2026-06-22
+**Category accuracy, VPS fully deployed, security hardened.**
+- **Kids eastern routing**: `kidsCatFor()` now recognises `\beastern\b` keyword directly; thobe/jhuba
+  in kids_boys_western migrated to kids_boys_eastern; adult-thobe rule guarded (`!/^kids_/`).
+- **Sha Posh**: sizes ≥ 36 are adult women (continuous run 20–40); pre-emptive guard prevents
+  re-routing back to kids by the explicit-gender block.
+- **18 accessories removed**: potli bags, Gulab Envelop (and the "Envelop" spelling variant),
+  Mirchi Sahara, Hand-Crafted Phool — via `NONAPPAREL_STRONG`/`NONAPPAREL_WEAK`.
+- **VPS fully deployed**: `relay-server.js` (adds `/admin/change` password-rotation endpoint) +
+  `catalog-cleanup.js` deployed to `/opt/psb-search/`; `search.db` rebuilt (59,845 products).
+- **Security**: VPS server password + admin panel password both rotated 2026-06-22. SSH key-only.
+- **Performance**: relay `/config` GET now sends `Cache-Control: public, max-age=60`; app fetches
+  use `cache:'default'` so repeat page-loads within 60 s skip the Pakistan round-trip entirely.
+- Live HTML build stamp: `2026-06-22`.
+
+---
+
 ## Stage 8 — Price-Parity Stable  ·  tag `price-parity-stable-20260621`  ·  2026-06-21
 **The card price == the basket price, everywhere, using only in-stock prices.**
 - Browse-card price now = **cheapest in-stock variant** (was `variants[0]`, often a sold-out
