@@ -205,7 +205,7 @@ function kidsCatFor(t, boy) {
   if (boy == null) boy = !/frock|\bdress\b|gown|lehenga|gharara|sharara|peplum|skirt|\bbarbie\b|princess|unicorn/.test(s);
   const g = boy ? 'boys' : 'girls';
   if (/tuxedo|\bsuit\b|blazer|\bformal\b|prince ?coat/.test(s)) return 'kids_' + g + '_formal';
-  if (/kurta|kameez|shalwar|sherwani|waistcoat|pajama|pyjama|sharara|gharara|lehenga|frock|anarkali|\bthobe\b|\bjhuba\b/.test(s)) return 'kids_' + g + '_eastern';
+  if (/kurta|kameez|shalwar|sherwani|waistcoat|pajama|pyjama|sharara|gharara|lehenga|frock|anarkali|\bthobe\b|\bjhuba\b|\beastern\b/.test(s)) return 'kids_' + g + '_eastern';
   return 'kids_' + g + '_western';
 }
 // garment → WOMEN category (for an item whose title explicitly says women but sits in men/kids)
@@ -287,6 +287,10 @@ function cleanupProducts(ps) {
     if (/^kids_/.test(p.cat) && meterSz(p) && !INFANT_WORD.test(p.t || '')) { p.cat = 'mens_unstitched'; menUnsN++; out.push(p); continue; }
     // Footwear cat with S/M/L clothing sizes (not shoe sizes) = garment misfiled as footwear.
     if (p.cat === 'footwear' && szLetter(p) && !FOOT.test(p.t||'')) { p.cat = womenCatFor(p); womenN++; out.push(p); continue; }
+    // Sha Posh uses "Kids" in ALL product titles including adult-sized garments. Once an adult-sized
+    // item has been moved to a women's cat (by the brand rule below), keep it there — don't let
+    // the explicit-gender check see "Kids" and route it back to a kids_ cat.
+    if (p.b === 'Sha Posh' && !/^kids_/.test(p.cat) && (p.sz || []).some(s => { const n = parseInt(s); return !isNaN(n) && n >= 36; })) { out.push(p); continue; }
     // EXPLICIT-TITLE gender corrector (highest-confidence, guarded). Footwear stays footwear (a
     // "Boys Peshawari" is still a shoe). Catches cross-gender mislabels any direction: Edge Republic
     // "Women's 3-Piece" in mens, Wear Ochre "Women's Dress" in kids, Kurta Corner "Kids Kurta Pajama"
@@ -357,6 +361,9 @@ function cleanupProducts(ps) {
       if (_smens && p.cat !== 'mens_unstitched') { p.cat = 'mens_unstitched'; slugN++; out.push(p); continue; }
       if (!_smens && p.cat !== 'shawl') { p.cat = 'shawl'; slugN++; out.push(p); continue; }
     }
+    // Sha Posh: sells kids-styled garments in a continuous size run 20–40. Sizes ≥36 = adult women.
+    // Keep small sizes in kids cat; reclassify adult-sized items to the appropriate women's cat.
+    if (p.b === 'Sha Posh' && /^kids_/.test(p.cat) && (p.sz || []).some(s => { const n = parseInt(s); return !isNaN(n) && n >= 36; })) { p.cat = womenCatFor(p); womenN++; out.push(p); continue; }
     // Dynasty Fabrics: men's suiting brand with no kids line — kids-misclassified items → mens_unstitched.
     if (p.b === 'Dynasty Fabrics' && /^kids_/.test(p.cat)) { p.cat = 'mens_unstitched'; slugN++; out.push(p); continue; }
     // Diners Autograph: formal menswear shirt collection wrongly landing in women's formal/emb cats.
@@ -397,13 +404,15 @@ function cleanupProducts(ps) {
       // (c) prince coat (eastern sherwani coat) in western → eastern; tuxedo (western suit) in eastern → formal
       if (p.cat === 'kids_boys_western' && /\bprince[\s-]?coat\b/.test(_tb)) { p.cat = 'kids_boys_eastern'; girlsKidN++; out.push(p); continue; }
       if (p.cat === 'kids_boys_western' && /\bthobe\b|\bjhuba\b/.test(_tb)) { p.cat = 'kids_boys_eastern'; girlsKidN++; out.push(p); continue; }
+      // (e) "Pajama Suit" in Pakistani context = shalwar kameez (not sleepwear) → eastern
+      if (p.cat === 'kids_boys_western' && /\bpajama[\s-]?suit\b/i.test(_tb)) { p.cat = 'kids_boys_eastern'; girlsKidN++; out.push(p); continue; }
       if (p.cat === 'kids_boys_eastern' && /\btuxedo\b/.test(_tb)) { p.cat = 'kids_boys_formal'; girlsKidN++; out.push(p); continue; }
       // (d) western garments in kids_boys_eastern → kids_boys_western.
       // Polo/henley/t-shirt = western tops (Engine, Preeto); standalone pajama without kurta = sleepwear
       // not shalwar, so it's western too (Minnie Minors). "except shalwar" = guard below.
       if (p.cat === 'kids_boys_eastern') {
         if (/\bhenley\b|\bpolo\b|t-?shirt|\btee\b|\bhoodie\b|\bsweat[\s-]?shirt\b|\btrack\b/.test(_tb) && !/(kurta|kameez|shalwar)/.test(_tb)) { p.cat='kids_boys_western'; girlsKidN++; out.push(p); continue; }
-        if (/\bpajama\b|\bpyjama\b|\bsleepwear\b|\bnightsuit\b|\bnight[\s-]?suit\b/.test(_tb) && !/(kurta|kameez)/.test(_tb)) { p.cat='kids_boys_western'; girlsKidN++; out.push(p); continue; }
+        if (/\bpajama\b|\bpyjama\b|\bsleepwear\b|\bnightsuit\b|\bnight[\s-]?suit\b/.test(_tb) && !/(kurta|kameez|\bpajama[\s-]?suit\b)/.test(_tb)) { p.cat='kids_boys_western'; girlsKidN++; out.push(p); continue; }
       }
     }
     // BRAND SLUG-GENDER: a women-cat item whose brand slug says men/boys/girls → route by garment
