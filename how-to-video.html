@@ -214,6 +214,8 @@ function setL(l){ L=l; localStorage.setItem('psb_lang', l); render(); }
 document.getElementById('modal').addEventListener('click', e=>{ if(e.target.id==='modal') closeVideo(); });
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeVideo(); });
 render();
+// Deep-link: how-to-video.html?v=<id> auto-opens that video (used by the iOS install sheet).
+(function(){ const want=new URLSearchParams(location.search).get('v'); if(want && VIDS.some(x=>x.id===want)) openVideo(want); })();
 </script>
 </body>
 </html>

@@ -146,6 +146,9 @@
     .iosg-slide{display:none}
     .iosg-slide svg{width:170px; height:auto; filter:drop-shadow(0 8px 22px rgba(0,0,0,0.22))}
     .iosg-cap{margin-top:13px; font-size:1rem; font-weight:700; color:var(--txt)}
+    .iosg-videos{display:flex; gap:8px; justify-content:center; margin:14px 0 4px}
+    .iosg-videos a{flex:1; max-width:180px; text-align:center; background:var(--gold-dim); border:1px solid var(--gold-bdr); border-radius:10px; padding:9px 8px; color:var(--gold); font-weight:700; font-size:0.82rem; text-decoration:none}
+    .iosg-videos a:active{background:var(--gold); color:#0A1628}
     .iosg-dots{display:flex; gap:8px; justify-content:center; margin-top:13px}
     .iosg-dot{width:9px; height:9px; border-radius:50%; background:var(--gold-bdr); cursor:pointer; transition:transform .15s}
     .iosg-dot.on{background:var(--gold); transform:scale(1.3)}
@@ -605,6 +608,7 @@
 
     /* ── Browse tabs: Brands | Products ── */
     .browse-tabs{display:flex;gap:8px;margin-bottom:7px}
+    .order-ways{background:var(--gold-dim);border:1px solid var(--gold-bdr);border-radius:12px;padding:9px 13px;margin-bottom:11px;font-size:0.86rem;font-weight:600;color:var(--txt);line-height:1.45;text-align:center}
     .browse-tab{flex:1;padding:11px 8px;background:var(--surface);border:1.5px solid var(--bdr-med);border-radius:10px;
       color:var(--txt-sec);font-weight:700;font-size:0.86rem;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px}
     .browse-tab{border-color:#137a72;color:#137a72}
@@ -956,6 +960,9 @@
 <div class="step-section active" id="step1">
 
 <div class="container">
+
+  <!-- Dual concept: pick from our listing OR paste a link from a listed brand -->
+  <div class="order-ways" data-i18n="order_ways">📋 Two ways to order: pick &amp; + Add from our listing, or paste a link from any of our 140+ listed brands.</div>
 
   <!-- Browse: switch between the brand directory and the multi-brand product search -->
   <div class="browse-tabs">
@@ -1576,6 +1583,10 @@
     <!-- iPhone visual install guide: auto-rolling Safari/Chrome step screens -->
     <div id="iosGuide" style="display:none">
       <p style="color:var(--txt-sec); margin-bottom:12px; font-size:0.92rem">iPhone can't auto-install — but it's just <b>3 taps</b>. Watch 👇 (<b>Safari</b> is easiest)</p>
+      <div class="iosg-videos">
+        <a href="how-to-video.html?v=install-iphone-safari" target="_blank" rel="noopener">▶ Safari install video</a>
+        <a href="how-to-video.html?v=install-iphone-chrome" target="_blank" rel="noopener">▶ Chrome install video</a>
+      </div>
       <div class="iosg-tabs">
         <button class="iosg-tab on" id="iosgTabSafari" onclick="psbIosTrack('safari')">🧭 Safari</button>
         <button class="iosg-tab" id="iosgTabChrome" onclick="psbIosTrack('chrome')">🌐 Chrome</button>
@@ -3972,7 +3983,7 @@
       hiw_confirm_pay:'Confirm price & pay (bKash/Nagad)',
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search 150+ Pakistani brands…',
-      tab_brands:'Browse brands', tab_products:'Browse products',
+      tab_brands:'Browse brands', tab_products:'Browse products', order_ways:'📋 Two ways to order: pick & + Add from our listing, or paste a link from any of our 140+ listed brands.',
       ps_price:'Price (৳ delivered)', ps_price_short:'Price Filters', ps_category:'Product Category', ps_category_short:'Categories', ps_brands:'Brands', ps_clear:'Clear Filters', ps_valueprop:'Any Pakistani brand → delivered to Bangladesh 🇧🇩', ps_morebrands:"Can't find it? Browse all 155 brands →",
       ps_allcats:'All categories', ps_loading:'Loading products…', ps_loadfail:'Could not load products — please try again.',
       ps_results:'products', ps_add:'Add', ps_prev:'Prev', ps_next:'Next', ps_page:'Page',
@@ -4037,7 +4048,7 @@
       hiw_confirm_pay:'দাম নিশ্চিত করে পেমেন্ট (বিকাশ/নগদ)',
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
       lbl_browse:'একটি ব্র্যান্ড দেখুন', search_ph:'🔍 ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
-      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন',
+      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', order_ways:'📋 দুইভাবে অর্ডার: আমাদের লিস্ট থেকে পণ্য বেছে + Add করুন, অথবা ১৪০+ লিস্টেড ব্র্যান্ডের যেকোনো পণ্যের link paste করুন।',
       ps_price:'দাম (৳, ডেলিভারিসহ)', ps_price_short:'দাম ফিল্টার', ps_category:'পণ্যের ক্যাটাগরি', ps_category_short:'ক্যাটাগরি', ps_brands:'ব্র্যান্ড', ps_clear:'ফিল্টার মুছুন', ps_valueprop:'যেকোনো পাকিস্তানি ব্র্যান্ড → বাংলাদেশে ডেলিভারি 🇧🇩', ps_morebrands:'খুঁজে পাচ্ছেন না? সব ১৫৫টি ব্র্যান্ড দেখুন →',
       ps_allcats:'সব ক্যাটাগরি', ps_loading:'পণ্য আসছে…', ps_loadfail:'পণ্য আনা গেল না — আবার চেষ্টা করুন।',
       ps_results:'পণ্য', ps_add:'যোগ করুন', ps_prev:'আগের', ps_next:'পরের', ps_page:'পৃষ্ঠা',
