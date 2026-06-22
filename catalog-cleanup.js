@@ -507,6 +507,9 @@ function cleanupProducts(ps) {
     if (p.cat !== 'dupatta_only' && /\bdupatta\b/i.test(p.t||'') && !/shirt|kameez|kurta|\bsuit\b|trouser|\b[23] ?pc\b|\b[23] ?piece\b/i.test(p.t||'')) { p.cat='dupatta_only'; womenN++; out.push(p); continue; }
     // stitched tights/leggings mislabeled unstitched → women's bottoms (Limelight "Jersey Tights").
     if (/unstitch/.test(p.cat) && /\btights?\b|\bleggings?\b/i.test(p.t||'')) { p.cat='womens_trouser'; womenN++; out.push(p); continue; }
+    // stretch leggings / jeggings / tights ("Next to Skin") mis-filed in a women's STITCHED suit cat
+    // → women's bottoms (Ego "Next to Skin" = white leggings, image-verified 2026-06-22).
+    if (/^(pret_3pc|pret_3pc_emb|pret_2pc_emb|formal_emb_3pc|formal_emb_2pc|kurti_1pc|shirt_dupatta_2pc)$/.test(p.cat) && /\btights?\b|\bleggings?\b|\bjeggings?\b|next[\s-]?to[\s-]?skin/i.test(p.t||'') && !/kameez|kurta|kurti|dupatta|\bshirt\b|\bsuit\b|\b[23] ?pc\b|\b[23] ?piece\b|frock/i.test(p.t||'')) { p.cat='womens_trouser'; womenN++; out.push(p); continue; }
     // Gul Ahmed "MN-FS" men's formal shirts dumped into women's formal → men's shirt.
     if (/^(formal_emb_3pc|formal_emb_2pc|pret_3pc|pret_3pc_emb)$/.test(p.cat) && /mn-?fs/i.test(p.u||'')) { p.cat='mens_shirt'; menPcN++; out.push(p); continue; }
     // Al-Deebaj men's waistcoats dumped into women's formal → men's waistcoat.
@@ -519,7 +522,7 @@ function cleanupProducts(ps) {
     // Standalone BOTTOM (trouser/pant/jegging/shalwar/jeans, no top) anywhere in a women's suit/fabric
     // cat → a bottom. Men SKU → mens_trouser; kids-numeric sizes (≤16) → girls' eastern; else women's.
     if (/^(pret_3pc|pret_3pc_emb|pret_2pc_emb|formal_emb_3pc|formal_emb_2pc|heavy_formal_3pc|lawn_3pc_unstitch|unstitch_3pc_emb|kurti_1pc_unstitch|winter_3pc_stitch|winter_3pc_unstitch)$/.test(p.cat)
-        && /\btrousers?\b|\bbottoms?\b|\bpants?\b|\bjegging|\bculottes?\b|cigarette pants?|\bshalwar\b|\bjeans?\b|\bdenim\b/i.test(p.t||'')
+        && /\btrousers?\b|\bbottoms?\b|\bpants?\b|\bjegging|\bculottes?\b|cigarette pants?|\bshalwar\b|\bjeans?\b|\bdenim\b|palazzo|pallazzo|pallazo|plazzo|plazo|palazo/i.test(p.t||'')
         && !/shirt|kameez|kurta|kurti|dupatta|\bsuit\b|\btop\b|frock|gown|\b[23] ?pc\b|\b[23] ?piece\b|co-?ord|jacket|kaftan|abaya/i.test(p.t||'')) {
       if (/gmss|\bmens?\b|gents/i.test(txt(p))) p.cat='mens_trouser';
       else if (Array.isArray(p.sz)&&p.sz.length&&p.sz.every(z=>/^\d{1,2}$/.test(String(z).trim())&&+z<=16)&&p.sz.some(z=>+z<=5)) p.cat='kids_girls_eastern';   // ≤5 = clearly kids
@@ -528,6 +531,15 @@ function cleanupProducts(ps) {
     }
     // explicit "2 Piece" embroidered item filed as 3pc-emb → 2pc-emb (Eminent/Lakhany "02 Pcs").
     if (p.cat==='pret_3pc_emb' && /\b0?2 ?(pc|pcs|piece|pieces)\b/i.test(p.t||'') && !/\b3 ?(pc|piece)/i.test(p.t||'')) { p.cat='pret_2pc_emb'; pieceN++; out.push(p); continue; }
+    // an explicitly "1 Pc / 1 Piece / single piece" STITCHED item mis-filed in a multi-piece suit cat
+    // → the 1-piece stitched category (kurti_1pc — lighter 0.61kg weight, so it no longer prices as a
+    // 3pc). Bottoms (palazzo/trouser/"1 Pc Bottom") are peeled off above; guard against 2-9-piece
+    // enumerations, co-ords, sets and dupatta. (Salitex/Ego/So Kamal "1Pc … Pret", image-/title-verified.)
+    if (/^(pret_3pc|pret_3pc_emb|pret_2pc_emb|formal_emb_3pc|formal_emb_2pc|heavy_formal_3pc|shirt_dupatta_2pc|shirt_trouser_2pc|winter_2pc_stitch|winter_3pc_stitch)$/.test(p.cat)
+        && /\b1 ?pcs?\b|\b1 ?pieces?\b|\bone[\s-]?piece\b|\bsingle[\s-]?piece\b|\b1-piece\b/i.test(p.t||'')
+        && !/\b[2-9] ?pcs?\b|\b[2-9] ?pieces?\b|\b[2-9]-piece\b|co-?ord|\bset\b|dupatta|\bbottoms?\b|\btrousers?\b|\bshalwar\b|\bpajama\b|\bpyjama\b|palazzo|pallazzo|pallazo|plazzo|plazo|palazo|\bpants?\b/i.test(p.t||'')) {
+      p.cat = 'kurti_1pc'; pieceN++; out.push(p); continue;
+    }
     // Engine is a WESTERN kids brand — its jersey "Top/Tee/Crew/Vest/Jegging" items mis-shelved in
     // kids eastern → western (Engine "Girls Top" flooded kids_girls_eastern).
     if (p.b==='Engine' && /^kids_(boys|girls)_eastern$/.test(p.cat) && /\btop\b|\btee\b|t-?shirt|\bcrew\b|tshirt|\bvest\b|jegging|legging|\bpolo\b/i.test(p.t||'') && !/kurta|kameez|shalwar|frock|kurti|dupatta/i.test(p.t||'')) { p.cat=p.cat.replace('_eastern','_western'); girlsKidN++; out.push(p); continue; }

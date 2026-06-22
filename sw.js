@@ -10,7 +10,7 @@
  *  - NEVER touch cross-origin requests (Shopify product fetches, Apps Script order
  *    submission, Formspree). Those must always hit the network untouched.
  */
-const CACHE_VERSION = 'psb-v11';
+const CACHE_VERSION = 'psb-v12';
 const APP_SHELL = [
   './',
   './index.html',
@@ -51,6 +51,11 @@ self.addEventListener('fetch', (event) => {
   // Formspree, fonts) passes straight through to the network.
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
+
+  // Cache-bust probes (?_v= / ?_fresh=) — used by the in-app auto-updater to read the
+  // live build tag and to force a fresh reload — are network-only: don't intercept,
+  // cache, or risk serving a stale copy for them.
+  if (url.searchParams.has('_v') || url.searchParams.has('_fresh')) return;
 
   const isHTML =
     req.mode === 'navigate' ||

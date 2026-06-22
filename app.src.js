@@ -2370,7 +2370,7 @@
      searches so the field visibly "keeps changing". Pauses while the field is
      focused/typed and when the tab is hidden. Every advertised term is a real,
      resolvable search (kurti/kaftan/lehenga/pret · ammi/abbu/wife · eid/festive…). */
-  const PS_PH_DWELL0 = 25000, PS_PH_DWELL = 15000;   // base sentence dwells 25s; the rest 15s each
+  const PS_PH_DWELL0 = 12500, PS_PH_DWELL = 7500;   // base sentence dwells 12.5s; the rest 7.5s each (halved)
   const PS_PH_TXT = {
     en: [
       'Search 50,000+ products, 140+ Pakistani brands',
@@ -5708,7 +5708,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-22b';
+  const PSB_BUILD = '2026-06-22c';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
@@ -5717,10 +5717,14 @@
   // prevents any reload loop.
   (function(){
     function liveBuildCheck(){
-      fetch('?_v=' + Date.now(), { cache: 'no-store' })
+      // The build tag now lives in the external, MINIFIED app.js (PSB_BUILD="…",
+      // double-quoted, no spaces) — not in the page HTML — so fetch app.js (cache-busted
+      // so the cache-first service worker can't serve a stale copy) and match either
+      // quote style. Fetching the page here matched nothing post-build → updater was dead.
+      fetch('app.js?_v=' + Date.now(), { cache: 'no-store' })
         .then(function(r){ return r.ok ? r.text() : Promise.reject(); })
         .then(function(html){
-          var m = html.match(/PSB_BUILD = '([^']+)'/);
+          var m = html.match(/PSB_BUILD ?= ?['"]([^'"]+)['"]/);
           var live = m && m[1];
           if(!live || live === PSB_BUILD) return;
           var key = 'psb_seen_' + live;
