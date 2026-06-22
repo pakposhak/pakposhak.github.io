@@ -39,6 +39,9 @@
       COMM_4P           : (cfgRate('comm_4p') ?? lsNum('psb_comm_4p', 15)) / 100,
       PKR_LOW_THRESHOLD : cfgRate('pkr_low_threshold') ?? lsNum('psb_pkr_low_threshold', 2100),
       COMM_LOW_BDT      : cfgRate('comm_low_bdt') ?? lsNum('psb_comm_low_bdt', 200),
+      KIDS_AGE_6_10     : cfgRate('kids_age_6_10')  ?? lsNum('psb_kids_age_6_10', 1.2),
+      KIDS_AGE_10_12    : cfgRate('kids_age_10_12') ?? lsNum('psb_kids_age_10_12', 1.3),
+      KIDS_AGE_12P      : cfgRate('kids_age_12p')   ?? lsNum('psb_kids_age_12p', 1.4),
       TRANS_FEE : 100
     };
   }
@@ -149,9 +152,12 @@
     document.getElementById('adm_comm_1').value  = +(r.COMM_1  * 100).toFixed(2);
     document.getElementById('adm_comm_23').value = +(r.COMM_23 * 100).toFixed(2);
     document.getElementById('adm_comm_4p').value       = +(r.COMM_4P * 100).toFixed(2);
-    document.getElementById('adm_pkr_threshold').value = r.PKR_LOW_THRESHOLD || 2100;
-    document.getElementById('adm_comm_low_bdt').value  = r.COMM_LOW_BDT      || 200;
-    document.getElementById('adm_relay').value         = localStorage.getItem('psb_relay_url') || '';
+    document.getElementById('adm_pkr_threshold').value  = r.PKR_LOW_THRESHOLD || 2100;
+    document.getElementById('adm_comm_low_bdt').value   = r.COMM_LOW_BDT      || 200;
+    document.getElementById('adm_kids_6_10').value      = r.KIDS_AGE_6_10     || 1.2;
+    document.getElementById('adm_kids_10_12').value     = r.KIDS_AGE_10_12    || 1.3;
+    document.getElementById('adm_kids_12p').value       = r.KIDS_AGE_12P      || 1.4;
+    document.getElementById('adm_relay').value          = localStorage.getItem('psb_relay_url') || '';
     document.getElementById('adm_maxqty').value  = maxPerSize();
     buildWeightEditor();
     panel.scrollIntoView({ behavior: 'smooth' });
@@ -228,6 +234,9 @@
     const c4p          = parseFloat(document.getElementById('adm_comm_4p').value);
     const pkrThreshold = parseFloat(document.getElementById('adm_pkr_threshold').value);
     const commLowBdt   = parseFloat(document.getElementById('adm_comm_low_bdt').value);
+    const kids6_10     = parseFloat(document.getElementById('adm_kids_6_10').value);
+    const kids10_12    = parseFloat(document.getElementById('adm_kids_10_12').value);
+    const kids12p      = parseFloat(document.getElementById('adm_kids_12p').value);
     const maxq = parseInt(document.getElementById('adm_maxqty').value);
     // The relay URL is how to REACH the relay, so it stays per-device (localStorage).
     const relayUrl = document.getElementById('adm_relay').value.trim();
@@ -238,7 +247,10 @@
     const rates = { conv, log, usd_pkr: usdPkr > 0 ? usdPkr : 278,
       comm_1: c1 >= 0 ? c1 : 20, comm_23: c23 >= 0 ? c23 : 18, comm_4p: c4p >= 0 ? c4p : 15, maxqty: maxq > 0 ? maxq : 5,
       pkr_low_threshold: pkrThreshold > 0 ? pkrThreshold : 2100,
-      comm_low_bdt: commLowBdt >= 0 ? commLowBdt : 200 };
+      comm_low_bdt: commLowBdt >= 0 ? commLowBdt : 200,
+      kids_age_6_10:  kids6_10  > 0 ? kids6_10  : 1.2,
+      kids_age_10_12: kids10_12 > 0 ? kids10_12 : 1.3,
+      kids_age_12p:   kids12p   > 0 ? kids12p   : 1.4 };
     const btn = document.getElementById('saveRatesBtn'); btn.textContent = 'Saving…';
     try{
       const res = await fetch(relayBase()+'/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash:h, rates})});
@@ -378,17 +390,18 @@
   }
   // Age-based weight multiplier for kids items. The base weight (DEFAULT_WEIGHTS / relay)
   // is calibrated for 0–6y garments; older children's garments are physically larger.
-  // Brackets: 0–6y × 1.0 (base) | 6–10y × 1.2 | 10–12y × 1.3 | 12y+ × 1.4.
-  function kidsAgeMultiplier(sizeStr) {
+  // Multipliers are admin-configurable via getRates() (defaults: ×1.2 / ×1.3 / ×1.4).
+  function kidsAgeMultiplier(sizeStr, r) {
     if (!sizeStr) return 1.0;
     const s = String(sizeStr).replace(/\s+/g,'').toLowerCase();
     if (/^\d+(-\d+)?m/i.test(s)) return 1.0;    // infant months → 0–6y bracket
     const ym = s.match(/(\d+).*y/i);
     if (!ym) return 1.0;
+    const _r  = r || getRates();
     const age = parseInt(ym[1]);                  // lower bound of the size range
-    if (age >= 12) return 1.4;
-    if (age >= 10) return 1.3;
-    if (age >= 6)  return 1.2;
+    if (age >= 12) return _r.KIDS_AGE_12P  || 1.4;
+    if (age >= 10) return _r.KIDS_AGE_10_12 || 1.3;
+    if (age >= 6)  return _r.KIDS_AGE_6_10  || 1.2;
     return 1.0;
   }
 
@@ -3135,7 +3148,7 @@
       const itemPkr = itemPkrSubtotal(item);   // Σ per-size price × qty
       totalPkr    += itemPkr;
       totalWeight += KIDS_CATS.has(item.cat)
-        ? (item.sizes||[{size:'',qty:1}]).reduce((s,z)=>s+item.weight*kidsAgeMultiplier(z.size)*z.qty, 0)
+        ? (item.sizes||[{size:'',qty:1}]).reduce((s,z)=>s+item.weight*kidsAgeMultiplier(z.size,r)*z.qty, 0)
         : item.weight * totalQty;
       const catTag  = CAT_LABELS[item.cat] || item.cat;
 
@@ -3285,7 +3298,7 @@
       const itemPkr  = itemPkrSubtotal(item);
       totalPkr    += itemPkr;
       totalWeight += KIDS_CATS.has(item.cat)
-        ? (item.sizes||[{size:'',qty:1}]).reduce((s,z)=>s+item.weight*kidsAgeMultiplier(z.size)*z.qty, 0)
+        ? (item.sizes||[{size:'',qty:1}]).reduce((s,z)=>s+item.weight*kidsAgeMultiplier(z.size,r)*z.qty, 0)
         : item.weight * totalQty;
       const bdtTotal = Math.round(itemPkr * r.CONV_RATE);
       // Size summary — per-size price listed when sizes are priced differently.
@@ -3338,7 +3351,7 @@
       const totalQty = (item.sizes || [{qty:1}]).reduce((s,r) => s + r.qty, 0);
       totalPkr    += itemPkrSubtotal(item);
       totalWeight += KIDS_CATS.has(item.cat)
-        ? (item.sizes||[{size:'',qty:1}]).reduce((s,z)=>s+item.weight*kidsAgeMultiplier(z.size)*z.qty, 0)
+        ? (item.sizes||[{size:'',qty:1}]).reduce((s,z)=>s+item.weight*kidsAgeMultiplier(z.size,r)*z.qty, 0)
         : item.weight * totalQty;
     });
     const productBdt = Math.round(totalPkr * r.CONV_RATE);
