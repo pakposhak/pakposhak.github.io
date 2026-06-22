@@ -265,13 +265,13 @@ function corsOrigin(req, strict){
   return strict ? ALLOWED_ORIGINS[0] : '*';
 }
 
-function send(res, status, obj, origin){
+function send(res, status, obj, origin, cc){
   const body = JSON.stringify(obj);
   res.writeHead(status, {
     'Content-Type': 'application/json; charset=utf-8',
     'Access-Control-Allow-Origin': origin || '*',
     'Vary': 'Origin',
-    'Cache-Control': 'no-store',
+    'Cache-Control': cc || 'no-store',
   });
   res.end(body);
 }
@@ -290,7 +290,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── GLOBAL RATE/WEIGHT CONFIG (admin panel writes here; every form reads it)
   if(u.pathname === '/config' && req.method === 'GET')
-    return send(res, 200, { ok:true, hasPassword: !!CONFIG.adminHash, rates: CONFIG.rates, weights: CONFIG.weights, updatedAt: CONFIG.updatedAt });
+    return send(res, 200, { ok:true, hasPassword: !!CONFIG.adminHash, rates: CONFIG.rates, weights: CONFIG.weights, updatedAt: CONFIG.updatedAt }, null, 'public, max-age=60');
 
   if(u.pathname === '/admin/setup' && req.method === 'POST'){
     const co = corsOrigin(req, true);

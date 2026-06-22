@@ -171,7 +171,7 @@
   // First paint instantly from the baked-in defaults (works even offline)…
   render(null, DEFAULT_LOG);
   // …then overlay the live admin-set weights + logistics rate from the relay.
-  fetch(RELAY + '/config', { cache: 'no-store' })
+  fetch(RELAY + '/config', { cache: 'default' })
     .then(function(r){ return r.json(); })
     .then(function(j){
       if(j && j.ok){

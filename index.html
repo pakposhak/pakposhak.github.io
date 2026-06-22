@@ -1877,7 +1877,7 @@
   // falls back to the last-known values rather than the built-in defaults).
   async function loadPsbConfig(){
     let cfg = null;
-    try{ const r = await fetch(relayBase()+'/config', { cache:'no-store' }); if(r.ok){ const j = await r.json(); if(j && j.ok) cfg = j; } }catch(e){}
+    try{ const r = await fetch(relayBase()+'/config', { cache:'default' }); if(r.ok){ const j = await r.json(); if(j && j.ok) cfg = j; } }catch(e){}
     if(cfg){ PSB_CFG = cfg; try{ localStorage.setItem('psb_cfg_cache', JSON.stringify(cfg)); }catch(e){} }
     else { try{ const c = JSON.parse(localStorage.getItem('psb_cfg_cache') || 'null'); if(c && c.ok) PSB_CFG = c; }catch(e){} }
     if(PSB_CFG && typeof renderCart === 'function') renderCart();   // refresh any totals shown before config arrived
