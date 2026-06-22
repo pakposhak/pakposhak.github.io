@@ -466,6 +466,25 @@ function cleanupProducts(ps) {
     if (p.cat === 'lehenga' && /\b1 ?pc\b|\b1 ?piece\b|\bsingle\b/i.test(p.t||'') && /sharara|gharara/i.test(p.t||'') && !/kameez|shirt|\bset\b|dupatta|[23] ?pc|[23] ?piece/i.test(p.t||'')) { p.cat = 'womens_trouser'; womenN++; out.push(p); continue; }
     // an explicitly WESTERN top mis-filed as an eastern kurti → western top (Beechtree "… (WESTERN)").
     if (p.cat === 'kurti_1pc' && /\bwestern\b/i.test(p.t||'') && /\btop\b|\btee\b|t-?shirt|jersey/i.test(p.t||'')) { p.cat = 'western_top'; womenN++; out.push(p); continue; }
+    // ── VISUAL-AUDIT wave 4 (image-verified) ──
+    // ChenOne "LDS-####" ladies WESTERN tops/shirts dumped into winter/pret stitched suits → western top.
+    if (p.b === 'ChenOne' && /lds/i.test(p.u||'') && /\btop\b|\bshirt\b|western|blouse/i.test(p.t||'') && !/\bsuit\b|[23] ?pc|kameez|dupatta|kurta/i.test(p.t||'') && !/^(western_top|kurti_1pc)$/.test(p.cat)) { p.cat='western_top'; womenN++; out.push(p); continue; }
+    // Salitex "1Pc … Bottom" embroidered trousers mis-filed as 3-piece suits → women's bottoms.
+    if (/^(pret_3pc|pret_3pc_emb|pret_2pc_emb|formal_emb_3pc|formal_emb_2pc|lawn_3pc_unstitch)$/.test(p.cat) && /\b1 ?pc\b|\b1 ?piece\b|\bsingle\b/i.test(p.t||'') && /\bbottom\b|\btrouser\b/i.test(p.t||'') && !/shirt|kameez|kurta|dupatta/i.test(p.t||'')) { p.cat='womens_trouser'; womenN++; out.push(p); continue; }
+    // a standalone SHAWL mis-filed in a suit/fabric cat → the shawl category.
+    if (p.cat !== 'shawl' && /\bshawl\b/i.test(p.t||'') && !/shawl[\s-]?collar|\bsuit\b|[23] ?pc|kameez|kurta|\bshirt\b|blazer|\bcoat\b|cardigan/i.test(p.t||'')) { p.cat='shawl'; womenN++; out.push(p); continue; }
+    // a standalone DUPATTA mis-filed as a suit → dupatta_only.
+    if (p.cat !== 'dupatta_only' && /\bdupatta\b/i.test(p.t||'') && !/shirt|kameez|kurta|\bsuit\b|trouser|\b[23] ?pc\b|\b[23] ?piece\b/i.test(p.t||'')) { p.cat='dupatta_only'; womenN++; out.push(p); continue; }
+    // stitched tights/leggings mislabeled unstitched → women's bottoms (Limelight "Jersey Tights").
+    if (/unstitch/.test(p.cat) && /\btights?\b|\bleggings?\b/i.test(p.t||'')) { p.cat='womens_trouser'; womenN++; out.push(p); continue; }
+    // Gul Ahmed "MN-FS" men's formal shirts dumped into women's formal → men's shirt.
+    if (/^(formal_emb_3pc|formal_emb_2pc|pret_3pc|pret_3pc_emb)$/.test(p.cat) && /mn-?fs/i.test(p.u||'')) { p.cat='mens_shirt'; menPcN++; out.push(p); continue; }
+    // Al-Deebaj men's waistcoats dumped into women's formal → men's waistcoat.
+    if (p.b === 'Al-Deebaj' && /waist[\s-]?coat/i.test(p.t||'') && catGenderOf(p.cat) !== 'm') { p.cat='mens_waistcoat'; menPcN++; out.push(p); continue; }
+    // modest head/face wear (niqab/hijab/chadar/makhna) leaking into SUIT/fabric cats → abaya (the
+    // documented modest-wear umbrella). Hijab pins are pure accessories → drop.
+    if (/glider[\s-]?pin|hijab[\s-]?pin/i.test(p.t||'')) { del++; continue; }
+    if (p.cat !== 'abaya' && /\bniqab\b|\bnaqab\b|face[\s-]?cover|face[\s-]?veil|\bmakhna\b|\bchadar\b|\bhijab\b/i.test(p.t||'') && !/\bsuit\b|kameez|kurta|\bshirt\b|\b[23] ?pc\b|trouser/i.test(p.t||'')) { p.cat='abaya'; womenN++; out.push(p); continue; }
     // BRAND SLUG-GENDER: a women-cat item whose brand slug says men/boys/girls → route by garment
     // (Zellbury men's shalwar-kameez/shirts, Diners boys' kurta-pajama & men's shirts, etc.). Fixes
     // the whole brand at once, not per image. Runs before womenType (title-only) — slug wins.
