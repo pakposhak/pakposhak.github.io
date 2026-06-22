@@ -5,69 +5,82 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <title>Video Guide — PakPoshak</title>
+<script>(function(){try{if(localStorage.getItem('psb_theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
 <style>
+  /* Light "Ivory & Gold" is DEFAULT; dark preserved under [data-theme="dark"] (matches index.html). */
   :root{
+    --bg:#FAF6EE; --surface:#FFFFFF; --raised:#F3ECDD; --input-bg:#FFFFFF;
+    --gold:#A8842B; --gold-dim:rgba(168,132,43,0.12); --gold-bdr:rgba(168,132,43,0.40); --gold-bdr2:rgba(168,132,43,0.60);
+    --txt:#000000; --txt-sec:#333333; --txt-muted:#6E6E6E; --bdr:rgba(31,36,51,0.12); --green:#1E8E54;
+    --on-gold:#FFFFFF; --topbar:rgba(250,246,238,.92);
+  }
+  [data-theme="dark"]{
     --bg:#080E1C; --surface:#0F1929; --raised:#162035; --input-bg:#0A1320;
-    --gold:#C9A96E; --gold-dim:rgba(201,169,110,0.14); --gold-bdr:rgba(201,169,110,0.4);
-    --txt:#EEE4CE; --txt-sec:#A0B2C8; --txt-muted:#5A6E84; --bdr:#1E2D45; --green:#34d27b;
+    --gold:#C9A96E; --gold-dim:rgba(201,169,110,0.18); --gold-bdr:rgba(201,169,110,0.32); --gold-bdr2:rgba(201,169,110,0.50);
+    --txt:#EEE4CE; --txt-sec:#A0B2C8; --txt-muted:#5A6E84; --bdr:rgba(201,169,110,0.15); --green:#34d27b;
+    --on-gold:#0A1628; --topbar:rgba(8,14,28,.92);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
     min-height:100vh;-webkit-tap-highlight-color:transparent}
   /* ── top bar ── */
-  .top{position:sticky;top:0;z-index:5;background:rgba(8,14,28,.92);backdrop-filter:blur(8px);
-    border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:10px;padding:12px 16px}
+  .top{position:sticky;top:0;z-index:5;background:var(--topbar);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:8px;padding:12px 16px}
   .top .brand{font-weight:800;color:var(--gold);font-size:0.98rem;letter-spacing:0.4px;flex:1}
+  .theme-tg{background:var(--surface);border:1px solid var(--gold-bdr);border-radius:50%;width:34px;height:34px;
+    font-size:1rem;cursor:pointer;line-height:1;color:var(--txt);display:flex;align-items:center;justify-content:center;font-family:inherit}
   .lang-tg{display:flex;border:1px solid var(--gold-bdr);border-radius:16px;overflow:hidden}
   .lang-tg button{background:none;border:none;color:var(--txt-sec);font-weight:700;font-size:0.78rem;
     padding:5px 13px;cursor:pointer;font-family:inherit}
-  .lang-tg button.on{background:var(--gold);color:#0A1628}
-  .close-x{color:var(--txt-muted);text-decoration:none;font-size:1.35rem;line-height:1;padding:4px 8px}
+  .lang-tg button.on{background:var(--gold);color:var(--on-gold)}
+  .close-x{color:var(--txt-muted);text-decoration:none;font-size:1.35rem;line-height:1;padding:4px 6px}
   /* ── layout ── */
-  .wrap{max-width:820px;margin:0 auto;padding:16px 16px 40px}
+  .wrap{max-width:760px;margin:0 auto;padding:16px 16px 40px}
   .hint{background:var(--gold-dim);border:1px solid var(--gold-bdr);border-radius:12px;
-    padding:10px 14px;font-size:0.86rem;color:var(--txt);margin-bottom:20px;line-height:1.45}
+    padding:10px 14px;font-size:0.86rem;color:var(--txt);margin-bottom:22px;line-height:1.45}
   .hint b{color:var(--gold)}
-  .sec{margin-bottom:26px}
+  .sec{margin-bottom:30px}
   .sec h3{font-size:0.82rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);
     margin-bottom:4px;font-weight:800}
   .sec .sub{font-size:0.82rem;color:var(--txt-muted);margin-bottom:14px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
-  /* ── card ── */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:18px}
+  /* ── card (smaller, thicker border, more separation) ── */
   .vcard{display:flex;flex-direction:column;text-align:left;background:var(--surface);
-    border:1px solid var(--bdr);border-radius:14px;overflow:hidden;cursor:pointer;font-family:inherit;
-    color:var(--txt);padding:0;transition:border-color .15s,transform .12s}
-  .vcard:hover{border-color:var(--gold-bdr);transform:translateY(-2px)}
-  .vcard.rec{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold-bdr)}
-  .thumb{position:relative;height:230px;background-size:cover;background-position:top center;background-color:#000}
-  .thumb .play{position:absolute;inset:0;margin:auto;width:52px;height:52px;display:flex;
-    align-items:center;justify-content:center;background:rgba(201,169,110,.92);color:#0A1628;
-    border-radius:50%;font-size:1.25rem;box-shadow:0 4px 16px rgba(0,0,0,.5)}
+    border:2px solid var(--gold-bdr);border-radius:16px;overflow:hidden;cursor:pointer;font-family:inherit;
+    color:var(--txt);padding:0;transition:border-color .15s,transform .12s,box-shadow .15s;
+    box-shadow:0 2px 10px rgba(31,36,51,0.05)}
+  .vcard:hover{border-color:var(--gold-bdr2);transform:translateY(-2px);box-shadow:0 6px 18px rgba(31,36,51,0.10)}
+  .vcard.rec{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold-bdr)}
+  .thumb{position:relative;height:184px;background-size:cover;background-position:top center;background-color:#000}
+  .thumb .play{position:absolute;inset:0;margin:auto;width:48px;height:48px;display:flex;
+    align-items:center;justify-content:center;background:rgba(168,132,43,.95);color:#fff;
+    border-radius:50%;font-size:1.15rem;box-shadow:0 4px 16px rgba(0,0,0,.5)}
   .thumb .dur{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.72);color:#fff;
     font-size:0.72rem;font-weight:700;padding:2px 7px;border-radius:6px}
-  .thumb .badge{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.62);color:var(--txt);
+  .thumb .badge{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.66);color:#fff;
     font-size:0.68rem;font-weight:700;padding:3px 8px;border-radius:7px}
-  .vcard.rec .thumb .badge{background:var(--gold);color:#0A1628}
+  .vcard.rec .thumb .badge{background:var(--gold);color:var(--on-gold)}
   .vinfo{padding:11px 12px 13px}
-  .vinfo .vttl{font-weight:700;font-size:0.92rem;display:block;line-height:1.3}
-  /* ── modal player ── */
+  .vinfo .vttl{font-weight:700;font-size:0.9rem;display:block;line-height:1.3}
+  /* ── modal player (stays dark — best for video viewing in any theme) ── */
   .modal{position:fixed;inset:0;z-index:20;background:rgba(4,7,14,.94);display:none;
     align-items:center;justify-content:center;padding:16px;flex-direction:column}
   .modal.show{display:flex}
   .modal video{max-width:min(420px,92vw);max-height:80vh;width:auto;border-radius:14px;
     background:#000;box-shadow:0 18px 60px rgba(0,0,0,.7)}
-  .modal .mttl{color:var(--txt);font-weight:700;font-size:0.95rem;margin-bottom:10px;text-align:center;max-width:92vw}
-  .modal .mclose{position:absolute;top:14px;right:16px;color:var(--txt);background:var(--raised);
-    border:1px solid var(--bdr);border-radius:50%;width:40px;height:40px;font-size:1.2rem;cursor:pointer;font-family:inherit}
-  .modal .cc-note{color:var(--txt-muted);font-size:0.74rem;margin-top:10px}
+  .modal .mttl{color:#EEE4CE;font-weight:700;font-size:0.95rem;margin-bottom:10px;text-align:center;max-width:92vw}
+  .modal .mclose{position:absolute;top:14px;right:16px;color:#EEE4CE;background:#162035;
+    border:1px solid rgba(201,169,110,0.25);border-radius:50%;width:40px;height:40px;font-size:1.2rem;cursor:pointer;font-family:inherit}
+  .modal .cc-note{color:#A0B2C8;font-size:0.74rem;margin-top:10px}
   video::cue{background:rgba(0,0,0,.78);color:#fff;font-size:0.92em;line-height:1.35;font-family:inherit}
-  .start-cta{display:block;text-align:center;background:var(--gold);color:#0A1628;font-weight:800;
+  .start-cta{display:block;text-align:center;background:var(--gold);color:var(--on-gold);font-weight:800;
     text-decoration:none;border-radius:22px;padding:13px;margin-top:8px;font-size:0.98rem}
 </style>
 </head>
 <body>
   <div class="top">
     <span class="brand">🪡 PakPoshak — <span id="hd">Video Guide</span></span>
+    <button class="theme-tg" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
     <div class="lang-tg">
       <button id="lg-en" onclick="setL('en')">EN</button>
       <button id="lg-bn" onclick="setL('bn')">বাংলা</button>
@@ -79,15 +92,15 @@
     <div class="hint" id="hint"></div>
 
     <div class="sec">
-      <h3 id="h-start"></h3>
-      <div class="sub" id="s-start"></div>
-      <div class="grid" id="startGrid"></div>
+      <h3 id="h-main"></h3>
+      <div class="sub" id="s-main"></div>
+      <div class="grid" id="mainGrid"></div>
     </div>
 
     <div class="sec">
-      <h3 id="h-more"></h3>
-      <div class="sub" id="s-more"></div>
-      <div class="grid" id="moreGrid"></div>
+      <h3 id="h-install"></h3>
+      <div class="sub" id="s-install"></div>
+      <div class="grid" id="installGrid"></div>
     </div>
 
     <a class="start-cta" id="startCta" href="./"></a>
@@ -103,49 +116,50 @@
 <script>
 'use strict';
 const MEDIA = 'media/guide/';
+// Order = the listing the user reads top-to-bottom. Smart Search is the hero, right after the intro.
 const VIDS = [
-  {id:'intro-android',         grp:'start', dur:'0:55', dev:'android', badge:'🤖 Android'},
-  {id:'install-iphone-chrome', grp:'start', dur:'0:17', dev:'ios',     badge:'🍎 iPhone · Chrome'},
-  {id:'install-iphone-safari', grp:'start', dur:'0:17', dev:'ios',     badge:'🍎 iPhone · Safari'},
-  {id:'order-browse-products', grp:'more',  dur:'0:12', badge:'🛍️ Browse Products'},
-  {id:'order-browse-brands',   grp:'more',  dur:'1:00', badge:'🏷️ Browse Brands'},
-  {id:'smart-search',          grp:'more',  dur:'1:22', badge:'🔎 Search'},
+  {id:'intro-android',         grp:'main',    dur:'0:55', badge:'🎬 Introduction'},
+  {id:'smart-search',          grp:'main',    dur:'1:22', badge:'🔎 Smart Search'},
+  {id:'order-browse-products', grp:'main',    dur:'0:12', badge:'🛍️ Browse Products'},
+  {id:'order-browse-brands',   grp:'main',    dur:'1:00', badge:'🏷️ Browse Brands'},
+  {id:'install-iphone-safari', grp:'install', dur:'0:17', dev:'ios', badge:'🍎 iPhone · Safari'},
+  {id:'install-iphone-chrome', grp:'install', dur:'0:17', dev:'ios', badge:'🍎 iPhone · Chrome'},
 ];
 const T = {
   en:{
     hd:'Video Guide',
-    h_start:'Start here · install the app', s_start:'A quick install so PakPoshak sits on your home screen like an app.',
-    h_more:'Learn more · ordering & search', s_more:'Tap any guide to watch how it works.',
+    h_main:'How PakPoshak works', s_main:'Start with the introduction, then Smart Search — the fastest way to shop. Two ways to order: + Add from our listing, or paste a product link from any of our 140+ brands.',
+    h_install:'Install on iPhone', s_install:'Add PakPoshak to your home screen so it opens like an app.',
     cta:'Start My Order →',
     ccNote:'Captions: English — switch to বাংলা at the top.',
-    hintIos:'Looks like you\'re on <b>iPhone</b> — start with the Safari or Chrome install guide below.',
-    hintAndroid:'Looks like you\'re on <b>Android</b> — start with the Android guide below.',
-    hintGeneric:'New here? Start with the <b>install</b> guide for your phone, then see how to order.',
+    hintIos:'Looks like you\'re on <b>iPhone</b> — watch the introduction, then the Safari or Chrome install guide below.',
+    hintAndroid:'Looks like you\'re on <b>Android</b> — tap <b>Install</b> on the app, then watch the introduction below.',
+    hintGeneric:'New here? Watch the <b>introduction</b>, then <b>Smart Search</b> — our quickest way to shop.',
     titles:{
-      'intro-android':'Introduction (Android)',
-      'install-iphone-chrome':'Install on iPhone — Chrome',
-      'install-iphone-safari':'Install on iPhone — Safari',
+      'intro-android':'Introduction — how it all works',
+      'smart-search':'Smart Search made easy',
       'order-browse-products':'Order via Browse Products',
       'order-browse-brands':'Full order via Browse Brands',
-      'smart-search':'Smart Search made easy',
+      'install-iphone-safari':'Install on iPhone — Safari',
+      'install-iphone-chrome':'Install on iPhone — Chrome',
     }
   },
   bn:{
     hd:'ভিডিও গাইড',
-    h_start:'শুরু করুন · অ্যাপ ইনস্টল', s_start:'অল্প সময়ে ইনস্টল করুন — PakPoshak হোম স্ক্রিনে app-এর মতো থাকবে।',
-    h_more:'আরও জানুন · অর্ডার ও সার্চ', s_more:'কীভাবে কাজ করে দেখতে যেকোনো গাইডে ট্যাপ করুন।',
+    h_main:'PakPoshak যেভাবে কাজ করে', s_main:'পরিচিতি দিয়ে শুরু করুন, তারপর Smart Search — কেনাকাটার দ্রুততম উপায়। অর্ডারের দুটি উপায়: আমাদের listing থেকে + Add, অথবা আমাদের ১৪০+ brand-এর যেকোনো product link paste করুন।',
+    h_install:'iPhone-এ ইনস্টল', s_install:'PakPoshak হোম স্ক্রিনে যোগ করুন — app-এর মতো খুলবে।',
     cta:'অর্ডার শুরু করুন →',
     ccNote:'ক্যাপশন: বাংলা — উপরে থেকে English-এ পাল্টান।',
-    hintIos:'আপনি সম্ভবত <b>iPhone</b> ব্যবহার করছেন — নিচের Safari বা Chrome ইনস্টল গাইড দিয়ে শুরু করুন।',
-    hintAndroid:'আপনি সম্ভবত <b>Android</b> ব্যবহার করছেন — নিচের Android গাইড দিয়ে শুরু করুন।',
-    hintGeneric:'নতুন? আপনার ফোনের <b>install</b> গাইড দিয়ে শুরু করুন, তারপর কীভাবে অর্ডার করবেন দেখুন।',
+    hintIos:'আপনি সম্ভবত <b>iPhone</b> ব্যবহার করছেন — পরিচিতি দেখুন, তারপর নিচের Safari বা Chrome ইনস্টল গাইড।',
+    hintAndroid:'আপনি সম্ভবত <b>Android</b> ব্যবহার করছেন — অ্যাপে <b>Install</b> চাপুন, তারপর নিচের পরিচিতি দেখুন।',
+    hintGeneric:'নতুন? <b>পরিচিতি</b> দেখুন, তারপর <b>Smart Search</b> — আমাদের কেনাকাটার দ্রুততম উপায়।',
     titles:{
-      'intro-android':'পরিচিতি (Android)',
-      'install-iphone-chrome':'iPhone-এ ইনস্টল — Chrome',
-      'install-iphone-safari':'iPhone-এ ইনস্টল — Safari',
+      'intro-android':'পরিচিতি — পুরো প্রক্রিয়া',
+      'smart-search':'স্মার্ট সার্চ — সহজে',
       'order-browse-products':'Browse Products দিয়ে অর্ডার',
       'order-browse-brands':'Browse Brands দিয়ে সম্পূর্ণ অর্ডার',
-      'smart-search':'স্মার্ট সার্চ — সহজে',
+      'install-iphone-safari':'iPhone-এ ইনস্টল — Safari',
+      'install-iphone-chrome':'iPhone-এ ইনস্টল — Chrome',
     }
   }
 };
@@ -156,7 +170,7 @@ const tt = k => T[L][k];
 
 function card(v){
   const title = T[L].titles[v.id];
-  const rec = (v.dev==='ios'&&isIOS) || (v.dev==='android'&&isAndroid);
+  const rec = (v.dev==='ios'&&isIOS);
   return `<button class="vcard${rec?' rec':''}" onclick="openVideo('${v.id}')">
     <div class="thumb" style="background-image:url('${MEDIA}${v.id}.jpg')">
       <span class="badge">${rec?'⭐ ':''}${v.badge}</span>
@@ -169,15 +183,15 @@ function card(v){
 function render(){
   document.documentElement.lang = L;
   document.getElementById('hd').textContent = tt('hd');
-  document.getElementById('h-start').textContent = tt('h_start');
-  document.getElementById('s-start').textContent = tt('s_start');
-  document.getElementById('h-more').textContent = tt('h_more');
-  document.getElementById('s-more').textContent = tt('s_more');
+  document.getElementById('h-main').textContent = tt('h_main');
+  document.getElementById('s-main').textContent = tt('s_main');
+  document.getElementById('h-install').textContent = tt('h_install');
+  document.getElementById('s-install').textContent = tt('s_install');
   const cta = document.getElementById('startCta'); cta.textContent = tt('cta');
   document.getElementById('ccNote').textContent = tt('ccNote');
   document.getElementById('hint').innerHTML = isIOS?tt('hintIos'):isAndroid?tt('hintAndroid'):tt('hintGeneric');
-  document.getElementById('startGrid').innerHTML = VIDS.filter(v=>v.grp==='start').map(card).join('');
-  document.getElementById('moreGrid').innerHTML  = VIDS.filter(v=>v.grp==='more').map(card).join('');
+  document.getElementById('mainGrid').innerHTML    = VIDS.filter(v=>v.grp==='main').map(card).join('');
+  document.getElementById('installGrid').innerHTML = VIDS.filter(v=>v.grp==='install').map(card).join('');
   document.getElementById('lg-en').classList.toggle('on', L==='en');
   document.getElementById('lg-bn').classList.toggle('on', L==='bn');
   if(document.getElementById('modal').classList.contains('show') && currentId)
@@ -211,9 +225,20 @@ function applyCC(){
 }
 player.addEventListener('loadeddata', applyCC);
 function setL(l){ L=l; localStorage.setItem('psb_lang', l); render(); }
+function updThemeBtn(){
+  const dark = document.documentElement.getAttribute('data-theme')==='dark';
+  const b = document.getElementById('themeBtn'); if(b) b.textContent = dark ? '☀️' : '🌙';
+}
+function toggleTheme(){
+  const dark = document.documentElement.getAttribute('data-theme')==='dark';
+  if(dark){ document.documentElement.removeAttribute('data-theme'); try{localStorage.setItem('psb_theme','light');}catch(e){} }
+  else { document.documentElement.setAttribute('data-theme','dark'); try{localStorage.setItem('psb_theme','dark');}catch(e){} }
+  updThemeBtn();
+}
 document.getElementById('modal').addEventListener('click', e=>{ if(e.target.id==='modal') closeVideo(); });
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeVideo(); });
 render();
+updThemeBtn();
 // Deep-link: how-to-video.html?v=<id> auto-opens that video (used by the iOS install sheet).
 (function(){ const want=new URLSearchParams(location.search).get('v'); if(want && VIDS.some(x=>x.id===want)) openVideo(want); })();
 </script>

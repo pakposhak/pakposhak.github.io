@@ -2125,7 +2125,7 @@
       hiw_confirm_pay:'Confirm price & pay (bKash/Nagad)',
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search 150+ Pakistani brands…',
-      tab_brands:'Browse brands', tab_products:'Browse products', order_ways:'📋 Two ways to order: pick & + Add from our listing, or paste a link from any of our 140+ listed brands.',
+      tab_brands:'Browse brands', tab_products:'Browse products', order_ways:'📋 Two ways to order: + Add from our listing, or paste a product link from any of our 140+ brands.',
       ps_price:'Price (৳ delivered)', ps_price_short:'Price Filters', ps_category:'Product Category', ps_category_short:'Categories', ps_brands:'Brands', ps_clear:'Clear Filters', ps_valueprop:'Any Pakistani brand → delivered to Bangladesh 🇧🇩', ps_morebrands:"Can't find it? Browse all 155 brands →",
       ps_allcats:'All categories', ps_loading:'Loading products…', ps_loadfail:'Could not load products — please try again.',
       ps_results:'products', ps_add:'Add', ps_prev:'Prev', ps_next:'Next', ps_page:'Page',
@@ -2190,7 +2190,7 @@
       hiw_confirm_pay:'দাম নিশ্চিত করে পেমেন্ট (বিকাশ/নগদ)',
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
       lbl_browse:'একটি ব্র্যান্ড দেখুন', search_ph:'🔍 ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
-      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', order_ways:'📋 দুইভাবে অর্ডার: আমাদের লিস্ট থেকে পণ্য বেছে + Add করুন, অথবা ১৪০+ লিস্টেড ব্র্যান্ডের যেকোনো পণ্যের link paste করুন।',
+      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', order_ways:'📋 দুইভাবে অর্ডার: আমাদের লিস্ট থেকে + Add করুন, অথবা ১৪০+ ব্র্যান্ডের যেকোনো পণ্যের link paste করুন।',
       ps_price:'দাম (৳, ডেলিভারিসহ)', ps_price_short:'দাম ফিল্টার', ps_category:'পণ্যের ক্যাটাগরি', ps_category_short:'ক্যাটাগরি', ps_brands:'ব্র্যান্ড', ps_clear:'ফিল্টার মুছুন', ps_valueprop:'যেকোনো পাকিস্তানি ব্র্যান্ড → বাংলাদেশে ডেলিভারি 🇧🇩', ps_morebrands:'খুঁজে পাচ্ছেন না? সব ১৫৫টি ব্র্যান্ড দেখুন →',
       ps_allcats:'সব ক্যাটাগরি', ps_loading:'পণ্য আসছে…', ps_loadfail:'পণ্য আনা গেল না — আবার চেষ্টা করুন।',
       ps_results:'পণ্য', ps_add:'যোগ করুন', ps_prev:'আগের', ps_next:'পরের', ps_page:'পৃষ্ঠা',
@@ -2254,6 +2254,16 @@
   function tr(k){ return (I18N[_lang] && I18N[_lang][k]) || I18N.en[k] || k; }
   function catLabel(cat){ return tr('cat_' + cat); }
   function applyIntroCC(){ const v=document.getElementById('introVideo'); if(!v||!v.textTracks) return; for(let i=0;i<v.textTracks.length;i++){ const t=v.textTracks[i]; t.mode=(t.language===_lang)?'showing':'disabled'; } }
+  function dismissIntro(){ try{localStorage.setItem('psb_intro_seen','1');}catch(e){} var c=document.getElementById('introCard'); if(c) c.style.display='none'; var v=document.getElementById('introVideo'); if(v){ try{v.pause();}catch(e){} } }
+  (function(){
+    var card=document.getElementById('introCard'); if(!card) return;
+    var installed=false; try{ installed=(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone===true; }catch(e){}
+    var seen=false; try{ seen=localStorage.getItem('psb_intro_seen')==='1'; }catch(e){}
+    if(installed||seen) return;                 // installed, or already shown once → stays hidden
+    card.style.display='';                        // first visit → reveal the onboarding card
+    try{ localStorage.setItem('psb_intro_seen','1'); }catch(e){}   // …and don't show it again next time
+    var v=document.getElementById('introVideo'); if(v) v.addEventListener('ended', dismissIntro);
+  })();
   function setLang(lang){
     _lang = (lang === 'bn') ? 'bn' : 'en';
     localStorage.setItem('psb_lang', _lang);

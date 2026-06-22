@@ -145,7 +145,9 @@
     .hiw-video,.hiw-guide{margin-left:12px;background:#1F2433;color:#FAF6EE;font-weight:800;font-size:0.72rem;padding:6px 14px;border-radius:14px;text-decoration:none;white-space:nowrap}
     [data-theme="dark"] .hiw-video,[data-theme="dark"] .hiw-guide{background:#0A1628;color:var(--gold)}
     /* Landing intro video (silent, EN/BN captions) */
-    .intro-vid{max-width:680px;margin:14px auto 0;padding:0 14px;display:flex;flex-direction:column;align-items:center;gap:9px}
+    .intro-vid{position:relative;max-width:680px;margin:14px auto 0;padding:0 14px;display:flex;flex-direction:column;align-items:center;gap:9px}
+    .intro-close{position:absolute;top:2px;right:8px;width:30px;height:30px;border-radius:50%;background:var(--surface);border:1px solid var(--gold-bdr);color:var(--txt-sec);font-size:1rem;line-height:1;cursor:pointer;z-index:2}
+    .intro-close:hover{color:var(--gold);border-color:var(--gold)}
     .intro-vid h3{font-size:0.92rem;font-weight:800;color:var(--gold);text-align:center}
     .intro-vid-player{width:min(300px,72vw);max-height:64vh;border-radius:16px;border:1px solid var(--gold-bdr);background:#000;box-shadow:0 10px 30px rgba(0,0,0,0.18)}
     .intro-vid-more{font-size:0.82rem;font-weight:700;color:var(--gold);text-decoration:none;border:1px solid var(--gold-bdr);border-radius:18px;padding:6px 15px}

@@ -91,9 +91,11 @@
   </div>
 </div>
 
-<!-- New here? Quick intro video (silent + EN/BN captions) -->
-<div class="intro-vid">
+<!-- New here? First-time onboarding: tagline + intro video. Closes on the ✕ or when it ends; never shown once installed or from the 2nd visit (psb_intro_seen). -->
+<div class="intro-vid" id="introCard" style="display:none">
+  <button class="intro-close" type="button" onclick="dismissIntro()" aria-label="Close">✕</button>
   <h3 data-i18n="introTitle">New here? Watch a quick intro</h3>
+  <div class="order-ways" data-i18n="order_ways">📋 Two ways to order: + Add from our listing, or paste a product link from any of our 140+ brands.</div>
   <video id="introVideo" class="intro-vid-player" controls playsinline preload="none" poster="media/guide/intro-android.jpg">
     <source src="media/guide/intro-android.mp4" type="video/mp4">
     <track id="introCcEn" kind="captions" srclang="en" label="English" src="media/guide/intro-android.en.vtt" default>
@@ -123,9 +125,6 @@
 <div class="step-section active" id="step1">
 
 <div class="container">
-
-  <!-- Dual concept: pick from our listing OR paste a link from a listed brand -->
-  <div class="order-ways" data-i18n="order_ways">📋 Two ways to order: pick &amp; + Add from our listing, or paste a link from any of our 140+ listed brands.</div>
 
   <!-- Browse: switch between the brand directory and the multi-brand product search -->
   <div class="browse-tabs">
