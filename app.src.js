@@ -2091,7 +2091,8 @@
     const dims = (d._otherDims||[]).filter(dim => dim.kind !== 'service');   // service dims auto-pick cheapest, no UI
     if(!dims.length){ box.style.display='none'; box.innerHTML=''; return; }
     const _scat = (document.getElementById(`dc_cat_${id}`)||{}).value || '';
-    const bdt = (pkr) => (typeof estLandedBdt === 'function') ? '≈৳'+estLandedBdt(pkr, _scat).toLocaleString() : ('PKR '+Math.round(pkr).toLocaleString());
+    const _pDiv = d._hasStock !== false ? 100 : 1;
+    const bdt = (rawP) => (typeof estLandedBdt === 'function') ? '≈৳'+estLandedBdt(rawP/_pDiv, _scat).toLocaleString() : ('PKR '+Math.round(rawP/_pDiv).toLocaleString());
     box.innerHTML = dims.map(dim => {
       const sel = d._otherSel[dim.idx];
       const opts = dim.values.map(v => {
@@ -6049,7 +6050,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-23j';
+  const PSB_BUILD = '2026-06-23k';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
