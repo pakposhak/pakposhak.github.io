@@ -2420,13 +2420,13 @@
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search 150+ Pakistani brands…',
       tab_brands:'Browse brands', tab_products:'Browse products', order_ways:'📋 Two ways to order: + Add from our listing, or paste a product link from any of our 140+ brands.',
-      ps_price:'Price (৳ delivered)', ps_price_short:'Price Filters', ps_category:'Product Category', ps_category_short:'Categories', ps_brands:'Brands', ps_clear:'Clear Filters', ps_valueprop:'Any Pakistani brand → delivered to Bangladesh 🇧🇩', ps_morebrands:"Can't find it? Browse all 155 brands →",
+      ps_price:'Price (৳ delivered)', ps_price_short:'Price', ps_category:'Product Category', ps_category_short:'Categories', ps_brands:'Brands', ps_clear:'Clear', ps_valueprop:'Any Pakistani brand → delivered to Bangladesh 🇧🇩', ps_morebrands:"Can't find it? Browse all 155 brands →",
       ps_allcats:'All categories', ps_loading:'Loading products…', ps_loadfail:'Could not load products — please try again.',
       ps_results:'products', ps_add:'Add', ps_prev:'Prev', ps_next:'Next', ps_page:'Page',
       ps_enlarge:'Enlarge', ps_avail_sizes:'Available sizes', ps_unstitched:'Unstitched · no size needed', ps_also_st:'✂️ Stitched also available', ps_also_uns:'🧵 Unstitched fabric also available', ps_mto:'Made to order', ps_d_loading:'Loading more details…', ps_d_open:'View on brand site, order here', ps_d_more:'More from', ps_d_nofetch:'See all photos &amp; details on the brand page →', ps_d_nodesc:'No extra description provided.', warn_title:'Look there, order here', warn_body:'This page is only for photos & product details. Don\'t add to the brand\'s cart. To order on PakPoshak: tap + Add if you see it in our listing — or copy the URL, come back, and paste it.', warn_ok:'Continue to brand site →', warn_cancel:'Stay on PakPoshak',
       ps_empty:'No products match these filters — try widening them.',
       ps_partial:'Not every brand &amp; product is listed here yet —', ps_partial_link:'want more? Browse by brands →', ps_word_products:'products', ps_word_brands:'brands',
-      ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products', ps_sort_lh:'৳ Low→High', ps_sort_hl:'৳ High→Low', ps_sort_price:'Sort: Price', ps_shop_cat:'Shop by category', ps_sale:'Sale', ps_new:'New', ps_lbl_sort:'Sort', ps_lbl_filter:'Filter', ps_search_ph:'Search 50,000+ products, 140+ Pakistani brands', ps_search_nomatch:'No brand or category matched',
+      ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products', ps_sort_lh:'৳ Low→High', ps_sort_hl:'৳ High→Low', ps_sort_price:'Sort: Price', ps_shop_cat:'Shop by category', wish_save:'Save to wishlist', wish_title:'Wishlist', wish_empty:'No saved items yet. Tap ♥ on any product to save it here.', wish_remove:'Remove', ps_sale:'Sale', ps_new:'New', ps_lbl_sort:'Sort', ps_lbl_filter:'Filter', ps_search_ph:'Search 50,000+ products, 140+ Pakistani brands', ps_search_nomatch:'No brand or category matched',
       bb_store:'Store Types', bb_product:'Product Category', bb_women:'👗 Women', bb_men:'👔 Men', bb_kids:'🧸 Kids', bb_md:'🏬 Multi-Dept', bb_premium:'💎 Premium',
       bb_more:'more', bb_less:'less', bb_all:'All', bb_two_ways:'Two ways to search brands', bb_pick_gender:'Pick women, men, or others above — or just type any brand name.', bb_pick_cat:'Pick a category above to see its brands.', bb_prod_sub:'🔎 Search 150+ brands to order directly from their page:', bb_loading:'Loading brands…', bb_prod_none:'No catalogued brands here yet.',
       bb_smart_ph:'🔍 Search 150+ brands — e.g. Khaadi, lawn, casual', bb_search_lead:'🔎 Know the brand? Search 150+ Pakistani brands by name:',
@@ -2485,13 +2485,13 @@
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
       lbl_browse:'একটি ব্র্যান্ড দেখুন', search_ph:'🔍 ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
       tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', order_ways:'📋 দুইভাবে অর্ডার: আমাদের লিস্ট থেকে + Add করুন, অথবা ১৪০+ ব্র্যান্ডের যেকোনো পণ্যের link paste করুন।',
-      ps_price:'দাম (৳, ডেলিভারিসহ)', ps_price_short:'দাম ফিল্টার', ps_category:'পণ্যের ক্যাটাগরি', ps_category_short:'ক্যাটাগরি', ps_brands:'ব্র্যান্ড', ps_clear:'ফিল্টার মুছুন', ps_valueprop:'যেকোনো পাকিস্তানি ব্র্যান্ড → বাংলাদেশে ডেলিভারি 🇧🇩', ps_morebrands:'খুঁজে পাচ্ছেন না? সব ১৫৫টি ব্র্যান্ড দেখুন →',
+      ps_price:'দাম (৳, ডেলিভারিসহ)', ps_price_short:'দাম', ps_category:'পণ্যের ক্যাটাগরি', ps_category_short:'ক্যাটাগরি', ps_brands:'ব্র্যান্ড', ps_clear:'মুছুন', ps_valueprop:'যেকোনো পাকিস্তানি ব্র্যান্ড → বাংলাদেশে ডেলিভারি 🇧🇩', ps_morebrands:'খুঁজে পাচ্ছেন না? সব ১৫৫টি ব্র্যান্ড দেখুন →',
       ps_allcats:'সব ক্যাটাগরি', ps_loading:'পণ্য আসছে…', ps_loadfail:'পণ্য আনা গেল না — আবার চেষ্টা করুন।',
       ps_results:'পণ্য', ps_add:'যোগ করুন', ps_prev:'আগের', ps_next:'পরের', ps_page:'পৃষ্ঠা',
       ps_enlarge:'ছবি বড় করুন', ps_avail_sizes:'স্টকে থাকা সাইজ', ps_unstitched:'আনস্টিচড · সাইজ লাগে না', ps_also_st:'✂️ সেলাই করাও আছে', ps_also_uns:'🧵 আনস্টিচড কাপড়ও আছে', ps_mto:'অর্ডারে তৈরি হবে', ps_d_loading:'আরও বিবরণ আসছে…', ps_d_open:'ব্র্যান্ড সাইটে দেখুন, অর্ডার এখানে', ps_d_more:'আরও দেখুন —', ps_d_nofetch:'সব ছবি ও বিবরণ ব্র্যান্ডের পেজে দেখুন →', ps_d_nodesc:'বাড়তি কোনো বিবরণ নেই।', warn_title:'দেখুন ওখানে, অর্ডার এখানে', warn_body:'এই পেজটি শুধু ছবি ও পণ্যের বিবরণ দেখার জন্য। ব্র্যান্ডের cart-এ যোগ করবেন না। PakPoshak-এ অর্ডার করতে: লিস্টে থাকলে + Add ট্যাপ করুন — অথবা URL copy করে ফিরে এসে paste করুন।', warn_ok:'ব্র্যান্ড সাইটে যান →', warn_cancel:'PakPoshak-এ থাকুন',
       ps_empty:'এই ফিল্টারে কোনো পণ্য নেই — ফিল্টার একটু কমিয়ে দেখুন।',
       ps_partial:'সব ব্র্যান্ড বা পণ্য এখনো এখানে যোগ হয়নি —', ps_partial_link:'আরও চান? “ব্র্যান্ড দেখুন”-এ যান →', ps_word_products:'পণ্য', ps_word_brands:'ব্র্যান্ড',
-      ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়', ps_sort_lh:'৳ কম→বেশি', ps_sort_hl:'৳ বেশি→কম', ps_sort_price:'দাম অনুসারে', ps_shop_cat:'ক্যাটাগরি অনুযায়ী দেখুন', ps_sale:'সেল', ps_new:'নতুন', ps_lbl_sort:'সাজান', ps_lbl_filter:'ফিল্টার', ps_search_ph:'খুঁজুন: ৫০,০০০+ পণ্য, ১৪০+ পাকিস্তানি ব্র্যান্ড', ps_search_nomatch:'কোনো ব্র্যান্ড বা ক্যাটাগরি মেলেনি',
+      ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়', ps_sort_lh:'৳ কম→বেশি', ps_sort_hl:'৳ বেশি→কম', ps_sort_price:'দাম অনুসারে', ps_shop_cat:'ক্যাটাগরি অনুযায়ী দেখুন', wish_save:'পছন্দে সেভ করুন', wish_title:'পছন্দের তালিকা', wish_empty:'এখনো কিছু সেভ করা হয়নি। যেকোনো পণ্যে ♥ চাপ দিয়ে এখানে সেভ করুন।', wish_remove:'সরান', ps_sale:'সেল', ps_new:'নতুন', ps_lbl_sort:'সাজান', ps_lbl_filter:'ফিল্টার', ps_search_ph:'খুঁজুন: ৫০,০০০+ পণ্য, ১৪০+ পাকিস্তানি ব্র্যান্ড', ps_search_nomatch:'কোনো ব্র্যান্ড বা ক্যাটাগরি মেলেনি',
       bb_store:'স্টোরের ধরন', bb_product:'পণ্যের ক্যাটাগরি', bb_women:'👗 মেয়েদের', bb_men:'👔 ছেলেদের', bb_kids:'🧸 বাচ্চাদের', bb_md:'🏬 মাল্টি-ডিপ', bb_premium:'💎 প্রিমিয়াম',
       bb_more:'আরও', bb_less:'কম', bb_all:'সব', bb_two_ways:'ব্র্যান্ড খোঁজার দুটি উপায়', bb_pick_gender:'উপরে মেয়ে, ছেলে বা অন্যান্য বেছে নিন — অথবা যেকোনো ব্র্যান্ডের নাম লিখুন।', bb_pick_cat:'ব্র্যান্ড দেখতে উপরের একটি ক্যাটাগরিতে ট্যাপ করুন।', bb_prod_sub:'🔎 সরাসরি অর্ডার করতে ১৫০+ ব্র্যান্ড খুঁজুন:', bb_loading:'ব্র্যান্ড আসছে…', bb_prod_none:'এখানে এখনো কোনো ব্র্যান্ড নেই।',
       bb_smart_ph:'🔍 ১৫০+ ব্র্যান্ড খুঁজুন — যেমন Khaadi, lawn, casual', bb_search_lead:'🔎 ব্র্যান্ড জানা আছে? নাম দিয়ে ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন:',
@@ -5450,38 +5450,61 @@
   // landing, above the rotating products. Each tile = ONE real category; tapping it
   // filters the grid to that category and scrolls down. Replaces the old 4 department
   // tiles (Women/Men/Kids/Premium) — richer + more categories than LAAM, women-first.
+  // Each tile = ONE real catalog category, tagged with its department (g: w|m|k) so the
+  // Women/Men/Kids classifier can show only that department's categories. (Shawl is a women's
+  // article → g:'w'.) Tiles whose category has zero products are auto-hidden via psFacetCats.
   const PS_SHOP_TILES = [
-    // WOMEN (the app's lead department)
-    { key:'pret_3pc',            en:'Stitched 3pc',   bn:'সেলাই করা ৩ পিস', e:'👗' },
-    { key:'pret_3pc_emb',        en:'Embroidered',    bn:'এমব্রয়ডারি',      e:'🪡' },
-    { key:'lawn_3pc_unstitch',   en:'Unstitched',     bn:'আনস্টিচড',        e:'🧵' },
-    { key:'shirt_dupatta_2pc',   en:'2-Piece',        bn:'২ পিস',          e:'👚' },
-    { key:'kurti_1pc',           en:'Kurti / 1pc',    bn:'কুর্তি / ১ পিস',   e:'👕' },
-    { key:'shirt_trouser_2pc',   en:'Co-ord Set',     bn:'কো-অর্ড সেট',     e:'🧶' },
-    { key:'formal_emb_3pc',      en:'Formal',         bn:'ফরমাল',          e:'✨' },
-    { key:'bridal',              en:'Bridal',         bn:'ব্রাইডাল',        e:'👰' },
-    { key:'lehenga',             en:'Lehenga',        bn:'লেহেঙ্গা',         e:'💃' },
-    { key:'saree',               en:'Saree',          bn:'শাড়ি',           e:'🥻' },
-    { key:'abaya',               en:'Abaya / Hijab',  bn:'আবায়া / হিজাব',   e:'🧕' },
-    { key:'kaftan',              en:'Kaftan',         bn:'কাফতান',          e:'🧥' },
-    { key:'maxi_dress',          en:'Maxi / Dress',   bn:'ম্যাক্সি / ড্রেস',  e:'👗' },
-    { key:'western_top',         en:'Western Top',    bn:'ওয়েস্টার্ন টপ',    e:'👚' },
-    { key:'womens_trouser',      en:'Trousers',       bn:'ট্রাউজার',        e:'👖' },
-    { key:'winter_3pc_stitch',   en:'Winter',         bn:'শীতের পোশাক',     e:'🧣' },
-    { key:'shawl',               en:'Shawl',          bn:'শাল',            e:'🧣' },
-    { key:'loungewear',          en:'Loungewear',     bn:'লাউঞ্জওয়্যার',     e:'🛋️' },
-    // MEN
-    { key:'mens_kurta',          en:'Men Kurta',      bn:'পুরুষ কুর্তা',     e:'👔' },
-    { key:'mens_shalwar_kameez', en:'Shalwar Kameez', bn:'শালওয়ার কামিজ',  e:'🧥' },
-    { key:'mens_shirt',          en:'Men Shirt',      bn:'পুরুষ শার্ট',      e:'👔' },
-    { key:'mens_waistcoat',      en:'Waistcoat',      bn:'ওয়েস্টকোট',       e:'🦺' },
-    { key:'mens_sherwani',       en:'Sherwani',       bn:'শেরওয়ানি',        e:'🤵' },
-    { key:'mens_unstitched',     en:'Men Unstitched', bn:'পুরুষ আনস্টিচড',   e:'🧵' },
-    // KIDS
-    { key:'kids_girls_eastern',  en:'Girls',          bn:'মেয়েদের',         e:'👧' },
-    { key:'kids_boys_eastern',   en:'Boys',           bn:'ছেলেদের',          e:'👦' },
-    { key:'kids_infant',         en:'Infant',         bn:'শিশু (০–২ বছর)',   e:'👶' }
+    // ── WOMEN ──
+    { g:'w', key:'pret_3pc',             en:'Stitched 3pc',    bn:'সেলাই করা ৩ পিস',  e:'👗' },
+    { g:'w', key:'pret_3pc_emb',         en:'Embroidered 3pc', bn:'এমব্রয়ডারি ৩ পিস', e:'🪡' },
+    { g:'w', key:'lawn_3pc_unstitch',    en:'Unstitched',      bn:'আনস্টিচড',         e:'🧵' },
+    { g:'w', key:'kurti_1pc_unstitch',   en:'Unstitched 1pc',  bn:'আনস্টিচড ১ পিস',    e:'🧵' },
+    { g:'w', key:'shirt_dupatta_2pc',    en:'2-Piece',         bn:'২ পিস',           e:'👚' },
+    { g:'w', key:'shirt_trouser_2pc',    en:'Co-ord Set',      bn:'কো-অর্ড সেট',      e:'🧶' },
+    { g:'w', key:'kurti_1pc',            en:'Kurti / 1pc',     bn:'কুর্তি / ১ পিস',    e:'👕' },
+    { g:'w', key:'western_top',          en:'Western Top',     bn:'ওয়েস্টার্ন টপ',     e:'👚' },
+    { g:'w', key:'womens_trouser',       en:'Trousers',        bn:'ট্রাউজার',         e:'👖' },
+    { g:'w', key:'maxi_dress',           en:'Maxi / Dress',    bn:'ম্যাক্সি / ড্রেস',   e:'👗' },
+    { g:'w', key:'coord_western',        en:'Western Co-ord',  bn:'ওয়েস্টার্ন কো-অর্ড', e:'🧥' },
+    { g:'w', key:'formal_emb_3pc',       en:'Formal',          bn:'ফরমাল',           e:'✨' },
+    { g:'w', key:'heavy_formal_3pc',     en:'Heavy Formal',    bn:'ভারী ফরমাল',       e:'💎' },
+    { g:'w', key:'bridal',               en:'Bridal',          bn:'ব্রাইডাল',         e:'👰' },
+    { g:'w', key:'lehenga',              en:'Lehenga',         bn:'লেহেঙ্গা',          e:'💃' },
+    { g:'w', key:'saree',                en:'Saree',           bn:'শাড়ি',            e:'🥻' },
+    { g:'w', key:'abaya',                en:'Abaya / Hijab',   bn:'আবায়া / হিজাব',    e:'🧕' },
+    { g:'w', key:'kaftan',               en:'Kaftan',          bn:'কাফতান',           e:'🧥' },
+    { g:'w', key:'winter_3pc_stitch',    en:'Winter',          bn:'শীতের পোশাক',      e:'🧣' },
+    { g:'w', key:'shawl',                en:'Shawl',           bn:'শাল',             e:'🧣' },
+    { g:'w', key:'dupatta_only',         en:'Dupatta',         bn:'ওড়না',            e:'🧣' },
+    { g:'w', key:'loungewear',           en:'Loungewear',      bn:'লাউঞ্জওয়্যার',      e:'🛋️' },
+    // ── MEN ──
+    { g:'m', key:'mens_kurta',           en:'Kurta',           bn:'কুর্তা',           e:'👔' },
+    { g:'m', key:'mens_shalwar_kameez',  en:'Shalwar Kameez',  bn:'শালওয়ার কামিজ',   e:'🧥' },
+    { g:'m', key:'mens_shirt',           en:'Shirt',           bn:'শার্ট',            e:'👔' },
+    { g:'m', key:'mens_trouser',         en:'Trousers',        bn:'ট্রাউজার',         e:'👖' },
+    { g:'m', key:'mens_waistcoat',       en:'Waistcoat',       bn:'ওয়েস্টকোট',        e:'🦺' },
+    { g:'m', key:'mens_sherwani',        en:'Sherwani',        bn:'শেরওয়ানি',         e:'🤵' },
+    { g:'m', key:'mens_suit',            en:'Suit',            bn:'স্যুট',            e:'🤵' },
+    { g:'m', key:'mens_unstitched',      en:'Unstitched',      bn:'আনস্টিচড',         e:'🧵' },
+    // ── KIDS ──
+    { g:'k', key:'kids_girls_eastern',   en:'Girls Eastern',   bn:'মেয়েদের ইস্টার্ন',  e:'👧' },
+    { g:'k', key:'kids_boys_eastern',    en:'Boys Eastern',    bn:'ছেলেদের ইস্টার্ন',   e:'👦' },
+    { g:'k', key:'kids_girls_western',   en:'Girls Western',   bn:'মেয়েদের ওয়েস্টার্ন', e:'👧' },
+    { g:'k', key:'kids_boys_western',    en:'Boys Western',    bn:'ছেলেদের ওয়েস্টার্ন',  e:'👦' },
+    { g:'k', key:'kids_girls_formal',    en:'Girls Formal',    bn:'মেয়েদের ফরমাল',     e:'🎀' },
+    { g:'k', key:'kids_boys_formal',     en:'Boys Formal',     bn:'ছেলেদের ফরমাল',     e:'🎩' },
+    { g:'k', key:'kids_infant',          en:'Infant',          bn:'শিশু (০–২ বছর)',    e:'👶' }
   ];
+  // Women/Men/Kids classifier tabs for the strip. Default = women (the app's lead department).
+  const PS_SHOP_GENDERS = [ ['w','👗','Women','মেয়েদের'], ['m','👔','Men','ছেলেদের'], ['k','🧸','Kids','বাচ্চাদের'] ];
+  let psShopGender = 'w';
+  // Tiles for the active department, hiding any category that has zero products (psFacetCats).
+  function psShopTiles(){
+    let t = PS_SHOP_TILES.filter(x => x.g === psShopGender);
+    if(psFacetCats && psFacetCats.size) t = t.filter(x => psFacetCats.has(x.key));
+    return t;
+  }
+  function psSetShopGender(g){ psShopGender = g; psBuildShopCat(); }
   // Per-category representative photo, cached in localStorage (14-day TTL) so the strip
   // paints instantly on repeat visits. Filled two ways: opportunistically from any product
   // page the grid loads (psHarvestThumbs), and by a throttled gap-fill fetch (psLoadShopThumbs).
@@ -5499,15 +5522,23 @@
     if(changed){ _psThumbsSave(); psPaintShopThumbs(); }
   }
   function psBuildShopCat(){
+    // Department tabs (Women/Men/Kids).
+    const tabsEl = document.getElementById('psShopTabs');
+    if(tabsEl){
+      tabsEl.innerHTML = PS_SHOP_GENDERS.map(([g,e,en,bn]) =>
+        `<button type="button" class="psc-gtab${g === psShopGender ? ' on' : ''}" onclick="psSetShopGender('${g}')">${e} ${esc(_lang === 'bn' ? bn : en)}</button>`).join('');
+    }
     const wrap = document.getElementById('psShopScroll'); if(!wrap) return;
-    wrap.innerHTML = PS_SHOP_TILES.map(t => {
+    const active = (psSel.cats.size === 1 && !psSel.brands.size && !psSel.prices.size) ? [...psSel.cats][0] : '';
+    wrap.innerHTML = psShopTiles().map(t => {
       const lbl = (_lang === 'bn' && t.bn) ? t.bn : t.en;
       const url = psThumbGet(t.key);
       const img = url ? `<img loading="lazy" src="${esc(thumbUrl(url))}" alt="${esc(lbl)}" onerror="this.closest('.psc-tile').classList.add('psc-noimg');this.remove();">` : '';
-      return `<button type="button" class="psc-tile${url ? '' : ' psc-noimg'}" data-cat="${esc(t.key)}" onclick="psShopPick('${t.key}')" title="${esc(lbl)}">`
+      return `<button type="button" class="psc-tile${t.key === active ? ' on' : ''}${url ? '' : ' psc-noimg'}" data-cat="${esc(t.key)}" onclick="psShopPick('${t.key}')" title="${esc(lbl)}">`
         + `<span class="psc-img" data-emoji="${t.e || '🛍️'}">${img}</span>`
         + `<span class="psc-lbl">${esc(lbl)}</span></button>`;
     }).join('');
+    wrap.scrollLeft = 0;
     psLoadShopThumbs();
   }
   function psPaintTile(key, url){
@@ -5518,12 +5549,13 @@
     im.onerror = function(){ tile.classList.add('psc-noimg'); im.remove(); };
     span.appendChild(im); tile.classList.remove('psc-noimg');
   }
-  function psPaintShopThumbs(){ PS_SHOP_TILES.forEach(t => { const u = psThumbGet(t.key); if(u) psPaintTile(t.key, u); }); }
-  // Gap-fill the strip: one tiny API call per category that has no cached photo yet (throttled).
+  // Paint cached photos onto whatever tiles are currently rendered (the active department).
+  function psPaintShopThumbs(){ psShopTiles().forEach(t => { const u = psThumbGet(t.key); if(u) psPaintTile(t.key, u); }); }
+  // Gap-fill the strip: one tiny API call per VISIBLE category that has no cached photo yet (throttled).
   function psLoadShopThumbs(){
     psPaintShopThumbs();
     if(!psApiMode) return;   // catalog.json mode: harvesting from the grid covers it
-    const missing = PS_SHOP_TILES.map(t => t.key).filter(k => !psThumbGet(k));
+    const missing = psShopTiles().map(t => t.key).filter(k => !psThumbGet(k));
     if(!missing.length) return;
     let i = 0; const CONC = 4;
     function next(){
@@ -5544,15 +5576,38 @@
     ['psSearchMobile','psSearchDesktop'].forEach(idd => { const e = document.getElementById(idd); if(e) e.value = ''; });
     psSearchHint('', new Set(), new Set());
     psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply();
-    const grid = document.getElementById('psGrid'); if(grid) grid.scrollIntoView({ behavior:'smooth', block:'start' });
+    psScrollGridUnderCarousel();
+  }
+  // Scroll the grid to the top, but offset by the pinned carousel's LIVE height (it varies with
+  // 1- vs 2-line labels and is taller on desktop) so the first product row isn't tucked behind it.
+  function psScrollGridUnderCarousel(){
+    const grid = document.getElementById('psGrid'); if(!grid) return;
+    const cat = document.getElementById('psShopCat');
+    let off = 0;
+    try { if(cat && getComputedStyle(cat).position === 'sticky') off = cat.offsetHeight + 8; } catch(e){}
+    if(off){
+      const y = grid.getBoundingClientRect().top + (window.scrollY || window.pageYOffset || 0) - off;
+      window.scrollTo({ top: Math.max(0, y), behavior:'smooth' });
+    } else {
+      grid.scrollIntoView({ behavior:'smooth', block:'start' });
+    }
   }
   function psIsLanding(){ return !psSel.cats.size && !psSel.brands.size && !psSel.prices.size && !psSaleOnly && !psNewOnly && !psSort && !psQuery && !psSizeQ; }
-  // Show the Shop-by-Category strip only on the plain landing; build it lazily on first show.
+  // Update which tile is highlighted as active (the single selected category) without a full rebuild.
+  function psSyncShopActive(){
+    const sc = document.getElementById('psShopScroll'); if(!sc) return;
+    const active = (psSel.cats.size === 1 && !psSel.brands.size && !psSel.prices.size) ? [...psSel.cats][0] : '';
+    sc.querySelectorAll('.psc-tile').forEach(t => t.classList.toggle('on', t.getAttribute('data-cat') === active));
+  }
+  // The Shop-by-Category carousel is ALWAYS visible (req) — it sticks at the top while scrolling
+  // products so the buyer can switch category anytime. Build lazily; otherwise just refresh the
+  // active highlight.
   function psSyncDeptTiles(){
     const el = document.getElementById('psShopCat'); if(!el) return;
-    const show = psIsLanding();
-    el.style.display = show ? '' : 'none';
-    if(show){ const sc = document.getElementById('psShopScroll'); if(sc && !sc.children.length) psBuildShopCat(); }
+    el.style.display = '';
+    const sc = document.getElementById('psShopScroll');
+    if(sc && !sc.children.length) psBuildShopCat();
+    else psSyncShopActive();
   }
   // All three filters combine with AND; price buckets OR within themselves.
   function psApply(){
@@ -5682,8 +5737,9 @@
     const dualBadge = (p.dual && p.altform)
       ? `<div class="ps-img-sizes" style="margin-top:3px;background:linear-gradient(135deg,var(--gold),#b08a4e);color:#1a1206;border:none;font-weight:700">${tr(p.altform === 'stitched' ? 'ps_also_st' : 'ps_also_uns')}${p.altbdt ? ` · ≈৳${(+p.altbdt).toLocaleString()}` : ''}</div>`
       : '';
+    const _uk = psUrlKey(p.u), _wsaved = psWishHas(p.u);
     return `<div class="ps-card">
-      <div class="ps-img" onclick="psDetail(${idx})" role="button" tabindex="0" aria-label="${esc(p.t)} — enlarge">${p.sale?'<span class="ps-sale">SALE</span>':''}<button type="button" class="ps-info" onclick="event.stopPropagation();psDetail(${idx})" aria-label="Enlarge pictures and details" title="Enlarge pics &amp; details">🔍<span class="ps-info-tx">${tr('ps_enlarge')}</span></button><img loading="lazy" src="${esc(thumbUrl(p.img))}" data-full="${esc(p.img)}" alt="${esc(p.t)}" onerror="if(!this.dataset.f){this.dataset.f=1;this.src=this.dataset.full;}else{this.parentElement.classList.add('ps-img-fail');}">${szOverlay}${dualBadge}</div>
+      <div class="ps-img" onclick="psDetail(${idx})" role="button" tabindex="0" aria-label="${esc(p.t)} — enlarge">${p.sale?'<span class="ps-sale">SALE</span>':''}<button type="button" class="ps-wish${_wsaved?' on':''}" data-uk="${esc(_uk)}" onclick="event.stopPropagation();psWishToggle(${idx},event)" aria-label="${tr('wish_save')}" title="${tr('wish_save')}">♥</button><button type="button" class="ps-info" onclick="event.stopPropagation();psDetail(${idx})" aria-label="Enlarge pictures and details" title="Enlarge pics &amp; details">🔍<span class="ps-info-tx">${tr('ps_enlarge')}</span></button><img loading="lazy" src="${esc(thumbUrl(p.img))}" data-full="${esc(p.img)}" alt="${esc(p.t)}" onerror="if(!this.dataset.f){this.dataset.f=1;this.src=this.dataset.full;}else{this.parentElement.classList.add('ps-img-fail');}">${szOverlay}${dualBadge}</div>
       <div class="ps-cbody">
         <div class="ps-brand">${esc(p.b)}</div>
         <div class="ps-title">${esc(p.t)}</div>
@@ -5857,6 +5913,7 @@
       +   `<div class="ps-d-szrow">${sz}</div>`
       +   `<div class="ps-d-loading" id="psDDesc">${tr('ps_d_loading')}</div>`
       +   `<div class="ps-d-actions">`
+      +     `<button type="button" class="ps-wish ps-d-wishbtn${psWishHas(p.u)?' on':''}" data-uk="${esc(psUrlKey(p.u))}" onclick="psWishToggle(${idx})" aria-label="${tr('wish_save')}" title="${tr('wish_save')}">♥</button>`
       +     `<button type="button" class="ps-d-open" onclick="psOpenFull(${idx})">${tr('ps_d_open')} ↗</button>`
       +     `<button type="button" class="ps-d-add" onclick="psCloseDetail();psAdd(${idx})">+ ${tr('ps_add')}</button>`
       +   `</div>`
@@ -5898,6 +5955,67 @@
       })
       .catch(() => { if(descEl) descEl.innerHTML = tr('ps_d_nofetch'); });
   }
+
+  // ── WISHLIST (E) ─────────────────────────────────────────────────────────
+  // Tap ♥ on any product card (or in the detail popup) to save it; the header ♥ opens a
+  // drawer of saved items where they can be added to the order or removed. Persisted in
+  // localStorage so it survives reloads; stores enough of each product to render + re-add
+  // without a network call.
+  let _wish = [];
+  try { _wish = JSON.parse(localStorage.getItem('psb_wishlist') || '[]'); } catch(e){ _wish = []; }
+  if(!Array.isArray(_wish)) _wish = [];
+  function _wishSave(){ try{ localStorage.setItem('psb_wishlist', JSON.stringify(_wish)); }catch(e){} }
+  function psWishHas(url){ if(!url) return false; const k = psUrlKey(url); return _wish.some(p => psUrlKey(p.u) === k); }
+  function psWishToggle(idx, ev){
+    if(ev){ ev.stopPropagation(); ev.preventDefault(); }
+    psWishToggleProduct(psFiltered[idx]);
+  }
+  function psWishToggleProduct(p){
+    if(!p || !p.u) return;
+    const k = psUrlKey(p.u);
+    const at = _wish.findIndex(x => psUrlKey(x.u) === k);
+    if(at >= 0) _wish.splice(at, 1);
+    else _wish.unshift({ u:p.u, b:p.b, t:p.t, img:p.img, pkr:p.pkr, cat:p.cat, sz:p.sz, sale:p.sale, _bdt:(p._bdt != null ? p._bdt : undefined) });
+    _wishSave();
+    psWishSyncUI();
+    const d = document.getElementById('wishDrawer'); if(d && d.classList.contains('open')) psWishRender();
+  }
+  // Reflect saved-state on every visible heart + the header badge, WITHOUT a grid re-render.
+  function psWishSyncUI(){
+    const has = uk => _wish.some(p => psUrlKey(p.u) === uk);
+    document.querySelectorAll('.ps-wish[data-uk]').forEach(b => b.classList.toggle('on', has(b.getAttribute('data-uk'))));
+    const badge = document.getElementById('hdrWishBadge');
+    if(badge){ const n = _wish.length; badge.textContent = n; badge.style.display = n ? '' : 'none'; }
+  }
+  function psWishOpen(){ psWishRender(); const d = document.getElementById('wishDrawer'); if(d){ d.classList.add('open'); document.body.style.overflow = 'hidden'; } }
+  function psWishClose(){ const d = document.getElementById('wishDrawer'); if(d) d.classList.remove('open'); document.body.style.overflow = ''; }
+  function psWishRender(){
+    const body = document.getElementById('wishBody'); if(!body) return;
+    const cnt = document.getElementById('wishCount'); if(cnt) cnt.textContent = _wish.length ? ('· ' + _wish.length) : '';
+    if(!_wish.length){ body.innerHTML = `<div class="wish-empty">${tr('wish_empty')}</div>`; return; }
+    body.innerHTML = _wish.map((p, i) => {
+      const bdt = (p._bdt != null) ? p._bdt : estLandedBdt(p.pkr, p.cat);
+      const img = p.img ? `<img loading="lazy" src="${esc(thumbUrl(p.img))}" alt="${esc(p.t || '')}" onerror="this.style.display='none'">` : '';
+      return `<div class="wish-item">`
+        + `<div class="wish-thumb">${img}</div>`
+        + `<div class="wish-info">`
+        +   `<div class="wish-brand">${esc(p.b || '')}</div>`
+        +   `<div class="wish-title">${esc(p.t || '')}</div>`
+        +   `<div class="wish-price">≈ ৳${bdt.toLocaleString()}${p.pkr ? ` · PKR ${(+p.pkr).toLocaleString()}` : ''}</div>`
+        +   `<div class="wish-acts">`
+        +     `<button type="button" class="wish-add" onclick="psWishAdd(${i})">+ ${tr('ps_add')}</button>`
+        +     `<button type="button" class="wish-rm" onclick="psWishRemove(${i})">♥ ${tr('wish_remove')}</button>`
+        +   `</div>`
+        + `</div></div>`;
+    }).join('');
+  }
+  function psWishRemove(i){ if(i < 0 || i >= _wish.length) return; _wish.splice(i, 1); _wishSave(); psWishSyncUI(); psWishRender(); }
+  // Add a saved item to the order via the proven paste-link pipeline (live price/size/category).
+  function psWishAdd(i){ const p = _wish[i]; if(!p || !p.u) return; const inp = document.getElementById('urlInput'); if(inp) inp.value = p.u; psWishClose(); handleAddUrl(); }
+  // Initialise the header badge once the DOM is ready.
+  if(document.readyState !== 'loading') psWishSyncUI();
+  else document.addEventListener('DOMContentLoaded', psWishSyncUI);
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') psWishClose(); });
 
   // ══ BROWSE BRANDS · PRODUCT-CATEGORY VIEW ════════════════════════════════
   // A 2nd way to find brands: by WHAT they sell, not their store type. Women /
@@ -6239,7 +6357,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-24f';
+  const PSB_BUILD = '2026-06-24g';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

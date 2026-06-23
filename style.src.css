@@ -410,14 +410,28 @@
       body.psb-browse #step1 > .container{padding-top:1px}
       .ps-rail{margin-bottom:7px}
       .ps-rail .ps-filtrow{margin-bottom:0}
-      /* Merge Price · Clear · Sort · Sale · New onto ONE row (count removed). The sortrow shrinks
-         and scrolls internally so the line never overflows the phone width; the resbar itself does
-         not scroll, so the Price popover (anchored inside it) is never clipped. */
-      .ps-resbar{flex-wrap:nowrap;align-items:center;gap:8px;margin-bottom:9px;min-height:0}
-      .ps-resbar-tools{flex:0 0 auto}
-      .ps-sortrow{flex:1 1 0;flex-basis:0;min-width:0;border-top:none;padding:0;margin:0;justify-content:flex-start;gap:8px}
-      .ps-sortgrp:first-child{flex:0 0 auto}
-      .ps-sortgrp + .ps-sortgrp{padding-left:10px;margin-left:auto}
+      /* Price · Clear · Sort: Price ···· Sale · New — ALL on ONE pilled row (count removed),
+         RESIZED to fit, NOT scrolling sideways. EVERY rule here is scoped under #tabProducts so it
+         OUTRANKS the unconditional base `.ps-resbar` / `.ps-sortrow` / `.ps-pricepop` declarations
+         that sit LATER in source (a media-query wrapper adds zero specificity, so a bare-class
+         mobile rule would lose the source-order tie — that was the original 2-row bug). */
+      #tabProducts .ps-resbar{flex-wrap:nowrap;justify-content:flex-start;align-items:center;gap:6px;margin-bottom:9px;min-height:0}
+      #tabProducts .ps-resbar-tools{flex:0 0 auto;gap:6px}
+      #tabProducts .ps-resbar .ps-sortrow{flex:1 1 auto;min-width:0;flex-basis:auto;border-top:none;padding:0;margin:0;overflow:visible;justify-content:flex-start;gap:6px}
+      #tabProducts .ps-resbar .ps-sortgrp{flex:0 1 auto}
+      #tabProducts .ps-resbar .ps-sortgrp + .ps-sortgrp{padding-left:0;border-left:none;margin-left:auto}   /* push Sale + New to the right edge */
+      #tabProducts .ps-resbar .ps-pricebtn,#tabProducts .ps-resbar .ps-clear-inline,#tabProducts .ps-resbar .ps-sortbtn{padding:6px 9px;font-size:0.68rem;border-radius:13px;white-space:nowrap}
+      /* Price is the LEFT-most pill now → its popover must open rightward (base anchors it right:0,
+         which would push it off the left edge of the screen). Cap width so it stays on a phone. */
+      #tabProducts .ps-pricepop{left:0;right:auto;width:min(232px,86vw)}
+      /* The category carousel is ALWAYS visible: it pins to the top while scrolling the products
+         (req). The search + filter row above it scroll away — only the carousel stays. The
+         #tabProducts prefix outranks the base `.ps-sticky-zone{position:sticky}` / `.ps-shopcat`
+         rules that sit later in source. scroll-margin keeps a tapped category's first row clear of
+         the pinned strip. */
+      #tabProducts .ps-sticky-zone{position:static;box-shadow:none;padding:0}
+      #tabProducts .ps-shopcat{position:sticky;top:0;z-index:16;background:var(--bg);margin:0 0 8px;padding:7px 0 5px;box-shadow:0 5px 11px -5px rgba(0,0,0,0.22)}
+      #tabProducts .ps-grid{scroll-margin-top:158px}
     }
     .show-more-btn{font-size:0.75rem;color:var(--gold);background:none;border:none;cursor:pointer;font-weight:600;padding:4px 0;text-decoration:underline}
 
@@ -509,18 +523,47 @@
     .dc-sect-hint{font-size:0.66rem;font-weight:500;color:var(--txt-muted);text-transform:none;letter-spacing:0}
     /* Browse Products landing: "Shop by category" — LAAM-style horizontal strip of photo tiles
        (image + label), shown on the plain landing above the rotating products. */
-    .ps-shopcat{margin:2px 0 15px}
-    .ps-shopcat-h{font-size:0.82rem;font-weight:800;letter-spacing:0.4px;text-transform:uppercase;color:var(--gold);margin:0 2px 10px;display:flex;align-items:center;gap:7px}
-    .ps-shopcat-scroll{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:1px 2px 7px}
+    /* "Shop by category": Women/Men/Kids classifier tabs + a horizontal row of photo tiles
+       (image + label). Compact because it is ALWAYS visible (sticky on mobile — see below). */
+    .ps-shopcat{margin:2px 0 13px}
+    .ps-shopcat-tabs{display:flex;gap:7px;margin:0 0 9px;flex-wrap:wrap}
+    .psc-gtab{flex:0 0 auto;padding:5px 13px;border:1.5px solid var(--gold-bdr);border-radius:14px;background:var(--surface);color:var(--txt-sec);font-size:0.74rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+    .psc-gtab.on{background:var(--gold);color:#1a1206;border-color:var(--gold)}
+    .ps-shopcat-scroll{display:flex;gap:11px;overflow-x:auto;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:1px 2px 6px}
     .ps-shopcat-scroll::-webkit-scrollbar{display:none}
-    .psc-tile{flex:0 0 auto;width:84px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;gap:7px;background:none;border:none;padding:0;cursor:pointer;font-family:inherit}
-    .psc-img{width:84px;height:102px;border-radius:16px;overflow:hidden;background:linear-gradient(150deg,var(--gold-dim),var(--raised));border:1.5px solid var(--gold-bdr);display:flex;align-items:center;justify-content:center;position:relative;transition:transform .12s,border-color .12s}
+    .psc-tile{flex:0 0 auto;width:64px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:none;padding:0;cursor:pointer;font-family:inherit}
+    .psc-img{width:64px;height:76px;border-radius:13px;overflow:hidden;background:linear-gradient(150deg,var(--gold-dim),var(--raised));border:1.5px solid var(--gold-bdr);display:flex;align-items:center;justify-content:center;position:relative;transition:transform .12s,border-color .12s,box-shadow .12s}
     .psc-img img{width:100%;height:100%;object-fit:cover;display:block}
-    .psc-tile.psc-noimg .psc-img::after{content:attr(data-emoji);font-size:2rem;opacity:0.85}
+    .psc-tile.psc-noimg .psc-img::after{content:attr(data-emoji);font-size:1.6rem;opacity:0.85}
     .psc-tile:hover .psc-img{border-color:var(--gold)}
-    .psc-tile:active .psc-img{transform:scale(0.96)}
-    .psc-lbl{font-size:0.72rem;font-weight:700;color:var(--txt);line-height:1.2;text-align:center;width:88px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-    @media (min-width:820px){ .psc-tile{width:104px} .psc-img{width:104px;height:124px} .psc-lbl{width:108px;font-size:0.78rem} .ps-shopcat-h{font-size:0.9rem} }
+    .psc-tile:active .psc-img{transform:scale(0.95)}
+    .psc-tile.on .psc-img{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
+    .psc-lbl{font-size:0.66rem;font-weight:700;color:var(--txt);line-height:1.15;text-align:center;width:68px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    @media (min-width:820px){ .ps-shopcat{margin-bottom:16px} .psc-gtab{font-size:0.8rem;padding:6px 16px} .psc-tile{width:92px} .psc-img{width:92px;height:108px;border-radius:15px} .psc-lbl{width:96px;font-size:0.74rem} .psc-tile.psc-noimg .psc-img::after{font-size:2rem} }
+    /* ── WISHLIST (E) ── heart on cards + header entry + saved-items drawer ── */
+    .hdr-wish{position:relative;color:var(--gold);font-size:1.15rem;line-height:1;padding:6px 9px}
+    .hdr-wish-badge{position:absolute;top:-3px;right:-3px;background:#c0392b;color:#fff;border-radius:9px;min-width:16px;height:16px;padding:0 4px;font-size:0.6rem;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1}
+    /* card heart — top-left, mirrors the top-right .ps-info pill */
+    .ps-wish{position:absolute;top:6px;left:6px;z-index:2;width:28px;height:28px;border-radius:50%;border:none;background:rgba(10,22,40,0.55);color:#fff;font-size:0.95rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;transition:transform .12s,color .12s,background .12s}
+    .ps-wish:hover{background:rgba(10,22,40,0.78)}
+    .ps-wish:active{transform:scale(0.86)}
+    .ps-wish.on{color:#ff5a7a;background:rgba(10,22,40,0.7)}
+    /* heart in the detail popup actions row */
+    .ps-d-wishbtn{flex:0 0 auto;position:static;width:46px;height:auto;min-width:46px;border-radius:9px;background:var(--gold-dim);border:1.5px solid var(--gold-bdr);color:var(--gold);font-size:1.15rem;padding:11px 0}
+    .ps-d-wishbtn.on{color:#e24b4a;border-color:#e24b4a;background:rgba(226,75,74,0.1)}
+    /* saved-items drawer (reuses .more-drawer-wrap / .more-drawer / .md-head shell) */
+    .wish-empty{text-align:center;color:var(--txt-muted);padding:42px 18px;font-size:0.92rem;line-height:1.5}
+    .wish-item{display:flex;gap:11px;padding:11px 4px;border-bottom:1px solid var(--bdr)}
+    .wish-thumb{flex:0 0 64px;width:64px;height:80px;border-radius:9px;overflow:hidden;background:var(--raised);display:flex;align-items:center;justify-content:center}
+    .wish-thumb img{width:100%;height:100%;object-fit:cover}
+    .wish-info{flex:1;min-width:0;display:flex;flex-direction:column}
+    .wish-brand{font-size:0.66rem;color:var(--txt-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.3px}
+    .wish-title{font-size:0.84rem;color:var(--txt);line-height:1.3;max-height:2.6em;overflow:hidden;margin:1px 0 3px}
+    .wish-price{font-size:0.82rem;font-weight:800;color:var(--txt)}
+    .wish-acts{display:flex;gap:8px;margin-top:7px}
+    .wish-add{flex:1;padding:8px;background:var(--gold);color:#12122a;border:none;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;font-family:inherit}
+    .wish-rm{flex:0 0 auto;padding:8px 12px;background:none;border:1.5px solid var(--bdr-med);color:#c0392b;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;font-family:inherit}
+    .wish-rm:hover{border-color:#c0392b}
     .dc-thumb-wrap{cursor:zoom-in}
     /* tap-to-enlarge product image lightbox */
     .img-zoom-ov{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;padding:18px;cursor:zoom-out}
