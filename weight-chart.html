@@ -49,22 +49,10 @@
 
   <div id="tables"></div>
 
-  <!-- Commission rates card -->
-  <div class="card" id="commCard">
-    <div class="card-title">💰 Commission Rates</div>
-    <div style="padding:12px 16px">
-      <table>
-        <tr style="background:#fffbf2">
-          <td class="row-label"><strong>Below PKR <span id="commThresh">2,100</span></strong><br><span style="font-size:0.72rem;color:#888">per unit (any qty)</span></td>
-          <td><strong>৳<span id="commLow">200</span> flat</strong><br><span style="font-size:0.72rem;color:#888">no % calculation</span></td>
-        </tr>
-        <tr><td class="row-label">PKR 2,100+ · 1 piece</td><td><span id="c1rate">—</span></td></tr>
-        <tr><td class="row-label">PKR 2,100+ · 2–3 pieces</td><td><span id="c23rate">—</span></td></tr>
-        <tr><td class="row-label">PKR 2,100+ · 4+ pieces</td><td><span id="c4prate">—</span></td></tr>
-      </table>
-      <div style="padding:8px 0 0;font-size:0.72rem;color:#888">"Pieces" = total qty across the whole order. Commission applies per product on top of the PKR→৳ converted price.</div>
-    </div>
-  </div>
+  <!-- HARD RULE: our commission / margin is NEVER shown to buyers. Do not add a
+       commission card, % breakdown, or any "our fee/markup" line to this page or
+       any buyer-facing surface. Commission stays folded silently into the order
+       total only (see cartCommission() in app.src.js). -->
 
   <a class="back" href="index.html">← Back to order form</a>
 
@@ -163,25 +151,6 @@
     ];
   }
 
-  function renderCommission(rates){
-    var threshold = (rates && rates.pkr_low_threshold > 0) ? rates.pkr_low_threshold : 2100;
-    var flatBdt   = (rates && rates.comm_low_bdt != null && isFinite(rates.comm_low_bdt)) ? rates.comm_low_bdt : 200;
-    var c1   = (rates && rates.comm_1  >= 0) ? rates.comm_1  : 22;
-    var c23  = (rates && rates.comm_23 >= 0) ? rates.comm_23 : 21;
-    var c4p  = (rates && rates.comm_4p >= 0) ? rates.comm_4p : 20;
-    document.getElementById('commThresh').textContent = Number(threshold).toLocaleString();
-    document.getElementById('commLow').textContent    = Number(flatBdt).toLocaleString();
-    document.getElementById('c1rate').textContent     = c1  + '%';
-    document.getElementById('c23rate').textContent    = c23 + '%';
-    document.getElementById('c4prate').textContent    = c4p + '%';
-    // Update "PKR 2,100+" labels with live threshold
-    var thresh = Number(threshold).toLocaleString();
-    ['c1rate','c23rate','c4prate'].forEach(function(id, i){
-      var td = document.getElementById(id).closest('tr').querySelector('.row-label');
-      if(td) td.childNodes[0].textContent = 'PKR ' + thresh + '+ · ' + ['1 piece','2–3 pieces','4+ pieces'][i];
-    });
-  }
-
   function render(weights, logRate, rates){
     document.getElementById('logRate').textContent = '৳' + Number(logRate).toLocaleString();
     var ageTiers = getAgeTiers(rates);
@@ -214,7 +183,6 @@
 
   // First paint instantly from the baked-in defaults (works even offline)…
   render(null, DEFAULT_LOG, null);
-  renderCommission(null);
   // …then overlay the live admin-set weights + logistics rate from the relay.
   fetch(RELAY + '/config', { cache: 'default' })
     .then(function(r){ return r.json(); })
@@ -222,7 +190,6 @@
       if(j && j.ok){
         var log = (j.rates && j.rates.log > 0) ? j.rates.log : DEFAULT_LOG;
         render(j.weights || null, log, j.rates || null);
-        renderCommission(j.rates || null);
       }
     })
     .catch(function(){ /* relay unreachable → keep the baked-in defaults */ });
