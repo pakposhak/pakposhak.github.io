@@ -574,6 +574,13 @@ function cleanupProducts(ps) {
         && !/kurta|kameez|\bshirt\b|\bsuit\b|sherwani|waistcoat|\b[23] ?(pc|piece)|co-?ord|kurti|\bset\b/i.test(p.t||'')) {
       p.cat = 'mens_trouser'; menPcN++; out.push(p); continue;
     }
+    // ── image-verified single mis-files (2026-06-23 picture pass) ──
+    // Outfitters women's blouse/dress mis-gendered into a men's cat → western_top (image: woman in blouse).
+    if (p.b === 'Outfitters' && /^mens_/.test(p.cat) && /\bblouse\b|\bdress\b|\bgown\b|kurti|frock/i.test(p.t||'') && !/\bmen'?s?\b/i.test(p.t||'')) { p.cat = 'western_top'; womenN++; out.push(p); continue; }
+    // (Kross "2PC Girl" is a genuine GIRLS/kids line — embroidered ones are image-confirmed on child
+    //  models, correctly kids_girls_eastern; do NOT blanket-move to women's.)
+    // Zainab Chottani "Capri" = a velvet KAFTAN line (image), not a capri bottom → kaftan.
+    if (p.b === 'Zainab Chottani' && /\bcapri\b/i.test(p.t||'') && p.cat !== 'kaftan' && !/trouser|\bpants?\b|bottom/i.test(p.t||'')) { p.cat = 'kaftan'; womenN++; out.push(p); continue; }
     // Engine is a WESTERN kids brand — its jersey "Top/Tee/Crew/Vest/Jegging" items mis-shelved in
     // kids eastern → western (Engine "Girls Top" flooded kids_girls_eastern).
     if (p.b==='Engine' && /^kids_(boys|girls)_eastern$/.test(p.cat) && /\btop\b|\btee\b|t-?shirt|\bcrew\b|tshirt|\bvest\b|jegging|legging|\bpolo\b/i.test(p.t||'') && !/kurta|kameez|shalwar|frock|kurti|dupatta/i.test(p.t||'')) { p.cat=p.cat.replace('_eastern','_western'); girlsKidN++; out.push(p); continue; }
