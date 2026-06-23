@@ -5823,8 +5823,8 @@
   function bbBrandGrid(brands, cntOf){
     if(!brands.length) return `<div class="bb-prod-empty">${tr('bb_prod_none')}</div>`;
     const CAP = 22;
-    const chip = b => { const n = cntOf ? (cntOf(b) || 0) : 0;
-      return `<button type="button" class="cat-brand" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">${esc(b.n)}${n > 0 ? `<span class="cb-cnt">${n}</span>` : ''}</button>`; };
+    const chip = b => { const n = cntOf ? (cntOf(b) || 0) : 0; const fl = FEATURED.has(b.n);
+      return `<button type="button" class="cat-brand${fl ? ' cb-feat' : ''}" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}"${fl ? ' title="Featured brand — verified by PakPoshak"' : ''}>${fl ? '<span class="cb-star" aria-hidden="true">★</span>' : ''}${esc(b.n)}${n > 0 ? `<span class="cb-cnt">${n}</span>` : ''}</button>`; };
     if(brands.length <= CAP)
       return `<div class="cat-grid" id="bbGrid"><div class="cat-track" id="bbTrack"><div class="cat-page"><div class="cat-pagegrid">${brands.map(chip).join('')}</div></div></div></div>`;
     const first = brands.slice(0, CAP), rest = brands.slice(CAP);
@@ -6050,7 +6050,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-23k';
+  const PSB_BUILD = '2026-06-23l';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

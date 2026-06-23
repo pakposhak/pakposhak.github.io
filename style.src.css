@@ -315,6 +315,10 @@
     .cb-cnt{float:right;margin:1px 0 0 8px;padding:0 7px;border-radius:9px;font-size:0.72em;font-weight:700;
       color:var(--gold);background:var(--gold-dim);line-height:1.7}
     .cat-brand:hover .cb-cnt{background:var(--gold-bdr)}
+    /* featured/verified brand: gold ★ + solid (non-muted) name = a trust signal in the brand grid */
+    .cb-star{color:var(--gold);font-size:0.74em;margin-right:5px;vertical-align:1px}
+    .cat-brand.cb-feat{color:var(--txt);font-weight:600}
+    .cat-brand.cb-feat:hover{color:var(--gold)}
     .brand-dd-item .cur-go{color:var(--gold);font-size:0.8rem}
     /* "More" tab — sits at the right end of the category bar and opens the drawer */
     .cat-tab.more-tab{margin-left:auto;color:var(--gold);font-weight:700}
