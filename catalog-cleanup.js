@@ -476,13 +476,19 @@ function cleanupProducts(ps) {
     // correctly in men's cats, but its WOMEN'S line (slugs ft/wt/ww/tlf/ltt/lcs = female-top/women-tee/
     // wrap/blazer) leaked into men's cats → women's western, routed by garment. Slug-gated so the
     // genuine men's items are NOT touched.
-    if (p.b === 'Cougar' && /^mens_/.test(p.cat) && /\/products\/(ft|wt|ww|tlf|ltt|lcs)\d/i.test(p.u||'')) {
+    // slug code may be at the START of the slug OR a trailing hyphen-segment ("scoop-neck-tank-top-ltt609").
+    if (p.b === 'Cougar' && /^mens_/.test(p.cat) && /\/products\/(?:[a-z0-9-]+-)?(ft|wt|ww|tlf|ltt|lcs|wws|wsk|wsh)\d/i.test(p.u||'')) {
       const s = (p.t||'').toLowerCase();
-      p.cat = /\b(trouser|pant|jean|legging|tight|jogger|shorts?|capri|bottom|skinny|flare|cargo|culotte|palazzo)\b/.test(s) ? 'womens_trouser'
+      p.cat = /\b(trouser|pant|jean|legging|tight|jogger|shorts?|capri|bottom|skinny|flare|cargo|culotte|palazzo|skirt)\b/.test(s) ? 'womens_trouser'
             : /\b(dress|maxi|gown)\b/.test(s) ? 'maxi_dress'
             : /co-?ord/.test(s) ? 'coord_western' : 'western_top';
       womenN++; out.push(p); continue;
     }
+    // Monark is a WESTERN menswear brand — its "TWO/THREE-PIECE SUIT" mis-filed as shalwar-kameez → men's suit.
+    if (p.b === 'Monark' && p.cat === 'mens_shalwar_kameez' && /\b(two|three|2|3)[\s-]?(piece|pc)\b.*suit|\bsuit\b/i.test(p.t||'')) { p.cat = 'mens_suit'; menPcN++; out.push(p); continue; }
+    // "One Kids" (confusing name — it sells ADULT menswear too; "MT…" slug + male model, image-verified)
+    // — its men's polos/crew-neck/v-neck/tunic tees mis-filed as shalwar-kameez → men's shirt; bottoms → trouser.
+    if (p.b === 'One Kids' && p.cat === 'mens_shalwar_kameez' && !/kameez|shalwar|kurta ?(pajama|pyjama)/i.test(p.t||'')) { p.cat = /\btrousers?\b|\bbottoms?\b|\bpants?\b|\bjeans?\b/i.test(p.t||'') ? 'mens_trouser' : 'mens_shirt'; menPcN++; out.push(p); continue; }
     // Al-Deebaj "Printed Cotton Co-Ord Set" = women's EASTERN kameez+shalwar 2pc (hijab-styled), not a
     // western co-ord → eastern 2pc.
     if (p.b === 'Al-Deebaj' && p.cat === 'coord_western') { p.cat = 'shirt_trouser_2pc'; womenN++; out.push(p); continue; }
@@ -504,7 +510,7 @@ function cleanupProducts(ps) {
     // (b) western tops mis-shelved as eastern kurtis → western_top. Clear western nouns move
     // unconditionally; bare "Top" only for confirmed western brands (Lulusar image-verified western).
     if (p.cat === 'kurti_1pc' && !/kurta|kameez|\bkurti\b|shalwar|dupatta|anarkali|\bfrock\b|abaya|gharara|lehenga/i.test(p.t||'')
-        && (/\btee\b|t-?shirt|\bblouse\b|camisole|tank[\s-]?top|crop[\s-]?top|bodysuit|\bcorset\b|bustier|\bhalter\b|tube[\s-]?top|\bcami\b|bralette|\bjersey\b/i.test(p.t||'')
+        && (/\btee\b|t-?shirt|\bblouse\b|camisole|tank[\s-]?top|crop[\s-]?top|bodysuit|\bcorset\b|bustier|\bhalter\b|tube[\s-]?top|\bcami\b|bralette|\bjersey\b|\bpolo\b|button[\s-]?(?:down|up)|\bshacket\b/i.test(p.t||'')
             || (/^(Lulusar|Outfitters|Breakout)$/.test(p.b||'') && /\btops?\b/i.test(p.t||'')))) { p.cat='western_top'; womenN++; out.push(p); continue; }
     // (c) kurti_1pc_unstitch = 1-piece SHIRT fabric. A 2-piece "Shirt & Trouser"/"02 Piece"/"Shirt
     // Bottom Suit" or a standalone "Bottom" fabric mis-shelved here → the right unstitched cat / bottoms.
@@ -594,11 +600,12 @@ function cleanupProducts(ps) {
       if (p.cat==='maxi_dress' && /jumpsuit/i.test(p.t||'')) { p.cat='womens_trouser'; womenN++; out.push(p); continue; }
       if (p.cat==='womens_trouser' && /\bvest\b|\bjacket\b|\btop\b/i.test(p.t||'') && !/trouser|\bpants?\b|shalwar|\bskirt\b|legging|culotte/i.test(p.t||'')) { p.cat='western_top'; womenN++; out.push(p); continue; }
     }
-    // ETHNC "SKIRT" (standalone bottom) mis-filed in any women's apparel cat -> women's bottom.
-    if (p.b === 'ETHNC' && /\bskirt\b/i.test(p.t||'') && p.cat!=='womens_trouser' && !/shirt|kameez|kurta|dupatta|\b[23] ?(pc|piece)|co-?ord|\bset\b|\btop\b/i.test(p.t||'')) { p.cat='womens_trouser'; womenN++; out.push(p); continue; }
-    // Cougar is MULTI-DEPT; its WOMEN'S-slug items leaking into a men's cat -> re-derive women's cat
-    // (slug-gated, mirrors existing Cougar policy: ft/ws/wws/wsk/wsh/tlf/lcs/ltt/wt/ww = women's).
-    if (p.b === 'Cougar' && /^mens_/.test(p.cat) && /\/products\/[a-z-]*(wws|wsk|wsh|tlf|lcs|ltt|\bws|\bwt|\bww|\bft)\d/i.test(p.u||'')) { p.cat = womenCatFor(p); womenN++; out.push(p); continue; }
+    // a standalone "SKIRT" (a bottom) mis-filed in a women's TOP/SUIT cat -> women's bottom (ETHNC,
+    // Beechtree "SOLID SKIRT"…). Guard sets/lehenga-choli/2-3pc so only the lone skirt moves.
+    if (/\bskirt\b/i.test(p.t||'') && /^(western_top|kurti_1pc|pret_3pc|pret_3pc_emb|maxi_dress|coord_western)$/.test(p.cat) && !/shirt|kameez|kurta|dupatta|\bcholi\b|lehenga|gharara|\b[23] ?(pc|piece)|co-?ord|\bset\b|\btop\b|\bsuit\b/i.test(p.t||'')) { p.cat='womens_trouser'; womenN++; out.push(p); continue; }
+    // Azure/other men's "Kurta Pajama" parked in loungewear -> men's shalwar-kameez.
+    if (p.cat==='loungewear' && /kurta ?(pajama|pyjama)/i.test(p.t||'') && !/\bwomen|\bladies|\bgirls?\b/i.test(p.t||'')) { p.cat='mens_shalwar_kameez'; menPcN++; out.push(p); continue; }
+    // (Cougar women's-slug-in-men's-cat is handled at the source rule above, by garment.)
     // Humayun Alamgir WOMEN'S bridal/formal (3pc/lehenga/gharara/choli/pishwas) mis-tagged men's kurta.
     if (p.b === 'Humayun Alamgir' && p.cat==='mens_kurta' && /\b3 ?pc\b|\b3 ?piece\b|lehenga|gharara|sharara|\bcholi\b|pishwas|anarkali/i.test(p.t||'')) { p.cat = /lehenga|gharara|sharara|\bcholi\b/i.test(p.t||'') ? 'lehenga' : 'pret_3pc'; womenN++; out.push(p); continue; }
     // Maria B "MBM-3PW" wool 3-piece (waistcoat+kurta+shalwar, male model) mis-filed as a men's shirt.
