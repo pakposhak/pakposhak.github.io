@@ -1170,8 +1170,23 @@
       const allSoldOut = hasStockInfo && vars.length > 0 && avail.length === 0;
       if(allSoldOut) avail = vars;  // keep a price reference, but no size chips + warn below
 
-      // For brands with type option: prefer stitched over unstitched
-      if(typeKey){
+      // ── PRICE-BEARING OPTIONS beyond size/colour (Item · stitching · add-on) ──
+      // e.g. Mina Hasan "Item": Shirt 80,800 / Pants 8,400 / Dupatta 8,400 / Full Set
+      // 97,500. Surface each as a dropdown DEFAULTED to the complete article (so the
+      // shown price == the brand-page price, never a cheap sub-piece) and filter the
+      // variant set to the chosen value so price + size chips follow it. Products with
+      // NO such dimension skip this entirely and keep the legacy path below.
+      const _otherCat = (catEl && catEl.value) ? catEl.value : (fetchedCat || '');
+      const otherDims = detectOtherDims(normOpts, vars, sizeIdxAll, colourIdx);
+      if(otherDims.length && drafts[id]){
+        const _sel = {};
+        otherDims.forEach(dim => { _sel[dim.idx] = defaultOptValue(dim, _otherCat); });
+        drafts[id]._otherDims = otherDims;
+        drafts[id]._otherSel  = _sel;
+        otherDims.forEach(dim => { const sel = _sel[dim.idx];
+          const f = avail.filter(v => String(v[dim.key]||'').trim() === sel); if(f.length) avail = f; });
+      } else if(typeKey){
+        // No structured option dimension → keep the legacy stitched-over-unstitched preference.
         const stitched = avail.filter(v => /stitch/i.test(v[typeKey]) && !/unstitch/i.test(v[typeKey]));
         if(stitched.length) avail = stitched;
       }
@@ -1287,6 +1302,12 @@
         d0.sizePrice = {};
         if(d0.stockVerified){ avail.forEach(v => { const lb = variantLabel(v, pickDims); if(lb && d0.sizePrice[lb] == null) d0.sizePrice[lb] = moneyOf(v.price); }); }
         d0.priceVaries = new Set(Object.values(d0.sizePrice).map(p => Math.round(p))).size > 1;
+        // State for psReprice() — only set when this product has a price-bearing option
+        // dimension (Item/stitching/add-on). Lets a dropdown change re-derive price+chips.
+        if(otherDims.length){
+          d0._vars = vars; d0._pickDims = pickDims; d0._hasStock = hasStockInfo;
+          d0._combined = combined; d0._chipLabel = combined ? pickDims.map(x=>x.name).join(' + ') : null;
+        }
       }
 
       if(!allSoldOut && sizesToAdd.length){
@@ -1336,6 +1357,10 @@
           }
         }
       }
+
+      // Component products: show the themed option dropdown(s) (Item/stitching/add-on),
+      // defaulted to the complete article. Buyer can switch piece → price+chips re-derive.
+      if(otherDims.length) renderOptDropdowns(id);
 
       if(allSoldOut){
         psMarkSoldOut(url);   // hide this dead listing from the Browse-Products grid right away
@@ -1433,6 +1458,8 @@
           <div id="dc_phint_${id}" style="font-size:0.72rem;color:var(--gold);margin-top:3px;min-height:14px"></div>
         </div>
       </div>
+      <!-- Price-bearing options (Item / stitching / add-on) — themed dropdowns; default = full article -->
+      <div id="dc_opts_${id}" style="display:none;margin-top:10px"></div>
       <!-- Sizes section — always visible, content changes with category -->
       <div id="dc_szbox_${id}" style="margin-top:12px;background:var(--raised);border-radius:7px;padding:10px 12px">
         <label style="font-size:0.76rem;font-weight:600;color:var(--txt-sec)">Sizes &amp; Quantities *
@@ -1944,6 +1971,148 @@
       if(size) rows.push({size, qty});
     });
     return rows;
+  }
+
+  // ══ COMPONENT / MULTI-PRICE OPTIONS (Item · stitching · add-on) ════════════
+  // Some products carry a PRICE-BEARING option beyond size/colour. e.g. Mina Hasan
+  // "Item": Shirt 80,800 · Pants 8,400 · Dupatta 8,400 · FULL SET 97,500. The cheapest
+  // variant is then a SUB-PIECE, so a cheapest-default badly understates the article
+  // (showed ৳49,917 garbage chips). We surface each such dimension as a DROPDOWN,
+  // DEFAULT it to the complete article (full price), and recompute price + size chips
+  // for the chosen value. Products with NO such dimension never touch this path.
+  const _OPT_SERVICE_RE = /deliver|whats\s*app|whatsapp|customi[sz]|stitch.*time|ready.*in|call|contact|availab/i;
+  const _OPT_ADDON_RE   = /\b(none|without|no\b)/i;
+
+  // Detect price-bearing options that are NOT size and NOT colour, with ≥2 values.
+  // Returns [{key,idx,name,values,minByVal,kind}] — kind: 'service'|'component'.
+  function detectOtherDims(normOpts, vars, sizeIdxAll, colourIdx){
+    const out = [];
+    normOpts.forEach((o, idx) => {
+      if(sizeIdxAll.includes(idx) || idx === colourIdx) return;
+      const key = ['option1','option2','option3'][idx];
+      const valSet = new Set(vars.map(v => String(v[key]||'').trim()).filter(Boolean));
+      if(valSet.size < 2) return;
+      const minByVal = {};
+      vars.forEach(v => { const val=String(v[key]||'').trim(); const p=parseFloat(v.price)||0; if(!val||p<=0) return; if(minByVal[val]==null||p<minByVal[val]) minByVal[val]=p; });
+      const mins = Object.values(minByVal);
+      if(mins.length < 2) return;
+      const spread = Math.max(...mins)/Math.min(...mins);
+      if(spread <= 1.02) return;   // same price across values ⇒ not price-bearing (e.g. sleeve style)
+      const kind = _OPT_SERVICE_RE.test(o.name) ? 'service' : 'component';
+      out.push({ key, idx, name:o.name, values:[...valSet], minByVal, kind });
+    });
+    return out;
+  }
+  // Default each dimension to whatever the BRAND PAGE shows (so form price == image price):
+  //  service (delivery/customisation) → cheapest value, no dropdown shown
+  //  stitching/type (Unstitched/Stitched) → match the product's category: an unstitched
+  //    product defaults to Unstitched (its page price); otherwise Stitched
+  //  add-on (a "None"/"Without" base exists) → that base (no paid upsell)
+  //  component-set (Item: Shirt/Pants/Dupatta/Full Set) → the MAX-priced value (= Full Set)
+  function _maxPricedValue(dim){ let hi=dim.values[0], hiP=dim.minByVal[hi]||0;
+    dim.values.forEach(v=>{ const p=dim.minByVal[v]||0; if(p>hiP){hiP=p;hi=v;} }); return hi; }
+  function defaultOptValue(dim, cat){
+    if(dim.kind === 'service'){
+      let lo=dim.values[0], loP=dim.minByVal[lo]!=null?dim.minByVal[lo]:Infinity;
+      dim.values.forEach(v=>{ const p=dim.minByVal[v]; if(p!=null&&p<loP){loP=p;lo=v;} }); return lo;
+    }
+    // stitching / type
+    if(dim.values.some(v => /stitch/i.test(v))){
+      const unst = dim.values.find(v => /un[\s-]?stitch/i.test(v));
+      const st   = dim.values.find(v => /stitch/i.test(v) && !/un[\s-]?stitch/i.test(v));
+      if(cat && typeof UNSTITCHED_CATS !== 'undefined' && UNSTITCHED_CATS.has(cat) && unst) return unst;
+      return st || _maxPricedValue(dim);
+    }
+    // add-on base (no paid upsell)
+    const base = dim.values.find(v => _OPT_ADDON_RE.test(v));
+    if(base) return base;
+    // component-set / everything else → MAX price (Full Set / complete article)
+    return _maxPricedValue(dim);
+  }
+  // The in-stock variant set for the draft's CURRENT option selection.
+  function psFilteredAvail(d){
+    const vars = d._vars || [];
+    let avail = d._hasStock ? vars.filter(v=>v.available) : vars.slice();
+    if(!avail.length) avail = vars.slice();   // all-oversell → keep a price reference
+    (d._otherDims||[]).forEach(dim => { const sel=d._otherSel[dim.idx];
+      if(sel!=null){ const f=avail.filter(v=>String(v[dim.key]||'').trim()===sel); if(f.length) avail=f; } });
+    return avail;
+  }
+  // Recompute price + size chips for the current option selection (called on every
+  // dropdown change). Mirrors the inline chip/price block in fetchProductData — kept
+  // faithful to it; if that changes, change here too.
+  function psReprice(id){
+    const d = drafts[id]; if(!d || !d._otherDims) return;
+    const vars = d._vars, pd = d._pickDims || [], hasStock = d._hasStock;
+    const mo = v => hasStock ? (parseFloat(v)||0)/100 : (parseFloat(v)||0);
+    const avail = psFilteredAvail(d);
+    // form price = cheapest in-stock variant of the chosen option (size chips refine it)
+    const _ap = avail.filter(v=>mo(v.price)>0);
+    const refVar = _ap.length ? _ap.reduce((lo,v)=>mo(v.price)<mo(lo.price)?v:lo) : (avail[0]||vars[0]);
+    const seen=new Set(), sizesToAdd=[];
+    if(pd.length) avail.forEach(v=>{ const l=variantLabel(v,pd); if(l&&!seen.has(l)){seen.add(l);sizesToAdd.push(l);} });
+    let soldOutSizes=[];
+    if(hasStock && pd.length){ const inS=new Set(sizesToAdd), aS=new Set();
+      vars.forEach(v=>{ if(v.available)return; const l=variantLabel(v,pd); if(l&&!inS.has(l)&&!aS.has(l)){aS.add(l);soldOutSizes.push(l);} }); }
+    d.stockVerified = hasStock; d.stockSizes = hasStock ? sizesToAdd.slice() : [];
+    d.soldOutSizes = soldOutSizes.slice();
+    d.sizePrice = {};
+    if(d.stockVerified) avail.forEach(v=>{ const l=variantLabel(v,pd); if(l&&d.sizePrice[l]==null) d.sizePrice[l]=mo(v.price); });
+    d.priceVaries = new Set(Object.values(d.sizePrice).map(p=>Math.round(p))).size > 1;
+    // refresh the price field (drop any previously-picked sizes — they belonged to the old option)
+    const srows = document.getElementById(`dc_srows_${id}`); if(srows) srows.innerHTML='';
+    const qhead = document.getElementById(`dc_qhead_${id}`); if(qhead) qhead.style.display='none';
+    if(refVar){ const sp=mo(refVar.price); const pe=document.getElementById(`dc_price_${id}`);
+      if(pe){ pe.value = (d.currency==='USD') ? sp.toFixed(2) : Math.round(sp); pe.classList.remove('psb-missing'); updateDraftPriceHint(id); } }
+    if(pd.length && sizesToAdd.length) showSizeChips(id, sizesToAdd, d._chipLabel, soldOutSizes);
+    checkAddUrlLock();
+  }
+  // Buyer picked an option value from a dropdown → store it, re-price, refresh the dropdown labels.
+  function psSetVariantOpt(id, idx, value){
+    const d = drafts[id]; if(!d) return;
+    d._otherSel[idx] = value;
+    const pop = document.getElementById(`dc_optpop_${id}_${idx}`); if(pop) pop.style.display='none';
+    const btn = document.getElementById(`dc_optbtn_${id}_${idx}`); if(btn) btn.setAttribute('aria-expanded','false');
+    psReprice(id);
+    renderOptDropdowns(id);   // re-mark the selected value
+  }
+  function psToggleOptPop(id, idx){
+    const pop = document.getElementById(`dc_optpop_${id}_${idx}`); if(!pop) return;
+    const open = pop.style.display === 'block';
+    // close any other open option pop on this card
+    (drafts[id]?._otherDims||[]).forEach(dim=>{ const p=document.getElementById(`dc_optpop_${id}_${dim.idx}`); if(p) p.style.display='none'; });
+    pop.style.display = open ? 'none' : 'block';
+    const btn = document.getElementById(`dc_optbtn_${id}_${idx}`); if(btn) btn.setAttribute('aria-expanded', open?'false':'true');
+  }
+  // Render the themed option dropdown(s) (no native <select>, per the UI theme rule).
+  function renderOptDropdowns(id){
+    const d = drafts[id]; if(!d) return;
+    const box = document.getElementById(`dc_opts_${id}`); if(!box) return;
+    const dims = (d._otherDims||[]).filter(dim => dim.kind !== 'service');   // service dims auto-pick cheapest, no UI
+    if(!dims.length){ box.style.display='none'; box.innerHTML=''; return; }
+    const _scat = (document.getElementById(`dc_cat_${id}`)||{}).value || '';
+    const bdt = (pkr) => (typeof estLandedBdt === 'function') ? '≈৳'+estLandedBdt(pkr, _scat).toLocaleString() : ('PKR '+Math.round(pkr).toLocaleString());
+    box.innerHTML = dims.map(dim => {
+      const sel = d._otherSel[dim.idx];
+      const opts = dim.values.map(v => {
+        const on = v === sel;
+        const p = dim.minByVal[v];
+        return `<button type="button" onclick="psSetVariantOpt(${id},${dim.idx},'${String(v).replace(/'/g,"\\'")}')"
+          style="display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:9px 12px;border:none;border-bottom:1px solid var(--bdr);background:${on?'var(--gold-dim)':'transparent'};color:var(--txt);font-size:0.84rem;font-weight:${on?'800':'600'};cursor:pointer;font-family:inherit">
+          <span>${on?'✓ ':''}${esc(v)}</span>${p!=null?`<span style="color:var(--gold);font-weight:700">${bdt(p)}</span>`:''}</button>`;
+      }).join('');
+      const selP = (sel!=null && dim.minByVal[sel]!=null) ? `<span style="margin-left:auto;color:var(--gold);font-weight:800;font-size:0.8rem">${bdt(dim.minByVal[sel])}</span>` : '';
+      return `<div style="margin-bottom:9px">
+        <div style="font-size:0.7rem;font-weight:800;letter-spacing:0.5px;text-transform:uppercase;color:var(--gold);margin-bottom:5px">${esc(dim.name)} — pick what you want</div>
+        <div style="position:relative">
+          <button type="button" id="dc_optbtn_${id}_${dim.idx}" onclick="psToggleOptPop(${id},${dim.idx})" aria-haspopup="true" aria-expanded="false"
+            style="display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;border:1.5px solid var(--gold-bdr2);border-radius:9px;background:var(--input-bg);color:var(--txt);font-size:0.86rem;font-weight:800;cursor:pointer;font-family:inherit">
+            <span>${esc(sel||'Select')}</span>${selP}<span style="margin-left:8px;color:var(--gold)">▾</span></button>
+          <div id="dc_optpop_${id}_${dim.idx}" style="display:none;position:absolute;z-index:30;left:0;right:0;margin-top:4px;background:var(--surface);border:1.5px solid var(--gold-bdr2);border-radius:9px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.25)">${opts}</div>
+        </div>
+      </div>`;
+    }).join('');
+    box.style.display='';
   }
 
   function updateSaveAllBtn(){
@@ -5880,7 +6049,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-23i';
+  const PSB_BUILD = '2026-06-23j';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
