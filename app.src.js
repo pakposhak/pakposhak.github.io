@@ -4129,22 +4129,34 @@
   const PS_M = Object.keys(PS_CAT_GENDER).filter(k => PS_CAT_GENDER[k]==='m');
   const PS_K = Object.keys(PS_CAT_GENDER).filter(k => PS_CAT_GENDER[k]==='k');
   const PS_CAT_SYNONYMS = [
-    ['1 piece', ['kurti_1pc','kurti_1pc_unstitch']],
-    ['1pc', ['kurti_1pc','kaftan','maxi_dress','womens_trouser','mens_shirt','mens_trouser','mens_jeans','mens_kurta','kurti_1pc_unstitch','western_top']],
+    ['1 pc',    ['kurti_1pc','kaftan','maxi_dress','womens_trouser','mens_shirt','mens_trouser','mens_jeans','mens_kurta','kurti_1pc_unstitch','western_top']],
+    ['1 pcs',   ['kurti_1pc','kaftan','maxi_dress','womens_trouser','mens_shirt','mens_trouser','mens_jeans','mens_kurta','kurti_1pc_unstitch','western_top']],
+    ['1 piece', ['kurti_1pc','kaftan','maxi_dress','womens_trouser','mens_shirt','mens_trouser','mens_jeans','mens_kurta','kurti_1pc_unstitch','western_top']],
+    ['1 pieces',['kurti_1pc','kaftan','maxi_dress','womens_trouser','mens_shirt','mens_trouser','mens_jeans','mens_kurta','kurti_1pc_unstitch','western_top']],
+    ['1pc',     ['kurti_1pc','kaftan','maxi_dress','womens_trouser','mens_shirt','mens_trouser','mens_jeans','mens_kurta','kurti_1pc_unstitch','western_top']],
     ['1pc unstitched', ['kurti_1pc_unstitch','mens_unstitched']],
-    ['1piece', ['kurti_1pc','kaftan','maxi_dress','womens_trouser','mens_shirt','mens_kurta']],
-    ['2 piece', ['shirt_dupatta_2pc','shirt_trouser_2pc','pret_2pc_emb']],
-    ['2pc', ['shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc','shirt_trouser_2pc_unstitch','pret_2pc_emb','coord_western','formal_emb_2pc','winter_2pc_stitch','winter_2pc_unstitch','mens_shalwar_kameez','mens_suit']],
+    ['1piece',  ['kurti_1pc','kaftan','maxi_dress','womens_trouser','mens_shirt','mens_trouser','mens_jeans','mens_kurta','kurti_1pc_unstitch','western_top']],
+    ['1pieces', ['kurti_1pc','kaftan','maxi_dress','womens_trouser','mens_shirt','mens_trouser','mens_jeans','mens_kurta','kurti_1pc_unstitch','western_top']],
+    ['2 pc',    ['shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc','shirt_trouser_2pc_unstitch','pret_2pc_emb','coord_western','formal_emb_2pc','winter_2pc_stitch','winter_2pc_unstitch','mens_shalwar_kameez','mens_suit']],
+    ['2 pcs',   ['shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc','shirt_trouser_2pc_unstitch','pret_2pc_emb','coord_western','formal_emb_2pc','winter_2pc_stitch','winter_2pc_unstitch','mens_shalwar_kameez','mens_suit']],
+    ['2 piece', ['shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc','shirt_trouser_2pc_unstitch','pret_2pc_emb','coord_western','formal_emb_2pc','winter_2pc_stitch','winter_2pc_unstitch','mens_shalwar_kameez','mens_suit']],
+    ['2 pieces',['shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc','shirt_trouser_2pc_unstitch','pret_2pc_emb','coord_western','formal_emb_2pc','winter_2pc_stitch','winter_2pc_unstitch','mens_shalwar_kameez','mens_suit']],
+    ['2pc',     ['shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc','shirt_trouser_2pc_unstitch','pret_2pc_emb','coord_western','formal_emb_2pc','winter_2pc_stitch','winter_2pc_unstitch','mens_shalwar_kameez','mens_suit']],
     ['2pc embroidered', ['pret_2pc_emb']],
     ['2pc unstitched', ['shirt_dupatta_2pc_unstitch','shirt_trouser_2pc_unstitch']],
-    ['2piece', ['shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc','shirt_trouser_2pc_unstitch','pret_2pc_emb','coord_western','formal_emb_2pc','mens_shalwar_kameez']],
-    ['3 piece', ['pret_3pc','pret_3pc_emb','lawn_3pc_unstitch']],
-    ['3pc', ['pret_3pc','pret_3pc_emb','lawn_3pc_unstitch','unstitch_3pc_emb','formal_emb_3pc','heavy_formal_3pc','winter_3pc_stitch','winter_3pc_unstitch','mens_suit']],
+    ['2piece',  ['shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc','shirt_trouser_2pc_unstitch','pret_2pc_emb','coord_western','formal_emb_2pc','winter_2pc_stitch','winter_2pc_unstitch','mens_shalwar_kameez','mens_suit']],
+    ['2pieces', ['shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc','shirt_trouser_2pc_unstitch','pret_2pc_emb','coord_western','formal_emb_2pc','winter_2pc_stitch','winter_2pc_unstitch','mens_shalwar_kameez','mens_suit']],
+    ['3 pc',    ['pret_3pc','pret_3pc_emb','lawn_3pc_unstitch','unstitch_3pc_emb','formal_emb_3pc','heavy_formal_3pc','winter_3pc_stitch','winter_3pc_unstitch','mens_suit']],
+    ['3 pcs',   ['pret_3pc','pret_3pc_emb','lawn_3pc_unstitch','unstitch_3pc_emb','formal_emb_3pc','heavy_formal_3pc','winter_3pc_stitch','winter_3pc_unstitch','mens_suit']],
+    ['3 piece', ['pret_3pc','pret_3pc_emb','lawn_3pc_unstitch','unstitch_3pc_emb','formal_emb_3pc','heavy_formal_3pc','winter_3pc_stitch','winter_3pc_unstitch','mens_suit']],
+    ['3 pieces',['pret_3pc','pret_3pc_emb','lawn_3pc_unstitch','unstitch_3pc_emb','formal_emb_3pc','heavy_formal_3pc','winter_3pc_stitch','winter_3pc_unstitch','mens_suit']],
+    ['3pc',     ['pret_3pc','pret_3pc_emb','lawn_3pc_unstitch','unstitch_3pc_emb','formal_emb_3pc','heavy_formal_3pc','winter_3pc_stitch','winter_3pc_unstitch','mens_suit']],
     ['3pc embroidered', ['pret_3pc_emb','unstitch_3pc_emb']],
     ['3pc stitched', ['pret_3pc','pret_3pc_emb']],
     ['3pc suit', ['mens_suit']],
     ['3pc unstitched', ['lawn_3pc_unstitch','unstitch_3pc_emb']],
-    ['3piece', ['pret_3pc','pret_3pc_emb','lawn_3pc_unstitch','unstitch_3pc_emb','formal_emb_3pc']],
+    ['3piece',  ['pret_3pc','pret_3pc_emb','lawn_3pc_unstitch','unstitch_3pc_emb','formal_emb_3pc','heavy_formal_3pc','winter_3pc_stitch','winter_3pc_unstitch','mens_suit']],
+    ['3pieces', ['pret_3pc','pret_3pc_emb','lawn_3pc_unstitch','unstitch_3pc_emb','formal_emb_3pc','heavy_formal_3pc','winter_3pc_stitch','winter_3pc_unstitch','mens_suit']],
     ['a-line', ['kurti_1pc','maxi_dress','pret_3pc']],
     ['abaya', ['abaya']],
     ['abayas', ['abaya']],
@@ -4716,7 +4728,16 @@
     _psSearchT = setTimeout(() => psSmartSearch(val), 180);
   }
   // Auto-suggest: prefix-match typed text against all synonym keys from the dictionary.
-  const PS_SUGGEST = PS_CAT_SYNONYMS.map(([kw]) => kw).filter(kw => kw.length >= 2).sort();
+  // Piece-count variants ("3pc","3pcs","3 piece","3pieces") dedup to one canonical display form.
+  const PS_SUGGEST = (function(){
+    const CANON = {'1pc':'1 piece','2pc':'2 pieces','3pc':'3 pieces'};
+    function key(kw){ var m=kw.match(/^(\d+)\s*(pieces?|pcs?|pc)$/i); return m?m[1]+'pc':kw.replace(/\s+/g,''); }
+    var seen={}, out=[];
+    PS_CAT_SYNONYMS.map(function(e){return e[0];}).filter(function(k){return k.length>=2;}).sort().forEach(function(kw){
+      var n=key(kw); if(!seen[n]){seen[n]=1; out.push(CANON[n]||kw);}
+    });
+    return out;
+  })();
   function psSugShow(id, terms){
     const el = document.getElementById(id);
     if(!el) return;
@@ -5859,7 +5880,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-23h';
+  const PSB_BUILD = '2026-06-23i';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
