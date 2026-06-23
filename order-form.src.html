@@ -227,6 +227,18 @@
   </div>
 
   <!-- PRODUCT DETAIL POPUP — opened by a card's ⓘ icon; X closes & stays on the page -->
+  <!-- Brand-site warning: shown before ANY "go to the brand site" tap so buyers don't add to the brand's own cart -->
+  <div id="psWarn" class="ps-warn" onclick="if(event.target===this)psWarnClose()">
+    <div class="ps-warn-card" role="alertdialog" aria-modal="true" aria-labelledby="psWarnTitle">
+      <div class="ps-warn-ico">⚠️</div>
+      <h3 id="psWarnTitle" data-i18n="warn_title">Look there, order here</h3>
+      <p id="psWarnBody" data-i18n="warn_body">This page is only to view photos &amp; sizes. Don't add to the brand's cart. Come back and tap + Add here on PakPoshak.</p>
+      <div class="ps-warn-actions">
+        <button type="button" class="ps-warn-cancel" onclick="psWarnClose()" data-i18n="warn_cancel">Stay on PakPoshak</button>
+        <button type="button" class="ps-warn-ok" id="psWarnOk" onclick="psWarnGo()" data-i18n="warn_ok">Open brand site (just to look)</button>
+      </div>
+    </div>
+  </div>
   <div id="psDetail" class="ps-detail" onclick="if(event.target===this)psCloseDetail()">
     <div class="ps-detail-card">
       <button class="ps-detail-x" type="button" onclick="psCloseDetail()" aria-label="Close">✕</button>
