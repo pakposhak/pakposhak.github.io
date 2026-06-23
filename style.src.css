@@ -398,8 +398,9 @@
          !important: the base .steps-bar rule appears LATER in source, so it would
          otherwise win on equal specificity and keep the top stepper visible. */
       .steps-bar{display:none !important}
-      /* Browse Products mobile: tighter spacing under filter pills */
-      .ps-rail{margin-bottom:3px}
+      /* Browse Products mobile: uniform 7px gap between every row */
+      body.psb-browse #step1 > .container{padding-top:1px}
+      .ps-rail{margin-bottom:7px}
       .ps-rail .ps-filtrow{margin-bottom:0}
     }
     .show-more-btn{font-size:0.75rem;color:var(--gold);background:none;border:none;cursor:pointer;font-weight:600;padding:4px 0;text-decoration:underline}
@@ -716,7 +717,7 @@
     .ps-brand-chk input{accent-color:var(--gold);width:15px;height:15px;flex-shrink:0}
     .ps-clear{width:100%;padding:8px;background:none;border:1.5px solid var(--bdr-med);border-radius:8px;color:var(--txt-muted);font-weight:600;font-size:0.78rem;cursor:pointer;font-family:inherit}
     .ps-sticky-zone{position:sticky;top:0;z-index:15;background:var(--bg);padding:0 0 4px;box-shadow:0 2px 8px rgba(0,0,0,0.07)}
-    .ps-sticky-zone .ps-searchblock{margin-bottom:3px;padding-top:0}
+    .ps-sticky-zone .ps-searchblock{margin-bottom:7px;padding-top:0}
     .ps-sticky-zone .ps-smartsearch{padding:7px 12px;font-size:0.82rem;border-width:1.5px;border-radius:9px;box-shadow:none}
     .ps-resbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;font-size:0.8rem;color:var(--txt-muted);margin-bottom:4px;font-weight:600;min-height:22px}
     /* Sort/filter chip row beneath the count: price-sorts (left, "Sort") | Sale+New (right, "Filter") */
