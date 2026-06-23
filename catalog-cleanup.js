@@ -280,6 +280,16 @@ function cleanupProducts(ps) {
   const out = [];
   // ── URL rewrite: international twin → PK domain ──
   for (const p of ps) { if (p.u) { for (const [intl, pk] of Object.entries(DOMAIN_REWRITE)) { if (p.u.includes('//' + intl)) { p.u = p.u.replace('//' + intl, '//' + pk); break; } } } }
+  // ── DUAL-FORM pre-pass (Khaadi): a design sold as BOTH unstitched fabric (`/fabrics-*/CODE`) AND
+  // stitched (`/…tailored/T-CODE`) as two rows sharing a design code. Build a map of TRUE pairs (both
+  // forms present) so the post-pass can cross-mark them `dual` for the Browse card badge. Khaadi is the
+  // ONLY brand whose two forms share a code (Sapphire's don't; Shopify brands sell one form). Runs over
+  // the FULL catalog at every search-db rebuild ⇒ "are both options there?" covers new + existing.
+  const _khCode = u => { if(!/khaadi\.com/i.test(u||'')) return null; const f=((u||'').split('/').pop()||'').replace(/\.html?$/i,'').replace(/^t-/i,''); const m=f.match(/^([a-z]?\d+-\d+-\d+[a-z]*\d*)/i); return m?m[1].toUpperCase():null; };
+  const _khForm = u => (/\/fabrics-/i.test(u||'') && !/tailored/i.test(u||'')) ? 'unstitched' : 'stitched';
+  const _khPairs = {};
+  for (const p of ps) { const cd = _khCode(p.u); if(!cd) continue; (_khPairs[cd] = _khPairs[cd] || {})[_khForm(p.u)] = p; }
+  for (const cd of Object.keys(_khPairs)) { const d = _khPairs[cd]; if(!(d.unstitched && d.stitched)) delete _khPairs[cd]; }
   for (const p of ps) {
     { const _t = p.t || ''; if (NONAPPAREL_STRONG.test(_t) || (NONAPPAREL_WEAK.test(_t) && !GARMENT_NOUN.test(_t))) { junkN++; continue; } }   // homeware/cosmetics/headwear/innerwear/gifting -> delete
     if (ACC.test(p.t || '') && !GARMENT.test(p.t || '') && p.cat !== 'footwear') { del++; continue; }
@@ -762,7 +772,11 @@ function cleanupProducts(ps) {
     if (ONE.has(p.cat)) { const nc = pieceCat(p); if (nc && nc !== p.cat) { p.cat = nc; pieceN++; } }
     out.push(p);
   }
-  return { products: out, stats: { junkN, del, footDel, footMove, fwdN, revN, pieceN, menUnsN, menPcN, womenN, girlsKidN, slugN, explicitN, before: ps.length, after: out.length } };
+  // ── DUAL-FORM post-pass: cross-mark the paired rows so the Browse card can badge "also available
+  // [form]". altpkr/altcat = the SIBLING form's price/cat (build-search-db computes its landed ৳).
+  let dualN = 0;
+  for (const p of out) { const cd = _khCode(p.u); if(!cd || !_khPairs[cd]) continue; const me = _khForm(p.u); const sib = _khPairs[cd][me === 'unstitched' ? 'stitched' : 'unstitched']; if(sib && sib !== p){ p.dual = 1; p.altform = (me === 'unstitched' ? 'stitched' : 'unstitched'); p.altpkr = sib.pkr; p.altcat = sib.cat; dualN++; } }
+  return { products: out, stats: { junkN, del, footDel, footMove, fwdN, revN, pieceN, menUnsN, menPcN, womenN, girlsKidN, slugN, explicitN, dualN, before: ps.length, after: out.length } };
 }
 
 module.exports = { cleanupProducts };

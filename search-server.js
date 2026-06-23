@@ -178,9 +178,9 @@ function handleSearch(u, res){
   try {
     const total = db.prepare(`SELECT count(*) c FROM products p ${whereSql}`).get(...args).c;
     const rows = db.prepare(
-      `SELECT p.b,p.t,p.u,p.img,p.pkr,p.cat,p.sz,p.sale,p.pub,p.bdt FROM products p ${whereSql} ORDER BY ${orderBy} LIMIT ? OFFSET ?`
+      `SELECT p.b,p.t,p.u,p.img,p.pkr,p.cat,p.sz,p.sale,p.pub,p.bdt,p.dual,p.altform,p.altbdt FROM products p ${whereSql} ORDER BY ${orderBy} LIMIT ? OFFSET ?`
     ).all(...args, pageSize, page * pageSize);
-    const products = rows.map(r => ({ b: r.b, t: r.t, u: r.u, img: r.img, pkr: r.pkr, cat: r.cat, sz: JSON.parse(r.sz || '[]'), sale: r.sale ? 1 : 0, pub: r.pub, bdt: r.bdt }));
+    const products = rows.map(r => ({ b: r.b, t: r.t, u: r.u, img: r.img, pkr: r.pkr, cat: r.cat, sz: JSON.parse(r.sz || '[]'), sale: r.sale ? 1 : 0, pub: r.pub, bdt: r.bdt, dual: r.dual ? 1 : 0, altform: r.altform || '', altbdt: r.altbdt || 0 }));
     send(res, 200, { total, page, pageSize, pages: Math.ceil(total / pageSize), products });
   } catch (e) { send(res, 400, { error: e.message }); }
 }

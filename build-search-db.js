@@ -161,17 +161,19 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
       id INTEGER PRIMARY KEY,
       b TEXT, t TEXT, u TEXT, img TEXT,
       pkr INTEGER, cat TEXT, sz TEXT, sale INTEGER, pub INTEGER,
-      bdt INTEGER, gender TEXT, ord INTEGER
+      bdt INTEGER, gender TEXT, ord INTEGER,
+      dual INTEGER, altform TEXT, altbdt INTEGER
     );
   `);
-  const ins = db.prepare(`INSERT INTO products (b,t,u,img,pkr,cat,sz,sale,pub,bdt,gender,ord)
-    VALUES (@b,@t,@u,@img,@pkr,@cat,@sz,@sale,@pub,@bdt,@gender,@ord)`);
+  const ins = db.prepare(`INSERT INTO products (b,t,u,img,pkr,cat,sz,sale,pub,bdt,gender,ord,dual,altform,altbdt)
+    VALUES (@b,@t,@u,@img,@pkr,@cat,@sz,@sale,@pub,@bdt,@gender,@ord,@dual,@altform,@altbdt)`);
   const tx = db.transaction(list => {
     list.forEach((p, i) => ins.run({
       b: p.b || '', t: p.t || '', u: p.u || '', img: p.img || '',
       pkr: p.pkr | 0, cat: p.cat || '', sz: JSON.stringify(p.sz || []),
       sale: p.sale ? 1 : 0, pub: p.pub | 0,
       bdt: landed(p.pkr, p.cat), gender: genderOf(p.cat), ord: i,
+      dual: p.dual ? 1 : 0, altform: p.altform || '', altbdt: (p.dual ? landed(p.altpkr | 0, p.altcat || '') : 0),
     }));
   });
   tx(products);
