@@ -3998,6 +3998,7 @@
   let PS_CATALOG = null, psLoaded = false, psLoading = false;
   let psSel = { prices:new Set(), cats:new Set(), brands:new Set() };
   let psFiltered = [], psPage = 0, psSort = '';   // '' | 'asc' | 'desc' — ৳ price sort (combines with the Sale/New filters)
+  let _psNavDir = 0;   // +1 = going forward (next page), -1 = back, 0 = no page-turn animation
   let psSaleOnly = false;                          // Sale filter: show only discounted items
   let psNewOnly = false;                           // New filter: newest NON-sale items (⇄ Sale; the ৳ price sort orders within)
 
@@ -5211,6 +5212,26 @@
     </div>`;
   }
 
+  // Slide the product grid in after a page-turn. Called immediately after grid.innerHTML
+  // is set — positions the grid off-screen to the incoming side, then transitions it
+  // to centre. Only fires when _psNavDir is non-zero (i.e. set by psGo).
+  function _psAnimateIn(){
+    if(_psNavDir === 0) return;
+    const dir = _psNavDir; _psNavDir = 0;
+    const grid = document.getElementById('psGrid');
+    if(!grid) return;
+    grid.style.transition = 'none';
+    grid.style.transform  = dir > 0 ? 'translateX(28px)' : 'translateX(-28px)';
+    grid.style.opacity    = '0';
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        grid.style.transition = 'transform 0.22s ease-out, opacity 0.22s ease-out';
+        grid.style.transform  = '';
+        grid.style.opacity    = '';
+      });
+    });
+  }
+
   function psRender(){
     const grid = document.getElementById('psGrid');
     const empty = document.getElementById('psEmpty');
@@ -5222,6 +5243,7 @@
       if(!psFiltered.length){ grid.innerHTML = ''; empty.style.display = total ? 'none' : ''; document.getElementById('psPager').innerHTML = ''; return; }
       empty.style.display = 'none';
       grid.innerHTML = psFiltered.map((p,i) => psCard(p, i)).join('');   // page-relative idx — psAdd/psDetail index psFiltered
+      _psAnimateIn();
       document.getElementById('psPager').innerHTML = psPagerHtml(Math.max(1, Math.ceil(total / psPageSize())));
       psSwipeHintMaybe();
       return;
@@ -5235,6 +5257,7 @@
     if(psPage >= pages) psPage = pages - 1;
     const start = psPage * ps;
     grid.innerHTML = psFiltered.slice(start, start + ps).map((p,i) => psCard(p, start + i)).join('');
+    _psAnimateIn();
     document.getElementById('psPager').innerHTML = psPagerHtml(pages);
     psSwipeHintMaybe();
   }
@@ -5248,7 +5271,22 @@
   }
   // Next/Prev: scroll to the RESULTS (not the page top) so the buyer keeps seeing
   // products instead of being thrown back up to the filters every time.
-  function psGo(d){ psPage += d; if(psPage < 0) psPage = 0; if(psApiMode) psApiFetch(); else psRender(); psScrollToResults(); }
+  function psGo(d){
+    psPage += d; if(psPage < 0) psPage = 0;
+    _psNavDir = d;
+    const grid = document.getElementById('psGrid');
+    if(grid){
+      grid.style.transition = 'transform 0.18s ease-in, opacity 0.18s ease-in';
+      grid.style.transform  = d > 0 ? 'translateX(-28px)' : 'translateX(28px)';
+      grid.style.opacity    = '0';
+      grid.style.pointerEvents = 'none';
+    }
+    setTimeout(function(){
+      if(grid) grid.style.pointerEvents = '';
+      if(psApiMode) psApiFetch(); else psRender();
+    }, 190);
+    psScrollToResults();
+  }
   function psJump(v){ psPage = parseInt(v, 10) || 0; if(psApiMode) psApiFetch(); else psRender(); psScrollToResults(); }
   function psScrollToResults(){ const g=document.getElementById('psCount'); if(g) window.scrollTo({top: g.getBoundingClientRect().top + window.scrollY - 64, behavior:'smooth'}); }
   // Swipe LEFT on the product grid → next page, swipe RIGHT → previous (alongside the

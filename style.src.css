@@ -742,7 +742,7 @@
     .ps-morebrands{text-align:center;margin-top:18px;padding-top:14px;border-top:1px solid var(--bdr)}
     .ps-morebrands a{color:var(--gold);font-weight:700;font-size:0.86rem;text-decoration:none}
     .ps-morebrands a:hover{text-decoration:underline}
-    .ps-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .ps-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;will-change:transform,opacity}
     @keyframes psSwipeNudge{0%,100%{transform:translateX(0)}15%{transform:translateX(-22px)}30%{transform:translateX(0)}45%{transform:translateX(-13px)}60%{transform:translateX(0)}}
     .ps-grid.ps-swipenudge{animation:psSwipeNudge 1.5s ease-in-out}
     #psSwipeCue{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:rgba(11,38,28,0.92);color:#E0C27E;font-size:0.82rem;font-weight:700;padding:8px 16px;border-radius:22px;z-index:60;pointer-events:none;white-space:nowrap;opacity:0;transition:opacity .35s;box-shadow:0 4px 16px rgba(0,0,0,0.28)}
