@@ -13,6 +13,28 @@ Naming scheme going forward: `<short-name>-stable-YYYYMMDD` (tag) + a "Stage N" 
 
 ---
 
+## Stage 1 restore points — per-subsystem rollback (set 2026-06-23)
+
+Independent "go back to stage 1" anchors for the LAAM/Aarong-inspired UX redesign. Each is a
+git tag at commit `626bdb5` — the live state on 2026-06-23 (build 23l / psb-v27, which already
+includes the Browse Brands featured-star marker). Say **"go back to stage 1 for &lt;area&gt;"**
+and only that area is reverted to its tag; the other areas keep their newer changes.
+
+| Area | Say | Tag |
+|---|---|---|
+| Browse Products | "go back to stage 1 for browsing products" | `browse-products-stage1-20260623` |
+| Browse Brands | "go back to stage 1 for browsing brands" | `browse-brands-stage1-20260623` |
+| Order form + Cart | "go back to stage 1 for the order form / cart" | `orderform-cart-stage1-20260623` |
+
+Mechanism: every redesign change ships as its own clearly-labelled commit per area, so reverting
+one area = `git revert` its commit(s) back to the tag while the others stay untouched.
+
+- 2026-06-23 build 23m / psb-v28 — **Order form + Cart: image-led** (product photo + title on the
+  draft card and cart line, brand-monogram fallback). Revert this commit to return order-form/cart
+  to Stage 1.
+
+---
+
 ## Stage 9 — Catalog-Accuracy Stable  ·  tag `catalog-accuracy-stable-20260622`  ·  2026-06-22
 **Category accuracy, VPS fully deployed, security hardened.**
 - **Kids eastern routing**: `kidsCatFor()` now recognises `\beastern\b` keyword directly; thobe/jhuba

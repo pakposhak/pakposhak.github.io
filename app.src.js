@@ -1076,6 +1076,17 @@
       clearTimeout(tid);
       } // end if(!isSfcc) — SFCC path above already populated `product`
       if(!product) throw new Error('empty');
+      // Image-led card + cart: capture the product photo + title once the live fetch resolves.
+      try{
+        const _pimg = product.featured_image
+          || (Array.isArray(product.images) && product.images[0] && (product.images[0].src || product.images[0]))
+          || product.image || '';
+        if(drafts[id]){
+          if(typeof _pimg === 'string' && _pimg) drafts[id].img = _pimg;
+          if(product.title) drafts[id].title = product.title;
+          fillDraftPreview(id);
+        }
+      }catch(e){}
       // .js endpoint reports money in paisa (×100); .json uses decimal strings
       const moneyOf = v0 => hasStockInfo ? (parseFloat(v0)||0)/100 : (parseFloat(v0)||0);
 
@@ -1407,18 +1418,32 @@
     }
   }
 
+  // Surface the captured product photo + title onto the draft card (image-led confirmation).
+  function fillDraftPreview(id){
+    const d = drafts[id]; if(!d) return;
+    if(d.img){ const img = document.getElementById(`dc_img_${id}`); if(img && img.getAttribute('src') !== d.img) img.src = d.img; }
+    if(d.title){ const t = document.getElementById(`dc_title_${id}`); if(t){ t.textContent = d.title; t.style.display = ''; } }
+  }
   function buildDraftCard(id, url, brand, isPk){
     const pkBadge = isPk
       ? `<span class="draft-badge-pk">🟢 PKR auto</span>`
       : `<span class="draft-badge-com">💵 Check currency</span>`;
+    const _mono = esc(((brand || '?').trim()[0] || '?').toUpperCase());
     return `<div class="draft-card" id="dc_${id}" data-url="${esc(url)}" data-brand="${esc(brand)}">
       <div class="draft-card-hdr">
+        <div class="dc-thumb-wrap">
+          <div class="dc-thumb dc-mono" id="dc_imgmono_${id}">${_mono}</div>
+          <img class="dc-thumb dc-img" id="dc_img_${id}" alt="" hidden
+               onload="this.hidden=false;var m=document.getElementById('dc_imgmono_${id}');if(m)m.style.display='none'"
+               onerror="this.remove()">
+        </div>
         <div style="flex:1;min-width:0">
-          <div class="url-text">${esc(url)}</div>
           <div class="badges">
             ${brand ? `<span class="draft-badge-brand">${esc(brand)}</span>` : ''}
             ${pkBadge}
           </div>
+          <div class="dc-title" id="dc_title_${id}" style="display:none"></div>
+          <div class="url-text">${esc(url)}</div>
         </div>
         <button class="draft-remove" onclick="removeDraft(${id})" title="Remove this URL">✕</button>
       </div>
@@ -3197,7 +3222,7 @@
         }
         return { size: rw.size, qty: rw.qty, pkr: rp };
       });
-      cart.push({ url, brand, cat, sizes, pkr, weight: getWeight(cat) });
+      cart.push({ url, brand, cat, sizes, pkr, weight: getWeight(cat), img: (dft && dft.img) || '', title: (dft && dft.title) || '' });
     });
     // Clear all drafts
     ids.forEach(id => { document.getElementById(`dc_${id}`)?.remove(); delete drafts[id]; });
@@ -3308,6 +3333,9 @@
     drafts[id] = { currency: 'PKR', sizeCounter: 0, catFetchDone: true, catUserSet: true, catPickerOpen: false };
     document.getElementById('draftsContainer').style.display = '';
     document.getElementById('draftCards').insertAdjacentHTML('beforeend', buildDraftCard(id, item.url, item.brand, isPk));
+    if(item.img) drafts[id].img = item.img;
+    if(item.title) drafts[id].title = item.title;
+    fillDraftPreview(id);
 
     // Add a clear "editing" banner so the user knows this is their item being edited
     const card = document.getElementById(`dc_${id}`);
@@ -3396,11 +3424,15 @@
         : `<div class="item-price">PKR ${item.pkr.toLocaleString()} <span style="font-size:0.68rem;font-weight:400;color:var(--txt-muted)">each</span></div>
            <div class="item-bdt">≈ ৳${Math.round(item.pkr * r.CONV_RATE).toLocaleString()} each</div>`;
 
+      const _cmono = esc(((item.brand||'?').trim()[0] || '?').toUpperCase());
       html += `<div class="cart-item">
-        <div class="item-num">#${i+1}</div>
+        <div class="ci-thumb-wrap">
+          <div class="dc-thumb dc-mono">${_cmono}</div>
+          ${item.img ? `<img class="dc-thumb dc-img" src="${esc(item.img)}" alt="" loading="lazy" onload="this.previousElementSibling.style.display='none'" onerror="this.remove()">` : ''}
+        </div>
         <div class="item-info">
-          <div class="item-brand">${esc(item.brand)}</div>
-          <div class="item-url">${esc(item.url)}</div>
+          <div class="ci-head"><span class="item-brand">${esc(item.brand)}</span><span class="item-num-inline">#${i+1}</span></div>
+          ${item.title ? `<div class="item-title">${esc(item.title)}</div>` : `<div class="item-url">${esc(item.url)}</div>`}
           <div class="item-tags">
             <span class="item-tag">${esc(catTag)}</span>
             ${sizeTags}
@@ -6050,7 +6082,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-23l';
+  const PSB_BUILD = '2026-06-23m';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
