@@ -183,11 +183,7 @@
   <div id="tabProducts">
     <div class="ps-wrap">
       <aside class="ps-rail">
-        <div class="ps-searchblock ps-search-mobile">
-          <input id="psSearchMobile" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSearchInput(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search 50,000+ products, 140+ Pakistani brands"/>
-          <div class="ps-search-hint" id="psSearchHintM"></div>
-        </div>
-        <!-- One-row filters (req): Categories + Brands as side-by-side dropdown pills; tapping drops a full-width panel under the row (mirrors the Price-Filters popover). Pick either or both. -->
+        <!-- One-row filters: Categories + Brands dropdown pills. Scrolls away on mobile — search bar is in the sticky zone below. -->
         <div class="ps-filtrow">
           <button type="button" class="ps-filtbtn" id="psCatBtn" onclick="psToggleFiltPop('cat')" aria-haspopup="true" aria-expanded="false"><span data-i18n="ps_category_short">Categories</span> <span class="ps-filt-n" id="psCatCount"></span><span class="ps-filtcar">▾</span></button>
           <button type="button" class="ps-filtbtn" id="psBrandBtn" onclick="psToggleFiltPop('brand')" aria-haspopup="true" aria-expanded="false"><span data-i18n="ps_brands">Brands</span> <span class="ps-filt-n" id="psBrandCount"></span><span class="ps-filtcar">▾</span></button>
@@ -196,7 +192,14 @@
         </div>
       </aside>
       <section class="ps-results">
-        <!-- Count + compact Price popover + Clear all share one row, just above the grid -->
+        <!-- Sticky zone (mobile): slim search + filter row. Locks at viewport top while scrolling;
+             releases naturally when scrolling back up, revealing branding, tabs and category pills.
+             Desktop: position:static — sidebar handles navigation. -->
+        <div class="ps-sticky-zone">
+        <div class="ps-searchblock ps-search-mobile">
+          <input id="psSearchMobile" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSearchInput(this.value)" data-i18n-ph="ps_search_ph" placeholder="Search 50,000+ products, 140+ Pakistani brands"/>
+          <div class="ps-search-hint" id="psSearchHintM"></div>
+        </div>
         <div class="ps-resbar">
           <span id="psCount"></span>
           <span class="ps-resbar-tools">
@@ -211,6 +214,7 @@
             <span class="ps-search-hint" id="psSearchHintD"></span>
           </span>
           <div class="ps-sortrow" id="psSortTabs"></div>
+        </div>
         </div>
         <div class="ps-grid" id="psGrid"></div>
         <div class="ps-empty" id="psEmpty" style="display:none" data-i18n="ps_empty">No products match these filters — try widening them.</div>

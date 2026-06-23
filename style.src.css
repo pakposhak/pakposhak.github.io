@@ -712,11 +712,15 @@
     .ps-bdept[open]>summary{color:var(--gold)}
     .ps-brand-chk input{accent-color:var(--gold);width:15px;height:15px;flex-shrink:0}
     .ps-clear{width:100%;padding:8px;background:none;border:1.5px solid var(--bdr-med);border-radius:8px;color:var(--txt-muted);font-weight:600;font-size:0.78rem;cursor:pointer;font-family:inherit}
-    .ps-resbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;font-size:0.8rem;color:var(--txt-muted);margin-bottom:4px;font-weight:600;min-height:22px;position:sticky;top:0;z-index:15;background:var(--bg);padding:5px 0 2px;box-shadow:0 2px 8px rgba(0,0,0,0.07)}
+    .ps-sticky-zone{position:sticky;top:0;z-index:15;background:var(--bg);padding:5px 0 4px;box-shadow:0 2px 8px rgba(0,0,0,0.07)}
+    .ps-sticky-zone .ps-searchblock{margin-bottom:3px;padding-top:0}
+    .ps-sticky-zone .ps-smartsearch{padding:7px 12px;font-size:0.82rem;border-width:1.5px;border-radius:9px;box-shadow:none}
+    .ps-resbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;font-size:0.8rem;color:var(--txt-muted);margin-bottom:4px;font-weight:600;min-height:22px}
     /* Sort/filter chip row beneath the count: price-sorts (left, "Sort") | Sale+New (right, "Filter") */
     .ps-sortrow{display:flex;flex-basis:100%;justify-content:space-between;align-items:center;gap:10px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;border-top:1px solid var(--bdr);padding:5px 0 1px;margin-bottom:5px}
     .ps-sortrow::-webkit-scrollbar{display:none}
     .ps-sortgrp{display:flex;align-items:center;gap:6px;flex-shrink:0}
+    .ps-sortgrp + .ps-sortgrp{padding-left:14px;border-left:1.5px solid var(--bdr-med)}
     .ps-grouplbl{font-size:0.58rem;letter-spacing:0.5px;color:var(--txt-muted);font-weight:700;text-transform:uppercase;opacity:0.85;margin-right:1px}
     .ps-sortbtn{padding:4px 10px;border:1.5px solid var(--gold-bdr);border-radius:13px;background:var(--gold-dim);color:var(--gold);font-size:0.68rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0}
     .ps-sortbtn.on{background:var(--gold);color:#12122a;border-color:var(--gold)}
@@ -818,7 +822,8 @@
       .ps-search-desktop .ps-smartsearch{width:100%}
       /* Resbar (desktop, req): ROW 1 = product count + the search bar (extended to fill the row);
          ROW 2 = Price Filters + Clear Filters (wrapped below). */
-      .ps-resbar{align-items:center;flex-wrap:wrap;justify-content:flex-start;row-gap:10px;position:static;box-shadow:none;padding:0;background:transparent}
+      .ps-sticky-zone{position:static;box-shadow:none;padding:0}
+      .ps-resbar{align-items:center;flex-wrap:wrap;justify-content:flex-start;row-gap:10px}
       #psCount{order:1;flex:0 0 auto}
       .ps-search-desktop{order:2;flex:1 1 auto;margin-left:18px}
       .ps-resbar::after{content:"";order:3;flex:0 0 100%;height:0}   /* row break: all filters drop to row 2 together */
