@@ -895,8 +895,37 @@
           // this draft holds the FIRST piece; spawn a separate draft per extra
           // piece so the buyer gets every piece of the article from one link.
           if(!presetMember && rj.isSet && Array.isArray(rj.members) && rj.members.length > 1){
-            const extras = rj.members.slice(1);
-            setTimeout(() => extras.forEach(mem => createDraft(url, mem)), 0);
+            // DUAL stitched/unstitched article (e.g. Khaadi fabrics-*): the SAME garment
+            // sold as a FABRIC member (size "3PC"/"FABRIC", cheaper) AND a TAILORED member
+            // with real garment sizes (XS/S/M/L, pricier). Keep ONE draft + a Stitched|
+            // Unstitched toggle. A normal multi-PIECE set (kurta + matching trouser) still
+            // splits into one draft per piece.
+            const FABRIC_SZ = /^\s*(\d\s?(pc|pcs|piece|pieces)\b|fabric|unstitch)/i;
+            const memFabric = m => Array.isArray(m.sizes) && m.sizes.length && m.sizes.every(s => FABRIC_SZ.test(s.size||''));
+            const memReal   = m => Array.isArray(m.sizes) && m.sizes.some(s => normSizeFull(s.size));
+            const fabM = rj.members.find(memFabric), stchM = rj.members.find(memReal);
+            if(rj.members.length === 2 && fabM && stchM && fabM !== stchM){
+              const d = drafts[id];
+              if(d){
+                const _bc = (document.getElementById(`dc_cat_${id}`)||{}).value || '';
+                const unsCat = UNSTITCHED_CATS.has(_bc) ? _bc : 'lawn_3pc_unstitch';
+                d.forms   = { unstitched: fabM, stitched: stchM };
+                d.formCat = { unstitched: unsCat, stitched: (unsCat === 'unstitch_3pc_emb' ? 'pret_3pc_emb' : 'pret_3pc') };
+                d.form    = 'stitched';   // DEFAULT to the STITCHED form (Danish 2026-06-23)
+                // render the default (stitched) member: re-synthesize `product` from it so the pipeline
+                // below shows its sizes + price (members[0] is the cheaper fabric form, not the default).
+                { const _sz = Array.isArray(stchM.sizes) ? stchM.sizes : [], _pa = Math.round(stchM.price * 100);
+                  product = { title: stchM.title || rj.title || '', product_type: '',
+                    options: _sz.length ? [{ name:'Size', values: _sz.map(s=>s.size) }] : [],
+                    variants: _sz.length ? _sz.map(s => ({ option1:s.size, available:!!s.available, price:_pa, compare_at_price:null }))
+                                         : [{ available: stchM.available !== false, price:_pa, compare_at_price:null }] }; }
+                setDraftCat(id, d.formCat.stitched); d.catUserSet = true;   // LOCK the stitched cat against the pipeline's catalog-override (~1116) / flip
+                renderFormToggle(id);
+              }
+            } else {
+              const extras = rj.members.slice(1);
+              setTimeout(() => extras.forEach(mem => createDraft(url, mem)), 0);
+            }
           }
         }
         if(!product)
@@ -1409,6 +1438,7 @@
         <label style="font-size:0.76rem;font-weight:600;color:var(--txt-sec)">Sizes &amp; Quantities *
           <span id="dc_sz_note_${id}" style="font-weight:400;color:var(--txt-muted);font-size:0.67rem;margin-left:4px">(same price for all adult sizes)</span>
         </label>
+        <div id="dc_formtoggle_${id}" style="display:none;margin:6px 0 9px"></div>
         <div id="dc_sz_msg_${id}" style="font-size:0.78rem;color:var(--txt-muted);padding:4px 0">
           ← Select a category first
         </div>
@@ -1446,7 +1476,7 @@
     const _cdHost = new URL(url).hostname;
     const isPk  = /\.(pk|com\.pk)(\/|$)/.test(_cdHost + '/') || _cdHost === 'pk.ethnc.com';
     const id    = draftIdCtr++;
-    drafts[id]  = { currency: 'PKR', sizeCounter: 0, catFetchDone: false, catUserSet: false, catPickerOpen: false };
+    drafts[id]  = { url: url, currency: 'PKR', sizeCounter: 0, catFetchDone: false, catUserSet: false, catPickerOpen: false };
     document.getElementById('draftCards')
       .insertAdjacentHTML('beforeend', buildDraftCard(id, url, brand, isPk));
 
@@ -1527,6 +1557,31 @@
     const hid = document.getElementById(`dc_cat_${id}`);
     if(hid) hid.value = cat || '';
     onDraftCatChange(id);
+  }
+
+  // ── DUAL stitched/unstitched articles (Khaadi fabrics-* etc.) ─────────────────
+  // Some brands sell the SAME garment in two forms on one listing. The relay returns
+  // both as a 2-member set; we keep ONE draft and let the buyer pick the form here.
+  function renderFormToggle(id){
+    const ft = document.getElementById(`dc_formtoggle_${id}`), d = drafts[id];
+    if(!ft || !d || !d.forms) return;
+    ft.innerHTML = '<div style="font-size:0.71rem;color:var(--txt-muted);margin-bottom:5px">📐 Sold in two forms — tap one (price &amp; size change):</div>'
+      + '<div class="currency-toggle" style="display:inline-flex">'
+      + `<button type="button" id="dc_formU_${id}" class="${d.form==='unstitched'?'active':''}" onclick="setDraftForm(${id},'unstitched')">Unstitched · fabric</button>`
+      + `<button type="button" id="dc_formS_${id}" class="${d.form==='stitched'?'active':''}" onclick="setDraftForm(${id},'stitched')">Stitched · pick size</button>`
+      + '</div>';
+    ft.style.display = '';
+  }
+  function setDraftForm(id, form){
+    const d = drafts[id];
+    if(!d || !d.forms || !d.forms[form] || d.form === form) return;
+    d.form = form;
+    setDraftCat(id, form === 'stitched' ? d.formCat.stitched : d.formCat.unstitched);   // set the form's cat (also clears the size box via onDraftCatChange)
+    d.catUserSet = true;   // LOCK it so the pipeline's catalog-override / flip can't revert it
+    fetchProductData(id, d.url, d.forms[form]);   // re-render size + price from that member (presetMember = no network)
+    const ub = document.getElementById(`dc_formU_${id}`), sb = document.getElementById(`dc_formS_${id}`);
+    if(ub) ub.classList.toggle('active', form === 'unstitched');
+    if(sb) sb.classList.toggle('active', form === 'stitched');
   }
 
   // Show the auto-detected chip when a category is set; reveal the 3-gender
@@ -5756,7 +5811,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-23e';
+  const PSB_BUILD = '2026-06-23f';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
