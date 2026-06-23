@@ -393,6 +393,7 @@
       .hiw-desktop{display:none}
       .hiw-mobile{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;min-width:0}
       .hiw-mobile .hiw-video,.hiw-mobile .hiw-guide{margin-left:0}
+      body.psb-browse #appHeader{position:relative;z-index:auto}
       /* The 1·2·3·4 step indicator moves into the fixed bottom bar on mobile.
          !important: the base .steps-bar rule appears LATER in source, so it would
          otherwise win on equal specificity and keep the top stepper visible. */
@@ -594,8 +595,8 @@
     .ps-note{font-size:0.76rem;color:var(--txt-sec);background:var(--gold-dim);border:1px solid var(--gold-bdr);border-radius:9px;padding:8px 12px;margin-bottom:12px;line-height:1.5}
     .ps-note a{color:var(--gold);font-weight:700;text-decoration:none}
     /* One-row Categories + Brands filter pills with a full-width floating popover under the row (mirrors the Price-Filters popover; themed light+dark). Buyer picks categories, brands, or both. */
-    .ps-filtrow{position:relative;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
-    .ps-filtbtn{flex:1 1 120px;min-width:0;display:flex;align-items:center;gap:7px;padding:11px 13px;border:1.5px solid var(--bdr-med);border-radius:10px;background:var(--input-bg);color:var(--txt);font-size:0.85rem;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap}
+    .ps-filtrow{position:relative;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
+    .ps-filtbtn{flex:1 1 120px;min-width:0;display:flex;align-items:center;gap:7px;padding:7px 11px;border:1.5px solid var(--bdr-med);border-radius:10px;background:var(--input-bg);color:var(--txt);font-size:0.85rem;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap}
     .ps-filtbtn.on{border-color:var(--gold-bdr2);color:var(--gold);background:var(--gold-dim)}
     .ps-filtcar{margin-left:auto;font-size:0.98rem;line-height:1;color:var(--txt-muted)}
     .ps-filtbtn[aria-expanded="true"] .ps-filtcar{color:var(--gold)}
