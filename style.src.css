@@ -248,7 +248,7 @@
     .remember-row{display:flex;align-items:center;gap:8px;margin-top:4px;font-size:0.8rem;color:var(--txt-sec)}
     .remember-row input[type=checkbox]{width:15px;height:15px;cursor:pointer;accent-color:var(--gold)}
 
-    .container{max-width:700px;margin:0 auto;padding:8px 14px 70px}
+    .container{max-width:700px;margin:0 auto;padding:8px 10px 70px}
 
     .section-label{font-size:0.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
       color:var(--gold);margin:28px 0 12px;border-bottom:1px solid var(--bdr-med);padding-bottom:6px}
@@ -353,7 +353,7 @@
          widen its OWN container to ≤1440px so the product grid, the tabs, AND every section below
          the product pics share one full width. Steps 2/3/4 keep their own 980px container so the
          contact/review/payment forms stay readable. The product grid still shows 4 per row. */
-      #step1 > .container{max-width:min(1440px,96vw);padding-left:10px;padding-right:10px}
+      #step1 > .container{max-width:min(1440px,96vw)}
       /* Browse-Brands search: centered + larger on desktop (req). ID/scoped selectors so these
          win over the base .bb-* rules that appear LATER in the stylesheet (equal specificity). */
       #bbProduct .bb-smartwrap, #bbProduct .bb-prod-sub{max-width:1040px;margin-left:auto;margin-right:auto}
@@ -398,6 +398,9 @@
          !important: the base .steps-bar rule appears LATER in source, so it would
          otherwise win on equal specificity and keep the top stepper visible. */
       .steps-bar{display:none !important}
+      /* Browse Products mobile: tighter spacing under filter pills */
+      .ps-rail{margin-bottom:3px}
+      .ps-rail .ps-filtrow{margin-bottom:0}
     }
     .show-more-btn{font-size:0.75rem;color:var(--gold);background:none;border:none;cursor:pointer;font-weight:600;padding:4px 0;text-decoration:underline}
 
@@ -579,7 +582,6 @@
     .browse-tab.on{background:#137a72;color:#fff;border-color:#137a72}
     /* ── Product search page ── */
     .ps-wrap{display:block}
-    .ps-rail{background:var(--surface);border:1px solid var(--bdr-med);border-radius:12px;padding:8px 14px 8px;margin-bottom:8px}
     .ps-rail-head{font-size:0.8rem;font-weight:800;color:var(--txt);margin-bottom:11px;padding-bottom:9px;border-bottom:1px solid var(--bdr)}
     .ps-fblock{margin-bottom:10px}
     .ps-rail .ps-fblock:last-child{margin-bottom:0}
@@ -814,7 +816,7 @@
     .ps-d-more:hover{background:var(--gold-dim)}
     @media (min-width:820px){
       .ps-wrap{display:flex;gap:18px;align-items:flex-start}
-      .ps-rail{width:212px;flex-shrink:0;margin-bottom:0;position:sticky;top:12px}
+      .ps-rail{background:var(--surface);border:1px solid var(--bdr-med);border-radius:12px;padding:8px 14px;width:212px;flex-shrink:0;margin-bottom:0;position:sticky;top:12px}
       .ps-results{flex:1;min-width:0}
       .ps-grid{grid-template-columns:repeat(4,1fr)}
       .ps-price{grid-template-columns:repeat(2,1fr)}   /* narrow rail → 2 per row */
