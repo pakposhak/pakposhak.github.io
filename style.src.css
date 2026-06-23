@@ -712,9 +712,9 @@
     .ps-bdept[open]>summary{color:var(--gold)}
     .ps-brand-chk input{accent-color:var(--gold);width:15px;height:15px;flex-shrink:0}
     .ps-clear{width:100%;padding:8px;background:none;border:1.5px solid var(--bdr-med);border-radius:8px;color:var(--txt-muted);font-weight:600;font-size:0.78rem;cursor:pointer;font-family:inherit}
-    .ps-resbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;font-size:0.8rem;color:var(--txt-muted);margin-bottom:8px;font-weight:600;min-height:22px}
+    .ps-resbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;font-size:0.8rem;color:var(--txt-muted);margin-bottom:4px;font-weight:600;min-height:22px;position:sticky;top:0;z-index:15;background:var(--bg);padding:5px 0 2px;box-shadow:0 2px 8px rgba(0,0,0,0.07)}
     /* Sort/filter chip row beneath the count: price-sorts (left, "Sort") | Sale+New (right, "Filter") */
-    .ps-sortrow{display:flex;flex-basis:100%;justify-content:space-between;align-items:center;gap:10px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;border-top:1px solid var(--bdr);padding:9px 0 2px;margin-bottom:11px}
+    .ps-sortrow{display:flex;flex-basis:100%;justify-content:space-between;align-items:center;gap:10px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;border-top:1px solid var(--bdr);padding:5px 0 1px;margin-bottom:5px}
     .ps-sortrow::-webkit-scrollbar{display:none}
     .ps-sortgrp{display:flex;align-items:center;gap:6px;flex-shrink:0}
     .ps-grouplbl{font-size:0.58rem;letter-spacing:0.5px;color:var(--txt-muted);font-weight:700;text-transform:uppercase;opacity:0.85;margin-right:1px}
@@ -743,8 +743,10 @@
     .ps-morebrands a{color:var(--gold);font-weight:700;font-size:0.86rem;text-decoration:none}
     .ps-morebrands a:hover{text-decoration:underline}
     .ps-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;will-change:transform,opacity}
-    /* Clip slide-in/out on mobile so the 80px shift doesn't create a horizontal scrollbar */
-    #tabProducts .ps-results{overflow-x:hidden}
+    /* Clip slide-in/out on mobile so the 80px shift doesn't create a horizontal scrollbar.
+       overflow-x:clip (not hidden) so position:sticky on .ps-resbar still works — clip
+       paints outside the box without creating a scroll container. */
+    #tabProducts .ps-results{overflow-x:clip}
     @keyframes psSwipeNudge{0%,100%{transform:translateX(0)}15%{transform:translateX(-22px)}30%{transform:translateX(0)}45%{transform:translateX(-13px)}60%{transform:translateX(0)}}
     .ps-grid.ps-swipenudge{animation:psSwipeNudge 1.5s ease-in-out}
     #psSwipeCue{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:rgba(11,38,28,0.92);color:#E0C27E;font-size:0.82rem;font-weight:700;padding:8px 16px;border-radius:22px;z-index:60;pointer-events:none;white-space:nowrap;opacity:0;transition:opacity .35s;box-shadow:0 4px 16px rgba(0,0,0,0.28)}
@@ -816,7 +818,7 @@
       .ps-search-desktop .ps-smartsearch{width:100%}
       /* Resbar (desktop, req): ROW 1 = product count + the search bar (extended to fill the row);
          ROW 2 = Price Filters + Clear Filters (wrapped below). */
-      .ps-resbar{align-items:center;flex-wrap:wrap;justify-content:flex-start;row-gap:10px}
+      .ps-resbar{align-items:center;flex-wrap:wrap;justify-content:flex-start;row-gap:10px;position:static;box-shadow:none;padding:0;background:transparent}
       #psCount{order:1;flex:0 0 auto}
       .ps-search-desktop{order:2;flex:1 1 auto;margin-left:18px}
       .ps-resbar::after{content:"";order:3;flex:0 0 100%;height:0}   /* row break: all filters drop to row 2 together */
