@@ -560,6 +560,20 @@ function cleanupProducts(ps) {
         && !/\b[2-9] ?pcs?\b|\b[2-9] ?pieces?\b|\b[2-9]-piece\b|co-?ord|\bset\b|dupatta|\bbottoms?\b|\btrousers?\b|\bshalwar\b|\bpajama\b|\bpyjama\b|palazzo|pallazzo|pallazo|plazzo|plazo|palazo|\bpants?\b/i.test(p.t||'')) {
       p.cat = 'kurti_1pc'; pieceN++; out.push(p); continue;
     }
+    // same for UNSTITCHED 3pc/2pc fabric cats: an explicit "1 PC / 1 Piece" unstitched item is
+    // 1-piece SHIRT fabric → kurti_1pc_unstitch (Asim Jofa "… LAWN 1 PC", Gul Ahmed/Sitara/Bonanza).
+    if (/^(lawn_3pc_unstitch|unstitch_3pc_emb|winter_3pc_unstitch|winter_2pc_unstitch|shirt_dupatta_2pc_unstitch|shirt_trouser_2pc_unstitch)$/.test(p.cat)
+        && /\b1 ?pcs?\b|\b1 ?pieces?\b|\bone[\s-]?piece\b|\bsingle[\s-]?piece\b|\b1-piece\b/i.test(p.t||'')
+        && !/\b[2-9] ?pcs?\b|\b[2-9] ?pieces?\b|\b[2-9]-piece\b|co-?ord|\bset\b|dupatta|\bbottoms?\b|\btrousers?\b|\bshalwar\b|palazzo|plazzo/i.test(p.t||'')) {
+      p.cat = 'kurti_1pc_unstitch'; pieceN++; out.push(p); continue;
+    }
+    // a standalone men's BOTTOM (thermal bottom / tracksuit trouser / pajama) mis-shelved in a men's
+    // TOP cat → mens_trouser (Cambridge "THERMAL BOTTOM", Furor "Tracksuit Trousers"). Guard tops/suits.
+    if (/^(mens_shirt|mens_kurta|mens_shalwar_kameez)$/.test(p.cat)
+        && /\btrousers?\b|\bbottoms?\b|\bpants?\b|\btrackpants?\b|\bjoggers?\b/i.test(p.t||'')
+        && !/kurta|kameez|\bshirt\b|\bsuit\b|sherwani|waistcoat|\b[23] ?(pc|piece)|co-?ord|kurti|\bset\b/i.test(p.t||'')) {
+      p.cat = 'mens_trouser'; menPcN++; out.push(p); continue;
+    }
     // Engine is a WESTERN kids brand — its jersey "Top/Tee/Crew/Vest/Jegging" items mis-shelved in
     // kids eastern → western (Engine "Girls Top" flooded kids_girls_eastern).
     if (p.b==='Engine' && /^kids_(boys|girls)_eastern$/.test(p.cat) && /\btop\b|\btee\b|t-?shirt|\bcrew\b|tshirt|\bvest\b|jegging|legging|\bpolo\b/i.test(p.t||'') && !/kurta|kameez|shalwar|frock|kurti|dupatta/i.test(p.t||'')) { p.cat=p.cat.replace('_eastern','_western'); girlsKidN++; out.push(p); continue; }
