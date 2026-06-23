@@ -634,7 +634,10 @@
     .ps-cat-row.on{background:var(--gold);color:#12122a;font-weight:700}
     .ps-cat-all{font-weight:700;color:var(--txt);padding-left:12px}
     /* Unified smart search — one bar for brands + categories (concept words). */
-    .ps-searchblock{margin-bottom:8px}
+    .ps-searchblock{margin-bottom:8px;position:relative}
+    .ps-sug{display:none;position:absolute;left:0;right:0;top:calc(100% + 2px);z-index:40;background:var(--surface);border:1.5px solid var(--gold-bdr);border-radius:10px;box-shadow:0 6px 22px rgba(0,0,0,0.18);max-height:230px;overflow-y:auto;list-style:none;margin:0;padding:4px 0}
+    .ps-sug li{padding:9px 15px;font-size:0.88rem;color:var(--txt);cursor:pointer;user-select:none}
+    .ps-sug li:hover{background:var(--gold-dim);color:var(--gold);font-weight:700}
     /* Highlighted, easy-to-see smart search (req): heavy gold border + soft glow, bigger type. */
     .ps-smartsearch{width:100%;box-sizing:border-box;padding:14px 16px;border:2.5px solid var(--gold);border-radius:12px;background:var(--input-bg);color:var(--txt);font-size:0.95rem;font-weight:600;font-family:inherit;box-shadow:0 0 0 4px rgba(201,169,110,0.10)}
     /* Bold, gold placeholder so the example searches read clearly (req: bold + different colour). */

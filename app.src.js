@@ -2425,19 +2425,21 @@
      searches so the field visibly "keeps changing". Pauses while the field is
      focused/typed and when the tab is hidden. Every advertised term is a real,
      resolvable search (kurti/kaftan/lehenga/pret · ammi/abbu/wife · eid/festive…). */
-  const PS_PH_DWELL0 = 12500, PS_PH_DWELL = 7500;   // base sentence dwells 12.5s; the rest 7.5s each (halved)
+  const PS_PH_DWELL0 = 5000, PS_PH_DWELL = 5000;
   const PS_PH_TXT = {
     en: [
-      'Search 50,000+ products, 140+ Pakistani brands',
+      'Smartly Search 50,000+ products, 140+ Pakistani brands',
       'Try “kurti”, “kaftan”, “2 pcs pret”, “lehenga”',
       'Shop for “ammi”, “abbu”, “wife”, “boys 14”',
-      'Occasions: “bridal”, “eid”, “festive”, “formal”'
+      'Occasions: “bridal”, “eid”, “festive”, “formal”',
+      'Power Search: “Khaadi 3pc”, “Sapphire pret”, “Ethnc kurti”'
     ],
     bn: [
-      'খুঁজুন: ৫০,০০০+ পণ্য, ১৪০+ পাকিস্তানি ব্র্যান্ড',
+      'স্মার্টলি খুঁজুন: ৫০,০০০+ পণ্য, ১৪০+ পাকিস্তানি ব্র্যান্ড',
       'লিখুন “kurti”, “kaftan”, “2 pcs pret”, “lehenga”',
       'যার জন্য: “ammi”, “abbu”, “wife”, “boys 14”',
-      'অনুষ্ঠান: “bridal”, “eid”, “festive”, “formal”'
+      'অনুষ্ঠান: “bridal”, “eid”, “festive”, “formal”',
+      'Power Search: “Khaadi 3pc”, “Sapphire pret”, “Ethnc kurti”'
     ]
   };
   let _psPhRolls = [], _psPhIdx = 0, _psPhTimer = null, _psPhBound = false;
@@ -4304,8 +4306,9 @@
     ['kaftaan', ['kaftan','maxi_dress']],
     ['kaftan', ['kaftan','maxi_dress']],
     ['kalidar', ['maxi_dress','pret_3pc','kurti_1pc']],
-    ['kameez', ['mens_shalwar_kameez','kids_boys_eastern','kids_girls_eastern','mens_kurta']],
+    ['kameez', ['kurti_1pc','kurti_1pc_unstitch','shirt_dupatta_2pc','pret_3pc','lawn_3pc_unstitch','mens_shalwar_kameez','mens_kurta','kids_boys_eastern','kids_girls_eastern']],
     ['kameez shalwar', ['mens_shalwar_kameez']],
+    ['kamiz', ['kurti_1pc','kurti_1pc_unstitch','shirt_dupatta_2pc','pret_3pc','lawn_3pc_unstitch','mens_shalwar_kameez','mens_kurta','kids_boys_eastern','kids_girls_eastern']],
     ['karandi', ['winter_2pc_unstitch','winter_3pc_unstitch','kurti_1pc','shirt_dupatta_2pc','winter_2pc_stitch','winter_3pc_stitch','mens_unstitched','mens_kurta','mens_shalwar_kameez','kids_boys_eastern','kids_girls_eastern']],
     ['khadar', ['winter_2pc_stitch','winter_2pc_unstitch','winter_3pc_stitch','winter_3pc_unstitch','mens_unstitched','kids_boys_eastern']],
     ['khaddar', ['winter_2pc_unstitch','winter_3pc_unstitch','kurti_1pc','kurti_1pc_unstitch','shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','winter_2pc_stitch','winter_3pc_stitch','mens_unstitched','mens_kurta','mens_shalwar_kameez','kids_boys_eastern','kids_girls_eastern']],
@@ -4708,8 +4711,34 @@
     const a = document.getElementById('psSearchMobile'), b = document.getElementById('psSearchDesktop');
     if(a && a.value !== val) a.value = val;
     if(b && b.value !== val) b.value = val;
+    psSugUpdate(val);
     clearTimeout(_psSearchT);
     _psSearchT = setTimeout(() => psSmartSearch(val), 180);
+  }
+  // Auto-suggest: prefix-match typed text against all synonym keys from the dictionary.
+  const PS_SUGGEST = PS_CAT_SYNONYMS.map(([kw]) => kw).filter(kw => kw.length >= 2).sort();
+  function psSugShow(id, terms){
+    const el = document.getElementById(id);
+    if(!el) return;
+    if(!terms.length){ el.innerHTML = ''; el.style.display = 'none'; return; }
+    el.innerHTML = terms.map(t => `<li onmousedown="psSugPick(event,'${t.replace(/'/g,"\\'")}')">${esc(t)}</li>`).join('');
+    el.style.display = 'block';
+  }
+  function psSugPick(e, term){ e.preventDefault(); psSugDo(term); }
+  function psSugDo(term){
+    const a = document.getElementById('psSearchMobile'), b = document.getElementById('psSearchDesktop');
+    if(a) a.value = term; if(b) b.value = term;
+    psSugHide();
+    clearTimeout(_psSearchT);
+    _psSearchT = setTimeout(() => psSmartSearch(term), 10);
+  }
+  function psSugHide(){ psSugShow('psSugM',[]); psSugShow('psSugD',[]); }
+  function psSugDeferred(){ setTimeout(psSugHide, 160); }
+  function psSugUpdate(val){
+    if(!val || val.length < 2){ psSugHide(); return; }
+    const n = psNorm(val);
+    const matches = PS_SUGGEST.filter(kw => psNorm(kw).startsWith(n)).slice(0, 7);
+    psSugShow('psSugM', matches); psSugShow('psSugD', matches);
   }
   // Store-tier words → select every brand of that Browse-Brands directory tier.
   const PS_TIER = { premium:'p', premiums:'p', luxury:'p', luxe:'p', designer:'p', designers:'p', highend:'p', couture:'p' };
@@ -5830,7 +5859,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-23g';
+  const PSB_BUILD = '2026-06-23h';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

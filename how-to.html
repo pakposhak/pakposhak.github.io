@@ -71,6 +71,13 @@
   .endlink a{display:inline-block;background:var(--gold);color:#0A1628;font-weight:800;
     text-decoration:none;padding:13px 28px;border-radius:12px;font-size:0.95rem}
   .faqlink{text-align:center;margin-top:14px;font-size:0.88rem}
+
+  /* Search tips grid */
+  .st-grid{display:grid;gap:7px}
+  .st-row{display:flex;align-items:baseline;gap:10px;background:var(--surface);border:1px solid var(--gold-bdr);border-radius:10px;padding:10px 13px;flex-wrap:wrap}
+  .st-power{border-color:var(--gold);background:var(--gold-dim)}
+  .st-label{flex-shrink:0;font-size:0.78rem;font-weight:800;color:var(--gold);min-width:90px}
+  .st-tags{font-size:0.82rem;color:var(--txt-sec);line-height:1.7}
 </style>
 </head>
 <body>
@@ -102,6 +109,21 @@
       <div class="step"><div class="n">B</div><div class="t" data-i18n="w_brand"><strong>Browse brands</strong> — tap <strong>“🏪 Browse brands”</strong>. Find a brand by <strong>Store Types</strong> (multi-department, women’s, premium, menswear, kids) or by <strong>Product Category</strong> (see which brands make bridal, lawn, winter, etc.), then open the brand and copy a product link (steps below).</div></div>
     </div>
     <div class="tip"><span class="ic">💡</span><span data-i18n="w_tip">Not every product is inside “Browse products” yet — for the full range, use “Browse brands”. And if an item is sold out, the app will tell you when you try to save it.</span></div>
+  </section>
+
+  <!-- Search Tips -->
+  <section id="search-tips">
+    <h2 class="sec"><span class="badge">🔍</span><span data-i18n="st_head">What to type in Browse Products</span></h2>
+    <p style="font-size:0.86rem;color:var(--txt-sec);margin-bottom:12px" data-i18n="st_sub">The search bar understands plain words — type any term below and results filter instantly:</p>
+    <div class="st-grid">
+      <div class="st-row"><span class="st-label" data-i18n="st_pieces">Piece count</span><span class="st-tags">1pc &nbsp;·&nbsp; 2pc &nbsp;·&nbsp; 3pc &nbsp;·&nbsp; 2 piece &nbsp;·&nbsp; 3 piece &nbsp;·&nbsp; 2pc unstitched &nbsp;·&nbsp; 3pc stitched</span></div>
+      <div class="st-row"><span class="st-label" data-i18n="st_fabric">Fabric</span><span class="st-tags">lawn &nbsp;·&nbsp; cotton &nbsp;·&nbsp; khaddar &nbsp;·&nbsp; karandi &nbsp;·&nbsp; chiffon &nbsp;·&nbsp; silk &nbsp;·&nbsp; georgette &nbsp;·&nbsp; net</span></div>
+      <div class="st-row"><span class="st-label" data-i18n="st_garment">Garment</span><span class="st-tags">kamiz &nbsp;·&nbsp; kurti &nbsp;·&nbsp; kaftan &nbsp;·&nbsp; shalwar &nbsp;·&nbsp; dupatta &nbsp;·&nbsp; lehenga &nbsp;·&nbsp; saree &nbsp;·&nbsp; shawl &nbsp;·&nbsp; abaya</span></div>
+      <div class="st-row"><span class="st-label" data-i18n="st_occasion">Occasion</span><span class="st-tags">eid &nbsp;·&nbsp; bridal &nbsp;·&nbsp; festive &nbsp;·&nbsp; casual &nbsp;·&nbsp; formal &nbsp;·&nbsp; dholki &nbsp;·&nbsp; mehndi &nbsp;·&nbsp; office</span></div>
+      <div class="st-row"><span class="st-label" data-i18n="st_age">Gender / age</span><span class="st-tags">women &nbsp;·&nbsp; men &nbsp;·&nbsp; girls &nbsp;·&nbsp; boys &nbsp;·&nbsp; baby &nbsp;·&nbsp; kids &nbsp;·&nbsp; boys 14 &nbsp;·&nbsp; girls 8</span></div>
+      <div class="st-row st-power"><span class="st-label" data-i18n="st_power">Power Search</span><span class="st-tags">"Khaadi 3pc" &nbsp;·&nbsp; "Sapphire pret" &nbsp;·&nbsp; "Gul Ahmed lawn" &nbsp;·&nbsp; "Ethnc kurti"</span></div>
+    </div>
+    <div class="tip" style="margin-top:10px"><span class="ic">💡</span><span data-i18n="st_tip">As you type, a suggestion list appears — tap any suggestion to apply it instantly.</span></div>
   </section>
 
   <!-- 1 · ADD PRODUCTS -->
@@ -191,6 +213,10 @@
       s4_head:'Track your order',
       d1:'Save your <strong>Order ID</strong>. Tap <strong>“Track My Order”</strong> anytime to see its status.',
       d2:'We’ll only message you on <strong>WhatsApp</strong> if a product is unavailable, or the parcel weight turns out much higher than estimated.',
+      st_head:'What to type in Browse Products',
+      st_sub:'The search bar understands plain words — type any term below and results filter instantly:',
+      st_pieces:'Piece count', st_fabric:'Fabric', st_garment:'Garment', st_occasion:'Occasion', st_age:'Gender / age', st_power:'Power Search',
+      st_tip:'As you type, a suggestion list appears — tap any suggestion to apply it instantly.',
       start:'🛍️ Start your order',
       faqlink:'Read our promise & FAQ →'
     },
@@ -227,6 +253,10 @@
       s4_head:'অর্ডার ট্র্যাক করুন',
       d1:'আপনার <strong>অর্ডার আইডি</strong> সেভ করুন। যেকোনো সময় <strong>“Track My Order”</strong> ট্যাপ করে অবস্থা দেখুন।',
       d2:'কোনো পণ্য না থাকলে, বা পার্সেলের ওজন অনুমানের চেয়ে অনেক বেশি হলে — কেবল তখনই আমরা <strong>হোয়াটসঅ্যাপে</strong> জানাব।',
+      st_head:'Browse Products-এ কী লিখবেন',
+      st_sub:'সার্চ বার সাধারণ শব্দ বোঝে — নিচের যেকোনো শব্দ লিখুন, ফলাফল তৎক্ষণাৎ ফিল্টার হবে:',
+      st_pieces:'পিস সংখ্যা', st_fabric:'কাপড়', st_garment:'পোশাকের ধরন', st_occasion:'অনুষ্ঠান', st_age:'লিঙ্গ / বয়স', st_power:'Power Search',
+      st_tip:'টাইপ করার সাথে সাথে suggestion list আসে — যেকোনো suggestion ট্যাপ করলেই সার্চ হয়ে যাবে।',
       start:'🛍️ অর্ডার শুরু করুন',
       faqlink:'আমাদের প্রতিশ্রুতি ও সাধারণ জিজ্ঞাসা →'
     }
