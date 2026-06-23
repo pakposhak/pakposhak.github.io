@@ -174,13 +174,13 @@
     .bnav-btn.active,.bnav-btn:hover{color:var(--gold)}
     .bnav-badge{position:absolute;top:4px;right:calc(50% - 18px);background:#c0392b;
       color:#fff;border-radius:10px;padding:1px 5px;font-size:0.6rem;font-weight:700;min-width:16px;text-align:center}
-    /* 1·2·3·4 order-progress indicator that lives in the centre of the bottom bar */
-    .bnav-steps{flex:1.5;display:flex;align-items:center;justify-content:center;gap:5px}
-    .bns{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--gold-bdr);color:var(--txt-muted);
-      font-size:0.74rem;font-weight:700;display:flex;align-items:center;justify-content:center;background:var(--surface)}
-    .bns.active{background:var(--gold);color:#0A1628;border-color:var(--gold)}
-    .bns.done{background:var(--gold-dim);color:var(--gold);border-color:var(--gold-bdr)}
-    .bns-sep{color:var(--txt-muted);font-size:0.72rem;opacity:0.55}
+    /* Order-progress indicator: four small dots in the centre of the bottom bar (no numbers) */
+    .bnav-steps{flex:1.5;display:flex;align-items:center;justify-content:center;gap:9px}
+    .bns{width:7px;height:7px;border-radius:50%;border:none;background:var(--gold-bdr);font-size:0;line-height:0;
+      transition:background .18s,transform .18s}
+    .bns.active{background:var(--gold);transform:scale(1.4)}
+    .bns.done{background:var(--gold-dim)}
+    .bns-sep{display:none}
 
     /* ── Brand launch bottom sheet ── */
     #brandSheet{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.7)}
@@ -398,11 +398,9 @@
       .cat-panel{border-radius:12px;border-top:1px solid var(--bdr)}
       .cat-head{font-size:0.92rem}
       .cat-brand{font-size:0.92rem;padding:11px 10px}
-      /* how-it-works: merged 4-step version, two rows (2x2 grid) — mobile only */
-      .hiw-strip{overflow-x:visible;padding:6px 12px}
-      .hiw-desktop{display:none}
-      .hiw-mobile{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;min-width:0}
-      .hiw-mobile .hiw-video,.hiw-mobile .hiw-guide{margin-left:0}
+      /* How-it-works + video now live ONLY under the bottom "Guide" icon on mobile — the top
+         strip is removed (req: declutter the top, one icon in the bottom bar). */
+      .hiw-strip{display:none}
       body.psb-browse #appHeader{position:relative;z-index:auto}
       /* The 1·2·3·4 step indicator moves into the fixed bottom bar on mobile.
          !important: the base .steps-bar rule appears LATER in source, so it would
@@ -412,6 +410,14 @@
       body.psb-browse #step1 > .container{padding-top:1px}
       .ps-rail{margin-bottom:7px}
       .ps-rail .ps-filtrow{margin-bottom:0}
+      /* Merge Price · Clear · Sort · Sale · New onto ONE row (count removed). The sortrow shrinks
+         and scrolls internally so the line never overflows the phone width; the resbar itself does
+         not scroll, so the Price popover (anchored inside it) is never clipped. */
+      .ps-resbar{flex-wrap:nowrap;align-items:center;gap:8px;margin-bottom:9px;min-height:0}
+      .ps-resbar-tools{flex:0 0 auto}
+      .ps-sortrow{flex:1 1 0;flex-basis:0;min-width:0;border-top:none;padding:0;margin:0;justify-content:flex-start;gap:8px}
+      .ps-sortgrp:first-child{flex:0 0 auto}
+      .ps-sortgrp + .ps-sortgrp{padding-left:10px;margin-left:auto}
     }
     .show-more-btn{font-size:0.75rem;color:var(--gold);background:none;border:none;cursor:pointer;font-weight:600;padding:4px 0;text-decoration:underline}
 
@@ -501,12 +507,20 @@
     .dc-sect{margin-top:10px;background:var(--raised);border:1px solid var(--bdr);border-radius:9px;padding:10px 12px}
     .dc-sect-h{font-size:0.72rem;font-weight:700;color:var(--gold);letter-spacing:0.03em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
     .dc-sect-hint{font-size:0.66rem;font-weight:500;color:var(--txt-muted);text-transform:none;letter-spacing:0}
-    /* Browse Products landing: department shortcut tiles (Women/Men/Kids/Premium) above the rotation */
-    .ps-depttiles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:4px 0 14px}
-    .ps-depttile{background:var(--surface);border:1.5px solid var(--gold-bdr);border-radius:11px;padding:13px 6px;cursor:pointer;font-family:inherit;font-size:0.84rem;font-weight:700;color:var(--txt);text-align:center;line-height:1.35;transition:background .12s,border-color .12s,transform .08s}
-    .ps-depttile:hover{background:var(--gold-dim);border-color:var(--gold)}
-    .ps-depttile:active{transform:scale(0.97)}
-    @media (max-width:520px){ .ps-depttiles{gap:6px} .ps-depttile{padding:11px 3px;font-size:0.74rem;border-radius:9px} }
+    /* Browse Products landing: "Shop by category" — LAAM-style horizontal strip of photo tiles
+       (image + label), shown on the plain landing above the rotating products. */
+    .ps-shopcat{margin:2px 0 15px}
+    .ps-shopcat-h{font-size:0.82rem;font-weight:800;letter-spacing:0.4px;text-transform:uppercase;color:var(--gold);margin:0 2px 10px;display:flex;align-items:center;gap:7px}
+    .ps-shopcat-scroll{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:1px 2px 7px}
+    .ps-shopcat-scroll::-webkit-scrollbar{display:none}
+    .psc-tile{flex:0 0 auto;width:84px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;gap:7px;background:none;border:none;padding:0;cursor:pointer;font-family:inherit}
+    .psc-img{width:84px;height:102px;border-radius:16px;overflow:hidden;background:linear-gradient(150deg,var(--gold-dim),var(--raised));border:1.5px solid var(--gold-bdr);display:flex;align-items:center;justify-content:center;position:relative;transition:transform .12s,border-color .12s}
+    .psc-img img{width:100%;height:100%;object-fit:cover;display:block}
+    .psc-tile.psc-noimg .psc-img::after{content:attr(data-emoji);font-size:2rem;opacity:0.85}
+    .psc-tile:hover .psc-img{border-color:var(--gold)}
+    .psc-tile:active .psc-img{transform:scale(0.96)}
+    .psc-lbl{font-size:0.72rem;font-weight:700;color:var(--txt);line-height:1.2;text-align:center;width:88px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    @media (min-width:820px){ .psc-tile{width:104px} .psc-img{width:104px;height:124px} .psc-lbl{width:108px;font-size:0.78rem} .ps-shopcat-h{font-size:0.9rem} }
     .dc-thumb-wrap{cursor:zoom-in}
     /* tap-to-enlarge product image lightbox */
     .img-zoom-ov{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;padding:18px;cursor:zoom-out}

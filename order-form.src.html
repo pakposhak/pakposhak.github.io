@@ -85,10 +85,6 @@
     <div class="hiw-step"><span class="icon">🚚</span><span data-i18n="hiw_delivery">2–3 weeks to your door</span></div>
     <a class="hiw-video" href="how-to-video.html" target="_blank" rel="noopener" data-i18n="hiw_video">▶ Watch video guide</a>
   </div>
-  <div class="hiw-inner hiw-mobile">
-    <a class="hiw-video" href="how-to-video.html" target="_blank" rel="noopener" data-i18n="hiw_video">▶ Watch video guide</a>
-    <a class="hiw-guide" href="how-to.html" target="_blank" rel="noopener" data-i18n="hiw_guide">📖 How it works</a>
-  </div>
 </div>
 
 <!-- New here? First-time onboarding: tagline + intro video. Closes on the ✕ or when it ends; never shown once installed or from the 2nd visit (psb_intro_seen). -->
@@ -203,7 +199,6 @@
           <ul class="ps-sug" id="psSugM"></ul>
         </div>
         <div class="ps-resbar">
-          <span id="psCount"></span>
           <span class="ps-resbar-tools">
             <div class="ps-pricedd" id="psPriceDd">
               <button type="button" class="ps-pricebtn" id="psPriceBtn" onclick="psTogglePricePop()" aria-haspopup="true" aria-expanded="false"><span data-i18n="ps_price_short">Price Filters</span> <span class="ps-price-n" id="psPriceN"></span><span class="ps-pricecar">▾</span></button>
@@ -219,11 +214,9 @@
           <div class="ps-sortrow" id="psSortTabs"></div>
         </div>
         </div>
-        <div id="psDeptTiles" class="ps-depttiles" style="display:none">
-          <button type="button" class="ps-depttile" onclick="psPickDept('w')" data-i18n="bb_women">👗 Women</button>
-          <button type="button" class="ps-depttile" onclick="psPickDept('m')" data-i18n="bb_men">👔 Men</button>
-          <button type="button" class="ps-depttile" onclick="psPickDept('k')" data-i18n="bb_kids">🧸 Kids</button>
-          <button type="button" class="ps-depttile" onclick="psPickDept('p')" data-i18n="bb_premium">💎 Premium</button>
+        <div id="psShopCat" class="ps-shopcat" style="display:none">
+          <div class="ps-shopcat-h">🛍️ <span data-i18n="ps_shop_cat">Shop by category</span></div>
+          <div class="ps-shopcat-scroll" id="psShopScroll"></div>
         </div>
         <div class="ps-grid" id="psGrid"></div>
         <div class="ps-empty" id="psEmpty" style="display:none" data-i18n="ps_empty">No products match these filters — try widening them.</div>
@@ -743,11 +736,14 @@
   <button class="bnav-btn active" id="bnav-home" onclick="bottomNavGo('home')">
     <span class="icon">🏠</span><span data-i18n="nav_home">Home</span>
   </button>
+  <button class="bnav-btn" id="bnav-guide" onclick="bottomNavGuide(event)">
+    <span class="icon">📖</span><span data-i18n="nav_guide">Guide</span>
+  </button>
   <div class="bnav-steps" id="bnavSteps" role="img" aria-label="Order progress">
-    <span class="bns active" id="bns_1">1</span><span class="bns-sep">›</span>
-    <span class="bns" id="bns_2">2</span><span class="bns-sep">›</span>
-    <span class="bns" id="bns_3">3</span><span class="bns-sep">›</span>
-    <span class="bns" id="bns_4">4</span>
+    <span class="bns active" id="bns_1"></span>
+    <span class="bns" id="bns_2"></span>
+    <span class="bns" id="bns_3"></span>
+    <span class="bns" id="bns_4"></span>
   </div>
   <button class="bnav-btn" id="bnav-cart" onclick="bottomNavGo('cart')">
     <span class="icon">🛒</span>
@@ -755,6 +751,10 @@
     <span data-i18n="nav_cart">Cart</span>
   </button>
 </nav>
+<div id="guidePop" class="guide-pop" style="display:none">
+  <a href="how-to-video.html" target="_blank" rel="noopener" data-i18n="hiw_video">▶ Watch video guide</a>
+  <a href="how-to.html" target="_blank" rel="noopener" data-i18n="hiw_guide">📖 How it works</a>
+</div>
 
 <!-- INSTALL APP — floating pill, hidden until installable (or iOS Safari) -->
 <button id="installPill" onclick="psbInstall()" style="display:none">
