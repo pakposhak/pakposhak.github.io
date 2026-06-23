@@ -5217,15 +5217,18 @@
   // to centre. Only fires when _psNavDir is non-zero (i.e. set by psGo).
   function _psAnimateIn(){
     if(_psNavDir === 0) return;
-    const dir = _psNavDir; _psNavDir = 0;
+    const dir    = _psNavDir; _psNavDir = 0;
+    const mobile = window.innerWidth < 820;
+    const shift  = mobile ? '80px' : '28px';
+    const enterMs = mobile ? 280 : 220;
     const grid = document.getElementById('psGrid');
     if(!grid) return;
     grid.style.transition = 'none';
-    grid.style.transform  = dir > 0 ? 'translateX(28px)' : 'translateX(-28px)';
+    grid.style.transform  = dir > 0 ? 'translateX(' + shift + ')' : 'translateX(-' + shift + ')';
     grid.style.opacity    = '0';
     requestAnimationFrame(function(){
       requestAnimationFrame(function(){
-        grid.style.transition = 'transform 0.22s ease-out, opacity 0.22s ease-out';
+        grid.style.transition = 'transform ' + enterMs + 'ms ease-out, opacity ' + enterMs + 'ms ease-out';
         grid.style.transform  = '';
         grid.style.opacity    = '';
       });
@@ -5274,17 +5277,20 @@
   function psGo(d){
     psPage += d; if(psPage < 0) psPage = 0;
     _psNavDir = d;
+    const mobile = window.innerWidth < 820;
+    const shift  = mobile ? '80px' : '28px';
+    const exitMs = mobile ? 220 : 180;
     const grid = document.getElementById('psGrid');
     if(grid){
-      grid.style.transition = 'transform 0.18s ease-in, opacity 0.18s ease-in';
-      grid.style.transform  = d > 0 ? 'translateX(-28px)' : 'translateX(28px)';
-      grid.style.opacity    = '0';
+      grid.style.transition    = 'transform ' + exitMs + 'ms ease-in, opacity ' + exitMs + 'ms ease-in';
+      grid.style.transform     = d > 0 ? 'translateX(-' + shift + ')' : 'translateX(' + shift + ')';
+      grid.style.opacity       = '0';
       grid.style.pointerEvents = 'none';
     }
     setTimeout(function(){
       if(grid) grid.style.pointerEvents = '';
       if(psApiMode) psApiFetch(); else psRender();
-    }, 190);
+    }, exitMs + 10);
     psScrollToResults();
   }
   function psJump(v){ psPage = parseInt(v, 10) || 0; if(psApiMode) psApiFetch(); else psRender(); psScrollToResults(); }
