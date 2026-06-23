@@ -143,7 +143,7 @@ function womenType(p){
   // Loungewear false-positive: luxury brands name formal collections "Night Affair"/"Night Edit"/etc.
   // and the word "night" alone triggers loungewear routing. Only reroute when "night" is present
   // WITHOUT an actual sleepwear/lounge-garment qualifier (suit, wear, dress, gown, set, pyjama …).
-  if (p.cat === 'loungewear' && /\bnight\b/i.test(p.t||'') && !/nightsuit|night[\s-]?(?:suit|wear|dress|gown|shirt|shorts?|pants?|set)|pyjama|pyajma|pajama|sleepwear|sleep[\s-]?(?:set|wear)|lounge[\s-]?(?:wear|set)|loungewear|\bnighty\b/i.test(p.t||'')) {
+  if (p.cat === 'loungewear' && /\bnights?\b|midnight/i.test(p.t||'') && !/nightsuit|night[\s-]?(?:suit|wear|dress|gown|shirt|shorts?|pants?|set)|pyjama|pyajma|pajama|sleepwear|sleep[\s-]?(?:set|wear)|lounge[\s-]?(?:wear|set)|loungewear|\bnighty\b/i.test(p.t||'')) {
     const _wc = womenCatFor(p); return _wc !== 'loungewear' ? _wc : null;
   }
   if (/\bniqab\b|\bjilbab\b|\bburqa\b|\bburka\b|\babaya\b/.test(s) && p.cat !== 'abaya') return 'abaya';
@@ -252,7 +252,7 @@ const coarseGender = g => (g === 'kb' || g === 'kg' || g === 'ki' || g === 'k') 
 const catGenderOf = c => /^mens_/.test(c) ? 'm' : /^kids_/.test(c) ? 'k' : 'w';
 const GARMENT = /shirt|kameez|kurti|kurta|\bdress\b|gown|frock|trouser|\bpant|\btop\b|abaya|hijab|shalwar|\bsuit\b|\blawn\b|saree|lehenga|dupatta|kaftan|maxi|peplum|blouse|tunic|\bcape\b|co-?ord|jumpsuit|romper|\btee\b|t-?shirt|polo|jeans|waistcoat|sweater|cardigan|hoodie|jacket|\bcoat\b|sweatshirt|nightwear|loungewear|pajama|angrakha|gharara|sharara|outfit|ensemble|\d ?piece|\d ?pc\b|unstitch|fabric/i;
 const ACC = /\bsunglass|\beyewear\b|\bgoggles?\b|jewell?ery|jewelry|\bearrings?\b|\bnecklace|\bbangles?\b|\bbracelet|\bpendant|\bbrooch|\bperfume\b|\bfragrance\b|\battar\b|\bwrist ?watch|\bwatch\b|\bwristband\b|\bgana\b|\bbeanie\b|\bscrunchie|\bhair ?band|\bhair ?clip|\bkeychain|\bkey ?chain|\bsocks?\b|\bwallet\b|\bcard ?holder|\bcufflink|\btote\b|\bbackpack|\bsling ?bag|\bhand ?bag|\bclutch\b|\bpouch\b|\bbelt\b|\bcap\b/i;
-const FOOT = /\bshoes?\b|\bheels?\b|\bsandal|\bslipper|\bslides?\b|\bsneaker|\bpumps?\b|\bwedge|\bmule\b|khussa|\bloafer|\bjutt?i\b|kolhapuri|\bchappal|\bmojari|\bmojri|\bkohati|\bnagra\b|\bkheri\b|stiletto|espadrille|moccasin|\bbrogue/i;
+const FOOT = /\bshoes?\b|\bheels?\b|\bsandal|\bslipper|\bslides?\b|\bsneaker|\bpumps?\b|sling[\s-]?backs?|peep[\s-]?toe|court[\s-]?shoe|ballerina[\s-]?flat|\bwedge|\bmule\b|khussa|\bloafer|\bjutt?i\b|kolhapuri|\bchappal|\bmojari|\bmojri|\bkohati|\bnagra\b|\bkheri\b|stiletto|espadrille|moccasin|\bbrogue/i;
 // ── CATALOG URL REWRITE: known intl-twin domains → PK store ──
 // Mirrors order-form.html TWIN_MAP but applied at cleanup time so browse-product links
 // always point to the PKR store, not a USD international twin.
@@ -268,7 +268,7 @@ const DOMAIN_REWRITE = {
 // double as colour/scent names ("Incense","Oud","Musk") or set components ("Sando shirt","Turban
 // ...Kurta") -> delete ONLY when the title has no garment NOUN (nouns, not piece-counts, so a
 // "Seamless Boxers 2pc" still goes).
-const NONAPPAREL_STRONG = /gift ?(box|card|set|hamper|voucher|pack)\b|\bhamper\b|beard ?oil|\bcologne\b|body ?spray|lip ?(&|and|n) ?cheek|lip ?tint|cheek ?tint|argan ?oil|\bconditioner\b|\bshampoo\b|hair ?(serum|oil|catcher|grip|band|clip|tie)|\bdiffuser\b|room ?spray|scented ?candle|\bcandle\b|\bbukhoor\b|\blampshade\b|\bcomforter\b|\bduvet\b|bed ?sheet|bedsheet|\bcushion\b|coffee ?table|table ?set|brass ?table|\bfurniture\b|ceramic ?(jar|mug|vase|plate|bowl|pot|ware)|\bcrockery\b|\btumbler\b|water ?bottle|\bzamzam\b|\bcooler\b|\bperfume\b|\bfragrance\b|gift ?wrap|ear ?cuff|tasbeeh|tasbih|misbaha|placemat|place ?mat|table ?runner|table ?cloth|tablecloth|\bcoaster|\bnapkin|prayer ?mat|jaye ?namaz|janamaz|\bmiswak\b|hijab ?(crown ?)?grip|\bself[\s-]?tie\b|\(TIE-\d+\)|designer[\s-]?tie\b|\[\+\s*rs\.?|\bstorage[\s-]+basket\b|\bwicker\s+basket\b|\blaundry\s+basket\b|\brattan\s+basket\b|\blapel\s*pin\b|\beyeliner\b|\bmascara\b|\bburp[\s-]*cloth\b|\bburp[\s-]*bib\b|\bpotli\s*bag\b|\bhand[\s-]?crafted\s+phool\b|\bmirchi\s+sahara\b|clay ?mask|face ?mask|sheet ?mask|liquid ?highlighter|\bkeratin\b|\blipstick\b|lip ?gloss|hd ?foundation|liquid ?foundation|sun ?block|sunscreen|\bspf ?\d|face ?wash|moisturi[sz](?:er|ing)|face ?cream|\bserum\b|\bprimer\b|\bconcealer\b|\bkajal\b|nail ?(?:polish|paint)|body ?lotion|\bmakeup\b|\bcosmetics?\b|pregnancy ?journal|baby ?journal/i;
+const NONAPPAREL_STRONG = /gift ?(box|card|set|hamper|voucher|pack)\b|\bhamper\b|beard ?oil|\bcologne\b|body ?spray|lip ?(&|and|n) ?cheek|lip ?tint|cheek ?tint|argan ?oil|\bconditioner\b|\bshampoo\b|hair ?(serum|oil|catcher|grip|band|clip|tie)|\bdiffuser\b|room ?spray|scented ?candle|\bcandle\b|\bbukhoor\b|\blampshade\b|\bcomforter\b|\bduvet\b|bed ?sheet|bedsheet|\bcushion\b|coffee ?table|table ?set|brass ?table|\bfurniture\b|ceramic ?(jar|mug|vase|plate|bowl|pot|ware)|\bcrockery\b|\btumbler\b|water ?bottle|\bzamzam\b|\bcooler\b|\bperfume\b|\bfragrance\b|gift ?wrap|ear ?cuff|tasbeeh|tasbih|misbaha|placemat|place ?mat|table ?runner|table ?cloth|tablecloth|\bcoaster|\bnapkin|prayer ?mat|jaye ?namaz|janamaz|\bmiswak\b|hijab ?(crown ?)?grip|\bself[\s-]?tie\b|\(TIE-\d+\)|designer[\s-]?tie\b|\[\+\s*rs\.?|\bstorage[\s-]+basket\b|\bwicker\s+basket\b|\blaundry\s+basket\b|\brattan\s+basket\b|\blapel\s*pin\b|\beyeliner\b|\bmascara\b|\bburp[\s-]*cloth\b|\bburp[\s-]*bib\b|\bpotli\s*bag\b|\bhand[\s-]?crafted\s+phool\b|\bmirchi\s+sahara\b|clay ?mask|face ?mask|sheet ?mask|liquid ?highlighter|\bkeratin\b|\blipstick\b|lip ?gloss|hd ?foundation|liquid ?foundation|sun ?block|sunscreen|\bspf ?\d|face ?wash|moisturi[sz](?:er|ing)|face ?cream|\bserum\b|\bprimer\b|\bconcealer\b|\bkajal\b|nail ?(?:polish|paint)|body ?lotion|\bmakeup\b|\bcosmetics?\b|\bhighlighter\b|\beyeshadow\b|setting ?powder|compact ?powder|long[\s-]?wear foundation|matte foundation|blush ?(?:&|and|n) ?highlighter|\bpalette\b|pregnancy ?journal|baby ?journal/i;
 const NONAPPAREL_WEAK = /\bmusk\b|\boud\b|\bincense\b|\bturban\b|\bimamah\b|\bkoofi\b|\bkufi\b|\btopi\b|prayer ?cap|pocket ?square|bow ?tie|bowtie|\bbow\b|\bnecktie\b|^tie\b|\btie[\s-]?pin\b|\bboxers?\b|\bbriefs?\b|boy ?shorts|\bsando\b|\bundershirt\b|cotton ?vest|vest ?pack|pack of \d+ ?(vest|boxer|brief)|undergarment|seamless ?boxer|\bmuffler\b|\bcharm\b|\bhipster\b|\btrunks?\b|men'?s vest|vest with sleeves|jersey vest|seamless ?(jersey )?vest|sleeveless vest|\bcaps?\b|\bsofa\b|\bottoman\b|recliner|\bcouch\b|dining ?table|cente?r ?table|coff?e?e? ?table|breakfast ?table|console ?table|room ?chair|bed ?spread|bedspread|l-?shape ?sofa|sideboard|\bmattress\b|\bdresser\b|\benvelop(?:e)?\b|\bpotli\b|bath ?mat|\bcanopy\b|nursery|\bmaala\b|\bmala\b|\bnecklace\b|\bbracelet\b|\bearrings?\b/i;
 const GARMENT_NOUN = /\b(kurti|kurta|kameez|shirt|t-?shirt|sweat ?shirt|sweat ?pants?|tee|polo|dress|gown|frock|trousers?|pants?|joggers?|leggings?|shorts?|skirt|abaya|hijab|shalwar|saree|lehenga|dupatta|kaftan|maxi|peplum|blouse|top|tank|tunic|sherwani|waistcoat|jacket|bomber|sweater|cardigan|hoodie|pullover|outfit|romper|jumpsuit|suit|blazer|coat|tuxedo)\b/i;
 
@@ -597,6 +597,10 @@ function cleanupProducts(ps) {
     // eastern suit/dress/bottom cats -> western_top; jumpsuits -> bottoms.
     if (p.b === 'Lulusar') {
       if (/^(pret_3pc|pret_3pc_emb|formal_emb_3pc|heavy_formal_3pc|maxi_dress)$/.test(p.cat) && /button[\s-]?(down|up)|\bjacket\b|\bshrug\b|\bshacket\b|\bcape\b|\bblazer\b|\bgilet\b|\bvest\b|\bcoat\b/i.test(p.t||'') && !/kurta|kameez|kurti|dupatta|shalwar|\b3 ?(pc|piece)|anarkali|gharara/i.test(p.t||'')) { p.cat='western_top'; womenN++; out.push(p); continue; }
+      // Lulusar is WESTERN — it makes no eastern 3-piece suits, so ANY Lulusar left in a 3pc cat is
+      // mis-filed (image-verified: "Street Rocker"=jacket, "Floral Crush"=maxi dress, "Ridaab Long"=long
+      // kurta). Route by garment: long/maxi/dress/gown → maxi_dress, else → western_top.
+      if (/^(pret_3pc|pret_3pc_emb|formal_emb_3pc|heavy_formal_3pc)$/.test(p.cat) && !/kameez|dupatta|shalwar|\b3 ?(pc|piece)|anarkali|gharara|lehenga/i.test(p.t||'')) { p.cat = /\blong\b|\bmaxi\b|\bdress\b|\bgown\b|\bfrock\b/i.test(p.t||'') ? 'maxi_dress' : 'western_top'; womenN++; out.push(p); continue; }
       if (p.cat==='maxi_dress' && /jumpsuit/i.test(p.t||'')) { p.cat='womens_trouser'; womenN++; out.push(p); continue; }
       if (p.cat==='womens_trouser' && /\bvest\b|\bjacket\b|\btop\b/i.test(p.t||'') && !/trouser|\bpants?\b|shalwar|\bskirt\b|legging|culotte/i.test(p.t||'')) { p.cat='western_top'; womenN++; out.push(p); continue; }
     }
@@ -605,6 +609,9 @@ function cleanupProducts(ps) {
     if (/\bskirt\b/i.test(p.t||'') && /^(western_top|kurti_1pc|pret_3pc|pret_3pc_emb|maxi_dress|coord_western)$/.test(p.cat) && !/shirt|kameez|kurta|dupatta|\bcholi\b|lehenga|gharara|\b[23] ?(pc|piece)|co-?ord|\bset\b|\btop\b|\bsuit\b/i.test(p.t||'')) { p.cat='womens_trouser'; womenN++; out.push(p); continue; }
     // Azure/other men's "Kurta Pajama" parked in loungewear -> men's shalwar-kameez.
     if (p.cat==='loungewear' && /kurta ?(pajama|pyjama)/i.test(p.t||'') && !/\bwomen|\bladies|\bgirls?\b/i.test(p.t||'')) { p.cat='mens_shalwar_kameez'; menPcN++; out.push(p); continue; }
+    // Akbar Aslam — women's festive EASTERN brand; its "named" kameez+shalwar(+dupatta) sets are
+    // mis-filed as western co-ords (image-confirmed eastern desi sets, not western) -> eastern 2pc.
+    if (p.b === 'Akbar Aslam' && p.cat === 'coord_western') { p.cat = 'shirt_trouser_2pc'; womenN++; out.push(p); continue; }
     // (Cougar women's-slug-in-men's-cat is handled at the source rule above, by garment.)
     // Humayun Alamgir WOMEN'S bridal/formal (3pc/lehenga/gharara/choli/pishwas) mis-tagged men's kurta.
     if (p.b === 'Humayun Alamgir' && p.cat==='mens_kurta' && /\b3 ?pc\b|\b3 ?piece\b|lehenga|gharara|sharara|\bcholi\b|pishwas|anarkali/i.test(p.t||'')) { p.cat = /lehenga|gharara|sharara|\bcholi\b/i.test(p.t||'') ? 'lehenga' : 'pret_3pc'; womenN++; out.push(p); continue; }
@@ -646,6 +653,10 @@ function cleanupProducts(ps) {
     if (p.b==='Edenrobe' && p.cat==='coord_western' && /lawn|co-?ord/i.test(txt(p))) { p.cat='shirt_trouser_2pc'; womenN++; out.push(p); continue; }
     // Uniworth / Edge Republic WESTERN suits & tuxedos mis-filed as men's shalwar-kameez → men's suit.
     if ((p.b==='Uniworth'||p.b==='Edge Republic') && p.cat==='mens_shalwar_kameez' && /\bsuit\b|tuxedo|double[\s-]?breasted|blazer/i.test(p.t||'')) { p.cat='mens_suit'; menPcN++; out.push(p); continue; }
+    // ANY western tailored suit (slim-fit / poly-viscose / 2-3 piece suit / blazer / tuxedo) mis-filed
+    // as men's shalwar-kameez -> men's suit. Guard EASTERN "Shalwar Suit"/kurta sets (Bonanza, Innerlines)
+    // by requiring NO shalwar/kameez/kurta/sherwani/pajama word. (Amir Adnan "PV … Slim Fit Suit" etc.)
+    if (p.cat==='mens_shalwar_kameez' && /slim[\s-]?fit suit|poly[\s-]?viscose|two[\s-]?piece suit|three[\s-]?piece suit|\bblazer\b|\btuxedo\b|double[\s-]?breasted|pant ?coat|coat ?pant/i.test(p.t||'') && !/shalwar|kameez|kurta|sherwani|prince|pajama|pyjama/i.test(p.t||'')) { p.cat='mens_suit'; menPcN++; out.push(p); continue; }
     // Kross Kulture "MOM" adult-sized lawn suits mis-filed in a kids cat → women's eastern.
     if (p.b==='Kross Kulture' && /^kids_/.test(p.cat) && (/\bmom\b/i.test(p.t||'')||/mom-kpr/i.test(p.u||''))) { p.cat='pret_3pc'; womenN++; out.push(p); continue; }
     // Lulusar WESTERN separates (vest/bustier/corset/skirt/jacket/bodysuit/blazer) in women's eastern → western.

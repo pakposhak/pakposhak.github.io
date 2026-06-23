@@ -30,13 +30,13 @@
 - `kurti_1pc_unstitch` = 1-piece SHIRT fabric (a standalone bottom fabric → `womens_trouser`).
 - `shirt_dupatta_2pc_unstitch` · `shirt_trouser_2pc_unstitch` · `lawn_3pc_unstitch` · `unstitch_3pc_emb` · `winter_2pc_unstitch` · `winter_3pc_unstitch`.
 
-**Women — other:** `abaya` (abaya/hijab/niqab/makhna — the **modest-wear umbrella**) · `dupatta_only` (standalone dupatta/scarf/stole) · `shawl` (shawl/pashmina/wrap) · `saree` · `lehenga` (lehenga/gharara/sharara/choli set) · `loungewear` (real nightwear/pajama/lounge sets only).
+**Women — other:** `abaya` (abaya/hijab/niqab/makhna — the **modest-wear umbrella**) · `dupatta_only` (standalone dupatta/scarf/stole) · `shawl` (shawl/pashmina/wrap) · `saree` · `lehenga` (lehenga/gharara/sharara/choli set) · `loungewear` (real nightwear/pajama/lounge sets only — design-named **"Midnight/Night/Nights"** suits *without* an explicit sleepwear word are auto-rescued to their real suit cat).
 
 **Men:** `mens_shirt` · `mens_trouser` · `mens_jeans` · `mens_kurta` · `mens_shalwar_kameez` (kurta+shalwar/trouser 2pc) · `mens_waistcoat` · `mens_suit` (western 2-3pc suit/tuxedo) · `mens_sherwani` (sherwani/prince-coat) · `mens_unstitched` (suiting FABRIC).
 
 **Kids:** `kids_boys_{eastern,western,formal}` · `kids_girls_{eastern,western,formal}` · `kids_infant`. **There is NO kids-trouser category — a boys/girls trouser correctly lives in its gender/style kids cat.**
 
-**Footwear:** `footwear` = women's footwear only (khussa/kolhapuri/chappal/pumps/heels). **Men's & kids' footwear is DELETED; peshawari is DELETED (any gender).**
+**Footwear:** `footwear` = women's footwear only (khussa/kolhapuri/chappal/pumps/heels/**sling-backs/peep-toes/court-shoes/mules**). **Men's & kids' footwear is DELETED; peshawari is DELETED (any gender).**
 
 ---
 
@@ -67,7 +67,7 @@
 - **Dynasty Fabrics** — men's suiting house, no kids line → any kids-misclassified item → `mens_unstitched`.
 
 ### Western brands — tops are WESTERN (→ `western_top`/`maxi_dress`/bottoms, not eastern kurti)
-- **Lulusar** — WESTERN. Button-downs/jackets/shrugs/shackets/capes/blazers/vests/bustiers/corsets/skirts in eastern cats → `western_top`; jumpsuits → bottoms.
+- **Lulusar** — WESTERN. Button-downs/jackets/shrugs/shackets/capes/blazers/vests/bustiers/corsets/skirts in eastern cats → `western_top`; jumpsuits → bottoms. It makes **no eastern 3-piece suits**, so ANY Lulusar left in a 3pc cat is rerouted by garment (long/maxi/dress/gown → `maxi_dress`, else → `western_top`).
 - **Outfitters** — women's blouse/dress mis-gendered into men's cats → `western_top`/`maxi_dress`.
 - **ETHNC** — `western-…` slug tops → `western_top`; standalone "SKIRT" → `womens_trouser`; eastern kids handled by the girls-kids list.
 - **ChenOne** — `LDS-####` ladies western tops/shirts dumped in winter/pret → `western_top`.
@@ -78,6 +78,7 @@
 ### Men's brands & quirks
 - **Monark** — western menswear. "TWO/THREE-PIECE SUIT" mis-filed as shalwar-kameez → `mens_suit`.
 - **Uniworth / Edge Republic** — western suits & tuxedos mis-filed as shalwar-kameez → `mens_suit`.
+- **Any western tailored suit** — "slim-fit suit" / "poly-viscose" / "two/three-piece suit" / blazer / tuxedo / double-breasted / pant-coat, with **no** shalwar/kameez/kurta/sherwani/pajama word, mis-filed as shalwar-kameez → `mens_suit` (general rule beyond the named brands above; catches **Amir Adnan** "PV … Slim Fit Suit". Eastern "Shalwar Suit" — Bonanza, Innerlines "Kurta With Pants" — is guarded out).
 - **Amir Adnan** — waistcoat-and-shawl sets in `shawl` → `mens_waistcoat`; "Tap Shoe" = a JACKET/suit line (NOT footwear); open-front sherwanis in `mens_unstitched` → `mens_sherwani`.
 - **Humayun Alamgir** — feminine bridal/formal (3pc/lehenga/gharara/choli/pishwas) mis-tagged `mens_kurta` → `pret_3pc`/`lehenga`.
 - **Al-Deebaj** — men's "Kurta Pajama" (KP/ADKP) in women's loungewear → men's eastern; men's "Kurta Shalwar" (KS) co-ords → `mens_shalwar_kameez`; men's waistcoats in women's formal → `mens_waistcoat`; "Printed Cotton Co-Ord Set" = women's EASTERN 2pc.
@@ -101,6 +102,7 @@
 - **Zainab Chottani** — "Capri" = a velvet KAFTAN line (not a capri bottom) → `kaftan`.
 - **Ammara Khan** — `D-…` slugged designer gowns mis-filed as 1pc kurti → `heavy_formal_3pc`.
 - **SHAAL** — luxury shawl brand; men's shawls → `mens_unstitched` (no mens_shawl cat), women's/unisex → `shawl`.
+- **Akbar Aslam** — women's festive **EASTERN** brand; its "named" (Marigold/Ivoire/Tesa/Aven…) kameez+shalwar(+dupatta) sets mis-filed as western co-ords → `shirt_trouser_2pc` (eastern 2pc; image-confirmed desi sets, not western co-ords).
 
 ---
 
