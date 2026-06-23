@@ -1078,11 +1078,12 @@
       if(!product) throw new Error('empty');
       // Image-led card + cart: capture the product photo + title once the live fetch resolves.
       try{
-        const _pimg = product.featured_image
-          || (Array.isArray(product.images) && product.images[0] && (product.images[0].src || product.images[0]))
-          || product.image || '';
+        let _imgs = Array.isArray(product.images) ? product.images.map(im => typeof im === 'string' ? im : (im && im.src)).filter(Boolean) : [];
+        const _pimg = product.featured_image || _imgs[0] || product.image || '';
+        if(!_imgs.length && _pimg) _imgs = [_pimg];
         if(drafts[id]){
           if(typeof _pimg === 'string' && _pimg) drafts[id].img = _pimg;
+          if(_imgs.length) drafts[id].imgs = _imgs;
           if(product.title) drafts[id].title = product.title;
           fillDraftPreview(id);
         }
@@ -1414,19 +1415,22 @@
   }
 
   // Tap a product thumbnail → full-size lightbox (order form + cart).
-  function openImgZoom(src){
-    if(!src) return;
+  function openImgZoom(imgs){
+    const list = (Array.isArray(imgs) ? imgs : [imgs]).filter(Boolean);
+    if(!list.length) return;
     let ov = document.getElementById('imgZoomOv');
     if(!ov){
       ov = document.createElement('div');
       ov.id = 'imgZoomOv'; ov.className = 'img-zoom-ov';
-      ov.addEventListener('click', () => { ov.style.display = 'none'; ov.innerHTML = ''; });
+      ov.addEventListener('click', (e) => { if(e.target === ov || e.target.classList.contains('img-zoom-track') || e.target.classList.contains('img-zoom-x')){ ov.style.display = 'none'; ov.innerHTML = ''; } });
       document.body.appendChild(ov);
     }
-    ov.innerHTML = `<img src="${esc(src)}" alt=""><button class="img-zoom-x" aria-label="Close">✕</button>`;
+    ov.innerHTML = `<button class="img-zoom-x" aria-label="Close">✕</button>`
+      + `<div class="img-zoom-track">` + list.map(s => `<img src="${esc(s)}" alt="" loading="lazy">`).join('') + `</div>`;
     ov.style.display = 'flex';
   }
-  function zoomDraftImg(id){ const d = drafts[id]; if(d && d.img) openImgZoom(d.img); }
+  function zoomDraftImg(id){ const d = drafts[id]; if(!d) return; openImgZoom(d.imgs && d.imgs.length ? d.imgs : (d.img ? [d.img] : [])); }
+  function zoomCartImg(i){ const it = cart[i]; if(!it) return; openImgZoom(it.imgs && it.imgs.length ? it.imgs : (it.img ? [it.img] : [])); }
   // Surface the captured product photo + title onto the draft card (image-led confirmation).
   function fillDraftPreview(id){
     const d = drafts[id]; if(!d) return;
@@ -2430,7 +2434,7 @@
       js_soldout_all:'sold out on the brand site', js_soldout_size:'this size is sold out',
       more_tab:'More', more_title:'More Brands', more_sub:'All brands in this category — tap any to start, same as the tabs.', more_back:'Back',
       lbl_addproducts:'Add Products to Your Order',
-      url_label:'📋 Need only the product webpage link — paste it here, or tap the side 📋 Paste tab.',
+      url_label:'📋 Paste the product link here, or tap the 📋 Paste tab.',
       btn_addurl:'+ Add URL', btn_paste:'📋 Paste Link & Auto-Fill', pp_tap:'Tap a product to add it — no copy-paste needed', pp_search:'🔍 Search this brand…', pp_site:'🌐 Open full brand site instead', fab_paste:'Paste link',
       nav_home:'Home', nav_brands:'Brands', nav_cart:'Cart', nav_how:'How To',
       tl_help:'New here? Start with these:', tl_faq:'❓ How it works & our promise', tl_track:'📦 Track an order', tl_weights:'⚖️ Shipping weights', tl_wa:'💬 Chat on WhatsApp',
@@ -2495,7 +2499,7 @@
       js_soldout_all:'ব্র্যান্ডের সাইটে স্টকে নেই', js_soldout_size:'এই সাইজটি স্টকে নেই',
       more_tab:'আরও', more_title:'আরও ব্র্যান্ড', more_sub:'এই ক্যাটাগরির সব ব্র্যান্ড — উপরের ট্যাবের মতোই, শুরু করতে যেকোনোটিতে ট্যাপ করুন।', more_back:'পেছনে',
       lbl_addproducts:'অর্ডারে পণ্য যোগ করুন',
-      url_label:'📋 শুধু পণ্যের ওয়েবপেজ লিংক দরকার — এখানে পেস্ট করুন, বা কপি করে পাশের 📋 Paste ট্যাবে চাপুন।',
+      url_label:'📋 পণ্যের লিংক এখানে পেস্ট করুন, বা পাশের 📋 Paste ট্যাবে চাপুন।',
       btn_addurl:'+ লিংক যোগ করুন',
       btn_paste:'📋 লিংক পেস্ট করে অটো-ফিল', pp_tap:'পণ্যে ট্যাপ করেই যোগ করুন — কপি-পেস্ট লাগবে না', pp_search:'🔍 এই ব্র্যান্ডে খুঁজুন…', pp_site:'🌐 বদলে পুরো ব্র্যান্ড সাইট খুলুন', fab_paste:'লিংক পেস্ট',
       nav_home:'হোম', nav_brands:'ব্র্যান্ড', nav_cart:'কার্ট', nav_how:'গাইড',
@@ -3220,7 +3224,7 @@
         }
         return { size: rw.size, qty: rw.qty, pkr: rp };
       });
-      cart.push({ url, brand, cat, sizes, pkr, weight: getWeight(cat), img: (dft && dft.img) || '', title: (dft && dft.title) || '' });
+      cart.push({ url, brand, cat, sizes, pkr, weight: getWeight(cat), img: (dft && dft.img) || '', imgs: (dft && dft.imgs) || [], title: (dft && dft.title) || '' });
     });
     // Clear all drafts
     ids.forEach(id => { document.getElementById(`dc_${id}`)?.remove(); delete drafts[id]; });
@@ -3332,6 +3336,7 @@
     document.getElementById('draftsContainer').style.display = '';
     document.getElementById('draftCards').insertAdjacentHTML('beforeend', buildDraftCard(id, item.url, item.brand, isPk));
     if(item.img) drafts[id].img = item.img;
+    if(item.imgs) drafts[id].imgs = item.imgs;
     if(item.title) drafts[id].title = item.title;
     fillDraftPreview(id);
 
@@ -3373,10 +3378,12 @@
     const empty = document.getElementById('cartEmpty');
     const rtBox = document.getElementById('runningTotal');
     const badge = document.getElementById('itemCountBadge');
+    const oll   = document.getElementById('orderListLabel');
     updateAddMoreRow();
 
     if(!cart.length){
-      if(empty) empty.style.display = '';
+      if(empty) empty.style.display = 'none';
+      if(oll) oll.style.display = 'none';
       rtBox.style.display = 'none';
       badge.style.display = 'none';
       list.innerHTML = '';
@@ -3388,6 +3395,7 @@
       return;
     }
     if(empty) empty.style.display = 'none';
+    if(oll) oll.style.display = '';
     badge.style.display = '';
     badge.textContent = cart.length + (cart.length === 1 ? ' item' : ' items');
     updateCartBadges(cart.length);
@@ -3424,7 +3432,7 @@
 
       const _cmono = esc(((item.brand||'?').trim()[0] || '?').toUpperCase());
       html += `<div class="cart-item">
-        <div class="ci-thumb-wrap"${item.img ? ` data-img="${esc(item.img)}" onclick="openImgZoom(this.dataset.img)" title="Tap to enlarge" style="cursor:zoom-in"` : ''}>
+        <div class="ci-thumb-wrap"${item.img ? ` onclick="zoomCartImg(${i})" title="Tap to enlarge" style="cursor:zoom-in"` : ''}>
           <div class="dc-thumb dc-mono">${_cmono}</div>
           ${item.img ? `<img class="dc-thumb dc-img" src="${esc(item.img)}" alt="" loading="lazy" onload="this.previousElementSibling.style.display='none'" onerror="this.remove()">` : ''}
         </div>
@@ -6080,7 +6088,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-24a';
+  const PSB_BUILD = '2026-06-24b';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

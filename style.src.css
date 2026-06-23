@@ -504,8 +504,9 @@
     .dc-thumb-wrap{cursor:zoom-in}
     /* tap-to-enlarge product image lightbox */
     .img-zoom-ov{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;padding:18px;cursor:zoom-out}
-    .img-zoom-ov img{max-width:96vw;max-height:90vh;border-radius:8px;object-fit:contain}
-    .img-zoom-x{position:absolute;top:14px;right:16px;background:rgba(0,0,0,0.45);color:#fff;border:none;font-size:1.3rem;width:38px;height:38px;border-radius:50%;cursor:pointer;line-height:1}
+    .img-zoom-track{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;max-width:100vw;padding:0 4vw;-webkit-overflow-scrolling:touch}
+    .img-zoom-track img{scroll-snap-align:center;flex:0 0 auto;max-width:90vw;max-height:88vh;object-fit:contain;border-radius:8px}
+    .img-zoom-x{position:absolute;top:14px;right:16px;z-index:2;background:rgba(0,0,0,0.55);color:#fff;border:none;font-size:1.3rem;width:38px;height:38px;border-radius:50%;cursor:pointer;line-height:1}
     .remove-item:hover{color:#e74c3c}
 
     /* Running total */
