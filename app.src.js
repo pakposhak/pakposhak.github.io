@@ -1346,11 +1346,6 @@
             // Stock could NOT be verified — fail LOUD, never silently allow all.
             hint.innerHTML = '⚠️ <b>Live stock could NOT be verified</b> for this brand. The options below are <u>all listed</u>, not confirmed-in-stock — please check the brand page before ordering.';
             hint.style.cssText = 'font-size:0.75rem;font-weight:700;color:#ff9a9a;background:rgba(192,57,43,0.15);border:1px solid rgba(192,57,43,0.45);border-radius:6px;padding:6px 10px;margin-bottom:7px';
-          } else if(hint && !picked && !detectSizeFromUrl(url)){
-            // Stock verified, but no choice in the pasted link → remind the operator
-            // that a highlighted choice on the brand page is NOT a selection.
-            hint.innerHTML = '⚠️ <b>Your link doesn\'t include a ' + whatWord + '.</b> Tap your ' + whatWord + ' below — a highlighted choice on the brand\'s page does <u>not</u> mean it was selected.';
-            hint.style.cssText = 'font-size:0.75rem;font-weight:600;color:var(--txt);background:rgba(230,168,23,0.12);border:1px solid rgba(230,168,23,0.40);border-radius:6px;padding:6px 10px;margin-bottom:7px';
           }
           // ── BUYER-PICKED COMBINATION (from ?variant=) ───────────────────
           // If the link encodes a specific variant (colour and/or size),
@@ -1418,6 +1413,20 @@
     }
   }
 
+  // Tap a product thumbnail → full-size lightbox (order form + cart).
+  function openImgZoom(src){
+    if(!src) return;
+    let ov = document.getElementById('imgZoomOv');
+    if(!ov){
+      ov = document.createElement('div');
+      ov.id = 'imgZoomOv'; ov.className = 'img-zoom-ov';
+      ov.addEventListener('click', () => { ov.style.display = 'none'; ov.innerHTML = ''; });
+      document.body.appendChild(ov);
+    }
+    ov.innerHTML = `<img src="${esc(src)}" alt=""><button class="img-zoom-x" aria-label="Close">✕</button>`;
+    ov.style.display = 'flex';
+  }
+  function zoomDraftImg(id){ const d = drafts[id]; if(d && d.img) openImgZoom(d.img); }
   // Surface the captured product photo + title onto the draft card (image-led confirmation).
   function fillDraftPreview(id){
     const d = drafts[id]; if(!d) return;
@@ -1425,13 +1434,11 @@
     if(d.title){ const t = document.getElementById(`dc_title_${id}`); if(t){ t.textContent = d.title; t.style.display = ''; } }
   }
   function buildDraftCard(id, url, brand, isPk){
-    const pkBadge = isPk
-      ? `<span class="draft-badge-pk">🟢 PKR auto</span>`
-      : `<span class="draft-badge-com">💵 Check currency</span>`;
+    const pkBadge = isPk ? `<span class="draft-badge-pk">🟢 PKR auto</span>` : '';
     const _mono = esc(((brand || '?').trim()[0] || '?').toUpperCase());
     return `<div class="draft-card" id="dc_${id}" data-url="${esc(url)}" data-brand="${esc(brand)}">
       <div class="draft-card-hdr">
-        <div class="dc-thumb-wrap">
+        <div class="dc-thumb-wrap" onclick="zoomDraftImg(${id})" title="Tap to enlarge">
           <div class="dc-thumb dc-mono" id="dc_imgmono_${id}">${_mono}</div>
           <img class="dc-thumb dc-img" id="dc_img_${id}" alt="" hidden
                onload="this.hidden=false;var m=document.getElementById('dc_imgmono_${id}');if(m)m.style.display='none'"
@@ -1443,18 +1450,16 @@
             ${pkBadge}
           </div>
           <div class="dc-title" id="dc_title_${id}" style="display:none"></div>
-          <div class="url-text">${esc(url)}</div>
+          <div class="url-text" onclick="this.classList.toggle('expanded')" title="Tap to show the full link">${esc(url)}</div>
         </div>
         <button class="draft-remove" onclick="removeDraft(${id})" title="Remove this URL">✕</button>
       </div>
       <div id="dc_fetch_${id}" style="display:none;font-size:0.72rem;font-weight:600;padding:5px 10px;background:var(--surface);border-radius:5px;margin-top:6px"></div>
-      <hr class="draft-divider"/>
-      <div class="row-2">
-        <div class="field">
-          <label>Category *</label>
-          <input type="hidden" id="dc_cat_${id}">
+      <div class="dc-sect">
+        <div class="dc-sect-h">Change category</div>
+        <input type="hidden" id="dc_cat_${id}">
           <!-- Initial: detecting -->
-          <div id="dc_catdetect_${id}" style="font-size:0.78rem;color:var(--txt-muted);padding:7px 0">🔄 Detecting category…</div>
+          <div id="dc_catdetect_${id}" style="font-size:0.78rem;color:var(--txt-muted);padding:3px 0">🔄 Detecting category…</div>
           <!-- Auto-detected chip (default once a category is found) -->
           <div id="dc_catauto_${id}" style="display:none;align-items:center;gap:9px;flex-wrap:wrap;background:rgba(46,125,50,0.12);border:1px solid rgba(46,125,50,0.40);border-radius:7px;padding:8px 11px">
             <span style="font-size:0.7rem;color:var(--txt-muted)">✓ Auto-detected</span>
@@ -1468,9 +1473,9 @@
             ${buildCatDropdown(id,'m')}
             ${buildCatDropdown(id,'k')}
           </div>
-        </div>
-        <div class="field">
-          <label>Price * — <span style="color:#c0392b;font-weight:700">use sale price if shown</span></label>
+      </div>
+      <div class="dc-sect">
+        <div class="dc-sect-h">Price <span class="dc-sect-hint">match the brand's price</span></div>
           <div class="price-row">
             <input type="number" id="dc_price_${id}" placeholder="e.g. 4500 PKR" min="0"
               oninput="this.classList.remove('psb-missing');updateDraftPriceHint(${id});checkAddUrlLock()"/>
@@ -1480,16 +1485,13 @@
             </div>
           </div>
           <div id="dc_cnote_${id}" style="display:none;margin-top:5px;font-size:0.72rem;font-weight:600;padding:4px 8px;border-radius:5px"></div>
-          <div id="dc_phint_${id}" style="font-size:0.72rem;color:var(--gold);margin-top:3px;min-height:14px"></div>
-        </div>
+          <div id="dc_phint_${id}" style="font-size:0.72rem;color:var(--gold);margin-top:3px"></div>
       </div>
-      <!-- Price-bearing options (Item / stitching / add-on) — themed dropdowns; default = full article -->
       <div id="dc_opts_${id}" style="display:none;margin-top:10px"></div>
-      <!-- Sizes section — always visible, content changes with category -->
-      <div id="dc_szbox_${id}" style="margin-top:12px;background:var(--raised);border-radius:7px;padding:10px 12px">
-        <label style="font-size:0.76rem;font-weight:600;color:var(--txt-sec)">Sizes &amp; Quantities *
-          <span id="dc_sz_note_${id}" style="font-weight:400;color:var(--txt-muted);font-size:0.67rem;margin-left:4px">(same price for all adult sizes)</span>
-        </label>
+      <div class="dc-sect" id="dc_szbox_${id}">
+        <div class="dc-sect-h">Size &amp; qty
+          <span id="dc_sz_note_${id}" class="dc-sect-hint">same price for all adult sizes</span>
+        </div>
         <div id="dc_formtoggle_${id}" style="display:none;margin:6px 0 9px"></div>
         <div id="dc_sz_msg_${id}" style="font-size:0.78rem;color:var(--txt-muted);padding:4px 0">
           ← Select a category first
@@ -1515,10 +1517,6 @@
         <!-- One quantity stepper per chosen size -->
         <div id="dc_qhead_${id}" style="display:none;font-size:0.71rem;color:var(--txt-muted);margin:9px 0 5px">Quantity per size:</div>
         <div id="dc_srows_${id}"></div>
-        <div id="dc_sremind_${id}" style="display:none;margin-top:5px;font-size:0.72rem;font-weight:700;
-          color:#ff7575;background:rgba(192,57,43,0.15);border:1px solid rgba(192,57,43,0.35);border-radius:5px;padding:4px 8px">
-          ⚠️ Please tap at least one size before saving.
-        </div>
       </div>
     </div>`;
   }
@@ -1544,7 +1542,7 @@
         if(sz) addDraftSizeRow(id, sz);
       }
     }
-    showDraftCurrencyNote(id, isPk);
+    /* currency note removed — price is always shown in PKR */
 
     // Network fetch — overwrites with richer data if available. With presetMember
     // (an extra set piece) it uses that data directly instead of re-fetching.
@@ -1672,7 +1670,7 @@
     const note    = document.getElementById(`dc_sz_note_${id}`);
     const chipsW  = document.getElementById(`dc_szchips_${id}`);
     const qhead   = document.getElementById(`dc_qhead_${id}`);
-    document.getElementById(`dc_sremind_${id}`).style.display = 'none';
+    { const _sr = document.getElementById(`dc_sremind_${id}`); if(_sr) _sr.style.display = 'none'; }
     // Picking a category clears its (and the sizes box's) red missing-highlight
     document.getElementById(`dc_catpick_${id}`)?.querySelectorAll('.catdd').forEach(d=> d.classList.remove('psb-missing'));
     document.getElementById(`dc_szbox_${id}`)?.classList.remove('psb-missing');
@@ -1968,7 +1966,7 @@
 
   function onDraftSizeChange(draftId){
     if(getDraftSizeRows(draftId).some(r=>r.size)){
-      document.getElementById(`dc_sremind_${draftId}`).style.display='none';
+      { const _sr = document.getElementById(`dc_sremind_${draftId}`); if(_sr) _sr.style.display='none'; }
       document.getElementById(`dc_szbox_${draftId}`)?.classList.remove('psb-missing');
     }
     // SIZE-PRICED products: make the PKR price follow the picked size so the BDT total is right
@@ -3352,7 +3350,7 @@
     setDraftCat(id, item.cat);
     document.getElementById(`dc_price_${id}`).value = item.pkr;
     updateDraftPriceHint(id);
-    showDraftCurrencyNote(id, isPk);
+    /* currency note removed — price is always shown in PKR */
     // Restore the per-size price map so editing a size-priced item keeps per-size billing on re-save.
     drafts[id].sizePrice = {};
     (item.sizes || []).forEach(r => { if(r.size && r.pkr != null) drafts[id].sizePrice[r.size] = r.pkr; });
@@ -3426,7 +3424,7 @@
 
       const _cmono = esc(((item.brand||'?').trim()[0] || '?').toUpperCase());
       html += `<div class="cart-item">
-        <div class="ci-thumb-wrap">
+        <div class="ci-thumb-wrap"${item.img ? ` data-img="${esc(item.img)}" onclick="openImgZoom(this.dataset.img)" title="Tap to enlarge" style="cursor:zoom-in"` : ''}>
           <div class="dc-thumb dc-mono">${_cmono}</div>
           ${item.img ? `<img class="dc-thumb dc-img" src="${esc(item.img)}" alt="" loading="lazy" onload="this.previousElementSibling.style.display='none'" onerror="this.remove()">` : ''}
         </div>
@@ -6082,7 +6080,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-23m';
+  const PSB_BUILD = '2026-06-24a';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
