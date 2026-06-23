@@ -78,6 +78,10 @@ function fwdCat(p){
   const s3 = /\b3\s*-?\s*(pc|piece|pcs)\b|three[\s-]?piece/.test(s) || (shirt && bottom && dup);
   const s2 = !s3 && (/\b2\s*-?\s*(pc|piece|pcs)\b|two[\s-]?piece/.test(s) || (shirt && dup && !bottom) || (shirt && bottom && !dup));
   const coord = shirt && bottom && !dup;
+  // standalone unstitched BOTTOM (trouser/shalwar/bottom fabric, no shirt/dupatta) — there is no
+  // "unstitched bottom" category, so it is just a bottom (Lakhany/Zeen "Unstitched Bottom" were
+  // landing in kurti_1pc_unstitch = the 1-piece SHIRT-fabric cat). Must precede the s2/s3/FWD logic.
+  if (bottom && !shirt && !dup) return 'womens_trouser';
   if (s3) return emb(s) ? 'unstitch_3pc_emb' : (winterRe(s) ? 'winter_3pc_unstitch' : 'lawn_3pc_unstitch');
   if (s2) return winterRe(s) ? 'winter_2pc_unstitch' : (coord ? 'shirt_trouser_2pc_unstitch' : 'shirt_dupatta_2pc_unstitch');
   const sib = FWD[p.cat]; if (sib) return sib;
@@ -248,7 +252,7 @@ const coarseGender = g => (g === 'kb' || g === 'kg' || g === 'ki' || g === 'k') 
 const catGenderOf = c => /^mens_/.test(c) ? 'm' : /^kids_/.test(c) ? 'k' : 'w';
 const GARMENT = /shirt|kameez|kurti|kurta|\bdress\b|gown|frock|trouser|\bpant|\btop\b|abaya|hijab|shalwar|\bsuit\b|\blawn\b|saree|lehenga|dupatta|kaftan|maxi|peplum|blouse|tunic|\bcape\b|co-?ord|jumpsuit|romper|\btee\b|t-?shirt|polo|jeans|waistcoat|sweater|cardigan|hoodie|jacket|\bcoat\b|sweatshirt|nightwear|loungewear|pajama|angrakha|gharara|sharara|outfit|ensemble|\d ?piece|\d ?pc\b|unstitch|fabric/i;
 const ACC = /\bsunglass|\beyewear\b|\bgoggles?\b|jewell?ery|\bearrings?\b|\bnecklace|\bbangles?\b|\bbracelet|\bpendant|\bbrooch|\bperfume\b|\bfragrance\b|\battar\b|\bwrist ?watch|\bwatch\b|\bbeanie\b|\bscrunchie|\bhair ?band|\bhair ?clip|\bkeychain|\bkey ?chain|\bsocks?\b|\bwallet\b|\bcard ?holder|\bcufflink|\btote\b|\bbackpack|\bsling ?bag|\bhand ?bag|\bclutch\b|\bpouch\b|\bbelt\b|\bcap\b/i;
-const FOOT = /\bshoes?\b|\bheels?\b|\bsandal|\bslipper|\bslides?\b|\bsneaker|\bpump\b|\bwedge|\bmule\b|khussa|\bloafer|\bjutt?i\b|kolhapuri|\bchappal|\bmojari|\bmojri|\bkohati|\bnagra\b|\bkheri\b|stiletto|espadrille|moccasin|\bbrogue/i;
+const FOOT = /\bshoes?\b|\bheels?\b|\bsandal|\bslipper|\bslides?\b|\bsneaker|\bpumps?\b|\bwedge|\bmule\b|khussa|\bloafer|\bjutt?i\b|kolhapuri|\bchappal|\bmojari|\bmojri|\bkohati|\bnagra\b|\bkheri\b|stiletto|espadrille|moccasin|\bbrogue/i;
 // ── CATALOG URL REWRITE: known intl-twin domains → PK store ──
 // Mirrors order-form.html TWIN_MAP but applied at cleanup time so browse-product links
 // always point to the PKR store, not a USD international twin.
@@ -487,6 +491,22 @@ function cleanupProducts(ps) {
     if (p.cat === 'lehenga' && /\b1 ?pc\b|\b1 ?piece\b|\bsingle\b/i.test(p.t||'') && /sharara|gharara/i.test(p.t||'') && !/kameez|shirt|\bset\b|dupatta|[23] ?pc|[23] ?piece/i.test(p.t||'')) { p.cat = 'womens_trouser'; womenN++; out.push(p); continue; }
     // an explicitly WESTERN top mis-filed as an eastern kurti → western top (Beechtree "… (WESTERN)").
     if (p.cat === 'kurti_1pc' && /\bwestern\b/i.test(p.t||'') && /\btop\b|\btee\b|t-?shirt|jersey/i.test(p.t||'')) { p.cat = 'western_top'; womenN++; out.push(p); continue; }
+    // ── KURTI = EASTERN-ONLY cleanup (Danish 2026-06-23): kurti_1pc must hold ONLY eastern 1-piece
+    // shirts/kurtis. (a) 2-piece "Shirt + Culotte / Shirt & Trouser" co-ords mis-shelved here → 2pc
+    // (Sana Safinaz / Alkaram "Shirt + Culotte" flooded kurti_1pc). Run BEFORE the western-top rule
+    // so a "Top & Trouser" set isn't grabbed as a lone top.
+    if (p.cat === 'kurti_1pc' && /(shirt|top|kameez|kurta)[\s]{0,3}(&|\+|and|with|\/)[\s]{0,3}(culottes?|trousers?|pants?|palazzo|plazzo|bottoms?|shalwar)/i.test(p.t||'')) { p.cat = 'shirt_trouser_2pc'; pieceN++; out.push(p); continue; }
+    // (b) western tops mis-shelved as eastern kurtis → western_top. Clear western nouns move
+    // unconditionally; bare "Top" only for confirmed western brands (Lulusar image-verified western).
+    if (p.cat === 'kurti_1pc' && !/kurta|kameez|\bkurti\b|shalwar|dupatta|anarkali|\bfrock\b|abaya|gharara|lehenga/i.test(p.t||'')
+        && (/\btee\b|t-?shirt|\bblouse\b|camisole|tank[\s-]?top|crop[\s-]?top|bodysuit|\bcorset\b|bustier|\bhalter\b|tube[\s-]?top|\bcami\b|bralette|\bjersey\b/i.test(p.t||'')
+            || (/^(Lulusar|Outfitters|Breakout)$/.test(p.b||'') && /\btops?\b/i.test(p.t||'')))) { p.cat='western_top'; womenN++; out.push(p); continue; }
+    // (c) kurti_1pc_unstitch = 1-piece SHIRT fabric. A 2-piece "Shirt & Trouser"/"02 Piece"/"Shirt
+    // Bottom Suit" or a standalone "Bottom" fabric mis-shelved here → the right unstitched cat / bottoms.
+    if (p.cat === 'kurti_1pc_unstitch') {
+      if (/(shirt|kameez)[\s\w]{0,12}(trousers?|bottoms?|shalwar|pajama)|\b0?2 ?(pc|pcs|piece|pieces)\b|shirt[\s-]?bottom|bottom[\s-]?suit/i.test(p.t||'')) { p.cat='shirt_trouser_2pc_unstitch'; pieceN++; out.push(p); continue; }
+      if (/\bbottoms?\b|\btrousers?\b|\bshalwar\b/i.test(p.t||'') && !/shirt|kameez|kurta|\bkurti\b|dupatta/i.test(p.t||'')) { p.cat='womens_trouser'; womenN++; out.push(p); continue; }
+    }
     // ── VISUAL-AUDIT wave 4 (image-verified) ──
     // ChenOne "LDS-####" ladies WESTERN tops/shirts dumped into winter/pret stitched suits → western top.
     if (p.b === 'ChenOne' && /lds/i.test(p.u||'') && /\btop\b|\bshirt\b|western|blouse/i.test(p.t||'') && !/\bsuit\b|[23] ?pc|kameez|dupatta|kurta/i.test(p.t||'') && !/^(western_top|kurti_1pc)$/.test(p.cat)) { p.cat='western_top'; womenN++; out.push(p); continue; }
