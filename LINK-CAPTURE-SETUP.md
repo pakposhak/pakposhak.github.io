@@ -58,98 +58,94 @@ You build this **once** on your iPhone, then send customers one iCloud link. Tak
 ## Part A2 — iPhone "Send whole cart" Shortcut (all brands)
 
 Same idea as Part A, but instead of one product it grabs **every item in the brand's
-cart** in one tap. One universal script handles both store platforms: it reads the live
-cart (Shopify `/cart.js`, or the cart page for Khaadi/Sapphire) and opens the order form
-with all the links.
+cart** in one tap. The script builds the whole PakPoshak link itself, so the Shortcut is
+only **3 actions** (no fragile URL-Encode/Text wiring to get wrong). **Open the brand's
+cart/bag page first, then Share** — that one habit makes it work the same on every brand.
 
 Build a second shortcut named **Send cart to PakPoshak**, with these actions:
 
 | # | Action | Set it to |
 |---|---|---|
 | 1 | **Receive** | Receive **Safari web pages** from **Share Sheet**. If no input → **Stop** |
-| 2 | **Run JavaScript on Web Page** | paste the universal script below |
-| 3 | **URL Encode** | Mode = **Encode**, input = the **JavaScript Result** |
-| 4 | **Text** | `https://pakposhak.github.io/order-form.html?cart=` then insert the **URL Encoded** variable right after `=` |
-| 5 | **Open URLs** | input = the **Text** |
+| 2 | **Run JavaScript on Web Page** | paste the script below |
+| 3 | **Open URLs** | input = the **JavaScript Result** |
 
-Universal script for action 2 — handles **Shopify AND Salesforce Commerce Cloud
-(Khaadi/Sapphire)** in one go, with a single-item fallback:
+Self-contained script for action 2 — reads the cart, builds the full PakPoshak link, and
+hands it straight to **Open URLs**. Works on Shopify, Khaadi/Sapphire (SFCC), and custom:
 
 ```javascript
 (async () => {
-  const origin = location.origin;
-  const clean = h => { try { const u = new URL(h, origin); u.hash = ''; return u.href; } catch (e) { return null; } };
+  var origin = location.origin;
+  var abs = function (h) { try { var u = new URL(h, origin); u.hash = ''; return u.href; } catch (e) { return null; } };
+  var isProd = function (h) { try { var p = new URL(h, origin).pathname; return /\.html$/i.test(p) || /\/products?\//i.test(p); } catch (e) { return false; } };
+  // Build the full PakPoshak link and hand it to Open URLs (one completion() call).
+  var finish = function (list) {
+    var seen = {}, urls = [];
+    (list || []).forEach(function (u) { if (u && !seen[u]) { seen[u] = 1; urls.push(u); } });
+    completion('https://pakposhak.github.io/order-form.html?cart=' + encodeURIComponent(urls.join('\n')));
+  };
 
-  // 1) Shopify — read cart.js, build each link from handle+variant_id (NOT item.url):
-  //    on multi-currency / Markets stores item.url can carry a /en-us/ locale prefix;
-  //    /products/{handle} is always the canonical path the order form can fetch.
+  // A) Scrape the CART PAGE — works on EVERY platform with no network call. Real
+  //    line-items have a quantity control next to a product link; recommendation
+  //    carousels don't, so they're skipped. (Open the cart/bag page before sharing.)
   try {
-    const res = await fetch('/cart.js', { headers: { Accept: 'application/json' } });
-    if (res.ok) {
-      const cart = await res.json();
-      const urls = [];
-      (cart.items || []).forEach(i => {
-        const path = i.handle ? ('/products/' + i.handle + (i.variant_id ? '?variant=' + i.variant_id : '')) : i.url;
-        const u = path && clean(path);
-        if (u) urls.push(u);
-      });
-      if (urls.length) { completion(urls.join('\n')); return; }
-    }
-  } catch (e) {}
-
-  // 2) Non-Shopify (Khaadi/Sapphire SFCC, or a custom platform like LAAM) — no
-  //    /cart.js. Scrape the cart page: real cart line-items have a QUANTITY control
-  //    next to a product link (ending .html for SFCC, or containing /product);
-  //    recommendation carousels don't, so we skip them. Keeps ?dwvar_..._size=.
-  try {
-    const isPdp = h => { try { const p = new URL(h, origin).pathname; return /\.html$/i.test(p) || /\/products?\//i.test(p); } catch (e) { return false; } };
-    const out = new Set();
+    var out = [];
     document.querySelectorAll(
       'input[name*="quantity" i],select[name*="quantity" i],[class*="quantity"] input,[class*="quantity"] select,[class*="qty"] input,[class*="qty"] select'
-    ).forEach(q => {
-      let el = q;
-      for (let i = 0; i < 6 && el; i++, el = el.parentElement) {
-        const a = el.querySelector && el.querySelector('a[href]');
-        if (a && isPdp(a.getAttribute('href'))) { const c = clean(a.getAttribute('href')); if (c) out.add(c); break; }
+    ).forEach(function (q) {
+      var el = q;
+      for (var i = 0; i < 6 && el; i++, el = el.parentElement) {
+        var a = el.querySelector && el.querySelector('a[href]');
+        if (a && isProd(a.getAttribute('href'))) { var u = abs(a.getAttribute('href')); if (u) { out.push(u); break; } }
       }
     });
-    if (!out.size) {
-      document.querySelectorAll('.product-line-item,.line-item,[class*="line-item"],[class*="cart-item"]').forEach(li => {
-        const a = li.querySelector('a[href]');
-        if (a && isPdp(a.getAttribute('href'))) { const c = clean(a.getAttribute('href')); if (c) out.add(c); }
+    if (!out.length) {
+      document.querySelectorAll('.product-line-item,.line-item,[class*="line-item"],[class*="cart-item"]').forEach(function (li) {
+        var a = li.querySelector('a[href]');
+        if (a && isProd(a.getAttribute('href'))) { var u = abs(a.getAttribute('href')); if (u) out.push(u); }
       });
     }
-    if (out.size) { completion([...out].join('\n')); return; }
+    if (out.length) { finish(out); return; }
   } catch (e) {}
 
-  // 3) Fallback: just send the current page (single item).
-  completion(location.href);
+  // B) Shopify fallback — read the cart JSON (lets it work from any page too). Build
+  //    each link from handle+variant_id so a /en-us/ Markets prefix can't break it.
+  try {
+    var res = await fetch('/cart.js', { headers: { Accept: 'application/json' } });
+    if (res.ok) {
+      var cart = await res.json();
+      var urls = (cart.items || []).map(function (i) {
+        return abs(i.handle ? ('/products/' + i.handle + (i.variant_id ? '?variant=' + i.variant_id : '')) : i.url);
+      });
+      if (urls.filter(Boolean).length) { finish(urls); return; }
+    }
+  } catch (e) {}
+
+  // C) Fallback: the current page (single item).
+  finish([location.href]);
 })();
 ```
 
-How the customer uses it:
-- **Shopify brands:** add items to cart, then from **any page** on that brand tap
-  **Share → Send cart to PakPoshak** (`/cart.js` is the session cart, so any page works).
-- **Khaadi / Sapphire (SFCC):** open the **cart/bag page** first (so the line-items are
-  on screen), then **Share → Send cart to PakPoshak**.
+How the customer uses it (uniform on every brand):
+> Add items to the brand's cart → open the **cart / bag page** → tap **Share → Send cart
+> to PakPoshak**.
 
-The order form then adds one item per cart line (validated, de-duped, capped at 40).
-SFCC items resolve their real PKR price through the relay, exactly like a single share —
-**verified** with live Sapphire products (৳6,990 + ৳6,590).
+The order form then adds one item per cart line (validated, de-duped, capped at 40), each
+resolving its real PKR price exactly like a single share. Verified end-to-end on the
+order-form side with live products from Lawrencepur, ETHNC, Gul Ahmed, Edenrobe, Beechtree,
+Cross Stitch and Sapphire (real prices, including a `/en-us/` locale-prefixed URL).
 
-> **SFCC caveat — needs a real-cart confirm.** The Shopify path is exact (reads the cart
-> JSON). The Khaadi/Sapphire path scrapes the cart **page DOM**; the heuristic (product
-> link next to a quantity control) is robust but the exact markup can't be verified without
-> a populated cart. Test once on a real Khaadi and Sapphire cart — if it grabs the wrong
-> items or misses any, send a screenshot of the cart page and the selector gets tuned.
-> Until then, the safe SFCC habit is: **be on the cart page** before sharing.
+> **Why "open the cart page first":** on the cart page the script reads the line-items
+> straight from the screen (strategy A — no network call), which works identically on every
+> platform. The Shopify `cart.js` read (strategy B) is only a fallback for when you share
+> from some other page. Being on the cart page is the reliable habit.
 
 ### Coverage by platform (tested 2026-06-24)
 
 | Platform | Brands (sample) | Whole cart |
 |---|---|---|
-| Shopify (most of the catalog) | Lawrencepur, Mina Hasan, Bonanza, Sana Safinaz, Gul Ahmed, Limelight, Nishat Linen, Asim Jofa, Edenrobe, Beechtree, Maria B, Cross Stitch | ✅ exact (reads `cart.js`) |
-| Salesforce Commerce Cloud | Khaadi, Sapphire | ✅ scrapes the **cart page** (open the cart/bag first) |
+| Shopify (most of the catalog) | Lawrencepur, ETHNC, Mina Hasan, Bonanza, Sana Safinaz, Gul Ahmed, Limelight, Nishat Linen, Asim Jofa, Edenrobe, Beechtree, Maria B, Cross Stitch | ✅ cart page (or `cart.js` fallback) |
+| Salesforce Commerce Cloud | Khaadi, Sapphire | ✅ scrapes the **cart page** |
 | Custom marketplace | LAAM | ⚠️ no readable cart → sends the single product you're on |
 
 > **Lawrencepur note:** it's Shopify and its `cart.js` returns PKR (the USD on screen is
@@ -158,14 +154,16 @@ SFCC items resolve their real PKR price through the relay, exactly like a single
 > `?cart=` was confirmed across Lawrencepur, Gul Ahmed, Edenrobe, Beechtree, Cross Stitch
 > and Sapphire, all resolving real prices.
 
-### Diagnostic — see what the cart script grabbed
+### Diagnostic — see what the cart script built
 
-If a brand's cart "doesn't fetch," check what the script extracted: in the Shortcut, drag a
-**Quick Look** action between **Run JavaScript on Web Page** and **URL Encode**, then run it
-from the brand's cart page. It shows the links found:
-- a list of `/products/...` or `.html` links → good (those become order items);
-- a single non-product link (the cart page itself) → the cart couldn't be read on that
-  brand; send a screenshot of its cart page and the selector gets tuned.
+If a brand's cart "doesn't fetch," see what the script produced: in the Shortcut, drag a
+**Quick Look** action **between Run JavaScript on Web Page and Open URLs**, then run it from
+the brand's **cart page**. It shows the final link:
+- `…/order-form.html?cart=https%3A%2F%2F…%2Fproducts%2F…` with one or more product paths
+  inside → good (those become order items);
+- `…?cart=` ending in the **cart page URL** (e.g. `…%2Fcart`) with no `/products/` inside →
+  the cart wasn't read on that brand (often: not on the cart page, or its markup differs).
+  Send that text or a screenshot of the cart page and it gets tuned.
 Remove the Quick Look action once confirmed.
 
 ## Part B — Android (nothing to build)
