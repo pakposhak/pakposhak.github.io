@@ -71,6 +71,8 @@
 - **Outfitters** — women's blouse/dress mis-gendered into men's cats → `western_top`/`maxi_dress`.
 - **ETHNC** — `western-…` slug tops → `western_top`; standalone "SKIRT" → `womens_trouser`; eastern kids handled by the girls-kids list.
 - **ChenOne** — `LDS-####` ladies western tops/shirts dumped in winter/pret → `western_top`.
+- **Breakout** — WESTERN high-street brand; its "Top" items mis-shelved in eastern kurti → `western_top` (grouped with Lulusar/Outfitters).
+- **Edenrobe** — multi-dept; its "Printed Lawn Co-Ord Set" is **EASTERN** (kameez+trouser) → `shirt_trouser_2pc`, NOT a western co-ord.
 - *(Beechtree polos/button-downs & standalone skirts are caught by the general kurti=eastern and skirt→bottom rules.)*
 
 ### Men's brands & quirks
@@ -84,6 +86,7 @@
 - **Sadaf Fawad Khan** — standalone "X Kurta" (not kurti/suit) = its MEN's kurta line.
 - **Royal Tag** — `LP/GT/FT/DOT` SKUs = lapel pins / ties / grooming sets → DELETE (accessories).
 - **Charcoal** — menswear scarves/ties in unstitched → DELETE.
+- **Azure** — women-first brand with a MEN's line (`MENS_2PC_BRANDS`): its "Kameez / Kurta Shalwar / Kurta with Trouser" 2pc + "Kurta Pajama" mistagged into women's cats → `mens_shalwar_kameez`.
 
 ### Modest-wear / hijab brands → `abaya` (the modest-wear umbrella)
 - **The Hijab Company · Abaya.pk · The Ummatis · Hijab-ul-Hareem · Hijabi.pk · Hijab & Co** — items sitting in apparel suit cats → `abaya` (they sell hijabs/scarves, not 3pc lawn suits). ⚠️ **OPEN: Danish to confirm `abaya` vs a dedicated hijab cat vs `dupatta_only`.**
@@ -102,8 +105,33 @@
 ---
 
 ## Open / held decisions (need Danish)
-1. **Hijab brands → `abaya`** (~581 items): keep in the modest-wear umbrella, or split into a dedicated hijab cat / `dupatta_only`?
-2. **Sapphire** ~237 plain "Cotton/Dobby Suit" SKUs in men's cats — genuinely men's, or women's mistagged? (BRAND-AUDIT-FINDINGS.md confusion #1.)
-3. **Wear Ochre** 478 generic "Lawn 2/3 Pc Suit" in kids_girls_eastern — kids or women's?
-4. Stitched-vs-unstitched ambiguity for brands whose titles say only "Suit/Fabric" (Shahzeb Saeed, Arsalan Iqbal, Almirah KS/KT, Diners Wash&Wear). See BRAND-AUDIT-FINDINGS.md "Confusions" for the full list.
-5. No taxonomy key for: 4-piece suits, men's outerwear/jackets (CRUSH puffer), western coats (KEF). Currently bucketed pragmatically.
+*(Grouped from the historical 61 "Confusions". Many are now RESOLVED in code — see the note at the end — these are the ones still genuinely open. Per-brand specifics: `BRAND-AUDIT-FINDINGS.md`.)*
+
+**A. Hijab / modest-wear routing** — should hijabs/scarves sit in `abaya` (current, ~581 items), a dedicated hijab cat, or `dupatta_only`? Affects The Hijab Company, The Ummatis, The Women Zone, Hijabi.pk, Abaya.pk, KEF, Paarsa, Hijab-ul-Hareem. Also: "Kids Namaz Chadar" (The Ummatis) → kids or abaya?
+
+**B. Genderless "Suit" cells — kids vs women** (title has no age/gender marker):
+- **Sapphire** ~237 "Cotton/Dobby/Pima Suit" in men's cats — men's or women's mistagged?
+- **Wear Ochre** 478 "Lawn 2/3 Pc Suit" in kids_girls_eastern — kids or women's?
+- **Limelight** "2 Piece … Suit (Pret)" split kids/women — its own pret line or kids?
+- **Maria B** plain "Kurta"/"2 Piece Blended Suit" — M-Kids line or women's?
+- **Asim Jofa** `AJKL` "Stitched 2 Pcs/1 Pc" — kids or women's 2pc?
+- **Saya** "For Kids" lawn 2pc with no boy/girl marker — default to girls or boys?
+- **Kross Kulture** unprefixed "2PC/3PC Embroidered Suit" — women's pret or kids?
+- **Tassels** "Mother & Daughter" sets — women's pret, kids, or split?
+
+**C. Stitched-vs-unstitched** (title says only "Suit/Fabric/Kameez Shalwar") — fabric or finished?: **Shahzeb Saeed** (SF- two-piece suits), **Arsalan Iqbal** (IronEz kurta sets), **Almirah** (KS/KT kameez-shalwar), **Diners** (Wash&Wear Shalwar Kameez), **Ismail Farid** (crush-fabric kurta pajama), **Cambridge** (Basic Shalwar Kameez Suit), **Sania Maskatiya** (coded Cala/Lulu), **Iznik** (UE-/IP-/CC- codes).
+
+**D. Missing taxonomy keys** (currently bucketed pragmatically — confirm or add a key):
+- **4-piece** suits (Roheenaz "Four Piece", Sitara "4PC", Sha Posh "4PC").
+- **Men's outerwear / jacket** (CRUSH waterproof puffer; Amir Adnan Jamawar "Jacket" — waistcoat or kurta?).
+- **Western coats / kimono** (KEF "Jamawar Coat", "Kimono"; Jeem "Jacket").
+- **Unstitched kaftan / blouse-skirt** (Threads & Motifs).
+- **Jubba / Thobe** (J. Junaid Jamshed) — keep `mens_kurta` or separate?
+- **3-piece men's eastern set** (Kurta Corner "Designer Set (3 Piece)", Royal Tag "Three-Piece Suit" — `mens_shalwar_kameez` vs `mens_suit`).
+- **Men's activewear / tracksuit** (ChenOne "Jogging Suit", Furor tracksuits) — currently `mens_shirt`.
+
+**E. Add-on / component variants** — **Sadaf Fawad Khan** "[+Rs …]" Pants/Sleeves/Dupatta/Potli: catalogue as standalone products, or hide as order add-ons? (The bracketed `[+Rs` ones are already deleted by NONAPPAREL.)
+
+**F. Eastern-vs-western "Suit"** (Amir Adnan "Embroidered Suit" — eastern kameez-shalwar vs western pant-coat; Royal Tag "Three-Piece Suit").
+
+> **Resolved since the first audit** (no longer open): hijab-brand suits → `abaya`; Salitex/Lakhany unstitched bottoms → `womens_trouser`; Sha Posh kids → `kids_girls_*`; Sana Safinaz/Alkaram "Shirt + Culotte" → `shirt_trouser_2pc`; Al-Deebaj/Azure men's lines → men's; Monark/Uniworth/Edge western suits → `mens_suit`; cosmetics/jewelry/men's-shoes → deleted.
