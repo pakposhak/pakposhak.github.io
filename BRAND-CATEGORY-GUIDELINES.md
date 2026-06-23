@@ -103,6 +103,7 @@
 - **Ammara Khan** — `D-…` slugged designer gowns mis-filed as 1pc kurti → `heavy_formal_3pc`.
 - **SHAAL** — luxury shawl brand; men's shawls → `mens_unstitched` (no mens_shawl cat), women's/unisex → `shawl`.
 - **Akbar Aslam** — women's festive **EASTERN** brand; its "named" (Marigold/Ivoire/Tesa/Aven…) kameez+shalwar(+dupatta) sets mis-filed as western co-ords → `shirt_trouser_2pc` (eastern 2pc; image-confirmed desi sets, not western co-ords).
+- **Khaadi (SFCC dual-form)** — sells the SAME design in TWO forms under TWO urls: `/fabrics-*/CODE` = **UNSTITCHED fabric** (cheaper) and `/…-tailored-*/T-CODE` = **STITCHED**. The harvest mislabels the fabric form as stitched (pret_3pc, fake XS-XL); the `/fabrics-*` (no "tailored") rows are routed to their unstitched sibling (`pret_3pc`→`lawn_3pc_unstitch`, `shirt_dupatta_2pc`→`shirt_dupatta_2pc_unstitch`, …) with size `Unstitched`, so **each form shows in its own facet**. Tailored (`T-`) rows stay stitched. The order-form paste offers BOTH forms via a Stitched|Unstitched toggle (see [[dual-stitched-unstitched]]).
 
 ---
 

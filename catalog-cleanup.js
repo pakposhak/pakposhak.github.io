@@ -616,6 +616,17 @@ function cleanupProducts(ps) {
     // Akbar Aslam — women's festive EASTERN brand; its "named" kameez+shalwar(+dupatta) sets are
     // mis-filed as western co-ords (image-confirmed eastern desi sets, not western) -> eastern 2pc.
     if (p.b === 'Akbar Aslam' && p.cat === 'coord_western') { p.cat = 'shirt_trouser_2pc'; womenN++; out.push(p); continue; }
+    // Khaadi (SFCC) sells the SAME design in TWO forms under TWO urls: `/fabrics-*/CODE` = UNSTITCHED
+    // fabric (cheaper) and `/…-tailored-*/T-CODE` = STITCHED. The harvest mislabels the FABRIC form as
+    // stitched (pret_3pc, fake XS-XL). Route the fabric form to its unstitched sibling + size "Unstitched"
+    // so each form sits in its OWN facet (Danish 2026-06-23 "each category shows its form's card"). The
+    // tailored (T-) rows are left stitched. The order-form paste already offers BOTH via the live relay.
+    if (/khaadi/i.test(p.u||'') && /\/fabrics-/i.test(p.u||'') && !/tailored/i.test(p.u||'')) {
+      const KH_UNS = { pret_3pc:'lawn_3pc_unstitch', pret_3pc_emb:'unstitch_3pc_emb', formal_emb_3pc:'unstitch_3pc_emb', heavy_formal_3pc:'unstitch_3pc_emb', shirt_dupatta_2pc:'shirt_dupatta_2pc_unstitch', shirt_trouser_2pc:'shirt_trouser_2pc_unstitch', pret_2pc_emb:'shirt_dupatta_2pc_unstitch', formal_emb_2pc:'shirt_dupatta_2pc_unstitch', kurti_1pc:'kurti_1pc_unstitch', western_top:'kurti_1pc_unstitch', winter_3pc_stitch:'winter_3pc_unstitch', winter_2pc_stitch:'winter_2pc_unstitch' };
+      if (KH_UNS[p.cat]) p.cat = KH_UNS[p.cat];
+      p.sz = ['Unstitched'];
+      womenN++; out.push(p); continue;
+    }
     // (Cougar women's-slug-in-men's-cat is handled at the source rule above, by garment.)
     // Humayun Alamgir WOMEN'S bridal/formal (3pc/lehenga/gharara/choli/pishwas) mis-tagged men's kurta.
     if (p.b === 'Humayun Alamgir' && p.cat==='mens_kurta' && /\b3 ?pc\b|\b3 ?piece\b|lehenga|gharara|sharara|\bcholi\b|pishwas|anarkali/i.test(p.t||'')) { p.cat = /lehenga|gharara|sharara|\bcholi\b/i.test(p.t||'') ? 'lehenga' : 'pret_3pc'; womenN++; out.push(p); continue; }
