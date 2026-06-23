@@ -25,7 +25,7 @@
   "categories": ["shopping", "lifestyle"],
   "lang": "en-BD",
   "share_target": {
-    "action": "/",
+    "action": "/order-form.html",
     "method": "GET",
     "enctype": "application/x-www-form-urlencoded",
     "params": { "title": "title", "text": "text", "url": "url" }

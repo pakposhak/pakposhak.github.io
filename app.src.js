@@ -3103,16 +3103,24 @@
   // ── SHARE TARGET ────────────────────────────────────────────────────────────
   // Installed as a PWA, the app registers in the phone's Share sheet (see
   // manifest share_target). On the brand's product page the user taps the
-  // browser Share button → "PakPoshak" → we open with ?url=/?text= set. The
-  // Share button is ALWAYS available, even when the address bar can't be
-  // copied — so this is the most reliable way to get the link with zero typing.
+  // browser Share button → "PakPoshak" → we open with ?url=/?text= set. iPhone
+  // has no PWA share target, so an iOS Shortcut opens order-form.html?add=<link>
+  // instead — handled by the same function below. The Share button / Shortcut are
+  // ALWAYS available, even when the address bar can't be copied — so this is the
+  // most reliable way to get the link with zero typing.
   function handleSharedUrl(){
     try{
       const q = new URLSearchParams(location.search);
-      const shared = q.get('url') || q.get('text') || q.get('title') || '';
+      // ?add= is our own explicit param (the iOS Shortcut builds it); ?url/?text/
+      // ?title are what the Android Web Share sheet fills in. First non-empty wins.
+      const shared = q.get('add') || q.get('url') || q.get('text') || q.get('title') || '';
       if(!shared) return;
       const m = shared.match(/https?:\/\/[^\s"'<>]+/i);
       const link = m ? m[0] : shared.trim();
+      // Defence-in-depth: never ingest non-web schemes. parseUrl would otherwise
+      // rewrite javascript:/data: into a bogus-host https URL (isKnownBrand still
+      // rejects it, but bail early + explicitly on an external-input path).
+      if(/^\s*(javascript|data|vbscript|file|blob):/i.test(link)) return;
       const clean = parseUrl(link);
       if(clean && isKnownBrand(clean)){
         const inp = document.getElementById('urlInput');
@@ -6104,7 +6112,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-24c';
+  const PSB_BUILD = '2026-06-24d';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
