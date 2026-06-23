@@ -80,22 +80,29 @@ Universal script for action 2 — handles **Shopify AND Salesforce Commerce Clou
   const origin = location.origin;
   const clean = h => { try { const u = new URL(h, origin); u.hash = ''; return u.href; } catch (e) { return null; } };
 
-  // 1) Shopify — /cart.js is the universal cart JSON (keeps ?variant=).
+  // 1) Shopify — read cart.js, build each link from handle+variant_id (NOT item.url):
+  //    on multi-currency / Markets stores item.url can carry a /en-us/ locale prefix;
+  //    /products/{handle} is always the canonical path the order form can fetch.
   try {
     const res = await fetch('/cart.js', { headers: { Accept: 'application/json' } });
     if (res.ok) {
       const cart = await res.json();
-      const urls = (cart.items || []).map(i => origin + i.url).filter(Boolean);
+      const urls = [];
+      (cart.items || []).forEach(i => {
+        const path = i.handle ? ('/products/' + i.handle + (i.variant_id ? '?variant=' + i.variant_id : '')) : i.url;
+        const u = path && clean(path);
+        if (u) urls.push(u);
+      });
       if (urls.length) { completion(urls.join('\n')); return; }
     }
   } catch (e) {}
 
-  // 2) Salesforce Commerce Cloud (Khaadi, Sapphire) — no /cart.js. Scrape the cart
-  //    page: real cart line-items have a QUANTITY control next to a product link
-  //    ending in .html; recommendation carousels don't, so we skip them. Keeps the
-  //    ?dwvar_..._size= so the chosen size carries over.
+  // 2) Non-Shopify (Khaadi/Sapphire SFCC, or a custom platform like LAAM) — no
+  //    /cart.js. Scrape the cart page: real cart line-items have a QUANTITY control
+  //    next to a product link (ending .html for SFCC, or containing /product);
+  //    recommendation carousels don't, so we skip them. Keeps ?dwvar_..._size=.
   try {
-    const isPdp = h => { try { return /\.html$/i.test(new URL(h, origin).pathname); } catch (e) { return false; } };
+    const isPdp = h => { try { const p = new URL(h, origin).pathname; return /\.html$/i.test(p) || /\/products?\//i.test(p); } catch (e) { return false; } };
     const out = new Set();
     document.querySelectorAll(
       'input[name*="quantity" i],select[name*="quantity" i],[class*="quantity"] input,[class*="quantity"] select,[class*="qty"] input,[class*="qty"] select'
@@ -131,11 +138,35 @@ SFCC items resolve their real PKR price through the relay, exactly like a single
 **verified** with live Sapphire products (৳6,990 + ৳6,590).
 
 > **SFCC caveat — needs a real-cart confirm.** The Shopify path is exact (reads the cart
-> JSON). The Khaadi/Sapphire path scrapes the cart **page DOM**; the heuristic (link
-> ending in `.html` next to a quantity control) is robust but the exact markup can't be
-> verified without a populated cart. Test once on a real Khaadi and Sapphire cart — if it
-> grabs the wrong items or misses any, send a screenshot of the cart page and the selector
-> gets tuned. Until then, the safe SFCC habit is: **be on the cart page** before sharing.
+> JSON). The Khaadi/Sapphire path scrapes the cart **page DOM**; the heuristic (product
+> link next to a quantity control) is robust but the exact markup can't be verified without
+> a populated cart. Test once on a real Khaadi and Sapphire cart — if it grabs the wrong
+> items or misses any, send a screenshot of the cart page and the selector gets tuned.
+> Until then, the safe SFCC habit is: **be on the cart page** before sharing.
+
+### Coverage by platform (tested 2026-06-24)
+
+| Platform | Brands (sample) | Whole cart |
+|---|---|---|
+| Shopify (most of the catalog) | Lawrencepur, Mina Hasan, Bonanza, Sana Safinaz, Gul Ahmed, Limelight, Nishat Linen, Asim Jofa, Edenrobe, Beechtree, Maria B, Cross Stitch | ✅ exact (reads `cart.js`) |
+| Salesforce Commerce Cloud | Khaadi, Sapphire | ✅ scrapes the **cart page** (open the cart/bag first) |
+| Custom marketplace | LAAM | ⚠️ no readable cart → sends the single product you're on |
+
+> **Lawrencepur note:** it's Shopify and its `cart.js` returns PKR (the USD on screen is
+> just a currency selector). Whole-cart works. If it ever doesn't, it's the Shortcut step,
+> not the order form — verified that a Lawrencepur `?cart=` builds the drafts with prices.
+> `?cart=` was confirmed across Lawrencepur, Gul Ahmed, Edenrobe, Beechtree, Cross Stitch
+> and Sapphire, all resolving real prices.
+
+### Diagnostic — see what the cart script grabbed
+
+If a brand's cart "doesn't fetch," check what the script extracted: in the Shortcut, drag a
+**Quick Look** action between **Run JavaScript on Web Page** and **URL Encode**, then run it
+from the brand's cart page. It shows the links found:
+- a list of `/products/...` or `.html` links → good (those become order items);
+- a single non-product link (the cart page itself) → the cart couldn't be read on that
+  brand; send a screenshot of its cart page and the selector gets tuned.
+Remove the Quick Look action once confirmed.
 
 ## Part B — Android (nothing to build)
 
