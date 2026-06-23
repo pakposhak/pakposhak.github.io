@@ -154,7 +154,7 @@ function womenType(p){
   // pieces in pret_3pc). Guard against women's "sherwani-style kurti" and bridal lehengas.
   if (/\bsherwani\b|\bprince[\s-]?coat\b/.test(s) && !/\bwomen|\bladies\b|\bgirls?\b|\bkurti\b|\bstyle\b|inspired|lehenga|gharara|sharara|\bfrock\b|\bsaree\b|\bmaxi\b|\bgown\b/.test(s)) return 'mens_sherwani';
   if (/\b(trouser|straight pants?|culottes?|tights|palazzo|cigarette pants?|farshi shalwar|pants?)\b/.test(s)
-      && !/(shirt|kameez|kurti|kurta|dupatta|\bsuit\b|3 ?pc|2 ?pc|3 ?piece|2 ?piece|\btop\b|co-?ord|frock|\bmaxi\b|gown|saree|lehenga|abaya|kaftan|peplum)/.test(s)) return isUnstitched(p) ? 'kurti_1pc_unstitch' : 'womens_trouser';
+      && !/(shirt|kameez|kurti|kurta|dupatta|\bsuit\b|3 ?pc|2 ?pc|3 ?piece|2 ?piece|\btop\b|co-?ord|frock|\bmaxi\b|gown|saree|lehenga|abaya|kaftan|peplum)/.test(s)) return 'womens_trouser';   // a standalone bottom is a bottom whether stitched or unstitched (there is no unstitched-bottom cat) — same fix as fwdCat
   if (/\bt-?shirt\b|tank top/.test(s) && !/(\bsuit\b|3 ?pc|2 ?pc|dupatta|trouser|kameez)/.test(s)) return 'western_top';
   return null;
 }
@@ -493,7 +493,7 @@ function cleanupProducts(ps) {
     // western co-ord → eastern 2pc.
     if (p.b === 'Al-Deebaj' && p.cat === 'coord_western') { p.cat = 'shirt_trouser_2pc'; womenN++; out.push(p); continue; }
     // men's shawls dumped into mens_unstitched (which is for FABRIC) → the shawl category.
-    if (p.cat === 'mens_unstitched' && /\bshawl\b/i.test(p.t||'')) { p.cat = 'shawl'; womenN++; out.push(p); continue; }
+    if (p.cat === 'mens_unstitched' && /\bshawl\b/i.test(p.t||'') && !/sherwani|kurta ?pajam|\bgroom\b|prince ?coat|\bdhoti\b/i.test(p.t||'')) { p.cat = 'shawl'; womenN++; out.push(p); continue; }   // a men's sherwani GROOM SET that merely includes a shawl is NOT a standalone shawl -> falls through to the sherwani rule below
     // a "shirt"-titled top mis-filed as jeans → men's shirt (Diners/Eminent "… Shirt" in mens_jeans).
     if (p.cat === 'mens_jeans' && /\bshirt\b/i.test(p.t||'') && !/\bjeans?\b|\bdenim\b/i.test(p.t||'')) { p.cat = 'mens_shirt'; menPcN++; out.push(p); continue; }
     // inners/camisoles/slips/"shameez" mis-filed as a 3-piece suit → western top (inner).
@@ -515,7 +515,7 @@ function cleanupProducts(ps) {
     // (c) kurti_1pc_unstitch = 1-piece SHIRT fabric. A 2-piece "Shirt & Trouser"/"02 Piece"/"Shirt
     // Bottom Suit" or a standalone "Bottom" fabric mis-shelved here → the right unstitched cat / bottoms.
     if (p.cat === 'kurti_1pc_unstitch') {
-      if (/(shirt|kameez)[\s\w]{0,12}(trousers?|bottoms?|shalwar|pajama)|\b0?2 ?(pc|pcs|piece|pieces)\b|shirt[\s-]?bottom|bottom[\s-]?suit/i.test(p.t||'')) { p.cat='shirt_trouser_2pc_unstitch'; pieceN++; out.push(p); continue; }
+      if (/(shirt|kameez|dress|blouse|gown)[\s\w]{0,12}(trousers?|bottoms?|shalwar|pajama|skirt)|\b0?2 ?(pc|pcs|piece|pieces)\b|shirt[\s-]?bottom|bottom[\s-]?suit/i.test(p.t||'')) { p.cat='shirt_trouser_2pc_unstitch'; pieceN++; out.push(p); continue; }
       if (/\bbottoms?\b|\btrousers?\b|\bshalwar\b/i.test(p.t||'') && !/shirt|kameez|kurta|\bkurti\b|dupatta/i.test(p.t||'')) { p.cat='womens_trouser'; womenN++; out.push(p); continue; }
     }
     // ── VISUAL-AUDIT wave 4 (image-verified) ──
@@ -606,7 +606,11 @@ function cleanupProducts(ps) {
     }
     // a standalone "SKIRT" (a bottom) mis-filed in a women's TOP/SUIT cat -> women's bottom (ETHNC,
     // Beechtree "SOLID SKIRT"…). Guard sets/lehenga-choli/2-3pc so only the lone skirt moves.
-    if (/\bskirt\b/i.test(p.t||'') && /^(western_top|kurti_1pc|pret_3pc|pret_3pc_emb|maxi_dress|coord_western)$/.test(p.cat) && !/shirt|kameez|kurta|dupatta|\bcholi\b|lehenga|gharara|\b[23] ?(pc|piece)|co-?ord|\bset\b|\btop\b|\bsuit\b/i.test(p.t||'')) { p.cat='womens_trouser'; womenN++; out.push(p); continue; }
+    if (/\bskirt\b/i.test(p.t||'') && /^(western_top|kurti_1pc|pret_3pc|pret_3pc_emb|maxi_dress|coord_western|winter_3pc_stitch|winter_2pc_stitch|winter_3pc_unstitch)$/.test(p.cat) && !/shirt|kameez|kurta|dupatta|\bcholi\b|lehenga|gharara|\b[23] ?(pc|piece)|co-?ord|\bset\b|\btop\b|\bsuit\b/i.test(p.t||'')) { p.cat='womens_trouser'; womenN++; out.push(p); continue; }
+    // a men's SHERWANI GROOM SET (sherwani + turban/kurta-pajama/dhoti/shawl) parked in shawl OR
+    // mens_unstitched -> men's sherwani (Edge Republic "… Sherwani With Turban Shawl And Kurta Pajam").
+    // Run on both cats (it enters mens_unstitched and is moved to shawl only LATER). Guard real FABRIC.
+    if ((p.cat==='shawl' || p.cat==='mens_unstitched') && /\bsherwani\b/i.test(p.t||'') && /turban|\bgroom\b|kurta ?pajam|\bdhoti\b|with shawl|& shawl/i.test(p.t||'') && !/\bfabric\b|unstitch|suiting|suit length/i.test(p.t||'') && !/\bwomen|\bladies|\bgirls?\b|\bkurti\b|lehenga/i.test(p.t||'')) { p.cat='mens_sherwani'; menPcN++; out.push(p); continue; }
     // Azure/other men's "Kurta Pajama" parked in loungewear -> men's shalwar-kameez.
     if (p.cat==='loungewear' && /kurta ?(pajama|pyjama)/i.test(p.t||'') && !/\bwomen|\bladies|\bgirls?\b/i.test(p.t||'')) { p.cat='mens_shalwar_kameez'; menPcN++; out.push(p); continue; }
     // Akbar Aslam — women's festive EASTERN brand; its "named" kameez+shalwar(+dupatta) sets are
@@ -617,6 +621,17 @@ function cleanupProducts(ps) {
     if (p.b === 'Humayun Alamgir' && p.cat==='mens_kurta' && /\b3 ?pc\b|\b3 ?piece\b|lehenga|gharara|sharara|\bcholi\b|pishwas|anarkali/i.test(p.t||'')) { p.cat = /lehenga|gharara|sharara|\bcholi\b/i.test(p.t||'') ? 'lehenga' : 'pret_3pc'; womenN++; out.push(p); continue; }
     // Maria B "MBM-3PW" wool 3-piece (waistcoat+kurta+shalwar, male model) mis-filed as a men's shirt.
     if (p.b === 'Maria B' && /mbm-?3pw/i.test(p.u||'') && p.cat==='mens_shirt') { p.cat='mens_shalwar_kameez'; menPcN++; out.push(p); continue; }
+    // Amir Adnan avant-garde RUNWAY couture wrongly in mens_unstitched (a FABRIC cat) — finished
+    // STITCHED outfits, image-verified per item 2026-06-23. The show mixed Amir Adnan menswear +
+    // House-of-Parishae womenswear, so the TITLE can't tell gender ("velvet jacket"=woman, "double-
+    // breast coat"=man) — slug-keyed because the gender call here is image-only.
+    if (p.b === 'Amir Adnan' && (p.cat === 'mens_unstitched' || /^mens_(trouser|shirt|suit)$/.test(p.cat))) {
+      const _au = p.u || '';   // NOTE: cat guard widened — these run-way pieces enter as mens_trouser w/ sz=["Unstitched"] and would be converted to mens_unstitched only LATER (line ~744), so keying on mens_unstitched alone missed them
+      if (/black-velvet-jacket-and-pants|miner-by-house-of-parishae|braids-by-house-of-parishae/.test(_au)) { p.cat='coord_western'; womenN++; out.push(p); continue; }   // women's couture sets
+      const _am = [['tehra-jamawar-prince','mens_sherwani'],['deep-brown-hand-embroidered-jacket','mens_sherwani'],['anarkali-style-short-kurta-with-coat-sleeves-and-dhoti','mens_shalwar_kameez'],['corset-by-house-of-parishae','mens_waistcoat'],['black-double-breast-coat','mens_suit'],['pink-double-breasted-crush-jamawar','mens_suit']];
+      const _hit = _am.find(([k]) => _au.includes(k));
+      if (_hit) { p.cat=_hit[1]; menPcN++; out.push(p); continue; }
+    }
     // mens_unstitched holds FABRIC - finished stitched men's couture (sherwani/prince coat/open-front/
     // achkan) mis-tagged there (the expensive last page) -> mens_sherwani.
     if (p.cat==='mens_unstitched' && /prince ?coat|open[\s-]?front|\bachkan\b|\bbandhgala\b|sherwani (?:&|and|with) (?:dhoti|kurta|turban)/i.test(p.t||'') && !/\bfabric\b|unstitch|suiting|\bsuit length\b|\bgreige\b/i.test(p.t||'')) { p.cat='mens_sherwani'; menPcN++; out.push(p); continue; }

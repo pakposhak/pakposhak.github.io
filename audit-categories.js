@@ -55,6 +55,8 @@ function isFalsePositive(p) {
   if (p.cat === 'mens_sherwani' && /prince ?coat/i.test(t)) return true;           // "prince coat with same pant" = a sherwani set
   if (/waist ?coat/i.test(t) && /^(pret_3pc|kurti_1pc|pret_3pc_emb)$/.test(p.cat)) return true; // women's waistcoat is legit
   if (b === 'One Kids') return true;                                               // "One Kids" sells ADULT menswear (confusing name)
+  if ((p.cat === 'coord_western' || p.cat === 'mens_waistcoat') && /\bwaistcoat\b|poncho|\bcorset\b|bikini|\bjacket\b/i.test(t)) return true; // set/couture pieces legitimately pair a bottom
+  if (b === 'Zainab Chottani' && /\bcapri\b/i.test(t) && p.cat === 'kaftan') return true; // "Capri" = a velvet KAFTAN line, not a capri bottom
   return false;
 }
 
@@ -62,7 +64,7 @@ function isFalsePositive(p) {
 function flag(p) {
   const t = p.t || '', c = p.cat, out = [];
   if (isFalsePositive(p)) return out;
-  const isFoot = c === 'footwear', isBottom = /trouser$/.test(c) || c === 'womens_trouser' || c === 'mens_trouser',
+  const isFoot = c === 'footwear', isBottom = /trouser$/.test(c) || c === 'womens_trouser' || c === 'mens_trouser' || c === 'mens_jeans',
         isDup = c === 'dupatta_only', isShawl = c === 'shawl', isKidCat = /^kids_/.test(c),
         gender = /^mens_/.test(c) ? 'm' : isKidCat ? 'k' : 'w';
   if (!isFoot && FOOT.test(t) && !TOPN.test(t) && !BOTN.test(t) && !/\bsuit\b|kameez|kurta/i.test(t)) out.push('FOOTWEAR');
@@ -70,7 +72,7 @@ function flag(p) {
   if (JEWELRY.test(t) && !TOPN.test(t) && !BOTN.test(t)) out.push('JEWELRY(delete?)');
   // a standalone bottom (no top word, no dupatta, no suit) in a NON-bottom adult cat. Kids cats skip
   // (no kids-trouser cat — a boys/girls trouser correctly lives in its gender/style kids cat).
-  if (!isBottom && !isDup && !isShawl && !isKidCat && BOTN.test(t) && !TOPN.test(t) && !DUP.test(t) && !/\bsuit\b|[23] ?(pc|piece)|co-?ord/i.test(t)) out.push('BOTTOM-ONLY');
+  if (!isBottom && !isDup && !isShawl && !isKidCat && !/^(coord_western|mens_suit|mens_sherwani)$/.test(c) && BOTN.test(t) && !TOPN.test(t) && !DUP.test(t) && !/\bsuit\b|[23] ?(pc|piece)|co-?ord/i.test(t)) out.push('BOTTOM-ONLY');   // coord/suit/sherwani are jacket+pant SET cats — a bottom word is expected
   if (gender === 'w' && isMenStrong.test(t) && !isWomen.test(t)) out.push('MEN-IN-WOMEN');
   if (gender === 'm' && isWomen.test(t) && !isMenStrong.test(t)) out.push('WOMEN-IN-MEN');
   if (gender !== 'k' && isKidStrong.test(t)) out.push('KID-IN-ADULT');
