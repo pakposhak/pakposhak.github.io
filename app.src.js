@@ -5408,9 +5408,24 @@
     psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply();
   }
 
+  // Browse-Products landing department tiles (Women / Men / Kids / Premium): a one-tap shortcut
+  // that sits above the rotating products and hides the moment any filter or search is active.
+  function psPickDept(g){
+    psSel = { prices:new Set(), cats:new Set(), brands:new Set() };
+    psSort = ''; psSaleOnly = false; psNewOnly = false; psQuery = ''; psSizeQ = '';
+    ['psSearchMobile','psSearchDesktop'].forEach(idd => { const e = document.getElementById(idd); if(e) e.value = ''; });
+    psSearchHint('', new Set(), new Set());
+    if(g === 'p') BRANDS.forEach(b => { if(b.c === 'p') psSel.brands.add(b.n); });
+    else psSel.cats.add('all:' + g);
+    psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply();
+    const grid = document.getElementById('psGrid'); if(grid) grid.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+  function psIsLanding(){ return !psSel.cats.size && !psSel.brands.size && !psSel.prices.size && !psSaleOnly && !psNewOnly && !psSort && !psQuery && !psSizeQ; }
+  function psSyncDeptTiles(){ const el = document.getElementById('psDeptTiles'); if(el) el.style.display = psIsLanding() ? '' : 'none'; }
   // All three filters combine with AND; price buckets OR within themselves.
   function psApply(){
     psPage = 0;
+    psSyncDeptTiles();
     if(psApiMode) return psApiFetch();   // API mode: server filters/sorts/pages; psFiltered = the page
     psFiltered = PS_CATALOG.filter(p => {
       if(PS_HIDE_CATS.has(p.cat)) return false;   // accessories/jewellery not shown on the Products grid
@@ -5572,6 +5587,7 @@
   function psRender(){
     const grid = document.getElementById('psGrid');
     const empty = document.getElementById('psEmpty');
+    psSyncDeptTiles();
     if(psApiMode){
       // API mode: psFiltered IS the current page; psApiTotal is the grand total for the pager.
       const total = psApiTotal;
@@ -6088,7 +6104,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-24b';
+  const PSB_BUILD = '2026-06-24c';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

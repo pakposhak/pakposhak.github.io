@@ -501,6 +501,12 @@
     .dc-sect{margin-top:10px;background:var(--raised);border:1px solid var(--bdr);border-radius:9px;padding:10px 12px}
     .dc-sect-h{font-size:0.72rem;font-weight:700;color:var(--gold);letter-spacing:0.03em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
     .dc-sect-hint{font-size:0.66rem;font-weight:500;color:var(--txt-muted);text-transform:none;letter-spacing:0}
+    /* Browse Products landing: department shortcut tiles (Women/Men/Kids/Premium) above the rotation */
+    .ps-depttiles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:4px 0 14px}
+    .ps-depttile{background:var(--surface);border:1.5px solid var(--gold-bdr);border-radius:11px;padding:13px 6px;cursor:pointer;font-family:inherit;font-size:0.84rem;font-weight:700;color:var(--txt);text-align:center;line-height:1.35;transition:background .12s,border-color .12s,transform .08s}
+    .ps-depttile:hover{background:var(--gold-dim);border-color:var(--gold)}
+    .ps-depttile:active{transform:scale(0.97)}
+    @media (max-width:520px){ .ps-depttiles{gap:6px} .ps-depttile{padding:11px 3px;font-size:0.74rem;border-radius:9px} }
     .dc-thumb-wrap{cursor:zoom-in}
     /* tap-to-enlarge product image lightbox */
     .img-zoom-ov{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;padding:18px;cursor:zoom-out}
