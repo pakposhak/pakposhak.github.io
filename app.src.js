@@ -3108,21 +3108,48 @@
   // instead — handled by the same function below. The Share button / Shortcut are
   // ALWAYS available, even when the address bar can't be copied — so this is the
   // most reliable way to get the link with zero typing.
+  //
+  // WHOLE-CART capture: the iOS Shortcut can run JS on the brand page to read its
+  // /cart.js (Shopify) and open order-form.html?cart=<all product links>. We add
+  // one draft per link. Each link runs through the SAME parseUrl + isKnownBrand +
+  // scheme gate as a single share — a hostile ?cart= can only ever spawn drafts
+  // for supported brands, and is capped so it can't fan out into many fetches.
+  const _CART_MAX = 40;
+  // Validate + normalise a raw link the same way handleAddUrl does. Returns the
+  // clean URL string, or null if it's not a usable supported-brand http(s) link.
+  function _validSharedLink(raw){
+    if(!raw) return null;
+    if(/^\s*(javascript|data|vbscript|file|blob):/i.test(raw)) return null;
+    const clean = parseUrl(raw);
+    return (clean && isKnownBrand(clean)) ? clean : null;
+  }
   function handleSharedUrl(){
     try{
       const q = new URLSearchParams(location.search);
-      // ?add= is our own explicit param (the iOS Shortcut builds it); ?url/?text/
-      // ?title are what the Android Web Share sheet fills in. First non-empty wins.
+      // ── Multi-item: ?cart= carries every product link from the brand's cart ──
+      const cartRaw = q.get('cart');
+      if(cartRaw){
+        const seen = new Set();
+        const links = (cartRaw.match(/https?:\/\/[^\s"'<>]+/ig) || [])
+          .map(_validSharedLink)
+          .filter(u => u && !seen.has(u) && seen.add(u))   // valid, supported, de-duped
+          .slice(0, _CART_MAX);                            // cap the fan-out
+        if(links.length){
+          document.getElementById('urlInputRow').style.display = 'none';
+          document.getElementById('draftsContainer').style.display = '';
+          links.forEach(u => createDraft(u));              // one draft per cart item
+          const dc = document.getElementById('draftsContainer');
+          if(dc) dc.scrollIntoView({ behavior:'smooth', block:'nearest' });
+        }
+        history.replaceState(null, '', location.pathname);
+        return;
+      }
+      // ── Single item: ?add= (iOS Shortcut) or ?url/?text/?title (Android share) ──
       const shared = q.get('add') || q.get('url') || q.get('text') || q.get('title') || '';
       if(!shared) return;
       const m = shared.match(/https?:\/\/[^\s"'<>]+/i);
-      const link = m ? m[0] : shared.trim();
-      // Defence-in-depth: never ingest non-web schemes. parseUrl would otherwise
-      // rewrite javascript:/data: into a bogus-host https URL (isKnownBrand still
-      // rejects it, but bail early + explicitly on an external-input path).
-      if(/^\s*(javascript|data|vbscript|file|blob):/i.test(link)) return;
-      const clean = parseUrl(link);
-      if(clean && isKnownBrand(clean)){
+      const clean = _validSharedLink(m ? m[0] : shared.trim());
+      if(clean){
         const inp = document.getElementById('urlInput');
         if(inp){ inp.value = clean; handleAddUrl(); }
       }
@@ -6112,7 +6139,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-24d';
+  const PSB_BUILD = '2026-06-24e';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
@@ -6161,6 +6188,13 @@
   /* Register the service worker so the site is installable as an app and works
      offline. Guarded to http/https so local file:// previews don't throw. */
   if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    // Was a SW ALREADY controlling this page at load? If not, this is a first-time
+    // visit and the first controllerchange is just the initial install claiming the
+    // page — reloading then would wipe transient first-load state, e.g. a ?add=/?cart=
+    // deep-link draft created (and its query already stripped) before the SW installed.
+    // So only auto-reload for a genuine BUILD UPDATE (a new SW replacing an existing
+    // controller), never on first install.
+    var _hadController = !!navigator.serviceWorker.controller;
     window.addEventListener('load', function () {
       navigator.serviceWorker.register('sw.js').then(function (reg) {
         // Check for a newer SW on every load and apply it promptly.
@@ -6169,12 +6203,12 @@
         console.warn('SW registration failed:', err);
       });
     });
-    // When a new service worker takes control (a new build deployed), reload
-    // ONCE so the user is never stuck on a stale page. The flag guards against
-    // a reload loop.
+    // When a NEW build's service worker takes control, reload ONCE so the user is
+    // never stuck on a stale page. Skip on first install (_hadController false) and
+    // guard against a reload loop.
     var _psbReloaded = false;
     navigator.serviceWorker.addEventListener('controllerchange', function () {
-      if (_psbReloaded) return;
+      if (!_hadController || _psbReloaded) return;
       _psbReloaded = true;
       location.reload();
     });

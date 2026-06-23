@@ -55,6 +55,49 @@ You build this **once** on your iPhone, then send customers one iCloud link. Tak
 
 ---
 
+## Part A2 — iPhone "Send whole cart" Shortcut (Shopify brands)
+
+Same idea as Part A, but instead of one product it grabs **every item in the brand's
+cart** in one tap. It works by running a tiny script on the brand page that reads the
+store's `/cart.js` (the live cart), then opens the order form with all the links.
+
+Build a second shortcut named **Send cart to PakPoshak**, with these actions:
+
+| # | Action | Set it to |
+|---|---|---|
+| 1 | **Receive** | Receive **Safari web pages** from **Share Sheet**. If no input → **Stop** |
+| 2 | **Run JavaScript on Web Page** | paste the script below |
+| 3 | **URL Encode** | Mode = **Encode**, input = the **JavaScript Result** |
+| 4 | **Text** | `https://pakposhak.github.io/order-form.html?cart=` then insert the **URL Encoded** variable right after `=` |
+| 5 | **Open URLs** | input = the **Text** |
+
+Script for action 2:
+
+```javascript
+(async () => {
+  try {
+    const res = await fetch('/cart.js', { headers: { Accept: 'application/json' } });
+    if (res.ok) {
+      const cart = await res.json();
+      const urls = (cart.items || []).map(i => location.origin + i.url);
+      if (urls.length) { completion(urls.join('\n')); return; }
+    }
+  } catch (e) {}
+  completion(location.href);   // not Shopify / empty cart → fall back to this page
+})();
+```
+
+How the customer uses it: add items to the brand's cart, then from **any page on that
+brand site** tap **Share → Send cart to PakPoshak**. The order form opens with every
+cart item added. (`/cart.js` is the session cart, so they don't have to be on the cart
+page — any page of that brand works.)
+
+> **Shopify-only.** This reads `/cart.js`, which **Khaadi and Sapphire (Salesforce
+> Commerce Cloud) don't have**. On those, the script falls back to sending the *current
+> page* as a single item — so the customer uses the normal one-product **Add to
+> PakPoshak** shortcut there instead. Whole-cart for SFCC brands is a later add-on.
+> The order form caps a single `?cart=` at 40 items as a safety limit.
+
 ## Part B — Android (nothing to build)
 
 Already works once the customer **installs PakPoshak** (the "Add to home screen" /
