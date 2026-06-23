@@ -1,5 +1,7 @@
 # Brand Audit — Findings
 
+> ⚠️ **HISTORICAL (first-pass proposals).** Most "move/delete" rows below are now **resolved and live in `catalog-cleanup.js`**. For the CURRENT per-brand · per-category rules, read **`BRAND-CATEGORY-GUIDELINES.md`**. The still-useful part of this file is the **"Confusions"** section (open owner-decision questions).
+
 274 findings, 61 confusions.
 
 ## Moves & deletes
