@@ -3230,6 +3230,7 @@
     });
     currentStep = n;
     document.body.classList.toggle('psb-browse', n === 1);
+    const _bh=document.getElementById('appHeader');if(_bh)_bh.style.position=(n===1&&window.innerWidth<820)?'relative':'';
     // Bottom bar now stays visible on every step — it IS the order-progress
     // indicator (Home · 1·2·3·4 · Cart); Home/Cart work from any step.
     const bnSteps = document.getElementById('bnavSteps');
@@ -4724,6 +4725,7 @@
     updatePasteFab();
     try{ localStorage.setItem('psb_browse', which); }catch(e){}   // remember tab so we return to it (req #7)
     document.body.classList.add('psb-browse');
+    const _bh=document.getElementById('appHeader');if(_bh&&window.innerWidth<820)_bh.style.position='relative';
   }
   // True while the Browse-Products grid is the visible tab.
   function psOnProductsTab(){ const tp = document.getElementById('tabProducts'); return !!tp && tp.style.display !== 'none'; }
@@ -5754,7 +5756,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-23a';
+  const PSB_BUILD = '2026-06-23b';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
