@@ -5606,7 +5606,7 @@
     return t;
   }
   function psSetShopGender(g){ psShopMode = 'cat'; psShopGender = g; psBuildShopCat(); }
-  function psShopBrandsMode(){ psShopMode = 'brand'; psBuildShopCat(); }
+  function psShopBrandsMode(){ psShopMode = (psShopMode === 'brand') ? 'cat' : 'brand'; psBuildShopCat(); }   // re-tap Brands → back to categories
   function psSetBrandDept(d){ psShopDept = d; psBuildShopCat(); }
   // Brand names for a department, restricted to brands that actually have products (so each tile gets
   // a photo). Reuses the Browse-Brands ranked per-department pool. 'p' = Premium.
@@ -5975,7 +5975,7 @@
         : `<div class="ps-img-sizes">${dualTag}<b>${tr('ps_avail_sizes')}</b>${list.slice(0,7).map(esc).join(' · ')}</div>`;
     const _uk = psUrlKey(p.u), _wsaved = psWishHas(p.u);
     return `<div class="ps-card">
-      <div class="ps-img" onclick="psDetail(${idx})" role="button" tabindex="0" aria-label="${esc(p.t)} — enlarge">${p.sale?'<span class="ps-sale">SALE</span>':''}<button type="button" class="ps-wish${_wsaved?' on':''}" data-uk="${esc(_uk)}" onclick="event.stopPropagation();psWishToggle(${idx},event)" aria-label="${tr('wish_save')}" title="${tr('wish_save')}">♥</button><button type="button" class="ps-info" onclick="event.stopPropagation();psDetail(${idx})" aria-label="Enlarge pictures and details" title="Enlarge pics &amp; details">🔍<span class="ps-info-tx">${tr('ps_enlarge')}</span></button><img loading="lazy" src="${esc(thumbUrl(p.img))}" data-full="${esc(p.img)}" alt="${esc(p.t)}" onerror="if(!this.dataset.f){this.dataset.f=1;this.src=this.dataset.full;}else{this.parentElement.classList.add('ps-img-fail');}">${szOverlay}</div>
+      <div class="ps-img" onclick="psDetail(${idx})" role="button" tabindex="0" aria-label="${esc(p.t)} — enlarge">${p.sale?'<span class="ps-sale">SALE</span>':''}<button type="button" class="ps-wish${_wsaved?' on':''}" data-uk="${esc(_uk)}" onclick="event.stopPropagation();psWishToggle(${idx},event)" aria-label="${tr('wish_save')}" title="${tr('wish_save')}"><svg class="ps-heart-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></button><button type="button" class="ps-info" onclick="event.stopPropagation();psDetail(${idx})" aria-label="Enlarge pictures and details" title="Enlarge pics &amp; details">🔍<span class="ps-info-tx">${tr('ps_enlarge')}</span></button><img loading="lazy" src="${esc(thumbUrl(p.img))}" data-full="${esc(p.img)}" alt="${esc(p.t)}" onerror="if(!this.dataset.f){this.dataset.f=1;this.src=this.dataset.full;}else{this.parentElement.classList.add('ps-img-fail');}">${szOverlay}</div>
       <div class="ps-cbody">
         <div class="ps-brand">${esc(p.b)}</div>
         <div class="ps-title">${esc(p.t)}</div>
@@ -6149,7 +6149,7 @@
       +   `<div class="ps-d-szrow">${sz}</div>`
       +   `<div class="ps-d-loading" id="psDDesc">${tr('ps_d_loading')}</div>`
       +   `<div class="ps-d-actions">`
-      +     `<button type="button" class="ps-wish ps-d-wishbtn${psWishHas(p.u)?' on':''}" data-uk="${esc(psUrlKey(p.u))}" onclick="psWishToggle(${idx})" aria-label="${tr('wish_save')}" title="${tr('wish_save')}">♥</button>`
+      +     `<button type="button" class="ps-wish ps-d-wishbtn${psWishHas(p.u)?' on':''}" data-uk="${esc(psUrlKey(p.u))}" onclick="psWishToggle(${idx})" aria-label="${tr('wish_save')}" title="${tr('wish_save')}"><svg class="ps-heart-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></button>`
       +     `<button type="button" class="ps-d-open" onclick="psOpenFull(${idx})">${tr('ps_d_open')} ↗</button>`
       +     `<button type="button" class="ps-d-add" onclick="psCloseDetail();psAdd(${idx})">+ ${tr('ps_add')}</button>`
       +   `</div>`

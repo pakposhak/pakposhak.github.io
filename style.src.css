@@ -570,6 +570,11 @@
     /* ── WISHLIST (E) ── heart on cards + header entry + saved-items drawer ── */
     .hdr-wish{position:relative;color:var(--gold);font-size:1.15rem;line-height:1;padding:6px 9px}
     .hdr-wish-badge{position:absolute;top:-3px;right:-3px;background:#c0392b;color:#fff;border-radius:9px;min-width:16px;height:16px;padding:0 4px;font-size:0.6rem;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1}
+    /* Fuller, rounded heart (SVG) for the wishlist — replaces the flat ♥ glyph (req) */
+    .ps-heart-svg{width:1em;height:1em;fill:currentColor;display:inline-block;vertical-align:-0.14em}
+    .bnav-btn .ps-heart-svg{width:1.5rem;height:1.5rem;vertical-align:middle}
+    /* Wishlist lives in the bottom nav on mobile — drop the duplicate header heart there (req) */
+    @media (max-width:819px){ #hdrWishBtn{display:none} }
     /* card heart — top-left, mirrors the top-right .ps-info pill */
     .ps-wish{position:absolute;top:6px;left:6px;z-index:2;width:28px;height:28px;border-radius:50%;border:none;background:rgba(10,22,40,0.55);color:#fff;font-size:0.95rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;transition:transform .12s,color .12s,background .12s}
     .ps-wish:hover{background:rgba(10,22,40,0.78)}
