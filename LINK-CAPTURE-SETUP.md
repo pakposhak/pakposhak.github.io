@@ -189,6 +189,13 @@ Desktop uses a **bookmarklet** — a one-click button on the bookmarks bar. Inst
 > A bookmarklet can only be **clicked from the bookmarks bar**, not pasted into the address
 > bar (browsers strip `javascript:` there). The install page handles the drag/paste setup.
 
+**Android Chrome (staff-grade):** the *same* bookmarklet works on Android — once it runs it
+auto-loads the order form exactly like desktop; only the trigger is fiddly. Setup is on the
+install page ("On an Android phone" section): Copy the code → bookmark any page → edit it →
+Name `sendcart`, URL = the code (must start with `javascript:`). To run: on the cart page,
+type `sendcart` in the address bar and tap the **bookmark** suggestion (not a search result).
+Too fiddly for shoppers — keep it for you/staff; customer-grade Android whole-cart = the app.
+
 ---
 
 ## Customer-facing copy (paste into WhatsApp / a help card)

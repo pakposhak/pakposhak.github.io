@@ -28,7 +28,7 @@
 <body>
 <div class="wrap">
   <h1>🛒 Send your whole cart to PakPoshak — from your computer</h1>
-  <p class="sub">Works in Chrome, Firefox, Edge and Safari on desktop. One-time setup, then one click.</p>
+  <p class="sub">Desktop (Chrome, Firefox, Edge, Safari): one drag, then one click. Android Chrome: staff setup at the bottom.</p>
 
   <div class="card" style="text-align:center">
     <p style="margin:0 0 14px;font-weight:600">Drag this button up to your bookmarks bar:</p>
@@ -52,8 +52,23 @@
     <button class="copy" id="copyBtn" type="button">Copy the code</button>
   </div>
 
+  <div class="card">
+    <h3 style="margin-top:0;color:var(--green)">📱 On an Android phone (Chrome) — for you &amp; staff</h3>
+    <p class="small" style="margin-top:0">Android can't drag bookmarks, so set it up once like this:</p>
+    <ol class="small">
+      <li>Tap <b>Copy the code</b> above.</li>
+      <li>Chrome menu <b>⋮</b> → tap the <b>☆ star</b> to bookmark this page.</li>
+      <li>Chrome menu <b>⋮ → Bookmarks</b>, find it, tap <b>Edit</b> (✏️ pencil).</li>
+      <li>Set the <b>Name</b> to <kbd>sendcart</kbd>. Clear the <b>URL</b> box and <b>paste</b> the code.
+        <span class="ok">The URL must start with</span> <kbd>javascript:</kbd> — if Chrome dropped it when pasting, type it back at the front.</li>
+      <li>Save (back arrow / ✓).</li>
+    </ol>
+    <p class="small"><b>To use it:</b> on a brand's <b>cart/bag page</b>, tap the address bar, type <kbd>sendcart</kbd>, and tap the <b>bookmark</b> suggestion (the one with a ☆ — not a Google result). The PakPoshak order form opens with the whole cart, prices loading. ✅</p>
+    <p class="small">If nothing happens, re-edit the bookmark and make sure its URL begins with <kbd>javascript:</kbd>. The trigger is fiddly, so this is best kept to <b>you and staff</b>, not shoppers.</p>
+  </div>
+
   <div class="warn">
-    <b>Khaadi &amp; Sapphire:</b> make sure you're on the <b>cart/bag page</b> when you click it.
+    <b>Khaadi &amp; Sapphire:</b> make sure you're on the <b>cart/bag page</b> when you run it.
     <b>LAAM</b> and a few custom sites don't expose a readable cart — there it sends the single product you're viewing.
   </div>
 </div>
