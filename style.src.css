@@ -415,13 +415,19 @@
          OUTRANKS the unconditional base `.ps-resbar` / `.ps-sortrow` / `.ps-pricepop` declarations
          that sit LATER in source (a media-query wrapper adds zero specificity, so a bare-class
          mobile rule would lose the source-order tie — that was the original 2-row bug). */
+      /* Price Filters · Clear Filters · Sort: Price = THREE equal-width tabs sharing the row; Sale +
+         New stay pinned right. display:contents dissolves the .ps-resbar-tools / #psSortTabs wrappers
+         so their children become direct resbar flex items — then flex:1 on the three tabs = equal. */
       #tabProducts .ps-resbar{flex-wrap:nowrap;justify-content:flex-start;align-items:center;gap:6px;margin-bottom:9px;min-height:0}
-      #tabProducts .ps-resbar-tools{flex:0 0 auto;gap:6px}
-      #tabProducts .ps-resbar .ps-sortrow{flex:1 1 auto;min-width:0;flex-basis:auto;border-top:none;padding:0;margin:0;overflow:visible;justify-content:flex-start;gap:6px}
-      #tabProducts .ps-resbar .ps-sortgrp{flex:0 1 auto}
-      #tabProducts .ps-resbar .ps-sortgrp + .ps-sortgrp{padding-left:0;border-left:none;margin-left:auto}   /* push Sale + New to the right edge */
-      #tabProducts .ps-resbar .ps-pricebtn,#tabProducts .ps-resbar .ps-clear-inline,#tabProducts .ps-resbar .ps-sortbtn{padding:6px 9px;font-size:0.68rem;border-radius:13px;white-space:nowrap}
-      /* Price is the LEFT-most pill now → its popover must open rightward (base anchors it right:0,
+      #tabProducts .ps-resbar-tools{display:contents}
+      #tabProducts .ps-resbar #psSortTabs{display:contents}
+      #tabProducts .ps-resbar .ps-sortgrp{display:flex;align-items:center;gap:6px;border:none;padding:0}
+      #tabProducts .ps-resbar .ps-pricedd,#tabProducts .ps-resbar .ps-clear-inline,#tabProducts .ps-resbar .ps-sortgrp:first-child{flex:1 1 0;min-width:0}
+      #tabProducts .ps-resbar .ps-sortgrp:first-child .ps-sortdd{flex:1 1 0;min-width:0}
+      #tabProducts .ps-resbar .ps-pricebtn,#tabProducts .ps-resbar .ps-clear-inline,#tabProducts .ps-resbar .ps-sortddbtn{width:100%;justify-content:center;padding:7px 6px;font-size:0.7rem;border-radius:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      #tabProducts .ps-resbar .ps-sortgrp + .ps-sortgrp{flex:0 0 auto;margin-left:auto;border:none;padding:0}   /* Sale + New pinned right */
+      #tabProducts .ps-resbar .ps-salebtn,#tabProducts .ps-resbar .ps-sortgrp + .ps-sortgrp .ps-sortbtn{padding:7px 11px;font-size:0.7rem;border-radius:13px}
+      /* Price is the LEFT-most tab now → its popover must open rightward (base anchors it right:0,
          which would push it off the left edge of the screen). Cap width so it stays on a phone. */
       #tabProducts .ps-pricepop{left:0;right:auto;width:min(232px,86vw)}
       /* The category carousel is ALWAYS visible: it pins to the top while scrolling the products
@@ -431,7 +437,7 @@
          the pinned strip. */
       #tabProducts .ps-sticky-zone{position:static;box-shadow:none;padding:0}
       #tabProducts .ps-shopcat{position:sticky;top:0;z-index:16;background:var(--bg);margin:0 0 8px;padding:7px 0 5px;box-shadow:0 5px 11px -5px rgba(0,0,0,0.22)}
-      #tabProducts .ps-grid{scroll-margin-top:158px}
+      #tabProducts .ps-grid{scroll-margin-top:180px}
     }
     .show-more-btn{font-size:0.75rem;color:var(--gold);background:none;border:none;cursor:pointer;font-weight:600;padding:4px 0;text-decoration:underline}
 
@@ -535,15 +541,15 @@
     .psc-gtab.on{background:var(--gold);color:#1a1206;border-color:var(--gold)}
     .ps-shopcat-scroll{display:flex;gap:11px;overflow-x:auto;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:1px 2px 6px}
     .ps-shopcat-scroll::-webkit-scrollbar{display:none}
-    .psc-tile{flex:0 0 auto;width:64px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:none;padding:0;cursor:pointer;font-family:inherit}
-    .psc-img{width:64px;height:76px;border-radius:13px;overflow:hidden;background:linear-gradient(150deg,var(--gold-dim),var(--raised));border:1.5px solid var(--gold-bdr);display:flex;align-items:center;justify-content:center;position:relative;transition:transform .12s,border-color .12s,box-shadow .12s}
+    .psc-tile{flex:0 0 auto;width:80px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:none;padding:0;cursor:pointer;font-family:inherit}
+    .psc-img{width:80px;height:96px;border-radius:14px;overflow:hidden;background:linear-gradient(150deg,var(--gold-dim),var(--raised));border:1.5px solid var(--gold-bdr);display:flex;align-items:center;justify-content:center;position:relative;transition:transform .12s,border-color .12s,box-shadow .12s}
     .psc-img img{width:100%;height:100%;object-fit:cover;display:block}
-    .psc-tile.psc-noimg .psc-img::after{content:attr(data-emoji);font-size:1.6rem;opacity:0.85}
+    .psc-tile.psc-noimg .psc-img::after{content:attr(data-emoji);font-size:1.9rem;opacity:0.85}
     .psc-tile:hover .psc-img{border-color:var(--gold)}
     .psc-tile:active .psc-img{transform:scale(0.95)}
     .psc-tile.on .psc-img{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
-    .psc-lbl{font-size:0.66rem;font-weight:700;color:var(--txt);line-height:1.15;text-align:center;width:68px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-    @media (min-width:820px){ .ps-shopcat{margin-bottom:16px} .psc-gtab{font-size:0.8rem;padding:6px 16px} .psc-tile{width:92px} .psc-img{width:92px;height:108px;border-radius:15px} .psc-lbl{width:96px;font-size:0.74rem} .psc-tile.psc-noimg .psc-img::after{font-size:2rem} }
+    .psc-lbl{font-size:0.7rem;font-weight:700;color:var(--txt);line-height:1.15;text-align:center;width:84px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    @media (min-width:820px){ .ps-shopcat{margin-bottom:16px} .psc-gtab{font-size:0.8rem;padding:6px 16px} .psc-tile{width:104px} .psc-img{width:104px;height:124px;border-radius:16px} .psc-lbl{width:108px;font-size:0.76rem} .psc-tile.psc-noimg .psc-img::after{font-size:2.2rem} }
     /* ── WISHLIST (E) ── heart on cards + header entry + saved-items drawer ── */
     .hdr-wish{position:relative;color:var(--gold);font-size:1.15rem;line-height:1;padding:6px 9px}
     .hdr-wish-badge{position:absolute;top:-3px;right:-3px;background:#c0392b;color:#fff;border-radius:9px;min-width:16px;height:16px;padding:0 4px;font-size:0.6rem;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1}

@@ -2446,7 +2446,7 @@
       intro_ios:"On iPhone: on a brand's product page, tap Share, then Add to PakPoshak. (One-time: add the PakPoshak shortcut.) Or copy the link and paste it here.",
       intro_android:"On Android: install PakPoshak, then on a brand's product page tap Share, then PakPoshak. Or copy the link and paste it here.",
       intro_desktop:"On desktop: paste a product link below, or add the Send-cart bookmark to grab a whole cart at once.",
-      ps_price:'Price (৳ delivered)', ps_price_short:'Price', ps_category:'Product Category', ps_category_short:'Categories', ps_brands:'Brands', ps_clear:'Clear', ps_valueprop:'Any Pakistani brand → delivered to Bangladesh 🇧🇩', ps_morebrands:"Can't find it? Browse all 155 brands →",
+      ps_price:'Price (৳ delivered)', ps_price_short:'Price Filters', ps_category:'Product Category', ps_category_short:'Categories', ps_brands:'Brands', ps_clear:'Clear Filters', ps_valueprop:'Any Pakistani brand → delivered to Bangladesh 🇧🇩', ps_morebrands:"Can't find it? Browse all 155 brands →",
       ps_allcats:'All categories', ps_loading:'Loading products…', ps_loadfail:'Could not load products — please try again.',
       ps_results:'products', ps_add:'Add', ps_prev:'Prev', ps_next:'Next', ps_page:'Page',
       ps_enlarge:'Enlarge', ps_avail_sizes:'Available sizes', ps_unstitched:'Unstitched · no size needed', ps_also_st:'✂️ Stitched also available', ps_also_uns:'🧵 Unstitched fabric also available', ps_mto:'Made to order', ps_d_loading:'Loading more details…', ps_d_open:'View on brand site, order here', ps_d_more:'More from', ps_d_nofetch:'See all photos &amp; details on the brand page →', ps_d_nodesc:'No extra description provided.', warn_title:'Look there, order here', warn_body:'This page is only for photos & product details. Don\'t add to the brand\'s cart. To order on PakPoshak: tap + Add if you see it in our listing — or copy the URL, come back, and paste it.', warn_ok:'Continue to brand site →', warn_cancel:'Stay on PakPoshak',
@@ -2462,7 +2462,7 @@
       lbl_addproducts:'Add Products to Your Order',
       url_label:"Easiest: on a brand's page, tap Share then PakPoshak. Or paste a product link below.",
       btn_addurl:'+ Add URL', btn_paste:'📋 Paste Link & Auto-Fill', pp_tap:'Tap a product to add it — no copy-paste needed', pp_search:'🔍 Search this brand…', pp_site:'🌐 Open full brand site instead', fab_paste:'Paste link',
-      nav_home:'Home', nav_brands:'Brands', nav_cart:'Cart', nav_how:'How To',
+      nav_home:'Home', nav_brands:'Brands', nav_cart:'Cart', nav_how:'How To', nav_guide:'Guide',
       tl_help:'New here? Start with these:', tl_faq:'❓ How it works & our promise', tl_track:'📦 Track an order', tl_weights:'⚖️ Shipping weights', tl_wa:'💬 Chat on WhatsApp',
       addmore_hint:'✓ Item saved! Add another product, or continue to your details.', addmore_btn:'➕ Add Another Product',
       word_brands:'brands',
@@ -2514,7 +2514,7 @@
       intro_ios:'আইফোনে: ব্র্যান্ডের পণ্য পেজে Share চেপে Add to PakPoshak বেছে নিন। (একবার: PakPoshak শর্টকাট যোগ করুন।) অথবা লিংক কপি করে এখানে পেস্ট করুন।',
       intro_android:'অ্যান্ড্রয়েডে: PakPoshak ইনস্টল করুন, তারপর ব্র্যান্ডের পণ্য পেজে Share চেপে PakPoshak বেছে নিন। অথবা লিংক কপি করে এখানে পেস্ট করুন।',
       intro_desktop:'ডেস্কটপে: নিচে পণ্যের লিংক পেস্ট করুন, অথবা পুরো কার্ট একসাথে আনতে Send-cart বুকমার্ক যোগ করুন।',
-      ps_price:'দাম (৳, ডেলিভারিসহ)', ps_price_short:'দাম', ps_category:'পণ্যের ক্যাটাগরি', ps_category_short:'ক্যাটাগরি', ps_brands:'ব্র্যান্ড', ps_clear:'মুছুন', ps_valueprop:'যেকোনো পাকিস্তানি ব্র্যান্ড → বাংলাদেশে ডেলিভারি 🇧🇩', ps_morebrands:'খুঁজে পাচ্ছেন না? সব ১৫৫টি ব্র্যান্ড দেখুন →',
+      ps_price:'দাম (৳, ডেলিভারিসহ)', ps_price_short:'দাম ফিল্টার', ps_category:'পণ্যের ক্যাটাগরি', ps_category_short:'ক্যাটাগরি', ps_brands:'ব্র্যান্ড', ps_clear:'ফিল্টার মুছুন', ps_valueprop:'যেকোনো পাকিস্তানি ব্র্যান্ড → বাংলাদেশে ডেলিভারি 🇧🇩', ps_morebrands:'খুঁজে পাচ্ছেন না? সব ১৫৫টি ব্র্যান্ড দেখুন →',
       ps_allcats:'সব ক্যাটাগরি', ps_loading:'পণ্য আসছে…', ps_loadfail:'পণ্য আনা গেল না — আবার চেষ্টা করুন।',
       ps_results:'পণ্য', ps_add:'যোগ করুন', ps_prev:'আগের', ps_next:'পরের', ps_page:'পৃষ্ঠা',
       ps_enlarge:'ছবি বড় করুন', ps_avail_sizes:'স্টকে থাকা সাইজ', ps_unstitched:'আনস্টিচড · সাইজ লাগে না', ps_also_st:'✂️ সেলাই করাও আছে', ps_also_uns:'🧵 আনস্টিচড কাপড়ও আছে', ps_mto:'অর্ডারে তৈরি হবে', ps_d_loading:'আরও বিবরণ আসছে…', ps_d_open:'ব্র্যান্ড সাইটে দেখুন, অর্ডার এখানে', ps_d_more:'আরও দেখুন —', ps_d_nofetch:'সব ছবি ও বিবরণ ব্র্যান্ডের পেজে দেখুন →', ps_d_nodesc:'বাড়তি কোনো বিবরণ নেই।', warn_title:'দেখুন ওখানে, অর্ডার এখানে', warn_body:'এই পেজটি শুধু ছবি ও পণ্যের বিবরণ দেখার জন্য। ব্র্যান্ডের cart-এ যোগ করবেন না। PakPoshak-এ অর্ডার করতে: লিস্টে থাকলে + Add ট্যাপ করুন — অথবা URL copy করে ফিরে এসে paste করুন।', warn_ok:'ব্র্যান্ড সাইটে যান →', warn_cancel:'PakPoshak-এ থাকুন',
@@ -2531,7 +2531,7 @@
       url_label:'সবচেয়ে সহজ: ব্র্যান্ডের পেজে Share চেপে PakPoshak বেছে নিন। অথবা নিচে পণ্যের লিংক পেস্ট করুন।',
       btn_addurl:'+ লিংক যোগ করুন',
       btn_paste:'📋 লিংক পেস্ট করে অটো-ফিল', pp_tap:'পণ্যে ট্যাপ করেই যোগ করুন — কপি-পেস্ট লাগবে না', pp_search:'🔍 এই ব্র্যান্ডে খুঁজুন…', pp_site:'🌐 বদলে পুরো ব্র্যান্ড সাইট খুলুন', fab_paste:'লিংক পেস্ট',
-      nav_home:'হোম', nav_brands:'ব্র্যান্ড', nav_cart:'কার্ট', nav_how:'গাইড',
+      nav_home:'হোম', nav_brands:'ব্র্যান্ড', nav_cart:'কার্ট', nav_how:'গাইড', nav_guide:'গাইড',
       tl_help:'নতুন? শুরুটা এখান থেকে করুন:', tl_faq:'❓ কীভাবে কাজ করে ও আমাদের প্রতিশ্রুতি', tl_track:'📦 অর্ডার ট্র্যাক করুন', tl_weights:'⚖️ শিপিং ওজন', tl_wa:'💬 হোয়াটসঅ্যাপে চ্যাট',
       addmore_hint:'✓ পণ্যটি সেভ হয়েছে! আরেকটি যোগ করুন, বা আপনার তথ্য দিতে এগিয়ে যান।', addmore_btn:'➕ আরেকটি পণ্য যোগ করুন',
       word_brands:'ব্র্যান্ড',
@@ -5512,12 +5512,11 @@
     { g:'w', key:'lawn_3pc_unstitch',    en:'Unstitched',      bn:'আনস্টিচড',         e:'🧵' },
     { g:'w', key:'kurti_1pc_unstitch',   en:'Unstitched 1pc',  bn:'আনস্টিচড ১ পিস',    e:'🧵' },
     { g:'w', key:'shirt_dupatta_2pc',    en:'2-Piece',         bn:'২ পিস',           e:'👚' },
-    { g:'w', key:'shirt_trouser_2pc',    en:'Co-ord Set',      bn:'কো-অর্ড সেট',      e:'🧶' },
+    { g:'w', key:'shirt_trouser_2pc', cats:['shirt_trouser_2pc','coord_western'], en:'Co-ord Set', bn:'কো-অর্ড সেট', e:'🧶' },
     { g:'w', key:'kurti_1pc',            en:'Kurti / 1pc',     bn:'কুর্তি / ১ পিস',    e:'👕' },
     { g:'w', key:'western_top',          en:'Western Top',     bn:'ওয়েস্টার্ন টপ',     e:'👚' },
     { g:'w', key:'womens_trouser',       en:'Trousers',        bn:'ট্রাউজার',         e:'👖' },
     { g:'w', key:'maxi_dress',           en:'Maxi / Dress',    bn:'ম্যাক্সি / ড্রেস',   e:'👗' },
-    { g:'w', key:'coord_western',        en:'Western Co-ord',  bn:'ওয়েস্টার্ন কো-অর্ড', e:'🧥' },
     { g:'w', key:'formal_emb_3pc',       en:'Formal',          bn:'ফরমাল',           e:'✨' },
     { g:'w', key:'heavy_formal_3pc',     en:'Heavy Formal',    bn:'ভারী ফরমাল',       e:'💎' },
     { g:'w', key:'bridal',               en:'Bridal',          bn:'ব্রাইডাল',         e:'👰' },
@@ -5528,6 +5527,7 @@
     { g:'w', key:'winter_3pc_stitch',    en:'Winter',          bn:'শীতের পোশাক',      e:'🧣' },
     { g:'w', key:'shawl',                en:'Shawl',           bn:'শাল',             e:'🧣' },
     { g:'w', key:'dupatta_only',         en:'Dupatta',         bn:'ওড়না',            e:'🧣' },
+    { g:'w', key:'footwear',             en:'Footwear / Khussa', bn:'জুতা / খুসা',     e:'👡' },
     { g:'w', key:'loungewear',           en:'Loungewear',      bn:'লাউঞ্জওয়্যার',      e:'🛋️' },
     // ── MEN ──
     { g:'m', key:'mens_kurta',           en:'Kurta',           bn:'কুর্তা',           e:'👔' },
@@ -5553,24 +5553,29 @@
   // Tiles for the active department, hiding any category that has zero products (psFacetCats).
   function psShopTiles(){
     let t = PS_SHOP_TILES.filter(x => x.g === psShopGender);
-    if(psFacetCats && psFacetCats.size) t = t.filter(x => psFacetCats.has(x.key));
+    if(psFacetCats && psFacetCats.size) t = t.filter(x => (x.cats || [x.key]).some(k => psFacetCats.has(k)));
     return t;
   }
   function psSetShopGender(g){ psShopGender = g; psBuildShopCat(); }
+  // Keep a category tile's photo gender-appropriate: a WOMEN tile must not pick a men's product photo
+  // (e.g. the Shawl tile was showing a man). Men/Kids tiles are gender-encoded already, so no filter.
+  const _PS_MALE_RE = /\b(men|mens|men's|gents?|male|mardana|him)\b/i;
+  function _psTileGender(catKey){ const t = PS_SHOP_TILES.find(x => x.key === catKey || (x.cats && x.cats.indexOf(catKey) >= 0)); return t ? t.g : ''; }
+  function _psThumbOk(catKey, title){ return _psTileGender(catKey) !== 'w' || !_PS_MALE_RE.test(String(title || '')); }
   // Per-category representative photo, cached in localStorage (14-day TTL) so the strip
   // paints instantly on repeat visits. Filled two ways: opportunistically from any product
   // page the grid loads (psHarvestThumbs), and by a throttled gap-fill fetch (psLoadShopThumbs).
   const PS_THUMB_TTL = 14 * 24 * 3600 * 1000;
   let _psThumbs = {};
-  try { _psThumbs = JSON.parse(localStorage.getItem('psb_cat_thumbs') || '{}') || {}; } catch(e){ _psThumbs = {}; }
-  function _psThumbsSave(){ try{ localStorage.setItem('psb_cat_thumbs', JSON.stringify(_psThumbs)); }catch(e){} }
+  try { _psThumbs = JSON.parse(localStorage.getItem('psb_cat_thumbs_v2') || '{}') || {}; } catch(e){ _psThumbs = {}; }   // _v2: re-fetch after the gender-aware photo fix
+  function _psThumbsSave(){ try{ localStorage.setItem('psb_cat_thumbs_v2', JSON.stringify(_psThumbs)); }catch(e){} }
   function psThumbGet(key){ const t = _psThumbs[key]; return (t && t.u && (Date.now() - t.t < PS_THUMB_TTL)) ? t.u : ''; }
   function psThumbSet(key, url){ if(!key || !url) return; _psThumbs[key] = { u:url, t:Date.now() }; _psThumbsSave(); }
-  // Record the first image seen for any category from a freshly-loaded product page.
+  // Record the first GENDER-APPROPRIATE image seen for any category from a freshly-loaded product page.
   function psHarvestThumbs(products){
     if(!Array.isArray(products)) return;
     let changed = false;
-    for(const p of products){ if(p && p.cat && p.img && !psThumbGet(p.cat)){ _psThumbs[p.cat] = { u:p.img, t:Date.now() }; changed = true; } }
+    for(const p of products){ if(p && p.cat && p.img && !psThumbGet(p.cat) && _psThumbOk(p.cat, p.t)){ _psThumbs[p.cat] = { u:p.img, t:Date.now() }; changed = true; } }
     if(changed){ _psThumbsSave(); psPaintShopThumbs(); }
   }
   function psBuildShopCat(){
@@ -5613,17 +5618,24 @@
     function next(){
       if(i >= missing.length) return;
       const key = missing[i++];
-      fetch(psSearchBase() + '?cat=' + encodeURIComponent(key) + '&pageSize=1&page=0', { cache:'default' })
+      // pull a few and pick the first GENDER-APPROPRIATE photo (so a Women tile never shows a man)
+      fetch(psSearchBase() + '?cat=' + encodeURIComponent(key) + '&pageSize=6&page=0', { cache:'default' })
         .then(r => r.ok ? r.json() : null)
-        .then(j => { const p = j && j.products && j.products[0]; if(p && p.img){ psThumbSet(key, p.img); psPaintTile(key, p.img); } })
+        .then(j => {
+          const arr = (j && j.products) || [];
+          const pick = arr.find(p => p && p.img && _psThumbOk(key, p.t)) || arr.find(p => p && p.img);
+          if(pick && pick.img){ psThumbSet(key, pick.img); psPaintTile(key, pick.img); }
+        })
         .catch(() => {})
         .then(() => { next(); });
     }
     for(let c = 0; c < CONC; c++) next();
   }
-  // Tap a category tile → filter the grid to just that category, then scroll to it.
+  // Tap a category tile → filter the grid to that category (a merged tile selects all its cats), then scroll.
   function psShopPick(key){
-    psSel = { prices:new Set(), cats:new Set([key]), brands:new Set() };
+    const tile = PS_SHOP_TILES.find(t => t.key === key);
+    const cats = (tile && tile.cats) ? tile.cats : [key];
+    psSel = { prices:new Set(), cats:new Set(cats), brands:new Set() };
     psSort = ''; psSaleOnly = false; psNewOnly = false; psQuery = ''; psSizeQ = '';
     ['psSearchMobile','psSearchDesktop'].forEach(idd => { const e = document.getElementById(idd); if(e) e.value = ''; });
     psSearchHint('', new Set(), new Set());
@@ -6429,7 +6441,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-24i';
+  const PSB_BUILD = '2026-06-24j';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
