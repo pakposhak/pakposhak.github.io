@@ -743,24 +743,23 @@
   <span class="pf-ic">📋</span><span class="pf-tx" data-i18n="fab_paste">Paste link</span>
 </button>
 
-<!-- BOTTOM NAVIGATION BAR — Home · 1·2·3·4 step indicator · Cart (mobile only; desktop uses the top steps-bar) -->
+<!-- BOTTOM NAVIGATION BAR — Home · Wishlist · Cart · Help (mobile only; desktop uses the top steps-bar) -->
 <nav class="bottom-nav" id="bottomNav">
   <button class="bnav-btn active" id="bnav-home" onclick="bottomNavGo('home')">
     <span class="icon">🏠</span><span data-i18n="nav_home">Home</span>
   </button>
-  <button class="bnav-btn" id="bnav-guide" onclick="bottomNavGuide(event)">
-    <span class="icon">📖</span><span data-i18n="nav_guide">Guide</span>
+  <button class="bnav-btn" id="bnav-wish" onclick="psWishOpen()">
+    <span class="icon">♥</span>
+    <span class="bnav-badge" id="bnavWishBadge" style="display:none">0</span>
+    <span data-i18n="nav_wish">Wishlist</span>
   </button>
-  <div class="bnav-steps" id="bnavSteps" role="img" aria-label="Order progress">
-    <span class="bns active" id="bns_1"></span>
-    <span class="bns" id="bns_2"></span>
-    <span class="bns" id="bns_3"></span>
-    <span class="bns" id="bns_4"></span>
-  </div>
   <button class="bnav-btn" id="bnav-cart" onclick="bottomNavGo('cart')">
     <span class="icon">🛒</span>
     <span class="bnav-badge" id="bnavBadge" style="display:none">0</span>
     <span data-i18n="nav_cart">Cart</span>
+  </button>
+  <button class="bnav-btn" id="bnav-help" onclick="bottomNavHelp(event)">
+    <span class="icon">💬</span><span data-i18n="nav_help">Help</span>
   </button>
 </nav>
 <div id="guidePop" class="guide-pop" style="display:none">

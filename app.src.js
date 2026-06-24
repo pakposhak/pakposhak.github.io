@@ -2462,7 +2462,7 @@
       lbl_addproducts:'Add Products to Your Order',
       url_label:"Easiest: on a brand's page, tap Share then PakPoshak. Or paste a product link below.",
       btn_addurl:'+ Add URL', btn_paste:'📋 Paste Link & Auto-Fill', pp_tap:'Tap a product to add it — no copy-paste needed', pp_search:'🔍 Search this brand…', pp_site:'🌐 Open full brand site instead', fab_paste:'Paste link',
-      nav_home:'Home', nav_brands:'Brands', nav_cart:'Cart', nav_how:'How To', nav_guide:'Guide',
+      nav_home:'Home', nav_brands:'Brands', nav_cart:'Cart', nav_how:'How To', nav_guide:'Guide', nav_wish:'Wishlist', nav_help:'Help',
       tl_help:'New here? Start with these:', tl_faq:'❓ How it works & our promise', tl_track:'📦 Track an order', tl_weights:'⚖️ Shipping weights', tl_wa:'💬 Chat on WhatsApp',
       addmore_hint:'✓ Item saved! Add another product, or continue to your details.', addmore_btn:'➕ Add Another Product',
       word_brands:'brands',
@@ -2531,7 +2531,7 @@
       url_label:'সবচেয়ে সহজ: ব্র্যান্ডের পেজে Share চেপে PakPoshak বেছে নিন। অথবা নিচে পণ্যের লিংক পেস্ট করুন।',
       btn_addurl:'+ লিংক যোগ করুন',
       btn_paste:'📋 লিংক পেস্ট করে অটো-ফিল', pp_tap:'পণ্যে ট্যাপ করেই যোগ করুন — কপি-পেস্ট লাগবে না', pp_search:'🔍 এই ব্র্যান্ডে খুঁজুন…', pp_site:'🌐 বদলে পুরো ব্র্যান্ড সাইট খুলুন', fab_paste:'লিংক পেস্ট',
-      nav_home:'হোম', nav_brands:'ব্র্যান্ড', nav_cart:'কার্ট', nav_how:'গাইড', nav_guide:'গাইড',
+      nav_home:'হোম', nav_brands:'ব্র্যান্ড', nav_cart:'কার্ট', nav_how:'গাইড', nav_guide:'গাইড', nav_wish:'পছন্দ', nav_help:'সাহায্য',
       tl_help:'নতুন? শুরুটা এখান থেকে করুন:', tl_faq:'❓ কীভাবে কাজ করে ও আমাদের প্রতিশ্রুতি', tl_track:'📦 অর্ডার ট্র্যাক করুন', tl_weights:'⚖️ শিপিং ওজন', tl_wa:'💬 হোয়াটসঅ্যাপে চ্যাট',
       addmore_hint:'✓ পণ্যটি সেভ হয়েছে! আরেকটি যোগ করুন, বা আপনার তথ্য দিতে এগিয়ে যান।', addmore_btn:'➕ আরেকটি পণ্য যোগ করুন',
       word_brands:'ব্র্যান্ড',
@@ -4204,8 +4204,7 @@
 
   // ── BOTTOM NAV ───────────────────────────────────────────────────────────
   function bottomNavGo(tab){
-    // Bottom bar is now Home · 1·2·3·4 steps · Cart (Brands/How-To were removed —
-    // Brands lives in the top toggle, How-It-Works in the strip below the header).
+    // Bottom bar = Home · Wishlist · Cart · Help (no step dots — the order steps live in the page).
     ['home','cart'].forEach(t => { const b = document.getElementById('bnav-'+t); if(b) b.classList.toggle('active', t===tab); });
     if(tab === 'home'){
       if(currentStep !== 1) goToStep(1);
@@ -4214,6 +4213,21 @@
       gotoCart();   // jumps back to step 1 if needed, then scrolls to the cart
     }
   }
+  // Help tab → toggle the guide popup (Watch video + How it works). Replaces the old broken
+  // "bottomNavGuide" handler (it was never defined → the button did nothing).
+  function bottomNavHelp(ev){
+    if(ev) ev.stopPropagation();
+    const pop = document.getElementById('guidePop'); if(!pop) return;
+    const open = !(pop.style.display === 'block');
+    pop.style.display = open ? 'block' : 'none';
+    const btn = document.getElementById('bnav-help'); if(btn) btn.classList.toggle('active', open);
+  }
+  document.addEventListener('click', function(e){
+    const pop = document.getElementById('guidePop'), btn = document.getElementById('bnav-help');
+    if(pop && pop.style.display === 'block' && !pop.contains(e.target) && (!btn || !btn.contains(e.target))){
+      pop.style.display = 'none'; if(btn) btn.classList.remove('active');
+    }
+  });
 
   function scrollToCart(){
     if(document.getElementById('step1').classList.contains('active')){
@@ -6064,12 +6078,12 @@
     psWishSyncUI();
     const d = document.getElementById('wishDrawer'); if(d && d.classList.contains('open')) psWishRender();
   }
-  // Reflect saved-state on every visible heart + the header badge, WITHOUT a grid re-render.
+  // Reflect saved-state on every visible heart + the header AND bottom-bar badges (no grid re-render).
   function psWishSyncUI(){
     const has = uk => _wish.some(p => psUrlKey(p.u) === uk);
     document.querySelectorAll('.ps-wish[data-uk]').forEach(b => b.classList.toggle('on', has(b.getAttribute('data-uk'))));
-    const badge = document.getElementById('hdrWishBadge');
-    if(badge){ const n = _wish.length; badge.textContent = n; badge.style.display = n ? '' : 'none'; }
+    const n = _wish.length;
+    ['hdrWishBadge','bnavWishBadge'].forEach(id => { const b = document.getElementById(id); if(b){ b.textContent = n; b.style.display = n ? '' : 'none'; } });
   }
   function psWishOpen(){ psWishRender(); const d = document.getElementById('wishDrawer'); if(d){ d.classList.add('open'); document.body.style.overflow = 'hidden'; } }
   function psWishClose(){ const d = document.getElementById('wishDrawer'); if(d) d.classList.remove('open'); document.body.style.overflow = ''; }
@@ -6441,7 +6455,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-24j';
+  const PSB_BUILD = '2026-06-24k';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

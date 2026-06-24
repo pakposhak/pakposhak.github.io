@@ -167,12 +167,13 @@
       display:flex;padding-bottom:env(safe-area-inset-bottom);
       padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
     .bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-      gap:2px;padding:8px 4px 6px;background:none;border:none;cursor:pointer;
-      color:var(--txt-muted);font-size:0.6rem;font-weight:600;letter-spacing:0.3px;
-      min-height:54px;transition:color 0.15s;position:relative}
-    .bnav-btn .icon{font-size:1.25rem;line-height:1}
+      gap:3px;padding:9px 4px 6px;background:none;border:none;cursor:pointer;
+      color:var(--txt-muted);font-size:0.66rem;font-weight:600;letter-spacing:0.3px;
+      min-height:56px;transition:color 0.15s;position:relative}
+    .bnav-btn .icon{font-size:1.45rem;line-height:1}
     .bnav-btn.active,.bnav-btn:hover{color:var(--gold)}
-    .bnav-badge{position:absolute;top:4px;right:calc(50% - 18px);background:#c0392b;
+    #bnav-wish.active .icon,#bnav-wish:hover .icon{color:#e24b4a}
+    .bnav-badge{position:absolute;top:3px;right:calc(50% - 19px);background:#c0392b;
       color:#fff;border-radius:10px;padding:1px 5px;font-size:0.6rem;font-weight:700;min-width:16px;text-align:center}
     /* Order-progress indicator: four small dots in the centre of the bottom bar (no numbers) */
     .bnav-steps{flex:1.5;display:flex;align-items:center;justify-content:center;gap:9px}
@@ -181,6 +182,13 @@
     .bns.active{background:var(--gold);transform:scale(1.4)}
     .bns.done{background:var(--gold-dim)}
     .bns-sep{display:none}
+    /* Help popup (Watch video + How it works), toggled by the bottom-bar Help tab. Floats just
+       above the bar near the right (Help is the right-most tab). */
+    .guide-pop{position:fixed;right:8px;bottom:calc(62px + env(safe-area-inset-bottom,0px));z-index:320;
+      background:var(--surface);border:1.5px solid var(--gold-bdr);border-radius:12px;
+      box-shadow:0 8px 28px rgba(0,0,0,0.3);padding:6px;min-width:188px}
+    .guide-pop a{display:block;padding:11px 14px;border-radius:9px;color:var(--txt);font-size:0.86rem;font-weight:600;text-decoration:none}
+    .guide-pop a:hover{background:var(--gold-dim);color:var(--gold)}
 
     /* ── Brand launch bottom sheet ── */
     #brandSheet{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.7)}
