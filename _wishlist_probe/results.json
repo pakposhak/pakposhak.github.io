@@ -1,0 +1,1340 @@
+[
+  {
+    "name": "Alkaram Studio",
+    "host": "www.alkaramstudio.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Agha Noor",
+    "host": "pk.aghanoorofficial.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Afrozeh",
+    "host": "afrozeh.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Alizeh",
+    "host": "alizeh.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Arsalan Iqbal",
+    "host": "arsalaniqbal.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Abaya.pk",
+    "host": "abaya.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Akbar Aslam",
+    "host": "akbaraslam.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Al-Deebaj",
+    "host": "aldeebaj.com",
+    "status": 200,
+    "platform": "Shopify",
+    "apps": [
+      "Growave"
+    ],
+    "fetchModes": [
+      "page"
+    ],
+    "generic": true,
+    "finalUrl": "https://aldeebaj.com/"
+  },
+  {
+    "name": "Armas",
+    "host": "armasclothing.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Ammara Khan",
+    "host": "ammarakhan.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Almirah",
+    "host": "almirah.com.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Asifa & Nabeel",
+    "host": "asifaandnabeel.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Asim Jofa",
+    "host": "asimjofa.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Azure",
+    "host": "azureofficial.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Bareeze",
+    "host": "bareezepk.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Barae Khanom",
+    "host": "baraekhanom.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Amir Adnan",
+    "host": "www.amiradnan.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Baroque",
+    "host": "baroque.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Beechtree",
+    "host": "beechtree.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Bareeze Man",
+    "host": "bareezeman.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Bin Ilyas",
+    "host": "binilyas.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Bin Saeed",
+    "host": "binsaeedfabric.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Black Camels",
+    "host": "blackcamels.com.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Bonanza Satrangi",
+    "host": "bonanzasatrangi.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "CRUSH Menswear",
+    "host": "crushmenswear.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Breakout",
+    "host": "breakout.com.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Cambridge",
+    "host": "thecambridgeshop.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "ChenOne",
+    "host": "chenone.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Charcoal",
+    "host": "charcoal.com.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Charizma",
+    "host": "houseofcharizma.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Cougar",
+    "host": "www.cougar.com.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Chinyere",
+    "host": "chinyere.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Coco by Zara Shahjahan",
+    "host": "www.cocobyzarashahjahan.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Crimson",
+    "host": "www.crimson.com.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Cross Stitch",
+    "host": "www.crossstitch.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Dazzle by Sarah",
+    "host": "dazzlebysarah.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Dhanak",
+    "host": "dhanak.com.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Diners",
+    "host": "diners.com.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Dynasty Fabrics",
+    "host": "dynastyfabrics.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "ETHNC",
+    "host": "pk.ethnc.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "ECS",
+    "host": "shopecs.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Edenrobe",
+    "host": "edenrobe.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Ego",
+    "host": "wearego.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Elan",
+    "host": "elan.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Edge Republic",
+    "host": "edge.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Elaya Prints",
+    "host": "elayaprints.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Emaan Adeel",
+    "host": "emaanadeel.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Eminent",
+    "host": "eminent.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Engine",
+    "host": "engine.com.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Faiza Saqlain",
+    "host": "www.faizasaqlain.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Farasha",
+    "host": "farashaonline.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Firdous",
+    "host": "firdouscloth.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Erum Khan",
+    "host": "erumkhanstores.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Furor",
+    "host": "furorjeans.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Generation",
+    "host": "generation.com.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Gul Ahmed",
+    "host": "gulahmedshop.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Gulaal",
+    "host": "gulaal.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Hijab-ul-Hareem",
+    "host": "hijabulhareem.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Hijab & Co",
+    "host": "hijabandco.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Hijabi.pk",
+    "host": "hijabi.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Hopscotch",
+    "host": "ilovehopscotch.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Hussain Rehar",
+    "host": "hussainrehar.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Humayun Alamgir",
+    "host": "humayunalamgir.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Innerlines",
+    "host": "innerlines.com.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Imrozia Premium",
+    "host": "imroziapremium.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Ismail Farid",
+    "host": "www.ismailfarid.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Ittehad Textiles",
+    "host": "ittehadtextile.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Iznik Fashions",
+    "host": "iznikfashions.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Jade",
+    "host": "jadeonline.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "J. Junaid Jamshed",
+    "host": "www.junaidjamshed.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Jazmin",
+    "host": "jazmin.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Jeem",
+    "host": "jeem.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "KEF",
+    "host": "kefpk.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Kashee's Boutique",
+    "host": "kasheesboutique.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Kayseria",
+    "host": "kayseria.com.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Khaadi",
+    "host": "pk.khaadi.com",
+    "status": 200,
+    "platform": "SFCC",
+    "apps": [
+      "SFCC native wishlist"
+    ],
+    "fetchModes": [
+      "page"
+    ],
+    "generic": true,
+    "finalUrl": "https://pk.khaadi.com/"
+  },
+  {
+    "name": "Khas Stores",
+    "host": "khasstores.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Khussa Corner",
+    "host": "www.khussacorner.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Khussa Master",
+    "host": "khussamaster.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Kross Kulture",
+    "host": "krosskulture.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Kurta Corner",
+    "host": "kurtacorner.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Lakhany by LSM",
+    "host": "lakhanyonline.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Lawrencepur",
+    "host": "www.lawrencepur.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Limelight",
+    "host": "www.limelight.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Lulusar",
+    "host": "lulusar.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "MTJ (Tariq Jameel)",
+    "host": "mtjonline.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Maria B",
+    "host": "mariab.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Maria Osama Khan",
+    "host": "mariaosamakhan.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Minnie Minors",
+    "host": "minnieminors.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Maryum N Maria",
+    "host": "maryumnmaria.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Mausummery",
+    "host": "mausummery.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Mina Hasan",
+    "host": "minahasan.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Mohagni",
+    "host": "mohagni.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Monark",
+    "host": "monark.com.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Motifz",
+    "host": "motifz.com.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Mushq",
+    "host": "mushq.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Naqshi",
+    "host": "naqshiofficial.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Nishat Linen",
+    "host": "nishatlinen.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Nureh",
+    "host": "nureh.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "One Kids",
+    "host": "beoneshopone.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Outfitters",
+    "host": "outfitters.com.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Paarsa",
+    "host": "paarsa.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Preeto",
+    "host": "preeto.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Qalamkar",
+    "host": "qalamkar.com.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "RajBari",
+    "host": "rajbari.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Ramsha",
+    "host": "ramsha.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Republic Womenswear",
+    "host": "republicwomenswear.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Rang Rasiya",
+    "host": "rangrasiya.com.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Riwaj Menswear",
+    "host": "riwajmenswear.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Roheenaz",
+    "host": "roheenaz.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Royal Tag",
+    "host": "royaltag.com.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "SHAAL",
+    "host": "shaal.com.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Saad Bin Shahzad",
+    "host": "www.saadbinshahzad.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Sadaf Fawad Khan",
+    "host": "sadaffawadkhan.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Saira Rizwan",
+    "host": "sairarizwan.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Salitex",
+    "host": "salitexonline.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Sania Maskatiya",
+    "host": "pk.saniamaskatiya.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Sana Safinaz",
+    "host": "www.sanasafinaz.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Sapphire",
+    "host": "pk.sapphireonline.pk",
+    "status": 200,
+    "platform": "SFCC",
+    "apps": [
+      "SFCC native wishlist"
+    ],
+    "fetchModes": [
+      "page"
+    ],
+    "generic": true,
+    "finalUrl": "https://pk.sapphireonline.pk/"
+  },
+  {
+    "name": "Saya",
+    "host": "saya.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Senorita",
+    "host": "senorita.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Sha Posh",
+    "host": "shaposh.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Shahzeb Saeed",
+    "host": "shahzebsaeed.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Sifa",
+    "host": "sifa.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Silayi Pret",
+    "host": "silayipret.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Sitara Studio",
+    "host": "sitarastudio.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "So Kamal",
+    "host": "sokamal.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Sobia Nazir",
+    "host": "sobianazir.net",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Stylo",
+    "host": "stylo.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Tassels",
+    "host": "tassels.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Tawakkal Fabrics",
+    "host": "tawakkalfabrics.co",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "The Hijab Company",
+    "host": "thehijabcompany.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "The Ummatis",
+    "host": "theummatispk.store",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "The Women Zone",
+    "host": "thewomenzone.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Threads & Motifs",
+    "host": "threadsandmotifs.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Tifl",
+    "host": "tifl.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Uniworth",
+    "host": "uniworthshop.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Vanya",
+    "host": "vanya.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Wardha Saleem",
+    "host": "wardhasaleem.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Wear Ochre",
+    "host": "wearochre.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Zaha by Elan",
+    "host": "www.zaha.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Zara Shahjahan",
+    "host": "www.zarashahjahan.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Zainab Chottani",
+    "host": "pk.zainabchottani.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Zeen (by Cambridge)",
+    "host": "zeenwoman.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Zarif",
+    "host": "zarif.pk",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Zellbury",
+    "host": "zellbury.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  },
+  {
+    "name": "Zuruj",
+    "host": "www.zuruj.com",
+    "status": 0,
+    "platform": "?",
+    "wishlist": "FETCH-FAILED:TIMEOUT",
+    "apps": [],
+    "generic": false
+  }
+]

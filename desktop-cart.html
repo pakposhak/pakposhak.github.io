@@ -27,27 +27,27 @@
 </head>
 <body>
 <div class="wrap">
-  <h1>🛒 Send your whole cart to PakPoshak — from your computer</h1>
-  <p class="sub">Desktop (Chrome, Firefox, Edge, Safari): one drag, then one click. Android Chrome: staff setup at the bottom.</p>
+  <h1>🛒 Send your cart or wishlist to PakPoshak — from your computer</h1>
+  <p class="sub">Desktop (Chrome, Firefox, Edge, Safari): one drag, then one click. Android Chrome: staff setup at the bottom. One button reads either a brand's <b>cart</b> or its <b>wishlist</b>.</p>
 
   <div class="card" style="text-align:center">
     <p style="margin:0 0 14px;font-weight:600">Drag this button up to your bookmarks bar:</p>
-    <a class="bm" id="bm" href="#">📥 Send cart to PakPoshak</a>
+    <a class="bm" id="bm" href="#">📥 Send to PakPoshak</a>
     <p class="hint">Can't see a bookmarks bar? Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> (Windows) or <kbd>⌘</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> (Mac) to show it, then drag.</p>
   </div>
 
   <div class="card steps">
     <h3 style="margin-top:0;color:var(--green)">How to use it</h3>
     <ol>
-      <li>On a brand's website, add the items you want to <b>their</b> cart.</li>
-      <li>Open the brand's <b>cart / bag</b> page.</li>
-      <li>Click the <b>Send cart to PakPoshak</b> bookmark you just added.</li>
+      <li><b>From a cart:</b> add the items to the brand's cart, then open their <b>cart / bag</b> page.</li>
+      <li><b>From a wishlist:</b> open the brand's <b>♡ Wishlist</b> page so your saved items are on screen (log in first if it asks).</li>
+      <li>On either page, click the <b>Send to PakPoshak</b> bookmark you just added.</li>
       <li class="ok">The PakPoshak order form opens with every item already added. ✅</li>
     </ol>
   </div>
 
   <div class="card">
-    <p class="small" style="margin-top:0"><b>If dragging is awkward</b> (or on Safari), make a new bookmark of any page, then edit it: set the <i>name</i> to “Send cart to PakPoshak” and paste this as the <i>URL / address</i>:</p>
+    <p class="small" style="margin-top:0"><b>If dragging is awkward</b> (or on Safari), make a new bookmark of any page, then edit it: set the <i>name</i> to “Send to PakPoshak” and paste this as the <i>URL / address</i>:</p>
     <textarea id="code" readonly spellcheck="false"></textarea>
     <button class="copy" id="copyBtn" type="button">Copy the code</button>
   </div>
@@ -63,21 +63,23 @@
         <span class="ok">The URL must start with</span> <kbd>javascript:</kbd> — if Chrome dropped it when pasting, type it back at the front.</li>
       <li>Save (back arrow / ✓).</li>
     </ol>
-    <p class="small"><b>To use it:</b> on a brand's <b>cart/bag page</b>, tap the address bar, type <kbd>sendcart</kbd>, and tap the <b>bookmark</b> suggestion (the one with a ☆ — not a Google result). The PakPoshak order form opens with the whole cart, prices loading. ✅</p>
+    <p class="small"><b>To use it:</b> on a brand's <b>cart/bag page</b> or <b>♡ Wishlist page</b>, tap the address bar, type <kbd>sendcart</kbd>, and tap the <b>bookmark</b> suggestion (the one with a ☆ — not a Google result). The PakPoshak order form opens with every item, prices loading. ✅</p>
     <p class="small">If nothing happens, re-edit the bookmark and make sure its URL begins with <kbd>javascript:</kbd>. The trigger is fiddly, so this is best kept to <b>you and staff</b>, not shoppers.</p>
   </div>
 
   <div class="warn">
-    <b>Khaadi &amp; Sapphire:</b> make sure you're on the <b>cart/bag page</b> when you run it.
-    <b>LAAM</b> and a few custom sites don't expose a readable cart — there it sends the single product you're viewing.
+    <b>Be on the right page first:</b> run it from the brand's <b>cart/bag page</b> (for a cart) or its <b>♡ Wishlist page</b> with your saved items showing (for a wishlist). Khaadi &amp; Sapphire both work.
+    <b>LAAM</b> and a few custom sites don't expose a readable cart/wishlist — there it sends the single product you're viewing.
   </div>
 </div>
 
 <script>
 (function(){
-  // The bookmarklet: reads the brand cart (cart-page DOM first, then Shopify /cart.js),
-  // then opens the PakPoshak order form with every product link.
-  var code = "javascript:(function(){var o=location.origin;function ab(h){try{var u=new URL(h,o);u.hash='';return u.href}catch(e){return null}}function ip(h){try{var p=new URL(h,o).pathname;return /\\.html$/i.test(p)||/\\/products?\\//i.test(p)}catch(e){return false}}function go(l){var s={},a=[];(l||[]).forEach(function(u){if(u&&!s[u]){s[u]=1;a.push(u)}});location.href='https://pakposhak.github.io/order-form.html?cart='+encodeURIComponent(a.join('\\n'))}var out=[];document.querySelectorAll('input[name*=\"quantity\" i],select[name*=\"quantity\" i],[class*=\"quantity\"] input,[class*=\"quantity\"] select,[class*=\"qty\"] input,[class*=\"qty\"] select').forEach(function(q){var e=q;for(var i=0;i<6&&e;i++,e=e.parentElement){var a=e.querySelector&&e.querySelector('a[href]');if(a&&ip(a.getAttribute('href'))){var u=ab(a.getAttribute('href'));if(u){out.push(u);break}}}});if(out.length){return go(out)}fetch('/cart.js',{headers:{Accept:'application/json'}}).then(function(r){return r.ok?r.json():null}).then(function(c){if(c&&c.items){var u=c.items.map(function(i){return ab(i.handle?('/products/'+i.handle+(i.variant_id?'?variant='+i.variant_id:'')):i.url)}).filter(Boolean);if(u.length){return go(u)}}go([location.href])}).catch(function(){go([location.href])})})();";
+  // The bookmarklet: reads the brand CART or WISHLIST and opens the PakPoshak order
+  // form with every product link. Detection order: cart line-items (quantity control
+  // next to a product link) → wishlist items (product links inside a wishlist-scoped
+  // container, recommendation carousels excluded) → Shopify /cart.js → the single page.
+  var code = "javascript:(function reader() { var o = location.origin; function ab(h) { try { var u = new URL(h, o); u.hash = ''; return u.href; } catch (e) { return null; } } function ip(h) { try { var p = new URL(h, o).pathname; return /\\.html$/i.test(p) || /\\/products?\\//i.test(p); } catch (e) { return false; } } function cid(e) { var c = e.className; if (c && c.baseVal !== undefined) c = c.baseVal; return String(c || '') + ' ' + (e.id || ''); } function rec(el) { for (var e = el; e && e !== document.body; e = e.parentElement) { if (/recommend|related|you-?may|also-?like|cross-?sell|upsell|recently-?viewed|trending|bestsell|complete-the-look|similar|carousel/i.test(cid(e))) return true; } return false; } function go(l) { var s = {}, a = []; (l || []).forEach(function (u) { if (u && !s[u]) { s[u] = 1; a.push(u); } }); location.href = 'https://pakposhak.github.io/order-form.html?cart=' + encodeURIComponent(a.join('\\n')); } var out = []; document.querySelectorAll('input[name*=\"quantity\" i],select[name*=\"quantity\" i],[class*=\"quantity\"] input,[class*=\"quantity\"] select,[class*=\"qty\"] input,[class*=\"qty\"] select').forEach(function (q) { var e = q; for (var i = 0; i < 6 && e; i++, e = e.parentElement) { var a = e.querySelector && e.querySelector('a[href]'); if (a && ip(a.getAttribute('href'))) { var u = ab(a.getAttribute('href')); if (u) { out.push(u); break; } } } }); if (out.length) { return go(out); } var wl = [], ws = {}; document.querySelectorAll('[class*=\"wishlist\" i],[id*=\"wishlist\" i],[class*=\"wish-list\" i],[class*=\"favourite\" i],[class*=\"favorite\" i],[class*=\"swym\" i],[id*=\"swym\" i],[class*=\"growave\" i],[class*=\"saved-item\" i],[data-wishlist],[data-swym-product-id]').forEach(function (sc) { if (sc === document.body || sc === document.documentElement) return; sc.querySelectorAll('a[href]').forEach(function (a) { var h = a.getAttribute('href'); if (ip(h) && !rec(a)) { var u = ab(h); if (u && !ws[u]) { ws[u] = 1; wl.push(u); } } }); }); if (wl.length) { return go(wl); } fetch('/cart.js', { headers: { Accept: 'application/json' } }).then(function (r) { return r.ok ? r.json() : null; }).then(function (c) { if (c && c.items) { var u = c.items.map(function (i) { return ab(i.handle ? ('/products/' + i.handle + (i.variant_id ? '?variant=' + i.variant_id : '')) : i.url); }).filter(Boolean); if (u.length) { return go(u); } } go([location.href]); }).catch(function () { go([location.href]); }); })();";
   document.getElementById('bm').setAttribute('href', code);
   document.getElementById('code').value = code;
   document.getElementById('copyBtn').addEventListener('click', function(){
