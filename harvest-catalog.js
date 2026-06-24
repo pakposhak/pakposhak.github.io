@@ -313,7 +313,8 @@ function mapCatWomen(s, tags){
   // 10) western 2pc co-ord (stitched assumed; unstitched co-ord → unstitched 2pc)
   if(/co[\s-]?ord|coord/.test(s)) return unstitch ? 'shirt_trouser_2pc_unstitch' : 'coord_western';
   // 11) 1pc separates
-  if(/trouser|pant|palazzo|plazo|capri|culotte|tights|leggings?/.test(s) && !/shirt|kurti|kurta|kameez/.test(s)) return 'womens_trouser';
+  // womens_trouser = STANDALONE 1-piece bottom only; "X with trouser" outfits route to their top's cat below.
+  if(/trouser|pant|palazzo|plazo|capri|culotte|tights|leggings?/.test(s) && !/shirt|kurti|kurta|kameez|angharka|ang[ae]?rkha|peshwas|pishwas|anarkali|\bcholi\b|frock|gown|\bmaxi\b|dress|\bsuit\b|dupatta|3 ?pc|2 ?pc|\bwith\s+(?:a\s+)?(?:trouser|pant|shalwar|bottom)/.test(s)) return 'womens_trouser';
   if(/dress|maxi|gown|jumpsuit|\bfrock\b|anarkali/.test(s)) return 'maxi_dress';
   // 12) 1pc kurti / shirt — stitched vs unstitched
   if(/kurti|kurta|shirt|tunic|\bcape\b|\btop\b|peplum|blouse/.test(s)) return unstitch ? 'kurti_1pc_unstitch' : 'kurti_1pc';

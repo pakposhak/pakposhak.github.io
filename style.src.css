@@ -521,6 +521,10 @@
     .dc-sect{margin-top:10px;background:var(--raised);border:1px solid var(--bdr);border-radius:9px;padding:10px 12px}
     .dc-sect-h{font-size:0.72rem;font-weight:700;color:var(--gold);letter-spacing:0.03em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
     .dc-sect-hint{font-size:0.66rem;font-weight:500;color:var(--txt-muted);text-transform:none;letter-spacing:0}
+    /* order form: one chip per DISTINCT price in a multi-price size selection (e.g. S·M ≈৳40,482 | XXL ≈৳46,304) */
+    .dc-price-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+    .dc-price-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-bdr);border-radius:13px;font-size:0.74rem;font-weight:700}
+    .dc-price-chip b{color:var(--txt);font-weight:800}
     /* Browse Products landing: "Shop by category" — LAAM-style horizontal strip of photo tiles
        (image + label), shown on the plain landing above the rotating products. */
     /* "Shop by category": Women/Men/Kids classifier tabs + a horizontal row of photo tiles
@@ -843,6 +847,16 @@
     .ps-price-n{font-weight:800}
     .ps-pricepop{display:none;position:absolute;right:0;top:calc(100% + 6px);z-index:60;background:var(--surface);border:1.5px solid var(--bdr-med);border-radius:10px;padding:10px;box-shadow:0 10px 28px rgba(0,0,0,0.22);width:232px}
     .ps-pricepop.open{display:block}
+    /* Sort dropdown (mirrors the Price tab): tap to open, then pick a sort option as a pill. */
+    .ps-sortdd{position:relative}
+    .ps-sortddbtn{display:inline-flex;align-items:center;gap:5px}
+    .ps-sortcar{font-size:0.6rem;opacity:0.8}
+    .ps-sortpop{display:none;position:absolute;left:0;top:calc(100% + 6px);z-index:60;background:var(--surface);border:1.5px solid var(--bdr-med);border-radius:11px;padding:6px;box-shadow:0 10px 28px rgba(0,0,0,0.22);min-width:152px}
+    .ps-sortpop.open{display:block}
+    .ps-sort-opt{display:block;width:100%;text-align:left;padding:8px 13px;border:1.5px solid transparent;border-radius:13px;background:none;color:var(--txt-sec);font-size:0.8rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;margin-bottom:5px}
+    .ps-sort-opt:last-child{margin-bottom:0}
+    .ps-sort-opt:hover{background:var(--raised)}
+    .ps-sort-opt.on{background:var(--gold-dim);color:var(--gold);border-color:var(--gold-bdr)}
     .ps-clear-inline{padding:6px 12px;border:1.5px solid var(--bdr-med);border-radius:13px;background:none;color:var(--txt-muted);font-weight:700;font-size:0.74rem;cursor:pointer;font-family:inherit;white-space:nowrap}
     .ps-clear-inline:hover{color:var(--gold);border-color:var(--gold-bdr)}
     /* Partial-catalog escape hatch — always route to the full 155-brand directory */
@@ -873,6 +887,8 @@
     /* in-stock sizes, labelled, on the bottom of the first image */
     .ps-img-sizes{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:18px 7px 5px;background:linear-gradient(rgba(10,22,40,0),rgba(10,22,40,0.9));color:#fff;font-size:0.63rem;font-weight:600;line-height:1.3}
     .ps-img-sizes b{display:block;font-size:0.5rem;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#f0d595;margin-bottom:1px}
+    /* dual stitched/unstitched: compact tag floated to the RIGHT of the sizes overlay (does NOT cover the photo) */
+    .ps-img-dual{float:right;font-size:0.5rem;font-weight:800;text-transform:uppercase;letter-spacing:0.4px;color:#1a1206;background:var(--gold);padding:2px 7px;border-radius:9px;margin-left:6px;line-height:1.35}
     .ps-add{margin-top:8px;width:100%;padding:7px;background:var(--gold);color:#12122a;border:none;border-radius:7px;font-weight:700;font-size:0.78rem;cursor:pointer;font-family:inherit}
     .ps-pager{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:18px;font-size:0.84rem;color:var(--txt-sec);font-weight:600}
     .ps-pg-btn{padding:7px 14px;border:1.5px solid var(--gold-bdr);border-radius:8px;background:var(--gold-dim);color:var(--gold);font-weight:700;cursor:pointer;font-family:inherit;font-size:0.82rem}

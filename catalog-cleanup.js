@@ -154,7 +154,11 @@ function womenType(p){
   // pieces in pret_3pc). Guard against women's "sherwani-style kurti" and bridal lehengas.
   if (/\bsherwani\b|\bprince[\s-]?coat\b/.test(s) && !/\bwomen|\bladies\b|\bgirls?\b|\bkurti\b|\bstyle\b|inspired|lehenga|gharara|sharara|\bfrock\b|\bsaree\b|\bmaxi\b|\bgown\b/.test(s)) return 'mens_sherwani';
   if (/\b(trouser|straight pants?|culottes?|tights|palazzo|cigarette pants?|farshi shalwar|pants?)\b/.test(s)
-      && !/(shirt|kameez|kurti|kurta|dupatta|\bsuit\b|3 ?pc|2 ?pc|3 ?piece|2 ?piece|\btop\b|co-?ord|frock|\bmaxi\b|gown|saree|lehenga|abaya|kaftan|peplum)/.test(s)) return 'womens_trouser';   // a standalone bottom is a bottom whether stitched or unstitched (there is no unstitched-bottom cat) — same fix as fwdCat
+      // womens_trouser is for a STANDALONE 1-piece bottom ONLY. "X with trouser" (an outfit whose top
+      // is the main piece + a trouser) must NOT land here — exclude when a top-garment noun is present
+      // OR the title literally says "with trouser/pant/shalwar/bottom" (the trouser is a component).
+      // (NB "Trouser with Pockets/Belt" is still a trouser — only "with <bottom-noun>" is excluded.)
+      && !/(shirt|kameez|kurti|kurta|dupatta|\bsuit\b|3 ?pc|2 ?pc|3 ?piece|2 ?piece|\btop\b|co-?ord|frock|\bmaxi\b|gown|saree|lehenga|abaya|kaftan|peplum|ang[ae]?rkha|angharka|peshwas|pishwas|anarkali|\bcholi\b|\bwith\s+(?:a\s+)?(?:trouser|pant|shalwar|bottom))/.test(s)) return 'womens_trouser';   // a standalone bottom is a bottom whether stitched or unstitched (there is no unstitched-bottom cat) — same fix as fwdCat
   if (/\bt-?shirt\b|tank top/.test(s) && !/(\bsuit\b|3 ?pc|2 ?pc|dupatta|trouser|kameez)/.test(s)) return 'western_top';
   return null;
 }

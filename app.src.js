@@ -1490,6 +1490,7 @@
           </div>
           <div id="dc_cnote_${id}" style="display:none;margin-top:5px;font-size:0.72rem;font-weight:600;padding:4px 8px;border-radius:5px"></div>
           <div id="dc_phint_${id}" style="font-size:0.72rem;color:var(--gold);margin-top:3px"></div>
+          <div id="dc_price_chips_${id}" class="dc-price-chips" style="display:none"></div>
       </div>
       <div id="dc_opts_${id}" style="display:none;margin-top:10px"></div>
       <div class="dc-sect" id="dc_szbox_${id}">
@@ -1955,6 +1956,7 @@
     const qhead = document.getElementById(`dc_qhead_${id}`);
     if(qhead) qhead.style.display = (rowsEl && rowsEl.children.length) ? '' : 'none';
     wrap.style.display = '';
+    updatePriceChips(id);   // reflect any restored multi-price selection
   }
 
   function toggleSizeChip(id, sz){
@@ -1986,7 +1988,28 @@
         if(priceEl){ priceEl.value = (d.currency === 'USD') ? chosen.toFixed(2) : Math.round(chosen); updateDraftPriceHint(draftId); }
       }
     }
+    updatePriceChips(draftId);
     checkAddUrlLock();
+  }
+  // When a size-priced product has DIFFERENT prices selected, show one ৳ chip per distinct price
+  // (grouped by the sizes that cost it) in the Price section — so the buyer sees each price in their
+  // selection, not just the single (highest) number in the input. Hidden when the selection is a
+  // single price or the product isn't size-priced.
+  function updatePriceChips(draftId){
+    const wrap = document.getElementById(`dc_price_chips_${draftId}`); if(!wrap) return;
+    const d = drafts[draftId];
+    if(!d || !d.priceVaries || !d.sizePrice){ wrap.style.display = 'none'; wrap.innerHTML = ''; return; }
+    const _scat = (document.getElementById(`dc_cat_${draftId}`) || {}).value || d.cat || '';
+    const sel = getDraftSizeRows(draftId).filter(r => r.size && d.sizePrice[r.size] != null);
+    const groups = {};
+    sel.forEach(r => { const k = Math.round(d.sizePrice[r.size]); (groups[k] = groups[k] || []).push(r.size); });
+    const prices = Object.keys(groups).map(Number).sort((a, b) => a - b);
+    if(prices.length < 2){ wrap.style.display = 'none'; wrap.innerHTML = ''; return; }   // only when the selection spans MULTIPLE prices
+    wrap.innerHTML = prices.map(pr => {
+      const bdt = (typeof estLandedBdt === 'function') ? estLandedBdt(pr, _scat) : pr;
+      return `<span class="dc-price-chip"><b>${groups[pr].map(esc).join(' · ')}</b> ≈৳${bdt.toLocaleString()}</span>`;
+    }).join('');
+    wrap.style.display = 'flex';
   }
 
   function getDraftSizeRows(draftId){
@@ -2426,7 +2449,7 @@
       ps_enlarge:'Enlarge', ps_avail_sizes:'Available sizes', ps_unstitched:'Unstitched · no size needed', ps_also_st:'✂️ Stitched also available', ps_also_uns:'🧵 Unstitched fabric also available', ps_mto:'Made to order', ps_d_loading:'Loading more details…', ps_d_open:'View on brand site, order here', ps_d_more:'More from', ps_d_nofetch:'See all photos &amp; details on the brand page →', ps_d_nodesc:'No extra description provided.', warn_title:'Look there, order here', warn_body:'This page is only for photos & product details. Don\'t add to the brand\'s cart. To order on PakPoshak: tap + Add if you see it in our listing — or copy the URL, come back, and paste it.', warn_ok:'Continue to brand site →', warn_cancel:'Stay on PakPoshak',
       ps_empty:'No products match these filters — try widening them.',
       ps_partial:'Not every brand &amp; product is listed here yet —', ps_partial_link:'want more? Browse by brands →', ps_word_products:'products', ps_word_brands:'brands',
-      ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products', ps_sort_lh:'৳ Low→High', ps_sort_hl:'৳ High→Low', ps_sort_price:'Sort: Price', ps_shop_cat:'Shop by category', wish_save:'Save to wishlist', wish_title:'Wishlist', wish_empty:'No saved items yet. Tap ♥ on any product to save it here.', wish_remove:'Remove', ps_sale:'Sale', ps_new:'New', ps_lbl_sort:'Sort', ps_lbl_filter:'Filter', ps_search_ph:'Search 50,000+ products, 140+ Pakistani brands', ps_search_nomatch:'No brand or category matched',
+      ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products', ps_sort_lh:'৳ Low→High', ps_sort_hl:'৳ High→Low', ps_sort_price:'Sort: Price', ps_shop_cat:'Shop by category', wish_save:'Save to wishlist', wish_title:'Wishlist', wish_empty:'No saved items yet. Tap ♥ on any product to save it here.', wish_remove:'Remove', ps_also_uns_short:'Unstitched available', ps_also_st_short:'Stitched available', ps_sale:'Sale', ps_new:'New', ps_lbl_sort:'Sort', ps_lbl_filter:'Filter', ps_search_ph:'Search 50,000+ products, 140+ Pakistani brands', ps_search_nomatch:'No brand or category matched',
       bb_store:'Store Types', bb_product:'Product Category', bb_women:'👗 Women', bb_men:'👔 Men', bb_kids:'🧸 Kids', bb_md:'🏬 Multi-Dept', bb_premium:'💎 Premium',
       bb_more:'more', bb_less:'less', bb_all:'All', bb_two_ways:'Two ways to search brands', bb_pick_gender:'Pick women, men, or others above — or just type any brand name.', bb_pick_cat:'Pick a category above to see its brands.', bb_prod_sub:'🔎 Search 150+ brands to order directly from their page:', bb_loading:'Loading brands…', bb_prod_none:'No catalogued brands here yet.',
       bb_smart_ph:'🔍 Search 150+ brands — e.g. Khaadi, lawn, casual', bb_search_lead:'🔎 Know the brand? Search 150+ Pakistani brands by name:',
@@ -2491,7 +2514,7 @@
       ps_enlarge:'ছবি বড় করুন', ps_avail_sizes:'স্টকে থাকা সাইজ', ps_unstitched:'আনস্টিচড · সাইজ লাগে না', ps_also_st:'✂️ সেলাই করাও আছে', ps_also_uns:'🧵 আনস্টিচড কাপড়ও আছে', ps_mto:'অর্ডারে তৈরি হবে', ps_d_loading:'আরও বিবরণ আসছে…', ps_d_open:'ব্র্যান্ড সাইটে দেখুন, অর্ডার এখানে', ps_d_more:'আরও দেখুন —', ps_d_nofetch:'সব ছবি ও বিবরণ ব্র্যান্ডের পেজে দেখুন →', ps_d_nodesc:'বাড়তি কোনো বিবরণ নেই।', warn_title:'দেখুন ওখানে, অর্ডার এখানে', warn_body:'এই পেজটি শুধু ছবি ও পণ্যের বিবরণ দেখার জন্য। ব্র্যান্ডের cart-এ যোগ করবেন না। PakPoshak-এ অর্ডার করতে: লিস্টে থাকলে + Add ট্যাপ করুন — অথবা URL copy করে ফিরে এসে paste করুন।', warn_ok:'ব্র্যান্ড সাইটে যান →', warn_cancel:'PakPoshak-এ থাকুন',
       ps_empty:'এই ফিল্টারে কোনো পণ্য নেই — ফিল্টার একটু কমিয়ে দেখুন।',
       ps_partial:'সব ব্র্যান্ড বা পণ্য এখনো এখানে যোগ হয়নি —', ps_partial_link:'আরও চান? “ব্র্যান্ড দেখুন”-এ যান →', ps_word_products:'পণ্য', ps_word_brands:'ব্র্যান্ড',
-      ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়', ps_sort_lh:'৳ কম→বেশি', ps_sort_hl:'৳ বেশি→কম', ps_sort_price:'দাম অনুসারে', ps_shop_cat:'ক্যাটাগরি অনুযায়ী দেখুন', wish_save:'পছন্দে সেভ করুন', wish_title:'পছন্দের তালিকা', wish_empty:'এখনো কিছু সেভ করা হয়নি। যেকোনো পণ্যে ♥ চাপ দিয়ে এখানে সেভ করুন।', wish_remove:'সরান', ps_sale:'সেল', ps_new:'নতুন', ps_lbl_sort:'সাজান', ps_lbl_filter:'ফিল্টার', ps_search_ph:'খুঁজুন: ৫০,০০০+ পণ্য, ১৪০+ পাকিস্তানি ব্র্যান্ড', ps_search_nomatch:'কোনো ব্র্যান্ড বা ক্যাটাগরি মেলেনি',
+      ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়', ps_sort_lh:'৳ কম→বেশি', ps_sort_hl:'৳ বেশি→কম', ps_sort_price:'দাম অনুসারে', ps_shop_cat:'ক্যাটাগরি অনুযায়ী দেখুন', wish_save:'পছন্দে সেভ করুন', wish_title:'পছন্দের তালিকা', wish_empty:'এখনো কিছু সেভ করা হয়নি। যেকোনো পণ্যে ♥ চাপ দিয়ে এখানে সেভ করুন।', wish_remove:'সরান', ps_also_uns_short:'আনস্টিচডও আছে', ps_also_st_short:'সেলাইও আছে', ps_sale:'সেল', ps_new:'নতুন', ps_lbl_sort:'সাজান', ps_lbl_filter:'ফিল্টার', ps_search_ph:'খুঁজুন: ৫০,০০০+ পণ্য, ১৪০+ পাকিস্তানি ব্র্যান্ড', ps_search_nomatch:'কোনো ব্র্যান্ড বা ক্যাটাগরি মেলেনি',
       bb_store:'স্টোরের ধরন', bb_product:'পণ্যের ক্যাটাগরি', bb_women:'👗 মেয়েদের', bb_men:'👔 ছেলেদের', bb_kids:'🧸 বাচ্চাদের', bb_md:'🏬 মাল্টি-ডিপ', bb_premium:'💎 প্রিমিয়াম',
       bb_more:'আরও', bb_less:'কম', bb_all:'সব', bb_two_ways:'ব্র্যান্ড খোঁজার দুটি উপায়', bb_pick_gender:'উপরে মেয়ে, ছেলে বা অন্যান্য বেছে নিন — অথবা যেকোনো ব্র্যান্ডের নাম লিখুন।', bb_pick_cat:'ব্র্যান্ড দেখতে উপরের একটি ক্যাটাগরিতে ট্যাপ করুন।', bb_prod_sub:'🔎 সরাসরি অর্ডার করতে ১৫০+ ব্র্যান্ড খুঁজুন:', bb_loading:'ব্র্যান্ড আসছে…', bb_prod_none:'এখানে এখনো কোনো ব্র্যান্ড নেই।',
       bb_smart_ph:'🔍 ১৫০+ ব্র্যান্ড খুঁজুন — যেমন Khaadi, lawn, casual', bb_search_lead:'🔎 ব্র্যান্ড জানা আছে? নাম দিয়ে ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন:',
@@ -5653,21 +5676,40 @@
   // Tapping the active sort/Sale chip clears it.
   function psBuildSort(){
     const el = document.getElementById('psSortTabs'); if(!el) return;
-    // ONE price-sort chip that cycles: off → ৳ Low→High → ৳ High→Low → off (req: a single sort tab).
+    // Sort is a DROPDOWN (like the Price tab): tap it open, then SELECT ৳ Low→High or ৳ High→Low
+    // as pills (no confusing cycling). The button shows the active choice.
     const sortLbl = psSort === 'asc' ? tr('ps_sort_lh') : psSort === 'desc' ? tr('ps_sort_hl') : tr('ps_sort_price');
     el.innerHTML =
-        `<span class="ps-sortgrp">`
-      +   `<button type="button" class="ps-sortbtn ps-sortcyc${psSort?' on':''}" onclick="psCycleSort()" title="${esc(tr('ps_sort_price'))}">${esc(sortLbl)}</button>`
+        `<span class="ps-sortgrp ps-sortdd" id="psSortDd">`
+      +   `<button type="button" class="ps-sortbtn ps-sortddbtn${psSort?' on':''}" id="psSortBtn" onclick="psToggleSortPop()" aria-haspopup="true" aria-expanded="false">${esc(sortLbl)} <span class="ps-sortcar">▾</span></button>`
+      +   `<div class="ps-sortpop" id="psSortPop">`
+      +     `<button type="button" class="ps-sort-opt${psSort==='asc'?' on':''}" onclick="psSetSortVal('asc')">${tr('ps_sort_lh')}</button>`
+      +     `<button type="button" class="ps-sort-opt${psSort==='desc'?' on':''}" onclick="psSetSortVal('desc')">${tr('ps_sort_hl')}</button>`
+      +   `</div>`
       + `</span>`
       + `<span class="ps-sortgrp">`
       +   `<button type="button" class="ps-sortbtn ps-salebtn${psSaleOnly?' on':''}" onclick="psToggleSale()">${tr('ps_sale')}</button>`
       +   `<button type="button" class="ps-sortbtn${psNewOnly?' on':''}" onclick="psToggleNew()">${tr('ps_new')}</button>`
       + `</span>`;
   }
-  // The single price-sort chip cycles off → ৳ Low→High → ৳ High→Low. Sale and New are FILTERS
-  // (Sale ⇄ New mutually exclusive); the ৳ price sort orders WITHIN whichever is active.
-  function psCycleSort(){ psSort = (psSort === '') ? 'asc' : (psSort === 'asc') ? 'desc' : ''; psBuildSort(); psApply(); }
-  function psSetSort(s){ psSort = (psSort === s) ? '' : s; psBuildSort(); psApply(); }
+  function psToggleSortPop(){
+    const pop = document.getElementById('psSortPop'), btn = document.getElementById('psSortBtn');
+    if(!pop) return;
+    const open = pop.classList.toggle('open');
+    if(btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  // Select a sort option (re-tapping the active one clears it back to the curated default).
+  function psSetSortVal(s){ psSort = (psSort === s) ? '' : s; const p = document.getElementById('psSortPop'); if(p) p.classList.remove('open'); psBuildSort(); psApply(); }
+  function psSetSort(s){ psSort = (psSort === s) ? '' : s; psBuildSort(); psApply(); }   // legacy alias
+  // Sale and New are FILTERS (Sale ⇄ New mutually exclusive); the ৳ price sort orders WITHIN
+  // whichever is active. Outside-click closes the sort popover (mirrors the price popover).
+  document.addEventListener('click', function(e){
+    const dd = document.getElementById('psSortDd'), pop = document.getElementById('psSortPop');
+    if(pop && pop.classList.contains('open') && dd && !dd.contains(e.target)){
+      pop.classList.remove('open');
+      const btn = document.getElementById('psSortBtn'); if(btn) btn.setAttribute('aria-expanded','false');
+    }
+  });
   function psToggleSale(){ psSaleOnly = !psSaleOnly; if(psSaleOnly) psNewOnly = false; psBuildSort(); psApply(); }   // Sale ⇄ New
   function psToggleNew(){ psNewOnly = !psNewOnly; if(psNewOnly) psSaleOnly = false; psBuildSort(); psApply(); }       // New = newest non-sale; price sorts within
   // Dynamic "12,000+ products · 80+ brands — want more?" note; counts come from the
@@ -5741,19 +5783,20 @@
     const list = p.sz || [];
     const isUns = list.length === 1 && /unstitch/i.test(list[0]);
     const isMto = list.length === 1 && /made to order/i.test(list[0]);
-    const szOverlay = isMto
-      ? `<div class="ps-img-sizes"><b>${tr('ps_mto')}</b></div>`
-      : isUns
-        ? `<div class="ps-img-sizes"><b>${tr('ps_unstitched')}</b></div>`
-        : `<div class="ps-img-sizes"><b>${tr('ps_avail_sizes')}</b>${list.slice(0,7).map(esc).join(' · ')}</div>`;
-    // DUAL stitched/unstitched article (Khaadi) — this card is ONE form; flag that the OTHER form
-    // (with its own price) is also sold, so each facet's card mentions both options.
-    const dualBadge = (p.dual && p.altform)
-      ? `<div class="ps-img-sizes" style="margin-top:3px;background:linear-gradient(135deg,var(--gold),#b08a4e);color:#1a1206;border:none;font-weight:700">${tr(p.altform === 'stitched' ? 'ps_also_st' : 'ps_also_uns')}${p.altbdt ? ` · ≈৳${(+p.altbdt).toLocaleString()}` : ''}</div>`
+    // DUAL stitched/unstitched article (Khaadi) — this card is ONE form; show a SMALL tag on the
+    // RIGHT of the sizes overlay (e.g. "Unstitched available") instead of a banner that covers the
+    // photo + hides the sizes. Two words, right-aligned; the sizes stay on the left as usual.
+    const dualTag = (p.dual && p.altform)
+      ? `<span class="ps-img-dual">${tr(p.altform === 'stitched' ? 'ps_also_st_short' : 'ps_also_uns_short')}</span>`
       : '';
+    const szOverlay = isMto
+      ? `<div class="ps-img-sizes">${dualTag}<b>${tr('ps_mto')}</b></div>`
+      : isUns
+        ? `<div class="ps-img-sizes">${dualTag}<b>${tr('ps_unstitched')}</b></div>`
+        : `<div class="ps-img-sizes">${dualTag}<b>${tr('ps_avail_sizes')}</b>${list.slice(0,7).map(esc).join(' · ')}</div>`;
     const _uk = psUrlKey(p.u), _wsaved = psWishHas(p.u);
     return `<div class="ps-card">
-      <div class="ps-img" onclick="psDetail(${idx})" role="button" tabindex="0" aria-label="${esc(p.t)} — enlarge">${p.sale?'<span class="ps-sale">SALE</span>':''}<button type="button" class="ps-wish${_wsaved?' on':''}" data-uk="${esc(_uk)}" onclick="event.stopPropagation();psWishToggle(${idx},event)" aria-label="${tr('wish_save')}" title="${tr('wish_save')}">♥</button><button type="button" class="ps-info" onclick="event.stopPropagation();psDetail(${idx})" aria-label="Enlarge pictures and details" title="Enlarge pics &amp; details">🔍<span class="ps-info-tx">${tr('ps_enlarge')}</span></button><img loading="lazy" src="${esc(thumbUrl(p.img))}" data-full="${esc(p.img)}" alt="${esc(p.t)}" onerror="if(!this.dataset.f){this.dataset.f=1;this.src=this.dataset.full;}else{this.parentElement.classList.add('ps-img-fail');}">${szOverlay}${dualBadge}</div>
+      <div class="ps-img" onclick="psDetail(${idx})" role="button" tabindex="0" aria-label="${esc(p.t)} — enlarge">${p.sale?'<span class="ps-sale">SALE</span>':''}<button type="button" class="ps-wish${_wsaved?' on':''}" data-uk="${esc(_uk)}" onclick="event.stopPropagation();psWishToggle(${idx},event)" aria-label="${tr('wish_save')}" title="${tr('wish_save')}">♥</button><button type="button" class="ps-info" onclick="event.stopPropagation();psDetail(${idx})" aria-label="Enlarge pictures and details" title="Enlarge pics &amp; details">🔍<span class="ps-info-tx">${tr('ps_enlarge')}</span></button><img loading="lazy" src="${esc(thumbUrl(p.img))}" data-full="${esc(p.img)}" alt="${esc(p.t)}" onerror="if(!this.dataset.f){this.dataset.f=1;this.src=this.dataset.full;}else{this.parentElement.classList.add('ps-img-fail');}">${szOverlay}</div>
       <div class="ps-cbody">
         <div class="ps-brand">${esc(p.b)}</div>
         <div class="ps-title">${esc(p.t)}</div>
