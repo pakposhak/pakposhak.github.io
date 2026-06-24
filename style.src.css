@@ -588,7 +588,21 @@
     .psc-tile:active .psc-img{transform:scale(0.95)}
     .psc-tile.on .psc-img{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
     .psc-lbl{font-size:0.7rem;font-weight:700;color:var(--txt);line-height:1.15;text-align:center;width:84px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-    @media (min-width:820px){ .ps-shopcat{margin-bottom:16px} .psc-gtab{font-size:0.8rem;padding:6px 16px} .psc-tile{width:104px} .psc-img{width:104px;height:124px;border-radius:16px} .psc-lbl{width:108px;font-size:0.76rem} .psc-tile.psc-noimg .psc-img::after{font-size:2.2rem} }
+    @media (min-width:820px){
+      .ps-shopcat{margin-bottom:16px} .psc-gtab{font-size:0.8rem;padding:6px 16px} .psc-tile{width:104px} .psc-img{width:104px;height:124px;border-radius:16px} .psc-lbl{width:108px;font-size:0.76rem} .psc-tile.psc-noimg .psc-img::after{font-size:2.2rem}
+      /* DESKTOP dual-cluster tab row (req): Brands cluster (left, teal-tinted) + Categories cluster
+         (right, gold) BOTH visible at once — no toggle. Tiles fan outward from the centre labels. */
+      .psc-deskrow{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;width:100%}
+      .psc-cluster{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+      .psc-clabel{font-size:0.72rem;font-weight:800;letter-spacing:0.4px;text-transform:uppercase;color:var(--txt-muted);white-space:nowrap;padding:0 2px}
+      .psc-cl-brand .psc-gtab{border-color:#3f9d92;color:#137a72}
+      .psc-cl-brand .psc-gtab.on{background:#137a72;color:#fff;border-color:#137a72}
+      [data-theme="dark"] .psc-cl-brand .psc-gtab{color:#5fd0c4;border-color:#2a6b63}
+      [data-theme="dark"] .psc-cl-brand .psc-gtab.on{background:#137a72;color:#fff;border-color:#137a72}
+      /* Desktop fixed view (req): JS adds .ps-pinned when the header locks on scroll — give it a
+         background + shadow so the filters/sort/carousel read cleanly as products scroll under. */
+      #tabProducts .ps-pinhead.ps-pinned{background:var(--bg);box-shadow:0 6px 16px -6px rgba(0,0,0,0.28)}
+    }
     /* ── WISHLIST (E) ── heart on cards + header entry + saved-items drawer ── */
     .hdr-wish{position:relative;color:var(--gold);font-size:1.15rem;line-height:1;padding:6px 9px}
     .hdr-wish-badge{position:absolute;top:-3px;right:-3px;background:#c0392b;color:#fff;border-radius:9px;min-width:16px;height:16px;padding:0 4px;font-size:0.6rem;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1}

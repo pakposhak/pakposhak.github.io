@@ -5638,6 +5638,9 @@
     psBuildShopCat();
   }
   function psSetBrandDept(d){ psShopDept = d; psBuildShopCat(); }
+  // Desktop dual-cluster row: clicking a brand-cluster dept enters Brands mode for that dept directly
+  // (mobile reaches this via the Brands toggle, but desktop shows both clusters at once).
+  function psShopDeskBrand(d){ psShopMode = 'brand'; psShopDept = d; psBuildShopCat(); }
   // Brand names for a department, restricted to brands that actually have products (so each tile gets
   // a photo). Reuses the Browse-Brands ranked per-department pool. 'p' = Premium.
   function psShopBrandsForDept(dept){
@@ -5686,16 +5689,31 @@
     const tabsEl = document.getElementById('psShopTabs');
     const brand = psShopMode === 'brand';
     if(tabsEl){
-      const src = brand ? PS_BRAND_DEPTS : PS_SHOP_GENDERS;
-      const activeKey = brand ? psShopDept : psShopGender;
-      const fn = brand ? 'psSetBrandDept' : 'psSetShopGender';
-      const deptHtml = src.map(([d,e,en,bn]) =>
-        `<button type="button" class="psc-gtab${d===activeKey ? ' on' : ''}" onclick="${fn}('${d}')">${e} ${esc(_lang==='bn'?bn:en)}</button>`).join('');
-      // Dept tabs sit in their own track; the Brands toggle is OUTSIDE it so it's always tappable.
-      // In Brands mode the track is compacted (so all 4 incl. Premium fit) + tinted teal + the tabs
-      // slide in left-to-right, reading as departments "coming out of" the Brands toggle (req).
-      tabsEl.innerHTML = `<div class="psc-tabscroll${brand ? ' on-brand' : ' on-cat'}">${deptHtml}</div>`
-        + `<button type="button" class="psc-gtab psc-gtab-brand${brand ? ' on' : ''}" onclick="psShopBrandsMode()">🏷️ ${esc(tr('ps_brands'))}</button>`;
+      const lang = _lang === 'bn';
+      if(window.innerWidth >= 820){
+        // DESKTOP (req): show BOTH clusters in the one row at once — Brands (brand depts fanning toward
+        // the left, next to the 🏷️ Brands label) + Categories (📁 Categories label then the category
+        // depts incl. West, on the right). Click a brand dept → that dept's brand carousel; a category
+        // dept → its category tiles. No toggle — desktop has the width to show both. Mobile keeps the toggle.
+        const bAct = brand ? psShopDept : '';
+        const cAct = brand ? '' : psShopGender;
+        const bTiles = PS_BRAND_DEPTS.map(([d,e,en,bn]) => `<button type="button" class="psc-gtab${d===bAct?' on':''}" onclick="psShopDeskBrand('${d}')">${e} ${esc(lang?bn:en)}</button>`).join('');
+        const cTiles = PS_SHOP_GENDERS.map(([d,e,en,bn]) => `<button type="button" class="psc-gtab${d===cAct?' on':''}" onclick="psSetShopGender('${d}')">${e} ${esc(lang?bn:en)}</button>`).join('');
+        tabsEl.innerHTML = `<div class="psc-deskrow">`
+          + `<div class="psc-cluster psc-cl-brand${brand?' on':''}">${bTiles}<span class="psc-clabel">🏷️ ${esc(tr('ps_brands'))}</span></div>`
+          + `<div class="psc-cluster psc-cl-cat${brand?'':' on'}"><span class="psc-clabel">📁 ${esc(tr('ps_category_short'))}</span>${cTiles}</div>`
+          + `</div>`;
+      } else {
+        const src = brand ? PS_BRAND_DEPTS : PS_SHOP_GENDERS;
+        const activeKey = brand ? psShopDept : psShopGender;
+        const fn = brand ? 'psSetBrandDept' : 'psSetShopGender';
+        const deptHtml = src.map(([d,e,en,bn]) =>
+          `<button type="button" class="psc-gtab${d===activeKey ? ' on' : ''}" onclick="${fn}('${d}')">${e} ${esc(lang?bn:en)}</button>`).join('');
+        // Dept tabs sit in their own track; the Brands toggle is OUTSIDE it so it's always tappable.
+        // In Brands mode the track is compacted (teal slide-in); cat mode is gold left slide-in (req).
+        tabsEl.innerHTML = `<div class="psc-tabscroll${brand ? ' on-brand' : ' on-cat'}">${deptHtml}</div>`
+          + `<button type="button" class="psc-gtab psc-gtab-brand${brand ? ' on' : ''}" onclick="psShopBrandsMode()">🏷️ ${esc(tr('ps_brands'))}</button>`;
+      }
     }
     const deptsEl = document.getElementById('psBrandDepts'); if(deptsEl) deptsEl.style.display = 'none';   // retired: brand departments now live in the tab row above
     const wrap = document.getElementById('psShopScroll'); if(!wrap) return;
@@ -5890,12 +5908,13 @@
     const head = document.getElementById('psPinHead'); if(!head) return;
     let sen = _psPin.sen;
     if(!sen || !sen.parentNode){ sen = document.createElement('div'); sen.setAttribute('aria-hidden','true'); sen.style.height = '0px'; head.parentNode.insertBefore(sen, head); _psPin.sen = sen; }
-    // Mobile only, and only while the bar is actually rendered. getClientRects() (not offsetParent,
-    // which is null for position:fixed) stays truthy while fixed and goes empty when the Brands tab
-    // hides #tabProducts — so we correctly drop the fix on tab switch.
-    const active = window.innerWidth < 820 && head.getClientRects().length > 0;
+    // Runs on BOTH mobile and desktop now (req: desktop also locks the filters/sort/carousel on
+    // scroll). Only while the bar is actually rendered — getClientRects() (not offsetParent, which
+    // is null for position:fixed) stays truthy while fixed, and goes empty when the Brands tab hides
+    // #tabProducts, so we correctly drop the fix on tab switch.
+    const active = head.getClientRects().length > 0;
     if(!active){
-      if(_psPin.on){ head.style.position=''; head.style.top=''; head.style.left=''; head.style.width=''; head.style.zIndex=''; sen.style.height='0px'; _psPin.on=false; }
+      if(_psPin.on){ head.style.position=''; head.style.top=''; head.style.left=''; head.style.width=''; head.style.zIndex=''; head.classList.remove('ps-pinned'); sen.style.height='0px'; _psPin.on=false; }
       return;
     }
     const st = _psPin.inset;
@@ -5904,25 +5923,31 @@
       const rr = head.parentElement.getBoundingClientRect();
       const hH = head.getBoundingClientRect().height;
       head.style.position='fixed'; head.style.top=st+'px'; head.style.left=rr.left+'px'; head.style.width=rr.width+'px'; head.style.zIndex='16';
+      head.classList.add('ps-pinned');   // desktop: triggers the background/shadow (mobile already styles the pinhead)
       sen.style.height = hH + 'px';
       _psPin.on = true;
     } else if(_psPin.on && senTop > st){
-      head.style.position=''; head.style.top=''; head.style.left=''; head.style.width=''; head.style.zIndex=''; sen.style.height='0px';
+      head.style.position=''; head.style.top=''; head.style.left=''; head.style.width=''; head.style.zIndex=''; head.classList.remove('ps-pinned');
+      sen.style.height='0px';
       _psPin.on = false;
     }
   }
   function psPinInit(){
     if(_psPin.bound) return;
     _psPin.bound = true;
+    _psPin.desk = window.innerWidth >= 820;
     _psPinMeasureInset();
     window.addEventListener('scroll', () => window.requestAnimationFrame(psPinUpdate), { passive:true });
     // On resize/orientation, the column width and notch inset may change: drop the fix and recompute.
     window.addEventListener('resize', () => {
       const head = document.getElementById('psPinHead');
-      if(head){ head.style.position=''; head.style.top=''; head.style.left=''; head.style.width=''; head.style.zIndex=''; }
+      if(head){ head.style.position=''; head.style.top=''; head.style.left=''; head.style.width=''; head.style.zIndex=''; head.classList.remove('ps-pinned'); }
       if(_psPin.sen) _psPin.sen.style.height = '0px';
       _psPin.on = false;
       _psPinMeasureInset();
+      // Re-render the tab row only when crossing the 820 breakpoint (desktop dual-cluster ↔ mobile toggle).
+      const desk = window.innerWidth >= 820;
+      if(_psPin.desk !== desk){ _psPin.desk = desk; try { psBuildShopCat(); } catch(e){} }
       window.requestAnimationFrame(psPinUpdate);
     });
     psPinUpdate();
@@ -6725,7 +6750,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-24v';
+  const PSB_BUILD = '2026-06-24w';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
