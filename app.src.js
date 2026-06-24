@@ -5598,7 +5598,9 @@
   let psShopMode = 'cat';
   let psShopDept = 'w';   // active brand-carousel department (renamed from psBrandDept — collided with the psBrandDept() helper)
   // Brand-carousel departments (req: 4, EXCLUDING multi-dept). Labels reuse the bb_* i18n keys.
-  const PS_BRAND_DEPTS = [ ['w','bb_women'], ['m','bb_men'], ['k','bb_kids'], ['p','bb_premium'] ];
+  // Brand-carousel departments (4 — incl. Premium, which has no category equivalent so it appears
+  // ONLY in Brands mode). Same emoji/labels as the gender tabs so the one row reads consistently.
+  const PS_BRAND_DEPTS = [ ['w','👗','Women','মেয়েদের'], ['m','👔','Men','ছেলেদের'], ['k','🧸','Kids','বাচ্চাদের'], ['p','💎','Premium','প্রিমিয়াম'] ];
   // Tiles for the active department, hiding any category that has zero products (psFacetCats).
   function psShopTiles(){
     let t = PS_SHOP_TILES.filter(x => x.g === psShopGender);
@@ -5606,7 +5608,11 @@
     return t;
   }
   function psSetShopGender(g){ psShopMode = 'cat'; psShopGender = g; psBuildShopCat(); }
-  function psShopBrandsMode(){ psShopMode = (psShopMode === 'brand') ? 'cat' : 'brand'; psBuildShopCat(); }   // re-tap Brands → back to categories
+  function psShopBrandsMode(){
+    if(psShopMode === 'brand'){ psShopMode = 'cat'; }                 // re-tap Brands → back to categories
+    else { psShopMode = 'brand'; psShopDept = psShopGender; }         // enter Brands on the SAME department (Women cats → Women brands)
+    psBuildShopCat();
+  }
   function psSetBrandDept(d){ psShopDept = d; psBuildShopCat(); }
   // Brand names for a department, restricted to brands that actually have products (so each tile gets
   // a photo). Reuses the Browse-Brands ranked per-department pool. 'p' = Premium.
@@ -5650,23 +5656,25 @@
     return '';
   }
   function psBuildShopCat(){
-    // Tabs: Women / Men / Kids + a Brands tab pushed to the right.
+    // ONE tab row, double duty: catalogue mode = Women/Men/Kids (categories); Brands mode =
+    // Women/Men/Kids/Premium (brand departments). The Brands toggle on the right switches modes.
+    // Premium ONLY shows in Brands mode (req) — never on the catalogue landing.
     const tabsEl = document.getElementById('psShopTabs');
+    const brand = psShopMode === 'brand';
     if(tabsEl){
-      let html = PS_SHOP_GENDERS.map(([g,e,en,bn]) =>
-        `<button type="button" class="psc-gtab${psShopMode==='cat' && g===psShopGender ? ' on' : ''}" onclick="psSetShopGender('${g}')">${e} ${esc(_lang==='bn'?bn:en)}</button>`).join('');
-      html += `<button type="button" class="psc-gtab psc-gtab-brand${psShopMode==='brand' ? ' on' : ''}" onclick="psShopBrandsMode()">🏷️ ${esc(tr('ps_brands'))}</button>`;
-      tabsEl.innerHTML = html;
+      const src = brand ? PS_BRAND_DEPTS : PS_SHOP_GENDERS;
+      const activeKey = brand ? psShopDept : psShopGender;
+      const fn = brand ? 'psSetBrandDept' : 'psSetShopGender';
+      const deptHtml = src.map(([d,e,en,bn]) =>
+        `<button type="button" class="psc-gtab${d===activeKey ? ' on' : ''}" onclick="${fn}('${d}')">${e} ${esc(_lang==='bn'?bn:en)}</button>`).join('');
+      // Dept tabs scroll in their own track; the Brands toggle sits OUTSIDE it so it's always tappable.
+      tabsEl.innerHTML = `<div class="psc-tabscroll">${deptHtml}</div>`
+        + `<button type="button" class="psc-gtab psc-gtab-brand${brand ? ' on' : ''}" onclick="psShopBrandsMode()">🏷️ ${esc(tr('ps_brands'))}</button>`;
     }
-    const deptsEl = document.getElementById('psBrandDepts');
+    const deptsEl = document.getElementById('psBrandDepts'); if(deptsEl) deptsEl.style.display = 'none';   // retired: brand departments now live in the tab row above
     const wrap = document.getElementById('psShopScroll'); if(!wrap) return;
-    // ── BRAND MODE: department pills + a carousel of that department's brand photos ──
-    if(psShopMode === 'brand'){
-      if(deptsEl){
-        deptsEl.style.display = '';
-        deptsEl.innerHTML = PS_BRAND_DEPTS.map(([d,k]) =>
-          `<button type="button" class="psc-dpill${d===psShopDept ? ' on' : ''}" onclick="psSetBrandDept('${d}')">${esc(tr(k))}</button>`).join('');
-      }
+    // ── BRAND MODE: a carousel of the selected department's brand photos ──
+    if(brand){
       // The per-dept brand pool needs the brand→category index (so multi-dept flagships like
       // Khaadi/Sapphire/Gul Ahmed fold into Women/Men/Kids, and brands are strength-ranked). Load it
       // once — same as Browse Brands — then re-render; without it the fallback drops those brands.
@@ -6593,7 +6601,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-24q';
+  const PSB_BUILD = '2026-06-24r';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

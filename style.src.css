@@ -546,11 +546,14 @@
     /* "Shop by category": Women/Men/Kids classifier tabs + a horizontal row of photo tiles
        (image + label). Compact because it is ALWAYS visible (sticky on mobile — see below). */
     .ps-shopcat{margin:2px 0 13px}
-    .ps-shopcat-tabs{display:flex;gap:7px;margin:0 0 9px;flex-wrap:nowrap;align-items:center;overflow-x:auto;scrollbar-width:none}
-    .ps-shopcat-tabs::-webkit-scrollbar{display:none}
-    .psc-gtab{flex:0 0 auto;padding:5px 13px;border:1.5px solid var(--gold-bdr);border-radius:14px;background:var(--surface);color:var(--txt-sec);font-size:0.74rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+    .ps-shopcat-tabs{display:flex;gap:7px;margin:0 0 9px;flex-wrap:nowrap;align-items:center}
+    /* department tabs scroll within their own track; the Brands toggle stays pinned + always visible */
+    .psc-tabscroll{display:flex;gap:7px;flex:1 1 auto;min-width:0;align-items:center;overflow-x:auto;scrollbar-width:none}
+    .psc-tabscroll::-webkit-scrollbar{display:none}
+    .psc-gtab{flex:0 0 auto;padding:5px 12px;border:1.5px solid var(--gold-bdr);border-radius:14px;background:var(--surface);color:var(--txt-sec);font-size:0.74rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
     .psc-gtab.on{background:var(--gold);color:#1a1206;border-color:var(--gold)}
-    .psc-gtab-brand{margin-left:auto}   /* Brands tab sits at the right corner of the row (collapses when the row scrolls) */
+    .psc-gtab-brand{flex:0 0 auto;margin-left:1px}   /* Brands toggle pinned at the right corner, OUTSIDE the scrolling dept track → always tappable */
+    .psc-gtab-brand.on{background:#137a72;color:#fff;border-color:#137a72}   /* active "Brands ✓" — distinct from the gold dept tabs */
     /* Brand-mode department pills (Kids/Women/Men/Premium) — a sub-level under the Brands tab */
     .ps-shopcat-depts{display:flex;gap:7px;margin:0 0 9px;flex-wrap:wrap}
     .psc-dpill{flex:0 0 auto;padding:4px 12px;border:1.5px solid var(--bdr-med);border-radius:13px;background:var(--input-bg);color:var(--txt-sec);font-size:0.72rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
