@@ -6568,27 +6568,39 @@
     im.onerror = function(){ tile.classList.add('bb-btile-noimg'); im.remove(); };
     span.appendChild(im); tile.classList.remove('bb-btile-noimg');
   }
-  let _bbPhotoIO = null;
+  function _bbHash(s){ let h = 0; for(let i = 0; i < s.length; i++){ h = (h * 31 + s.charCodeAt(i)) | 0; } return Math.abs(h); }
+  // Find a photo for a brand tile, ALWAYS landing on a person pic (req: every icon has a pic):
+  //   1) the brand's own dept-scoped photo (relevant to the active Women/Men/Kids tab);
+  //   2) the brand's photo in ANY category (covers a brand with no products in that exact dept);
+  //   3) if the brand has NO catalogue products at all (~23 directory-only brands), a GENERIC photo
+  //      from that DEPARTMENT at a name-hashed offset — varied per brand, still men/women/kids-appropriate.
+  async function bbFetchBrandPhoto(t, n, dept){
+    const base = psSearchBase();
+    const cats = _psDeptCats(dept), catParam = (cats && cats.length) ? ('&cat=' + encodeURIComponent(cats.join(','))) : '';
+    const get = async u => { try { const r = await fetch(u, { cache:'default' }); return r.ok ? (await r.json()) : null; } catch(e){ return null; } };
+    const pickDept = arr => { const w = (dept === 'w') ? arr.find(x => x && x.img && !_PS_MALE_RE.test(String(x.t || ''))) : null; return w || arr.find(x => x && x.img) || null; };
+    let j = await get(base + '?brand=' + encodeURIComponent(n) + catParam + '&pageSize=6&page=0');
+    let p = pickDept((j && j.products) || []);
+    if(!p && catParam){ j = await get(base + '?brand=' + encodeURIComponent(n) + '&pageSize=6&page=0'); p = ((j && j.products) || []).find(x => x && x.img) || null; }
+    if(!p){ const off = _bbHash(n) % 24, deptOnly = catParam ? catParam.slice(1) : ''; j = await get(base + (deptOnly ? '?' + deptOnly + '&' : '?') + 'pageSize=1&page=' + off); p = pickDept((j && j.products) || []); }
+    if(p && p.img){ psBrandThumbSet(n, dept, p.img); bbPaintTile(t, n, p.img); }
+  }
   function bbLoadBrandTilePhotos(){
     const grid = document.getElementById('bbBtGrid'); if(!grid) return;
-    grid.querySelectorAll('.bb-btile[data-name]').forEach(t => { const u = psBrandThumbGet(t.getAttribute('data-name'), t.getAttribute('data-dept') || 'w'); if(u) bbPaintTile(t, t.getAttribute('data-name'), u); });
-    if(!psApiMode || typeof IntersectionObserver === 'undefined') return;
-    if(_bbPhotoIO) _bbPhotoIO.disconnect();
-    _bbPhotoIO = new IntersectionObserver((entries, obs) => {
-      entries.forEach(en => {
-        if(!en.isIntersecting) return;
-        const t = en.target; obs.unobserve(t);
-        const n = t.getAttribute('data-name'), dept = t.getAttribute('data-dept') || 'w';
-        if(psBrandThumbGet(n, dept)) return;
-        const cats = _psDeptCats(dept), catParam = (cats && cats.length) ? ('&cat=' + encodeURIComponent(cats.join(','))) : '';
-        const ps = (dept === 'w') ? 6 : 1;   // women: pull a few + skip men's-titled (multi-dept brands)
-        fetch(psSearchBase() + '?brand=' + encodeURIComponent(n) + catParam + '&pageSize=' + ps + '&page=0', { cache:'default' })
-          .then(r => r.ok ? r.json() : null)
-          .then(j => { const arr = (j && j.products) || []; let p = (dept === 'w') ? arr.find(x => x && x.img && !_PS_MALE_RE.test(String(x.t || ''))) : null; if(!p) p = arr.find(x => x && x.img) || null; if(p && p.img){ psBrandThumbSet(n, dept, p.img); bbPaintTile(t, n, p.img); } })
-          .catch(() => {});
-      });
-    }, { rootMargin: '200px 500px' });   // prefetch sideways (3-row carousel scrolls horizontally)
-    grid.querySelectorAll('.bb-btile[data-name]').forEach(t => { if(!psBrandThumbGet(t.getAttribute('data-name'), t.getAttribute('data-dept') || 'w')) _bbPhotoIO.observe(t); });
+    const tiles = Array.prototype.slice.call(grid.querySelectorAll('.bb-btile[data-name]'));
+    const missing = [];
+    tiles.forEach(t => { const n = t.getAttribute('data-name'), dept = t.getAttribute('data-dept') || 'w'; const u = psBrandThumbGet(n, dept); if(u) bbPaintTile(t, n, u); else missing.push(t); });
+    if(!psApiMode || !missing.length) return;
+    // EAGER-load every remaining tile's photo with a small concurrency cap, so NO tile is left without a
+    // pic (req). Cached per brand|dept after the first open → subsequent opens are instant. (Lazy/IO
+    // loading proved unreliable inside the horizontal carousel — the inner scroll didn't fire it.)
+    let i = 0; const CONC = 6;
+    function next(){
+      if(i >= missing.length) return;
+      const t = missing[i++], n = t.getAttribute('data-name'), dept = t.getAttribute('data-dept') || 'w';
+      bbFetchBrandPhoto(t, n, dept).then(next, next);
+    }
+    for(let c = 0; c < CONC; c++) next();
   }
   function bbMeasureSlide(){
     const track = document.getElementById('bbTrack'); if(!track) return;
@@ -6802,7 +6814,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-25b';
+  const PSB_BUILD = '2026-06-25c';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
