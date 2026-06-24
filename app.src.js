@@ -5658,8 +5658,8 @@
   // page the grid loads (psHarvestThumbs), and by a throttled gap-fill fetch (psLoadShopThumbs).
   const PS_THUMB_TTL = 14 * 24 * 3600 * 1000;
   let _psThumbs = {};
-  try { _psThumbs = JSON.parse(localStorage.getItem('psb_cat_thumbs_v2') || '{}') || {}; } catch(e){ _psThumbs = {}; }   // _v2: re-fetch after the gender-aware photo fix
-  function _psThumbsSave(){ try{ localStorage.setItem('psb_cat_thumbs_v2', JSON.stringify(_psThumbs)); }catch(e){} }
+  try { _psThumbs = JSON.parse(localStorage.getItem('psb_cat_thumbs_v3') || '{}') || {}; } catch(e){ _psThumbs = {}; }   // _v3: re-fetch after the men's-formal-garment filter fix (Shawl tile was a man)
+  function _psThumbsSave(){ try{ localStorage.setItem('psb_cat_thumbs_v3', JSON.stringify(_psThumbs)); }catch(e){} }
   function psThumbGet(key){ const t = _psThumbs[key]; return (t && t.u && (Date.now() - t.t < PS_THUMB_TTL)) ? t.u : ''; }
   function psThumbSet(key, url){ if(!key || !url) return; _psThumbs[key] = { u:url, t:Date.now() }; _psThumbsSave(); }
   // Record the first GENDER-APPROPRIATE image seen for any category from a freshly-loaded product page.
@@ -5822,7 +5822,10 @@
         .then(r => r.ok ? r.json() : null)
         .then(j => {
           const arr = (j && j.products) || [];
-          const pick = arr.find(p => p && p.img && _psThumbOk(key, p.t)) || arr.find(p => p && p.img);
+          // For a WOMEN tile, never fall back to a (possibly men's) photo — leave the emoji instead
+          // of risking a man (req: the Shawl tile must show a woman). Men/Kids tiles keep the fallback.
+          const isW = _psTileGender(key) === 'w';
+          const pick = arr.find(p => p && p.img && _psThumbOk(key, p.t)) || (isW ? null : arr.find(p => p && p.img));
           if(pick && pick.img){ psThumbSet(key, pick.img); psPaintTile(key, pick.img); }
         })
         .catch(() => {})
@@ -6722,7 +6725,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-24u';
+  const PSB_BUILD = '2026-06-24v';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
