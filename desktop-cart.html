@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PakPoshak — Send cart from your computer</title>
+<style>
+  :root{ --ivory:#F7F1E6; --gold:#9c7a22; --gold2:#caa64a; --green:#0B261C; --txt:#2a2118; --muted:#7a6e5c; --bdr:#e3d9c2; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--ivory); color:var(--txt); font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; line-height:1.6; }
+  .wrap{ max-width:680px; margin:0 auto; padding:30px 20px 70px; }
+  h1{ font-size:1.7rem; margin:0 0 6px; color:var(--green); }
+  .sub{ color:var(--muted); margin:0 0 26px; }
+  .card{ background:#fff; border:1px solid var(--bdr); border-radius:14px; padding:22px; margin:18px 0; }
+  .bm{ display:inline-block; background:linear-gradient(180deg,var(--gold2),var(--gold)); color:#fff; font-weight:800; font-size:1.05rem; text-decoration:none; padding:14px 26px; border-radius:12px; box-shadow:0 4px 14px rgba(156,122,34,.35); cursor:grab; user-select:none; }
+  .bm:active{ cursor:grabbing; }
+  .hint{ font-size:.86rem; color:var(--muted); margin-top:10px; }
+  ol{ padding-left:22px; } li{ margin:8px 0; }
+  kbd{ background:#efe7d4; border:1px solid var(--bdr); border-radius:5px; padding:1px 6px; font-family:inherit; font-size:.85rem; }
+  .steps b{ color:var(--green); }
+  textarea{ width:100%; height:90px; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.74rem; border:1px solid var(--bdr); border-radius:8px; padding:10px; background:#fbf8f1; color:var(--txt); }
+  .small{ font-size:.82rem; color:var(--muted); }
+  .ok{ color:#1d7a44; font-weight:700; }
+  .warn{ background:#fff7e6; border:1px solid #f0d9a0; border-radius:10px; padding:12px 14px; font-size:.88rem; }
+  button.copy{ background:var(--green); color:#fff; border:none; border-radius:8px; padding:8px 14px; font-weight:700; cursor:pointer; margin-top:8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🛒 Send your whole cart to PakPoshak — from your computer</h1>
+  <p class="sub">Works in Chrome, Firefox, Edge and Safari on desktop. One-time setup, then one click.</p>
+
+  <div class="card" style="text-align:center">
+    <p style="margin:0 0 14px;font-weight:600">Drag this button up to your bookmarks bar:</p>
+    <a class="bm" id="bm" href="#">📥 Send cart to PakPoshak</a>
+    <p class="hint">Can't see a bookmarks bar? Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> (Windows) or <kbd>⌘</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> (Mac) to show it, then drag.</p>
+  </div>
+
+  <div class="card steps">
+    <h3 style="margin-top:0;color:var(--green)">How to use it</h3>
+    <ol>
+      <li>On a brand's website, add the items you want to <b>their</b> cart.</li>
+      <li>Open the brand's <b>cart / bag</b> page.</li>
+      <li>Click the <b>Send cart to PakPoshak</b> bookmark you just added.</li>
+      <li class="ok">The PakPoshak order form opens with every item already added. ✅</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <p class="small" style="margin-top:0"><b>If dragging is awkward</b> (or on Safari), make a new bookmark of any page, then edit it: set the <i>name</i> to “Send cart to PakPoshak” and paste this as the <i>URL / address</i>:</p>
+    <textarea id="code" readonly spellcheck="false"></textarea>
+    <button class="copy" id="copyBtn" type="button">Copy the code</button>
+  </div>
+
+  <div class="warn">
+    <b>Khaadi &amp; Sapphire:</b> make sure you're on the <b>cart/bag page</b> when you click it.
+    <b>LAAM</b> and a few custom sites don't expose a readable cart — there it sends the single product you're viewing.
+  </div>
+</div>
+
+<script>
+(function(){
+  // The bookmarklet: reads the brand cart (cart-page DOM first, then Shopify /cart.js),
+  // then opens the PakPoshak order form with every product link.
+  var code = "javascript:(function(){var o=location.origin;function ab(h){try{var u=new URL(h,o);u.hash='';return u.href}catch(e){return null}}function ip(h){try{var p=new URL(h,o).pathname;return /\\.html$/i.test(p)||/\\/products?\\//i.test(p)}catch(e){return false}}function go(l){var s={},a=[];(l||[]).forEach(function(u){if(u&&!s[u]){s[u]=1;a.push(u)}});location.href='https://pakposhak.github.io/order-form.html?cart='+encodeURIComponent(a.join('\\n'))}var out=[];document.querySelectorAll('input[name*=\"quantity\" i],select[name*=\"quantity\" i],[class*=\"quantity\"] input,[class*=\"quantity\"] select,[class*=\"qty\"] input,[class*=\"qty\"] select').forEach(function(q){var e=q;for(var i=0;i<6&&e;i++,e=e.parentElement){var a=e.querySelector&&e.querySelector('a[href]');if(a&&ip(a.getAttribute('href'))){var u=ab(a.getAttribute('href'));if(u){out.push(u);break}}}});if(out.length){return go(out)}fetch('/cart.js',{headers:{Accept:'application/json'}}).then(function(r){return r.ok?r.json():null}).then(function(c){if(c&&c.items){var u=c.items.map(function(i){return ab(i.handle?('/products/'+i.handle+(i.variant_id?'?variant='+i.variant_id:'')):i.url)}).filter(Boolean);if(u.length){return go(u)}}go([location.href])}).catch(function(){go([location.href])})})();";
+  document.getElementById('bm').setAttribute('href', code);
+  document.getElementById('code').value = code;
+  document.getElementById('copyBtn').addEventListener('click', function(){
+    var t = document.getElementById('code'); t.select();
+    try{ document.execCommand('copy'); this.textContent='Copied ✓'; }catch(e){ this.textContent='Select the text and copy'; }
+  });
+})();
+</script>
+</body>
+</html>

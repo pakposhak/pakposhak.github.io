@@ -173,6 +173,22 @@ install prompt). After install, PakPoshak appears in the phone's **Share** menu:
 
 > On a brand product page → tap **Share** → **PakPoshak** → order form opens with the item.
 
+## Part C — Desktop (Chrome / Firefox / Edge / Safari)
+
+Desktop uses a **bookmarklet** — a one-click button on the bookmarks bar. Install page:
+**`desktop-cart.html`** (`https://pakposhak.github.io/desktop-cart.html`).
+
+- It shows a **"📥 Send cart to PakPoshak"** button to **drag onto the bookmarks bar**
+  (one-time), plus a copy-paste fallback for Safari.
+- Then: on a brand's **cart page**, click the bookmark → the PakPoshak order form opens
+  with every cart item. Same cart-reading logic as the iPhone Shortcut (cart-page DOM
+  first, Shopify `cart.js` fallback), and the single-product paste still works as before.
+- The bookmarklet was verified to parse and to pull cart line-items (skipping
+  recommendation carousels, preserving the SFCC `?dwvar_size=`).
+
+> A bookmarklet can only be **clicked from the bookmarks bar**, not pasted into the address
+> bar (browsers strip `javascript:` there). The install page handles the drag/paste setup.
+
 ---
 
 ## Customer-facing copy (paste into WhatsApp / a help card)
