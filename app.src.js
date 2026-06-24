@@ -2442,7 +2442,10 @@
       hiw_confirm_pay:'Confirm price & pay (bKash/Nagad)',
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search 150+ Pakistani brands…',
-      tab_brands:'Browse brands', tab_products:'Browse products', order_ways:'📋 Two ways to order: + Add from our listing, or paste a product link from any of our 140+ brands.',
+      tab_brands:'Browse brands', tab_products:'Browse products', order_ways:'Two ways to order: tap + Add on anything in our listing, or send a product link from any of our 140+ brands.',
+      intro_ios:"On iPhone: on a brand's product page, tap Share, then Add to PakPoshak. (One-time: add the PakPoshak shortcut.) Or copy the link and paste it here.",
+      intro_android:"On Android: install PakPoshak, then on a brand's product page tap Share, then PakPoshak. Or copy the link and paste it here.",
+      intro_desktop:"On desktop: paste a product link below, or add the Send-cart bookmark to grab a whole cart at once.",
       ps_price:'Price (৳ delivered)', ps_price_short:'Price', ps_category:'Product Category', ps_category_short:'Categories', ps_brands:'Brands', ps_clear:'Clear', ps_valueprop:'Any Pakistani brand → delivered to Bangladesh 🇧🇩', ps_morebrands:"Can't find it? Browse all 155 brands →",
       ps_allcats:'All categories', ps_loading:'Loading products…', ps_loadfail:'Could not load products — please try again.',
       ps_results:'products', ps_add:'Add', ps_prev:'Prev', ps_next:'Next', ps_page:'Page',
@@ -2457,7 +2460,7 @@
       js_soldout_all:'sold out on the brand site', js_soldout_size:'this size is sold out',
       more_tab:'More', more_title:'More Brands', more_sub:'All brands in this category — tap any to start, same as the tabs.', more_back:'Back',
       lbl_addproducts:'Add Products to Your Order',
-      url_label:'📋 Paste the product link here, or tap the 📋 Paste tab.',
+      url_label:"Easiest: on a brand's page, tap Share then PakPoshak. Or paste a product link below.",
       btn_addurl:'+ Add URL', btn_paste:'📋 Paste Link & Auto-Fill', pp_tap:'Tap a product to add it — no copy-paste needed', pp_search:'🔍 Search this brand…', pp_site:'🌐 Open full brand site instead', fab_paste:'Paste link',
       nav_home:'Home', nav_brands:'Brands', nav_cart:'Cart', nav_how:'How To',
       tl_help:'New here? Start with these:', tl_faq:'❓ How it works & our promise', tl_track:'📦 Track an order', tl_weights:'⚖️ Shipping weights', tl_wa:'💬 Chat on WhatsApp',
@@ -2507,7 +2510,10 @@
       hiw_confirm_pay:'দাম নিশ্চিত করে পেমেন্ট (বিকাশ/নগদ)',
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
       lbl_browse:'একটি ব্র্যান্ড দেখুন', search_ph:'🔍 ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
-      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', order_ways:'📋 দুইভাবে অর্ডার: আমাদের লিস্ট থেকে + Add করুন, অথবা ১৪০+ ব্র্যান্ডের যেকোনো পণ্যের link paste করুন।',
+      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', order_ways:'দুইভাবে অর্ডার: আমাদের লিস্টে যেকোনো পণ্যে + Add চাপুন, অথবা ১৪০+ ব্র্যান্ডের যেকোনো পণ্যের লিংক পাঠান।',
+      intro_ios:'আইফোনে: ব্র্যান্ডের পণ্য পেজে Share চেপে Add to PakPoshak বেছে নিন। (একবার: PakPoshak শর্টকাট যোগ করুন।) অথবা লিংক কপি করে এখানে পেস্ট করুন।',
+      intro_android:'অ্যান্ড্রয়েডে: PakPoshak ইনস্টল করুন, তারপর ব্র্যান্ডের পণ্য পেজে Share চেপে PakPoshak বেছে নিন। অথবা লিংক কপি করে এখানে পেস্ট করুন।',
+      intro_desktop:'ডেস্কটপে: নিচে পণ্যের লিংক পেস্ট করুন, অথবা পুরো কার্ট একসাথে আনতে Send-cart বুকমার্ক যোগ করুন।',
       ps_price:'দাম (৳, ডেলিভারিসহ)', ps_price_short:'দাম', ps_category:'পণ্যের ক্যাটাগরি', ps_category_short:'ক্যাটাগরি', ps_brands:'ব্র্যান্ড', ps_clear:'মুছুন', ps_valueprop:'যেকোনো পাকিস্তানি ব্র্যান্ড → বাংলাদেশে ডেলিভারি 🇧🇩', ps_morebrands:'খুঁজে পাচ্ছেন না? সব ১৫৫টি ব্র্যান্ড দেখুন →',
       ps_allcats:'সব ক্যাটাগরি', ps_loading:'পণ্য আসছে…', ps_loadfail:'পণ্য আনা গেল না — আবার চেষ্টা করুন।',
       ps_results:'পণ্য', ps_add:'যোগ করুন', ps_prev:'আগের', ps_next:'পরের', ps_page:'পৃষ্ঠা',
@@ -2522,7 +2528,7 @@
       js_soldout_all:'ব্র্যান্ডের সাইটে স্টকে নেই', js_soldout_size:'এই সাইজটি স্টকে নেই',
       more_tab:'আরও', more_title:'আরও ব্র্যান্ড', more_sub:'এই ক্যাটাগরির সব ব্র্যান্ড — উপরের ট্যাবের মতোই, শুরু করতে যেকোনোটিতে ট্যাপ করুন।', more_back:'পেছনে',
       lbl_addproducts:'অর্ডারে পণ্য যোগ করুন',
-      url_label:'📋 পণ্যের লিংক এখানে পেস্ট করুন, বা পাশের 📋 Paste ট্যাবে চাপুন।',
+      url_label:'সবচেয়ে সহজ: ব্র্যান্ডের পেজে Share চেপে PakPoshak বেছে নিন। অথবা নিচে পণ্যের লিংক পেস্ট করুন।',
       btn_addurl:'+ লিংক যোগ করুন',
       btn_paste:'📋 লিংক পেস্ট করে অটো-ফিল', pp_tap:'পণ্যে ট্যাপ করেই যোগ করুন — কপি-পেস্ট লাগবে না', pp_search:'🔍 এই ব্র্যান্ডে খুঁজুন…', pp_site:'🌐 বদলে পুরো ব্র্যান্ড সাইট খুলুন', fab_paste:'লিংক পেস্ট',
       nav_home:'হোম', nav_brands:'ব্র্যান্ড', nav_cart:'কার্ট', nav_how:'গাইড',
@@ -2569,6 +2575,14 @@
   };
   let _lang = localStorage.getItem('psb_lang') || 'en';
   function tr(k){ return (I18N[_lang] && I18N[_lang][k]) || I18N.en[k] || k; }
+  // Phone platform → which sharing instruction to show. iPhone (incl. iPadOS desktop-mode)
+  // vs Android vs desktop. Used to give buyers the RIGHT one-time setup + Share steps.
+  function psPlatform(){
+    const ua = navigator.userAgent || '';
+    if(/iphone|ipad|ipod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) return 'ios';
+    if(/android/i.test(ua)) return 'android';
+    return 'desktop';
+  }
   function catLabel(cat){ return tr('cat_' + cat); }
   function applyIntroCC(){ const v=document.getElementById('introVideo'); if(!v||!v.textTracks) return; for(let i=0;i<v.textTracks.length;i++){ const t=v.textTracks[i]; t.mode=(t.language===_lang)?'showing':'disabled'; } }
   function dismissIntro(){ try{localStorage.setItem('psb_intro_seen','1');}catch(e){} var c=document.getElementById('introCard'); if(c) c.style.display='none'; var v=document.getElementById('introVideo'); if(v){ try{v.pause();}catch(e){} } }
@@ -2578,6 +2592,7 @@
     var seen=false; try{ seen=localStorage.getItem('psb_intro_seen')==='1'; }catch(e){}
     if(installed||seen) return;                 // installed, or already shown once → stays hidden
     card.style.display='';                        // first visit → reveal the onboarding card
+    var ip=document.getElementById('introPlatform'); if(ip) ip.textContent = tr('intro_'+psPlatform());  // platform-specific Share steps (iPhone / Android / desktop)
     try{ localStorage.setItem('psb_intro_seen','1'); }catch(e){}   // …and don't show it again next time
     var v=document.getElementById('introVideo'); if(v) v.addEventListener('ended', dismissIntro);
   })();
@@ -3577,18 +3592,18 @@
     updatePasteFab();
   }
 
-  // Floating Paste button: useful on step 1 INCLUDING the Browse-Products grid —
-  // buyers open a product in Chrome to inspect it, copy the link, then come back
-  // and paste here (req #7). Shown on both browse tabs.
+  // Floating Paste button: the brand-link paste fallback. Shown on step 1 ONLY on the
+  // Browse BRANDS tab — buyers leave for a brand site, then come back and share/paste
+  // the link. Hidden on Browse PRODUCTS, where you just tap "+ Add" (no link needed).
   function updatePasteFab(){
     const fab = document.getElementById('pasteFab');
     if(!fab) return;
-    fab.classList.toggle('show', currentStep === 1);
+    fab.classList.toggle('show', currentStep === 1 && !psOnProductsTab());
   }
   // When the user switches BACK to PakPoshak (e.g. after copying a link in
   // Chrome), pulse the Paste button so it's obvious where to tap next.
   document.addEventListener('visibilitychange', () => {
-    if(document.visibilityState === 'visible' && currentStep === 1){
+    if(document.visibilityState === 'visible' && currentStep === 1 && !psOnProductsTab()){
       const fab = document.getElementById('pasteFab');
       if(fab){ fab.classList.add('pulse'); setTimeout(() => fab.classList.remove('pulse'), 6000); }
     }
@@ -6414,7 +6429,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-24h';
+  const PSB_BUILD = '2026-06-24i';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

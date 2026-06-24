@@ -92,7 +92,8 @@
 <div class="intro-vid" id="introCard" style="display:none">
   <button class="intro-close" type="button" onclick="dismissIntro()" aria-label="Close">✕</button>
   <h3 data-i18n="introTitle">New here? Watch a quick intro</h3>
-  <div class="order-ways" data-i18n="order_ways">📋 Two ways to order: + Add from our listing, or paste a product link from any of our 140+ brands.</div>
+  <div class="order-ways" data-i18n="order_ways">Two ways to order: tap + Add on anything in our listing, or send a product link from any of our 140+ brands.</div>
+  <div class="order-ways" id="introPlatform" style="margin-top:6px"></div>
   <video id="introVideo" class="intro-vid-player" controls playsinline preload="none" poster="media/guide/intro-android.jpg">
     <source src="media/guide/intro-android.mp4" type="video/mp4">
     <track id="introCcEn" kind="captions" srclang="en" label="English" src="media/guide/intro-android.en.vtt" default>
@@ -274,7 +275,7 @@
   <div class="section-label" style="margin-top:28px" data-i18n="lbl_addproducts">Add Products to Your Order</div>
 
   <div class="url-input-box">
-    <span class="input-label" data-i18n="url_label">📋 Copy a product link from any brand site and paste it below — or use the side 📋 Paste tab:</span>
+    <span class="input-label" data-i18n="url_label">Easiest: on a brand's page, tap Share then PakPoshak. Or paste a product link below.</span>
     <!-- Pasting is handled by the always-visible floating Paste tab (bottom-right) —
          no inline paste button needed here. -->
     <!-- FIRST URL input — hidden once draft cards exist -->
