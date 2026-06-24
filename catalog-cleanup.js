@@ -689,6 +689,11 @@ function cleanupProducts(ps) {
     if (p.cat==='kids_girls_western' && /kali[\s-]?dar|\bkoti\b|\bkameez\b|\bshalwar\b|\bfrock\b|lehenga|gharara|sharara|anarkali|peshwas|angrakha|\bpeshwas\b/i.test(p.t||'') && !/\bjeans?\b|t-?shirt|\btee\b|jegging|legging|\bdenim\b|hoodie|sweat/i.test(p.t||'')) { p.cat='kids_girls_eastern'; girlsKidN++; out.push(p); continue; }
     // Al-Deebaj MEN's "Kurta Pajama" (KP/ADKP codes) mis-filed as women's loungewear → men's eastern.
     if (p.b==='Al-Deebaj' && p.cat==='loungewear' && /kurta|pajama|pyjama/i.test(p.t||'')) { p.cat='mens_shalwar_kameez'; slugN++; out.push(p); continue; }
+    // Al-Deebaj MEN's "Kurta Shalwar" sets coded "K-S" / "KS-NNN" (e.g. "Silver Grey Des K-S", "KS-241")
+    // landed in women's pret_3pc → men's shalwar kameez. The generic MENS_2PC_TITLE rule misses them
+    // because the title abbreviates "kurta shalwar" to "K-S" (no full words to match). Brand-gated +
+    // the compact K-S token only, so it never touches Al-Deebaj's women abaya/lawn/co-ord titles.
+    if (p.b==='Al-Deebaj' && /\bk[-\s.]?s\b|\bks[-\s]?\d/i.test(p.t||'') && catGenderOf(p.cat) !== 'm') { p.cat='mens_shalwar_kameez'; slugN++; out.push(p); continue; }
     // Edenrobe "Printed Lawn Co-Ord Set" = EASTERN kameez+trouser 2pc, not a western co-ord.
     if (p.b==='Edenrobe' && p.cat==='coord_western' && /lawn|co-?ord/i.test(txt(p))) { p.cat='shirt_trouser_2pc'; womenN++; out.push(p); continue; }
     // Uniworth / Edge Republic WESTERN suits & tuxedos mis-filed as men's shalwar-kameez → men's suit.
