@@ -544,9 +544,14 @@
     /* "Shop by category": Women/Men/Kids classifier tabs + a horizontal row of photo tiles
        (image + label). Compact because it is ALWAYS visible (sticky on mobile — see below). */
     .ps-shopcat{margin:2px 0 13px}
-    .ps-shopcat-tabs{display:flex;gap:7px;margin:0 0 9px;flex-wrap:wrap}
+    .ps-shopcat-tabs{display:flex;gap:7px;margin:0 0 9px;flex-wrap:nowrap;align-items:center}
     .psc-gtab{flex:0 0 auto;padding:5px 13px;border:1.5px solid var(--gold-bdr);border-radius:14px;background:var(--surface);color:var(--txt-sec);font-size:0.74rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
     .psc-gtab.on{background:var(--gold);color:#1a1206;border-color:var(--gold)}
+    .psc-gtab-brand{margin-left:auto}   /* Brands tab sits at the right corner of the row */
+    /* Brand-mode department pills (Kids/Women/Men/Premium) — a sub-level under the Brands tab */
+    .ps-shopcat-depts{display:flex;gap:7px;margin:0 0 9px;flex-wrap:wrap}
+    .psc-dpill{flex:0 0 auto;padding:4px 12px;border:1.5px solid var(--bdr-med);border-radius:13px;background:var(--input-bg);color:var(--txt-sec);font-size:0.72rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+    .psc-dpill.on{background:var(--gold-dim);color:var(--gold);border-color:var(--gold-bdr)}
     .ps-shopcat-scroll{display:flex;gap:11px;overflow-x:auto;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:1px 2px 6px}
     .ps-shopcat-scroll::-webkit-scrollbar{display:none}
     .psc-tile{flex:0 0 auto;width:80px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:none;padding:0;cursor:pointer;font-family:inherit}
@@ -694,6 +699,11 @@
     .browse-tab.on{background:#137a72;color:#fff;border-color:#137a72}
     /* ── Product search page ── */
     .ps-wrap{display:block}
+    /* Categories/Brands DROPDOWN drill-down REMOVED from the Browse row (req) — filtering is now
+       all-carousel (category carousel + the Brands carousel). The markup + JS (psBuildCatFilter /
+       psBuildBrandFilter) are KEPT, just hidden, so the drill-down can be re-placed behind an icon
+       later (see memory preserve-drilldown-filters). Toggle by removing this one rule. */
+    #tabProducts .ps-rail{display:none}
     .ps-rail-head{font-size:0.8rem;font-weight:800;color:var(--txt);margin-bottom:11px;padding-bottom:9px;border-bottom:1px solid var(--bdr)}
     .ps-fblock{margin-bottom:10px}
     .ps-rail .ps-fblock:last-child{margin-bottom:0}

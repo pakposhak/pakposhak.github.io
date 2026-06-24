@@ -5552,22 +5552,22 @@
     // ── WOMEN ──
     { g:'w', key:'pret_3pc',             en:'Stitched 3pc',    bn:'সেলাই করা ৩ পিস',  e:'👗' },
     { g:'w', key:'pret_3pc_emb',         en:'Embroidered 3pc', bn:'এমব্রয়ডারি ৩ পিস', e:'🪡' },
-    { g:'w', key:'lawn_3pc_unstitch',    en:'Unstitched',      bn:'আনস্টিচড',         e:'🧵' },
+    { g:'w', key:'lawn_3pc_unstitch', cats:['lawn_3pc_unstitch','unstitch_3pc_emb'], en:'Unstitched', bn:'আনস্টিচড', e:'🧵' },
     { g:'w', key:'kurti_1pc_unstitch',   en:'Unstitched 1pc',  bn:'আনস্টিচড ১ পিস',    e:'🧵' },
-    { g:'w', key:'shirt_dupatta_2pc',    en:'2-Piece',         bn:'২ পিস',           e:'👚' },
-    { g:'w', key:'shirt_trouser_2pc', cats:['shirt_trouser_2pc','coord_western'], en:'Co-ord Set', bn:'কো-অর্ড সেট', e:'🧶' },
+    { g:'w', key:'shirt_dupatta_2pc', cats:['shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','pret_2pc_emb'], en:'2-Piece', bn:'২ পিস', e:'👚' },
+    { g:'w', key:'shirt_trouser_2pc', cats:['shirt_trouser_2pc','coord_western','shirt_trouser_2pc_unstitch'], en:'Co-ord Set', bn:'কো-অর্ড সেট', e:'🧶' },
     { g:'w', key:'kurti_1pc',            en:'Kurti / 1pc',     bn:'কুর্তি / ১ পিস',    e:'👕' },
     { g:'w', key:'western_top',          en:'Western Top',     bn:'ওয়েস্টার্ন টপ',     e:'👚' },
     { g:'w', key:'womens_trouser',       en:'Trousers',        bn:'ট্রাউজার',         e:'👖' },
     { g:'w', key:'maxi_dress',           en:'Maxi / Dress',    bn:'ম্যাক্সি / ড্রেস',   e:'👗' },
-    { g:'w', key:'formal_emb_3pc',       en:'Formal',          bn:'ফরমাল',           e:'✨' },
-    { g:'w', key:'heavy_formal_3pc',     en:'Heavy Formal',    bn:'ভারী ফরমাল',       e:'💎' },
+    { g:'w', key:'formal_emb_3pc', cats:['formal_emb_3pc','formal_emb_2pc'], en:'Formal', bn:'ফরমাল', e:'✨' },
+    { g:'w', key:'heavy_formal_3pc', cats:['heavy_formal_3pc','handmade_emb'], en:'Heavy Formal', bn:'ভারী ফরমাল', e:'💎' },
     { g:'w', key:'bridal',               en:'Bridal',          bn:'ব্রাইডাল',         e:'👰' },
     { g:'w', key:'lehenga',              en:'Lehenga',         bn:'লেহেঙ্গা',          e:'💃' },
     { g:'w', key:'saree',                en:'Saree',           bn:'শাড়ি',            e:'🥻' },
     { g:'w', key:'abaya',                en:'Abaya / Hijab',   bn:'আবায়া / হিজাব',    e:'🧕' },
     { g:'w', key:'kaftan',               en:'Kaftan',          bn:'কাফতান',           e:'🧥' },
-    { g:'w', key:'winter_3pc_stitch',    en:'Winter',          bn:'শীতের পোশাক',      e:'🧣' },
+    { g:'w', key:'winter_3pc_stitch', cats:['winter_3pc_stitch','winter_3pc_unstitch','winter_2pc_stitch','winter_2pc_unstitch'], en:'Winter', bn:'শীতের পোশাক', e:'🧣' },
     { g:'w', key:'shawl',                en:'Shawl',           bn:'শাল',             e:'🧣' },
     { g:'w', key:'dupatta_only',         en:'Dupatta',         bn:'ওড়না',            e:'🧣' },
     { g:'w', key:'footwear',             en:'Footwear / Khussa', bn:'জুতা / খুসা',     e:'👡' },
@@ -5576,7 +5576,7 @@
     { g:'m', key:'mens_kurta',           en:'Kurta',           bn:'কুর্তা',           e:'👔' },
     { g:'m', key:'mens_shalwar_kameez',  en:'Shalwar Kameez',  bn:'শালওয়ার কামিজ',   e:'🧥' },
     { g:'m', key:'mens_shirt',           en:'Shirt',           bn:'শার্ট',            e:'👔' },
-    { g:'m', key:'mens_trouser',         en:'Trousers',        bn:'ট্রাউজার',         e:'👖' },
+    { g:'m', key:'mens_trouser', cats:['mens_trouser','mens_jeans'], en:'Trousers', bn:'ট্রাউজার', e:'👖' },
     { g:'m', key:'mens_waistcoat',       en:'Waistcoat',       bn:'ওয়েস্টকোট',        e:'🦺' },
     { g:'m', key:'mens_sherwani',        en:'Sherwani',        bn:'শেরওয়ানি',         e:'🤵' },
     { g:'m', key:'mens_suit',            en:'Suit',            bn:'স্যুট',            e:'🤵' },
@@ -5593,13 +5593,31 @@
   // Women/Men/Kids classifier tabs for the strip. Default = women (the app's lead department).
   const PS_SHOP_GENDERS = [ ['w','👗','Women','মেয়েদের'], ['m','👔','Men','ছেলেদের'], ['k','🧸','Kids','বাচ্চাদের'] ];
   let psShopGender = 'w';
+  // The carousel has two MODES: 'cat' (Women/Men/Kids category tiles, default) and 'brand' (tap the
+  // Brands tab → pick a department → a carousel of that dept's brands, each a representative photo).
+  let psShopMode = 'cat';
+  let psBrandDept = 'w';
+  // Brand-carousel departments (req: 4, EXCLUDING multi-dept). Labels reuse the bb_* i18n keys.
+  const PS_BRAND_DEPTS = [ ['w','bb_women'], ['m','bb_men'], ['k','bb_kids'], ['p','bb_premium'] ];
   // Tiles for the active department, hiding any category that has zero products (psFacetCats).
   function psShopTiles(){
     let t = PS_SHOP_TILES.filter(x => x.g === psShopGender);
     if(psFacetCats && psFacetCats.size) t = t.filter(x => (x.cats || [x.key]).some(k => psFacetCats.has(k)));
     return t;
   }
-  function psSetShopGender(g){ psShopGender = g; psBuildShopCat(); }
+  function psSetShopGender(g){ psShopMode = 'cat'; psShopGender = g; psBuildShopCat(); }
+  function psShopBrandsMode(){ psShopMode = 'brand'; psBuildShopCat(); }
+  function psSetBrandDept(d){ psBrandDept = d; psBuildShopCat(); }
+  // Brand names for a department, restricted to brands that actually have products (so each tile gets
+  // a photo). Reuses the Browse-Brands ranked per-department pool. 'p' = Premium.
+  function psShopBrandsForDept(dept){
+    let pool = [];
+    try { pool = bbDeptPool(dept) || []; } catch(e){ pool = (typeof BRANDS !== 'undefined') ? BRANDS.filter(b => b.c === dept) : []; }
+    const present = psFacetBrands ? new Set(psFacetBrands) : null;
+    const seen = new Set(), out = [];
+    pool.forEach(b => { const n = b && b.n; if(n && !seen.has(n) && (!present || present.has(n))){ seen.add(n); out.push(n); } });
+    return out;
+  }
   // Keep a category tile's photo gender-appropriate: a WOMEN tile must not pick a men's product photo
   // (e.g. the Shawl tile was showing a man). Men/Kids tiles are gender-encoded already, so no filter.
   const _PS_MALE_RE = /\b(men|mens|men's|gents?|male|mardana|him)\b/i;
@@ -5622,13 +5640,38 @@
     if(changed){ _psThumbsSave(); psPaintShopThumbs(); }
   }
   function psBuildShopCat(){
-    // Department tabs (Women/Men/Kids).
+    // Tabs: Women / Men / Kids + a Brands tab pushed to the right.
     const tabsEl = document.getElementById('psShopTabs');
     if(tabsEl){
-      tabsEl.innerHTML = PS_SHOP_GENDERS.map(([g,e,en,bn]) =>
-        `<button type="button" class="psc-gtab${g === psShopGender ? ' on' : ''}" onclick="psSetShopGender('${g}')">${e} ${esc(_lang === 'bn' ? bn : en)}</button>`).join('');
+      let html = PS_SHOP_GENDERS.map(([g,e,en,bn]) =>
+        `<button type="button" class="psc-gtab${psShopMode==='cat' && g===psShopGender ? ' on' : ''}" onclick="psSetShopGender('${g}')">${e} ${esc(_lang==='bn'?bn:en)}</button>`).join('');
+      html += `<button type="button" class="psc-gtab psc-gtab-brand${psShopMode==='brand' ? ' on' : ''}" onclick="psShopBrandsMode()">🏷️ ${esc(tr('ps_brands'))}</button>`;
+      tabsEl.innerHTML = html;
     }
+    const deptsEl = document.getElementById('psBrandDepts');
     const wrap = document.getElementById('psShopScroll'); if(!wrap) return;
+    // ── BRAND MODE: department pills + a carousel of that department's brand photos ──
+    if(psShopMode === 'brand'){
+      if(deptsEl){
+        deptsEl.style.display = '';
+        deptsEl.innerHTML = PS_BRAND_DEPTS.map(([d,k]) =>
+          `<button type="button" class="psc-dpill${d===psBrandDept ? ' on' : ''}" onclick="psSetBrandDept('${d}')">${esc(tr(k))}</button>`).join('');
+      }
+      const activeBrand = (psSel.brands.size===1 && !psSel.cats.size && !psSel.prices.size) ? [...psSel.brands][0] : '';
+      const brands = psShopBrandsForDept(psBrandDept);
+      wrap.innerHTML = brands.map(n => {
+        const url = psBrandThumbGet(n);
+        const img = url ? `<img loading="lazy" src="${esc(thumbUrl(url))}" alt="${esc(n)}" onerror="this.closest('.psc-tile').classList.add('psc-noimg');this.remove();">` : '';
+        return `<button type="button" class="psc-tile${n===activeBrand ? ' on' : ''}${url ? '' : ' psc-noimg'}" data-brand="${esc(n)}" onclick="psShopPickBrand(this.getAttribute('data-brand'))" title="${esc(n)}">`
+          + `<span class="psc-img" data-emoji="🏷️">${img}</span>`
+          + `<span class="psc-lbl">${esc(n)}</span></button>`;
+      }).join('');
+      wrap.scrollLeft = 0;
+      psLoadBrandThumbs(brands);
+      return;
+    }
+    // ── CATEGORY MODE (default) ──
+    if(deptsEl) deptsEl.style.display = 'none';
     const active = (psSel.cats.size === 1 && !psSel.brands.size && !psSel.prices.size) ? [...psSel.cats][0] : '';
     wrap.innerHTML = psShopTiles().map(t => {
       const lbl = (_lang === 'bn' && t.bn) ? t.bn : t.en;
@@ -5640,6 +5683,48 @@
     }).join('');
     wrap.scrollLeft = 0;
     psLoadShopThumbs();
+  }
+  // ── Brand-tile photos: one representative product photo per brand, cached in localStorage ──
+  let _psBrandThumbs = {};
+  try { _psBrandThumbs = JSON.parse(localStorage.getItem('psb_brand_thumbs') || '{}') || {}; } catch(e){ _psBrandThumbs = {}; }
+  function psBrandThumbGet(n){ const t = _psBrandThumbs[n]; return (t && t.u && (Date.now() - t.t < PS_THUMB_TTL)) ? t.u : ''; }
+  function psBrandThumbSet(n, url){ if(!n || !url) return; _psBrandThumbs[n] = { u:url, t:Date.now() }; try{ localStorage.setItem('psb_brand_thumbs', JSON.stringify(_psBrandThumbs)); }catch(e){} }
+  function psPaintBrandTile(n, url){
+    if(!url) return;
+    let tile = null;
+    document.querySelectorAll('#psShopScroll .psc-tile[data-brand]').forEach(t => { if(t.getAttribute('data-brand') === n) tile = t; });
+    if(!tile) return;
+    const span = tile.querySelector('.psc-img'); if(!span || span.querySelector('img')) return;
+    const im = document.createElement('img'); im.loading = 'lazy'; im.src = thumbUrl(url); im.alt = n;
+    im.onerror = function(){ tile.classList.add('psc-noimg'); im.remove(); };
+    span.appendChild(im); tile.classList.remove('psc-noimg');
+  }
+  function psLoadBrandThumbs(brands){
+    brands.forEach(n => { const u = psBrandThumbGet(n); if(u) psPaintBrandTile(n, u); });
+    if(!psApiMode) return;
+    const missing = brands.filter(n => !psBrandThumbGet(n));
+    if(!missing.length) return;
+    let i = 0; const CONC = 4;
+    function next(){
+      if(i >= missing.length) return;
+      const n = missing[i++];
+      fetch(psSearchBase() + '?brand=' + encodeURIComponent(n) + '&pageSize=1&page=0', { cache:'default' })
+        .then(r => r.ok ? r.json() : null)
+        .then(j => { const p = j && j.products && j.products[0]; if(p && p.img){ psBrandThumbSet(n, p.img); psPaintBrandTile(n, p.img); } })
+        .catch(() => {})
+        .then(() => { next(); });
+    }
+    for(let c = 0; c < CONC; c++) next();
+  }
+  // Tap a brand tile → filter the grid to that brand, then scroll.
+  function psShopPickBrand(name){
+    if(!name) return;
+    psSel = { prices:new Set(), cats:new Set(), brands:new Set([name]) };
+    psSort = ''; psSaleOnly = false; psNewOnly = false; psQuery = ''; psSizeQ = '';
+    ['psSearchMobile','psSearchDesktop'].forEach(idd => { const e = document.getElementById(idd); if(e) e.value = ''; });
+    psSearchHint('', new Set(), new Set());
+    psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply();
+    psScrollGridUnderCarousel();
   }
   function psPaintTile(key, url){
     if(!url) return;
@@ -5700,11 +5785,15 @@
     }
   }
   function psIsLanding(){ return !psSel.cats.size && !psSel.brands.size && !psSel.prices.size && !psSaleOnly && !psNewOnly && !psSort && !psQuery && !psSizeQ; }
-  // Update which tile is highlighted as active (the single selected category) without a full rebuild.
+  // Update which tile is highlighted as active (the single selected category OR brand) — no rebuild.
   function psSyncShopActive(){
     const sc = document.getElementById('psShopScroll'); if(!sc) return;
-    const active = (psSel.cats.size === 1 && !psSel.brands.size && !psSel.prices.size) ? [...psSel.cats][0] : '';
-    sc.querySelectorAll('.psc-tile').forEach(t => t.classList.toggle('on', t.getAttribute('data-cat') === active));
+    const activeCat   = (psSel.cats.size === 1 && !psSel.brands.size && !psSel.prices.size) ? [...psSel.cats][0] : '';
+    const activeBrand = (psSel.brands.size === 1 && !psSel.cats.size && !psSel.prices.size) ? [...psSel.brands][0] : '';
+    sc.querySelectorAll('.psc-tile').forEach(t => {
+      const c = t.getAttribute('data-cat'), b = t.getAttribute('data-brand');
+      t.classList.toggle('on', (!!c && c === activeCat) || (!!b && b === activeBrand));
+    });
   }
   // The Shop-by-Category carousel is ALWAYS visible (req) — it sticks at the top while scrolling
   // products so the buyer can switch category anytime. Build lazily; otherwise just refresh the
@@ -6484,7 +6573,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-24l';
+  const PSB_BUILD = '2026-06-24m';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
