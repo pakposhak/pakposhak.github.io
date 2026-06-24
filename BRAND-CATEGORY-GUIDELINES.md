@@ -107,6 +107,93 @@
 
 ---
 
+### New brand/rule corrections (2026-06-24 classifier pass)
+- **Amir Adnan** — `jamawar/raw-silk "Jacket"` → `mens_waistcoat` (Rule 2.4). Its FINISHED couture is listed
+  `sz:["Unstitched"]`, so it is exempt from the unstitched→fabric demotion and from `fwdCat` (its slug-rules
+  place the runway pieces). "Talpuri Waistcoat … with Shawl" → `mens_waistcoat`; "Sherwani … paired with
+  Shawl" → `mens_sherwani`.
+- **CRUSH Menswear** — "Prince Coat with Same Pant" / "… Sherwani for Groom" sized Unstitched are finished
+  couture → stay `mens_sherwani` (not demoted to fabric).
+- **Arsalan Iqbal** — "Rawsilk/Velvet Sherwani with Shawl" mis-filed in `shawl` → `mens_sherwani` (it's a set).
+- **Furor** — "Tracksuit Trousers" / "Co-ord Set Pants" mis-filed as `mens_shirt` → `mens_trouser`
+  (a tracksuit TOP stays a shirt).
+- **Maria B** — "3 Piece Markhor (Polo) Wool Suit": "(Polo)" is a style name, not a polo shirt → stays
+  `mens_shalwar_kameez`.
+- **Salitex** — "1PC Stitched … (Khaddar Dress/Suit)" is a 1-piece shirt → pinned `kurti_1pc`.
+- **Kross Kulture** — "2PC/3PC Girl …" pinned to `kids_girls_*` (casual→eastern, formal→formal) to stop a
+  flip. ⚠️ This is the still-OPEN kids-vs-women call (Open-Decision B) — flip the target in code if it's women's.
+- **Edge Republic** — a kids "Prince Coat" is eastern formalwear → `kids_boys_eastern` (the word "coat" must
+  not read western).
+- **Men's standalone shawls** (SHAAL/Edge/Diners "Men's Shawl/Odhni") → `mens_unstitched` uniformly (no
+  `mens_shawl` cat); **hijabs/niqabs/cashmere "Hijab Scarf" → `abaya`** (modest-wear umbrella, NOT `shawl`).
+
+## Classification decision framework — the conflict-resolution overrides (2026-06-24)
+
+*Distilled from Danish's expert-classifier prompt. This is the reasoning the code follows when the
+title/URL/tags/sizes disagree. Our DB keys are RICHER than the prompt's (we split `shirt_dupatta_2pc`
+vs `shirt_trouser_2pc`, have 7 kids categories, winter 2pc/3pc, etc.) so the prompt's keys map onto
+ours, not the reverse. **All of these are live in `catalog-cleanup.js` + `harvest-catalog.js`.**
+
+1. **Unstitched override** — `sz:["Unstitched"]` OR a title/tag of `unstitch / un-stitch / RTS /
+   ready-to-stitch / raw fabric / greige` BEATS any "ready-to-wear / pret / stitched" hint. A stitched-cat
+   item carrying that signal is forwarded to its unstitched sibling (`fwdCat`), piece-count preserved.
+   *We do NOT treat the bare word "fabric" as unstitched* — too many brand names ("Dynasty Fabrics") and
+   stitched descriptions contain it; the `sz` field is the reliable authority. (0 residue in the live catalog.)
+2. **Gender disambiguation** — an item is pulled out of women's cats when it carries a MEN-specific
+   signal (`men's/gents/mardana`, a male designer line, a men slug-code, or a men-only garment like
+   kurta-pajama/sherwani/prince-coat/pathani). Slug-gender (Zellbury/Diners/Bonanza/One Kids/Maria-B-`mbm`)
+   and explicit-title gender win whole-brand, not per-image. *The prompt's "4–4.5 m single fabric block →
+   men's unstitched" heuristic is NOT coded — the live catalog has **no** meter-lengths in titles (3 total,
+   all already-correct shawls), so there is nothing to act on; revisit only if a brand starts listing metres.*
+3. **Western vs eastern men's "Suit"** — `pant-coat / blazer / tuxedo / 2-3-piece suit / slim-fit /
+   poly-viscose / double-breasted` with NO shalwar/kameez/kurta/sherwani/pajama word → `mens_suit`
+   (Monark, Uniworth, Edge Republic, Amir Adnan "PV Slim Fit Suit", Charcoal). Otherwise an eastern
+   designer's "Suit" = a kameez-shalwar set → `mens_shalwar_kameez`. Eastern "Shalwar Suit"/"Kurta With
+   Pants" is guarded IN (stays shalwar-kameez).
+4. **Jacket vs waistcoat (RULE 2.4, new 2026-06-24)** — a MEN'S "Jacket" in a luxury eastern weave
+   (`jamawar / raw-silk / banarasi / katan`) = a sleeveless band-collar VEST → **`mens_waistcoat`**. This
+   resolves the long-open "Amir Adnan Jamawar 'Jacket' = waistcoat or kurta?" question → waistcoat (a kurta
+   is a long tunic; this outerwear isn't one). Scoped to men's cats (women's bridal/winter "Raw Silk Jacket"
+   sets are untouched); excludes western `bomber/blazer` (→ stays/`mens_suit`), `sherwani/prince` coats, and
+   jacket+pant SETS. ~23 Amir Adnan items moved kurta→waistcoat.
+5. **Kids vs women's pret** — a `kids/toddler/teen/infant` token (anchored — leading token or explicit
+   `(kids)`/"for kids"), age sizes (`2-3Y`, `9/12-M`), or a kids slug/SKU routes to the right `kids_*`
+   category even inside an adult feed. Adult letter-sizes (XS–XXL) on a "2 Pc Suit" sitting in a kids cat
+   send it back to women. (Sha Posh sizes 36–40 are OLDER KIDS, not adults — see below.)
+
+### Brand-terminology translation (Level 3)
+- **Khaadi / Sapphire:** "Ready to Wear" → `pret_*`; "Unstitched" → `lawn_3pc_unstitch` / `unstitch_3pc_emb`.
+  Khaadi sells the SAME design as `/fabrics-*` (unstitched) AND `/…tailored/T-*` (stitched) → split per form.
+- **Silayi Pret / Lulusar / Ammara Khan / Mina Hasan / Saira Rizwan:** "Kaftan" collection → `kaftan` (forced).
+- **Ethnic by Outfitters (ETHNC):** `western-…` slug tops → `western_top`; standalone "Skirt" → `womens_trouser`.
+- **J. Junaid Jamshed:** "Kurta" → check section — men's collection → `mens_kurta`; a women's kurti → `kurti_1pc`.
+
+## Idempotency / convergence — cleanup MUST reach a fixed point (2026-06-24, big fix)
+
+`catalog-cleanup.js` runs at **every** harvest and every VPS `search.db` rebuild (~3h). It must be a
+**fixed-point function**: `cleanup(cleanup(X)) == cleanup(X)`. It was not — **503 products oscillated
+between two categories on every pass** (e.g. a SHAAL hijab flipped `abaya ⇄ shawl`, an Amir Adnan
+open-front sherwani flipped `mens_sherwani ⇄ mens_unstitched`), so ~500 items' live categories changed
+every few hours by parity. **This was the single biggest cause of "wrong category products."**
+
+Root cause: pairs of rules that undo each other across passes (rule A: X→Y with `continue`; next pass
+rule B: Y→X). Fixed by making each pair converge on the **documented intent**, almost always by adding a
+guard to the rule that grabbed a SET as if it were a standalone piece:
+- A standalone shawl/stole/pashmina/**odhni** now routes through ONE canonical rule (men's → `mens_unstitched`
+  per the no-`mens_shawl`-cat precedent; women's → `shawl`; hijabs are NOT shawls → fall to `abaya`).
+- A "Sherwani/Waistcoat **… with/paired with** Shawl" is a SET → its sherwani/waistcoat cat, not `shawl`.
+- **Amir Adnan lists FINISHED made-to-measure couture as `sz:["Unstitched"]`** — so `sz=Unstitched` is NOT
+  a fabric signal for it; its stitched-cat items are never demoted to `mens_unstitched`/forwarded by `fwdCat`.
+- A finished sherwani / prince-coat / open-front / "…for Groom" (sz=Unstitched) stays in its sherwani cat.
+- The Sha-Posh "size ≥ 36 = adult" rule was DELETED — it contradicted the photo-verified "36–40 = older kids".
+- Guard fixes: `[23] ?pc` → `[23][\s-]?pc` (matched "3-pc" hyphen); tights/leggings/culottes are bottoms;
+  bare "denim" is a colour not a bottom; "(Polo)" inside a "3-Piece … Suit" is a style name not a polo shirt.
+
+**Result: 503 → 0 true oscillations; the pipeline reaches a stable fixed point in 2 passes.** As a belt-and-
+suspenders guarantee, the harvester now re-runs cleanup until a pass changes nothing before writing
+`catalog.json`. **Always run the idempotency check (`_cat_audit/`) after adding any rule** — a new rule that
+moves X→Y must not be undone by an existing rule.
+
 ## Open / held decisions (need Danish)
 *(Grouped from the historical 61 "Confusions". Many are now RESOLVED in code — see the note at the end — these are the ones still genuinely open. Per-brand specifics: `BRAND-AUDIT-FINDINGS.md`.)*
 
@@ -119,14 +206,17 @@
 - **Maria B** plain "Kurta"/"2 Piece Blended Suit" — M-Kids line or women's?
 - **Asim Jofa** `AJKL` "Stitched 2 Pcs/1 Pc" — kids or women's 2pc?
 - **Saya** "For Kids" lawn 2pc with no boy/girl marker — default to girls or boys?
-- **Kross Kulture** unprefixed "2PC/3PC Embroidered Suit" — women's pret or kids?
+- **Kross Kulture** unprefixed "2PC/3PC Embroidered Suit" — women's pret or kids? *(Provisionally PINNED to
+  `kids_girls_*` 2026-06-24 to stop an oscillation — "Girl" in title + documented "child models" note. Flip
+  the pin in code if it's women's.)*
 - **Tassels** "Mother & Daughter" sets — women's pret, kids, or split?
 
 **C. Stitched-vs-unstitched** (title says only "Suit/Fabric/Kameez Shalwar") — fabric or finished?: **Shahzeb Saeed** (SF- two-piece suits), **Arsalan Iqbal** (IronEz kurta sets), **Almirah** (KS/KT kameez-shalwar), **Diners** (Wash&Wear Shalwar Kameez), **Ismail Farid** (crush-fabric kurta pajama), **Cambridge** (Basic Shalwar Kameez Suit), **Sania Maskatiya** (coded Cala/Lulu), **Iznik** (UE-/IP-/CC- codes).
 
 **D. Missing taxonomy keys** (currently bucketed pragmatically — confirm or add a key):
 - **4-piece** suits (Roheenaz "Four Piece", Sitara "4PC", Sha Posh "4PC").
-- **Men's outerwear / jacket** (CRUSH waterproof puffer; Amir Adnan Jamawar "Jacket" — waistcoat or kurta?).
+- **Men's outerwear / jacket** (CRUSH waterproof puffer). *(RESOLVED 2026-06-24: Amir Adnan jamawar/raw-silk
+  "Jacket" → `mens_waistcoat` per Rule 2.4 — see the framework section.)*
 - **Western coats / kimono** (KEF "Jamawar Coat", "Kimono"; Jeem "Jacket").
 - **Unstitched kaftan / blouse-skirt** (Threads & Motifs).
 - **Jubba / Thobe** (J. Junaid Jamshed) — keep `mens_kurta` or separate?

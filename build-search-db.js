@@ -52,8 +52,12 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
     fetchText(CONFIG_URL).catch(() => '{}'),   // rates are best-effort; fall back to defaults
   ]);
   const cat = JSON.parse(catRaw);
-  // Re-run the catalog corrector before indexing (safety net — see require above). Idempotent.
-  { const _c = cleanupProducts(cat.products || []); cat.products = _c.products; console.log('search-db cleanup:', JSON.stringify(_c.stats)); }
+  // Re-run the catalog corrector before indexing (safety net — see require above), to a FIXED POINT.
+  // cleanup is convergent (≤2 passes); a few set/couture rules legitimately need a 2nd pass to settle, so
+  // re-apply until a pass changes no category. Guarantees STABLE live categories on every rebuild (without
+  // this, ~a couple of products' categories could differ between rebuilds). See _cat_audit/test-idempotent.js.
+  { let _c = cleanupProducts(cat.products || []); cat.products = _c.products; console.log('search-db cleanup:', JSON.stringify(_c.stats));
+    for (let _i = 0; _i < 4; _i++) { const _sig = cat.products.map(p => p.u + '\t' + p.cat).join('\n'); cat.products = cleanupProducts(cat.products).products; if (cat.products.map(p => p.u + '\t' + p.cat).join('\n') === _sig) break; } }
   const cfg = JSON.parse(cfgRaw) || {};
   const rates = (cfg && cfg.rates) || {};
   const weights = (cfg && cfg.weights) || {};

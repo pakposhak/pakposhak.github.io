@@ -814,6 +814,16 @@ async function harvestKidsBrand(name, host){
   const _clean = cleanupProducts(deduped);
   console.log('  catalog-cleanup:', JSON.stringify(_clean.stats));
   deduped = _clean.products;
+  // Run cleanup to a FIXED POINT. cleanup is convergent (≤2 passes on the live catalog), but a few
+  // brand/garment rules legitimately need a 2nd pass to settle (e.g. a men's couture set routed to its
+  // sherwani/waistcoat cat, a hijab-brand "…Denim" fabric → abaya). Re-applying until a pass changes no
+  // category guarantees the WRITTEN catalog is stable, so categories can't shift on the next rebuild.
+  for (let _i = 0; _i < 4; _i++) {
+    const _sig = deduped.map(p => p.u + '\t' + p.cat).join('\n');
+    deduped = cleanupProducts(deduped).products;
+    if (deduped.map(p => p.u + '\t' + p.cat).join('\n') === _sig) break;
+    console.log(`  catalog-cleanup (settle pass ${_i + 1})`);
+  }
   const brands = [...new Set(deduped.map(p => p.b))];
   const out = { updated: new Date().toISOString(), count: deduped.length, brands: brands.length, products: deduped };
   const file = KIDS_ONLY ? 'catalog-kids-sample.json' : 'catalog.json';

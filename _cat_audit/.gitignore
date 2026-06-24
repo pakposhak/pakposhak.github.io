@@ -1,0 +1,11 @@
+# large catalog snapshots used by the tests (regenerate by copying ../catalog.json)
+catalog.before.json
+catalog.fixed.json
+*.snapshot.json
+
+# scratch diff/probe artifacts (not durable)
+head-*.js
+main-*.js
+vps-*.js
+probe.js
+results.json
