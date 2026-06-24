@@ -822,7 +822,7 @@
     .bb-subtabs{display:flex;gap:8px;margin-bottom:14px}
     .bb-subtab{flex:1;padding:9px 8px;background:var(--surface);border:1.5px solid var(--bdr-med);border-radius:10px;color:var(--txt-sec);font-weight:700;font-size:0.82rem;cursor:pointer;font-family:inherit}
     .bb-subtab.on{background:var(--gold);color:#12122a;border-color:var(--gold)}
-    .bb-prod-sub{font-size:0.78rem;color:var(--txt-muted);margin:-2px 0 7px}
+    .bb-prod-sub{font-size:0.86rem;font-weight:600;color:var(--txt);text-align:center;line-height:1.5;margin:2px auto 11px;max-width:460px}
     .bb-gtabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
     .bb-gtab{flex:1;min-width:88px;padding:9px 6px;background:var(--surface);border:1.5px solid var(--bdr-med);border-radius:9px;color:var(--txt-sec);font-weight:700;font-size:0.82rem;cursor:pointer;font-family:inherit}
     .bb-gtab.on{background:#137a72;color:#fff;border-color:#137a72}
@@ -850,6 +850,20 @@
     .bb-chip.bb-more{background:var(--gold-dim);border-color:var(--gold-bdr);color:var(--gold);font-weight:700}
     .bb-prod-empty{font-size:0.84rem;color:var(--txt-muted);padding:18px 4px}
     .bb-prod-empty.bb-pickprompt{text-align:center;font-size:1.08rem;font-weight:700;color:var(--txt);padding:36px 20px;line-height:1.55;max-width:440px;margin:0 auto}
+    /* Brand image-tile CAROUSEL (req): small brand PHOTO tiles laid out in THREE rows that scroll
+       HORIZONTALLY (grid-auto-flow:column fills top→bottom then advances right). Tile size kept. */
+    .bb-btgrid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(3,auto);grid-auto-columns:84px;gap:12px 10px;overflow-x:auto;overflow-y:hidden;padding:6px 2px 12px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+    .bb-btgrid::-webkit-scrollbar{display:none}
+    .bb-btile{display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;padding:0;cursor:pointer;font-family:inherit;width:100%}
+    .bb-btile-img{width:100%;aspect-ratio:1/1;border-radius:14px;overflow:hidden;border:1.5px solid var(--gold-bdr);background:linear-gradient(135deg,var(--gold-dim),var(--surface));display:flex;align-items:center;justify-content:center;position:relative;transition:border-color .12s,transform .12s}
+    .bb-btile-img img{width:100%;height:100%;object-fit:cover;display:block}
+    .bb-btile-noimg .bb-btile-img::after{content:attr(data-emoji);font-size:1.6rem;opacity:0.55}
+    .bb-btile-name{font-size:0.68rem;font-weight:600;color:var(--txt);line-height:1.15;text-align:center;width:100%;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .bb-btile-feat .bb-btile-img{border-color:var(--gold)}
+    .bb-btile .cb-star{color:var(--gold);font-size:0.82em;margin-right:2px}
+    .bb-btile:hover .bb-btile-img{border-color:var(--gold)}
+    .bb-btile:active .bb-btile-img{transform:scale(0.95)}
+    @media (min-width:820px){ .bb-btgrid{grid-auto-columns:104px;gap:16px 14px} .bb-btile-name{font-size:0.74rem} }
     /* third-tier club dropdown beside each group heading */
     .bb-grp-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;flex-wrap:wrap}
     .bb-grp-head .bb-grp-h{margin-bottom:0}
@@ -941,7 +955,10 @@
     #tabProducts .ps-results{overflow-x:clip}
     @keyframes psSwipeNudge{0%,100%{transform:translateX(0)}15%{transform:translateX(-22px)}30%{transform:translateX(0)}45%{transform:translateX(-13px)}60%{transform:translateX(0)}}
     .ps-grid.ps-swipenudge{animation:psSwipeNudge 1.5s ease-in-out}
-    #psSwipeCue{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:rgba(11,38,28,0.92);color:#E0C27E;font-size:0.82rem;font-weight:700;padding:8px 16px;border-radius:22px;z-index:60;pointer-events:none;white-space:nowrap;opacity:0;transition:opacity .35s;box-shadow:0 4px 16px rgba(0,0,0,0.28)}
+    /* Nudged to the bottom-RIGHT and lifted just above the share-added toast so the
+       👈 "Swipe for more" hand never sits under the centred ".ps-share-toast" message
+       (which wraps ~105px tall). The toast owns the bottom-centre; the cue owns the right. */
+    #psSwipeCue{position:fixed;right:14px;left:auto;bottom:190px;transform:none;background:rgba(11,38,28,0.92);color:#E0C27E;font-size:0.82rem;font-weight:700;padding:8px 16px;border-radius:22px;z-index:60;pointer-events:none;white-space:nowrap;opacity:0;transition:opacity .35s;box-shadow:0 4px 16px rgba(0,0,0,0.28)}
     #psSwipeCue.show{opacity:1}
     .ps-card{border:1px solid var(--bdr-med);border-radius:11px;overflow:hidden;background:var(--surface);display:flex;flex-direction:column}
     .ps-img{aspect-ratio:3/4;background:var(--raised);position:relative;overflow:hidden;cursor:pointer}

@@ -2457,8 +2457,8 @@
       ps_partial:'Not every brand &amp; product is listed here yet —', ps_partial_link:'want more? Browse by brands →', ps_word_products:'products', ps_word_brands:'brands',
       ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products', ps_sort_lh:'৳ Low→High', ps_sort_hl:'৳ High→Low', ps_sort_price:'Sort: Price', ps_shop_cat:'Shop by category', wish_save:'Save to wishlist', wish_title:'Wishlist', wish_empty:'No saved items yet. Tap ♥ on any product to save it here.', wish_remove:'Remove', ps_also_uns_short:'Unstitched available', ps_also_st_short:'Stitched available', ps_sale:'Sale', ps_new:'New', ps_lbl_sort:'Sort', ps_lbl_filter:'Filter', ps_search_ph:'Search 50,000+ products, 140+ Pakistani brands', ps_search_nomatch:'No brand or category matched', share_added:'Added to your cart, keep browsing', share_review:'Review order',
       bb_store:'Store Types', bb_product:'Product Category', bb_women:'👗 Women', bb_men:'👔 Men', bb_kids:'🧸 Kids', bb_md:'🏬 Multi-Dept', bb_premium:'💎 Premium',
-      bb_more:'more', bb_less:'less', bb_all:'All', bb_two_ways:'Two ways to search brands', bb_pick_gender:'Pick women, men, or others above — or just type any brand name.', bb_pick_cat:'Pick a category above to see its brands.', bb_prod_sub:'🔎 Search 150+ brands to order directly from their page:', bb_loading:'Loading brands…', bb_prod_none:'No catalogued brands here yet.',
-      bb_smart_ph:'🔍 Search 150+ brands — e.g. Khaadi, lawn, casual', bb_search_lead:'🔎 Know the brand? Search 150+ Pakistani brands by name:',
+      bb_more:'more', bb_less:'less', bb_all:'All', bb_two_ways:'Two ways to search brands', bb_pick_gender:'Pick women, men, or others above — or just type any brand name.', bb_pick_cat:'Pick a category above to see its brands.', bb_prod_sub:'Choose your brand by clicking a tab or typing its name, go to the product you like, and just share it back to us.', bb_loading:'Loading brands…', bb_prod_none:'No catalogued brands here yet.',
+      bb_smart_ph:'🔍 Search brands, e.g. Khaadi, lawn, casual', bb_search_lead:'🔎 Know the brand? Just type its name:',
       js_soldout_lead:'Some items appear SOLD OUT and can’t be saved — please remove them or pick another article:',
       js_soldout_all:'sold out on the brand site', js_soldout_size:'this size is sold out',
       more_tab:'More', more_title:'More Brands', more_sub:'All brands in this category — tap any to start, same as the tabs.', more_back:'Back',
@@ -2525,8 +2525,8 @@
       ps_partial:'সব ব্র্যান্ড বা পণ্য এখনো এখানে যোগ হয়নি —', ps_partial_link:'আরও চান? “ব্র্যান্ড দেখুন”-এ যান →', ps_word_products:'পণ্য', ps_word_brands:'ব্র্যান্ড',
       ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়', ps_sort_lh:'৳ কম→বেশি', ps_sort_hl:'৳ বেশি→কম', ps_sort_price:'দাম অনুসারে', ps_shop_cat:'ক্যাটাগরি অনুযায়ী দেখুন', wish_save:'পছন্দে সেভ করুন', wish_title:'পছন্দের তালিকা', wish_empty:'এখনো কিছু সেভ করা হয়নি। যেকোনো পণ্যে ♥ চাপ দিয়ে এখানে সেভ করুন।', wish_remove:'সরান', ps_also_uns_short:'আনস্টিচডও আছে', ps_also_st_short:'সেলাইও আছে', ps_sale:'সেল', ps_new:'নতুন', ps_lbl_sort:'সাজান', ps_lbl_filter:'ফিল্টার', ps_search_ph:'খুঁজুন: ৫০,০০০+ পণ্য, ১৪০+ পাকিস্তানি ব্র্যান্ড', ps_search_nomatch:'কোনো ব্র্যান্ড বা ক্যাটাগরি মেলেনি', share_added:'কার্টে যোগ হয়েছে, আরও দেখুন', share_review:'অর্ডার দেখুন',
       bb_store:'স্টোরের ধরন', bb_product:'পণ্যের ক্যাটাগরি', bb_women:'👗 মেয়েদের', bb_men:'👔 ছেলেদের', bb_kids:'🧸 বাচ্চাদের', bb_md:'🏬 মাল্টি-ডিপ', bb_premium:'💎 প্রিমিয়াম',
-      bb_more:'আরও', bb_less:'কম', bb_all:'সব', bb_two_ways:'ব্র্যান্ড খোঁজার দুটি উপায়', bb_pick_gender:'উপরে মেয়ে, ছেলে বা অন্যান্য বেছে নিন — অথবা যেকোনো ব্র্যান্ডের নাম লিখুন।', bb_pick_cat:'ব্র্যান্ড দেখতে উপরের একটি ক্যাটাগরিতে ট্যাপ করুন।', bb_prod_sub:'🔎 সরাসরি অর্ডার করতে ১৫০+ ব্র্যান্ড খুঁজুন:', bb_loading:'ব্র্যান্ড আসছে…', bb_prod_none:'এখানে এখনো কোনো ব্র্যান্ড নেই।',
-      bb_smart_ph:'🔍 ১৫০+ ব্র্যান্ড খুঁজুন — যেমন Khaadi, lawn, casual', bb_search_lead:'🔎 ব্র্যান্ড জানা আছে? নাম দিয়ে ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন:',
+      bb_more:'আরও', bb_less:'কম', bb_all:'সব', bb_two_ways:'ব্র্যান্ড খোঁজার দুটি উপায়', bb_pick_gender:'উপরে মেয়ে, ছেলে বা অন্যান্য বেছে নিন — অথবা যেকোনো ব্র্যান্ডের নাম লিখুন।', bb_pick_cat:'ব্র্যান্ড দেখতে উপরের একটি ক্যাটাগরিতে ট্যাপ করুন।', bb_prod_sub:'একটি ট্যাবে ক্লিক করে বা নাম টাইপ করে আপনার ব্র্যান্ড বেছে নিন, পছন্দের পণ্যে যান, আর সেটি আমাদের শেয়ার করুন।', bb_loading:'ব্র্যান্ড আসছে…', bb_prod_none:'এখানে এখনো কোনো ব্র্যান্ড নেই।',
+      bb_smart_ph:'🔍 ব্র্যান্ড খুঁজুন, যেমন Khaadi, lawn, casual', bb_search_lead:'🔎 ব্র্যান্ড জানা আছে? নাম দিয়ে খুঁজুন:',
       js_soldout_lead:'কিছু পণ্য স্টকে নেই, তাই সেভ করা যাচ্ছে না — সেগুলো সরিয়ে দিন বা অন্য পণ্য বেছে নিন:',
       js_soldout_all:'ব্র্যান্ডের সাইটে স্টকে নেই', js_soldout_size:'এই সাইজটি স্টকে নেই',
       more_tab:'আরও', more_title:'আরও ব্র্যান্ড', more_sub:'এই ক্যাটাগরির সব ব্র্যান্ড — উপরের ট্যাবের মতোই, শুরু করতে যেকোনোটিতে ট্যাপ করুন।', more_back:'পেছনে',
@@ -5109,6 +5109,12 @@
   }
   function psSugHide(){ psSugShow('psSugM',[]); psSugShow('psSugD',[]); }
   function psSugDeferred(){ setTimeout(psSugHide, 160); }
+  // Tap the search box again to dismiss the suggestion list — so the buyer is never
+  // "stuck" being forced to pick a suggestion. Open → close; typing reopens it.
+  function psSugToggleClose(){
+    const m = document.getElementById('psSugM'), d = document.getElementById('psSugD');
+    if((m && m.style.display === 'block') || (d && d.style.display === 'block')) psSugHide();
+  }
   function psSugUpdate(val){
     if(!val || val.length < 2){ psSugHide(); return; }
     const n = psNorm(val);
@@ -5163,6 +5169,21 @@
     psSel.brands = brands;
     psBuildCatFilter(); psBuildBrandFilter(); psApply();
     psSearchHint(raw, brands, cats);
+    psSyncShopGender(cats);            // light up the gender tab that matches the results, not the stale default
+  }
+  // During a search, make the "Shop by" gender tab follow the results so the highlighted
+  // tab matches the products shown (searching "men" must light up Men, not the default
+  // Women). Only adopt a gender when the result is unambiguously ONE gender; mixed or
+  // brand-only searches leave the strip as-is. Additive: never forces an empty/none state.
+  function psSyncShopGender(cats){
+    if(typeof psShopMode !== 'undefined' && psShopMode === 'brand') return;   // brand carousel highlight handled elsewhere
+    const gs = new Set([...(cats || [])].map(c => PS_CAT_GENDER[c]).filter(Boolean));
+    if(gs.size !== 1) return;
+    const g = [...gs][0];
+    if(PS_SHOP_GENDERS.some(x => x[0] === g) && g !== psShopGender){
+      psShopGender = g;
+      try{ psBuildShopCat(); }catch(e){}
+    }
   }
   function psSearchHint(raw, brands, cats){
     const els = [document.getElementById('psSearchHintM'), document.getElementById('psSearchHintD')];
@@ -6516,24 +6537,58 @@
   function bbPickClub2(e, v){ if(e) e.stopPropagation(); _bbClub[_bbGender+'|'+_bbGroup] = (v === '') ? null : +v; bbRenderProduct(); }
   function bbToggleClubDD(e){ if(e) e.stopPropagation(); const l = document.querySelector('#bbClubDD .bb-cdd-list'); if(l) l.style.display = (l.style.display === 'none' ? 'block' : 'none'); }
   document.addEventListener('click', e => { const dd = document.getElementById('bbClubDD'); if(dd && !dd.contains(e.target)){ const l = dd.querySelector('.bb-cdd-list'); if(l) l.style.display = 'none'; } });
-  // Brand list rendered exactly like the Store-Types mega-menu (same .cat-*
-  // classes → identical grid look) with a horizontal "+N more" slider: ~22 per
-  // page, page 2 holds the rest. Consistency with the Store-Types view.
-  let _bbSlidePage = 0, _bbPageH = [];
-  function bbBrandGrid(brands, cntOf){
+  let _bbSlidePage = 0, _bbPageH = [];   // kept for the Store-Types slider (bbSlide/bbMeasureSlide)
+  // Brand list = a multi-row grid of small brand PHOTO tiles (req) — replaces the old text list +
+  // per-brand product-count badge (the number confused buyers). Photos LAZY-load as tiles scroll
+  // into view (cache + on-demand fetch) so all ~150 brands don't fetch at once. Tap keeps openBrandInApp.
+  // Photo dept: when a gender tab (Women/Men/Kids) is active, use IT so a MULTI-DEPT brand (Khaadi,
+  // Edenrobe…) shows a MEN photo under Men, a women photo under Women, a kids photo under Kids (req) —
+  // each dept's photo is cached separately (brand|dept). On the all-brands / Multi-Dept / Premium
+  // view (no gender tab) fall back to the brand's own primary dept.
+  function bbBrandDept(b){
+    if(_bbGender === 'w' || _bbGender === 'm' || _bbGender === 'k') return _bbGender;
+    return (b.c === 'w' || b.c === 'm' || b.c === 'k') ? b.c : 'w';
+  }
+  function bbBrandGrid(brands){
     if(!brands.length) return `<div class="bb-prod-empty">${tr('bb_prod_none')}</div>`;
-    const CAP = 22;
-    const chip = b => { const n = cntOf ? (cntOf(b) || 0) : 0; const fl = FEATURED.has(b.n);
-      return `<button type="button" class="cat-brand${fl ? ' cb-feat' : ''}" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}"${fl ? ' title="Featured brand — verified by PakPoshak"' : ''}>${fl ? '<span class="cb-star" aria-hidden="true">★</span>' : ''}${esc(b.n)}${n > 0 ? `<span class="cb-cnt">${n}</span>` : ''}</button>`; };
-    if(brands.length <= CAP)
-      return `<div class="cat-grid" id="bbGrid"><div class="cat-track" id="bbTrack"><div class="cat-page"><div class="cat-pagegrid">${brands.map(chip).join('')}</div></div></div></div>`;
-    const first = brands.slice(0, CAP), rest = brands.slice(CAP);
-    const moreChip = `<button type="button" class="cat-brand cat-nav" onclick="bbSlide(1)">+${rest.length} ${tr('more_tab')} ›</button>`;
-    const backChip = `<button type="button" class="cat-brand cat-nav" onclick="bbSlide(0)">‹ ${tr('more_back')}</button>`;
-    return `<div class="cat-grid" id="bbGrid"><div class="cat-track" id="bbTrack">`
-      + `<div class="cat-page"><div class="cat-pagegrid">${first.map(chip).join('')}${moreChip}</div></div>`
-      + `<div class="cat-page"><div class="cat-pagegrid">${backChip}${rest.map(chip).join('')}</div></div>`
-      + `</div></div>`;
+    const tile = b => {
+      const fl = FEATURED.has(b.n), dept = bbBrandDept(b);
+      const url = psBrandThumbGet(b.n, dept);
+      const img = url ? `<img loading="lazy" src="${esc(thumbUrl(url))}" alt="${esc(b.n)}" onerror="this.closest('.bb-btile').classList.add('bb-btile-noimg');this.remove();">` : '';
+      return `<button type="button" class="bb-btile${fl ? ' bb-btile-feat' : ''}${url ? '' : ' bb-btile-noimg'}" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}" data-dept="${dept}" title="${esc(b.n)}">`
+        + `<span class="bb-btile-img" data-emoji="🏷️">${img}</span>`
+        + `<span class="bb-btile-name">${fl ? '<span class="cb-star" aria-hidden="true">★</span>' : ''}${esc(b.n)}</span></button>`;
+    };
+    return `<div class="bb-btgrid" id="bbBtGrid">${brands.map(tile).join('')}</div>`;
+  }
+  function bbPaintTile(tile, n, url){
+    if(!url || !tile) return;
+    const span = tile.querySelector('.bb-btile-img'); if(!span || span.querySelector('img')) return;
+    const im = document.createElement('img'); im.loading = 'lazy'; im.src = thumbUrl(url); im.alt = n;
+    im.onerror = function(){ tile.classList.add('bb-btile-noimg'); im.remove(); };
+    span.appendChild(im); tile.classList.remove('bb-btile-noimg');
+  }
+  let _bbPhotoIO = null;
+  function bbLoadBrandTilePhotos(){
+    const grid = document.getElementById('bbBtGrid'); if(!grid) return;
+    grid.querySelectorAll('.bb-btile[data-name]').forEach(t => { const u = psBrandThumbGet(t.getAttribute('data-name'), t.getAttribute('data-dept') || 'w'); if(u) bbPaintTile(t, t.getAttribute('data-name'), u); });
+    if(!psApiMode || typeof IntersectionObserver === 'undefined') return;
+    if(_bbPhotoIO) _bbPhotoIO.disconnect();
+    _bbPhotoIO = new IntersectionObserver((entries, obs) => {
+      entries.forEach(en => {
+        if(!en.isIntersecting) return;
+        const t = en.target; obs.unobserve(t);
+        const n = t.getAttribute('data-name'), dept = t.getAttribute('data-dept') || 'w';
+        if(psBrandThumbGet(n, dept)) return;
+        const cats = _psDeptCats(dept), catParam = (cats && cats.length) ? ('&cat=' + encodeURIComponent(cats.join(','))) : '';
+        const ps = (dept === 'w') ? 6 : 1;   // women: pull a few + skip men's-titled (multi-dept brands)
+        fetch(psSearchBase() + '?brand=' + encodeURIComponent(n) + catParam + '&pageSize=' + ps + '&page=0', { cache:'default' })
+          .then(r => r.ok ? r.json() : null)
+          .then(j => { const arr = (j && j.products) || []; let p = (dept === 'w') ? arr.find(x => x && x.img && !_PS_MALE_RE.test(String(x.t || ''))) : null; if(!p) p = arr.find(x => x && x.img) || null; if(p && p.img){ psBrandThumbSet(n, dept, p.img); bbPaintTile(t, n, p.img); } })
+          .catch(() => {});
+      });
+    }, { rootMargin: '200px 500px' });   // prefetch sideways (3-row carousel scrolls horizontally)
+    grid.querySelectorAll('.bb-btile[data-name]').forEach(t => { if(!psBrandThumbGet(t.getAttribute('data-name'), t.getAttribute('data-dept') || 'w')) _bbPhotoIO.observe(t); });
   }
   function bbMeasureSlide(){
     const track = document.getElementById('bbTrack'); if(!track) return;
@@ -6730,15 +6785,12 @@
     if(_bbGender && !tabs.some(t => t[0] === _bbGender)) _bbGender = 'w';
     gtabs.innerHTML = tabs.map(([g,k]) =>
       `<button type="button" class="bb-gtab${_bbGender===g?' on':''}" onclick="bbPickGender('${g}')">${tr(k)}</button>`).join('');
-    // No tab picked AND nothing typed → the search-first prompt. With a query we fall
-    // through and search across ALL brands (req — the search works without a tab).
-    if(!_bbGender && (_bbQuery || '').trim().length < 2){ bbSetHint('', null, null); body.innerHTML = `<div class="bb-prod-empty bb-pickprompt">${tr('bb_pick_gender')}</div>`; return; }
+    // No tab picked AND nothing typed → show ALL brands as image tiles (req — no more pick-prompt);
+    // the search + dept tabs above still filter. With a query we search across all brands.
+    if(!_bbGender && (_bbQuery || '').trim().length < 2){ bbSetHint('', null, null); }
     const brands = bbBrandsForView();
-    const cats = (_bbGender === 'w' || _bbGender === 'm' || _bbGender === 'k') ? [...bbGenderCats(_bbGender)] : null;
-    const cntOf = b => cats ? bbStrength(b.n, cats) : ((_bbCnt && _bbCnt[b.n]) || 0);   // count shown = strength in THIS category
-    _bbSlidePage = 0;
-    body.innerHTML = `<div id="bbGridWrap">` + bbBrandGrid(brands, cntOf) + `</div>`;
-    bbMeasureSlide();
+    body.innerHTML = `<div id="bbGridWrap">` + bbBrandGrid(brands) + `</div>`;
+    bbLoadBrandTilePhotos();
   }
 
   // Browse PRODUCTS is the default landing tab. We still honour a saved choice so
@@ -6750,7 +6802,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-24w';
+  const PSB_BUILD = '2026-06-25b';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
