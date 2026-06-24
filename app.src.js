@@ -3124,6 +3124,20 @@
     const clean = parseUrl(raw);
     return (clean && isKnownBrand(clean)) ? clean : null;
   }
+  // When the page is opened by a SHARE, the order form (which sits BELOW the Browse
+  // Products grid) must be the first thing the buyer sees — not the product images.
+  // The Browse grid loads async and would otherwise push the new draft far down the
+  // page, landing the buyer on browse images instead of their order. So hide Browse
+  // (collapsing its height → stable layout) and scroll the order/drafts to the top.
+  function focusOrderView(){
+    const bt = document.querySelector('.browse-tabs'); if(bt) bt.style.display = 'none';
+    ['tabProducts','tabBrands'].forEach(idv => { const e = document.getElementById(idv); if(e) e.style.display = 'none'; });
+    setTimeout(() => {
+      const dc = document.getElementById('draftsContainer');
+      const tgt = (dc && dc.style.display !== 'none') ? dc : document.getElementById('urlInputRow');
+      if(tgt) tgt.scrollIntoView({ behavior:'auto', block:'start' });
+    }, 80);
+  }
   function handleSharedUrl(){
     try{
       const q = new URLSearchParams(location.search);
@@ -3139,8 +3153,7 @@
           document.getElementById('urlInputRow').style.display = 'none';
           document.getElementById('draftsContainer').style.display = '';
           links.forEach(u => createDraft(u));              // one draft per cart item
-          const dc = document.getElementById('draftsContainer');
-          if(dc) dc.scrollIntoView({ behavior:'smooth', block:'nearest' });
+          focusOrderView();                                // order first, not Browse images
         }
         history.replaceState(null, '', location.pathname);
         return;
@@ -3153,6 +3166,7 @@
       if(clean){
         const inp = document.getElementById('urlInput');
         if(inp){ inp.value = clean; handleAddUrl(); }
+        focusOrderView();                                  // order first, not Browse images
       }
       // Drop the query string so a refresh doesn't re-add the same item.
       history.replaceState(null, '', location.pathname);
@@ -6357,7 +6371,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-24g';
+  const PSB_BUILD = '2026-06-24h';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
