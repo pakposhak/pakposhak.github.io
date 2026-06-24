@@ -5639,6 +5639,16 @@
     for(const p of products){ if(p && p.cat && p.img && !psThumbGet(p.cat) && _psThumbOk(p.cat, p.t)){ _psThumbs[p.cat] = { u:p.img, t:Date.now() }; changed = true; } }
     if(changed){ _psThumbsSave(); psPaintShopThumbs(); }
   }
+  // The carousel-active category KEY: the single selected category, OR (for a clubbed multi-cat tile)
+  // the tile whose full cat-set exactly matches the selection. '' when a brand/price filter is active.
+  function _psActiveCatKey(){
+    if(psSel.brands.size || psSel.prices.size || !psSel.cats.size) return '';
+    for(const t of PS_SHOP_TILES){
+      const cats = t.cats || [t.key];
+      if(cats.length === psSel.cats.size && cats.every(k => psSel.cats.has(k))) return t.key;
+    }
+    return '';
+  }
   function psBuildShopCat(){
     // Tabs: Women / Men / Kids + a Brands tab pushed to the right.
     const tabsEl = document.getElementById('psShopTabs');
@@ -5657,8 +5667,17 @@
         deptsEl.innerHTML = PS_BRAND_DEPTS.map(([d,k]) =>
           `<button type="button" class="psc-dpill${d===psBrandDept ? ' on' : ''}" onclick="psSetBrandDept('${d}')">${esc(tr(k))}</button>`).join('');
       }
+      // The per-dept brand pool needs the brand→category index (so multi-dept flagships like
+      // Khaadi/Sapphire/Gul Ahmed fold into Women/Men/Kids, and brands are strength-ranked). Load it
+      // once — same as Browse Brands — then re-render; without it the fallback drops those brands.
+      if(!_bbIndex){
+        if(!_bbIdxLoading){ _bbIdxLoading = true; bbLoadIndex(() => { _bbIdxLoading = false; psBuildShopCat(); }); }
+        wrap.innerHTML = `<div class="psc-empty">${esc(tr('bb_loading'))}</div>`; wrap.scrollLeft = 0;
+        return;
+      }
       const activeBrand = (psSel.brands.size===1 && !psSel.cats.size && !psSel.prices.size) ? [...psSel.brands][0] : '';
       const brands = psShopBrandsForDept(psBrandDept);
+      if(!brands.length){ wrap.innerHTML = `<div class="psc-empty">${esc(tr('bb_prod_none'))}</div>`; wrap.scrollLeft = 0; return; }
       wrap.innerHTML = brands.map(n => {
         const url = psBrandThumbGet(n);
         const img = url ? `<img loading="lazy" src="${esc(thumbUrl(url))}" alt="${esc(n)}" onerror="this.closest('.psc-tile').classList.add('psc-noimg');this.remove();">` : '';
@@ -5672,7 +5691,7 @@
     }
     // ── CATEGORY MODE (default) ──
     if(deptsEl) deptsEl.style.display = 'none';
-    const active = (psSel.cats.size === 1 && !psSel.brands.size && !psSel.prices.size) ? [...psSel.cats][0] : '';
+    const active = _psActiveCatKey();
     wrap.innerHTML = psShopTiles().map(t => {
       const lbl = (_lang === 'bn' && t.bn) ? t.bn : t.en;
       const url = psThumbGet(t.key);
@@ -5788,7 +5807,7 @@
   // Update which tile is highlighted as active (the single selected category OR brand) — no rebuild.
   function psSyncShopActive(){
     const sc = document.getElementById('psShopScroll'); if(!sc) return;
-    const activeCat   = (psSel.cats.size === 1 && !psSel.brands.size && !psSel.prices.size) ? [...psSel.cats][0] : '';
+    const activeCat   = _psActiveCatKey();
     const activeBrand = (psSel.brands.size === 1 && !psSel.cats.size && !psSel.prices.size) ? [...psSel.brands][0] : '';
     sc.querySelectorAll('.psc-tile').forEach(t => {
       const c = t.getAttribute('data-cat'), b = t.getAttribute('data-brand');
@@ -6573,7 +6592,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-24m';
+  const PSB_BUILD = '2026-06-24n';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
