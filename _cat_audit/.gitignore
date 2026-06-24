@@ -9,3 +9,7 @@ main-*.js
 vps-*.js
 probe.js
 results.json
+
+# more scratch
+probe[0-9]*.js
+*.jpg

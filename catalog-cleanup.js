@@ -298,13 +298,14 @@ function cleanupProducts(ps) {
   for (const p of ps) {
     { const _t = p.t || ''; if (NONAPPAREL_STRONG.test(_t) || (NONAPPAREL_WEAK.test(_t) && !GARMENT_NOUN.test(_t))) { junkN++; continue; } }   // homeware/cosmetics/headwear/innerwear/gifting -> delete
     if (ACC.test(p.t || '') && !GARMENT.test(p.t || '') && p.cat !== 'footwear') { del++; continue; }
+    if (/\bunder[\s-]?vests?\b/i.test(p.t || '')) { junkN++; continue; }   // "Under Vest(s) (Pack Of 2)" = innerwear (Minnie Minors) — not listed (we don't sell undergarments)
     // PESHAWARI footwear → DELETED for EVERY gender (Danish's call — it's men's-style). The GARMENT_NOUN
     // guard keeps a "Peshawari Kurta"/suit (clothing). Kolhapuri / chappal / khussa are kept (women's).
     if (/\bpeshawari\b/i.test(p.t || '') && !GARMENT_NOUN.test(p.t || '')) { footDel++; continue; }
     // Footwear: MEN'S and KIDS' shoes are DELETED entirely (policy — we don't ship them); only women's
     // footwear is kept (moved to the footwear cat). Guard: a garment that merely has a shoe word in its
     // name (e.g. "Sneaker Print Dress") has a GARMENT_NOUN and is NOT treated as footwear.
-    if (FOOT.test(p.t || '') && !GARMENT_NOUN.test(p.t || '')) {
+    if (FOOT.test(p.t || '') && !GARMENT_NOUN.test(p.t || '') && !(/\bsandal(i|wood)?\b/i.test(p.t||'') && (isUnsSz(p) || szLetter(p)))) {   // a "Sandal"/"Sandali"/"Sandalwood" COLLECTION name with apparel sizes (Unstitched / S-M-L) is NOT footwear — skip the FOOT mover so the sandal→apparel rule below can place it (else footwear⇄apparel oscillates)
       if (/^mens_|^kids_/.test(p.cat) || /\bmen'?s?\b|\bgents\b|\bboys?\b|\bgirls?\b|\bkids?\b|\binfants?\b/i.test(p.t || '')) { footDel++; continue; }
       if (p.cat !== 'footwear') { p.cat = 'footwear'; footMove++; out.push(p); continue; }
     }
@@ -320,6 +321,10 @@ function cleanupProducts(ps) {
     if (/^kids_/.test(p.cat) && meterSz(p) && !INFANT_WORD.test(p.t || '')) { p.cat = 'mens_unstitched'; menUnsN++; out.push(p); continue; }
     // Footwear cat with S/M/L clothing sizes (not shoe sizes) = garment misfiled as footwear.
     if (p.cat === 'footwear' && szLetter(p) && !FOOT.test(p.t||'')) { p.cat = womenCatFor(p); womenN++; out.push(p); continue; }
+    // "Sandal"/"Sandali"/"Sandalwood" as a COLLECTION/colour name (Maria Osama Khan/Zara Shahjahan/Zarif/
+    // Gulaal) is an apparel SUIT, not a shoe. A real sandal carries numeric shoe sizes (36-43); these have
+    // Unstitched / S-M-L apparel sizes → route to the apparel cat. (ETHNC "SANDAL" sz 36-41 stays footwear.)
+    if (p.cat === 'footwear' && /\bsandal(i|wood)?\b/i.test(p.t||'') && (isUnsSz(p) || szLetter(p))) { p.cat = womenCatFor(p); womenN++; out.push(p); continue; }
     // Sha Posh is a KIDS (girls') brand — image-verified (14 product photos): every "Kids …"/ck2p
     // item is a young girl, INCLUDING the larger numeric sizes. Its frock size chart runs 20→40, so
     // 36–40 are the OLDER-KIDS end, NOT adult. Route "Kids"-titled Sha Posh to girls'. (Supersedes an
@@ -509,12 +514,28 @@ function cleanupProducts(ps) {
         if (/\bpajama\b|\bpyjama\b|\bsleepwear\b|\bnightsuit\b|\bnight[\s-]?suit\b/.test(_tb) && !/(kurta|kameez|\bpajama[\s-]?suit\b)/.test(_tb)) { p.cat='kids_boys_western'; girlsKidN++; out.push(p); continue; }
       }
     }
+    // KIDS GENDER by explicit title (boys/girls). The explicit-gender corrector only fixes cross-DEPARTMENT
+    // (k vs w vs m), NOT boys↔girls WITHIN kids — so an explicit "Boys …"/"Girls …" item can sit in the wrong
+    // kids gender (Almirah "Boys Kameez Shalwar", Engine "Boys Suit" in kids_girls_*). Swap the kids gender,
+    // keep the eastern/western/formal suffix. (A title with BOTH boys & girls is left alone — no oscillation.)
+    if (/^kids_(boys|girls)_/.test(p.cat)) {
+      const _kg = (p.t||'').toLowerCase(), _ksuf = (p.cat.match(/_(eastern|western|formal)$/) || [, 'eastern'])[1];
+      if (/^kids_girls_/.test(p.cat) && /\bboys?\b/.test(_kg) && !/\bgirls?\b/.test(_kg)) { p.cat = 'kids_boys_' + _ksuf; girlsKidN++; out.push(p); continue; }
+      if (/^kids_boys_/.test(p.cat) && /\bgirls?\b/.test(_kg) && !/\bboys?\b/.test(_kg)) { p.cat = 'kids_girls_' + _ksuf; girlsKidN++; out.push(p); continue; }
+    }
+    // Kurta Corner is a MEN'S/BOYS kurta brand (no girls line) — image-confirmed its "Kids … Suit" are BOYS in
+    // kurta-shalwar (they defaulted to kids_girls_eastern via the genderless-eastern default). Route to boys.
+    if (p.b === 'Kurta Corner' && /^kids_girls_/.test(p.cat)) { const _kc = (p.cat.match(/_(eastern|western|formal)$/) || [, 'eastern'])[1]; p.cat = 'kids_boys_' + _kc; girlsKidN++; out.push(p); continue; }
     // Girls' WESTERN garments mislabeled kids_girls_eastern (Engine tops, Eminent camisoles, playsuits)
     // → kids_girls_western. Specific western nouns only (bare "top" is ambiguous with an eastern kurti).
     if (p.cat === 'kids_girls_eastern') {
       const _tg = (p.t||'').toLowerCase();
       if (/\btank[\s-]?top\b|\bcamisole\b|\bcami\b|t-?shirt|\btee\b|\bjeans\b|\bdenim\b|\blegging|\bplaysuit\b|\bjumpsuit\b|\bskirt\b|\bhoodie\b|\bsweat[\s-]?shirt\b|\bshorts?\b/.test(_tg)
           && !/kurta|kameez|shalwar|frock|dupatta|lehenga|abaya|gharara|peshwas|angrakha|\bkurti\b|makhna|hijab|niqab|jilbab/.test(_tg)) { p.cat='kids_girls_western'; girlsKidN++; out.push(p); continue; }
+      // Cougar sleeveless tops/dresses/peplums = WESTERN girls (sleeveless silhouette); guard a Beechtree
+      // "Sleeveless ETHNIC Embroidered SUIT" (eastern) via the ethnic/suit/kameez exclusions.
+      if (/\bsleeveless\b/.test(_tg) && /\btop\b|\bdress\b|\bpeplum\b|\bpleated\b|\bcami\b/.test(_tg)
+          && !/\bethnic\b|kameez|kurta|shalwar|frock|\bkurti\b|\b[23] ?(pc|piece)\b|\bsuit\b|anarkali|gharara|dupatta/.test(_tg)) { p.cat='kids_girls_western'; girlsKidN++; out.push(p); continue; }
     }
     // Men's WESTERN tees/polos mislabeled as shalwar-kameez/kurta (One Kids "mtt/mtp" knit basics) →
     // men's shirt; a pajama/trouser-only listing mislabeled as kurta → men's trouser.
@@ -731,9 +752,15 @@ function cleanupProducts(ps) {
     if (p.cat==='shawl' && /shawl/i.test(p.t||'') && /\b3[\s-]?pc\b|\b3 ?piece\b|shirt[\s\S]{0,18}trouser|trouser[\s\S]{0,12}shawl|\bsuit\b/i.test(p.t||'') && !/\bmen'?s?\b|gents|sherwani|waist ?coat|kurta pajama/i.test(p.t||'')) { p.cat = /unstitch|\brts\b|ready to stitch/i.test(txt(p)) ? 'lawn_3pc_unstitch' : 'pret_3pc'; womenN++; out.push(p); continue; }
     // Minnie Minors KIDS lehenga/choli/top sets mis-filed as dupatta_only -> kids girls eastern.
     if (p.b==='Minnie Minors' && p.cat==='dupatta_only') { p.cat='kids_girls_eastern'; girlsKidN++; out.push(p); continue; }
-    // loungewear polluted by "Midnight/Night"-named REGULAR suits (not sleepwear): unstitched or 2/3-pc
-    // suit with no real sleepwear word -> re-derive (fwdCat if fabric, else women's pret).
-    if (p.cat==='loungewear' && /\bunstitch|\b[23] ?pc\b|\b[23] ?piece\b|embroidered lawn/i.test(p.t||'') && !/pajama|pyjama|night ?suit|nightsuit|nightwear|sleep ?wear|\bnighty\b|lounge ?(wear|set)|\brobe\b/i.test(p.t||'')) { p.cat = (isUnstitched(p) || /unstitch|\brts\b/i.test(p.t||'')) ? fwdCat(p) : 'pret_3pc'; womenN++; out.push(p); continue; }
+    // loungewear MUST be real sleepwear. Anything WITHOUT an explicit sleepwear qualifier got here via a
+    // "night"-SUBSTRING collection name (Afrozeh "Nightlure"/"Candlenight"/"Serenight", Azure "Nightingale",
+    // Sadaf Fawad Khan "Nightfall") or a mistagged set (Black Camels "CO-ORD SET") → re-derive: fabric→fwdCat,
+    // co-ord→coord_western, else women's pret. KEEPS real sleepwear — \bnight\b (a WORD, so "Night Suit"/"Night
+    // Dress" stay but "Nightingale" doesn't), \bsleep\b, lounge, pyjama, nighty, robe (Diners "Night Suit",
+    // Generation/Zeen "Loungewear", Lakhany "Sleep Wear" all carry one).
+    if (p.cat==='loungewear' && !/pajama|pyjama|payjama|\bnight\b|\bsleep\b|\bnighty\b|lounge|\brobe\b|\bpjs?\b/i.test(p.t||'')) {
+      p.cat = (isUnstitched(p) || /unstitch|\brts\b/i.test(p.t||'')) ? fwdCat(p) : (/co-?ord/i.test(p.t||'') ? 'coord_western' : 'pret_3pc'); womenN++; out.push(p); continue;
+    }
     // a 2-piece "Shirt & Trouser / Shirt & Culotte / Shirt & Dupatta" naming mis-filed in a 1pc or 3pc
     // women's STITCHED cat -> the matching 2pc cat (Alkaram RTW, Sana Safinaz, Eminent "02PCS").
     if (/^(kurti_1pc|pret_3pc|pret_3pc_emb|formal_emb_3pc|heavy_formal_3pc|winter_3pc_stitch)$/.test(p.cat)

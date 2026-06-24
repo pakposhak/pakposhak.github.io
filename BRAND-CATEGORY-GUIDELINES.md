@@ -107,6 +107,29 @@
 
 ---
 
+### Screenshot-driven corrections (2026-06-25)
+- **"Sandal" / "Sandali" / "Sandalwood" are COLLECTION/colour names, not shoes.** Maria Osama Khan "Sandal",
+  Zara Shahjahan / Zarif "Sandali", Gulaal "Sandalwood Bloom" are unstitched/stitched SUITS that the shoe-word
+  filter grabbed into `footwear`. A real sandal carries numeric shoe sizes (36-43); these carry
+  **Unstitched / S-M-L apparel sizes** → routed to the apparel cat. ETHNC "SANDAL" (sz 36-41) stays footwear.
+  (The general FOOT→footwear mover is also guarded so it can't pull them back — was oscillating.)
+- **Kids gender by explicit title (boys ↔ girls WITHIN kids).** The explicit-gender corrector only fixes
+  cross-DEPARTMENT (k/w/m), so an explicit "Boys …"/"Girls …" item could sit in the wrong kids gender. A
+  `\bboys\b`-titled item in `kids_girls_*` → `kids_boys_*` (and vice versa), keeping the eastern/western/formal
+  suffix (Almirah "Boys Kameez Shalwar", Engine "Boys Suit" — ~149 items moved). Titles with BOTH words are left.
+- **Kurta Corner** is a men's/boys kurta brand (no girls line) — its genderless "Kids … Suit" defaulted to
+  `kids_girls_eastern`; image-confirmed BOYS in kurta-shalwar → `kids_boys_eastern`.
+- **Cougar sleeveless tops/dresses/peplums** in `kids_girls_eastern` = WESTERN girls → `kids_girls_western`
+  (guard a Beechtree "Sleeveless ETHNIC Embroidered SUIT", which stays eastern).
+- **Eastern boys = kurta/shalwar.** Verified via product image that Saya "Wash N Wear 2 Piece (Shirt/Trouser)
+  For Boys" is a boy in **kameez + shalwar** (eastern) — those stay in `kids_boys_eastern`, NOT moved. Only the
+  Minnie Minors "**Under Vest(s) (Pack Of 2)**" (innerwear) is dropped (we don't list undergarments).
+- **Loungewear MUST carry a sleepwear qualifier** (`\bnight\b` as a word / `\bsleep\b` / lounge / pyjama /
+  nighty / robe). Collection names with "night" as a SUBSTRING (Afrozeh "Nightlure"/"Candlenight"/"Serenight",
+  Azure "Nightingale", Sadaf Fawad Khan "Nightfall") and a mistagged Black Camels "CO-ORD SET" are re-derived
+  (fabric→unstitched, co-ord→`coord_western`, else pret). KEPT: Diners "Night Suit", Generation/Zeen
+  "Loungewear", Lakhany "Sleep Wear". Loungewear 20 → 13 (real sleepwear only).
+
 ### New brand/rule corrections (2026-06-24 classifier pass)
 - **Amir Adnan** — `jamawar/raw-silk "Jacket"` → `mens_waistcoat` (Rule 2.4). Its FINISHED couture is listed
   `sz:["Unstitched"]`, so it is exempt from the unstitched→fabric demotion and from `fwdCat` (its slug-rules
