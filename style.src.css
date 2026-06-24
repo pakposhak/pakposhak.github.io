@@ -850,8 +850,10 @@
     .bb-chip.bb-more{background:var(--gold-dim);border-color:var(--gold-bdr);color:var(--gold);font-weight:700}
     .bb-prod-empty{font-size:0.84rem;color:var(--txt-muted);padding:18px 4px}
     .bb-prod-empty.bb-pickprompt{text-align:center;font-size:1.08rem;font-weight:700;color:var(--txt);padding:36px 20px;line-height:1.55;max-width:440px;margin:0 auto}
-    /* Brand image-tile grid (req): small brand PHOTO tiles in multiple rows, replacing the text list */
-    .bb-btgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:12px 8px;padding:6px 2px 10px}
+    /* Brand image-tile CAROUSEL (req): small brand PHOTO tiles laid out in THREE rows that scroll
+       HORIZONTALLY (grid-auto-flow:column fills top→bottom then advances right). Tile size kept. */
+    .bb-btgrid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(3,auto);grid-auto-columns:84px;gap:12px 10px;overflow-x:auto;overflow-y:hidden;padding:6px 2px 12px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+    .bb-btgrid::-webkit-scrollbar{display:none}
     .bb-btile{display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;padding:0;cursor:pointer;font-family:inherit;width:100%}
     .bb-btile-img{width:100%;aspect-ratio:1/1;border-radius:14px;overflow:hidden;border:1.5px solid var(--gold-bdr);background:linear-gradient(135deg,var(--gold-dim),var(--surface));display:flex;align-items:center;justify-content:center;position:relative;transition:border-color .12s,transform .12s}
     .bb-btile-img img{width:100%;height:100%;object-fit:cover;display:block}
@@ -861,7 +863,7 @@
     .bb-btile .cb-star{color:var(--gold);font-size:0.82em;margin-right:2px}
     .bb-btile:hover .bb-btile-img{border-color:var(--gold)}
     .bb-btile:active .bb-btile-img{transform:scale(0.95)}
-    @media (min-width:820px){ .bb-btgrid{grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:16px 12px} .bb-btile-name{font-size:0.74rem} }
+    @media (min-width:820px){ .bb-btgrid{grid-auto-columns:104px;gap:16px 14px} .bb-btile-name{font-size:0.74rem} }
     /* third-tier club dropdown beside each group heading */
     .bb-grp-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;flex-wrap:wrap}
     .bb-grp-head .bb-grp-h{margin-bottom:0}

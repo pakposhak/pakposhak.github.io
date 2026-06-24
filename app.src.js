@@ -6541,7 +6541,14 @@
   // Brand list = a multi-row grid of small brand PHOTO tiles (req) — replaces the old text list +
   // per-brand product-count badge (the number confused buyers). Photos LAZY-load as tiles scroll
   // into view (cache + on-demand fetch) so all ~150 brands don't fetch at once. Tap keeps openBrandInApp.
-  function bbBrandDept(b){ return (b.c === 'w' || b.c === 'm' || b.c === 'k') ? b.c : 'w'; }   // photo dept (md/p → women photo)
+  // Photo dept: when a gender tab (Women/Men/Kids) is active, use IT so a MULTI-DEPT brand (Khaadi,
+  // Edenrobe…) shows a MEN photo under Men, a women photo under Women, a kids photo under Kids (req) —
+  // each dept's photo is cached separately (brand|dept). On the all-brands / Multi-Dept / Premium
+  // view (no gender tab) fall back to the brand's own primary dept.
+  function bbBrandDept(b){
+    if(_bbGender === 'w' || _bbGender === 'm' || _bbGender === 'k') return _bbGender;
+    return (b.c === 'w' || b.c === 'm' || b.c === 'k') ? b.c : 'w';
+  }
   function bbBrandGrid(brands){
     if(!brands.length) return `<div class="bb-prod-empty">${tr('bb_prod_none')}</div>`;
     const tile = b => {
@@ -6580,7 +6587,7 @@
           .then(j => { const arr = (j && j.products) || []; let p = (dept === 'w') ? arr.find(x => x && x.img && !_PS_MALE_RE.test(String(x.t || ''))) : null; if(!p) p = arr.find(x => x && x.img) || null; if(p && p.img){ psBrandThumbSet(n, dept, p.img); bbPaintTile(t, n, p.img); } })
           .catch(() => {});
       });
-    }, { rootMargin: '320px 0px' });   // prefetch a little before they scroll into view
+    }, { rootMargin: '200px 500px' });   // prefetch sideways (3-row carousel scrolls horizontally)
     grid.querySelectorAll('.bb-btile[data-name]').forEach(t => { if(!psBrandThumbGet(t.getAttribute('data-name'), t.getAttribute('data-dept') || 'w')) _bbPhotoIO.observe(t); });
   }
   function bbMeasureSlide(){
@@ -6795,7 +6802,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-25a';
+  const PSB_BUILD = '2026-06-25b';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
