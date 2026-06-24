@@ -805,7 +805,7 @@
   // a real PKR price reachable via the relay (PK IP). Force the relay for these so
   // the buyer sees the true PKR price instead of the raw USD .js price (which the
   // .pk-domain heuristic would otherwise mislabel as a tiny PKR amount).
-  const FORCE_RELAY_HOSTS = new Set(['suffuse.pk']);
+  const FORCE_RELAY_HOSTS = new Set(['suffuse.pk', 'rangrasiya.com.pk', 'rangrasiya.com']);
 
   // Default Pakistan price relay (Node relay on the Lahore VPS, fronted by Caddy
   // HTTPS at 103.83.91.34.sslip.io). Baked in so EVERY buyer's browser uses it
@@ -1246,9 +1246,12 @@
           //    → treat as USD and warn LOUD below (price is inflated Markets
           //    pricing, not a converted PKR price).
           // 3. cart.js unreachable → old heuristic: non-.pk site + price<600.
-          const isUsdSite = !/\.(pk|com\.pk)(\/|$)/.test(u.hostname + '/') && u.hostname !== 'pk.ethnc.com';
           const knownPkr  = pkrVia === 'direct' || pkrVia === 'relay';
-          const isUsd     = USD_ONLY_BRANDS.has(pastedHost) || (!knownPkr && (pkrVia !== 'unknown' || (isUsdSite && salePrice < 600)));
+          // Magnitude sanity: an UNRESOLVED price (cart.js unreachable) under ~600 "PKR" is implausibly
+          // cheap for any garment → almost certainly a geo-served USD number that the old .pk-domain
+          // heuristic mislabelled as a tiny PKR amount (e.g. Rang Rasiya .com.pk returned "PKR 84").
+          // Flag USD regardless of the .pk domain so it WARNS instead of silently charging a wrong price.
+          const isUsd     = USD_ONLY_BRANDS.has(pastedHost) || (!knownPkr && (pkrVia !== 'unknown' || salePrice < 600));
           if(isUsd){
             setDraftCurrency(id, 'USD'); // switches toggle before we fill the price
           }
@@ -2452,7 +2455,7 @@
       ps_enlarge:'Enlarge', ps_avail_sizes:'Available sizes', ps_unstitched:'Unstitched · no size needed', ps_also_st:'✂️ Stitched also available', ps_also_uns:'🧵 Unstitched fabric also available', ps_mto:'Made to order', ps_d_loading:'Loading more details…', ps_d_open:'View on brand site, order here', ps_d_more:'More from', ps_d_nofetch:'See all photos &amp; details on the brand page →', ps_d_nodesc:'No extra description provided.', warn_title:'Look there, order here', warn_body:'This page is only for photos and product details. Don\'t add to the brand\'s cart. To order on PakPoshak: tap + Add if it\'s in our listing, or Share the product to PakPoshak (or copy the link and paste it back here).', warn_ok:'Continue to brand site →', warn_cancel:'Stay on PakPoshak',
       ps_empty:'No products match these filters — try widening them.',
       ps_partial:'Not every brand &amp; product is listed here yet —', ps_partial_link:'want more? Browse by brands →', ps_word_products:'products', ps_word_brands:'brands',
-      ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products', ps_sort_lh:'৳ Low→High', ps_sort_hl:'৳ High→Low', ps_sort_price:'Sort: Price', ps_shop_cat:'Shop by category', wish_save:'Save to wishlist', wish_title:'Wishlist', wish_empty:'No saved items yet. Tap ♥ on any product to save it here.', wish_remove:'Remove', ps_also_uns_short:'Unstitched available', ps_also_st_short:'Stitched available', ps_sale:'Sale', ps_new:'New', ps_lbl_sort:'Sort', ps_lbl_filter:'Filter', ps_search_ph:'Search 50,000+ products, 140+ Pakistani brands', ps_search_nomatch:'No brand or category matched',
+      ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products', ps_sort_lh:'৳ Low→High', ps_sort_hl:'৳ High→Low', ps_sort_price:'Sort: Price', ps_shop_cat:'Shop by category', wish_save:'Save to wishlist', wish_title:'Wishlist', wish_empty:'No saved items yet. Tap ♥ on any product to save it here.', wish_remove:'Remove', ps_also_uns_short:'Unstitched available', ps_also_st_short:'Stitched available', ps_sale:'Sale', ps_new:'New', ps_lbl_sort:'Sort', ps_lbl_filter:'Filter', ps_search_ph:'Search 50,000+ products, 140+ Pakistani brands', ps_search_nomatch:'No brand or category matched', share_added:'Added to your cart, keep browsing', share_review:'Review order',
       bb_store:'Store Types', bb_product:'Product Category', bb_women:'👗 Women', bb_men:'👔 Men', bb_kids:'🧸 Kids', bb_md:'🏬 Multi-Dept', bb_premium:'💎 Premium',
       bb_more:'more', bb_less:'less', bb_all:'All', bb_two_ways:'Two ways to search brands', bb_pick_gender:'Pick women, men, or others above — or just type any brand name.', bb_pick_cat:'Pick a category above to see its brands.', bb_prod_sub:'🔎 Search 150+ brands to order directly from their page:', bb_loading:'Loading brands…', bb_prod_none:'No catalogued brands here yet.',
       bb_smart_ph:'🔍 Search 150+ brands — e.g. Khaadi, lawn, casual', bb_search_lead:'🔎 Know the brand? Search 150+ Pakistani brands by name:',
@@ -2520,7 +2523,7 @@
       ps_enlarge:'ছবি বড় করুন', ps_avail_sizes:'স্টকে থাকা সাইজ', ps_unstitched:'আনস্টিচড · সাইজ লাগে না', ps_also_st:'✂️ সেলাই করাও আছে', ps_also_uns:'🧵 আনস্টিচড কাপড়ও আছে', ps_mto:'অর্ডারে তৈরি হবে', ps_d_loading:'আরও বিবরণ আসছে…', ps_d_open:'ব্র্যান্ড সাইটে দেখুন, অর্ডার এখানে', ps_d_more:'আরও দেখুন —', ps_d_nofetch:'সব ছবি ও বিবরণ ব্র্যান্ডের পেজে দেখুন →', ps_d_nodesc:'বাড়তি কোনো বিবরণ নেই।', warn_title:'দেখুন ওখানে, অর্ডার এখানে', warn_body:'এই পেজটি শুধু ছবি ও পণ্যের বিবরণ দেখার জন্য। ব্র্যান্ডের cart-এ যোগ করবেন না। PakPoshak-এ অর্ডার করতে: লিস্টে থাকলে + Add ট্যাপ করুন, অথবা পণ্যটি PakPoshak-এ Share করুন (বা লিংক copy করে এখানে এসে paste করুন)।', warn_ok:'ব্র্যান্ড সাইটে যান →', warn_cancel:'PakPoshak-এ থাকুন',
       ps_empty:'এই ফিল্টারে কোনো পণ্য নেই — ফিল্টার একটু কমিয়ে দেখুন।',
       ps_partial:'সব ব্র্যান্ড বা পণ্য এখনো এখানে যোগ হয়নি —', ps_partial_link:'আরও চান? “ব্র্যান্ড দেখুন”-এ যান →', ps_word_products:'পণ্য', ps_word_brands:'ব্র্যান্ড',
-      ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়', ps_sort_lh:'৳ কম→বেশি', ps_sort_hl:'৳ বেশি→কম', ps_sort_price:'দাম অনুসারে', ps_shop_cat:'ক্যাটাগরি অনুযায়ী দেখুন', wish_save:'পছন্দে সেভ করুন', wish_title:'পছন্দের তালিকা', wish_empty:'এখনো কিছু সেভ করা হয়নি। যেকোনো পণ্যে ♥ চাপ দিয়ে এখানে সেভ করুন।', wish_remove:'সরান', ps_also_uns_short:'আনস্টিচডও আছে', ps_also_st_short:'সেলাইও আছে', ps_sale:'সেল', ps_new:'নতুন', ps_lbl_sort:'সাজান', ps_lbl_filter:'ফিল্টার', ps_search_ph:'খুঁজুন: ৫০,০০০+ পণ্য, ১৪০+ পাকিস্তানি ব্র্যান্ড', ps_search_nomatch:'কোনো ব্র্যান্ড বা ক্যাটাগরি মেলেনি',
+      ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়', ps_sort_lh:'৳ কম→বেশি', ps_sort_hl:'৳ বেশি→কম', ps_sort_price:'দাম অনুসারে', ps_shop_cat:'ক্যাটাগরি অনুযায়ী দেখুন', wish_save:'পছন্দে সেভ করুন', wish_title:'পছন্দের তালিকা', wish_empty:'এখনো কিছু সেভ করা হয়নি। যেকোনো পণ্যে ♥ চাপ দিয়ে এখানে সেভ করুন।', wish_remove:'সরান', ps_also_uns_short:'আনস্টিচডও আছে', ps_also_st_short:'সেলাইও আছে', ps_sale:'সেল', ps_new:'নতুন', ps_lbl_sort:'সাজান', ps_lbl_filter:'ফিল্টার', ps_search_ph:'খুঁজুন: ৫০,০০০+ পণ্য, ১৪০+ পাকিস্তানি ব্র্যান্ড', ps_search_nomatch:'কোনো ব্র্যান্ড বা ক্যাটাগরি মেলেনি', share_added:'কার্টে যোগ হয়েছে, আরও দেখুন', share_review:'অর্ডার দেখুন',
       bb_store:'স্টোরের ধরন', bb_product:'পণ্যের ক্যাটাগরি', bb_women:'👗 মেয়েদের', bb_men:'👔 ছেলেদের', bb_kids:'🧸 বাচ্চাদের', bb_md:'🏬 মাল্টি-ডিপ', bb_premium:'💎 প্রিমিয়াম',
       bb_more:'আরও', bb_less:'কম', bb_all:'সব', bb_two_ways:'ব্র্যান্ড খোঁজার দুটি উপায়', bb_pick_gender:'উপরে মেয়ে, ছেলে বা অন্যান্য বেছে নিন — অথবা যেকোনো ব্র্যান্ডের নাম লিখুন।', bb_pick_cat:'ব্র্যান্ড দেখতে উপরের একটি ক্যাটাগরিতে ট্যাপ করুন।', bb_prod_sub:'🔎 সরাসরি অর্ডার করতে ১৫০+ ব্র্যান্ড খুঁজুন:', bb_loading:'ব্র্যান্ড আসছে…', bb_prod_none:'এখানে এখনো কোনো ব্র্যান্ড নেই।',
       bb_smart_ph:'🔍 ১৫০+ ব্র্যান্ড খুঁজুন — যেমন Khaadi, lawn, casual', bb_search_lead:'🔎 ব্র্যান্ড জানা আছে? নাম দিয়ে ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন:',
@@ -3162,19 +3165,31 @@
     const clean = parseUrl(raw);
     return (clean && isKnownBrand(clean)) ? clean : null;
   }
-  // When the page is opened by a SHARE, the order form (which sits BELOW the Browse
-  // Products grid) must be the first thing the buyer sees — not the product images.
-  // The Browse grid loads async and would otherwise push the new draft far down the
-  // page, landing the buyer on browse images instead of their order. So hide Browse
-  // (collapsing its height → stable layout) and scroll the order/drafts to the top.
+  // When the page is opened by a SHARE, land the buyer on BROWSE PRODUCTS so they can keep
+  // adding more (req) — the shared item is already in their cart (Cart badge shows the count).
+  // A toast confirms the add so it isn't silent; tapping it jumps to the order list. (Previously
+  // this hid Browse and dumped the buyer on the order list, leaving "nothing to add more from".)
   function focusOrderView(){
-    const bt = document.querySelector('.browse-tabs'); if(bt) bt.style.display = 'none';
-    ['tabProducts','tabBrands'].forEach(idv => { const e = document.getElementById(idv); if(e) e.style.display = 'none'; });
-    setTimeout(() => {
-      const dc = document.getElementById('draftsContainer');
-      const tgt = (dc && dc.style.display !== 'none') ? dc : document.getElementById('urlInputRow');
-      if(tgt) tgt.scrollIntoView({ behavior:'auto', block:'start' });
-    }, 80);
+    const bt = document.querySelector('.browse-tabs'); if(bt) bt.style.display = '';
+    ['tabProducts','tabBrands'].forEach(idv => { const e = document.getElementById(idv); if(e) e.style.display = ''; });
+    try { if(typeof switchBrowse === 'function') switchBrowse('products'); } catch(e){}
+    try { window.scrollTo({ top:0, behavior:'auto' }); } catch(e){}
+    psShareAddedToast();
+  }
+  // Brief confirmation toast after a shared link is added (buyer stays on Browse Products).
+  function psShareAddedToast(){
+    let t = document.getElementById('psShareToast');
+    if(!t){ t = document.createElement('div'); t.id = 'psShareToast'; t.className = 'ps-share-toast'; t.setAttribute('role','status'); document.body.appendChild(t); }
+    t.innerHTML = `<span>✓ ${esc(tr('share_added'))}</span><button type="button" onclick="psGotoOrder()">${esc(tr('share_review'))}</button>`;
+    t.classList.add('on');
+    clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 5200);
+  }
+  // Jump to the order list (from the toast's "Review order").
+  function psGotoOrder(){
+    const t = document.getElementById('psShareToast'); if(t) t.classList.remove('on');
+    const dc = document.getElementById('draftsContainer');
+    const tgt = (dc && dc.style.display !== 'none') ? dc : document.getElementById('urlInputRow');
+    if(tgt) tgt.scrollIntoView({ behavior:'smooth', block:'start' });
   }
   function handleSharedUrl(){
     try{
@@ -5589,8 +5604,12 @@
     { g:'k', key:'kids_boys_formal',     en:'Boys Formal',     bn:'ছেলেদের ফরমাল',     e:'🎩' },
     { g:'k', key:'kids_infant',          en:'Infant',          bn:'শিশু (০–২ বছর)',    e:'👶' }
   ];
-  // Women/Men/Kids classifier tabs for the strip. Default = women (the app's lead department).
-  const PS_SHOP_GENDERS = [ ['w','👗','Women','মেয়েদের'], ['m','👔','Men','ছেলেদের'], ['k','🧸','Kids','বাচ্চাদের'] ];
+  // Women/Men/Kids/West classifier tabs for the strip. Default = women (the app's lead department).
+  // 'x' = West: a cross-gender WESTERN-wear tab gathering women's + men's western categories (req).
+  const PS_SHOP_GENDERS = [ ['w','👗','Women','মেয়েদের'], ['m','👔','Men','ছেলেদের'], ['k','🧸','Kids','বাচ্চাদের'], ['x','🌆','West','ওয়েস্টার্ন'] ];
+  // Western categories (req: women's + men's). Shown LAST within their own Women/Men carousels, and
+  // gathered together under the West tab. They are NOT removed from Women/Men — only reordered there.
+  const PS_WEST_KEYS = new Set(['shirt_trouser_2pc','western_top','womens_trouser','maxi_dress','loungewear','mens_shirt','mens_trouser']);
   let psShopGender = 'w';
   // The carousel has two MODES: 'cat' (Women/Men/Kids category tiles, default) and 'brand' (tap the
   // Brands tab → pick a department → a carousel of that dept's brands, each a representative photo).
@@ -5602,17 +5621,26 @@
   const PS_BRAND_DEPTS = [ ['w','👗','Women','মেয়েদের'], ['m','👔','Men','ছেলেদের'], ['k','🧸','Kids','বাচ্চাদের'], ['p','💎','Premium','প্রিমিয়াম'] ];
   // Tiles for the active department, hiding any category that has zero products (psFacetCats).
   function psShopTiles(){
-    let t = PS_SHOP_TILES.filter(x => x.g === psShopGender);
+    let t;
+    if(psShopGender === 'x'){
+      t = PS_SHOP_TILES.filter(x => PS_WEST_KEYS.has(x.key));                 // West tab = women's + men's western tiles together
+    } else {
+      const own = PS_SHOP_TILES.filter(x => x.g === psShopGender);
+      t = [...own.filter(x => !PS_WEST_KEYS.has(x.key)), ...own.filter(x => PS_WEST_KEYS.has(x.key))];   // western tiles LAST within Women/Men (req)
+    }
     if(psFacetCats && psFacetCats.size) t = t.filter(x => (x.cats || [x.key]).some(k => psFacetCats.has(k)));
     return t;
   }
   function psSetShopGender(g){ psShopMode = 'cat'; psShopGender = g; psBuildShopCat(); }
   function psShopBrandsMode(){
     if(psShopMode === 'brand'){ psShopMode = 'cat'; }                 // re-tap Brands → back to categories
-    else { psShopMode = 'brand'; psShopDept = psShopGender; }         // enter Brands on the SAME department (Women cats → Women brands)
+    else { psShopMode = 'brand'; psShopDept = (psShopGender === 'x') ? 'w' : psShopGender; }   // enter Brands on the same dept (West has no brand pool → Women)
     psBuildShopCat();
   }
   function psSetBrandDept(d){ psShopDept = d; psBuildShopCat(); }
+  // Desktop dual-cluster row: clicking a brand-cluster dept enters Brands mode for that dept directly
+  // (mobile reaches this via the Brands toggle, but desktop shows both clusters at once).
+  function psShopDeskBrand(d){ psShopMode = 'brand'; psShopDept = d; psBuildShopCat(); }
   // Brand names for a department, restricted to brands that actually have products (so each tile gets
   // a photo). Reuses the Browse-Brands ranked per-department pool. 'p' = Premium.
   function psShopBrandsForDept(dept){
@@ -5625,7 +5653,7 @@
   }
   // Keep a category tile's photo gender-appropriate: a WOMEN tile must not pick a men's product photo
   // (e.g. the Shawl tile was showing a man). Men/Kids tiles are gender-encoded already, so no filter.
-  const _PS_MALE_RE = /\b(men|mens|men's|gents?|male|mardana|him)\b/i;
+  const _PS_MALE_RE = /\b(men|mens|men's|gents?|male|mardana|him|waistcoat|sherwani|achkan|prince ?coat)\b/i;
   function _psTileGender(catKey){ const t = PS_SHOP_TILES.find(x => x.key === catKey || (x.cats && x.cats.indexOf(catKey) >= 0)); return t ? t.g : ''; }
   function _psThumbOk(catKey, title){ return _psTileGender(catKey) !== 'w' || !_PS_MALE_RE.test(String(title || '')); }
   // Per-category representative photo, cached in localStorage (14-day TTL) so the strip
@@ -5633,8 +5661,8 @@
   // page the grid loads (psHarvestThumbs), and by a throttled gap-fill fetch (psLoadShopThumbs).
   const PS_THUMB_TTL = 14 * 24 * 3600 * 1000;
   let _psThumbs = {};
-  try { _psThumbs = JSON.parse(localStorage.getItem('psb_cat_thumbs_v2') || '{}') || {}; } catch(e){ _psThumbs = {}; }   // _v2: re-fetch after the gender-aware photo fix
-  function _psThumbsSave(){ try{ localStorage.setItem('psb_cat_thumbs_v2', JSON.stringify(_psThumbs)); }catch(e){} }
+  try { _psThumbs = JSON.parse(localStorage.getItem('psb_cat_thumbs_v3') || '{}') || {}; } catch(e){ _psThumbs = {}; }   // _v3: re-fetch after the men's-formal-garment filter fix (Shawl tile was a man)
+  function _psThumbsSave(){ try{ localStorage.setItem('psb_cat_thumbs_v3', JSON.stringify(_psThumbs)); }catch(e){} }
   function psThumbGet(key){ const t = _psThumbs[key]; return (t && t.u && (Date.now() - t.t < PS_THUMB_TTL)) ? t.u : ''; }
   function psThumbSet(key, url){ if(!key || !url) return; _psThumbs[key] = { u:url, t:Date.now() }; _psThumbsSave(); }
   // Record the first GENDER-APPROPRIATE image seen for any category from a freshly-loaded product page.
@@ -5661,16 +5689,31 @@
     const tabsEl = document.getElementById('psShopTabs');
     const brand = psShopMode === 'brand';
     if(tabsEl){
-      const src = brand ? PS_BRAND_DEPTS : PS_SHOP_GENDERS;
-      const activeKey = brand ? psShopDept : psShopGender;
-      const fn = brand ? 'psSetBrandDept' : 'psSetShopGender';
-      const deptHtml = src.map(([d,e,en,bn]) =>
-        `<button type="button" class="psc-gtab${d===activeKey ? ' on' : ''}" onclick="${fn}('${d}')">${e} ${esc(_lang==='bn'?bn:en)}</button>`).join('');
-      // Dept tabs sit in their own track; the Brands toggle is OUTSIDE it so it's always tappable.
-      // In Brands mode the track is compacted (so all 4 incl. Premium fit) + tinted teal + the tabs
-      // slide in left-to-right, reading as departments "coming out of" the Brands toggle (req).
-      tabsEl.innerHTML = `<div class="psc-tabscroll${brand ? ' on-brand' : ''}">${deptHtml}</div>`
-        + `<button type="button" class="psc-gtab psc-gtab-brand${brand ? ' on' : ''}" onclick="psShopBrandsMode()">🏷️ ${esc(tr('ps_brands'))}</button>`;
+      const lang = _lang === 'bn';
+      if(window.innerWidth >= 820){
+        // DESKTOP (req): show BOTH clusters in the one row at once — Brands (brand depts fanning toward
+        // the left, next to the 🏷️ Brands label) + Categories (📁 Categories label then the category
+        // depts incl. West, on the right). Click a brand dept → that dept's brand carousel; a category
+        // dept → its category tiles. No toggle — desktop has the width to show both. Mobile keeps the toggle.
+        const bAct = brand ? psShopDept : '';
+        const cAct = brand ? '' : psShopGender;
+        const bTiles = PS_BRAND_DEPTS.map(([d,e,en,bn]) => `<button type="button" class="psc-gtab${d===bAct?' on':''}" onclick="psShopDeskBrand('${d}')">${e} ${esc(lang?bn:en)}</button>`).join('');
+        const cTiles = PS_SHOP_GENDERS.map(([d,e,en,bn]) => `<button type="button" class="psc-gtab${d===cAct?' on':''}" onclick="psSetShopGender('${d}')">${e} ${esc(lang?bn:en)}</button>`).join('');
+        tabsEl.innerHTML = `<div class="psc-deskrow">`
+          + `<div class="psc-cluster psc-cl-brand${brand?' on':''}">${bTiles}<span class="psc-clabel">🏷️ ${esc(tr('ps_brands'))}</span></div>`
+          + `<div class="psc-cluster psc-cl-cat${brand?'':' on'}"><span class="psc-clabel">📁 ${esc(tr('ps_category_short'))}</span>${cTiles}</div>`
+          + `</div>`;
+      } else {
+        const src = brand ? PS_BRAND_DEPTS : PS_SHOP_GENDERS;
+        const activeKey = brand ? psShopDept : psShopGender;
+        const fn = brand ? 'psSetBrandDept' : 'psSetShopGender';
+        const deptHtml = src.map(([d,e,en,bn]) =>
+          `<button type="button" class="psc-gtab${d===activeKey ? ' on' : ''}" onclick="${fn}('${d}')">${e} ${esc(lang?bn:en)}</button>`).join('');
+        // Dept tabs sit in their own track; the Brands toggle is OUTSIDE it so it's always tappable.
+        // In Brands mode the track is compacted (teal slide-in); cat mode is gold left slide-in (req).
+        tabsEl.innerHTML = `<div class="psc-tabscroll${brand ? ' on-brand' : ' on-cat'}">${deptHtml}</div>`
+          + `<button type="button" class="psc-gtab psc-gtab-brand${brand ? ' on' : ''}" onclick="psShopBrandsMode()">🏷️ ${esc(tr('ps_brands'))}</button>`;
+      }
     }
     const deptsEl = document.getElementById('psBrandDepts'); if(deptsEl) deptsEl.style.display = 'none';   // retired: brand departments now live in the tab row above
     const wrap = document.getElementById('psShopScroll'); if(!wrap) return;
@@ -5736,13 +5779,22 @@
     if(!missing.length) return;
     const cats = _psDeptCats(dept);
     const catParam = (cats && cats.length) ? ('&cat=' + encodeURIComponent(cats.join(','))) : '';   // dept-scoped photo
+    // Women dept: a multi-dept brand (Al-Deebaj/Edenrobe…) can carry men's kurta/waistcoat items
+    // filed under women categories — pull a few and pick the first NON-men's-titled photo so the
+    // Women tile isn't a man. Men/Kids tiles are already gender-scoped by category → 1 is enough.
+    const ps = (dept === 'w') ? 6 : 1;
     let i = 0; const CONC = 4;
     function next(){
       if(i >= missing.length) return;
       const n = missing[i++];
-      fetch(psSearchBase() + '?brand=' + encodeURIComponent(n) + catParam + '&pageSize=1&page=0', { cache:'default' })
+      fetch(psSearchBase() + '?brand=' + encodeURIComponent(n) + catParam + '&pageSize=' + ps + '&page=0', { cache:'default' })
         .then(r => r.ok ? r.json() : null)
-        .then(j => { const p = j && j.products && j.products[0]; if(p && p.img){ psBrandThumbSet(n, dept, p.img); psPaintBrandTile(n, p.img); } })
+        .then(j => {
+          const arr = (j && j.products) || [];
+          let p = (dept === 'w') ? arr.find(x => x && x.img && !_PS_MALE_RE.test(String(x.t || ''))) : null;
+          if(!p) p = arr.find(x => x && x.img) || null;
+          if(p && p.img){ psBrandThumbSet(n, dept, p.img); psPaintBrandTile(n, p.img); }
+        })
         .catch(() => {})
         .then(() => { next(); });
     }
@@ -5788,7 +5840,10 @@
         .then(r => r.ok ? r.json() : null)
         .then(j => {
           const arr = (j && j.products) || [];
-          const pick = arr.find(p => p && p.img && _psThumbOk(key, p.t)) || arr.find(p => p && p.img);
+          // For a WOMEN tile, never fall back to a (possibly men's) photo — leave the emoji instead
+          // of risking a man (req: the Shawl tile must show a woman). Men/Kids tiles keep the fallback.
+          const isW = _psTileGender(key) === 'w';
+          const pick = arr.find(p => p && p.img && _psThumbOk(key, p.t)) || (isW ? null : arr.find(p => p && p.img));
           if(pick && pick.img){ psThumbSet(key, pick.img); psPaintTile(key, pick.img); }
         })
         .catch(() => {})
@@ -5814,7 +5869,7 @@
     // The pinned header (filter row + carousel) is what stays on screen — offset by its LIVE height.
     const head = document.getElementById('psPinHead');
     let off = 0;
-    try { if(head && getComputedStyle(head).position === 'sticky') off = head.offsetHeight + 8; } catch(e){}
+    try { const pos = head ? getComputedStyle(head).position : ''; if(pos === 'sticky' || pos === 'fixed') off = head.offsetHeight + 8; } catch(e){}
     if(off){
       const y = grid.getBoundingClientRect().top + (window.scrollY || window.pageYOffset || 0) - off;
       window.scrollTo({ top: Math.max(0, y), behavior:'smooth' });
@@ -5833,6 +5888,70 @@
       t.classList.toggle('on', (!!c && c === activeCat) || (!!b && b === activeBrand));
     });
   }
+  // ── Keep the Browse-Products filter/category bar fixed to the top through the WHOLE scroll
+  //    (req: "keep it fixed for both iphone and android"). The bar is position:sticky scoped to
+  //    .ps-results, so on its own it releases the moment you scroll past the products into the
+  //    "Paste a link" section below. A 0-height sentinel records the bar's in-flow position; once
+  //    it scrolls under the top safe-area we switch the bar to position:fixed (matched to the
+  //    results column) and grow the sentinel to fill the gap so nothing jumps. It releases back to
+  //    sticky when you scroll up, so the branding still shows at the very top first. Mobile +
+  //    Products-tab only — desktop's bar is a static sidebar. ──
+  const _psPin = { sen:null, on:false, bound:false, inset:0 };
+  function _psPinMeasureInset(){
+    // env(safe-area-inset-top) isn't readable directly in JS — measure it off a hidden fixed probe
+    // so the fixed bar clears the iPhone notch/camera exactly like the sticky one did (standing rule).
+    let p = document.getElementById('psSafeProbe');
+    if(!p){ p = document.createElement('div'); p.id = 'psSafeProbe'; p.style.cssText = 'position:fixed;top:0;left:0;width:0;height:env(safe-area-inset-top,0px);visibility:hidden;pointer-events:none'; document.body.appendChild(p); }
+    _psPin.inset = p.getBoundingClientRect().height;
+  }
+  function psPinUpdate(){
+    const head = document.getElementById('psPinHead'); if(!head) return;
+    let sen = _psPin.sen;
+    if(!sen || !sen.parentNode){ sen = document.createElement('div'); sen.setAttribute('aria-hidden','true'); sen.style.height = '0px'; head.parentNode.insertBefore(sen, head); _psPin.sen = sen; }
+    // Runs on BOTH mobile and desktop now (req: desktop also locks the filters/sort/carousel on
+    // scroll). Only while the bar is actually rendered — getClientRects() (not offsetParent, which
+    // is null for position:fixed) stays truthy while fixed, and goes empty when the Brands tab hides
+    // #tabProducts, so we correctly drop the fix on tab switch.
+    const active = head.getClientRects().length > 0;
+    if(!active){
+      if(_psPin.on){ head.style.position=''; head.style.top=''; head.style.left=''; head.style.width=''; head.style.zIndex=''; head.classList.remove('ps-pinned'); sen.style.height='0px'; _psPin.on=false; }
+      return;
+    }
+    const st = _psPin.inset;
+    const senTop = sen.getBoundingClientRect().top;
+    if(!_psPin.on && senTop <= st){
+      const rr = head.parentElement.getBoundingClientRect();
+      const hH = head.getBoundingClientRect().height;
+      head.style.position='fixed'; head.style.top=st+'px'; head.style.left=rr.left+'px'; head.style.width=rr.width+'px'; head.style.zIndex='16';
+      head.classList.add('ps-pinned');   // desktop: triggers the background/shadow (mobile already styles the pinhead)
+      sen.style.height = hH + 'px';
+      _psPin.on = true;
+    } else if(_psPin.on && senTop > st){
+      head.style.position=''; head.style.top=''; head.style.left=''; head.style.width=''; head.style.zIndex=''; head.classList.remove('ps-pinned');
+      sen.style.height='0px';
+      _psPin.on = false;
+    }
+  }
+  function psPinInit(){
+    if(_psPin.bound) return;
+    _psPin.bound = true;
+    _psPin.desk = window.innerWidth >= 820;
+    _psPinMeasureInset();
+    window.addEventListener('scroll', () => window.requestAnimationFrame(psPinUpdate), { passive:true });
+    // On resize/orientation, the column width and notch inset may change: drop the fix and recompute.
+    window.addEventListener('resize', () => {
+      const head = document.getElementById('psPinHead');
+      if(head){ head.style.position=''; head.style.top=''; head.style.left=''; head.style.width=''; head.style.zIndex=''; head.classList.remove('ps-pinned'); }
+      if(_psPin.sen) _psPin.sen.style.height = '0px';
+      _psPin.on = false;
+      _psPinMeasureInset();
+      // Re-render the tab row only when crossing the 820 breakpoint (desktop dual-cluster ↔ mobile toggle).
+      const desk = window.innerWidth >= 820;
+      if(_psPin.desk !== desk){ _psPin.desk = desk; try { psBuildShopCat(); } catch(e){} }
+      window.requestAnimationFrame(psPinUpdate);
+    });
+    psPinUpdate();
+  }
   // The Shop-by-Category carousel is ALWAYS visible (req) — it sticks at the top while scrolling
   // products so the buyer can switch category anytime. Build lazily; otherwise just refresh the
   // active highlight.
@@ -5842,6 +5961,7 @@
     const sc = document.getElementById('psShopScroll');
     if(sc && !sc.children.length) psBuildShopCat();
     else psSyncShopActive();
+    psPinInit();
   }
   // All three filters combine with AND; price buckets OR within themselves.
   function psApply(){
@@ -5993,7 +6113,7 @@
         : `<div class="ps-img-sizes">${dualTag}<b>${tr('ps_avail_sizes')}</b>${list.slice(0,7).map(esc).join(' · ')}</div>`;
     const _uk = psUrlKey(p.u), _wsaved = psWishHas(p.u);
     return `<div class="ps-card">
-      <div class="ps-img" onclick="psDetail(${idx})" role="button" tabindex="0" aria-label="${esc(p.t)} — enlarge">${p.sale?'<span class="ps-sale">SALE</span>':''}<button type="button" class="ps-wish${_wsaved?' on':''}" data-uk="${esc(_uk)}" onclick="event.stopPropagation();psWishToggle(${idx},event)" aria-label="${tr('wish_save')}" title="${tr('wish_save')}"><svg class="ps-heart-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></button><button type="button" class="ps-info" onclick="event.stopPropagation();psDetail(${idx})" aria-label="Enlarge pictures and details" title="Enlarge pics &amp; details">🔍<span class="ps-info-tx">${tr('ps_enlarge')}</span></button><img loading="lazy" src="${esc(thumbUrl(p.img))}" data-full="${esc(p.img)}" alt="${esc(p.t)}" onerror="if(!this.dataset.f){this.dataset.f=1;this.src=this.dataset.full;}else{this.parentElement.classList.add('ps-img-fail');}">${szOverlay}</div>
+      <div class="ps-img" onclick="psDetail(${idx})" role="button" tabindex="0" aria-label="${esc(p.t)} — enlarge"><button type="button" class="ps-wish${_wsaved?' on':''}" data-uk="${esc(_uk)}" onclick="event.stopPropagation();psWishToggle(${idx},event)" aria-label="${tr('wish_save')}" title="${tr('wish_save')}"><svg class="ps-heart-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></button><div class="ps-tr">${p.sale?`<span class="ps-sale">${tr('ps_sale')}</span>`:''}<button type="button" class="ps-info" onclick="event.stopPropagation();psDetail(${idx})" aria-label="${tr('ps_enlarge')}" title="${tr('ps_enlarge')}">🔍</button></div><img loading="lazy" src="${esc(thumbUrl(p.img))}" data-full="${esc(p.img)}" alt="${esc(p.t)}" onerror="if(!this.dataset.f){this.dataset.f=1;this.src=this.dataset.full;}else{this.parentElement.classList.add('ps-img-fail');}">${szOverlay}</div>
       <div class="ps-cbody">
         <div class="ps-brand">${esc(p.b)}</div>
         <div class="ps-title">${esc(p.t)}</div>
@@ -6630,7 +6750,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-24s';
+  const PSB_BUILD = '2026-06-24w';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

@@ -160,13 +160,16 @@ function handleSearch(u, res){
   const fts = ftsQuery(q.get('q'));
   if (fts) { where.push('p.id IN (SELECT rowid FROM products_fts WHERE products_fts MATCH ?)'); args.push(fts); }
 
-  // 90s landing rotation: ?seed=N on the PLAIN landing (no q / sort / filter / sale / size)
-  // rotates WHICH curated products lead — women-pret still leads (PRETLEAD), but a seeded
-  // multiplicative hash of p.ord shuffles the order so the page feels fresh ~every 90s without
-  // re-harvesting. The multiplier is always large so low-ord women-pret items actually rotate,
-  // and consecutive seeds jump far apart. Seed-gated → no seed = byte-identical to the default.
+  // 90s rotation: ?seed=N rotates WHICH curated products lead — not only on the plain landing but
+  // WITHIN any active category / brand / price / sale / text-search filter too (req: "front-page
+  // products keep changing within the selected category/brand", instead of the same first images
+  // every time). Women-pret still leads (PRETLEAD); a seeded multiplicative hash of p.ord shuffles
+  // the order so the page feels fresh ~every 90s without re-harvesting. The multiplier is always
+  // large so low-ord items actually rotate and consecutive seeds jump far apart. Skipped only when
+  // the buyer imposed their OWN order — an explicit ৳ price sort, the New filter, or an age/size
+  // boost — and when no seed is sent (then byte-identical to the default p.ord order).
   const _seed = q.get('seed');
-  if (_seed != null && /^[0-9]{1,15}$/.test(_seed) && !sort && q.get('new') !== '1' && !fts && !cats.length && !brands.length && !pidx.length && q.get('sale') !== '1' && !/^[a-z0-9]{1,4}$/.test(sizeBoost) && ORD_N > 1) {
+  if (_seed != null && /^[0-9]{1,15}$/.test(_seed) && !sort && q.get('new') !== '1' && !/^[a-z0-9]{1,4}$/.test(sizeBoost) && ORD_N > 1) {
     const _mult = 2000003 + ((parseInt(_seed, 10) * 524287) % 1000000);
     orderBy = PRETLEAD + ' ASC, (((p.ord + 1) * ' + _mult + ') % 2147483647) ASC, p.ord ASC';
   }

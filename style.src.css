@@ -565,6 +565,14 @@
     .psc-tabscroll.on-brand .psc-gtab:nth-child(3){animation-delay:.1s}
     .psc-tabscroll.on-brand .psc-gtab:nth-child(4){animation-delay:.15s}
     @keyframes psTabIn{from{opacity:0;transform:translateX(14px) scale(.92)}to{opacity:1;transform:translateX(0) scale(1)}}
+    /* Category mode (Women/Men/Kids/West): the 4 dept tabs compact to fit one row and slide in from
+       the LEFT (mirroring Brands' right slide-in), keeping the existing GOLD colour (req). */
+    .psc-tabscroll.on-cat{overflow-x:visible}
+    .psc-tabscroll.on-cat .psc-gtab{padding:4px 9px;font-size:0.7rem;animation:psTabInL .28s ease-out both}
+    .psc-tabscroll.on-cat .psc-gtab:nth-child(2){animation-delay:.05s}
+    .psc-tabscroll.on-cat .psc-gtab:nth-child(3){animation-delay:.1s}
+    .psc-tabscroll.on-cat .psc-gtab:nth-child(4){animation-delay:.15s}
+    @keyframes psTabInL{from{opacity:0;transform:translateX(-14px) scale(.92)}to{opacity:1;transform:translateX(0) scale(1)}}
     /* Brand-mode department pills (Kids/Women/Men/Premium) — a sub-level under the Brands tab */
     .ps-shopcat-depts{display:flex;gap:7px;margin:0 0 9px;flex-wrap:wrap}
     .psc-dpill{flex:0 0 auto;padding:4px 12px;border:1.5px solid var(--bdr-med);border-radius:13px;background:var(--input-bg);color:var(--txt-sec);font-size:0.72rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
@@ -580,7 +588,21 @@
     .psc-tile:active .psc-img{transform:scale(0.95)}
     .psc-tile.on .psc-img{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
     .psc-lbl{font-size:0.7rem;font-weight:700;color:var(--txt);line-height:1.15;text-align:center;width:84px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-    @media (min-width:820px){ .ps-shopcat{margin-bottom:16px} .psc-gtab{font-size:0.8rem;padding:6px 16px} .psc-tile{width:104px} .psc-img{width:104px;height:124px;border-radius:16px} .psc-lbl{width:108px;font-size:0.76rem} .psc-tile.psc-noimg .psc-img::after{font-size:2.2rem} }
+    @media (min-width:820px){
+      .ps-shopcat{margin-bottom:16px} .psc-gtab{font-size:0.8rem;padding:6px 16px} .psc-tile{width:104px} .psc-img{width:104px;height:124px;border-radius:16px} .psc-lbl{width:108px;font-size:0.76rem} .psc-tile.psc-noimg .psc-img::after{font-size:2.2rem}
+      /* DESKTOP dual-cluster tab row (req): Brands cluster (left, teal-tinted) + Categories cluster
+         (right, gold) BOTH visible at once — no toggle. Tiles fan outward from the centre labels. */
+      .psc-deskrow{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;width:100%}
+      .psc-cluster{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+      .psc-clabel{font-size:0.72rem;font-weight:800;letter-spacing:0.4px;text-transform:uppercase;color:var(--txt-muted);white-space:nowrap;padding:0 2px}
+      .psc-cl-brand .psc-gtab{border-color:#3f9d92;color:#137a72}
+      .psc-cl-brand .psc-gtab.on{background:#137a72;color:#fff;border-color:#137a72}
+      [data-theme="dark"] .psc-cl-brand .psc-gtab{color:#5fd0c4;border-color:#2a6b63}
+      [data-theme="dark"] .psc-cl-brand .psc-gtab.on{background:#137a72;color:#fff;border-color:#137a72}
+      /* Desktop fixed view (req): JS adds .ps-pinned when the header locks on scroll — give it a
+         background + shadow so the filters/sort/carousel read cleanly as products scroll under. */
+      #tabProducts .ps-pinhead.ps-pinned{background:var(--bg);box-shadow:0 6px 16px -6px rgba(0,0,0,0.28)}
+    }
     /* ── WISHLIST (E) ── heart on cards + header entry + saved-items drawer ── */
     .hdr-wish{position:relative;color:var(--gold);font-size:1.15rem;line-height:1;padding:6px 9px}
     .hdr-wish-badge{position:absolute;top:-3px;right:-3px;background:#c0392b;color:#fff;border-radius:9px;min-width:16px;height:16px;padding:0 4px;font-size:0.6rem;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1}
@@ -732,7 +754,9 @@
     .ps-rail .ps-fblock:last-child{margin-bottom:0}
     .ps-flabel{font-size:0.7rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:7px}
     .ps-fnum{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--gold);color:#12122a;font-size:0.62rem;font-weight:800;letter-spacing:0;vertical-align:middle}
-    .ps-sale{position:absolute;top:6px;left:6px;z-index:2;background:#c0392b;color:#fff;font-size:0.6rem;font-weight:800;letter-spacing:0.5px;padding:2px 7px;border-radius:5px}
+    /* Sale badge now sits in the top-RIGHT cluster (.ps-tr) beside the magnifier — no longer
+       overlapping the wishlist heart at top-left (req). In-flow within the flex cluster. */
+    .ps-sale{background:#c0392b;color:#fff;font-size:0.6rem;font-weight:800;letter-spacing:0.5px;padding:3px 7px;border-radius:5px;line-height:1}
     /* 6 price buckets in a 3×2 grid (two rows on mobile), re-tap a bucket to clear it, multi-select OR */
     .ps-price{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
     .ps-bucket{padding:7px 4px;border:1.5px solid var(--gold-bdr);border-radius:13px;background:var(--gold-dim);color:var(--gold);font-size:0.72rem;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;text-align:center}
@@ -952,10 +976,17 @@
     .ps-pgdd-item.on{background:var(--gold-dim);color:var(--gold);font-weight:700}
     .ps-pg-btn:disabled{opacity:0.4;cursor:default}
     .ps-empty{text-align:center;color:var(--txt-muted);padding:40px 10px;font-size:0.9rem}
-    /* card "details" icon → in-page product popup */
-    .ps-info{position:absolute;top:6px;right:6px;height:24px;border-radius:13px;background:rgba(10,22,40,0.62);color:#fff;border:none;cursor:pointer;font-size:0.72rem;font-weight:700;display:flex;align-items:center;gap:3px;z-index:2;line-height:1;padding:0 9px;font-family:inherit}
-    .ps-info:hover{background:rgba(10,22,40,0.85)}
-    .ps-info .ps-info-tx{font-size:0.66rem;letter-spacing:0.2px}
+    /* card top-RIGHT cluster: the magnifier (enlarge) icon with the Sale badge beside it (req) */
+    .ps-tr{position:absolute;top:6px;right:6px;z-index:2;display:flex;align-items:center;gap:5px}
+    /* card "details" icon → in-page product popup. Magnifier-ONLY now (text dropped), a round
+       button mirroring the wishlist heart at top-left. */
+    .ps-info{width:28px;height:28px;border-radius:50%;background:rgba(10,22,40,0.55);color:#fff;border:none;cursor:pointer;font-size:0.92rem;font-weight:700;display:flex;align-items:center;justify-content:center;line-height:1;padding:0;font-family:inherit}
+    .ps-info:hover{background:rgba(10,22,40,0.78)}
+    /* Share-added confirmation toast — fixed above the bottom nav, auto-dismisses (req #6) */
+    .ps-share-toast{position:fixed;left:50%;transform:translateX(-50%) translateY(20px);bottom:calc(66px + env(safe-area-inset-bottom,0px));z-index:60;display:flex;align-items:center;gap:10px;max-width:92vw;background:#137a72;color:#fff;padding:10px 14px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.28);font-size:0.82rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
+    .ps-share-toast.on{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
+    .ps-share-toast button{flex:0 0 auto;background:rgba(255,255,255,0.22);color:#fff;border:none;border-radius:8px;padding:6px 11px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+    .ps-share-toast button:hover{background:rgba(255,255,255,0.34)}
     /* Brand-site warning interstitial — centered themed dialog (mirrors .ps-detail), above all overlays */
     .ps-warn{display:none;position:fixed;inset:0;z-index:650;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;padding:18px}
     .ps-warn-card{background:var(--surface);border:1px solid var(--bdr-med);border-radius:16px;max-width:380px;width:100%;padding:24px 22px;text-align:center;box-shadow:0 14px 40px rgba(0,0,0,0.28);animation:psbPillIn .3s ease}
