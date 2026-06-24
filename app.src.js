@@ -5793,9 +5793,10 @@
   // 1- vs 2-line labels and is taller on desktop) so the first product row isn't tucked behind it.
   function psScrollGridUnderCarousel(){
     const grid = document.getElementById('psGrid'); if(!grid) return;
-    const cat = document.getElementById('psShopCat');
+    // The pinned header (filter row + carousel) is what stays on screen — offset by its LIVE height.
+    const head = document.getElementById('psPinHead');
     let off = 0;
-    try { if(cat && getComputedStyle(cat).position === 'sticky') off = cat.offsetHeight + 8; } catch(e){}
+    try { if(head && getComputedStyle(head).position === 'sticky') off = head.offsetHeight + 8; } catch(e){}
     if(off){
       const y = grid.getBoundingClientRect().top + (window.scrollY || window.pageYOffset || 0) - off;
       window.scrollTo({ top: Math.max(0, y), behavior:'smooth' });
@@ -6592,7 +6593,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-24o';
+  const PSB_BUILD = '2026-06-24p';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

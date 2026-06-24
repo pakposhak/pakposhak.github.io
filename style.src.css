@@ -438,14 +438,16 @@
       /* Price is the LEFT-most tab now → its popover must open rightward (base anchors it right:0,
          which would push it off the left edge of the screen). Cap width so it stays on a phone. */
       #tabProducts .ps-pricepop{left:0;right:auto;width:min(232px,86vw)}
-      /* The category carousel is ALWAYS visible: it pins to the top while scrolling the products
-         (req). The search + filter row above it scroll away — only the carousel stays. The
-         #tabProducts prefix outranks the base `.ps-sticky-zone{position:sticky}` / `.ps-shopcat`
-         rules that sit later in source. scroll-margin keeps a tapped category's first row clear of
-         the pinned strip. */
+      /* Pinned header: the filter row (sort/price) AND the category/brand carousel stay visible
+         while scrolling the products (req). The search bar above scrolls away. `top` uses the iPhone
+         safe-area inset so the pinned header clears the notch / camera pin (standing rule), falling
+         back to 0 on devices without an inset. The #tabProducts prefix outranks the base
+         `.ps-sticky-zone{position:sticky}` rule that sits later in source. */
       #tabProducts .ps-sticky-zone{position:static;box-shadow:none;padding:0}
-      #tabProducts .ps-shopcat{position:sticky;top:0;z-index:16;background:var(--bg);margin:0 0 8px;padding:7px 0 5px;box-shadow:0 5px 11px -5px rgba(0,0,0,0.22)}
-      #tabProducts .ps-grid{scroll-margin-top:180px}
+      #tabProducts .ps-pinhead{position:sticky;top:env(safe-area-inset-top,0px);z-index:16;background:var(--bg);padding:6px 0 5px;box-shadow:0 5px 11px -5px rgba(0,0,0,0.22)}
+      #tabProducts .ps-pinhead .ps-resbar{margin-bottom:8px}
+      #tabProducts .ps-shopcat{margin:0;padding:0;box-shadow:none}
+      #tabProducts .ps-grid{scroll-margin-top:232px}
     }
     .show-more-btn{font-size:0.75rem;color:var(--gold);background:none;border:none;cursor:pointer;font-weight:600;padding:4px 0;text-decoration:underline}
 
