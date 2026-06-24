@@ -5290,12 +5290,11 @@
     if(psSort)            p.set('sort', psSort);
     if(psQuery)           p.set('q', psQuery);
     if(psSizeQ)           p.set('size', psSizeQ);   // boost products that have this age/size
-    // 90s landing rotation: on the PLAIN landing (no search / sort / filter) send a seed that
-    // advances every 90 seconds. The server keeps women-pret leading but rotates WHICH curated
-    // products lead, so the page feels fresh on each visit / auto-refresh — without re-harvesting
-    // or changing the catalogue. Filtered / searched / sorted views never send it (they stay
-    // exact and stable).
-    if(!psSel.cats.size && !psSel.brands.size && !psSel.prices.size && !psSaleOnly && !psNewOnly && !psSort && !psQuery && !psSizeQ){
+    // 90s rotation seed: advances every 90s. Sent on the landing AND on category/brand/search/filter
+    // views so the same selection doesn't always surface the same first products (req: front-page
+    // products keep changing within the selected category/brand). The ONLY view that stays exact is
+    // an explicit ৳ price sort. The server seed-shuffles within whatever filter is active.
+    if(!psSort){
       p.set('seed', Math.floor(Date.now() / 90000));
     }
     p.set('page', psPage);
@@ -5667,8 +5666,10 @@
       const fn = brand ? 'psSetBrandDept' : 'psSetShopGender';
       const deptHtml = src.map(([d,e,en,bn]) =>
         `<button type="button" class="psc-gtab${d===activeKey ? ' on' : ''}" onclick="${fn}('${d}')">${e} ${esc(_lang==='bn'?bn:en)}</button>`).join('');
-      // Dept tabs scroll in their own track; the Brands toggle sits OUTSIDE it so it's always tappable.
-      tabsEl.innerHTML = `<div class="psc-tabscroll">${deptHtml}</div>`
+      // Dept tabs sit in their own track; the Brands toggle is OUTSIDE it so it's always tappable.
+      // In Brands mode the track is compacted (so all 4 incl. Premium fit) + tinted teal + the tabs
+      // slide in left-to-right, reading as departments "coming out of" the Brands toggle (req).
+      tabsEl.innerHTML = `<div class="psc-tabscroll${brand ? ' on-brand' : ''}">${deptHtml}</div>`
         + `<button type="button" class="psc-gtab psc-gtab-brand${brand ? ' on' : ''}" onclick="psShopBrandsMode()">🏷️ ${esc(tr('ps_brands'))}</button>`;
     }
     const deptsEl = document.getElementById('psBrandDepts'); if(deptsEl) deptsEl.style.display = 'none';   // retired: brand departments now live in the tab row above
@@ -5687,14 +5688,14 @@
       const brands = psShopBrandsForDept(psShopDept);
       if(!brands.length){ wrap.innerHTML = `<div class="psc-empty">${esc(tr('bb_prod_none'))}</div>`; wrap.scrollLeft = 0; return; }
       wrap.innerHTML = brands.map(n => {
-        const url = psBrandThumbGet(n);
+        const url = psBrandThumbGet(n, psShopDept);
         const img = url ? `<img loading="lazy" src="${esc(thumbUrl(url))}" alt="${esc(n)}" onerror="this.closest('.psc-tile').classList.add('psc-noimg');this.remove();">` : '';
         return `<button type="button" class="psc-tile${n===activeBrand ? ' on' : ''}${url ? '' : ' psc-noimg'}" data-brand="${esc(n)}" onclick="psShopPickBrand(this.getAttribute('data-brand'))" title="${esc(n)}">`
           + `<span class="psc-img" data-emoji="🏷️">${img}</span>`
           + `<span class="psc-lbl">${esc(n)}</span></button>`;
       }).join('');
       wrap.scrollLeft = 0;
-      psLoadBrandThumbs(brands);
+      psLoadBrandThumbs(brands, psShopDept);
       return;
     }
     // ── CATEGORY MODE (default) ──
@@ -5711,11 +5712,13 @@
     wrap.scrollLeft = 0;
     psLoadShopThumbs();
   }
-  // ── Brand-tile photos: one representative product photo per brand, cached in localStorage ──
+  // ── Brand-tile photos: one representative photo per brand PER DEPARTMENT (so a multi-dept brand
+  //    shows a kids photo under Kids, a women photo under Women, etc.), cached in localStorage ──
   let _psBrandThumbs = {};
-  try { _psBrandThumbs = JSON.parse(localStorage.getItem('psb_brand_thumbs') || '{}') || {}; } catch(e){ _psBrandThumbs = {}; }
-  function psBrandThumbGet(n){ const t = _psBrandThumbs[n]; return (t && t.u && (Date.now() - t.t < PS_THUMB_TTL)) ? t.u : ''; }
-  function psBrandThumbSet(n, url){ if(!n || !url) return; _psBrandThumbs[n] = { u:url, t:Date.now() }; try{ localStorage.setItem('psb_brand_thumbs', JSON.stringify(_psBrandThumbs)); }catch(e){} }
+  try { _psBrandThumbs = JSON.parse(localStorage.getItem('psb_brand_thumbs_v2') || '{}') || {}; } catch(e){ _psBrandThumbs = {}; }
+  function _psBrandKey(n, dept){ return n + '|' + (dept || 'w'); }
+  function psBrandThumbGet(n, dept){ const t = _psBrandThumbs[_psBrandKey(n, dept)]; return (t && t.u && (Date.now() - t.t < PS_THUMB_TTL)) ? t.u : ''; }
+  function psBrandThumbSet(n, dept, url){ if(!n || !url) return; _psBrandThumbs[_psBrandKey(n, dept)] = { u:url, t:Date.now() }; try{ localStorage.setItem('psb_brand_thumbs_v2', JSON.stringify(_psBrandThumbs)); }catch(e){} }
   function psPaintBrandTile(n, url){
     if(!url) return;
     let tile = null;
@@ -5726,27 +5729,34 @@
     im.onerror = function(){ tile.classList.add('psc-noimg'); im.remove(); };
     span.appendChild(im); tile.classList.remove('psc-noimg');
   }
-  function psLoadBrandThumbs(brands){
-    brands.forEach(n => { const u = psBrandThumbGet(n); if(u) psPaintBrandTile(n, u); });
+  function psLoadBrandThumbs(brands, dept){
+    brands.forEach(n => { const u = psBrandThumbGet(n, dept); if(u) psPaintBrandTile(n, u); });
     if(!psApiMode) return;
-    const missing = brands.filter(n => !psBrandThumbGet(n));
+    const missing = brands.filter(n => !psBrandThumbGet(n, dept));
     if(!missing.length) return;
+    const cats = _psDeptCats(dept);
+    const catParam = (cats && cats.length) ? ('&cat=' + encodeURIComponent(cats.join(','))) : '';   // dept-scoped photo
     let i = 0; const CONC = 4;
     function next(){
       if(i >= missing.length) return;
       const n = missing[i++];
-      fetch(psSearchBase() + '?brand=' + encodeURIComponent(n) + '&pageSize=1&page=0', { cache:'default' })
+      fetch(psSearchBase() + '?brand=' + encodeURIComponent(n) + catParam + '&pageSize=1&page=0', { cache:'default' })
         .then(r => r.ok ? r.json() : null)
-        .then(j => { const p = j && j.products && j.products[0]; if(p && p.img){ psBrandThumbSet(n, p.img); psPaintBrandTile(n, p.img); } })
+        .then(j => { const p = j && j.products && j.products[0]; if(p && p.img){ psBrandThumbSet(n, dept, p.img); psPaintBrandTile(n, p.img); } })
         .catch(() => {})
         .then(() => { next(); });
     }
     for(let c = 0; c < CONC; c++) next();
   }
-  // Tap a brand tile → filter the grid to that brand, then scroll.
+  // Category keys for a brand-carousel department. Premium ('p') is a tier, not a gender → no cat
+  // restriction. Women/Men/Kids restrict to that gender's categories so a multi-department brand
+  // (Edenrobe, Khaadi…) shows ONLY that department's articles when picked under it (req).
+  function _psDeptCats(dept){ return dept === 'w' ? PS_W : dept === 'm' ? PS_M : dept === 'k' ? PS_K : []; }
+  // Tap a brand tile → filter the grid to that brand AND the current department's categories, then scroll.
   function psShopPickBrand(name){
     if(!name) return;
-    psSel = { prices:new Set(), cats:new Set(), brands:new Set([name]) };
+    const cats = (psShopMode === 'brand') ? _psDeptCats(psShopDept) : [];
+    psSel = { prices:new Set(), cats:new Set(cats), brands:new Set([name]) };
     psSort = ''; psSaleOnly = false; psNewOnly = false; psQuery = ''; psSizeQ = '';
     ['psSearchMobile','psSearchDesktop'].forEach(idd => { const e = document.getElementById(idd); if(e) e.value = ''; });
     psSearchHint('', new Set(), new Set());
@@ -6233,6 +6243,25 @@
   }
   function psWishOpen(){ psWishRender(); const d = document.getElementById('wishDrawer'); if(d){ d.classList.add('open'); document.body.style.overflow = 'hidden'; } }
   function psWishClose(){ const d = document.getElementById('wishDrawer'); if(d) d.classList.remove('open'); document.body.style.overflow = ''; }
+  // Tap a saved item's photo → open the multi-image lightbox (like the order form). Shows the saved
+  // photo instantly, then fetches the product's full gallery (Shopify .js) and upgrades the view.
+  function psWishZoom(i){
+    const p = _wish[i]; if(!p || !p.u) return;
+    if(p.imgs && p.imgs.length){ openImgZoom(p.imgs); return; }
+    openImgZoom(p.img ? [p.img] : []);
+    let origin, handle;
+    try { const u = new URL(p.u); origin = u.origin; const m = u.pathname.match(/\/products\/([^/?#.]+)/); handle = m && m[1]; } catch(e){}
+    if(!handle) return;   // SFCC / non-Shopify → the single saved photo only
+    fetch(origin + '/products/' + handle + '.js', { cache:'no-store' })
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(prod => {
+        const imgs = (prod.images || []).map(s => typeof s === 'string' ? s : (s && s.src)).filter(Boolean);
+        if(imgs.length){ p.imgs = imgs; _wishSave();
+          const ov = document.getElementById('imgZoomOv');
+          if(ov && ov.style.display !== 'none') openImgZoom(imgs);   // upgrade the open lightbox to the full gallery
+        }
+      }).catch(() => {});
+  }
   function psWishRender(){
     const body = document.getElementById('wishBody'); if(!body) return;
     const cnt = document.getElementById('wishCount'); if(cnt) cnt.textContent = _wish.length ? ('· ' + _wish.length) : '';
@@ -6241,7 +6270,7 @@
       const bdt = (p._bdt != null) ? p._bdt : estLandedBdt(p.pkr, p.cat);
       const img = p.img ? `<img loading="lazy" src="${esc(thumbUrl(p.img))}" alt="${esc(p.t || '')}" onerror="this.style.display='none'">` : '';
       return `<div class="wish-item">`
-        + `<div class="wish-thumb">${img}</div>`
+        + `<button type="button" class="wish-thumb" onclick="psWishZoom(${i})" aria-label="${tr('ps_enlarge')}">${img}</button>`
         + `<div class="wish-info">`
         +   `<div class="wish-brand">${esc(p.b || '')}</div>`
         +   `<div class="wish-title">${esc(p.t || '')}</div>`
@@ -6601,7 +6630,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-24r';
+  const PSB_BUILD = '2026-06-24s';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

@@ -554,6 +554,17 @@
     .psc-gtab.on{background:var(--gold);color:#1a1206;border-color:var(--gold)}
     .psc-gtab-brand{flex:0 0 auto;margin-left:1px}   /* Brands toggle pinned at the right corner, OUTSIDE the scrolling dept track → always tappable */
     .psc-gtab-brand.on{background:#137a72;color:#fff;border-color:#137a72}   /* active "Brands ✓" — distinct from the gold dept tabs */
+    /* Brands mode: the dept tabs (W/M/K/Premium) are compacted so all four fit the row, tinted teal
+       (so they read as "coming out of" the Brands toggle), and slide in left-to-right. */
+    .psc-tabscroll.on-brand{overflow-x:visible}
+    .psc-tabscroll.on-brand .psc-gtab{padding:4px 9px;font-size:0.7rem;background:var(--surface);border-color:#3f9d92;color:#137a72;animation:psTabIn .28s ease-out both}
+    .psc-tabscroll.on-brand .psc-gtab.on{background:#137a72;color:#fff;border-color:#137a72}
+    [data-theme="dark"] .psc-tabscroll.on-brand .psc-gtab{color:#5fd0c4;border-color:#2a6b63}
+    [data-theme="dark"] .psc-tabscroll.on-brand .psc-gtab.on{background:#137a72;color:#fff}
+    .psc-tabscroll.on-brand .psc-gtab:nth-child(2){animation-delay:.05s}
+    .psc-tabscroll.on-brand .psc-gtab:nth-child(3){animation-delay:.1s}
+    .psc-tabscroll.on-brand .psc-gtab:nth-child(4){animation-delay:.15s}
+    @keyframes psTabIn{from{opacity:0;transform:translateX(14px) scale(.92)}to{opacity:1;transform:translateX(0) scale(1)}}
     /* Brand-mode department pills (Kids/Women/Men/Premium) — a sub-level under the Brands tab */
     .ps-shopcat-depts{display:flex;gap:7px;margin:0 0 9px;flex-wrap:wrap}
     .psc-dpill{flex:0 0 auto;padding:4px 12px;border:1.5px solid var(--bdr-med);border-radius:13px;background:var(--input-bg);color:var(--txt-sec);font-size:0.72rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
@@ -589,7 +600,7 @@
     /* saved-items drawer (reuses .more-drawer-wrap / .more-drawer / .md-head shell) */
     .wish-empty{text-align:center;color:var(--txt-muted);padding:42px 18px;font-size:0.92rem;line-height:1.5}
     .wish-item{display:flex;gap:11px;padding:11px 4px;border-bottom:1px solid var(--bdr)}
-    .wish-thumb{flex:0 0 64px;width:64px;height:80px;border-radius:9px;overflow:hidden;background:var(--raised);display:flex;align-items:center;justify-content:center}
+    .wish-thumb{flex:0 0 64px;width:64px;height:80px;border-radius:9px;overflow:hidden;background:var(--raised);display:flex;align-items:center;justify-content:center;border:none;padding:0;cursor:zoom-in;font-family:inherit}
     .wish-thumb img{width:100%;height:100%;object-fit:cover}
     .wish-info{flex:1;min-width:0;display:flex;flex-direction:column}
     .wish-brand{font-size:0.66rem;color:var(--txt-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.3px}
