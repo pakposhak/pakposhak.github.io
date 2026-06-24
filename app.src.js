@@ -5109,6 +5109,12 @@
   }
   function psSugHide(){ psSugShow('psSugM',[]); psSugShow('psSugD',[]); }
   function psSugDeferred(){ setTimeout(psSugHide, 160); }
+  // Tap the search box again to dismiss the suggestion list — so the buyer is never
+  // "stuck" being forced to pick a suggestion. Open → close; typing reopens it.
+  function psSugToggleClose(){
+    const m = document.getElementById('psSugM'), d = document.getElementById('psSugD');
+    if((m && m.style.display === 'block') || (d && d.style.display === 'block')) psSugHide();
+  }
   function psSugUpdate(val){
     if(!val || val.length < 2){ psSugHide(); return; }
     const n = psNorm(val);
@@ -5163,6 +5169,21 @@
     psSel.brands = brands;
     psBuildCatFilter(); psBuildBrandFilter(); psApply();
     psSearchHint(raw, brands, cats);
+    psSyncShopGender(cats);            // light up the gender tab that matches the results, not the stale default
+  }
+  // During a search, make the "Shop by" gender tab follow the results so the highlighted
+  // tab matches the products shown (searching "men" must light up Men, not the default
+  // Women). Only adopt a gender when the result is unambiguously ONE gender; mixed or
+  // brand-only searches leave the strip as-is. Additive: never forces an empty/none state.
+  function psSyncShopGender(cats){
+    if(typeof psShopMode !== 'undefined' && psShopMode === 'brand') return;   // brand carousel highlight handled elsewhere
+    const gs = new Set([...(cats || [])].map(c => PS_CAT_GENDER[c]).filter(Boolean));
+    if(gs.size !== 1) return;
+    const g = [...gs][0];
+    if(PS_SHOP_GENDERS.some(x => x[0] === g) && g !== psShopGender){
+      psShopGender = g;
+      try{ psBuildShopCat(); }catch(e){}
+    }
   }
   function psSearchHint(raw, brands, cats){
     const els = [document.getElementById('psSearchHintM'), document.getElementById('psSearchHintD')];
@@ -6750,7 +6771,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-24w';
+  const PSB_BUILD = '2026-06-24x';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
