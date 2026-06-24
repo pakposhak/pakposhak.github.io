@@ -303,7 +303,7 @@
 
   <div class="cart-empty" id="cartEmpty" style="display:none">
     <div style="font-size:2rem;margin-bottom:8px">🛍️</div>
-    No items yet. Paste a product link above to start.
+    No items yet. Share a product from any brand, or paste a link above to start.
   </div>
   <div id="cartList"></div>
 
@@ -678,41 +678,8 @@
       <div style="font-size:0.78rem;color:var(--txt-muted);margin-top:3px">How to add a product from this brand:</div>
     </div>
     <div class="bs-steps">
-      <div class="bs-steps-title">How to copy the product link</div>
-      <!-- MOBILE: viewing inside an in-app browser → must hop to Chrome first (unchanged) -->
-      <div class="bs-steps-mobile">
-        <div class="bs-step">
-          <span class="bs-num">1</span>
-          <span>Tap <strong>Open Brand Site</strong> below. The brand’s <strong>home page</strong> opens — now <strong>tap the exact product you want</strong> so its own <strong>product page</strong> loads. <span style="opacity:.75">(The product link doesn’t exist until you open the product — copying on the home page only gives the home page.)</span></span>
-        </div>
-        <div class="bs-step">
-          <span class="bs-num">2</span>
-          <span>If you don’t see a <strong>web address bar</strong> at the top, tap the <strong>⋮ three-dots</strong> menu → <strong>“Open in Chrome”</strong> first.</span>
-        </div>
-        <div class="bs-step">
-          <span class="bs-num">3</span>
-          <span>On the <strong>product page</strong>, tap the <strong>web address at the top</strong> (or press &amp; hold it) until <strong>“Copy”</strong> appears — then tap <strong>Copy</strong>.</span>
-        </div>
-        <div class="bs-step">
-          <span class="bs-num">4</span>
-          <span>Come back here and tap the gold <strong>📋 Paste link</strong> button — price &amp; sizes fill in automatically.</span>
-        </div>
-      </div>
-      <!-- DESKTOP: the brand opens directly in a new Chrome tab — no ⋮ menu hop needed -->
-      <div class="bs-steps-desktop">
-        <div class="bs-step">
-          <span class="bs-num">1</span>
-          <span>Click <strong>Open Brand Site</strong> below — it opens in a <strong>new Chrome tab</strong>. Browse and open the product you want.</span>
-        </div>
-        <div class="bs-step">
-          <span class="bs-num">2</span>
-          <span>Click the <strong>web address</strong> at the top (or press <strong>Ctrl + L</strong>), then <strong>Ctrl + C</strong> to copy it. <span style="opacity:.75">(Or right-click the product → <strong>Copy link</strong>.)</span></span>
-        </div>
-        <div class="bs-step">
-          <span class="bs-num">3</span>
-          <span>Switch back to this <strong>PakPoshak</strong> tab and click the gold <strong>📋 Paste link</strong> button — price &amp; sizes fill in automatically.</span>
-        </div>
-      </div>
+      <div class="bs-steps-title" id="bsStepsTitle">Bring the product back to PakPoshak</div>
+      <div class="bs-steps-list" id="bsSteps"></div>
     </div>
     <button class="bs-open-btn" id="bsOpenBtn" onclick="launchBrandTab()">
       Open Brand Site →
