@@ -5596,7 +5596,7 @@
   // The carousel has two MODES: 'cat' (Women/Men/Kids category tiles, default) and 'brand' (tap the
   // Brands tab → pick a department → a carousel of that dept's brands, each a representative photo).
   let psShopMode = 'cat';
-  let psBrandDept = 'w';
+  let psShopDept = 'w';   // active brand-carousel department (renamed from psBrandDept — collided with the psBrandDept() helper)
   // Brand-carousel departments (req: 4, EXCLUDING multi-dept). Labels reuse the bb_* i18n keys.
   const PS_BRAND_DEPTS = [ ['w','bb_women'], ['m','bb_men'], ['k','bb_kids'], ['p','bb_premium'] ];
   // Tiles for the active department, hiding any category that has zero products (psFacetCats).
@@ -5607,7 +5607,7 @@
   }
   function psSetShopGender(g){ psShopMode = 'cat'; psShopGender = g; psBuildShopCat(); }
   function psShopBrandsMode(){ psShopMode = 'brand'; psBuildShopCat(); }
-  function psSetBrandDept(d){ psBrandDept = d; psBuildShopCat(); }
+  function psSetBrandDept(d){ psShopDept = d; psBuildShopCat(); }
   // Brand names for a department, restricted to brands that actually have products (so each tile gets
   // a photo). Reuses the Browse-Brands ranked per-department pool. 'p' = Premium.
   function psShopBrandsForDept(dept){
@@ -5665,7 +5665,7 @@
       if(deptsEl){
         deptsEl.style.display = '';
         deptsEl.innerHTML = PS_BRAND_DEPTS.map(([d,k]) =>
-          `<button type="button" class="psc-dpill${d===psBrandDept ? ' on' : ''}" onclick="psSetBrandDept('${d}')">${esc(tr(k))}</button>`).join('');
+          `<button type="button" class="psc-dpill${d===psShopDept ? ' on' : ''}" onclick="psSetBrandDept('${d}')">${esc(tr(k))}</button>`).join('');
       }
       // The per-dept brand pool needs the brand→category index (so multi-dept flagships like
       // Khaadi/Sapphire/Gul Ahmed fold into Women/Men/Kids, and brands are strength-ranked). Load it
@@ -5676,7 +5676,7 @@
         return;
       }
       const activeBrand = (psSel.brands.size===1 && !psSel.cats.size && !psSel.prices.size) ? [...psSel.brands][0] : '';
-      const brands = psShopBrandsForDept(psBrandDept);
+      const brands = psShopBrandsForDept(psShopDept);
       if(!brands.length){ wrap.innerHTML = `<div class="psc-empty">${esc(tr('bb_prod_none'))}</div>`; wrap.scrollLeft = 0; return; }
       wrap.innerHTML = brands.map(n => {
         const url = psBrandThumbGet(n);
@@ -6592,7 +6592,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-24n';
+  const PSB_BUILD = '2026-06-24o';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
