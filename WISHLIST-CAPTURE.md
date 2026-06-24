@@ -16,7 +16,7 @@ order form, the same zero-typing way as whole-cart.
   **session** — so a pasted wishlist URL fetched on our side would be empty. The items must
   be read **on the page** (Shortcut / bookmarklet / future in-app browser), exactly like
   whole-cart. This is the core constraint.
-- **Coverage:** a wishlist exists on **at least 63 of 147 brands** (lower bound — see method).
+- **Coverage:** a wishlist exists on **at least 65 of 147 brands** (lower bound — see method).
   For every one of those, the reader works the same way (DOM scrape), so capture coverage
   ≈ "brands that have a wishlist."
 
@@ -29,8 +29,19 @@ wishlists that render a static link/page** (Swym-style `/pages/wishlist`, theme-
 which adds heart icons after load) — those show up as "no", yet have a real wishlist.
 Confirmed example: **Al-Deebaj** (raw-HTML probe = Growave wishlist) censused as "no".
 
-So 63 is a floor. The true number is higher. An exact per-app census needs raw HTML from a
+So 65 is a floor. The true number is higher. An exact per-app census needs raw HTML from a
 network that can reach the brands (the **PK VPS**, which already harvests them) — not yet run.
+
+**Re-probe (2026-06-24):** all 82 "no" brands were re-checked for save-for-later features
+under any name — Favourites, Favorites, Saved, Shortlist, My List, Loved, Wish Bag,
+Collections, heart icon, Growave `/apps/wishlist`, etc. **Result: zero alt-name features
+exist.** Two new wishlists were discovered that the first pass missed (both use
+`/search?view=wishlist` with theme-native markup not present on the homepage):
+- **Asim Jofa** — native Wishlist at `/search?view=wishlist`
+- **Cambridge** — native Wishlist at `/search?view=wishlist` (page title "My Wishlist Page")
+
+One brand remains genuinely unknown: **Mushq** (mushq.pk) blocks all HTTP fetches (403), so
+it cannot be checked without a browser. All other 79 re-probed brands confirmed no save feature.
 
 ## Wishlist URL patterns found (why the reader scrapes the DOM, not a fixed URL)
 
@@ -38,7 +49,7 @@ network that can reach the brands (the **PK VPS**, which already harvests them) 
 |---|---|---|
 | `/pages/wishlist` | Afrozeh, Alkaram, Gul Ahmed, Edenrobe, Maria B, Limelight, Generation, Outfitters, Salitex, Zeen, Zara Shahjahan, Sana Safinaz | Swym / theme-native |
 | `/pages/wish-list` | Charizma, Diners, MTJ, Edge Republic | theme-native |
-| `/search/?view=wishlist` (or `?view=wish`) | Bareeze, Bonanza, Mina Hasan, Nureh, RajBari, Maryum N Maria, Sania Maskatiya, Saya, So Kamal, Vanya, Wardha Saleem, Zainab Chottani, Maria Osama Khan | theme-native search-driven |
+| `/search/?view=wishlist` (or `?view=wish`) | Bareeze, Bonanza, Mina Hasan, Nureh, RajBari, Maryum N Maria, Sania Maskatiya, Saya, So Kamal, Vanya, Wardha Saleem, Zainab Chottani, Maria Osama Khan, Asim Jofa, Cambridge | theme-native search-driven |
 | `/apps/wishlist` | Gulaal | Growave |
 | `/wishlist` | Khaadi, Cougar | SFCC / custom |
 | JS-injected (no static page) | Al-Deebaj, + an unknown number of "no" rows | Growave & similar |
@@ -80,11 +91,11 @@ YES = a wishlist page/link was detected. Order follows the brand directory.
 | Alizeh | no | Arsalan Iqbal | YES | Abaya.pk | no |
 | Akbar Aslam | no | Al-Deebaj | YES* | Armas | no |
 | Ammara Khan | no | Almirah | no | Asifa & Nabeel | YES |
-| Asim Jofa | no | Azure | no | Bareeze | YES |
+| Asim Jofa | YES† | Azure | no | Bareeze | YES |
 | Barae Khanom | no | Amir Adnan | YES | Baroque | YES |
 | Beechtree | no | Bareeze Man | YES | Bin Ilyas | no |
 | Bin Saeed | no | Black Camels | YES | Bonanza Satrangi | YES |
-| CRUSH Menswear | YES | Breakout | no | Cambridge | no |
+| CRUSH Menswear | YES | Breakout | no | Cambridge | YES† |
 | ChenOne | no | Charcoal | no | Charizma | YES |
 | Cougar | YES | Chinyere | YES | Coco by Zara Shahjahan | YES |
 | Crimson | no | Cross Stitch | no | Dazzle by Sarah | no |
@@ -107,7 +118,7 @@ YES = a wishlist page/link was detected. Order follows the brand directory.
 | Lulusar | no | MTJ (Tariq Jameel) | YES | Maria B | YES |
 | Maria Osama Khan | YES | Minnie Minors | no | Maryum N Maria | YES |
 | Mausummery | no | Mina Hasan | YES | Mohagni | no |
-| Monark | no | Motifz | no | Mushq | no |
+| Monark | no | Motifz | no | Mushq | ?† |
 | Naqshi | no | Nishat Linen | no | Nureh | YES |
 | One Kids | YES | Outfitters | YES | Paarsa | no |
 | Preeto | no | Qalamkar | YES | RajBari | YES |
@@ -129,3 +140,6 @@ YES = a wishlist page/link was detected. Order follows the brand directory.
 `*` = censused "no" by the static probe but **confirmed YES** out-of-band (Al-Deebaj = Growave
 JS wishlist; Sapphire = SFCC native wishlist). They illustrate why the "no" column is a
 ceiling on misses, not a confirmed absence.
+
+`†` = found by the **2026-06-24 re-probe** of all 82 "no" brands (Asim Jofa + Cambridge =
+native `/search?view=wishlist` wishlists; Mushq = blocked 403 on all fetches, genuinely unknown).
