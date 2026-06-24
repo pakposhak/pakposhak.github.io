@@ -5814,7 +5814,7 @@
     // The pinned header (filter row + carousel) is what stays on screen — offset by its LIVE height.
     const head = document.getElementById('psPinHead');
     let off = 0;
-    try { if(head && getComputedStyle(head).position === 'sticky') off = head.offsetHeight + 8; } catch(e){}
+    try { const pos = head ? getComputedStyle(head).position : ''; if(pos === 'sticky' || pos === 'fixed') off = head.offsetHeight + 8; } catch(e){}
     if(off){
       const y = grid.getBoundingClientRect().top + (window.scrollY || window.pageYOffset || 0) - off;
       window.scrollTo({ top: Math.max(0, y), behavior:'smooth' });
@@ -5833,6 +5833,63 @@
       t.classList.toggle('on', (!!c && c === activeCat) || (!!b && b === activeBrand));
     });
   }
+  // ── Keep the Browse-Products filter/category bar fixed to the top through the WHOLE scroll
+  //    (req: "keep it fixed for both iphone and android"). The bar is position:sticky scoped to
+  //    .ps-results, so on its own it releases the moment you scroll past the products into the
+  //    "Paste a link" section below. A 0-height sentinel records the bar's in-flow position; once
+  //    it scrolls under the top safe-area we switch the bar to position:fixed (matched to the
+  //    results column) and grow the sentinel to fill the gap so nothing jumps. It releases back to
+  //    sticky when you scroll up, so the branding still shows at the very top first. Mobile +
+  //    Products-tab only — desktop's bar is a static sidebar. ──
+  const _psPin = { sen:null, on:false, bound:false, inset:0 };
+  function _psPinMeasureInset(){
+    // env(safe-area-inset-top) isn't readable directly in JS — measure it off a hidden fixed probe
+    // so the fixed bar clears the iPhone notch/camera exactly like the sticky one did (standing rule).
+    let p = document.getElementById('psSafeProbe');
+    if(!p){ p = document.createElement('div'); p.id = 'psSafeProbe'; p.style.cssText = 'position:fixed;top:0;left:0;width:0;height:env(safe-area-inset-top,0px);visibility:hidden;pointer-events:none'; document.body.appendChild(p); }
+    _psPin.inset = p.getBoundingClientRect().height;
+  }
+  function psPinUpdate(){
+    const head = document.getElementById('psPinHead'); if(!head) return;
+    let sen = _psPin.sen;
+    if(!sen || !sen.parentNode){ sen = document.createElement('div'); sen.setAttribute('aria-hidden','true'); sen.style.height = '0px'; head.parentNode.insertBefore(sen, head); _psPin.sen = sen; }
+    // Mobile only, and only while the bar is actually rendered. getClientRects() (not offsetParent,
+    // which is null for position:fixed) stays truthy while fixed and goes empty when the Brands tab
+    // hides #tabProducts — so we correctly drop the fix on tab switch.
+    const active = window.innerWidth < 820 && head.getClientRects().length > 0;
+    if(!active){
+      if(_psPin.on){ head.style.position=''; head.style.top=''; head.style.left=''; head.style.width=''; head.style.zIndex=''; sen.style.height='0px'; _psPin.on=false; }
+      return;
+    }
+    const st = _psPin.inset;
+    const senTop = sen.getBoundingClientRect().top;
+    if(!_psPin.on && senTop <= st){
+      const rr = head.parentElement.getBoundingClientRect();
+      const hH = head.getBoundingClientRect().height;
+      head.style.position='fixed'; head.style.top=st+'px'; head.style.left=rr.left+'px'; head.style.width=rr.width+'px'; head.style.zIndex='16';
+      sen.style.height = hH + 'px';
+      _psPin.on = true;
+    } else if(_psPin.on && senTop > st){
+      head.style.position=''; head.style.top=''; head.style.left=''; head.style.width=''; head.style.zIndex=''; sen.style.height='0px';
+      _psPin.on = false;
+    }
+  }
+  function psPinInit(){
+    if(_psPin.bound) return;
+    _psPin.bound = true;
+    _psPinMeasureInset();
+    window.addEventListener('scroll', () => window.requestAnimationFrame(psPinUpdate), { passive:true });
+    // On resize/orientation, the column width and notch inset may change: drop the fix and recompute.
+    window.addEventListener('resize', () => {
+      const head = document.getElementById('psPinHead');
+      if(head){ head.style.position=''; head.style.top=''; head.style.left=''; head.style.width=''; head.style.zIndex=''; }
+      if(_psPin.sen) _psPin.sen.style.height = '0px';
+      _psPin.on = false;
+      _psPinMeasureInset();
+      window.requestAnimationFrame(psPinUpdate);
+    });
+    psPinUpdate();
+  }
   // The Shop-by-Category carousel is ALWAYS visible (req) — it sticks at the top while scrolling
   // products so the buyer can switch category anytime. Build lazily; otherwise just refresh the
   // active highlight.
@@ -5842,6 +5899,7 @@
     const sc = document.getElementById('psShopScroll');
     if(sc && !sc.children.length) psBuildShopCat();
     else psSyncShopActive();
+    psPinInit();
   }
   // All three filters combine with AND; price buckets OR within themselves.
   function psApply(){
@@ -6630,7 +6688,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-24s';
+  const PSB_BUILD = '2026-06-24t';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
