@@ -679,13 +679,13 @@
     <div style="text-align:center">
       <div style="font-size:2rem">🛍️</div>
       <div class="bs-brand-name" id="bsBrandName">Brand</div>
-      <div style="font-size:0.78rem;color:var(--txt-muted);margin-top:3px">How to add a product from this brand:</div>
     </div>
+    <div id="bsWarn" style="display:flex;gap:8px;align-items:flex-start;background:rgba(186,117,23,0.10);border:1px solid rgba(186,117,23,0.30);border-radius:9px;padding:10px 12px;margin:12px 0 14px;font-size:0.8rem;line-height:1.5;color:var(--txt)"></div>
     <div class="bs-steps">
-      <div class="bs-steps-title" id="bsStepsTitle">Bring the product back to PakPoshak</div>
+      <div class="bs-steps-title" id="bsStepsTitle">Send what you want back to PakPoshak</div>
       <div class="bs-steps-list" id="bsSteps"></div>
     </div>
-    <button class="bs-open-btn" id="bsOpenBtn" onclick="launchBrandTab()">
+    <button class="bs-open-btn" id="bsOpenBtn" onclick="launchBrandTab(true)">
       Open Brand Site →
     </button>
     <button class="bs-cancel-btn" onclick="closeBrandSheet()">Cancel</button>

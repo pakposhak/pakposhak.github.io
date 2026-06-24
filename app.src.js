@@ -4059,36 +4059,34 @@
   // can't list in-app: Khaadi, Sapphire and other non-Shopify stores).
   // Platform-specific "how to bring the product back" steps — Share-first (paste is the
   // fallback). iPhone → Share→Add to PakPoshak; Android → Share→PakPoshak; desktop → copy/paste.
-  function renderBrandSteps(){
+  // Fill the merged brand sheet: the inline "order on PakPoshak" warning + the
+  // Share-first steps. PHONE shows iPhone + Android rows (single item); DESKTOP
+  // shows copy/paste + the Send-cart bookmark (that's where whole-cart lives).
+  function renderBrandSteps(name){
+    const bn = esc(name || 'the brand');
+    const warn = document.getElementById('bsWarn');
+    if(warn) warn.innerHTML = `<span style="font-size:1rem;flex-shrink:0">⚠️</span><span><b>Order and pay on PakPoshak, not on ${bn}.</b> Look at photos and sizes there, then send what you want back here.</span>`;
     const box = document.getElementById('bsSteps'); if(!box) return;
     const num = (n,h) => `<div class="bs-step"><span class="bs-num">${n}</span><span>${h}</span></div>`;
-    let steps;
-    const pf = psPlatform();
-    if(pf === 'ios'){
-      steps = [
-        'Tap <strong>Open Brand Site</strong> below, then open the <strong>exact product</strong> you want.',
-        'Tap <strong>Share</strong>, then <strong>Add to PakPoshak</strong>. <span style="opacity:.75">(One-time: add the PakPoshak shortcut.)</span>',
-        'You land back here with the item added, price &amp; size filled in. <span style="opacity:.75">No shortcut yet? Copy the link, come back, tap the gold <strong>📋 Paste link</strong> button.</span>'
-      ];
-    } else if(pf === 'android'){
-      steps = [
-        'Tap <strong>Open Brand Site</strong> below, then open the <strong>exact product</strong> you want.',
-        'Tap <strong>Share</strong>, then <strong>PakPoshak</strong>. <span style="opacity:.75">(Install PakPoshak once so it shows in the Share menu.)</span>',
-        'You land back here with the item added, price &amp; size filled in. <span style="opacity:.75">Not installed? Copy the link, come back, tap the gold <strong>📋 Paste link</strong> button.</span>'
-      ];
+    if(psPlatform() === 'desktop'){
+      box.innerHTML =
+        num(1, `Click <strong>Open ${bn}</strong> below (opens a new tab), then open the product you want.`) +
+        num(2, `Copy the web address (<strong>Ctrl + L</strong>, then <strong>Ctrl + C</strong>), come back, and click the gold <strong>📋 Paste link</strong> button.`) +
+        num(3, `<strong>Whole cart?</strong> Add the items to ${bn}'s cart, then click the <strong>Send cart</strong> bookmark to bring them all at once.`);
     } else {
-      steps = [
-        'Click <strong>Open Brand Site</strong> below (opens a new tab), then open the product you want.',
-        'Copy the web address (<strong>Ctrl + L</strong>, then <strong>Ctrl + C</strong>). <span style="opacity:.75">(Whole cart? Use the Send-cart bookmark instead.)</span>',
-        'Back on <strong>PakPoshak</strong>, click the gold <strong>📋 Paste link</strong> button. Price &amp; sizes fill in automatically.'
-      ];
+      box.innerHTML =
+        num(1, `Tap <strong>Open ${bn}</strong> below, then open the product you want.`) +
+        `<div class="bs-step"><span class="bs-num">2</span><span>` +
+          `<span style="display:block;margin-bottom:5px"><b>iPhone:</b> tap <strong>Share</strong>, then <strong>Add to PakPoshak</strong>.</span>` +
+          `<span style="display:block"><b>Android:</b> tap <strong>Share</strong>, then <strong>PakPoshak</strong>.</span>` +
+        `</span></div>` +
+        num(3, `It lands here, price and size filled in. <span style="opacity:.7">No Share? Copy the link, come back, tap <strong>📋 Paste link</strong>.</span>`);
     }
-    box.innerHTML = steps.map((h,i) => num(i+1, h)).join('');
   }
   function showBrandSheet(name){
     document.getElementById('bsBrandName').textContent = name;
     document.getElementById('bsOpenBtn').textContent   = 'Open ' + name + ' →';
-    renderBrandSteps();
+    renderBrandSteps(name);
     document.getElementById('brandSheet').style.display = 'block';
   }
 
@@ -4195,7 +4193,9 @@
 
   // Public entry: show the warning first; the real open happens only on "proceed"
   // (still inside the OK button's click gesture, so the popup is not blocked).
-  function launchBrandTab(){ psWarnOpen({ onOk: _doLaunchBrandTab }); }
+  // skipWarn=true: go STRAIGHT to the brand site (used by the merged brand sheet,
+  // which already shows the "order on PakPoshak" warning inline — no second modal).
+  function launchBrandTab(skipWarn){ if(skipWarn) _doLaunchBrandTab(); else psWarnOpen({ onOk: _doLaunchBrandTab }); }
   function _doLaunchBrandTab(){
     const url = _pendingBrandUrl;
     closeBrandSheet();
@@ -6593,7 +6593,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-24p';
+  const PSB_BUILD = '2026-06-24q';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
