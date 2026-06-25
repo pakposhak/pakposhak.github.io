@@ -10,7 +10,7 @@
  *  - NEVER touch cross-origin requests (Shopify product fetches, Apps Script order
  *    submission, Formspree). Those must always hit the network untouched.
  */
-const CACHE_VERSION = 'psb-v66';
+const CACHE_VERSION = 'psb-v67';
 const APP_SHELL = [
   './',
   './index.html',
@@ -18,8 +18,8 @@ const APP_SHELL = [
   './style.css',
   './app.js',
   './manifest.json',
-  './icon-192.png',
-  './icon-512.png',
+  './pakposhak-icon-192.png',
+  './pakposhak-icon-512.png',
   './apple-touch-icon.png',
 ];
 
