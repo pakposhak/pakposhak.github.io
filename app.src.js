@@ -5056,6 +5056,14 @@
     { re:/\bhusband\b/,                                g:['m'],     cats:['mens_shirt','mens_trouser','mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_suit','mens_jeans'] },
     { re:/\b(office|work)\s*wear\b/,                   g:['w','m'], cats:['kurti_1pc','shirt_dupatta_2pc','western_top','shirt_trouser_2pc','womens_trouser','mens_shirt','mens_trouser','mens_kurta'] },
   ];
+  // Women's "pret" = ready-to-wear SUITS (kurti / 2pc / 3pc / embroidered / formal / winter +
+  // maxi / kaftan), STITCHED **and** UNSTITCHED — because many houses (Agha Noor, lawn brands)
+  // sell their suits unstitched, so a stitched-only "pret" would return ZERO for them. Deliberately
+  // EXCLUDES western tops & trousers, saree, lehenga, bridal, abaya, dupatta, shawl and loungewear —
+  // those are their own searches, not "pret". (Before, "pret" expanded to EVERY women's category, so
+  // "agha noor pret" matched ~all of Agha Noor and the word stopped narrowing — req 2026-06-25.)
+  // The explicit refiners still work: "stitched" / "unstitched" narrow this set to one construction.
+  const PS_PRET_CATS = ['kurti_1pc','shirt_dupatta_2pc','shirt_trouser_2pc','pret_2pc_emb','formal_emb_2pc','pret_3pc','pret_3pc_emb','formal_emb_3pc','heavy_formal_3pc','handmade_emb','winter_2pc_stitch','winter_3pc_stitch','maxi_dress','kaftan','kurti_1pc_unstitch','shirt_dupatta_2pc_unstitch','shirt_trouser_2pc_unstitch','lawn_3pc_unstitch','unstitch_3pc_emb','winter_2pc_unstitch','winter_3pc_unstitch'];
   function psResolveCats(tokens, raw, present){
     const genders = new Set(), catToks = [], relCats = new Set();
     let relSeen = false;
@@ -5078,7 +5086,7 @@
     // gender (→women) and the piece refiner (→2pc/3pc). Computed live so it stays complete as the
     // catalogue grows. ('pret' is also kept out of brand-matching below so it can't false-match
     // the "Silayi Pret" brand and AND the grid down to nothing.)
-    if(/\bpret\b/.test(raw)){ genders.add('w'); psCatsForGender('w', present).forEach(c => { if(!psCatUnstitched(c) && c !== 'footwear') cats.add(c); }); }
+    if(/\bpret\b/.test(raw)){ genders.add('w'); PS_PRET_CATS.forEach(c => { if(present.has(c)) cats.add(c); }); }
     if(genders.size){
       if(cats.size){
         // a category WAS named → keep only cats of the named (fine) gender(s) — AND semantics
@@ -5099,7 +5107,7 @@
     if(/(^|[^0-9])2\s*-?\s*(pc|piece)s?\b|\btwo[\s-]?piece\b/.test(raw)) wantP.add(2);
     if(/(^|[^0-9])3\s*-?\s*(pc|piece)s?\b|\bthree[\s-]?piece\b/.test(raw)) wantP.add(3);
     if(wantP.size && cats.size) [...cats].forEach(c => { const pc = psCatPiece(c); if(pc === 0 || !wantP.has(pc)) cats.delete(c); });
-    if(/\bstitched\b|\bpret\b|\brtw\b|ready[\s-]?to[\s-]?wear/.test(raw) && !/unstitch/.test(raw) && cats.size) [...cats].forEach(c => { if(psCatUnstitched(c)) cats.delete(c); });
+    if(/\bstitched\b|\brtw\b|ready[\s-]?to[\s-]?wear/.test(raw) && !/unstitch/.test(raw) && cats.size) [...cats].forEach(c => { if(psCatUnstitched(c)) cats.delete(c); });
     if(/unstitch|\bfabric\b/.test(raw) && cats.size) [...cats].forEach(c => { if(!psCatUnstitched(c)) cats.delete(c); });
     return { cats, genders, catToks };
   }
@@ -6857,7 +6865,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-25h';
+  const PSB_BUILD = '2026-06-25i';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
