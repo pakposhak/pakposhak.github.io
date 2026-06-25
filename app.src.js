@@ -5836,8 +5836,11 @@
   function psShopPickBrand(name){
     if(!name) return;
     const cats = (psShopMode === 'brand') ? _psDeptCats(psShopDept) : [];
-    psSel = { prices:new Set(), cats:new Set(cats), brands:new Set([name]) };
-    psSort = ''; psSaleOnly = false; psNewOnly = false; psQuery = ''; psSizeQ = '';
+    // Carry the active Price / Sort / Sale / New filter forward so they STACK with the brand
+    // (req: "multi filters shall work together" — filter prices within a brand too). Only the
+    // free-text query is cleared — tapping a brand tile is a browse action, not a search.
+    psSel = { prices:new Set(psSel.prices), cats:new Set(cats), brands:new Set([name]) };
+    psQuery = ''; psSizeQ = '';
     ['psSearchMobile','psSearchDesktop'].forEach(idd => { const e = document.getElementById(idd); if(e) e.value = ''; });
     psSearchHint('', new Set(), new Set());
     psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply();
@@ -5883,8 +5886,11 @@
   function psShopPick(key){
     const tile = PS_SHOP_TILES.find(t => t.key === key);
     const cats = (tile && tile.cats) ? tile.cats : [key];
-    psSel = { prices:new Set(), cats:new Set(cats), brands:new Set() };
-    psSort = ''; psSaleOnly = false; psNewOnly = false; psQuery = ''; psSizeQ = '';
+    // Carry the active Price / Sort / Sale / New filter forward so they STACK with the chosen
+    // category (req: "multi filters shall work together" — filter prices within a category).
+    // Only the free-text query is cleared — tapping a tile is a browse action, not a search.
+    psSel = { prices:new Set(psSel.prices), cats:new Set(cats), brands:new Set() };
+    psQuery = ''; psSizeQ = '';
     ['psSearchMobile','psSearchDesktop'].forEach(idd => { const e = document.getElementById(idd); if(e) e.value = ''; });
     psSearchHint('', new Set(), new Set());
     psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply();
@@ -6821,7 +6827,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-25d';
+  const PSB_BUILD = '2026-06-25e';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
