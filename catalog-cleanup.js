@@ -83,7 +83,7 @@ const MODEST_KIDS_BRANDS = new Set(['The Women Zone', 'Hijabi.pk', 'Hijab-ul-Har
 // Pajama-as-sleepwear is handled in the rule as `pajama WITHOUT suit` so it can't eat eastern sets.
 // (bare "denim" is NOT here — "Denim Jacquard"/"Denim Fabric" is an eastern SUIT material, not a
 // western garment; "jeans" / "denim jacket" are caught by jeans/jacket.)
-const KWEST = /\bsuiting\b|\bblazers?\b|\btrack[\s-]?suits?\b|\bloungewear\b|\bnight[\s-]?(?:suits?|wear|y|dress)\b|\bathletic\b|\bsweat[\s-]?shirts?\b|\bhoodies?\b|\bjeans?\b|\bt-?shirts?\b|\btees?\b|\bpolos?\b|\bjackets?\b|\bbombers?\b|\bgilets?\b|\bupper\b|\bzip[\s-]?(?:up|thru)\b|\bshorts?\b|\bjoggers?\b|\bsweaters?\b|\bcardigans?\b|\bsportswear\b/i;
+const KWEST = /\bsuiting\b|\bsuit[\s-]?sets?\b|\bformal[\s-]?suits?\b|\bblazers?\b|\btrack[\s-]?suits?\b|\bloungewear\b|\bnight[\s-]?(?:suits?|wear|y|dress)\b|\bathletic\b|\bsweat[\s-]?shirts?\b|\bhoodies?\b|\bjeans?\b|\bt-?shirts?\b|\btees?\b|\bpolos?\b|\bjackets?\b|\bbombers?\b|\bgilets?\b|\bupper\b|\bzip[\s-]?(?:up|thru)\b|\bshorts?\b|\bjoggers?\b|\bsweaters?\b|\bcardigans?\b|\bsportswear\b/i;
 const KPAJAMA_WEST = p => /\bpaj?amas?\b|\bpyjamas?\b/i.test(p) && !/\bsuit\b/i.test(p);   // sleepwear pajama (no "suit") = western; "Pajama Suit" stays eastern
 const KEAST_GUARD = /\bkurta|kameez|shalwar|sherwani|waist\s?coat|achkan|anarkali|gharara|sharara|\bethnic\b|\beastern\b|\babaya\b|makhna|\bhijab\b|\bniqab\b|\bfrock\b|lehenga|peshwas|\bjubba|\bthobe\b|\bkurti\b|dupatta|saree/i;
 // Western-ONLY kids brands (site-verified): their whole kids line is western, so even a bare "Boys
