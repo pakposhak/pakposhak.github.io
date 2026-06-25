@@ -3069,9 +3069,10 @@
   // on the paste bar or the order form depending on state.) The just-saved item is safe
   // in the cart, so returning to Browse can't lose it.
   function addAnotherProduct(){
-    // Re-show the Browse tabs (focusOrderView hides them on a share landing) and
-    // return to whichever Browse tab the buyer was on (Products grid or Brands).
-    const bt = document.querySelector('.browse-tabs'); if(bt) bt.style.display = '';
+    // Scroll UP to whichever Browse tab the buyer was last on (Products grid or Brands)
+    // and dismiss any lingering share toast. (Browse stays visible after a share, so this
+    // is just a convenience jump — the buyer could also scroll up themselves.)
+    try{ psHideShareToast(); }catch(e){}
     let which = 'products';
     try{ if(localStorage.getItem('psb_browse') === 'brands') which = 'brands'; }catch(e){}
     try{ if(typeof switchBrowse === 'function') switchBrowse(which); }catch(e){}
@@ -3171,35 +3172,56 @@
   // share is a fresh page load, so an UNSAVED draft from a previous share gets WIPED. So
   // we put the buyer right on the item and prompt them to SAVE it first; once saved it
   // persists (localStorage psb_cart), and "Add Another Product" then returns them to Browse.
+  let psShareToastActive = false;   // true while the share toast is up → suppress the Paste FAB / swipe cue so they can't collide with it
   function focusOrderView(){
-    // HIDE the Browse tabs + grid. The order form sits BELOW the async-loading Browse
-    // grid in step1, so leaving Browse visible lets the late-rendering grid shove the
-    // draft ~2000px down — the buyer "lands on products". Hiding it gives a stable
-    // top-of-page order form. "Add Another Product" re-shows Browse afterwards.
-    const bt = document.querySelector('.browse-tabs'); if(bt) bt.style.display = 'none';
-    ['tabProducts','tabBrands'].forEach(idv => { const e = document.getElementById(idv); if(e) e.style.display = 'none'; });
-    // Hide the floating Paste FAB: on the order-form view there's nothing to paste, and
-    // it sits bottom-right (z 350) right where the centred toast is — they collide. When
-    // "Add Another Product" re-shows Browse, updatePasteFab() (in switchBrowse) restores it.
-    const pf = document.getElementById('pasteFab'); if(pf) pf.classList.remove('show','pulse');
+    // KEEP Browse VISIBLE — the buyer wants the whole Browse page WITH the order form, so
+    // they can scroll up and keep browsing WITHOUT tapping "Add Another". We only bring the
+    // order form (draft + Save) into view and confirm with a toast.
     const dc = document.getElementById('draftsContainer');
     const tgt = (dc && dc.style.display !== 'none') ? dc : document.getElementById('urlInputRow');
-    if(tgt) tgt.scrollIntoView({ behavior:'smooth', block:'start' });
+    psScrollToOrder(tgt);
     psShareAddedToast();
   }
-  // Brief confirmation toast after a shared link is added (buyer stays on Browse Products).
+  // The order form sits BELOW the async-loading Browse grid, so a single scroll lands on
+  // products (the grid grows AFTER and shoves the form down). Scroll now, then re-pin as
+  // the grid settles (catalog-ready + a couple of frames + a safety tick) — but STOP the
+  // moment the buyer scrolls themselves, so we never fight them.
+  function psScrollToOrder(tgt){
+    if(!tgt) return;
+    let cancelled = false;
+    const stop = () => { cancelled = true; window.removeEventListener('touchstart', stop); window.removeEventListener('wheel', stop); };
+    window.addEventListener('touchstart', stop, { passive:true });
+    window.addEventListener('wheel', stop, { passive:true });
+    const go = () => { if(!cancelled) tgt.scrollIntoView({ behavior:'auto', block:'start' }); };
+    go();
+    try{ if(typeof psOnReady === 'function') psOnReady(() => requestAnimationFrame(() => requestAnimationFrame(go))); }catch(e){}
+    [250, 650, 1200].forEach(ms => setTimeout(go, ms));
+    setTimeout(stop, 1400);
+  }
+  // Brief confirmation toast after a shared link is added (buyer stays on the Browse page).
   function psShareAddedToast(){
     let t = document.getElementById('psShareToast');
     if(!t){ t = document.createElement('div'); t.id = 'psShareToast'; t.className = 'ps-share-toast'; t.setAttribute('role','status'); document.body.appendChild(t); }
     t.innerHTML = `<span>✓ ${esc(tr('share_added'))}</span><button type="button" onclick="psSaveShared()">${esc(tr('share_review'))}</button>`;
     t.classList.add('on');
-    clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 5200);
+    // COLLISION FIX: while the toast is up, no other floating element shares the bottom —
+    // hide the Paste FAB + swipe cue; restore them when it goes. updatePasteFab() also
+    // checks psShareToastActive, so it can't re-show the FAB underneath the toast.
+    psShareToastActive = true;
+    const pf = document.getElementById('pasteFab'); if(pf) pf.classList.remove('show','pulse');
+    const sc = document.getElementById('psSwipeCue'); if(sc) sc.classList.remove('show');
+    clearTimeout(t._h); t._h = setTimeout(psHideShareToast, 5200);
+  }
+  function psHideShareToast(){
+    const t = document.getElementById('psShareToast'); if(t) t.classList.remove('on');
+    psShareToastActive = false;
+    try{ updatePasteFab(); }catch(e){}   // restore the Paste FAB for the current tab
   }
   // Toast "Save" button: scroll to the shared item and trigger the REAL save. If a
   // size/category is still needed, saveAllDrafts() names it and highlights the field —
   // so "Save" always does something honest (saves when complete, guides when not).
   function psSaveShared(){
-    const t = document.getElementById('psShareToast'); if(t) t.classList.remove('on');
+    psHideShareToast();
     const dc = document.getElementById('draftsContainer');
     const tgt = (dc && dc.style.display !== 'none') ? dc : document.getElementById('urlInputRow');
     if(tgt) tgt.scrollIntoView({ behavior:'smooth', block:'start' });
@@ -3627,7 +3649,8 @@
   function updatePasteFab(){
     const fab = document.getElementById('pasteFab');
     if(!fab) return;
-    fab.classList.toggle('show', currentStep === 1 && !psOnProductsTab());
+    // ...and never while the share toast is up (they'd overlap bottom-right).
+    fab.classList.toggle('show', currentStep === 1 && !psOnProductsTab() && !psShareToastActive);
   }
   // When the user switches BACK to PakPoshak (e.g. after copying a link in
   // Chrome), pulse the Paste button so it's obvious where to tap next.
@@ -6834,7 +6857,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-25g';
+  const PSB_BUILD = '2026-06-25h';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
