@@ -1050,15 +1050,18 @@
           if(rc.ok) sessionCur = (await rc.json()).currency || null;
         }catch(err){ if(err.name === 'AbortError') throw err; }
         if(sessionCur === 'PKR') pkrVia = 'direct';
-        else if(sessionCur || USD_ONLY_BRANDS.has(pastedHost) || FORCE_RELAY_HOSTS.has(pastedHost)){
-          // Foreign session — OR a brand we KNOW geo-serves USD but whose cart.js
-          // is CORS-blocked in the browser (Suffuse, Baroque) so sessionCur came
-          // back null. Either way the .js price is NOT trustworthy PKR.
-          pkrVia = sessionCur || 'USD';
+        else {
+          // sessionCur is null (cart.js CORS-blocked in BD) or a confirmed foreign
+          // currency. In both cases the directly-fetched price may be in a non-PKR
+          // currency — always try the VPS relay (PK IP) to get the true PKR price.
+          // If the relay ALSO returns a non-PKR currency the brand has no PK store
+          // and is genuinely USD-only.
           const relay = ((localStorage.getItem('psb_relay_url')||'').trim() || DEFAULT_RELAY_URL).replace(/\/+$/,'');
           if(relay && !USD_ONLY_BRANDS.has(pastedHost)){
             try{
-              setStatus(`🇵🇰 Brand priced in ${pkrVia} for you — fetching real PKR price via Pakistan relay…`,'var(--gold)');
+              setStatus(sessionCur
+                ? `🇵🇰 Brand priced in ${sessionCur} for you — fetching real PKR price via Pakistan relay…`
+                : `🇵🇰 Verifying PKR price via Pakistan relay…`, 'var(--gold)');
               // Send the relay the PK-twin URL so it queries the right store.
               const relayUrl = twinHost ? `${fetchOrigin}/products/${m[1]}` : url;
               const rr = await fetch(`${relay}/price?url=${encodeURIComponent(relayUrl)}`,
@@ -1067,9 +1070,13 @@
                 const rj = await rr.json();
                 if(rj && rj.currency === 'PKR' && rj.product){
                   product = rj.product; hasStockInfo = true; pkrVia = 'relay';
+                } else if(rj && rj.currency && rj.currency !== 'PKR'){
+                  pkrVia = rj.currency;  // relay also returns non-PKR → no PK store
                 }
               }
             }catch(err){ if(err.name === 'AbortError') throw err; }
+          } else if(USD_ONLY_BRANDS.has(pastedHost)){
+            pkrVia = 'USD';
           }
         }
       }
@@ -1384,18 +1391,16 @@
       const szWord    = hasStockInfo ? ' sizes in stock' : ' sizes found';
       const foreignCur = (pkrVia !== 'direct' && pkrVia !== 'relay' && pkrVia !== 'unknown') ? pkrVia : null;
       if(foreignCur && USD_ONLY_BRANDS.has(pastedHost)){
-        // USD-native brand: the USD price IS the true price (no PKR exists
-        // anywhere, even for Pakistani buyers) — calm note, not an alarm.
-        setStatus(`ℹ️ This brand sells in ${foreignCur} only — no PKR price exists. ${foreignCur} price auto-filled; it converts at your admin USD→PKR rate.`, 'var(--txt)');
+        // USD-native brand: the USD price IS the true price — no PKR exists
+        // anywhere, even from a PK IP. Calm note; let admin rate convert.
+        setStatus(`ℹ️ This brand does not have a Pakistani store — it sells in ${foreignCur} only. ${foreignCur} price filled in; it will convert to PKR at your admin rate.`, 'var(--txt)');
         checkAddUrlLock();
         return;  // keep the note visible (no auto-hide)
       }
       if(foreignCur){
-        // Brand geo-priced this session in a foreign currency and the relay
-        // could not get the PKR price — fail LOUD, keep the warning visible.
-        setStatus(`⛔ Brand showed ${foreignCur}, not PKR! ${foreignCur} prices include international markup — the real PKR price is unknown. `
-          + `The Pakistan relay couldn't fetch the PKR price (it may be temporarily down, or this item isn't sold on the PK store). `
-          + `Verify the PKR price from Pakistan before ordering.`, '#ff7575');
+        // Relay (PK IP) also returned non-PKR — brand has no PK store for this
+        // item, or this article is not stocked on the PK site.
+        setStatus(`⚠️ This product is only available in ${foreignCur}. This appears to be from an international store with no Pakistani price. Check if the brand has a .pk store, or enter the PKR price manually.`, '#ff9a00');
         checkAddUrlLock();
         return;  // no auto-hide
       }
@@ -6891,7 +6896,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-25l';
+  const PSB_BUILD = '2026-06-25m';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
