@@ -30,6 +30,15 @@ t('Kurta Corner "Kids Suit" girls→boys (own rule)',         {b:'Kurta Corner',
 // ── NEGATIVE: a BOTH brand (not listed) is left alone ──
 t('Maria B (BOTH) genderless kids stays put',               {b:'Maria B',t:'3 Piece Embroidered Lawn Suit',cat:'kids_girls_eastern',sz:['5-6 Y']}, 'kids_girls_eastern');
 t('Unlisted brand genderless kids_boys stays boys',         {b:'ZZ Test',t:'Kids Printed Shirt',cat:'kids_boys_western',sz:['5-6 Y']}, 'kids_boys_western');
+t('Saya (BOTH — removed from BOYS set) kids stays girls',  {b:'Saya',t:'Kids Printed Lawn Suit',cat:'kids_girls_eastern',sz:['3-4 Y']}, 'kids_girls_eastern');
+// ── COLLECTION-AUTHORITY gender (_collGirls / _collBoys) ──
+t('_collGirls "girls-kurta" overrides boys default',        {b:'ZZ Test',t:'Kids Embroidered Suit',cat:'kids_boys_eastern',sz:['5-6 Y'],coll:'girls-kurta'}, 'kids_girls_eastern');
+t('_collBoys  "boys-shirts" overrides girls default',       {b:'ZZ Test',t:'Kids Printed Shirt',cat:'kids_girls_western',sz:['5-6 Y'],coll:'boys-shirts'}, 'kids_boys_western');
+t('_collGirls "kids-girls-eastern" coll moves to girls',    {b:'Saya',t:'Kids Lawn Suit',cat:'kids_boys_eastern',sz:['3-4 Y'],coll:'kids-girls-eastern'}, 'kids_girls_eastern');
+t('_collBoys  "kids-boys-suits" coll moves to boys',        {b:'Limelight',t:'Kids Suit',cat:'kids_girls_eastern',sz:['8-9 Y'],coll:'kids-boys-suits'}, 'kids_boys_eastern');
+t('_collGirls overrides BOYS_KIDS_BRANDS (Cambridge)',      {b:'Cambridge',t:'Kids Suit',cat:'kids_girls_eastern',sz:['8-9 Y'],coll:'girls-collection'}, 'kids_girls_eastern');
+t('No coll → brand-set still applies (Cambridge→boys)',     {b:'Cambridge',t:'Kids Embroidered Suit',cat:'kids_girls_eastern',sz:['5-6 Y']}, 'kids_boys_eastern');
+t('Neutral coll → brand-set still applies (Cambridge→boys)',{b:'Cambridge',t:'Kids Suit',cat:'kids_girls_eastern',sz:['5-6 Y'],coll:'eid-collection-2025'}, 'kids_boys_eastern');
 // ── MODEST kids wear is EASTERN, never western ──
 t('Hijabi.pk "Kids Makhna" western→eastern',                {b:'Hijabi.pk',t:'Kids Makhna Pearls - Yellow',cat:'kids_girls_western',sz:['S']}, 'kids_girls_eastern');
 t('The Women Zone "Kids Scarf" western→eastern (brand)',    {b:'The Women Zone',t:'Kids Scarf - #97',cat:'kids_girls_western',sz:['Free Size']}, 'kids_girls_eastern');

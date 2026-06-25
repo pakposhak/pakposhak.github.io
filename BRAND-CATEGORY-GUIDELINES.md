@@ -153,16 +153,16 @@ is never flipped (keeps cleanup idempotent). Only the GENDERLESS items move.
   **Khas Stores** (7 kids collections: 2 infant + 1 girls + 4 kids; khasstores.com zero boys collection).
 - **BOYS-only** (`BOYS_KIDS_BRANDS`): **Cambridge**, **Innerlines** (menswear/kurta houses, original members)
   + **Kurta Corner** (its own pre-existing rule); their genderless "Kids … Suit"/kurta-shalwar defaulted to
-  girls → `kids_boys_*`. 2026-06-25 MAP-scan additions: **Saya** (6 kids collections: 2 boys + 4 kids;
-  saya.pk full scan = all kids collections boys/gender-neutral, zero girls), **Monark** (2 kids collections,
-  both boys-only; monark.com.pk junior line is boys-only men's fashion house). Guard: if a product in a
-  boys-only brand carries a KGIRL_STRONG garment word (peplum/frock/gown/lehenga…) it is NOT flipped — the
-  strong girls' garment signal beats the brand rule (prevents oscillation with the KGIRL_STRONG rule).
-- **Left as BOTH — NOT forced (they genuinely sell both genders, site-confirmed):** Maria B (27-pc boys kurta
-  line + girls suits), Asim Jofa ("READY TO WEAR BOYS" waistcoats/kurtas + girls lawn), Al-Deebaj (boys
-  kurta-shalwar on boy models + girls abaya), ChenOne, MTJ, Edge Republic (unisex kurta sets "for boys and
-  girls alike"), Minnie Minors, Kross Kulture, Tifl, Gul Ahmed, Alkaram. Their per-item classification
-  is left alone.
+  girls → `kids_boys_*`. **Monark** (2 kids collections, both boys-only; monark.com.pk junior line is
+  boys-only men's fashion house). Guard: if a product carries a KGIRL_STRONG garment word
+  (peplum/frock/gown/lehenga…) OR a girls-labeled collection handle (`_collGirls`) it is NOT flipped.
+  NOTE: **Saya was removed from this set (build 25n, 2026-06-25)** — Saya sells BOTH boys and girls;
+  the MAP scan showed zero girls-labeled collections because Saya puts girls items in generic "kids"
+  collections. Brand-level forced assignment was wrong. Moved to BOTH.
+- **Left as BOTH — NOT forced (genuinely sell both genders):** Maria B, Asim Jofa, Al-Deebaj, ChenOne,
+  MTJ, Edge Republic, Minnie Minors, Kross Kulture, Tifl, Gul Ahmed, Alkaram, **Saya** (added back
+  build 25n — boys AND girls on saya.pk; MAP scan had missed girls items in generic "kids" collections).
+  Their per-item classification is left alone; `_collGirls`/`_collBoys` handles gender on re-harvest.
 - **MODEST kids wear is EASTERN, never western** (`MODEST_KIDS` keyword + `MODEST_KIDS_BRANDS`): a kids
   abaya/makhna/hijab/niqab/khimar/jilbab is traditional modest wear. The harvester's western default
   mislabelled them — Hijabi.pk/Abaya.pk "Kids Makhna", Hijab-ul-Hareem "Kids Abaya" → `kids_*_western`; fixed
@@ -323,7 +323,7 @@ moves X→Y must not be undone by an existing rule.
 - **Limelight** "2 Piece … Suit (Pret)" split kids/women — its own pret line or kids?
 - **Maria B** plain "Kurta"/"2 Piece Blended Suit" — M-Kids line or women's?
 - **Asim Jofa** `AJKL` "Stitched 2 Pcs/1 Pc" — kids or women's 2pc?
-- **Saya** "For Kids" lawn 2pc with no boy/girl marker — default to girls or boys?
+- **Saya** "For Kids" lawn 2pc with no boy/girl marker — RESOLVED (build 25n): Saya sells BOTH. Genderless items left as-is (title-based default). _collGirls/_collBoys will resolve per-product on next full re-harvest.
 - **Kross Kulture** unprefixed "2PC/3PC Embroidered Suit" — women's pret or kids? *(Provisionally PINNED to
   `kids_girls_*` 2026-06-24 to stop an oscillation — "Girl" in title + documented "child models" note. Flip
   the pin in code if it's women's.)*

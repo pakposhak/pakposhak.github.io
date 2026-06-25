@@ -71,10 +71,12 @@ const GIRLS_KIDS_BRANDS = new Set([
 // genderless EASTERN kids ("Kids Embroidered Suit") to GIRLS. Mirror of the above: kids_girls_* →
 // kids_boys_*, guarded against an explicit "girl" title. 2026-06-25 website verified.
 // (Kurta Corner is the same case but already has its own dedicated rule below — not repeated here.)
+// NOTE: Saya was here (build 25l) but removed (build 25n) — Saya sells both boys AND girls; its
+// collection scan showed "zero girls" because the girls products sit in generic "kids" collections
+// with no gender label. The brand-level rule was wrong; _collBoys/_collGirls handle it on re-harvest.
 const BOYS_KIDS_BRANDS = new Set([
   'Cambridge', 'Innerlines',   // menswear/kurta houses (original members, 2026-06-25)
   // 2026-06-25 scan-brand-collections.js MAP verified boys-only (no girls collections found):
-  'Saya',    // kids(6): boys(2)+kids(4); saya.pk full scan — all kids collections are boys/gender-neutral, zero girls
   'Monark',  // kids(2): boys(2) only; monark.com.pk junior line is boys-only (men's fashion house)
 ]);
 // MODEST kids wear is EASTERN, never western — a kids abaya/makhna/hijab/niqab is traditional modest
@@ -110,6 +112,13 @@ const WESTERN_KIDS_BRANDS = new Set(['Engine']);
 // _collWest: handle names a western collection (pajamas/lounge/jeans/track/sport/sleepwear…)
 function _collEast(h){ return !!(h && /\beast(?:ern)?\b|ethnic|kurta|kameez|shalwar|eid[-_]|festive[-_]|formal[-_]suit|traditional|modest|abaya|makhna|hijab|niqab|namaz/i.test(h)); }
 function _collWest(h){ return !!(h && /\bwest(?:ern)?\b|pajamas?[-_]|loungewear|lounge[-_]|casual[-_]wear|jeans[-_]|denim[-_]jean|t[-_]shirt|track[-_]suit|sport[-_]|athletic|sleepwear|nightwear|night[-_]suit|gym[-_]|sweat[-_]|hoodie|jogger|polo(?![-_]kurta)/i.test(h)); }
+// _collGirls / _collBoys: handle UNAMBIGUOUSLY names one gender (e.g. "girls-kurta", "boys-shirts",
+// "kids-girls-eastern"). Matches word-boundary so "toys-for-boys" or "tomboys" don't fire. Used as
+// collection-AUTHORITY gender — takes precedence over the brand-level GIRLS/BOYS_KIDS_BRANDS sets,
+// because the brand's own taxonomy is more reliable than our brand-wide generalisation.
+// Only activates for products that have p.coll from the new harvest path (build 25l+).
+function _collGirls(h){ return !!(h && /(?:^|[-_])girls?(?:[-_]|$)/i.test(h)); }
+function _collBoys(h){  return !!(h && /(?:^|[-_])boys?(?:[-_]|$)/i.test(h)); }
 // Women-first brands that ALSO carry a men's line which the harvester (no men cat for them) dumps
 // into the women 2-piece cats. Vision-confirmed WHOLE-category (not per image): every "Shalwar
 // Kameez" / "Kurta Shalwar" / "Kurta with Trouser" 2pc listing of these brands is their MENSWEAR.
@@ -447,8 +456,13 @@ function cleanupProducts(ps) {
         explicitN++; out.push(p); continue;
       }
     }
-    if (/^kids_boys_/.test(p.cat) && GIRLS_KIDS_BRANDS.has(p.b) && !/\bboys?\b/i.test(p.t || '')) { p.cat = p.cat.replace('kids_boys_', 'kids_girls_'); girlsKidN++; out.push(p); continue; }   // girls-only brand (site+census verified): genderless boys-default → girls. Guard: never flip an explicit "boys" title (idempotent).
-    if (/^kids_girls_/.test(p.cat) && BOYS_KIDS_BRANDS.has(p.b) && !/\bgirls?\b/i.test(p.t || '') && !KGIRL_STRONG.test((p.t || '').toLowerCase())) { p.cat = p.cat.replace('kids_girls_', 'kids_boys_'); girlsKidN++; out.push(p); continue; }   // boys-only brand (menswear kids): genderless girls-default → boys. Guard: never flip an explicit "girls" title OR a KGIRL_STRONG garment (peplum/frock/gown…); those win even for boys-only brands. Note: lowercase title to match KGIRL_STRONG's case-insensitive patterns.
+    // COLLECTION-AUTHORITY gender (2026-06-25+): if the product was harvested from a collection whose
+    // handle UNAMBIGUOUSLY names one gender (e.g. "girls-kurta", "boys-shirts"), trust the brand's own
+    // taxonomy — it beats every brand-level set rule below. Only fires for products with p.coll set.
+    if (/^kids_boys_/.test(p.cat) && _collGirls(p.coll)) { p.cat = p.cat.replace('kids_boys_', 'kids_girls_'); girlsKidN++; out.push(p); continue; }
+    if (/^kids_girls_/.test(p.cat) && _collBoys(p.coll))  { p.cat = p.cat.replace('kids_girls_', 'kids_boys_'); girlsKidN++; out.push(p); continue; }
+    if (/^kids_boys_/.test(p.cat) && GIRLS_KIDS_BRANDS.has(p.b) && !/\bboys?\b/i.test(p.t || '') && !_collBoys(p.coll)) { p.cat = p.cat.replace('kids_boys_', 'kids_girls_'); girlsKidN++; out.push(p); continue; }   // girls-only brand: genderless boys-default → girls. Guard: explicit "boys" title OR boys-collection handle stays boys.
+    if (/^kids_girls_/.test(p.cat) && BOYS_KIDS_BRANDS.has(p.b) && !/\bgirls?\b/i.test(p.t || '') && !KGIRL_STRONG.test((p.t || '').toLowerCase()) && !_collGirls(p.coll)) { p.cat = p.cat.replace('kids_girls_', 'kids_boys_'); girlsKidN++; out.push(p); continue; }   // boys-only brand: genderless girls-default → boys. Guard: explicit "girls" title, KGIRL_STRONG garment, OR girls-collection handle stays girls.
     if (/^kids_(boys|girls)_western$/.test(p.cat) && (MODEST_KIDS.test(p.t || '') || MODEST_KIDS_BRANDS.has(p.b))) { p.cat = p.cat.replace('_western', '_eastern'); girlsKidN++; out.push(p); continue; }   // kids modest wear (abaya/makhna/hijab) + hijab-only houses → eastern, never western
     if (/^kids_(boys|girls)_eastern$/.test(p.cat) && WESTERN_KIDS_BRANDS.has(p.b)) { p.cat = p.cat.replace('_eastern', '_western'); girlsKidN++; out.push(p); continue; }   // western-only brand (Engine): a bare "Boys Suit" is a blazer suit → western
     // COLLECTION-AUTHORITATIVE west move (2026-06-25): if this product was harvested from a collection
