@@ -65,6 +65,13 @@ const GIRLS_KIDS_BRANDS = new Set([
 // kids_boys_*, guarded against an explicit "girl" title. 2026-06-25 website verified.
 // (Kurta Corner is the same case but already has its own dedicated rule below — not repeated here.)
 const BOYS_KIDS_BRANDS = new Set(['Cambridge', 'Innerlines']);
+// MODEST kids wear is EASTERN, never western — a kids abaya/makhna/hijab/niqab is traditional modest
+// wear, so the harvester's western default mislabels them (Hijabi.pk/Abaya.pk "Kids Makhna",
+// Hijab-ul-Hareem "Kids Abaya" → kids_*_western). Brand-agnostic keyword fix below, PLUS the
+// hijab-only houses whose kids items carry NO keyword (The Women Zone "Kids Scarf #97" is a kids
+// HIJAB). These are scan-verified eastern-only modest houses (2026-06-25).
+const MODEST_KIDS = /\bmakhna\b|\bmakhana\b|\bhijab\b|\babaya\b|\bniqab\b|\bniqaab\b|\bkhimar\b|\bjilbab\b|\bburqa\b|\bburka\b|\bjubbah?\b|\bnamaz\b|\bshayla\b/i;
+const MODEST_KIDS_BRANDS = new Set(['The Women Zone', 'Hijabi.pk', 'Hijab-ul-Hareem', 'Abaya.pk', 'The Ummatis', 'Black Camels', 'Hijab & Co']);
 // Women-first brands that ALSO carry a men's line which the harvester (no men cat for them) dumps
 // into the women 2-piece cats. Vision-confirmed WHOLE-category (not per image): every "Shalwar
 // Kameez" / "Kurta Shalwar" / "Kurta with Trouser" 2pc listing of these brands is their MENSWEAR.
@@ -396,6 +403,7 @@ function cleanupProducts(ps) {
     }
     if (/^kids_boys_/.test(p.cat) && GIRLS_KIDS_BRANDS.has(p.b) && !/\bboys?\b/i.test(p.t || '')) { p.cat = p.cat.replace('kids_boys_', 'kids_girls_'); girlsKidN++; out.push(p); continue; }   // girls-only brand (site+census verified): genderless boys-default → girls. Guard: never flip an explicit "boys" title (idempotent).
     if (/^kids_girls_/.test(p.cat) && BOYS_KIDS_BRANDS.has(p.b) && !/\bgirls?\b/i.test(p.t || '')) { p.cat = p.cat.replace('kids_girls_', 'kids_boys_'); girlsKidN++; out.push(p); continue; }   // boys-only brand (menswear kids): genderless girls-default → boys. Guard: never flip an explicit "girls" title.
+    if (/^kids_(boys|girls)_western$/.test(p.cat) && (MODEST_KIDS.test(p.t || '') || MODEST_KIDS_BRANDS.has(p.b))) { p.cat = p.cat.replace('_western', '_eastern'); girlsKidN++; out.push(p); continue; }   // kids modest wear (abaya/makhna/hijab) + hijab-only houses → eastern, never western
     // One Kids (beoneshopone) encodes kids' gender in the product SLUG: /products/g… = GIRL,
     // /products/b… = BOY. The harvester defaults its code-named kids to BOYS, so trust the slug:
     // vision-confirmed 28/30 g-slug items sitting in kids_boys are girls (incl. title-impossible

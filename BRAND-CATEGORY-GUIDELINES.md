@@ -153,8 +153,20 @@ is never flipped (keeps cleanup idempotent). Only the GENDERLESS items move.
   girls alike"), Minnie Minors, Saya, Kross Kulture, Tifl, Gul Ahmed, Alkaram. Their per-item classification
   is left alone. Limelight / Khas Stores read girls/unisex but are multi-dept + med-confidence with nothing to
   move, so they are deliberately NOT locked (revisit if a boys kids line appears).
-- **Flagged separately (NOT a gender swap):** **Ego** — its website kids collection is EMPTY, yet ~60 "Ego"
-  items sit in `kids_girls_*`; these are misclassified WOMEN'S items (a kids-vs-women bug) — open for review.
+- **MODEST kids wear is EASTERN, never western** (`MODEST_KIDS` keyword + `MODEST_KIDS_BRANDS`): a kids
+  abaya/makhna/hijab/niqab/khimar/jilbab is traditional modest wear. The harvester's western default
+  mislabelled them — Hijabi.pk/Abaya.pk "Kids Makhna", Hijab-ul-Hareem "Kids Abaya" → `kids_*_western`; fixed
+  to `kids_*_eastern` by keyword. The hijab-only houses (**The Women Zone**, **Hijabi.pk**, **Hijab-ul-Hareem**,
+  **Abaya.pk**, **The Ummatis**, **Black Camels**, **Hijab & Co**) also move by BRAND, because The Women Zone's
+  "Kids Scarf #97" is a kids hijab with no keyword (28 fixed). Black Camels' ADULT "Embroidered Co-Ord Sets"
+  stay `coord_western` (scanner found a western section; ambiguous — not touched).
+- **NOT a bug — Ego kids are legit** (corrected 2026-06-25): the ~60 "Ego" items in `kids_girls_eastern` are
+  Ego's real **"Little Ego"** age-sized (2-8Y) kids line — slugs end `-little-ego`. An earlier flag wrongly
+  called them misclassified women's; verification showed the research agent had checked Ego's *empty*
+  `kids-wear` collection and missed the real `little-ego` line. Left as-is (correct).
+- **No real women-in-kids leak found** (verified 2026-06-25): only true adult-letter-sized `kids_*` items are
+  Hijabi.pk kids makhna (size S = small kids, legit) and the documented Kross Kulture "2PC Girl" open call.
+  Numeric kids sizes (Sha Posh 20→40, Senorita 16–32, kurta 14–28) are KIDS sizes, not adult.
 
 ### New brand/rule corrections (2026-06-24 classifier pass)
 - **Amir Adnan** — `jamawar/raw-silk "Jacket"` → `mens_waistcoat` (Rule 2.4). Its FINISHED couture is listed

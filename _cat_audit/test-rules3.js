@@ -30,5 +30,10 @@ t('Kurta Corner "Kids Suit" girls→boys (own rule)',         {b:'Kurta Corner',
 // ── NEGATIVE: a BOTH brand (not listed) is left alone ──
 t('Maria B (BOTH) genderless kids stays put',               {b:'Maria B',t:'3 Piece Embroidered Lawn Suit',cat:'kids_girls_eastern',sz:['5-6 Y']}, 'kids_girls_eastern');
 t('Unlisted brand genderless kids_boys stays boys',         {b:'ZZ Test',t:'Kids Printed Shirt',cat:'kids_boys_western',sz:['5-6 Y']}, 'kids_boys_western');
+// ── MODEST kids wear is EASTERN, never western ──
+t('Hijabi.pk "Kids Makhna" western→eastern',                {b:'Hijabi.pk',t:'Kids Makhna Pearls - Yellow',cat:'kids_girls_western',sz:['S']}, 'kids_girls_eastern');
+t('The Women Zone "Kids Scarf" western→eastern (brand)',    {b:'The Women Zone',t:'Kids Scarf - #97',cat:'kids_girls_western',sz:['Free Size']}, 'kids_girls_eastern');
+t('brand-agnostic "Kids Abaya" western→eastern (keyword)',  {b:'ZZ Test',t:'Kids Abaya Embroidered',cat:'kids_girls_western',sz:['5-6 Y']}, 'kids_girls_eastern');
+t('NEGATIVE non-modest kids western stays western',         {b:'ZZ Test',t:'Kids Sweatshirt',cat:'kids_girls_western',sz:['5-6 Y']}, 'kids_girls_western');
 console.log('\n'+pass+' passed, '+fail+' failed');
 process.exit(fail);
