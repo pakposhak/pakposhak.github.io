@@ -5721,14 +5721,25 @@
   // (e.g. the Shawl tile was showing a man). Men/Kids tiles are gender-encoded already, so no filter.
   const _PS_MALE_RE = /\b(men|mens|men's|gents?|male|mardana|him|waistcoat|sherwani|achkan|prince ?coat)\b/i;
   function _psTileGender(catKey){ const t = PS_SHOP_TILES.find(x => x.key === catKey || (x.cats && x.cats.indexOf(catKey) >= 0)); return t ? t.g : ''; }
-  function _psThumbOk(catKey, title){ return _psTileGender(catKey) !== 'w' || !_PS_MALE_RE.test(String(title || '')); }
+  function _psThumbOk(catKey, title){
+    const t = String(title || '');
+    if(_psTileGender(catKey) === 'w' && _PS_MALE_RE.test(t)) return false;   // a women tile must not show a man
+    // A kids EASTERN tile must show an EASTERN garment (kurta pajama / shalwar kameez / waistcoat),
+    // never a western suit / pajama / tee — so "Boys Eastern" shows a kurta pajama (req 2026-06-25).
+    if(/^kids_(?:boys|girls)_eastern$/.test(catKey)){
+      if(/\bkurta|kameez|shalwar|sherwani|waist\s?coat|\bfrock\b|anarkali|lehenga|gharara|sharara|\bethnic\b|\beastern\b|peshwas|\bkurti\b/i.test(t)) return true;   // a real eastern garment (incl. "kurta pajama") → use it
+      if(/\bsuiting\b|\bsuit\b|\bblazer\b|\bgilet\b|\bupper\b|zip[\s-]?up|\bjeans?\b|\bdenim\s+(?:jacket|shirt)|t-?shirt|\btee\b|\bpolo\b|\bhoodie\b|\bsweat|\bjacket\b|loungewear|\bpaj?ama|\bpyjama|\bathletic\b|\btrack\b|\bshorts?\b|\bjogger|\bbomber\b|\bcardigan\b/i.test(t)) return false;   // clearly western → never on an eastern tile
+      return false;   // unknown garment → skip; wait for a clear eastern photo
+    }
+    return true;
+  }
   // Per-category representative photo, cached in localStorage (14-day TTL) so the strip
   // paints instantly on repeat visits. Filled two ways: opportunistically from any product
   // page the grid loads (psHarvestThumbs), and by a throttled gap-fill fetch (psLoadShopThumbs).
   const PS_THUMB_TTL = 14 * 24 * 3600 * 1000;
   let _psThumbs = {};
-  try { _psThumbs = JSON.parse(localStorage.getItem('psb_cat_thumbs_v3') || '{}') || {}; } catch(e){ _psThumbs = {}; }   // _v3: re-fetch after the men's-formal-garment filter fix (Shawl tile was a man)
-  function _psThumbsSave(){ try{ localStorage.setItem('psb_cat_thumbs_v3', JSON.stringify(_psThumbs)); }catch(e){} }
+  try { _psThumbs = JSON.parse(localStorage.getItem('psb_cat_thumbs_v4') || '{}') || {}; } catch(e){ _psThumbs = {}; }   // _v4: re-fetch after the kids eastern/western fix so "Boys Eastern" shows a kurta, not a western suit
+  function _psThumbsSave(){ try{ localStorage.setItem('psb_cat_thumbs_v4', JSON.stringify(_psThumbs)); }catch(e){} }
   function psThumbGet(key){ const t = _psThumbs[key]; return (t && t.u && (Date.now() - t.t < PS_THUMB_TTL)) ? t.u : ''; }
   function psThumbSet(key, url){ if(!key || !url) return; _psThumbs[key] = { u:url, t:Date.now() }; _psThumbsSave(); }
   // Record the first GENDER-APPROPRIATE image seen for any category from a freshly-loaded product page.
@@ -5870,14 +5881,20 @@
   // restriction. Women/Men/Kids restrict to that gender's categories so a multi-department brand
   // (Edenrobe, Khaadi…) shows ONLY that department's articles when picked under it (req).
   function _psDeptCats(dept){ return dept === 'w' ? PS_W : dept === 'm' ? PS_M : dept === 'k' ? PS_K : []; }
+  // True when a cat-set is EXACTLY one whole department's category list — i.e. it came from a bare
+  // brand-tile tap (dept widening), NOT a specific search/faceted narrowing like "kurti". Lets a
+  // brand pick PRESERVE a real category filter while still widening a bare brand tap to the dept.
+  function _psIsWholeDeptCats(s){ return [PS_W, PS_M, PS_K].some(d => s.size === d.length && d.every(c => s.has(c))); }
   // Tap a brand tile → filter the grid to that brand AND the current department's categories, then scroll.
   function psShopPickBrand(name){
     if(!name) return;
-    const cats = (psShopMode === 'brand') ? _psDeptCats(psShopDept) : [];
-    // Carry the active Price / Sort / Sale / New filter forward so they STACK with the brand
-    // (req: "multi filters shall work together" — filter prices within a brand too). Only the
-    // free-text query is cleared — tapping a brand tile is a browse action, not a search.
-    psSel = { prices:new Set(psSel.prices), cats:new Set(cats), brands:new Set([name]) };
+    const deptCats = (psShopMode === 'brand') ? _psDeptCats(psShopDept) : [];
+    // Carry Price / Sort / Sale / New forward (multi-filter), and PRESERVE an active category
+    // narrowing (e.g. a "kurti" search or a faceted pick) so brand + category STACK — req:
+    // "search kurti then pick Khaadi → only Khaadi kurti". Only widen to the whole department's
+    // cats when there is no specific category yet (a bare brand tap under a Men/Women/Kids tab).
+    const keepCats = (psSel.cats.size && !_psIsWholeDeptCats(psSel.cats)) ? psSel.cats : new Set(deptCats);
+    psSel = { prices:new Set(psSel.prices), cats:new Set(keepCats), brands:new Set([name]) };
     psQuery = ''; psSizeQ = '';
     ['psSearchMobile','psSearchDesktop'].forEach(idd => { const e = document.getElementById(idd); if(e) e.value = ''; });
     psSearchHint('', new Set(), new Set());
@@ -5924,13 +5941,11 @@
   function psShopPick(key){
     const tile = PS_SHOP_TILES.find(t => t.key === key);
     const cats = (tile && tile.cats) ? tile.cats : [key];
-    // Carry the active Price / Sort / Sale / New filter forward so they STACK with the chosen
-    // category (req: "multi filters shall work together" — filter prices within a category).
-    // Only the free-text query is cleared — tapping a tile is a browse action, not a search.
-    psSel = { prices:new Set(psSel.prices), cats:new Set(cats), brands:new Set() };
-    psQuery = ''; psSizeQ = '';
-    ['psSearchMobile','psSearchDesktop'].forEach(idd => { const e = document.getElementById(idd); if(e) e.value = ''; });
-    psSearchHint('', new Set(), new Set());
+    // STACK with the active search + filters (req: "search 'agha noor' then tap a category →
+    // that category, Agha Noor only"). A typed brand/keyword lives in psQuery (free-text FTS —
+    // API mode can't always pre-resolve it to a brand chip), so PRESERVE psQuery + psSizeQ + the
+    // search box + the brand / price / sort / sale / new state; only set the chosen category.
+    psSel = { prices:new Set(psSel.prices), cats:new Set(cats), brands:new Set(psSel.brands) };
     psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply();
     psScrollGridUnderCarousel();
   }
@@ -6865,7 +6880,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-25i';
+  const PSB_BUILD = '2026-06-25j';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

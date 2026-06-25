@@ -72,6 +72,25 @@ const BOYS_KIDS_BRANDS = new Set(['Cambridge', 'Innerlines']);
 // HIJAB). These are scan-verified eastern-only modest houses (2026-06-25).
 const MODEST_KIDS = /\bmakhna\b|\bmakhana\b|\bhijab\b|\babaya\b|\bniqab\b|\bniqaab\b|\bkhimar\b|\bjilbab\b|\bburqa\b|\bburka\b|\bjubbah?\b|\bnamaz\b|\bshayla\b/i;
 const MODEST_KIDS_BRANDS = new Set(['The Women Zone', 'Hijabi.pk', 'Hijab-ul-Hareem', 'Abaya.pk', 'The Ummatis', 'Black Camels', 'Hijab & Co']);
+// WESTERN kids garments that the classifier wrongly sent to kids_*_eastern. Root cause: the
+// eastern-garment regex matched the bare word "suit", so western blazer suits ("Boys Suit" @ Engine,
+// "Suiting for Boys" @ Diners) read eastern; and sleepwear/outerwear ("Pajamas"/"Loungewear"/
+// "Athletic Pajamas" @ Minnie, "Gilet"/"Zip-Up Upper") weren't treated as western. These words are
+// UNAMBIGUOUSLY western kidswear. A kids_*_eastern item that matches one and carries NO eastern
+// garment word (KEAST_GUARD) → kids_*_western. (Brand's own collection confirms: these sit in the
+// brand's boy-western / pajamas / suiting collections.) 2026-06-25.
+// NOTE: bare "pajama" is NOT here — a "Pajama Suit" / "Kurta Pajama" is EASTERN (Cambridge menswear).
+// Pajama-as-sleepwear is handled in the rule as `pajama WITHOUT suit` so it can't eat eastern sets.
+// (bare "denim" is NOT here — "Denim Jacquard"/"Denim Fabric" is an eastern SUIT material, not a
+// western garment; "jeans" / "denim jacket" are caught by jeans/jacket.)
+const KWEST = /\bsuiting\b|\bblazers?\b|\btrack[\s-]?suits?\b|\bloungewear\b|\bnight[\s-]?(?:suits?|wear|y|dress)\b|\bathletic\b|\bsweat[\s-]?shirts?\b|\bhoodies?\b|\bjeans?\b|\bt-?shirts?\b|\btees?\b|\bpolos?\b|\bjackets?\b|\bbombers?\b|\bgilets?\b|\bupper\b|\bzip[\s-]?(?:up|thru)\b|\bshorts?\b|\bjoggers?\b|\bsweaters?\b|\bcardigans?\b|\bsportswear\b/i;
+const KPAJAMA_WEST = p => /\bpaj?amas?\b|\bpyjamas?\b/i.test(p) && !/\bsuit\b/i.test(p);   // sleepwear pajama (no "suit") = western; "Pajama Suit" stays eastern
+const KEAST_GUARD = /\bkurta|kameez|shalwar|sherwani|waist\s?coat|achkan|anarkali|gharara|sharara|\bethnic\b|\beastern\b|\babaya\b|makhna|\bhijab\b|\bniqab\b|\bfrock\b|lehenga|peshwas|\bjubba|\bthobe\b|\bkurti\b|dupatta|saree/i;
+// Western-ONLY kids brands (site-verified): their whole kids line is western, so even a bare "Boys
+// Suit" (= a blazer suit, no eastern word) is western. Engine: 160/162 of its "boys_eastern" were
+// western (suits, gilets, zip-up uppers); only a couple borderline "Boys Shalwar". Danish: "Engine
+// all products are western only" → force its kids_*_eastern → kids_*_western.
+const WESTERN_KIDS_BRANDS = new Set(['Engine']);
 // Women-first brands that ALSO carry a men's line which the harvester (no men cat for them) dumps
 // into the women 2-piece cats. Vision-confirmed WHOLE-category (not per image): every "Shalwar
 // Kameez" / "Kurta Shalwar" / "Kurta with Trouser" 2pc listing of these brands is their MENSWEAR.
@@ -412,6 +431,8 @@ function cleanupProducts(ps) {
     if (/^kids_boys_/.test(p.cat) && GIRLS_KIDS_BRANDS.has(p.b) && !/\bboys?\b/i.test(p.t || '')) { p.cat = p.cat.replace('kids_boys_', 'kids_girls_'); girlsKidN++; out.push(p); continue; }   // girls-only brand (site+census verified): genderless boys-default → girls. Guard: never flip an explicit "boys" title (idempotent).
     if (/^kids_girls_/.test(p.cat) && BOYS_KIDS_BRANDS.has(p.b) && !/\bgirls?\b/i.test(p.t || '')) { p.cat = p.cat.replace('kids_girls_', 'kids_boys_'); girlsKidN++; out.push(p); continue; }   // boys-only brand (menswear kids): genderless girls-default → boys. Guard: never flip an explicit "girls" title.
     if (/^kids_(boys|girls)_western$/.test(p.cat) && (MODEST_KIDS.test(p.t || '') || MODEST_KIDS_BRANDS.has(p.b))) { p.cat = p.cat.replace('_western', '_eastern'); girlsKidN++; out.push(p); continue; }   // kids modest wear (abaya/makhna/hijab) + hijab-only houses → eastern, never western
+    if (/^kids_(boys|girls)_eastern$/.test(p.cat) && WESTERN_KIDS_BRANDS.has(p.b)) { p.cat = p.cat.replace('_eastern', '_western'); girlsKidN++; out.push(p); continue; }   // western-only brand (Engine): a bare "Boys Suit" is a blazer suit → western
+    if (/^kids_(boys|girls)_eastern$/.test(p.cat) && (KWEST.test(p.t || '') || KPAJAMA_WEST(p.t || '')) && !KEAST_GUARD.test(p.t || '')) { p.cat = p.cat.replace('_eastern', '_western'); girlsKidN++; out.push(p); continue; }   // western garment (suiting/loungewear/gilet/jacket/sleepwear-pajama…) with NO eastern word → western, not eastern
     // One Kids (beoneshopone) encodes kids' gender in the product SLUG: /products/g… = GIRL,
     // /products/b… = BOY. The harvester defaults its code-named kids to BOYS, so trust the slug:
     // vision-confirmed 28/30 g-slug items sitting in kids_boys are girls (incl. title-impossible

@@ -16,7 +16,7 @@ for (const m of code.matchAll(/\/\^\(([^)]+)\)\$\/i?\.test\(p\.b/g)) {
   m[1].split('|').forEach(b => brands.add(b.replace(/\\/g, '')));
 }
 // 3) brand Sets (add new brand-set names here as they appear)
-for (const setName of ['GIRLS_KIDS_BRANDS', 'BOYS_KIDS_BRANDS', 'MODEST_KIDS_BRANDS', 'MENS_2PC_BRANDS']) {
+for (const setName of ['GIRLS_KIDS_BRANDS', 'BOYS_KIDS_BRANDS', 'MODEST_KIDS_BRANDS', 'WESTERN_KIDS_BRANDS', 'MENS_2PC_BRANDS']) {
   const re = new RegExp(setName + '\\s*=\\s*new Set\\(\\[([^\\]]+)\\]');
   const m = code.match(re);
   if (m) for (const x of m[1].matchAll(/['"]([^'"]+)['"]/g)) brands.add(x[1]);

@@ -176,6 +176,24 @@ is never flipped (keeps cleanup idempotent). Only the GENDERLESS items move.
   by the Beach", "Zirconia Embroidered Suit") is NEVER dropped. A blanket jewellery-keyword purge was rejected:
   it would delete ~60 real suits with jewellery design-names. 37 true jewellery removed, 0 false positives.
 
+### Kids WESTERN garments mislabelled eastern (2026-06-25)
+**Root cause:** the eastern-garment regex matched the bare word "suit", so western blazer suits read as
+eastern — "Boys Suit" (Engine), "Suiting for Boys" (Diners) → `kids_*_eastern`; and western sleepwear /
+outerwear ("Pajamas", "Athletic Pajamas", "Loungewear" @ Minnie Minors; "Gilet"/"Zip-Up Upper") weren't
+treated as western. **Why the brand-collection logic didn't catch it:** the kids collection hint
+(boy-western / pajamas / suiting collections) is only used by the FULL harvest's `mapCatKids`, and even
+there the TITLE overrides it; the LIVE catalogue is rebuilt by the VPS auto-refresh + `catalog-cleanup.js`,
+which see only title + slug (no collection). So the fix lives in cleanup:
+- `KWEST` (unambiguous western kid garments: suiting/blazer/track-suit/loungewear/nightwear/pajama/athletic/
+  sweatshirt/hoodie/jeans/denim/tee/polo/jacket/bomber/gilet/upper/zip-up/shorts/jogger/sweater/cardigan)
+  in `kids_*_eastern` + NO eastern word (`KEAST_GUARD`: kurta/kameez/shalwar/sherwani/waistcoat/anarkali/
+  gharara/ethnic/frock/lehenga…) → `kids_*_western`. Catalog-wide; 0 false positives (Minnie 95, Diners 24…).
+- `WESTERN_KIDS_BRANDS` = **Engine** — site-verified western-only kids brand (160/162 of its "boys_eastern"
+  were western suits/gilets/uppers); its bare "Boys Suit" carries no eastern word, so force all Engine
+  `kids_*_eastern` → `kids_*_western`. Its only eastern garment (`kurta`/`shalwar`) would be guarded, but per
+  Danish "Engine is western-only" so it is forced wholesale.
+- "kurta pajama" / "kameez shalwar" stay EASTERN (the `kurta`/`shalwar` word guards them).
+
 ### New brand/rule corrections (2026-06-24 classifier pass)
 - **Amir Adnan** — `jamawar/raw-silk "Jacket"` → `mens_waistcoat` (Rule 2.4). Its FINISHED couture is listed
   `sz:["Unstitched"]`, so it is exempt from the unstitched→fabric demotion and from `fwdCat` (its slug-rules

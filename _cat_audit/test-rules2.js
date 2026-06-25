@@ -18,7 +18,7 @@ t('Khussa Master "Zafira" (real khussa, no sandal word) STAYS footwear', {b:'Khu
 t('Minnie "Under Vests (Pack Of 2)" → deleted', {b:'Minnie Minors',t:'Under Vests (Pack Of 2) (MSBVU-04)',cat:'kids_boys_eastern',sz:['9/12-M']}, '(deleted)');
 // C) kids gender-swap + Kurta Corner
 t('Almirah "Boys Kameez Shalwar" in girls → boys', {b:'Almirah',t:'White Cotton Boys Kameez Shalwar',cat:'kids_girls_eastern',sz:['3-4 Y']}, 'kids_boys_eastern');
-t('Engine "Boys Suit" in girls → boys',            {b:'Engine',t:'Boys Suit',cat:'kids_girls_eastern',sz:['2 Y']}, 'kids_boys_eastern');
+t('Engine "Boys Suit" eastern → WESTERN (western-only brand)', {b:'Engine',t:'Boys Suit',cat:'kids_boys_eastern',sz:['2 Y']}, 'kids_boys_western');
 t('Kurta Corner "Kids Embroidered Suit" in girls → boys', {b:'Kurta Corner',t:'Kids Embroidered Suit 13',cat:'kids_girls_eastern',sz:['22','24']}, 'kids_boys_eastern');
 // D) Cougar sleeveless western → girls western
 t('Cougar "Sleeveless Embroidered Top" → girls western', {b:'Cougar',t:'Sleeveless Embroidered Top',cat:'kids_girls_eastern',sz:['2-3 Y']}, 'kids_girls_western');

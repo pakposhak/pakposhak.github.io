@@ -41,5 +41,12 @@ t('"Diamante By Soeurs Pearl Hoops" dropped',               {b:'Agha Noor',t:'Di
 t('Zara Shahjahan "Phool Jhoomar" dropped',                 {b:'Zara Shahjahan',t:'Phool Jhoomar',cat:'lawn_3pc_unstitch',sz:['Unstitched']}, '(deleted)');
 t('GUARD jewellery-named SUIT survives ("Kundan Coral" 3pc)',{b:'Maryum N Maria',t:'Kundan Coral Embroidered 3pc Suit',cat:'pret_3pc',sz:['M']}, 'pret_3pc');
 t('GUARD "Jewel by the Beach" lawn suit survives',          {b:'Crimson',t:'Jewel by the Beach 3B Mahogany',cat:'lawn_3pc_unstitch',sz:['Unstitched']}, 'lawn_3pc_unstitch');
+// ── WESTERN kids garments mislabelled eastern → western ──
+t('Engine "Boys Suit" (western-only brand) eastern→western',{b:'Engine',t:'Boys Suit',cat:'kids_boys_eastern',sz:['5-6 Y']}, 'kids_boys_western');
+t('Diners "Suiting for Boys" eastern→western',              {b:'Diners',t:'Black Suiting for Boys',cat:'kids_boys_eastern',sz:['5-6 Y']}, 'kids_boys_western');
+t('Minnie "Athletic Pajamas" eastern→western',              {b:'Minnie Minors',t:'Athletic Pajamas (SW-PJ-073)',cat:'kids_boys_eastern',sz:['5-6 Y']}, 'kids_boys_western');
+t('Minnie "Loungewear" eastern→western',                    {b:'Minnie Minors',t:'Loungewear (BLW-012)',cat:'kids_boys_eastern',sz:['5-6 Y']}, 'kids_boys_western');
+t('GUARD "Boys Kurta Pajama" stays eastern',                {b:'Diners',t:'Orange Boys Kurta Pajama',cat:'kids_boys_eastern',sz:['5-6 Y']}, 'kids_boys_eastern');
+t('GUARD "Kameez Shalwar Waistcoat" stays eastern',         {b:'Diners',t:'Ash Grey Boys Kameez Shalwar With Waistcoat',cat:'kids_boys_eastern',sz:['5-6 Y']}, 'kids_boys_eastern');
 console.log('\n'+pass+' passed, '+fail+' failed');
 process.exit(fail);
