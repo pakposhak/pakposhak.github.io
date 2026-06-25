@@ -167,6 +167,14 @@ is never flipped (keeps cleanup idempotent). Only the GENDERLESS items move.
 - **No real women-in-kids leak found** (verified 2026-06-25): only true adult-letter-sized `kids_*` items are
   Hijabi.pk kids makhna (size S = small kids, legit) and the documented Kross Kulture "2PC Girl" open call.
   Numeric kids sizes (Sha Posh 20→40, Senorita 16–32, kurta 14–28) are KIDS sizes, not adult.
+- **JEWELLERY drop at cleanup level** (`JEWELLERY_DROP`, 2026-06-25): the harvester drops `product_type=Jewellery`,
+  but the VPS AUTO-REFRESH path doesn't, so jewellery leaked into `lawn_3pc_unstitch` (Agha Noor "JWL0190" SKUs
+  + "Diamante By Soeurs" earrings/zirconia = 27; Zara Shahjahan "Phool Jhoomar"/"Maang Tikka" = 10). cleanup
+  only sees title+slug, so it drops the UNAMBIGUOUS jewellery patterns (`jwl\d`, `soeurs`, `zirconia`,
+  `jhoomar`, `jhumka`, `maang tikka`, `matha patti`, `polki/kundan SET`, `nose pin`, `ear rings`, `pearl/stud
+  hoops/earrings`). **GUARDED by `GARMENT_NOUN`** — a jewellery-NAMED suit ("Kundan Coral 3pc", Crimson "Jewel
+  by the Beach", "Zirconia Embroidered Suit") is NEVER dropped. A blanket jewellery-keyword purge was rejected:
+  it would delete ~60 real suits with jewellery design-names. 37 true jewellery removed, 0 false positives.
 
 ### New brand/rule corrections (2026-06-24 classifier pass)
 - **Amir Adnan** — `jamawar/raw-silk "Jacket"` → `mens_waistcoat` (Rule 2.4). Its FINISHED couture is listed

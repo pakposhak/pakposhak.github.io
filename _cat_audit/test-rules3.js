@@ -35,5 +35,11 @@ t('Hijabi.pk "Kids Makhna" western→eastern',                {b:'Hijabi.pk',t:'
 t('The Women Zone "Kids Scarf" western→eastern (brand)',    {b:'The Women Zone',t:'Kids Scarf - #97',cat:'kids_girls_western',sz:['Free Size']}, 'kids_girls_eastern');
 t('brand-agnostic "Kids Abaya" western→eastern (keyword)',  {b:'ZZ Test',t:'Kids Abaya Embroidered',cat:'kids_girls_western',sz:['5-6 Y']}, 'kids_girls_eastern');
 t('NEGATIVE non-modest kids western stays western',         {b:'ZZ Test',t:'Kids Sweatshirt',cat:'kids_girls_western',sz:['5-6 Y']}, 'kids_girls_western');
+// ── JEWELLERY drop (Agha Noor JWL / Diamante, Zara Shahjahan Jhoomar) — title/slug, guarded ──
+t('Agha Noor "JWL0190" jewellery dropped',                  {b:'Agha Noor',t:'JWL0190',u:'https://x.com/products/jwl0190',cat:'lawn_3pc_unstitch',sz:['Unstitched']}, '(deleted)');
+t('"Diamante By Soeurs Pearl Hoops" dropped',               {b:'Agha Noor',t:'Diamante By Soeurs Pearl Hoops',cat:'lawn_3pc_unstitch',sz:['Unstitched']}, '(deleted)');
+t('Zara Shahjahan "Phool Jhoomar" dropped',                 {b:'Zara Shahjahan',t:'Phool Jhoomar',cat:'lawn_3pc_unstitch',sz:['Unstitched']}, '(deleted)');
+t('GUARD jewellery-named SUIT survives ("Kundan Coral" 3pc)',{b:'Maryum N Maria',t:'Kundan Coral Embroidered 3pc Suit',cat:'pret_3pc',sz:['M']}, 'pret_3pc');
+t('GUARD "Jewel by the Beach" lawn suit survives',          {b:'Crimson',t:'Jewel by the Beach 3B Mahogany',cat:'lawn_3pc_unstitch',sz:['Unstitched']}, 'lawn_3pc_unstitch');
 console.log('\n'+pass+' passed, '+fail+' failed');
 process.exit(fail);
