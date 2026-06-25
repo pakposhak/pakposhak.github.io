@@ -1000,9 +1000,12 @@
     .ps-info{width:28px;height:28px;border-radius:50%;background:rgba(10,22,40,0.55);color:#fff;border:none;cursor:pointer;font-size:0.92rem;font-weight:700;display:flex;align-items:center;justify-content:center;line-height:1;padding:0;font-family:inherit}
     .ps-info:hover{background:rgba(10,22,40,0.78)}
     /* Share-added confirmation toast — fixed above the bottom nav, auto-dismisses (req #6) */
-    .ps-share-toast{position:fixed;left:50%;transform:translateX(-50%) translateY(20px);bottom:calc(66px + env(safe-area-inset-bottom,0px));z-index:60;display:flex;align-items:center;gap:10px;max-width:92vw;background:#137a72;color:#fff;padding:10px 14px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.28);font-size:0.82rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
+    /* Column layout: the message reads horizontally across the toast width, with the
+       "Review order" button stacked BELOW it (was a row → text squeezed into a tall
+       narrow column). Fixed width keeps the sentence on ~2 lines, no wasted space. */
+    .ps-share-toast{position:fixed;left:50%;transform:translateX(-50%) translateY(20px);bottom:calc(66px + env(safe-area-inset-bottom,0px));z-index:60;display:flex;flex-direction:column;align-items:stretch;gap:9px;width:min(340px,92vw);background:#137a72;color:#fff;padding:12px 15px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.28);font-size:0.85rem;font-weight:600;line-height:1.4;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
     .ps-share-toast.on{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
-    .ps-share-toast button{flex:0 0 auto;background:rgba(255,255,255,0.22);color:#fff;border:none;border-radius:8px;padding:6px 11px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+    .ps-share-toast button{align-self:flex-end;background:rgba(255,255,255,0.22);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:0.8rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
     .ps-share-toast button:hover{background:rgba(255,255,255,0.34)}
     /* Brand-site warning interstitial — centered themed dialog (mirrors .ps-detail), above all overlays */
     .ps-warn{display:none;position:fixed;inset:0;z-index:650;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;padding:18px}

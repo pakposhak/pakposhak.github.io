@@ -3069,11 +3069,14 @@
   // on the paste bar or the order form depending on state.) The just-saved item is safe
   // in the cart, so returning to Browse can't lose it.
   function addAnotherProduct(){
+    // Re-show the Browse tabs (focusOrderView hides them on a share landing) and
+    // return to whichever Browse tab the buyer was on (Products grid or Brands).
+    const bt = document.querySelector('.browse-tabs'); if(bt) bt.style.display = '';
     let which = 'products';
     try{ if(localStorage.getItem('psb_browse') === 'brands') which = 'brands'; }catch(e){}
     try{ if(typeof switchBrowse === 'function') switchBrowse(which); }catch(e){}
-    const tgt = document.getElementById(which === 'brands' ? 'tabBrands' : 'tabProducts')
-              || document.querySelector('.browse-tabs');
+    const tgt = document.querySelector('.browse-tabs')
+              || document.getElementById(which === 'brands' ? 'tabBrands' : 'tabProducts');
     if(tgt) tgt.scrollIntoView({ behavior:'smooth', block:'start' });
   }
 
@@ -3169,8 +3172,12 @@
   // we put the buyer right on the item and prompt them to SAVE it first; once saved it
   // persists (localStorage psb_cart), and "Add Another Product" then returns them to Browse.
   function focusOrderView(){
-    const bt = document.querySelector('.browse-tabs'); if(bt) bt.style.display = '';
-    ['tabProducts','tabBrands'].forEach(idv => { const e = document.getElementById(idv); if(e) e.style.display = ''; });
+    // HIDE the Browse tabs + grid. The order form sits BELOW the async-loading Browse
+    // grid in step1, so leaving Browse visible lets the late-rendering grid shove the
+    // draft ~2000px down — the buyer "lands on products". Hiding it gives a stable
+    // top-of-page order form. "Add Another Product" re-shows Browse afterwards.
+    const bt = document.querySelector('.browse-tabs'); if(bt) bt.style.display = 'none';
+    ['tabProducts','tabBrands'].forEach(idv => { const e = document.getElementById(idv); if(e) e.style.display = 'none'; });
     const dc = document.getElementById('draftsContainer');
     const tgt = (dc && dc.style.display !== 'none') ? dc : document.getElementById('urlInputRow');
     if(tgt) tgt.scrollIntoView({ behavior:'smooth', block:'start' });
@@ -6827,7 +6834,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-25e';
+  const PSB_BUILD = '2026-06-25f';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
