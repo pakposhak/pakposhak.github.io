@@ -2455,7 +2455,7 @@
       ps_enlarge:'Enlarge', ps_avail_sizes:'Available sizes', ps_unstitched:'Unstitched · no size needed', ps_also_st:'✂️ Stitched also available', ps_also_uns:'🧵 Unstitched fabric also available', ps_mto:'Made to order', ps_d_loading:'Loading more details…', ps_d_open:'View on brand site, order here', ps_d_more:'More from', ps_d_nofetch:'See all photos &amp; details on the brand page →', ps_d_nodesc:'No extra description provided.', warn_title:'Look there, order here', warn_body:'This page is only for photos and product details. Don\'t add to the brand\'s cart. To order on PakPoshak: tap + Add if it\'s in our listing, or Share the product to PakPoshak (or copy the link and paste it back here).', warn_ok:'Continue to brand site →', warn_cancel:'Stay on PakPoshak',
       ps_empty:'No products match these filters — try widening them.',
       ps_partial:'Not every brand &amp; product is listed here yet —', ps_partial_link:'want more? Browse by brands →', ps_word_products:'products', ps_word_brands:'brands',
-      ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products', ps_sort_lh:'৳ Low→High', ps_sort_hl:'৳ High→Low', ps_sort_price:'Sort: Price', ps_shop_cat:'Shop by category', wish_save:'Save to wishlist', wish_title:'Wishlist', wish_empty:'No saved items yet. Tap ♥ on any product to save it here.', wish_remove:'Remove', ps_also_uns_short:'Unstitched available', ps_also_st_short:'Stitched available', ps_sale:'Sale', ps_new:'New', ps_lbl_sort:'Sort', ps_lbl_filter:'Filter', ps_search_ph:'Search 50,000+ products, 140+ Pakistani brands', ps_search_nomatch:'No brand or category matched', share_added:'Added to your cart, keep browsing', share_review:'Review order',
+      ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products', ps_sort_lh:'৳ Low→High', ps_sort_hl:'৳ High→Low', ps_sort_price:'Sort: Price', ps_shop_cat:'Shop by category', wish_save:'Save to wishlist', wish_title:'Wishlist', wish_empty:'No saved items yet. Tap ♥ on any product to save it here.', wish_remove:'Remove', ps_also_uns_short:'Unstitched available', ps_also_st_short:'Stitched available', ps_sale:'Sale', ps_new:'New', ps_lbl_sort:'Sort', ps_lbl_filter:'Filter', ps_search_ph:'Search 50,000+ products, 140+ Pakistani brands', ps_search_nomatch:'No brand or category matched', share_added:'Item added. Save it below before adding another.', share_review:'Review order',
       bb_store:'Store Types', bb_product:'Product Category', bb_women:'👗 Women', bb_men:'👔 Men', bb_kids:'🧸 Kids', bb_md:'🏬 Multi-Dept', bb_premium:'💎 Premium',
       bb_more:'more', bb_less:'less', bb_all:'All', bb_two_ways:'Two ways to search brands', bb_pick_gender:'Pick women, men, or others above — or just type any brand name.', bb_pick_cat:'Pick a category above to see its brands.', bb_prod_sub:'Choose your brand by clicking a tab or typing its name, go to the product you like, and just share it back to us.', bb_loading:'Loading brands…', bb_prod_none:'No catalogued brands here yet.',
       bb_smart_ph:'🔍 Search brands, e.g. Khaadi, lawn, casual', bb_search_lead:'🔎 Know the brand? Just type its name:',
@@ -2523,7 +2523,7 @@
       ps_enlarge:'ছবি বড় করুন', ps_avail_sizes:'স্টকে থাকা সাইজ', ps_unstitched:'আনস্টিচড · সাইজ লাগে না', ps_also_st:'✂️ সেলাই করাও আছে', ps_also_uns:'🧵 আনস্টিচড কাপড়ও আছে', ps_mto:'অর্ডারে তৈরি হবে', ps_d_loading:'আরও বিবরণ আসছে…', ps_d_open:'ব্র্যান্ড সাইটে দেখুন, অর্ডার এখানে', ps_d_more:'আরও দেখুন —', ps_d_nofetch:'সব ছবি ও বিবরণ ব্র্যান্ডের পেজে দেখুন →', ps_d_nodesc:'বাড়তি কোনো বিবরণ নেই।', warn_title:'দেখুন ওখানে, অর্ডার এখানে', warn_body:'এই পেজটি শুধু ছবি ও পণ্যের বিবরণ দেখার জন্য। ব্র্যান্ডের cart-এ যোগ করবেন না। PakPoshak-এ অর্ডার করতে: লিস্টে থাকলে + Add ট্যাপ করুন, অথবা পণ্যটি PakPoshak-এ Share করুন (বা লিংক copy করে এখানে এসে paste করুন)।', warn_ok:'ব্র্যান্ড সাইটে যান →', warn_cancel:'PakPoshak-এ থাকুন',
       ps_empty:'এই ফিল্টারে কোনো পণ্য নেই — ফিল্টার একটু কমিয়ে দেখুন।',
       ps_partial:'সব ব্র্যান্ড বা পণ্য এখনো এখানে যোগ হয়নি —', ps_partial_link:'আরও চান? “ব্র্যান্ড দেখুন”-এ যান →', ps_word_products:'পণ্য', ps_word_brands:'ব্র্যান্ড',
-      ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়', ps_sort_lh:'৳ কম→বেশি', ps_sort_hl:'৳ বেশি→কম', ps_sort_price:'দাম অনুসারে', ps_shop_cat:'ক্যাটাগরি অনুযায়ী দেখুন', wish_save:'পছন্দে সেভ করুন', wish_title:'পছন্দের তালিকা', wish_empty:'এখনো কিছু সেভ করা হয়নি। যেকোনো পণ্যে ♥ চাপ দিয়ে এখানে সেভ করুন।', wish_remove:'সরান', ps_also_uns_short:'আনস্টিচডও আছে', ps_also_st_short:'সেলাইও আছে', ps_sale:'সেল', ps_new:'নতুন', ps_lbl_sort:'সাজান', ps_lbl_filter:'ফিল্টার', ps_search_ph:'খুঁজুন: ৫০,০০০+ পণ্য, ১৪০+ পাকিস্তানি ব্র্যান্ড', ps_search_nomatch:'কোনো ব্র্যান্ড বা ক্যাটাগরি মেলেনি', share_added:'কার্টে যোগ হয়েছে, আরও দেখুন', share_review:'অর্ডার দেখুন',
+      ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়', ps_sort_lh:'৳ কম→বেশি', ps_sort_hl:'৳ বেশি→কম', ps_sort_price:'দাম অনুসারে', ps_shop_cat:'ক্যাটাগরি অনুযায়ী দেখুন', wish_save:'পছন্দে সেভ করুন', wish_title:'পছন্দের তালিকা', wish_empty:'এখনো কিছু সেভ করা হয়নি। যেকোনো পণ্যে ♥ চাপ দিয়ে এখানে সেভ করুন।', wish_remove:'সরান', ps_also_uns_short:'আনস্টিচডও আছে', ps_also_st_short:'সেলাইও আছে', ps_sale:'সেল', ps_new:'নতুন', ps_lbl_sort:'সাজান', ps_lbl_filter:'ফিল্টার', ps_search_ph:'খুঁজুন: ৫০,০০০+ পণ্য, ১৪০+ পাকিস্তানি ব্র্যান্ড', ps_search_nomatch:'কোনো ব্র্যান্ড বা ক্যাটাগরি মেলেনি', share_added:'পণ্যটি যোগ হয়েছে। আরেকটি যোগ করার আগে নিচে সেভ করুন।', share_review:'অর্ডার দেখুন',
       bb_store:'স্টোরের ধরন', bb_product:'পণ্যের ক্যাটাগরি', bb_women:'👗 মেয়েদের', bb_men:'👔 ছেলেদের', bb_kids:'🧸 বাচ্চাদের', bb_md:'🏬 মাল্টি-ডিপ', bb_premium:'💎 প্রিমিয়াম',
       bb_more:'আরও', bb_less:'কম', bb_all:'সব', bb_two_ways:'ব্র্যান্ড খোঁজার দুটি উপায়', bb_pick_gender:'উপরে মেয়ে, ছেলে বা অন্যান্য বেছে নিন — অথবা যেকোনো ব্র্যান্ডের নাম লিখুন।', bb_pick_cat:'ব্র্যান্ড দেখতে উপরের একটি ক্যাটাগরিতে ট্যাপ করুন।', bb_prod_sub:'একটি ট্যাবে ক্লিক করে বা নাম টাইপ করে আপনার ব্র্যান্ড বেছে নিন, পছন্দের পণ্যে যান, আর সেটি আমাদের শেয়ার করুন।', bb_loading:'ব্র্যান্ড আসছে…', bb_prod_none:'এখানে এখনো কোনো ব্র্যান্ড নেই।',
       bb_smart_ph:'🔍 ব্র্যান্ড খুঁজুন, যেমন Khaadi, lawn, casual', bb_search_lead:'🔎 ব্র্যান্ড জানা আছে? নাম দিয়ে খুঁজুন:',
@@ -3063,20 +3063,18 @@
     if(el) el.style.display = (cart.length > 0 && Object.keys(drafts).length === 0) ? '' : 'none';
   }
 
-  // "Add Another Product" (shown after a save): reveal + scroll to the paste box
-  // so the out-of-view top input comes right to the buyer.
+  // "Add Another Product" (shown after a save): take the buyer back to whichever Browse
+  // tab they were last on — the Browse PRODUCTS grid, or Browse BRANDS — so they pick/
+  // share the next product from there. (NOT the paste box: that was inconsistent, landing
+  // on the paste bar or the order form depending on state.) The just-saved item is safe
+  // in the cart, so returning to Browse can't lose it.
   function addAnotherProduct(){
-    showTopUrlInput();
-    const row = document.getElementById('urlInputRow');
-    const inp = document.getElementById('urlInput');
-    if(row) row.scrollIntoView({ behavior:'smooth', block:'center' });
-    setTimeout(() => {
-      if(!inp) return;
-      inp.focus();
-      inp.style.borderColor = 'var(--gold)';
-      inp.style.boxShadow   = '0 0 0 3px rgba(201,169,110,0.35)';
-      setTimeout(() => { inp.style.borderColor = ''; inp.style.boxShadow = ''; }, 2500);
-    }, 350);
+    let which = 'products';
+    try{ if(localStorage.getItem('psb_browse') === 'brands') which = 'brands'; }catch(e){}
+    try{ if(typeof switchBrowse === 'function') switchBrowse(which); }catch(e){}
+    const tgt = document.getElementById(which === 'brands' ? 'tabBrands' : 'tabProducts')
+              || document.querySelector('.browse-tabs');
+    if(tgt) tgt.scrollIntoView({ behavior:'smooth', block:'start' });
   }
 
   // ── ONE-TAP PASTE ──────────────────────────────────────────────────────────
@@ -3165,15 +3163,17 @@
     const clean = parseUrl(raw);
     return (clean && isKnownBrand(clean)) ? clean : null;
   }
-  // When the page is opened by a SHARE, land the buyer on BROWSE PRODUCTS so they can keep
-  // adding more (req) — the shared item is already in their cart (Cart badge shows the count).
-  // A toast confirms the add so it isn't silent; tapping it jumps to the order list. (Previously
-  // this hid Browse and dumped the buyer on the order list, leaving "nothing to add more from".)
+  // When the page is opened by a SHARE, land the buyer on the ORDER FORM (the draft +
+  // Save button) — NOT Browse Products. A shared item is only an in-memory DRAFT, and a
+  // share is a fresh page load, so an UNSAVED draft from a previous share gets WIPED. So
+  // we put the buyer right on the item and prompt them to SAVE it first; once saved it
+  // persists (localStorage psb_cart), and "Add Another Product" then returns them to Browse.
   function focusOrderView(){
     const bt = document.querySelector('.browse-tabs'); if(bt) bt.style.display = '';
     ['tabProducts','tabBrands'].forEach(idv => { const e = document.getElementById(idv); if(e) e.style.display = ''; });
-    try { if(typeof switchBrowse === 'function') switchBrowse('products'); } catch(e){}
-    try { window.scrollTo({ top:0, behavior:'auto' }); } catch(e){}
+    const dc = document.getElementById('draftsContainer');
+    const tgt = (dc && dc.style.display !== 'none') ? dc : document.getElementById('urlInputRow');
+    if(tgt) tgt.scrollIntoView({ behavior:'smooth', block:'start' });
     psShareAddedToast();
   }
   // Brief confirmation toast after a shared link is added (buyer stays on Browse Products).
@@ -3184,12 +3184,19 @@
     t.classList.add('on');
     clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 5200);
   }
-  // Jump to the order list (from the toast's "Review order").
+  // Jump to the order list (from the toast's "Review order") and draw the eye to the
+  // Save button — the shared item is only a draft until it's saved.
   function psGotoOrder(){
     const t = document.getElementById('psShareToast'); if(t) t.classList.remove('on');
     const dc = document.getElementById('draftsContainer');
     const tgt = (dc && dc.style.display !== 'none') ? dc : document.getElementById('urlInputRow');
     if(tgt) tgt.scrollIntoView({ behavior:'smooth', block:'start' });
+    const sb = document.getElementById('saveAllBtn');
+    if(sb){
+      sb.style.transition = 'box-shadow .25s';
+      sb.style.boxShadow = '0 0 0 4px rgba(201,169,110,0.45)';
+      setTimeout(() => { sb.style.boxShadow = ''; }, 2200);
+    }
   }
   function handleSharedUrl(){
     try{
@@ -6814,7 +6821,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-25c';
+  const PSB_BUILD = '2026-06-25d';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
