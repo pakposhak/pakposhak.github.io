@@ -55,7 +55,7 @@ Run it on demand from **Actions → Refresh product catalog → Run workflow**.
 On the relay VPS (103.83.91.34):
 ```bash
 # one-time: copy the harvester up
-scp harvest-catalog.js root@103.83.91.34:/opt/psb/
+scp -i ~/.ssh/pakiposhak_vps harvest-catalog.js admin130626@103.83.91.34:/opt/psb/
 
 # cron 3×/day at 10:00, 17:00, 22:00 PKT (Danish — most buying happens at night).
 # The job is light (~55 brands + 2 SFCC, gentle 700ms spacing ≈ 2–3 min); the
