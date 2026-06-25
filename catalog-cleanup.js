@@ -41,14 +41,30 @@ const FWD = {kurti_1pc:'kurti_1pc_unstitch',western_top:'kurti_1pc_unstitch',kaf
 // the title — NOT fabric-material words (suiting / wash-n-wear / gabardine describe a STITCHED
 // men's garment's cloth, so they must NOT flag it unstitched).
 const MEN_STITCHED = new Set(['mens_shirt','mens_trouser','mens_jeans','mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_suit','mens_sherwani']);
-// Girls-only festive brands whose KIDS line is girls — the harvester defaults code-named kids
-// (e.g. Alizeh "AFK-..." design codes, no gender word) to BOYS; the product image confirms they
-// are girls eastern festive. So their kids_boys_* items -> kids_girls_eastern. (Extend as found.)
-// Girls-only kids labels the harvester defaults to BOYS (code-named items, no gender word).
-// Alizeh = festive girls brand. ETHNC (Ethnic by Outfitters) = women's + girls' label with NO
-// boys line — vision-confirmed its kids_boys (co-ord sets, jumpsuits, tights, tees) are all on
-// girl models, and 0 ETHNC items carry a "boy" title. Move kids_boys_* → kids_girls_* (keep suffix).
-const GIRLS_KIDS_BRANDS = new Set(['Alizeh', 'ETHNC']);
+// ── KIDS single-gender brands ────────────────────────────────────────────────────────────────
+// A brand's kids line is often ONE gender, but the harvester (no gender word in the title) defaults
+// genderless kids to BOYS (western) or GIRLS (eastern) — so single-gender brands leak items into the
+// WRONG gender (the "Sana Safinaz girls in boys-eastern" bug). We pin them by BRAND: a girls-only
+// brand's kids_boys_* → kids_girls_* (and the boys-only mirror below). Each brand's lineup was
+// verified 2026-06-25 from its OWN website's collection structure (scan-brand-collections.js ->
+// brand-collections.json) + a product-title census (brand-gender-census.js) + per-brand site research.
+// The move is GUARDED so an item whose title explicitly names the OTHER gender is never flipped
+// (keeps the pass idempotent). Brands that sell BOTH (Maria B, Asim Jofa, ChenOne, MTJ, Edge Republic,
+// Minnie, Saya, Kross Kulture, Tifl, Gul Ahmed, Alkaram …) are deliberately NOT listed — their
+// per-item classification is left alone. See BRAND-CATEGORY-GUIDELINES.md for the per-brand evidence.
+//   Alizeh / ETHNC: original vision-confirmed members (festive/ethnic girls labels, no boys line).
+const GIRLS_KIDS_BRANDS = new Set([
+  'Alizeh', 'ETHNC',
+  // 2026-06-25 website + census verified girls-only (no boys collection / no boys product anywhere):
+  'Sana Safinaz', 'Senorita', 'Agha Noor', 'Sha Posh', 'Sadaf Fawad Khan', 'Charizma', 'Armas', 'Vanya',
+  // modest / abaya houses — their kids line is girls' abaya / makhna / hijab / namaz chadar:
+  'Black Camels', 'Hijabi.pk', 'Hijab-ul-Hareem', 'Abaya.pk', 'The Ummatis', 'The Women Zone',
+]);
+// Boys-only brands (menswear / kurta houses) — kids line is boys; the harvester defaults their
+// genderless EASTERN kids ("Kids Embroidered Suit") to GIRLS. Mirror of the above: kids_girls_* →
+// kids_boys_*, guarded against an explicit "girl" title. 2026-06-25 website verified.
+// (Kurta Corner is the same case but already has its own dedicated rule below — not repeated here.)
+const BOYS_KIDS_BRANDS = new Set(['Cambridge', 'Innerlines']);
 // Women-first brands that ALSO carry a men's line which the harvester (no men cat for them) dumps
 // into the women 2-piece cats. Vision-confirmed WHOLE-category (not per image): every "Shalwar
 // Kameez" / "Kurta Shalwar" / "Kurta with Trouser" 2pc listing of these brands is their MENSWEAR.
@@ -273,7 +289,7 @@ const DOMAIN_REWRITE = {
 // double as colour/scent names ("Incense","Oud","Musk") or set components ("Sando shirt","Turban
 // ...Kurta") -> delete ONLY when the title has no garment NOUN (nouns, not piece-counts, so a
 // "Seamless Boxers 2pc" still goes).
-const NONAPPAREL_STRONG = /gift ?(box|card|set|hamper|voucher|pack)\b|\bhamper\b|beard ?oil|\bcologne\b|body ?spray|lip ?(&|and|n) ?cheek|lip ?tint|cheek ?tint|argan ?oil|\bconditioner\b|\bshampoo\b|hair ?(serum|oil|catcher|grip|band|clip|tie)|\bdiffuser\b|room ?spray|scented ?candle|\bcandle\b|\bbukhoor\b|\blampshade\b|\bcomforter\b|\bduvet\b|bed ?sheet|bedsheet|\bcushion\b|coffee ?table|table ?set|brass ?table|\bfurniture\b|ceramic ?(jar|mug|vase|plate|bowl|pot|ware)|\bcrockery\b|\btumbler\b|water ?bottle|\bzamzam\b|\bcooler\b|\bperfume\b|\bfragrance\b|gift ?wrap|ear ?cuff|tasbeeh|tasbih|misbaha|placemat|place ?mat|table ?runner|table ?cloth|tablecloth|\bcoaster|\bnapkin|prayer ?mat|jaye ?namaz|janamaz|\bmiswak\b|hijab ?(crown ?)?grip|\bself[\s-]?tie\b|\(TIE-\d+\)|designer[\s-]?tie\b|\[\+\s*rs\.?|\bstorage[\s-]+basket\b|\bwicker\s+basket\b|\blaundry\s+basket\b|\brattan\s+basket\b|\blapel\s*pin\b|\beyeliner\b|\bmascara\b|\bburp[\s-]*cloth\b|\bburp[\s-]*bib\b|\bpotli\s*bag\b|\bhand[\s-]?crafted\s+phool\b|\bmirchi\s+sahara\b|clay ?mask|face ?mask|sheet ?mask|liquid ?highlighter|\bkeratin\b|\blipstick\b|lip ?gloss|hd ?foundation|liquid ?foundation|sun ?block|sunscreen|\bspf ?\d|face ?wash|moisturi[sz](?:er|ing)|face ?cream|\bserum\b|\bprimer\b|\bconcealer\b|\bkajal\b|nail ?(?:polish|paint)|body ?lotion|\bmakeup\b|\bcosmetics?\b|\bhighlighter\b|\beyeshadow\b|setting ?powder|compact ?powder|long[\s-]?wear foundation|matte foundation|blush ?(?:&|and|n) ?highlighter|\bpalette\b|pregnancy ?journal|baby ?journal/i;
+const NONAPPAREL_STRONG = /gift ?(box|card|set|hamper|voucher|pack)\b|\bhamper\b|beard ?oil|\bcologne\b|body ?spray|lip ?(&|and|n) ?cheek|lip ?tint|cheek ?tint|argan ?oil|\bconditioner\b|\bshampoo\b|hair ?(serum|oil|catcher|grip|band|clip|tie)|\bdiffuser\b|room ?spray|scented ?candle|\bcandle\b|\bbukhoor\b|\blampshade\b|\bcomforter\b|\bduvet\b|bed ?sheet|bedsheet|\bcushion\b|coffee ?table|table ?set|brass ?table|\bfurniture\b|ceramic ?(jar|mug|vase|plate|bowl|pot|ware)|\bcrockery\b|\btumbler\b|water ?bottle|\bzamzam\b|\bcooler\b|\bperfume\b|\bfragrance\b|gift ?wrap|ear ?cuff|tasbeeh|tasbih|misbaha|placemat|place ?mat|table ?runner|table ?cloth|tablecloth|\bcoaster|\bnapkin|prayer ?mat|jaye ?namaz|janamaz|\bmiswak\b|hijab ?(crown ?)?grip|\bself[\s-]?tie\b|\(TIE-\d+\)|designer[\s-]?tie\b|\[\+\s*rs\.?|\bstorage[\s-]+basket\b|\bwicker\s+basket\b|\blaundry\s+basket\b|\brattan\s+basket\b|\blapel\s*pin\b|\beyeliner\b|\bmascara\b|\bburp[\s-]*cloth\b|\bburp[\s-]*bib\b|\bpotli\s*bag\b|\bhand[\s-]?crafted\s+phool\b|\bmirchi\s+sahara\b|clay ?mask|face ?mask|sheet ?mask|liquid ?highlighter|\bkeratin\b|\blipstick\b|lip ?gloss|hd ?foundation|liquid ?foundation|sun ?block|sunscreen|\bspf ?\d|face ?wash|moisturi[sz](?:er|ing)|face ?cream|\bserum\b|\bprimer\b|\bconcealer\b|\bkajal\b|nail ?(?:polish|paint)|body ?lotion|\bmakeup\b|\bcosmetics?\b|\bhighlighter\b|\beyeshadow\b|setting ?powder|compact ?powder|long[\s-]?wear foundation|matte foundation|blush ?(?:&|and|n) ?highlighter|\bpalette\b|pregnancy ?journal|baby ?journal|\bbirth\s*hoop\b|\bhoop\s*frame\b|baby ?birth ?(?:hoop|frame|announcement)|\bwall ?(?:hanging|frame|art)\b|\bname ?frame\b/i;
 const NONAPPAREL_WEAK = /\bmusk\b|\boud\b|\bincense\b|\bturban\b|\bimamah\b|\bkoofi\b|\bkufi\b|\btopi\b|prayer ?cap|pocket ?square|bow ?tie|bowtie|\bbow\b|\bnecktie\b|^tie\b|\btie[\s-]?pin\b|\bboxers?\b|\bbriefs?\b|boy ?shorts|\bsando\b|\bundershirt\b|cotton ?vest|vest ?pack|pack of \d+ ?(vest|boxer|brief)|undergarment|seamless ?boxer|\bmuffler\b|\bcharm\b|\bhipster\b|\btrunks?\b|men'?s vest|vest with sleeves|jersey vest|seamless ?(jersey )?vest|sleeveless vest|\bcaps?\b|\bsofa\b|\bottoman\b|recliner|\bcouch\b|dining ?table|cente?r ?table|coff?e?e? ?table|breakfast ?table|console ?table|room ?chair|bed ?spread|bedspread|l-?shape ?sofa|sideboard|\bmattress\b|\bdresser\b|\benvelop(?:e)?\b|\bpotli\b|bath ?mat|\bcanopy\b|nursery|\bmaala\b|\bmala\b|\bnecklace\b|\bbracelet\b|\bearrings?\b/i;
 const GARMENT_NOUN = /\b(kurti|kurta|kameez|shirt|t-?shirt|sweat ?shirt|sweat ?pants?|tee|polo|dress|gown|frock|trousers?|pants?|joggers?|leggings?|shorts?|skirt|abaya|hijab|shalwar|saree|lehenga|dupatta|kaftan|maxi|peplum|blouse|top|tank|tunic|sherwani|waistcoat|jacket|bomber|sweater|cardigan|hoodie|pullover|outfit|romper|jumpsuit|suit|blazer|coat|tuxedo)\b/i;
 
@@ -378,7 +394,8 @@ function cleanupProducts(ps) {
         explicitN++; out.push(p); continue;
       }
     }
-    if (/^kids_boys_/.test(p.cat) && GIRLS_KIDS_BRANDS.has(p.b)) { p.cat = p.cat.replace('kids_boys_', 'kids_girls_'); girlsKidN++; out.push(p); continue; }   // girls-only brand mis-tagged boys (image-confirmed); keep eastern/western/formal suffix
+    if (/^kids_boys_/.test(p.cat) && GIRLS_KIDS_BRANDS.has(p.b) && !/\bboys?\b/i.test(p.t || '')) { p.cat = p.cat.replace('kids_boys_', 'kids_girls_'); girlsKidN++; out.push(p); continue; }   // girls-only brand (site+census verified): genderless boys-default → girls. Guard: never flip an explicit "boys" title (idempotent).
+    if (/^kids_girls_/.test(p.cat) && BOYS_KIDS_BRANDS.has(p.b) && !/\bgirls?\b/i.test(p.t || '')) { p.cat = p.cat.replace('kids_girls_', 'kids_boys_'); girlsKidN++; out.push(p); continue; }   // boys-only brand (menswear kids): genderless girls-default → boys. Guard: never flip an explicit "girls" title.
     // One Kids (beoneshopone) encodes kids' gender in the product SLUG: /products/g… = GIRL,
     // /products/b… = BOY. The harvester defaults its code-named kids to BOYS, so trust the slug:
     // vision-confirmed 28/30 g-slug items sitting in kids_boys are girls (incl. title-impossible

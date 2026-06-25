@@ -1,0 +1,1359 @@
+[
+ {
+  "name": "Minnie Minors",
+  "n": 1007,
+  "curBoys": 216,
+  "curGirls": 571,
+  "curInfant": 220,
+  "exBoy": 62,
+  "exGirl": 12,
+  "garBoy": 34,
+  "garGirl": 153,
+  "genderless": 746,
+  "genderlessSamples": [
+   "Shorts (DSH-147)",
+   "Shorts (GSH-159)",
+   "T- Shirt (GJT-582)",
+   "Top (BL-394)"
+  ],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": true,
+   "girl": true,
+   "inf": true,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Engine",
+  "n": 902,
+  "curBoys": 440,
+  "curGirls": 329,
+  "curInfant": 133,
+  "exBoy": 538,
+  "exGirl": 353,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 11,
+  "genderlessSamples": [
+   "T Shirt",
+   "Trouser",
+   "Dress",
+   "Dress"
+  ],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": true,
+   "girl": true,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Eminent",
+  "n": 874,
+  "curBoys": 179,
+  "curGirls": 414,
+  "curInfant": 281,
+  "exBoy": 299,
+  "exGirl": 524,
+  "garBoy": 0,
+  "garGirl": 11,
+  "genderless": 40,
+  "genderlessSamples": [
+   "Solid Seersucker 2 Pcs Suit",
+   "Solid Textured Jumpsuit",
+   "Terry Jogger Trousers",
+   "Interlock Graphic Co-ord Set"
+  ],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": true,
+   "girl": true,
+   "inf": true,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Edenrobe",
+  "n": 645,
+  "curBoys": 434,
+  "curGirls": 211,
+  "curInfant": 0,
+  "exBoy": 1,
+  "exGirl": 0,
+  "garBoy": 73,
+  "garGirl": 54,
+  "genderless": 517,
+  "genderlessSamples": [
+   "Knitted Chinos - EBBCP5-006",
+   "Embroidered Blended Shalwar Kameez - EBTKS5-4036",
+   "Knitted Chinos - EBBCP5-003",
+   "Embroidered Blended Shalwar Kameez - EBTKS5-4042"
+  ],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": true,
+   "girl": true,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Diners",
+  "n": 621,
+  "curBoys": 301,
+  "curGirls": 248,
+  "curInfant": 72,
+  "exBoy": 208,
+  "exGirl": 146,
+  "garBoy": 53,
+  "garGirl": 14,
+  "genderless": 200,
+  "genderlessSamples": [
+   "Blue Infant Kurta Screen Printed Shalwar",
+   "L-Grey Infant 2PC",
+   "L-Blue Infant 2PC",
+   "Embroidered Green Teens 2PC"
+  ],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": true,
+   "girl": true,
+   "inf": true,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Outfitters",
+  "n": 605,
+  "curBoys": 422,
+  "curGirls": 53,
+  "curInfant": 130,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 1,
+  "garGirl": 14,
+  "genderless": 590,
+  "genderlessSamples": [
+   "Character Graphic T-Shirt",
+   "Cut & Sew Slogan Print T-Shirt",
+   "Textured T-Shirt",
+   "Character Graphic T-Shirt"
+  ],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": true,
+   "girl": true,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Wear Ochre",
+  "n": 560,
+  "curBoys": 9,
+  "curGirls": 551,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 560,
+  "genderlessSamples": [
+   "Cotton Lawn Digital Printed 2 Pc Suit",
+   "Poly Lawn Digital Printed 3 Pc Suit",
+   "Cotton Embroidered 3 Pc Suit",
+   "Poly Lawn Digital Printed 2 Pc Suit"
+  ],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": true,
+   "girl": true,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Saya",
+  "n": 462,
+  "curBoys": 118,
+  "curGirls": 344,
+  "curInfant": 0,
+  "exBoy": 93,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 4,
+  "genderless": 365,
+  "genderlessSamples": [
+   "Printed  Premium Lawn Stitched 2 Piece (Shirt/Trouse",
+   "Printed Lawn Stitched 2 Piece (Shirt/Trouser) For Ki",
+   "Printed  Premium Lawn Stitched 2 Piece (Shirt/Trouse",
+   "Printed Lawn Stitched 2 Piece (Shirt/Trouser) For Ki"
+  ],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": true,
+   "girl": false,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Hopscotch",
+  "n": 405,
+  "curBoys": 196,
+  "curGirls": 208,
+  "curInfant": 1,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 5,
+  "garGirl": 45,
+  "genderless": 355,
+  "genderlessSamples": [
+   "Blue Seersucker Bowling Shirt",
+   "Seersucker Bowling Shirt",
+   "Printed Knit Polo",
+   "Embroidered Raglan Top"
+  ],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": true,
+   "girl": true,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Breakout",
+  "n": 383,
+  "curBoys": 245,
+  "curGirls": 138,
+  "curInfant": 0,
+  "exBoy": 245,
+  "exGirl": 138,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 0,
+  "genderlessSamples": [],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": true,
+   "girl": true,
+   "inf": true,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Senorita",
+  "n": 379,
+  "curBoys": 68,
+  "curGirls": 311,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 379,
+  "genderlessSamples": [
+   "KAD-02466 | P.Green | Casual 3 Piece Suit | Karandi ",
+   "KBD-02235 | Parrot Green & Silver | Casual 3 Piece S",
+   "KAD-02967 | Orange & Gold | Casual 3 Piece Suit | Co",
+   "KAD-03133 | Black & White  | Casual 3 Piece Suit | C"
+  ],
+  "verdict": "GIRLS-ONLY",
+  "conf": "high",
+  "moves": 68,
+  "coll": {
+   "boy": false,
+   "girl": true,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Cougar",
+  "n": 358,
+  "curBoys": 154,
+  "curGirls": 203,
+  "curInfant": 1,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 2,
+  "garGirl": 20,
+  "genderless": 336,
+  "genderlessSamples": [
+   "Raglan Knit T-Shirt",
+   "All-Over Printed T-Shirt",
+   "Striped Knit Dress",
+   "Embroidered Chambray Dress"
+  ],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": true,
+   "girl": true,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Maria B",
+  "n": 257,
+  "curBoys": 19,
+  "curGirls": 238,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 2,
+  "garGirl": 0,
+  "genderless": 255,
+  "genderlessSamples": [
+   "2 Piece Embroidered Organza Suit",
+   "3 Piece Embroidered Lawn Suit",
+   "3 Piece Embroidered Cotton Staple Zari Suit",
+   "3 Piece Embroidered Net Suit"
+  ],
+  "verdict": "NEEDS-CHECK",
+  "conf": "low",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": false,
+   "inf": false,
+   "onlyGeneric": true
+  }
+ },
+ {
+  "name": "Beechtree",
+  "n": 257,
+  "curBoys": 31,
+  "curGirls": 226,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 2,
+  "garGirl": 4,
+  "genderless": 251,
+  "genderlessSamples": [
+   "2 PIECE FLORAL PRINTED SUIT",
+   "2 PIECE ALLOVER EMBROIDERED SUIT",
+   "2 PIECE FLORAL EMBROIDERED SUIT",
+   "2 PIECE DIGITAL PRINTED SUIT"
+  ],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": true,
+   "girl": true,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "ETHNC",
+  "n": 235,
+  "curBoys": 0,
+  "curGirls": 233,
+  "curInfant": 2,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 1,
+  "garGirl": 1,
+  "genderless": 233,
+  "genderlessSamples": [
+   "T-SHIRT (E2272/301/001)",
+   "TIGHTS (E2284/301/130)",
+   "TIGHTS (E2284/301/002)",
+   "T-SHIRT (E2265/301/407)"
+  ],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": true,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Tifl",
+  "n": 207,
+  "curBoys": 6,
+  "curGirls": 4,
+  "curInfant": 197,
+  "exBoy": 23,
+  "exGirl": 22,
+  "garBoy": 4,
+  "garGirl": 5,
+  "genderless": 153,
+  "genderlessSamples": [
+   "Eid Embroidered Collar & Cuff Detailing Baby Romper/",
+   "Eid Embroidered Cuff & Back Detailing Romper/Black",
+   "Eid All Over Embroidered Baby Romper/Mint",
+   "Eid Embroidered Collar & Cuff Detailing Kurta Set/Iv"
+  ],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": true,
+   "inf": true,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Zellbury",
+  "n": 177,
+  "curBoys": 13,
+  "curGirls": 164,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 177,
+  "genderlessSamples": [
+   "Kurta - 1777",
+   "Kurta - 1170",
+   "Kurta Trouser - 2616",
+   "Kurta - 1764"
+  ],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": true,
+   "girl": true,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Tassels",
+  "n": 148,
+  "curBoys": 12,
+  "curGirls": 136,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 12,
+  "garGirl": 0,
+  "genderless": 136,
+  "genderlessSamples": [
+   "Embroidered 3pc. Zafira - Mother and Daughter (Ready",
+   "Embroidered 3pc. Ziyana - Mother and Daughter (Ready",
+   "Embroidered Stitched 3pc. Ziyana Kids (Ready-To-wear",
+   "Embroidered 3pc. Evara - Mother and Daughter (Ready-"
+  ],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": true,
+   "girl": true,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Limelight",
+  "n": 143,
+  "curBoys": 0,
+  "curGirls": 143,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 1,
+  "genderless": 142,
+  "genderlessSamples": [
+   "2 Piece Lawn Slub Suit- Embroidered (Pret)",
+   "2 Piece Lawn Slub Suit- Embroidered (Pret)",
+   "2 Piece Lawn Suit- Embroidered (Pret)",
+   "2 Piece Viscose Cotton Suit (Pret)"
+  ],
+  "verdict": "GIRLS-ONLY",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": true,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Preeto",
+  "n": 115,
+  "curBoys": 69,
+  "curGirls": 20,
+  "curInfant": 26,
+  "exBoy": 21,
+  "exGirl": 18,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 76,
+  "genderlessSamples": [
+   "Burberry poloshirt  Printed with Shorts",
+   "Kids Summer kurta Salwar with Sheep Embrodiary",
+   "Kids Independent Day 14 August Tshirt and Shorts",
+   "All-Over Mickey Mouse Print T-shirt and Elasticated "
+  ],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": false,
+   "inf": false,
+   "onlyGeneric": true
+  }
+ },
+ {
+  "name": "One Kids",
+  "n": 113,
+  "curBoys": 37,
+  "curGirls": 76,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 25,
+  "genderless": 88,
+  "genderlessSamples": [
+   "Lace Dress Pink",
+   "Tie Up Jumpsuit White/Blue",
+   "Marvel Printed Tee",
+   "Marvel Track pants"
+  ],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": true,
+   "girl": true,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Kross Kulture",
+  "n": 103,
+  "curBoys": 19,
+  "curGirls": 84,
+  "curInfant": 0,
+  "exBoy": 18,
+  "exGirl": 66,
+  "garBoy": 0,
+  "garGirl": 2,
+  "genderless": 17,
+  "genderlessSamples": [
+   "3PC - Embroidered Lawn Cotton Suit With Sharara",
+   "2PC - Embroidered Viscose Suit With Culottes",
+   "2PC - Embroidered Viscose Suit With Farshi Shalwaar",
+   "2PC - Embroidered Viscose Suit"
+  ],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": true,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Sana Safinaz",
+  "n": 93,
+  "curBoys": 20,
+  "curGirls": 73,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 93,
+  "genderlessSamples": [
+   "Stitched Kids Embroidered Suit",
+   "Stitched Kids Printed Cambric Set",
+   "Stitched Kids Bottom",
+   "Sc25gws390f"
+  ],
+  "verdict": "NEEDS-CHECK",
+  "conf": "low",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": false,
+   "inf": false,
+   "onlyGeneric": true
+  }
+ },
+ {
+  "name": "MTJ (Tariq Jameel)",
+  "n": 80,
+  "curBoys": 80,
+  "curGirls": 0,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 17,
+  "garGirl": 0,
+  "genderless": 63,
+  "genderlessSamples": [
+   "PASTEL-GREY 100% COTTON EMBROIDERED KURTA",
+   "TEAL 100% COTTON EMBROIDERED KURTA",
+   "SAND-BROWN BLENDED EMBROIDERED KURTA",
+   "LATTE BLENDED EMBROIDERED KURTA"
+  ],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": true,
+   "girl": true,
+   "inf": true,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Almirah",
+  "n": 76,
+  "curBoys": 4,
+  "curGirls": 72,
+  "curInfant": 0,
+  "exBoy": 1,
+  "exGirl": 3,
+  "garBoy": 4,
+  "garGirl": 3,
+  "genderless": 65,
+  "genderlessSamples": [
+   "White Plain Kurta Trousers - ALBYET-KT-011",
+   "Maroon Plain Kameez Shalwar - ALBYET-KS-006",
+   "Grey Plain Kameez Shalwar - ALBYET-KS-002",
+   "Ferozi Poly Net 3Pc Stitched - ALT-3PS-LS-1153"
+  ],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": true,
+   "girl": true,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Sha Posh",
+  "n": 60,
+  "curBoys": 0,
+  "curGirls": 60,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 6,
+  "genderless": 54,
+  "genderlessSamples": [
+   "Kids Danedar Chiffon 3PC | 1178",
+   "Kids Raw Silk 2PC | 16478",
+   "Kids Korean Raw Silk 3PC | 1204",
+   "Kids Plain Paper Katan 3PC | 1340"
+  ],
+  "verdict": "NEEDS-CHECK",
+  "conf": "low",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": false,
+   "inf": false,
+   "onlyGeneric": true
+  }
+ },
+ {
+  "name": "Ego",
+  "n": 60,
+  "curBoys": 0,
+  "curGirls": 60,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 60,
+  "genderlessSamples": [
+   "Misty 2 piece",
+   "Confetti 1 piece",
+   "Summer Shine 2 piece",
+   "Puffer 2 piece"
+  ],
+  "verdict": "NEEDS-CHECK",
+  "conf": "low",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": false,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Bonanza Satrangi",
+  "n": 57,
+  "curBoys": 14,
+  "curGirls": 43,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 57,
+  "genderlessSamples": [
+   "Ivory-Fancy-Zari-3 Piece (GP3PSLW25GI9O4)",
+   "Pink-Lurex-Net-3 Piece (GP3PSLW25GI9O3)",
+   "Blue-Lurex-Net-3 Piece (GP3PSFW25H10N1)",
+   "Blue-Dobby-Lawn-2 Piece (GP2PPBS26BG2M12)"
+  ],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": true,
+   "girl": true,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Agha Noor",
+  "n": 48,
+  "curBoys": 0,
+  "curGirls": 48,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 1,
+  "genderless": 47,
+  "genderlessSamples": [
+   "(Kids) 2 Piece - Pure Cotton Net Suit KD-101",
+   "(Kids) 2 Piece - Pure Cotton Net Suit KD-094",
+   "(Kids) 2 Piece - Pure Cotton Net Suit KD-097",
+   "(Kids) 2 Piece - Pure Cotton Net Suit KD-075"
+  ],
+  "verdict": "NEEDS-CHECK",
+  "conf": "low",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": false,
+   "inf": false,
+   "onlyGeneric": true
+  }
+ },
+ {
+  "name": "Asim Jofa",
+  "n": 46,
+  "curBoys": 0,
+  "curGirls": 46,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 46,
+  "genderlessSamples": [
+   "AJKL-11 Lurex Jacquard Stitched 2 Pcs",
+   "AJKL-10 Organza Blue Lines Stitched 2 Pcs",
+   "AJKL-09 Cotton Silk Stitched 2 Pcs",
+   "AJKL-08 Organza Stitched 2 Pcs"
+  ],
+  "verdict": "GIRLS-ONLY",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": true,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Alkaram Studio",
+  "n": 44,
+  "curBoys": 27,
+  "curGirls": 17,
+  "curInfant": 0,
+  "exBoy": 27,
+  "exGirl": 17,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 0,
+  "genderlessSamples": [],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": true,
+   "girl": true,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Kurta Corner",
+  "n": 37,
+  "curBoys": 21,
+  "curGirls": 16,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 20,
+  "garGirl": 0,
+  "genderless": 17,
+  "genderlessSamples": [
+   "Kids Embroidered Suit 13",
+   "Kids Embroidered Suit 12",
+   "Kids Embroidered Suit 11",
+   "Kids Embroidered Suit 10"
+  ],
+  "verdict": "NEEDS-CHECK",
+  "conf": "low",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": false,
+   "inf": false,
+   "onlyGeneric": true
+  }
+ },
+ {
+  "name": "Gul Ahmed",
+  "n": 31,
+  "curBoys": 30,
+  "curGirls": 1,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 30,
+  "garGirl": 0,
+  "genderless": 1,
+  "genderlessSamples": [
+   "Navy Blue Styling Suit SK-KS24-017"
+  ],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": true,
+   "girl": true,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "The Women Zone",
+  "n": 28,
+  "curBoys": 28,
+  "curGirls": 0,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 28,
+  "genderlessSamples": [
+   "Kids Scarf - #97",
+   "Kids Scarf - #96",
+   "Kids Scarf - #95",
+   "Kids Scarf - #94"
+  ],
+  "verdict": "NEEDS-CHECK",
+  "conf": "low",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": false,
+   "inf": false,
+   "onlyGeneric": true
+  }
+ },
+ {
+  "name": "Black Camels",
+  "n": 25,
+  "curBoys": 0,
+  "curGirls": 25,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 25,
+  "genderlessSamples": [
+   "SUDE",
+   "KIDS ABAYA - ICE BLUE (KIDS)",
+   "BASIC MAXI ABAYA - BLACK (KIDS)",
+   "KHIMAR ABAYA SET - DEEP GREEN (KIDS)"
+  ],
+  "verdict": "NEEDS-CHECK",
+  "conf": "low",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": false,
+   "inf": false,
+   "onlyGeneric": true
+  }
+ },
+ {
+  "name": "Hijabi.pk",
+  "n": 22,
+  "curBoys": 10,
+  "curGirls": 12,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 22,
+  "genderlessSamples": [
+   "Cream Embroidery Kids Abaya",
+   "Bottle Green Handwork Kids Abaya",
+   "Skin Handwork Kids Abaya",
+   "Mauve Handwork Kids Abaya"
+  ],
+  "verdict": "NEEDS-CHECK",
+  "conf": "low",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": false,
+   "inf": false,
+   "onlyGeneric": true
+  }
+ },
+ {
+  "name": "Khas Stores",
+  "n": 21,
+  "curBoys": 0,
+  "curGirls": 21,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 21,
+  "genderlessSamples": [
+   "Kid 2-Piece Stitched Printed Lawn Shirt & Trouser | ",
+   "Kid 2-Piece Stitched Printed Lawn Shirt & Trouser | ",
+   "Kid 2-Piece Stitched Printed Lawn Shirt & Trouser | ",
+   "Kid 2-Piece Stitched Printed Lawn Shirt & Trouser | "
+  ],
+  "verdict": "GIRLS-ONLY",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": true,
+   "inf": true,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Edge Republic",
+  "n": 21,
+  "curBoys": 21,
+  "curGirls": 0,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 10,
+  "garGirl": 0,
+  "genderless": 11,
+  "genderlessSamples": [
+   "KD 801 Olive Green Kurta Set For Kids",
+   "KD 807 Royal Blue Shalwar Kameez For Kids",
+   "KD 810  White Shalwar Kameez For Kids",
+   "KD 805 Black Shalwar Kameez For Kids"
+  ],
+  "verdict": "NEEDS-CHECK",
+  "conf": "low",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": false,
+   "inf": false,
+   "onlyGeneric": true
+  }
+ },
+ {
+  "name": "Sadaf Fawad Khan",
+  "n": 20,
+  "curBoys": 0,
+  "curGirls": 20,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 20,
+  "genderlessSamples": [
+   "Lyra",
+   "Mahruk",
+   "Suzane",
+   "Bibi"
+  ],
+  "verdict": "NEEDS-CHECK",
+  "conf": "low",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": false,
+   "inf": false,
+   "onlyGeneric": true
+  }
+ },
+ {
+  "name": "Charizma",
+  "n": 19,
+  "curBoys": 0,
+  "curGirls": 19,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 19,
+  "genderlessSamples": [
+   "3-PC Embroidered Raw-Silk CKP-6-366",
+   "3-PC Embroidered Raw-Silk CKP-6-381",
+   "3-PC Embroidered Raw-Silk CKP-6-380",
+   "3-PC Embroidered Raw-Silk CKP-6-379"
+  ],
+  "verdict": "NEEDS-CHECK",
+  "conf": "low",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": false,
+   "inf": false,
+   "onlyGeneric": true
+  }
+ },
+ {
+  "name": "Al-Deebaj",
+  "n": 16,
+  "curBoys": 9,
+  "curGirls": 7,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 16,
+  "genderlessSamples": [
+   "Grey Shamray Kids Kurta | ADKRS-14",
+   "Off White Emb Kids K-S | KDS-36",
+   "Black Emb Kids K-S | KDS-37",
+   "Maroon Emb Kids K-S | KDS-39"
+  ],
+  "verdict": "GIRLS-ONLY",
+  "conf": "high",
+  "moves": 9,
+  "coll": {
+   "boy": false,
+   "girl": true,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Cambridge",
+  "n": 15,
+  "curBoys": 15,
+  "curGirls": 0,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 15,
+  "genderlessSamples": [
+   "JUNIOR PAJAMA SUIT",
+   "JUNIOR PAJAMA SUIT",
+   "JUNIOR SHALWAR SUIT",
+   "JUNIOR SHALWAR SUIT"
+  ],
+  "verdict": "BOYS-ONLY",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": true,
+   "girl": false,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Alizeh",
+  "n": 12,
+  "curBoys": 0,
+  "curGirls": 12,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 12,
+  "genderlessSamples": [
+   "AFK-BCH-1013-Hyan",
+   "AFK-ZN-1001-Zarposh",
+   "AFK-BCH-1011-Blanc",
+   "AFK-BCH-1014-Reef"
+  ],
+  "verdict": "NEEDS-CHECK",
+  "conf": "low",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": false,
+   "inf": false,
+   "onlyGeneric": true
+  }
+ },
+ {
+  "name": "Innerlines",
+  "n": 12,
+  "curBoys": 12,
+  "curGirls": 0,
+  "curInfant": 0,
+  "exBoy": 12,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 0,
+  "genderlessSamples": [],
+  "verdict": "BOYS-ONLY",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": true,
+   "girl": false,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "ChenOne",
+  "n": 10,
+  "curBoys": 2,
+  "curGirls": 8,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 10,
+  "genderlessSamples": [
+   "PULL ON TROUSER ORANGE - KDS-G-13092",
+   "T-SHIRT F/SLV BLUE/BEIGE - KDS-BC-13149",
+   "KDS-G-13141 SHIRT CASUAL RED CHECK",
+   "KDS-G-13066 SHIRT CASUAL MAROON"
+  ],
+  "verdict": "NEEDS-CHECK",
+  "conf": "low",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": false,
+   "inf": false,
+   "onlyGeneric": true
+  }
+ },
+ {
+  "name": "Vanya",
+  "n": 9,
+  "curBoys": 0,
+  "curGirls": 9,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 9,
+  "genderlessSamples": [
+   "ME-35",
+   "ME-34",
+   "ME-33",
+   "ME-32"
+  ],
+  "verdict": "GIRLS-ONLY",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": true,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "The Ummatis",
+  "n": 6,
+  "curBoys": 0,
+  "curGirls": 6,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 6,
+  "genderlessSamples": [
+   "Kids Namaz Chadar - Summer Pastels Blue",
+   "Kids Namaz Chadar - Summer Pastels Lavender",
+   "Kids Namaz Chadar - Summer Pastels Grey",
+   "Kids Namaz Chadar - Summer Pastels Mint"
+  ],
+  "verdict": "NEEDS-CHECK",
+  "conf": "low",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": false,
+   "inf": false,
+   "onlyGeneric": true
+  }
+ },
+ {
+  "name": "Hijab-ul-Hareem",
+  "n": 5,
+  "curBoys": 1,
+  "curGirls": 4,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 5,
+  "genderlessSamples": [
+   "Chocolate Brown Front Open Nida Abaya",
+   "Majestic Blue Nida Abaya | 0116-Pc Kids",
+   "Slate Elegance Front-Open Abaya",
+   "Little Grace Abaya | 0118-R-1128"
+  ],
+  "verdict": "NEEDS-CHECK",
+  "conf": "low",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": false,
+   "inf": false,
+   "onlyGeneric": true
+  }
+ },
+ {
+  "name": "Sitara Studio",
+  "n": 4,
+  "curBoys": 0,
+  "curGirls": 4,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 4,
+  "genderlessSamples": [
+   "Printed Kids Eastern Shirt - KDS 604",
+   "Printed Kids Eastern Shirt - KDS 602",
+   "Printed Kids Eastern Shirt - KDS 601",
+   "Printed Kids Eastern Shirt - KDS 600"
+  ],
+  "verdict": "BOTH",
+  "conf": "high",
+  "moves": 0,
+  "coll": {
+   "boy": true,
+   "girl": true,
+   "inf": false,
+   "onlyGeneric": false
+  }
+ },
+ {
+  "name": "Armas",
+  "n": 4,
+  "curBoys": 1,
+  "curGirls": 3,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 4,
+  "genderlessSamples": [
+   "Ria Mini Olive",
+   "Ria Mini Red",
+   "Ria Mini Blue",
+   "Mini Embroidered Culottes"
+  ],
+  "verdict": "NEEDS-CHECK",
+  "conf": "low",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": false,
+   "inf": false,
+   "onlyGeneric": true
+  }
+ },
+ {
+  "name": "Abaya.pk",
+  "n": 2,
+  "curBoys": 2,
+  "curGirls": 0,
+  "curInfant": 0,
+  "exBoy": 0,
+  "exGirl": 0,
+  "garBoy": 0,
+  "garGirl": 0,
+  "genderless": 2,
+  "genderlessSamples": [
+   "Pink Kids Makhna",
+   "Beige Kids Makhna"
+  ],
+  "verdict": "NEEDS-CHECK",
+  "conf": "low",
+  "moves": 0,
+  "coll": {
+   "boy": false,
+   "girl": false,
+   "inf": false,
+   "onlyGeneric": true
+  }
+ }
+]

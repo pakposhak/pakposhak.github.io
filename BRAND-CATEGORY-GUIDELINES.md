@@ -130,6 +130,32 @@
   (fabric→unstitched, co-ord→`coord_western`, else pret). KEPT: Diners "Night Suit", Generation/Zeen
   "Loungewear", Lakhany "Sleep Wear". Loungewear 20 → 13 (real sleepwear only).
 
+### Kids single-gender brands — website-verified (2026-06-25)
+**Finding (Danish):** a brand's OWN website already sorts its products, and that collection structure is ground
+truth — it beats our title-guess. A brand's kids line is often ONE gender, but the harvester defaults a
+GENDERLESS "Kids …" title to boys (western) or girls (eastern), so single-gender brands leak into the wrong
+gender (the "Sana Safinaz girls in boys-eastern" bug). Each brand below was verified from its own
+`/collections.json` + a product-title census (`scan-brand-collections.js` → `brand-collections.json`,
+`brand-gender-census.js`) + per-brand site research. `GIRLS_KIDS_BRANDS` moves `kids_boys_*`→`kids_girls_*`;
+`BOYS_KIDS_BRANDS` moves the reverse. Both are GUARDED — an item whose title explicitly names the OTHER gender
+is never flipped (keeps cleanup idempotent). Only the GENDERLESS items move.
+- **GIRLS-only** (`GIRLS_KIDS_BRANDS`): **Sana Safinaz** (GSH girls codes, zero boys — 20 items fixed),
+  **Senorita** (girls-* collections / KDD formal suits — 68 fixed), **Agha Noor**, **Sha Posh**,
+  **Sadaf Fawad Khan**, **Charizma**, **Armas** ("Ria Mini" = girls mini-me of the women's line),
+  **Vanya** ("Metropolitan Girl"/"mini club"), plus the modest/abaya houses whose kids line is girls'
+  abaya/makhna/hijab/namaz-chadar: **Black Camels**, **Hijabi.pk**, **Hijab-ul-Hareem**, **Abaya.pk**,
+  **The Ummatis**, **The Women Zone** (kids hijab — 28 fixed). (Alizeh, ETHNC already listed above.)
+- **BOYS-only**: **Cambridge**, **Innerlines** (`BOYS_KIDS_BRANDS`) + **Kurta Corner** (its own pre-existing
+  rule) — menswear/kurta houses whose genderless "Kids … Suit" / kurta-shalwar defaulted to girls → `kids_boys_*`.
+- **Left as BOTH — NOT forced (they genuinely sell both genders, site-confirmed):** Maria B (27-pc boys kurta
+  line + girls suits), Asim Jofa ("READY TO WEAR BOYS" waistcoats/kurtas + girls lawn), Al-Deebaj (boys
+  kurta-shalwar on boy models + girls abaya), ChenOne, MTJ, Edge Republic (unisex kurta sets "for boys and
+  girls alike"), Minnie Minors, Saya, Kross Kulture, Tifl, Gul Ahmed, Alkaram. Their per-item classification
+  is left alone. Limelight / Khas Stores read girls/unisex but are multi-dept + med-confidence with nothing to
+  move, so they are deliberately NOT locked (revisit if a boys kids line appears).
+- **Flagged separately (NOT a gender swap):** **Ego** — its website kids collection is EMPTY, yet ~60 "Ego"
+  items sit in `kids_girls_*`; these are misclassified WOMEN'S items (a kids-vs-women bug) — open for review.
+
 ### New brand/rule corrections (2026-06-24 classifier pass)
 - **Amir Adnan** — `jamawar/raw-silk "Jacket"` → `mens_waistcoat` (Rule 2.4). Its FINISHED couture is listed
   `sz:["Unstitched"]`, so it is exempt from the unstitched→fabric demotion and from `fwdCat` (its slug-rules
