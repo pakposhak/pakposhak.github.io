@@ -5889,15 +5889,12 @@
   function psShopPickBrand(name){
     if(!name) return;
     const deptCats = (psShopMode === 'brand') ? _psDeptCats(psShopDept) : [];
-    // Carry Price / Sort / Sale / New forward (multi-filter), and PRESERVE an active category
-    // narrowing (e.g. a "kurti" search or a faceted pick) so brand + category STACK — req:
-    // "search kurti then pick Khaadi → only Khaadi kurti". Only widen to the whole department's
-    // cats when there is no specific category yet (a bare brand tap under a Men/Women/Kids tab).
+    // STACK with the active search + filters (req: "search kurti then pick Khaadi → only Khaadi
+    // kurti"). A typed category/keyword lives in psQuery (free-text FTS), so PRESERVE psQuery +
+    // psSizeQ + the search box + price/sort/sale/new. Also preserve an explicit faceted category
+    // narrowing; only widen to the whole department's cats for a bare brand tap (no category yet).
     const keepCats = (psSel.cats.size && !_psIsWholeDeptCats(psSel.cats)) ? psSel.cats : new Set(deptCats);
     psSel = { prices:new Set(psSel.prices), cats:new Set(keepCats), brands:new Set([name]) };
-    psQuery = ''; psSizeQ = '';
-    ['psSearchMobile','psSearchDesktop'].forEach(idd => { const e = document.getElementById(idd); if(e) e.value = ''; });
-    psSearchHint('', new Set(), new Set());
     psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply();
     psScrollGridUnderCarousel();
   }
@@ -6880,7 +6877,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-25j';
+  const PSB_BUILD = '2026-06-25k';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
