@@ -145,14 +145,24 @@ is never flipped (keeps cleanup idempotent). Only the GENDERLESS items move.
   **Vanya** ("Metropolitan Girl"/"mini club"), plus the modest/abaya houses whose kids line is girls'
   abaya/makhna/hijab/namaz-chadar: **Black Camels**, **Hijabi.pk**, **Hijab-ul-Hareem**, **Abaya.pk**,
   **The Ummatis**, **The Women Zone** (kids hijab — 28 fixed). (Alizeh, ETHNC already listed above.)
-- **BOYS-only**: **Cambridge**, **Innerlines** (`BOYS_KIDS_BRANDS`) + **Kurta Corner** (its own pre-existing
-  rule) — menswear/kurta houses whose genderless "Kids … Suit" / kurta-shalwar defaulted to girls → `kids_boys_*`.
+  2026-06-25 MAP-scan additions — verified from `BRAND-COLLECTIONS-MAP.md` (scan-brand-collections.js):
+  **Limelight** (18 kids collections, all girls-*; no boys collection found), **Nureh** (4 kids collections:
+  3 girls + 1 kids, eastern-only; zero boys), **Salitex** (1 kids collection, girls-only; confirmed zero boys),
+  **Zeen (by Cambridge)** (3 kids collections: 1 girls + 2 kids; zeenwoman.com = women+girls brand, no boys),
+  **Mohagni** (2 kids collections, both girls-only; mohagni.com confirmed zero boys),
+  **Khas Stores** (7 kids collections: 2 infant + 1 girls + 4 kids; khasstores.com zero boys collection).
+- **BOYS-only** (`BOYS_KIDS_BRANDS`): **Cambridge**, **Innerlines** (menswear/kurta houses, original members)
+  + **Kurta Corner** (its own pre-existing rule); their genderless "Kids … Suit"/kurta-shalwar defaulted to
+  girls → `kids_boys_*`. 2026-06-25 MAP-scan additions: **Saya** (6 kids collections: 2 boys + 4 kids;
+  saya.pk full scan = all kids collections boys/gender-neutral, zero girls), **Monark** (2 kids collections,
+  both boys-only; monark.com.pk junior line is boys-only men's fashion house). Guard: if a product in a
+  boys-only brand carries a KGIRL_STRONG garment word (peplum/frock/gown/lehenga…) it is NOT flipped — the
+  strong girls' garment signal beats the brand rule (prevents oscillation with the KGIRL_STRONG rule).
 - **Left as BOTH — NOT forced (they genuinely sell both genders, site-confirmed):** Maria B (27-pc boys kurta
   line + girls suits), Asim Jofa ("READY TO WEAR BOYS" waistcoats/kurtas + girls lawn), Al-Deebaj (boys
   kurta-shalwar on boy models + girls abaya), ChenOne, MTJ, Edge Republic (unisex kurta sets "for boys and
-  girls alike"), Minnie Minors, Saya, Kross Kulture, Tifl, Gul Ahmed, Alkaram. Their per-item classification
-  is left alone. Limelight / Khas Stores read girls/unisex but are multi-dept + med-confidence with nothing to
-  move, so they are deliberately NOT locked (revisit if a boys kids line appears).
+  girls alike"), Minnie Minors, Kross Kulture, Tifl, Gul Ahmed, Alkaram. Their per-item classification
+  is left alone.
 - **MODEST kids wear is EASTERN, never western** (`MODEST_KIDS` keyword + `MODEST_KIDS_BRANDS`): a kids
   abaya/makhna/hijab/niqab/khimar/jilbab is traditional modest wear. The harvester's western default
   mislabelled them — Hijabi.pk/Abaya.pk "Kids Makhna", Hijab-ul-Hareem "Kids Abaya" → `kids_*_western`; fixed
@@ -175,6 +185,27 @@ is never flipped (keeps cleanup idempotent). Only the GENDERLESS items move.
   hoops/earrings`). **GUARDED by `GARMENT_NOUN`** — a jewellery-NAMED suit ("Kundan Coral 3pc", Crimson "Jewel
   by the Beach", "Zirconia Embroidered Suit") is NEVER dropped. A blanket jewellery-keyword purge was rejected:
   it would delete ~60 real suits with jewellery design-names. 37 true jewellery removed, 0 false positives.
+
+### Collection-authority east/west override (2026-06-25)
+**Architectural fix:** `harvestKidsCollection` now saves `p.coll = handle` on every kids product — the
+Shopify collection handle the product was harvested from. `catalog-cleanup.js` exposes two helpers:
+- `_collEast(h)` — true if the handle unambiguously names an eastern garment (east/ethnic/kurta/kameez/
+  shalwar/eid/festive/traditional/modest/abaya/makhna/hijab/niqab/namaz).
+- `_collWest(h)` — true if the handle names a western garment (west/pajamas/loungewear/lounge/jeans/denim/
+  t-shirt/track-suit/sport/athletic/sleepwear/nightwear/gym/sweat/hoodie/jogger/polo except polo-kurta).
+
+Two rules use these helpers:
+1. **Collection-authoritative west move**: if a `kids_*_eastern` product was harvested from an explicitly
+   western collection handle (`_collWest`) and has no eastern title word (`KEAST_GUARD`), it is moved to
+   `kids_*_western`. This trusts the brand's own taxonomy over our title-guess.
+2. **KWEST with _collEast guard**: the existing KWEST keyword rule (western garment words → eastern→western)
+   now adds `!_collEast(p.coll)` so a product whose collection handle explicitly names an eastern garment
+   is never moved by a coincidental western-sounding title word (e.g. "Kurta Pajama" from "eastern-wear-
+   collection" stays eastern even if "pajama" is in KWEST).
+
+**Note:** existing products in catalog.json have no `p.coll` field (they were harvested before this change),
+so both helpers return `false` and no new moves are applied during VPS rebuilds of the existing catalog.
+The collection field will only exist for products re-harvested after this change.
 
 ### Kids WESTERN garments mislabelled eastern (2026-06-25)
 **Root cause:** the eastern-garment regex matched the bare word "suit", so western blazer suits read as

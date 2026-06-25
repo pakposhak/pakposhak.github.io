@@ -740,7 +740,10 @@ async function harvestKidsCollection(name, host, handle, hint, need){
     for(const p of prods){
       if(!(p.variants && p.variants.length && p.handle)) continue;
       const o = buildProduct(p, name, host, 'k', null, hint);
-      if(o) out.push(o);
+      // Preserve the brand's own collection handle so catalog-cleanup.js can use it as
+      // ground truth (east/west) — without it, cleanup only sees title+slug and may override
+      // what the brand's own taxonomy said. (See _collEast/_collWest in catalog-cleanup.js.)
+      if(o){ o.coll = handle; out.push(o); }
     }
     if(prods.length < 250) break;
     await sleep(350);

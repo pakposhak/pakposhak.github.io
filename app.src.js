@@ -5721,9 +5721,16 @@
   // (e.g. the Shawl tile was showing a man). Men/Kids tiles are gender-encoded already, so no filter.
   const _PS_MALE_RE = /\b(men|mens|men's|gents?|male|mardana|him|waistcoat|sherwani|achkan|prince ?coat)\b/i;
   function _psTileGender(catKey){ const t = PS_SHOP_TILES.find(x => x.key === catKey || (x.cats && x.cats.indexOf(catKey) >= 0)); return t ? t.g : ''; }
-  function _psThumbOk(catKey, title){
+  function _psThumbOk(catKey, title, sz){
     const t = String(title || '');
     if(_psTileGender(catKey) === 'w' && _PS_MALE_RE.test(t)) return false;   // a women tile must not show a man
+    // Unstitched fabric products (sz=['Unstitched']) show flat folded cloth, not a dressed model.
+    // Skip them for STITCHED category tiles so tiles show an editorial model shot — not a fabric swatch.
+    // (Unstitched categories like lawn_3pc_unstitch still use these products since ALL their items are
+    // unstitched; the heuristic only kicks in when the category itself is a stitched/pret tile.)
+    if(Array.isArray(sz) && sz.length === 1 && /^unstitch/i.test(sz[0]) && !/unstitch/.test(catKey)){
+      return false;
+    }
     // A kids EASTERN tile must show an EASTERN garment (kurta pajama / shalwar kameez / waistcoat),
     // never a western suit / pajama / tee — so "Boys Eastern" shows a kurta pajama (req 2026-06-25).
     if(/^kids_(?:boys|girls)_eastern$/.test(catKey)){
@@ -5738,15 +5745,15 @@
   // page the grid loads (psHarvestThumbs), and by a throttled gap-fill fetch (psLoadShopThumbs).
   const PS_THUMB_TTL = 14 * 24 * 3600 * 1000;
   let _psThumbs = {};
-  try { _psThumbs = JSON.parse(localStorage.getItem('psb_cat_thumbs_v4') || '{}') || {}; } catch(e){ _psThumbs = {}; }   // _v4: re-fetch after the kids eastern/western fix so "Boys Eastern" shows a kurta, not a western suit
-  function _psThumbsSave(){ try{ localStorage.setItem('psb_cat_thumbs_v4', JSON.stringify(_psThumbs)); }catch(e){} }
+  try { _psThumbs = JSON.parse(localStorage.getItem('psb_cat_thumbs_v5') || '{}') || {}; } catch(e){ _psThumbs = {}; }   // _v4: re-fetch after the kids eastern/western fix so "Boys Eastern" shows a kurta, not a western suit
+  function _psThumbsSave(){ try{ localStorage.setItem('psb_cat_thumbs_v5', JSON.stringify(_psThumbs)); }catch(e){} }
   function psThumbGet(key){ const t = _psThumbs[key]; return (t && t.u && (Date.now() - t.t < PS_THUMB_TTL)) ? t.u : ''; }
   function psThumbSet(key, url){ if(!key || !url) return; _psThumbs[key] = { u:url, t:Date.now() }; _psThumbsSave(); }
   // Record the first GENDER-APPROPRIATE image seen for any category from a freshly-loaded product page.
   function psHarvestThumbs(products){
     if(!Array.isArray(products)) return;
     let changed = false;
-    for(const p of products){ if(p && p.cat && p.img && !psThumbGet(p.cat) && _psThumbOk(p.cat, p.t)){ _psThumbs[p.cat] = { u:p.img, t:Date.now() }; changed = true; } }
+    for(const p of products){ if(p && p.cat && p.img && !psThumbGet(p.cat) && _psThumbOk(p.cat, p.t, p.sz)){ _psThumbs[p.cat] = { u:p.img, t:Date.now() }; changed = true; } }
     if(changed){ _psThumbsSave(); psPaintShopThumbs(); }
   }
   // The carousel-active category KEY: the single selected category, OR (for a clubbed multi-cat tile)
@@ -5835,10 +5842,10 @@
   // ── Brand-tile photos: one representative photo per brand PER DEPARTMENT (so a multi-dept brand
   //    shows a kids photo under Kids, a women photo under Women, etc.), cached in localStorage ──
   let _psBrandThumbs = {};
-  try { _psBrandThumbs = JSON.parse(localStorage.getItem('psb_brand_thumbs_v2') || '{}') || {}; } catch(e){ _psBrandThumbs = {}; }
+  try { _psBrandThumbs = JSON.parse(localStorage.getItem('psb_brand_thumbs_v3') || '{}') || {}; } catch(e){ _psBrandThumbs = {}; }
   function _psBrandKey(n, dept){ return n + '|' + (dept || 'w'); }
   function psBrandThumbGet(n, dept){ const t = _psBrandThumbs[_psBrandKey(n, dept)]; return (t && t.u && (Date.now() - t.t < PS_THUMB_TTL)) ? t.u : ''; }
-  function psBrandThumbSet(n, dept, url){ if(!n || !url) return; _psBrandThumbs[_psBrandKey(n, dept)] = { u:url, t:Date.now() }; try{ localStorage.setItem('psb_brand_thumbs_v2', JSON.stringify(_psBrandThumbs)); }catch(e){} }
+  function psBrandThumbSet(n, dept, url){ if(!n || !url) return; _psBrandThumbs[_psBrandKey(n, dept)] = { u:url, t:Date.now() }; try{ localStorage.setItem('psb_brand_thumbs_v3', JSON.stringify(_psBrandThumbs)); }catch(e){} }
   function psPaintBrandTile(n, url){
     if(!url) return;
     let tile = null;
@@ -5868,8 +5875,10 @@
         .then(r => r.ok ? r.json() : null)
         .then(j => {
           const arr = (j && j.products) || [];
-          let p = (dept === 'w') ? arr.find(x => x && x.img && !_PS_MALE_RE.test(String(x.t || ''))) : null;
-          if(!p) p = arr.find(x => x && x.img) || null;
+          // Prefer a stitched (real-sized) product — unstitched items show flat fabric, not a model.
+          const _notUns = x => !(Array.isArray(x.sz) && x.sz.length === 1 && /^unstitch/i.test(x.sz[0]));
+          let p = (dept === 'w') ? arr.find(x => x && x.img && _notUns(x) && !_PS_MALE_RE.test(String(x.t || ''))) : arr.find(x => x && x.img && _notUns(x));
+          if(!p) p = (dept === 'w') ? arr.find(x => x && x.img && !_PS_MALE_RE.test(String(x.t || ''))) : arr.find(x => x && x.img) || null;
           if(p && p.img){ psBrandThumbSet(n, dept, p.img); psPaintBrandTile(n, p.img); }
         })
         .catch(() => {})
@@ -5926,7 +5935,7 @@
           // For a WOMEN tile, never fall back to a (possibly men's) photo — leave the emoji instead
           // of risking a man (req: the Shawl tile must show a woman). Men/Kids tiles keep the fallback.
           const isW = _psTileGender(key) === 'w';
-          const pick = arr.find(p => p && p.img && _psThumbOk(key, p.t)) || (isW ? null : arr.find(p => p && p.img));
+          const pick = arr.find(p => p && p.img && _psThumbOk(key, p.t, p.sz)) || (isW ? null : arr.find(p => p && p.img));
           if(pick && pick.img){ psThumbSet(key, pick.img); psPaintTile(key, pick.img); }
         })
         .catch(() => {})
@@ -6641,7 +6650,12 @@
     const base = psSearchBase();
     const cats = _psDeptCats(dept), catParam = (cats && cats.length) ? ('&cat=' + encodeURIComponent(cats.join(','))) : '';
     const get = async u => { try { const r = await fetch(u, { cache:'default' }); return r.ok ? (await r.json()) : null; } catch(e){ return null; } };
-    const pickDept = arr => { const w = (dept === 'w') ? arr.find(x => x && x.img && !_PS_MALE_RE.test(String(x.t || ''))) : null; return w || arr.find(x => x && x.img) || null; };
+    // Prefer stitched products (real sizes) over unstitched fabric (flat-lay, not a dressed model).
+    const _notUnsB = x => !(Array.isArray(x.sz) && x.sz.length === 1 && /^unstitch/i.test(x.sz[0]));
+    const pickDept = arr => {
+      const w = (dept === 'w') ? arr.find(x => x && x.img && _notUnsB(x) && !_PS_MALE_RE.test(String(x.t || ''))) : null;
+      return w || arr.find(x => x && x.img && _notUnsB(x)) || arr.find(x => x && x.img) || null;
+    };
     let j = await get(base + '?brand=' + encodeURIComponent(n) + catParam + '&pageSize=6&page=0');
     let p = pickDept((j && j.products) || []);
     if(!p && catParam){ j = await get(base + '?brand=' + encodeURIComponent(n) + '&pageSize=6&page=0'); p = ((j && j.products) || []).find(x => x && x.img) || null; }
@@ -6877,7 +6891,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-25k';
+  const PSB_BUILD = '2026-06-25l';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
