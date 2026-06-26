@@ -5635,8 +5635,7 @@
   // article → g:'w'.) Tiles whose category has zero products are auto-hidden via psFacetCats.
   const PS_SHOP_TILES = [
     // ── WOMEN ──
-    { g:'w', key:'pret_3pc',             en:'Stitched 3pc',    bn:'সেলাই করা ৩ পিস',  e:'👗' },
-    { g:'w', key:'pret_3pc_emb',         en:'Embroidered 3pc', bn:'এমব্রয়ডারি ৩ পিস', e:'🪡' },
+    { g:'w', key:'pret_3pc', cats:['pret_3pc','pret_3pc_emb'], en:'Stitched 3 pc', bn:'সেলাই করা ৩ পিস', e:'👗' },
     { g:'w', key:'lawn_3pc_unstitch', cats:['lawn_3pc_unstitch','unstitch_3pc_emb'], en:'Unstitched', bn:'আনস্টিচড', e:'🧵' },
     { g:'w', key:'kurti_1pc_unstitch',   en:'Unstitched 1pc',  bn:'আনস্টিচড ১ পিস',    e:'🧵' },
     { g:'w', key:'shirt_dupatta_2pc', cats:['shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','pret_2pc_emb'], en:'2-Piece', bn:'২ পিস', e:'👚' },
@@ -5645,23 +5644,21 @@
     { g:'w', key:'western_top',          en:'Western Top',     bn:'ওয়েস্টার্ন টপ',     e:'👚' },
     { g:'w', key:'womens_trouser',       en:'Trousers',        bn:'ট্রাউজার',         e:'👖' },
     { g:'w', key:'maxi_dress',           en:'Maxi / Dress',    bn:'ম্যাক্সি / ড্রেস',   e:'👗' },
-    { g:'w', key:'formal_emb_3pc', cats:['formal_emb_3pc','formal_emb_2pc'], en:'Formal', bn:'ফরমাল', e:'✨' },
-    { g:'w', key:'heavy_formal_3pc', cats:['heavy_formal_3pc','handmade_emb'], en:'Heavy Formal', bn:'ভারী ফরমাল', e:'💎' },
+    { g:'w', key:'formal_emb_3pc', cats:['formal_emb_3pc','formal_emb_2pc','heavy_formal_3pc','handmade_emb'], en:'Formal Wear', bn:'ফরমাল ওয়্যার', e:'✨' },
     { g:'w', key:'bridal',               en:'Bridal',          bn:'ব্রাইডাল',         e:'👰' },
     { g:'w', key:'lehenga',              en:'Lehenga',         bn:'লেহেঙ্গা',          e:'💃' },
     { g:'w', key:'saree',                en:'Saree',           bn:'শাড়ি',            e:'🥻' },
     { g:'w', key:'abaya',                en:'Abaya / Hijab',   bn:'আবায়া / হিজাব',    e:'🧕' },
     { g:'w', key:'kaftan',               en:'Kaftan',          bn:'কাফতান',           e:'🧥' },
     { g:'w', key:'winter_3pc_stitch', cats:['winter_3pc_stitch','winter_3pc_unstitch','winter_2pc_stitch','winter_2pc_unstitch'], en:'Winter', bn:'শীতের পোশাক', e:'🧣' },
-    { g:'w', key:'shawl',                en:'Shawl',           bn:'শাল',             e:'🧣' },
-    { g:'w', key:'dupatta_only',         en:'Dupatta',         bn:'ওড়না',            e:'🧣' },
+    { g:'w', key:'shawl', cats:['shawl','dupatta_only'], en:'Shawl & Dupatta', bn:'শাল ও ওড়না', e:'🧣' },
     { g:'w', key:'footwear',             en:'Footwear / Khussa', bn:'জুতা / খুসা',     e:'👡' },
     { g:'w', key:'loungewear',           en:'Loungewear',      bn:'লাউঞ্জওয়্যার',      e:'🛋️' },
     // ── MEN ──
     { g:'m', key:'mens_kurta',           en:'Kurta',           bn:'কুর্তা',           e:'👔' },
     { g:'m', key:'mens_shalwar_kameez',  en:'Shalwar Kameez',  bn:'শালওয়ার কামিজ',   e:'🧥' },
-    { g:'m', key:'mens_shirt',           en:'Shirt',           bn:'শার্ট',            e:'👔' },
-    { g:'m', key:'mens_trouser', cats:['mens_trouser','mens_jeans'], en:'Trousers', bn:'ট্রাউজার', e:'👖' },
+    { g:'m', key:'mens_shirt',           en:'Men Tops',        bn:'মেনস টপস',         e:'👔' },
+    { g:'m', key:'mens_trouser', cats:['mens_trouser','mens_jeans'], en:'Men Bottoms', bn:'মেনস বটমস', e:'👖' },
     { g:'m', key:'mens_waistcoat',       en:'Waistcoat',       bn:'ওয়েস্টকোট',        e:'🦺' },
     { g:'m', key:'mens_sherwani',        en:'Sherwani',        bn:'শেরওয়ানি',         e:'🤵' },
     { g:'m', key:'mens_suit',            en:'Suit',            bn:'স্যুট',            e:'🤵' },
@@ -6922,7 +6919,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-26a';
+  const PSB_BUILD = '2026-06-26b';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
