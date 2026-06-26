@@ -418,9 +418,13 @@ const LABEL2KEY={}; for(const k in CAT_INFO) LABEL2KEY[CAT_INFO[k].label]=k;
 // ── NOISE FILTER (non-clothing collections) ────────────────────────────────────
 const NOISE_RE=/\b(furniture|sofa|chair|table|cushion|curtain|carpet|rug|lamp|decor|candle|bedsheet|pillow|comforter|mattress|toy|toys|teddy|puzzle|game|games|doll|belt|belts|bag|bags|purse|wallet|clutch|handbag|tote|satchel|perfume|fragrance|cologne|attar|deodorant|jewellery|jewelry|necklace|earring|earrings|bracelet|bangle|bangles|makeup|cosmetic|lipstick|foundation|skincare|sunscreen|electronic|phone|mobile|gadget|laptop|stationery|diary|planner|supplement|vitamin|protein|umbrella|sunglasses|spectacle|eyewear|watches|cap|caps|scrunchie|scrunchies|cufflink|cufflinks|undergarment|undergarments|lingerie|turban|turbans|potli|body\s*mist|slides|pumps|nail|mascara|kohl|liner|blush|concealer|primer|palette|lashes|lash|serum|toner|moisturiser|moisturizer|diffuser|incense|room\s*spray|home\s*decor|throw|runner|acne|ageing|aging|brightening|scarring|wrinkle|cleanser|exfoliat|micellar|niacinamide|retinol|sunblock|body\s*wash|face\s*wash|hair\s*oil|shampoo|conditioner|grooming|\bbeard\b|shaving|swimwear|swimsuit|bikini|burkini|gift\s*card|e-?gift|\bvoucher\b|gift\s*box|gift\s*hamper|bundle\s*builder|tasbeeh|tasbih|janamaz|prayer\s*mat|miswak|\bsocks?\b|\bgloves?\b|keychain|\bmug\b|duvet|quilt\s*cover|fitted\s*sheet|bed\s*sheet|sheet\s*set|pillow\s*case|pillowcase|\bblanket|\btowel|napkin|table\s*cloth|bedding)\b/i;
 const SHOES_RE=/\b(sneaker|sneakers|boot|boots|heel|heels|loafer|loafers|moccasin|moccasins|slipper|slippers|stiletto|stilettos|wedge|wedges|pump)\b/i;
-const KEEP_FOOT=/\b(khussa|chappal|kulapuri|kolhapuri|khusa|khusse)\b/i;
+const KEEP_FOOT=/\b(khussa|khussas|khusa|khusse|chappal|chappals|chuppal|chuppa|kulapuri|kulapori|kolapuri|kolhapuri|kohlapuri|peshawari|peshawaris|mojari|mojaris|\bjutti\b)\b/i;
+// Traditional footwear keywords → these collections belong in the footwear category (kept in Women).
+const FOOT_RE=/\bkhussas?\b|\bkhusa\b|\bkhusse\b|\bchappals?\b|\bchapals?\b|\bchuppals?\b|\bchuppa\b|\bkulapuris?\b|\bkulaporis?\b|\bkolapuris?\b|\bkolhapuris?\b|\bkohlapuris?\b|\bpeshawaris?\b|\bmojaris?\b|\bjuttis?\b|\bjutties\b|\bfootwear\b/i;
 
 function isNoise(col, brandName){
+  // Traditional footwear (khussa/chappal/kulapuri…) is NEVER noise — kept in Women (req: Danish).
+  if(FOOT_RE.test((col.t||'').toLowerCase())) return false;
   // Explicit non-clothing list (a collection whose actual first product was an
   // accessory/skincare item — from classify-vague-collections.js → collection-noise.json).
   if(brandName && noiseOverrides.has(brandName+'||'+(col.h||''))) return true;
@@ -533,6 +537,9 @@ function brandPrimaryDept(name){
 // (abaya⇒women, sherwani⇒men, girls_eastern⇒kids) — never the brand's overall mix.
 // Routing: decide kids → men → women (catalogue is women-dominated), then classify.
 function collToOurCatKey(col, brandName){
+  // Traditional footwear (khussa/chappal/kulapuri/peshawari…) — the TITLE is authoritative
+  // and beats the product-data override, so it always lands in Footwear (kept in Women, req: Danish).
+  if(FOOT_RE.test((col.t||'').toLowerCase())) return 'footwear';
   // Product-data override (from classify-vague-collections.js) wins — it read the
   // collection's actual product type/tags, so it beats the title-only guess.
   const ov=collOverrides[brandName+'||'+(col.h||'')];
