@@ -6,6 +6,12 @@
       "runtimeExecutable": "node",
       "runtimeArgs": ["-e", "require('http').createServer((req,res)=>{const fs=require('fs'),path=require('path');let f=path.join('C:/Users/Danish.Wazir/Documents/Claude/Projects/psb-clean',req.url==='/'?'index.html':req.url.replace(/^\\//,''));fs.readFile(f,(e,d)=>{if(e){res.writeHead(404);res.end('Not found');}else{const ext=f.split('.').pop();const m={'html':'text/html','css':'text/css','js':'application/javascript','json':'application/json','png':'image/png','jpg':'image/jpeg','mp4':'video/mp4','vtt':'text/vtt','webmanifest':'application/manifest+json'};res.writeHead(200,{'Content-Type':m[ext]||'text/plain','Cache-Control':'no-store'});res.end(d);}});}).listen(5598,()=>console.log('psb-clean on :5598'))"],
       "port": 5598
+    },
+    {
+      "name": "psb-main",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["-e", "require('http').createServer((req,res)=>{const fs=require('fs'),path=require('path');let f=path.join('C:/Users/Danish.Wazir/Documents/Claude/Projects/Lawn Busines For Bangladesh',req.url==='/'?'index.html':req.url.replace(/^\\//,''));fs.readFile(f,(e,d)=>{if(e){res.writeHead(404);res.end('Not found');}else{const ext=f.split('.').pop();const m={'html':'text/html','css':'text/css','js':'application/javascript','json':'application/json','png':'image/png','jpg':'image/jpeg','mp4':'video/mp4','vtt':'text/vtt','webmanifest':'application/manifest+json'};res.writeHead(200,{'Content-Type':m[ext]||'text/plain','Cache-Control':'no-store'});res.end(d);}});}).listen(5599,()=>console.log('psb-main on :5599'))"],
+      "port": 5599
     }
   ]
 }

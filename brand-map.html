@@ -17,38 +17,40 @@ button.ghost{background:transparent;border:1.5px solid #444;color:#bbb;padding:6
 button.ghost:hover{border-color:#c9a96e;color:#c9a96e}
 button.active{background:#c9a96e;color:#12122a}
 button.inactive{background:transparent;border:1.5px solid #444;color:#999}
-input[type=text],input[type=password]{background:#1a1a2e;border:1.5px solid #333;border-radius:7px;color:#eee;padding:8px 11px;font-size:0.82rem;outline:none;font-family:inherit}
-input:focus{border-color:#c9a96e}
+input[type=text],input[type=password],input[type=number],select{background:#1a1a2e;border:1.5px solid #333;border-radius:7px;color:#eee;padding:7px 10px;font-size:0.82rem;outline:none;font-family:inherit}
+input:focus,select:focus{border-color:#c9a96e}
+select option{background:#1a1a2e}
 .err{color:#ff8a8a;font-size:0.84rem}
 .hint{font-size:0.74rem;color:#777}
 
-/* ── Gate ───────────────────────────────────────────────── */
+/* ── Gate ─────────────────────────────────────── */
 #gate{max-width:400px;margin:70px auto;background:#16162a;border:1px solid #2a2a40;border-radius:14px;padding:24px;text-align:center}
 #gate h2{color:#c9a96e;font-size:1.05rem;margin-bottom:6px}
 #gate p{color:#999;font-size:0.82rem;margin-bottom:14px}
 #gate input{width:100%;margin-bottom:11px;text-align:center;letter-spacing:2px}
 #gate button{width:100%}
 
-/* ── Top controls ───────────────────────────────────────── */
-.topbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
-#brandSearch{flex:1;min-width:180px}
-.dept-tabs{display:flex;gap:5px}
-.view-tabs{display:flex;gap:5px}
-.stat-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px;font-size:0.78rem;color:#888}
+/* ── Top controls ─────────────────────────────── */
+.topbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+#brandSearch{flex:1;min-width:160px}
+.dept-tabs{display:flex;gap:4px}
+.view-tabs{display:flex;gap:4px}
+.stat-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:8px;font-size:0.78rem;color:#888}
 .stat-row b{color:#eee}
-.tog{display:flex;align-items:center;gap:7px;font-size:0.78rem;color:#aaa;cursor:pointer;user-select:none}
+.tog{display:flex;align-items:center;gap:6px;font-size:0.78rem;color:#aaa;cursor:pointer;user-select:none}
 .tog input{accent-color:#c9a96e}
 
-/* ── Legend ─────────────────────────────────────────────── */
-.legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;font-size:0.72rem;color:#aaa}
+/* ── Legend ───────────────────────────────────── */
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;font-size:0.72rem;color:#aaa}
 .leg{display:flex;align-items:center;gap:4px}
 .leg-dot{width:11px;height:11px;border-radius:3px;flex-shrink:0}
 
-/* ── Dept color palette ─────────────────────────────────── */
-/* Kids */ :root{--kids-bg:#082a1a;--kids-hd:#0b3820;--kids-txt:#7CFC9A;--kids-pill:#0d3a22;--kids-brd:#1a6040}
-/* Women */ :root{--wom-bg:#2a0a18;--wom-hd:#380d20;--wom-txt:#ff9abf;--wom-pill:#3a0d22;--wom-brd:#6a1a40}
-/* Men */ :root{--men-bg:#080a2a;--men-hd:#0d1038;--men-txt:#9abfff;--men-pill:#0d1038;--men-brd:#1a2060}
-/* Other */
+/* ── Dept color palette ───────────────────────── */
+:root{
+  --kids-bg:#082a1a;--kids-hd:#0b3820;--kids-txt:#7CFC9A;--kids-pill:#0d3a22;--kids-brd:#1a6040;
+  --wom-bg:#2a0a18;--wom-hd:#380d20;--wom-txt:#ff9abf;--wom-pill:#3a0d22;--wom-brd:#6a1a40;
+  --men-bg:#080a2a;--men-hd:#0d1038;--men-txt:#9abfff;--men-pill:#0d1038;--men-brd:#1a2060;
+}
 .dept-pill{display:inline-block;border-radius:8px;padding:1px 7px;font-size:0.62rem;font-weight:700;letter-spacing:0.3px}
 .dept-pill.kids-boys{background:var(--kids-pill);color:var(--kids-txt);border:1px solid var(--kids-brd)}
 .dept-pill.kids-girls{background:#0d2a2a;color:#7efce0;border:1px solid #1a6060}
@@ -57,49 +59,14 @@ input:focus{border-color:#c9a96e}
 .dept-pill.men{background:var(--men-pill);color:var(--men-txt);border:1px solid var(--men-brd)}
 .dept-pill.other{background:#1a1a1a;color:#aaa;border:1px solid #333}
 
-/* ── List View (accordion) ──────────────────────────────── */
-#listView{border:1px solid #2a2a40;border-radius:10px;overflow:hidden}
-.brow{display:grid;grid-template-columns:2fr auto auto auto auto auto;gap:0;align-items:center;padding:8px 12px;border-bottom:1px solid #1e1e32;cursor:pointer;user-select:none;background:#141428}
-.brow:hover{background:#1b1b34}
-.brow.open{background:#16163a;border-bottom-color:#2a2a60}
-.brow .bname{font-weight:700;color:#ddd;font-size:0.78rem;display:flex;align-items:center;gap:6px}
-.brow .bname .arrow{color:#666;font-size:0.7rem;transition:transform .2s}
-.brow.open .bname .arrow{transform:rotate(90deg)}
-.brow .ktot,.brow .wtot,.brow .mtot,.brow .otot,.brow .ttot{font-size:0.75rem;font-variant-numeric:tabular-nums;padding:2px 6px;border-radius:6px;min-width:36px;text-align:right}
-.brow .ktot{background:var(--kids-bg);color:var(--kids-txt)}
-.brow .wtot{background:var(--wom-bg);color:var(--wom-txt)}
-.brow .mtot{background:var(--men-bg);color:var(--men-txt)}
-.brow .otot{background:#141414;color:#777}
-.brow .ttot{background:#1a1a2a;color:#c9a96e;font-weight:700}
-/* sub-rows for OUR categories */
-.bdetail{display:none;padding:0 0 4px 0;background:#101020}
-.bdetail.open{display:block}
-.srow{display:grid;grid-template-columns:2fr 1fr 3fr auto;gap:0;align-items:center;padding:5px 12px 5px 28px;border-bottom:1px solid #14142a;font-size:0.75rem}
-.srow:last-child{border-bottom:none}
-.srow:hover{background:#14142a}
-.srow .sdept{padding-right:8px}
-.srow .scname{color:#bbb}
-.srow .scnt{font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer;color:#c9a96e;text-decoration:underline dotted;text-underline-offset:3px;text-align:right}
-.srow .scnt:hover{color:#fff}
-/* sub-section: brand's own collections */
-.bcoll-hdr{padding:6px 12px 3px 28px;font-size:0.65rem;color:#555;text-transform:uppercase;letter-spacing:0.5px;border-top:1px solid #1a1a30;background:#0c0c1e}
-.bcoll-row{display:grid;grid-template-columns:80px 130px 1fr auto;gap:0 6px;align-items:center;padding:4px 12px 4px 28px;font-size:0.7rem;color:#666;border-bottom:1px solid #0f0f20}
-.bcoll-row:hover{background:#0e0e24;color:#aaa}
-.bcoll-cnt{font-variant-numeric:tabular-nums;text-align:right;color:#555}
-
-/* Our-label in-parens tag next to brand collection title */
-.our-label{color:#7ab8ff;font-size:0.65rem;font-style:italic;margin-left:5px}
-/* Highlight collection row when it matches active sub-filter */
-.bcoll-row.sub-match{background:#0d1624!important;border-left:2px solid #7ab8ff}
-.bcoll-row.sub-dimmed{opacity:.35}
-/* Sub-filter pills row */
+/* ── Sub-filter pills ─────────────────────────── */
 .subf-row{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
 .subf-label{font-size:0.72rem;color:#666;flex-shrink:0;margin-right:2px}
 button.subf{background:transparent;border:1.5px solid #333;color:#888;padding:4px 10px;font-size:0.72rem;font-weight:600;border-radius:20px;cursor:pointer;transition:all .15s}
 button.subf:hover{border-color:#7ab8ff;color:#7ab8ff}
 button.subf.on{background:#0d1624;border-color:#7ab8ff;color:#7ab8ff}
 
-/* Rule badges */
+/* ── Badge ────────────────────────────────────── */
 .badge{display:inline-block;font-size:0.55rem;padding:1px 5px;border-radius:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.3px}
 .badge.gk{background:#1a3a1a;color:#7CFC9A;border:1px solid #2a5a2a}
 .badge.bk{background:#1a1a3a;color:#8fc4ff;border:1px solid #2a2a5a}
@@ -107,26 +74,64 @@ button.subf.on{background:#0d1624;border-color:#7ab8ff;color:#7ab8ff}
 .badge.ek{background:#281832;color:#c9a0f0;border:1px solid #4a2a5a}
 .badge.mk{background:#3a1a1a;color:#ff9a8f;border:1px solid #5a2a2a}
 .badge.sg{background:#10282d;color:#80d8e0;border:1px solid #205060}
-/* rule-override highlight on sub-rows */
-.srow.ov-girls{background:#0d1d0d}.srow.ov-boys{background:#0d0d1d}.srow.ov-west{background:#1d1a0a}.srow.ov-east{background:#160d1d}.srow.ov-men{background:#1d0d0d}
 
-/* ── Pivot View (wide table) ─────────────────────────────── */
-#pivotView{overflow:auto;border:1px solid #2a2a40;border-radius:10px;max-height:72vh}
+/* ── LIST VIEW (accordion) ────────────────────── */
+#listView{border:1px solid #2a2a40;border-radius:10px;overflow:hidden}
+.brow{display:grid;grid-template-columns:2fr auto auto auto auto;gap:0;align-items:center;padding:8px 12px;border-bottom:1px solid #1e1e32;cursor:pointer;user-select:none;background:#141428}
+.brow:hover{background:#1b1b34}
+.brow.open{background:#16163a;border-bottom-color:#2a2a60}
+.brow .bname{font-weight:700;color:#ddd;font-size:0.78rem;display:flex;align-items:center;gap:6px}
+.brow .bname .arrow{color:#666;font-size:0.7rem;transition:transform .2s;display:inline-block}
+.brow.open .bname .arrow{transform:rotate(90deg)}
+.brow .ktot,.brow .wtot,.brow .mtot,.brow .ttot{font-size:0.75rem;font-variant-numeric:tabular-nums;padding:2px 6px;border-radius:6px;min-width:36px;text-align:right}
+.brow .ktot{background:var(--kids-bg);color:var(--kids-txt)}
+.brow .wtot{background:var(--wom-bg);color:var(--wom-txt)}
+.brow .mtot{background:var(--men-bg);color:var(--men-txt)}
+.brow .ttot{background:#1a1a2a;color:#c9a96e;font-weight:700}
+
+/* Section headers inside accordion */
+.srow-hdr{padding:4px 12px 4px 16px;font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;display:flex;align-items:center;gap:6px}
+.srow-hdr.sect-kids  {background:var(--kids-hd);color:var(--kids-txt)}
+.srow-hdr.sect-women {background:var(--wom-hd); color:var(--wom-txt)}
+.srow-hdr.sect-men   {background:var(--men-hd); color:var(--men-txt)}
+.srow-hdr.sect-other {background:#141414;color:#666}
+.srow-hdr.sect-colls {background:#0c0c1e;color:#555;border-top:1px solid #1a1a30}
+
+.bdetail{display:none;background:#101020}
+.bdetail.open{display:block}
+.srow{display:grid;grid-template-columns:auto 1fr auto;gap:0 8px;align-items:center;padding:5px 12px 5px 28px;border-bottom:1px solid #14142a;font-size:0.75rem}
+.srow:last-child{border-bottom:none}
+.srow:hover{background:#14142a}
+.srow .scname{color:#bbb}
+.srow .scnt{font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer;color:#c9a96e;text-decoration:underline dotted;text-underline-offset:3px;text-align:right;padding:2px 4px;border-radius:4px}
+.srow .scnt:hover{background:#222240;color:#fff}
+.srow.ov-girls{background:#0d1d0d}.srow.ov-boys{background:#0d0d1d}
+.srow.ov-west{background:#1d1a0a}.srow.ov-east{background:#160d1d}.srow.ov-men{background:#1d0d0d}
+
+/* Brand's own collections */
+.bcoll-row{display:grid;grid-template-columns:70px 110px 1fr auto;gap:0 6px;align-items:center;padding:4px 12px 4px 28px;font-size:0.7rem;color:#666;border-bottom:1px solid #0f0f20}
+.bcoll-row:hover{background:#0e0e24;color:#aaa}
+.bcoll-cnt{font-variant-numeric:tabular-nums;text-align:right;color:#555}
+.bcoll-row.sub-match{background:#0d1624!important;border-left:2px solid #7ab8ff}
+.bcoll-row.sub-dimmed{opacity:.35}
+
+/* ── PIVOT VIEW ───────────────────────────────── */
+#pivotView{overflow:auto;border:1px solid #2a2a40;border-radius:10px;max-height:74vh}
 table{border-collapse:collapse;font-size:0.74rem;white-space:nowrap}
 th,td{padding:5px 7px;border-bottom:1px solid #1e1e32;text-align:right}
-th.brand-col,td.brand-col{text-align:left;position:sticky;left:0;z-index:3;min-width:170px;max-width:200px;white-space:normal;word-break:break-word;background:#141428}
-thead th{position:sticky;top:0;z-index:2;font-size:0.62rem;text-transform:uppercase;letter-spacing:0.3px;padding:5px 6px;cursor:default;border-bottom:2px solid #2a2a40}
+th.brand-col,td.brand-col{text-align:left;position:sticky;left:0;z-index:3;min-width:160px;max-width:200px;white-space:normal;word-break:break-word;background:#141428}
+thead th{position:sticky;top:0;z-index:2;font-size:0.62rem;text-transform:uppercase;letter-spacing:0.3px;padding:5px 6px;border-bottom:2px solid #2a2a40}
 thead th.brand-col{z-index:4}
 thead tr.group-row th{z-index:2;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #1e1e32;padding:3px 6px;text-align:center}
 thead tr.group-row th.brand-col{z-index:4;background:#0f0f22}
-thead tr.group-row .gh-kids{background:var(--kids-hd);color:var(--kids-txt)}
-thead tr.group-row .gh-women{background:var(--wom-hd);color:var(--wom-txt)}
-thead tr.group-row .gh-men{background:var(--men-hd);color:var(--men-txt)}
-thead tr.group-row .gh-other{background:#141414;color:#777}
-thead tr.col-row .ch-kids{background:#0a2016;color:var(--kids-txt)}
-thead tr.col-row .ch-women{background:#220a14;color:var(--wom-txt)}
-thead tr.col-row .ch-men{background:#080a20;color:var(--men-txt)}
-thead tr.col-row .ch-other{background:#111;color:#666}
+thead tr.group-row .gh-kids  {background:var(--kids-hd);color:var(--kids-txt)}
+thead tr.group-row .gh-women {background:var(--wom-hd); color:var(--wom-txt)}
+thead tr.group-row .gh-men   {background:var(--men-hd); color:var(--men-txt)}
+thead tr.group-row .gh-other {background:#141414;color:#777}
+thead tr.col-row .ch-kids  {background:#0a2016;color:var(--kids-txt)}
+thead tr.col-row .ch-women {background:#220a14;color:var(--wom-txt)}
+thead tr.col-row .ch-men   {background:#080a20;color:var(--men-txt)}
+thead tr.col-row .ch-other {background:#111;color:#666}
 tbody tr:hover td{background:#1b1b32!important}
 tbody tr:hover td.brand-col{background:#1e1e38!important}
 td.nonzero{color:#ddd;font-weight:600;cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px}
@@ -143,22 +148,31 @@ td.brand-col .brules{display:flex;gap:3px;flex-wrap:wrap;margin-top:2px}
 td.brand-col .btot{font-size:0.62rem;color:#666;margin-top:1px}
 tbody tr.total-row td{background:#0c0c22;color:#c9a96e;font-weight:700;border-top:2px solid #2a2a40}
 
-/* ── Product Modal ──────────────────────────────────────── */
-#modal{display:none;position:fixed;inset:0;background:#000a;z-index:100;overflow:auto;padding:20px}
-.modal-box{background:#131326;border:1px solid #2a2a50;border-radius:14px;max-width:860px;margin:0 auto;padding:0;overflow:hidden}
-.modal-hdr{background:#0f0f22;padding:14px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #2a2a40}
-.modal-hdr h3{flex:1;color:#c9a96e;font-size:0.95rem}
-.modal-hdr .mdept{flex-shrink:0}
-.modal-body{padding:16px 18px;max-height:70vh;overflow-y:auto}
-.product-table{width:100%;border-collapse:collapse;font-size:0.78rem}
-.product-table th{text-align:left;color:#888;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.4px;padding:6px 8px;border-bottom:1px solid #2a2a40}
-.product-table td{padding:7px 8px;border-bottom:1px solid #1a1a30;vertical-align:top}
-.product-table tr:hover td{background:#1a1a38}
-.product-table .ptit{color:#ddd;font-weight:600;max-width:360px;white-space:normal;word-break:break-word}
-.product-table .ppkr{color:#c9a96e;font-variant-numeric:tabular-nums;white-space:nowrap}
-.product-table a{color:#7ab8ff}
-.modal-empty{padding:30px;text-align:center;color:#666}
-.modal-load{padding:20px;text-align:center;color:#888;font-size:0.85rem}
+/* ── MAP (FLAT) VIEW ─────────────────────────── */
+.map-filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px;padding:10px 12px;background:#131320;border:1px solid #2a2a40;border-radius:8px}
+.map-filters input,.map-filters select{font-size:0.8rem;padding:6px 9px}
+.map-filters label{font-size:0.78rem;color:#888}
+.map-count{font-size:0.78rem;color:#888;margin-left:4px}
+#mapView{overflow:auto;border:1px solid #2a2a40;border-radius:10px;max-height:74vh}
+.map-table{width:100%;border-collapse:collapse;font-size:0.78rem;white-space:nowrap}
+.map-table th{position:sticky;top:0;z-index:2;background:#141428;color:#888;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.4px;padding:7px 10px;border-bottom:2px solid #2a2a40;text-align:left;cursor:pointer;user-select:none}
+.map-table th:hover{color:#c9a96e}
+.map-table th.sorted{color:#c9a96e}
+.map-table th.sorted::after{content:' ▲';font-size:0.55rem}
+.map-table th.sorted.desc::after{content:' ▼'}
+.map-table td{padding:6px 10px;border-bottom:1px solid #1a1a2e;vertical-align:middle}
+.map-table tr:hover td{background:#1a1a30}
+.map-table .col-brand{font-weight:600;color:#ddd;min-width:130px}
+.map-table .col-coll{color:#aaa;min-width:200px;white-space:normal;max-width:280px}
+.map-table .col-ourlbl{color:#7ab8ff;font-weight:600;min-width:130px}
+.map-table .col-count{text-align:right;font-variant-numeric:tabular-nums}
+.map-table .col-count a{color:#c9a96e;font-weight:600;text-decoration:none}
+.map-table .col-count a:hover{color:#fff;text-decoration:underline}
+.map-table .col-count span{color:#c9a96e;font-weight:600}
+.map-table .no-label{color:#444;font-style:italic}
+.map-group-hdr{background:#141428;padding:5px 10px;font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;border-bottom:1px solid #1e1e32;color:#c9a96e;position:sticky;top:0}
+
+/* ── Loading / empty ─────────────────────────── */
 #loadMsg{padding:24px;text-align:center;color:#666;font-size:0.9rem}
 .no-results{padding:24px;text-align:center;color:#666}
 </style>
@@ -181,7 +195,7 @@ tbody tr.total-row td{background:#0c0c22;color:#c9a96e;font-weight:700;border-to
 <!-- App -->
 <div id="app" style="display:none">
   <h1>🗺️ Brand Category Map</h1>
-  <div class="sub">Brand's own collections mapped to our categories · highlighted rows = our rules moved products · click any count to see those products</div>
+  <div class="sub">Our categories vs brand's own collections · click any count to view products · Map view = best for comparison</div>
 
   <div class="topbar">
     <input type="text" id="brandSearch" placeholder="🔍 Search brand…" oninput="renderAll()">
@@ -192,14 +206,18 @@ tbody tr.total-row td{background:#0c0c22;color:#c9a96e;font-weight:700;border-to
       <button id="dMen"  class="inactive" onclick="setDept('men')">Men</button>
     </div>
     <div class="view-tabs">
-      <button id="vList"  class="active"   onclick="setView('list')">List</button>
+      <button id="vList"  class="inactive" onclick="setView('list')">List</button>
       <button id="vPivot" class="inactive" onclick="setView('pivot')">Pivot</button>
+      <button id="vMap"   class="active"   onclick="setView('map')">Map</button>
     </div>
     <label class="tog"><input type="checkbox" id="ruleOnly" onchange="renderAll()"> Rules only</label>
+    <label class="tog" id="hideEmptyTog" style="display:none"><input type="checkbox" id="hideEmptyCols" onchange="renderAll()"> Hide empty cols</label>
+    <button class="ghost" onclick="exportCSV()" id="btnExport">⬇ CSV</button>
     <button class="ghost" onclick="loadData()">🔄 Refresh</button>
   </div>
 
-  <div class="subf-row">
+  <!-- Style sub-filter (list view only) -->
+  <div class="subf-row" id="subfRow" style="display:none">
     <span class="subf-label">Style filter:</span>
     <button class="subf on" data-v="" onclick="setSubFilter(this,'')">All</button>
     <button class="subf" data-v="eastern" onclick="setSubFilter(this,'eastern')">Eastern</button>
@@ -211,48 +229,58 @@ tbody tr.total-row td{background:#0c0c22;color:#c9a96e;font-weight:700;border-to
     <span id="subfCount" style="font-size:0.7rem;color:#555;margin-left:6px"></span>
   </div>
 
-  <div class="legend">
+  <!-- Map view filters -->
+  <div id="mapFilters" style="display:none">
+    <div class="map-filters">
+      <label>Our Category:
+        <select id="mapFOurCat" onchange="renderMap()">
+          <option value="">All Our Categories</option>
+        </select>
+      </label>
+      <label>Dept:
+        <select id="mapFDept" onchange="renderMap()">
+          <option value="">All Depts</option>
+          <option value="women">Women</option>
+          <option value="men">Men</option>
+          <option value="kids">Kids</option>
+        </select>
+      </label>
+      <label>Brand:
+        <input type="text" id="mapFBrand" placeholder="brand name…" oninput="renderMap()">
+      </label>
+      <label>Collection:
+        <input type="text" id="mapFColl" placeholder="collection name…" oninput="renderMap()">
+      </label>
+      <label class="tog"><input type="checkbox" id="mapHideNoLabel" onchange="renderMap()"> Hide unmapped</label>
+      <span class="map-count" id="mapCount"></span>
+    </div>
+  </div>
+
+  <div class="legend" id="legend">
     <span class="leg"><span class="leg-dot" style="background:var(--kids-hd)"></span>Kids</span>
     <span class="leg"><span class="leg-dot" style="background:var(--wom-hd)"></span>Women</span>
     <span class="leg"><span class="leg-dot" style="background:var(--men-hd)"></span>Men</span>
-    <span class="leg"><span class="leg-dot" style="background:#2a4a2a"></span>Girls-only brand override</span>
-    <span class="leg"><span class="leg-dot" style="background:#2a2a4a"></span>Boys-only brand override</span>
-    <span class="leg"><span class="leg-dot" style="background:#3a3010"></span>Western-only kids</span>
+    <span class="leg"><span class="leg-dot" style="background:#2a4a2a"></span>Girls override</span>
+    <span class="leg"><span class="leg-dot" style="background:#2a2a4a"></span>Boys override</span>
     <span class="leg"><span class="leg-dot" style="background:#3a1a1a"></span>Men re-routed</span>
   </div>
 
   <div class="stat-row" id="statRow"></div>
   <div id="loadMsg">Loading…</div>
 
-  <!-- List View -->
+  <!-- Views -->
   <div id="listView" style="display:none"></div>
-
-  <!-- Pivot View -->
   <div id="pivotView" style="display:none">
-    <table id="tbl">
-      <thead id="thead"></thead>
-      <tbody id="tbody"></tbody>
-    </table>
+    <table id="tbl"><thead id="thead"></thead><tbody id="tbody"></tbody></table>
   </div>
-</div>
-
-<!-- Product Modal -->
-<div id="modal" onclick="if(event.target===this)closeModal()">
-  <div class="modal-box">
-    <div class="modal-hdr">
-      <h3 id="modalTitle">Products</h3>
-      <span class="mdept" id="modalDept"></span>
-      <button class="ghost" onclick="closeModal()">✕ Close</button>
-    </div>
-    <div class="modal-body" id="modalBody"><div class="modal-load">Loading products…</div></div>
-  </div>
+  <div id="mapView" style="display:none"></div>
 </div>
 
 <script>
 // ── CONFIG ────────────────────────────────────────────────────────────────────
-const DEFAULT_RELAY = 'https://103.83.91.34.sslip.io';
-function relayBase(){ return ((localStorage.getItem('psb_relay_url')||'').trim()||DEFAULT_RELAY).replace(/\/+$/,''); }
-async function sha256hex(s){ const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
+const DEFAULT_RELAY='https://103.83.91.34.sslip.io';
+function relayBase(){return((localStorage.getItem('psb_relay_url')||'').trim()||DEFAULT_RELAY).replace(/\/+$/,'');}
+async function sha256hex(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 document.getElementById('gateRelay').textContent=relayBase();
 function setRelay(){
@@ -280,9 +308,9 @@ function enterApp(){
   document.getElementById('app').style.display='';
   loadData();
 }
-if(sessionStorage.getItem('psb_admin_h')) enterApp();
+if(sessionStorage.getItem('psb_admin_h'))enterApp();
 
-// ── RULE KNOWLEDGE ────────────────────────────────────────────────────────────
+// ── RULE KNOWLEDGE ─────────────────────────────────────────────────────────────
 const GIRLS_KIDS=new Set(['Alizeh','ETHNC','Sana Safinaz','Senorita','Agha Noor','Sha Posh',
   'Sadaf Fawad Khan','Charizma','Armas','Vanya','Black Camels','Hijabi.pk','Hijab-ul-Hareem',
   'Abaya.pk','The Ummatis','The Women Zone','Limelight','Nureh','Salitex','Zeen (by Cambridge)',
@@ -315,7 +343,7 @@ function affectedCats(brand){
   return af;
 }
 
-// ── CATEGORY DEFINITIONS ──────────────────────────────────────────────────────
+// ── CATEGORY DEFINITIONS ───────────────────────────────────────────────────────
 const CAT_INFO={
   kids_infant:        {label:'Kids Infant',       dept:'kids-inf',   group:'kids'},
   kids_boys_eastern:  {label:'Boys Eastern',       dept:'kids-boys',  group:'kids'},
@@ -367,14 +395,12 @@ const CAT_INFO={
   footwear:           {label:'Footwear',           dept:'other',      group:'other'},
 };
 const DEPT_LABEL={'kids-boys':'Kids Boys','kids-girls':'Kids Girls','kids-inf':'Kids Infant','women':'Women','men':'Men','other':'Other'};
-
 const KIDS_CATS  =Object.keys(CAT_INFO).filter(k=>CAT_INFO[k].group==='kids');
 const WOMEN_CATS =Object.keys(CAT_INFO).filter(k=>CAT_INFO[k].group==='women');
 const MEN_CATS   =Object.keys(CAT_INFO).filter(k=>CAT_INFO[k].group==='men');
 const OTHER_CATS =Object.keys(CAT_INFO).filter(k=>CAT_INFO[k].group==='other');
 const ALL_CATS   =[...KIDS_CATS,...WOMEN_CATS,...MEN_CATS,...OTHER_CATS];
 
-// Pivot columns short labels
 const COL_SHORT={
   kids_infant:'Infant',kids_boys_eastern:'Boys-E',kids_boys_western:'Boys-W',kids_boys_formal:'Boys-F',
   kids_girls_eastern:'Girls-E',kids_girls_western:'Girls-W',kids_girls_formal:'Girls-F',
@@ -391,15 +417,11 @@ const COL_SHORT={
   mens_unstitched:'M-Un',footwear:'Shoes'
 };
 
-// ── COLLECTION → OUR LABEL MAPPING ───────────────────────────────────────────
-// Sections: only 'eastern','western','formal','unstitched' exist in data
-// kidSub (k): 'kids','girls','boys','infant'
-// We also detect clothing type from the collection handle (h) / title (t)
+// ── COLLECTION → OUR LABEL ─────────────────────────────────────────────────────
 function collToOurLabel(col){
   const d=col.d||'', s=col.s||[], k=col.k||'';
   const h=(col.h||'').toLowerCase(), tl=(col.t||'').toLowerCase();
   const inHT=w=>h.includes(w)||tl.includes(w);
-
   if(d==='kids'){
     if(k==='infant') return 'Kids Infant';
     const g=k==='girls'?'Girls':k==='boys'?'Boys':'Kids';
@@ -421,7 +443,6 @@ function collToOurLabel(col){
     if(s.includes('formal'))               return 'Men Formal';
     return 'Men';
   }
-  // Women (no dept or dept='women') — check specific clothing types first
   if(inHT('abaya'))                        return 'Abaya';
   if(inHT('bridal')||inHT('wedding'))      return 'Bridal';
   if(inHT('lehenga'))                      return 'Lehenga';
@@ -446,59 +467,94 @@ function collToOurLabel(col){
 function collMatchesSub(col,sub){
   if(!sub)return true;
   const s=col.s||[], k=col.k||'';
-  if(sub==='eastern')   return s.includes('eastern');
-  if(sub==='western')   return s.includes('western');
-  if(sub==='formal')    return s.includes('formal');
-  if(sub==='unstitched')return s.includes('unstitched');
-  if(sub==='girls')     return k==='girls';
-  if(sub==='boys')      return k==='boys';
+  if(sub==='eastern')    return s.includes('eastern');
+  if(sub==='western')    return s.includes('western');
+  if(sub==='formal')     return s.includes('formal');
+  if(sub==='unstitched') return s.includes('unstitched');
+  if(sub==='girls')      return k==='girls';
+  if(sub==='boys')       return k==='boys';
   return false;
 }
 
-// ── STATE ─────────────────────────────────────────────────────────────────────
-let brandIndex=null, brandMapData=null, currentDept='all', currentView='list', subFilter='';
+// ── STATE ──────────────────────────────────────────────────────────────────────
+let brandIndex=null, brandMapData=null, currentDept='all', currentView='map', subFilter='';
 const openBrands=new Set();
+let RENDERED_BRANDS_ARR=[];
+let mapSortCol='ourLabel', mapSortDesc=false;
 
-function setSubFilter(btn,v){
-  subFilter=v;
-  document.querySelectorAll('.subf').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
-  renderAll();
-}
-
-// ── LOAD ──────────────────────────────────────────────────────────────────────
+// ── LOAD ───────────────────────────────────────────────────────────────────────
 async function loadData(){
   document.getElementById('loadMsg').textContent='Loading…';
   document.getElementById('loadMsg').style.display='';
   document.getElementById('listView').style.display='none';
   document.getElementById('pivotView').style.display='none';
+  document.getElementById('mapView').style.display='none';
   try{
     const [idxRes,mapRes]=await Promise.all([
       fetch(relayBase()+'/search/brand-index'),
-      fetch('brand-map-data.json')
+      fetch('brand-map-data.json?_='+Date.now(),{cache:'no-store'})
     ]);
     const idxJ=await idxRes.json();
     brandIndex=idxJ.brands||idxJ;
-    brandMapData=(mapRes.ok)?await mapRes.json():null;
+    brandMapData=mapRes.ok?await mapRes.json():null;
+    if(brandMapData) buildMapFilterOptions();
+    attachListeners();
     renderAll();
   }catch(e){
     document.getElementById('loadMsg').innerHTML='<span class="err">Load failed: '+esc(e.message)+'</span>';
   }
 }
 
+function buildMapFilterOptions(){
+  if(!brandMapData)return;
+  const labels=new Set();
+  for(const b of brandMapData.brands){
+    for(const c of (b.cols||[])){const l=collToOurLabel(c);if(l)labels.add(l);}
+  }
+  const sel=document.getElementById('mapFOurCat');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">All Our Categories</option>'+
+    [...labels].sort().map(l=>`<option value="${esc(l)}"${l===cur?' selected':''}>${esc(l)}</option>`).join('');
+}
+
 function setDept(d){
   currentDept=d;
-  document.querySelectorAll('.dept-tabs button').forEach(b=>{
-    const id=b.id.replace('d','').toLowerCase();
-    b.className=(id===d||(id==='all'&&d==='all'))?'active':'inactive';
+  ['all','kids','wom','men'].forEach(id=>{
+    const b=document.getElementById('d'+id.charAt(0).toUpperCase()+id.slice(1));
+    if(b)b.className=(id==='all'?d==='all':id==='wom'?d==='women':d===id)?'active':'inactive';
   });
+  // fix: dAll vs dKids etc
+  document.getElementById('dAll').className=d==='all'?'active':'inactive';
+  document.getElementById('dKids').className=d==='kids'?'active':'inactive';
+  document.getElementById('dWom').className=d==='women'?'active':'inactive';
+  document.getElementById('dMen').className=d==='men'?'active':'inactive';
   renderAll();
 }
+
 function setView(v){
   currentView=v;
+  updateViewUI();
+  if(brandIndex)renderAll();
+}
+
+function updateViewUI(){
+  const v=currentView;
   document.getElementById('vList').className=v==='list'?'active':'inactive';
   document.getElementById('vPivot').className=v==='pivot'?'active':'inactive';
+  document.getElementById('vMap').className=v==='map'?'active':'inactive';
+  document.getElementById('subfRow').style.display=v==='list'?'':'none';
+  document.getElementById('mapFilters').style.display=v==='map'?'':'none';
+  document.getElementById('hideEmptyTog').style.display=v==='pivot'?'':'none';
+  document.getElementById('legend').style.display=v==='map'?'none':'';
   document.getElementById('listView').style.display=v==='list'?'':'none';
   document.getElementById('pivotView').style.display=v==='pivot'?'':'none';
+  document.getElementById('mapView').style.display=v==='map'?'':'none';
+}
+
+function setSubFilter(btn,v){
+  subFilter=v;
+  document.querySelectorAll('.subf').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  renderAll();
 }
 
 function renderAll(){
@@ -510,13 +566,12 @@ function renderAll(){
   if(ruleOnly)brands=brands.filter(([n])=>brandRules(n).length>0);
   brands.sort((a,b)=>a[0].localeCompare(b[0]));
 
-  // When subFilter is active, hide brands that have collection data but 0 matching collections
   const collMap2={};
   if(brandMapData)brandMapData.brands.forEach(b=>{collMap2[b.name]=b;});
-  if(subFilter){
+  if(subFilter&&currentView==='list'){
     brands=brands.filter(([n])=>{
       const bd=collMap2[n];
-      if(!bd||!bd.cols||!bd.cols.length)return true; // no collection data — keep
+      if(!bd||!bd.cols||!bd.cols.length)return true;
       return bd.cols.some(c=>collMatchesSub(c,subFilter));
     });
   }
@@ -529,80 +584,79 @@ function renderAll(){
      <span><b>${ruleAffected}</b> rule-affected</span>·
      <span><b>${totalProducts.toLocaleString()}</b> products in catalog</span>·
      <span style="color:#666">${brandMapData?brandMapData.brands.length+' brands in collection data':''}</span>`;
-  // Sub-filter count feedback
   const sc=document.getElementById('subfCount');
-  if(sc)sc.textContent=subFilter?`(${brands.length} brands with ${subFilter} collections)`:'';
+  if(sc&&subFilter)sc.textContent=`(${brands.length} brands with ${subFilter} collections)`;
+  else if(sc)sc.textContent='';
 
-
-  if(currentView==='list') renderList(brands);
-  else renderPivot(brands);
+  updateViewUI();
   document.getElementById('loadMsg').style.display='none';
-  setView(currentView);
+
+  if(currentView==='list')renderList(brands);
+  else if(currentView==='pivot')renderPivot(brands);
+  else renderMap();
 }
 
-// ── LIST VIEW ─────────────────────────────────────────────────────────────────
+// ── LIST VIEW ──────────────────────────────────────────────────────────────────
 function renderList(brands){
   const lv=document.getElementById('listView');
   if(!brands.length){lv.innerHTML='<div class="no-results">No brands match.</div>';return;}
 
   const deptFilter=currentDept;
   const collMap={};
-  if(brandMapData){brandMapData.brands.forEach(b=>{collMap[b.name]=b;});}
+  if(brandMapData)brandMapData.brands.forEach(b=>{collMap[b.name]=b;});
 
-  const catsByGroup=(group)=>{
-    let cats=ALL_CATS.filter(k=>CAT_INFO[k].group===group);
-    if(deptFilter!=='all'){
-      const gMap={kids:['kids'],women:['women'],men:['men']};
-      const allowed=gMap[deptFilter]||['kids','women','men','other'];
-      cats=cats.filter(k=>allowed.includes(CAT_INFO[k].group));
-    }
-    return cats;
-  };
   const showCats=deptFilter==='all'?ALL_CATS:ALL_CATS.filter(k=>{
     const g=CAT_INFO[k].group;
-    return (deptFilter==='kids'&&g==='kids')||(deptFilter==='women'&&g==='women')||(deptFilter==='men'&&(g==='men'||g==='other'));
+    return(deptFilter==='kids'&&g==='kids')||(deptFilter==='women'&&g==='women')||(deptFilter==='men'&&(g==='men'||g==='other'));
   });
 
-  const rows=brands.map(([name,catMap])=>{
+  const groupDefs=[
+    {group:'kids',  cats:showCats.filter(k=>CAT_INFO[k].group==='kids'),  hdr:'Kids',  cls:'sect-kids'},
+    {group:'women', cats:showCats.filter(k=>CAT_INFO[k].group==='women'), hdr:'Women', cls:'sect-women'},
+    {group:'men',   cats:showCats.filter(k=>CAT_INFO[k].group==='men'||CAT_INFO[k].group==='other'), hdr:'Men', cls:'sect-men'},
+  ];
+
+  RENDERED_BRANDS_ARR=brands.map(([name])=>name);
+
+  const rows=brands.map(([name,catMap],idx)=>{
     const rules=brandRules(name);
     const affected=affectedCats(name);
     const bData=collMap[name];
     const kTot=KIDS_CATS.reduce((s,k)=>s+(catMap[k]||0),0);
     const wTot=WOMEN_CATS.reduce((s,k)=>s+(catMap[k]||0),0);
     const mTot=MEN_CATS.reduce((s,k)=>s+(catMap[k]||0),0);
-    const oTot=OTHER_CATS.reduce((s,k)=>s+(catMap[k]||0),0);
-    const tot=kTot+wTot+mTot+oTot;
+    const tot=kTot+wTot+mTot+OTHER_CATS.reduce((s,k)=>s+(catMap[k]||0),0);
     const rulesBadges=rules.map(r=>`<span class="badge ${r.k}">${r.label}</span>`).join('');
-    const id='br-'+name.replace(/[^a-zA-Z0-9]/g,'_');
     const isOpen=openBrands.has(name);
-
-    // Subtotals for current dept filter only
     const ktShow=(deptFilter==='all'||deptFilter==='kids')?`<span class="ktot">${kTot||'—'}</span>`:'';
     const wtShow=(deptFilter==='all'||deptFilter==='women')?`<span class="wtot">${wTot||'—'}</span>`:'';
     const mtShow=(deptFilter==='all'||deptFilter==='men')?`<span class="mtot">${mTot||'—'}</span>`:'';
 
-    // Sub-rows: one per non-zero category in the filtered view
+    // Sub-rows grouped by dept with section headers
     let subRows='';
-    for(const cat of showCats){
-      const cnt=catMap[cat]||0;
-      if(!cnt) continue;
-      const ci=CAT_INFO[cat];
-      const aff=affected[cat];
-      let ovCls='';
-      if(aff==='girls')ovCls='ov-girls';
-      else if(aff==='boys')ovCls='ov-boys';
-      else if(aff==='west')ovCls='ov-west';
-      else if(aff==='east')ovCls='ov-east';
-      else if(aff==='men')ovCls='ov-men';
-      subRows+=`<div class="srow ${ovCls}">
-        <span class="sdept"><span class="dept-pill ${ci.dept}">${DEPT_LABEL[ci.dept]}</span></span>
-        <span></span>
-        <span class="scname">${esc(ci.label)}</span>
-        <span class="scnt" onclick="showProducts(${JSON.stringify(name)},${JSON.stringify(cat)})" title="Click to see ${cnt} products">${cnt}</span>
-      </div>`;
+    for(const {group,cats,hdr,cls} of groupDefs){
+      const catRows=cats.filter(cat=>(catMap[cat]||0)>0);
+      if(!catRows.length)continue;
+      subRows+=`<div class="srow-hdr ${cls}">${hdr} — ${catRows.reduce((s,k)=>s+(catMap[k]||0),0)} products</div>`;
+      for(const cat of catRows){
+        const cnt=catMap[cat]||0;
+        const ci=CAT_INFO[cat];
+        const aff=affected[cat];
+        let ovCls='';
+        if(aff==='girls')ovCls='ov-girls';
+        else if(aff==='boys')ovCls='ov-boys';
+        else if(aff==='west')ovCls='ov-west';
+        else if(aff==='east')ovCls='ov-east';
+        else if(aff==='men')ovCls='ov-men';
+        subRows+=`<div class="srow ${ovCls}">
+          <span><span class="dept-pill ${ci.dept}">${DEPT_LABEL[ci.dept]}</span></span>
+          <span class="scname">${esc(ci.label)}</span>
+          <span class="scnt" data-idx="${idx}" data-cat="${esc(cat)}">${cnt}</span>
+        </div>`;
+      }
     }
 
-    // Brand's own collections section
+    // Brand's own collections
     let collRows='';
     if(bData&&bData.cols&&bData.cols.length){
       const filtCols=bData.cols.filter(c=>{
@@ -612,31 +666,30 @@ function renderList(brands){
         return true;
       }).sort((a,b)=>(b.n||0)-(a.n||0)).slice(0,80);
       if(filtCols.length){
-        collRows=`<div class="bcoll-hdr">Brand's Shopify collections — ${filtCols.length} shown · <i>click count to see products in that category above</i></div>`+
+        collRows=`<div class="srow-hdr sect-colls">Brand's Own Collections (${filtCols.length}) — their names → our label</div>`+
           filtCols.map(c=>{
             const ourLabel=collToOurLabel(c);
             const matches=collMatchesSub(c,subFilter);
             const rowCls='bcoll-row'+(subFilter?(matches?' sub-match':' sub-dimmed'):'');
-            // dept pill
             const dk=c.d||'women';
             const dpCls=dk==='kids'?'kids-boys':dk==='men'?'men':'women';
-            const dLab=c.d?c.d.charAt(0).toUpperCase()+c.d.slice(1):(c.s&&c.s.length?'Women':'—');
+            const dLab=c.d?c.d.charAt(0).toUpperCase()+c.d.slice(1):'—';
             return `<div class="${rowCls}">
-              <span><span class="dept-pill ${dpCls}" style="font-size:0.58rem">${esc(dLab)}</span></span>
+              <span><span class="dept-pill ${dpCls}" style="font-size:0.56rem">${esc(dLab)}</span></span>
               <span style="color:#6a9af0;font-size:0.68rem;font-weight:600">${ourLabel?esc(ourLabel):''}</span>
-              <span style="color:#999">${esc(c.t)}</span>
+              <span style="color:#777">${esc(c.t)}</span>
               <span class="bcoll-cnt">${c.n}</span>
             </div>`;
           }).join('');
       }
     }
 
-    return `<div class="brow${isOpen?' open':''}" onclick="toggleBrand(${JSON.stringify(name)},${JSON.stringify(id)})">
-      <span class="bname"><span class="arrow">▶</span>${esc(name)}${rulesBadges?` ${rulesBadges}`:''}</span>
+    return `<div class="brow${isOpen?' open':''}" data-idx="${idx}">
+      <span class="bname"><span class="arrow">▶</span>${esc(name)}${rulesBadges?' '+rulesBadges:''}</span>
       ${ktShow}${wtShow}${mtShow}
       <span class="ttot">${tot}</span>
     </div>
-    <div class="bdetail${isOpen?' open':''}" id="${id}">
+    <div class="bdetail${isOpen?' open':''}" id="bdt-${idx}">
       ${subRows||'<div style="padding:8px 28px;color:#555;font-size:0.72rem">No products in this department filter.</div>'}
       ${collRows}
     </div>`;
@@ -645,28 +698,44 @@ function renderList(brands){
   lv.innerHTML=rows.join('');
 }
 
-function toggleBrand(name,id){
-  if(openBrands.has(name)){openBrands.delete(name);}else{openBrands.add(name);}
-  const brow=document.querySelector(`[onclick*="${name.replace(/'/g,"\\'")}"]`);
-  // re-render is cleanest for state consistency
-  renderAll();
-  // scroll to just-opened brand
-  setTimeout(()=>{
-    const el=document.getElementById(id);
-    if(el&&openBrands.has(name))el.scrollIntoView({behavior:'smooth',block:'nearest'});
-  },80);
+// ── LIST VIEW EVENT DELEGATION ─────────────────────────────────────────────────
+let _listenersAttached=false;
+function attachListeners(){
+  if(_listenersAttached)return;
+  _listenersAttached=true;
+  document.getElementById('listView').addEventListener('click',e=>{
+    const scnt=e.target.closest('.scnt');
+    if(scnt){e.stopPropagation();showProducts(RENDERED_BRANDS_ARR[+scnt.dataset.idx],scnt.dataset.cat);return;}
+    const brow=e.target.closest('.brow');
+    if(!brow)return;
+    const name=RENDERED_BRANDS_ARR[+brow.dataset.idx];
+    if(!name)return;
+    const prevY=window.scrollY;
+    if(openBrands.has(name))openBrands.delete(name);else openBrands.add(name);
+    renderAll();
+    window.scrollTo(0,prevY);
+    if(openBrands.has(name))setTimeout(()=>{
+      const el=document.getElementById('bdt-'+brow.dataset.idx);
+      if(el)el.scrollIntoView({behavior:'smooth',block:'nearest'});
+    },60);
+  });
 }
 
-// ── PIVOT VIEW ────────────────────────────────────────────────────────────────
+// ── PIVOT VIEW ─────────────────────────────────────────────────────────────────
 function renderPivot(brands){
+  const hideEmpty=document.getElementById('hideEmptyCols')?.checked;
   let cols;
-  if(currentDept==='kids')       cols=KIDS_CATS;
-  else if(currentDept==='women') cols=WOMEN_CATS;
+  if(currentDept==='kids')       cols=[...KIDS_CATS];
+  else if(currentDept==='women') cols=[...WOMEN_CATS];
   else if(currentDept==='men')   cols=[...MEN_CATS,...OTHER_CATS];
-  else                           cols=ALL_CATS;
+  else                           cols=[...ALL_CATS];
 
-  // Header
-  const grpCnt=(g)=>cols.filter(k=>CAT_INFO[k].group===g).length;
+  // Pre-compute totals for hide-empty
+  const colTotals={};
+  brands.forEach(([,cm])=>cols.forEach(k=>{colTotals[k]=(colTotals[k]||0)+(cm[k]||0);}));
+  if(hideEmpty)cols=cols.filter(k=>(colTotals[k]||0)>0);
+
+  const grpCnt=g=>cols.filter(k=>CAT_INFO[k].group===g).length;
   const groupRow=`<tr class="group-row">
     <th class="brand-col">Brand</th>
     ${grpCnt('kids')?`<th class="gh-kids" colspan="${grpCnt('kids')}">Kids</th>`:''}
@@ -675,14 +744,16 @@ function renderPivot(brands){
     ${grpCnt('other')?`<th class="gh-other" colspan="${grpCnt('other')}">Other</th>`:''}
   </tr>`;
   const colRow=`<tr class="col-row"><th class="brand-col">Brand + Rules</th>`+
-    cols.map(k=>`<th class="ch-${CAT_INFO[k].group}" title="${k}">${COL_SHORT[k]||k}</th>`).join('')+'</tr>';
+    cols.map(k=>`<th class="ch-${CAT_INFO[k].group}" title="${esc(CAT_INFO[k].label)}">${COL_SHORT[k]||k}</th>`).join('')+'</tr>';
   document.getElementById('thead').innerHTML=groupRow+colRow;
 
+  // Set RENDERED_BRANDS_ARR BEFORE building rows so idx mapping is correct
+  RENDERED_BRANDS_ARR=brands.map(([name])=>name);
   const totals={};
-  const rows=brands.map(([name,catMap])=>{
+  const rows=brands.map(([name,catMap],idx)=>{
     const rules=brandRules(name);
     const affected=affectedCats(name);
-    const tot=Object.values(catMap).reduce((a,b)=>a+b,0);
+    const tot=cols.reduce((s,k)=>s+(catMap[k]||0),0);
     const rulesBadges=rules.map(r=>`<span class="badge ${r.k}">${r.label}</span>`).join('');
     let cells='';
     for(const col of cols){
@@ -690,12 +761,11 @@ function renderPivot(brands){
       totals[col]=(totals[col]||0)+cnt;
       const aff=affected[col];
       let cls=cnt>0?'nonzero':'zero';
-      if(cnt>0&&aff){cls='rule-'+(aff==='girls'?'girls':aff==='boys'?'boys':aff==='west'?'west':aff==='east'?'east':aff==='men'?'men':'slug');}
-      const tip=aff?` title="Rule override: ${aff}"`:` title="${CAT_INFO[col]&&CAT_INFO[col].label||col}"`;
-      const click=cnt>0?` onclick="showProducts(${JSON.stringify(name)},${JSON.stringify(col)})"` :'';
-      cells+=`<td class="${cls}"${tip}${click}>${cnt||''}</td>`;
+      if(cnt>0&&aff)cls='rule-'+(aff==='girls'?'girls':aff==='boys'?'boys':aff==='west'?'west':aff==='east'?'east':aff==='men'?'men':'slug');
+      const tip=aff?` title="Rule: ${aff}"`:` title="${CAT_INFO[col]?.label||col}"`;
+      cells+=`<td class="${cls}"${tip}>${cnt||''}</td>`;
     }
-    return `<tr><td class="brand-col">
+    return `<tr data-idx="${idx}"><td class="brand-col">
       <div class="bname2">${esc(name)}</div>
       <div class="brules">${rulesBadges}</div>
       <div class="btot">${tot} total</div>
@@ -706,43 +776,215 @@ function renderPivot(brands){
   const grand=Object.values(totals).reduce((a,b)=>a+b,0);
   rows.push(`<tr class="total-row"><td class="brand-col">TOTAL — ${grand.toLocaleString()}</td>${totCells}</tr>`);
   document.getElementById('tbody').innerHTML=rows.join('');
+
+  // Add click handlers for non-zero cells — use closure over cols (local) + RENDERED_BRANDS_ARR
+  document.querySelectorAll('#tbody tr[data-idx]').forEach(tr=>{
+    const brIdx=+tr.dataset.idx;
+    tr.querySelectorAll('td.nonzero,td[class^="rule-"]').forEach(td=>{
+      td.addEventListener('click',()=>{
+        const allCells=[...tr.querySelectorAll('td')];
+        const colIdx=allCells.indexOf(td)-1;
+        if(colIdx>=0&&cols[colIdx])showProducts(RENDERED_BRANDS_ARR[brIdx],cols[colIdx]);
+      });
+    });
+  });
 }
 
-// ── PRODUCT MODAL ─────────────────────────────────────────────────────────────
+// ── MAP (FLAT COMPARISON) VIEW ─────────────────────────────────────────────────
+function renderMap(){
+  const mv=document.getElementById('mapView');
+  if(!brandMapData){mv.innerHTML='<div class="no-results">No collection data. Click Refresh.</div>';return;}
+
+  const fOurCat=(document.getElementById('mapFOurCat')||{}).value||'';
+  const fDept=(document.getElementById('mapFDept')||{}).value||'';
+  const fBrand=((document.getElementById('mapFBrand')||{}).value||'').toLowerCase();
+  const fColl=((document.getElementById('mapFColl')||{}).value||'').toLowerCase();
+  const hideNoLabel=(document.getElementById('mapHideNoLabel')||{}).checked;
+  const searchBrand=(document.getElementById('brandSearch')||{}).value?.toLowerCase()||'';
+
+  const allRows=[];
+  for(const b of brandMapData.brands){
+    if(searchBrand&&!b.name.toLowerCase().includes(searchBrand))continue;
+    if(fBrand&&!b.name.toLowerCase().includes(fBrand))continue;
+    for(const c of (b.cols||[])){
+      const ourLabel=collToOurLabel(c);
+      if(hideNoLabel&&!ourLabel)continue;
+      if(fOurCat&&ourLabel!==fOurCat)continue;
+      const dept=c.d||'women';
+      if(fDept&&dept!==fDept)continue;
+      if(fColl&&!c.t.toLowerCase().includes(fColl))continue;
+      allRows.push({brand:b.name,host:b.host||'',handle:c.h,collTitle:c.t,ourLabel:ourLabel||null,dept,count:c.n});
+    }
+  }
+
+  // Sort
+  allRows.sort((a,b)=>{
+    let va=a[mapSortCol]||'',vb=b[mapSortCol]||'';
+    if(mapSortCol==='count'){va=a.count;vb=b.count;}
+    const cmp=typeof va==='number'?(va-vb):String(va).localeCompare(String(vb));
+    return mapSortDesc?-cmp:cmp;
+  });
+
+  document.getElementById('mapCount').textContent=allRows.length+' rows';
+
+  const sortHdr=(col,label)=>{
+    const isSorted=mapSortCol===col;
+    return `<th class="${isSorted?'sorted'+(mapSortDesc?' desc':''):''}" onclick="mapSort('${col}')">${label}</th>`;
+  };
+
+  const tableRows=allRows.map(r=>{
+    const collUrl=r.host?`https://${r.host}/collections/${r.handle}`:'';
+    const countCell=collUrl?
+      `<a href="${esc(collUrl)}" target="_blank" rel="noopener">${r.count}</a>`:
+      `<span>${r.count}</span>`;
+    const deptCls=r.dept==='kids'?'kids-boys':r.dept==='men'?'men':'women';
+    const ourLblCell=r.ourLabel?
+      `<span style="color:#7ab8ff;font-weight:600">${esc(r.ourLabel)}</span>`:
+      `<span class="no-label">—</span>`;
+    return `<tr>
+      <td class="col-brand">${esc(r.brand)}</td>
+      <td class="col-coll">${esc(r.collTitle)}</td>
+      <td>${ourLblCell}</td>
+      <td><span class="dept-pill ${deptCls}">${r.dept}</span></td>
+      <td class="col-count">${countCell}</td>
+    </tr>`;
+  }).join('');
+
+  mv.innerHTML=`<table class="map-table">
+    <thead><tr>
+      ${sortHdr('brand','Brand')}
+      ${sortHdr('collTitle',"Brand's Collection")}
+      ${sortHdr('ourLabel','Our Category')}
+      ${sortHdr('dept','Dept')}
+      ${sortHdr('count','Count')}
+    </tr></thead>
+    <tbody>${tableRows||'<tr><td colspan="5" style="text-align:center;color:#666;padding:24px">No collections match the filters.</td></tr>'}</tbody>
+  </table>`;
+}
+
+function mapSort(col){
+  if(mapSortCol===col)mapSortDesc=!mapSortDesc;
+  else{mapSortCol=col;mapSortDesc=col==='count';}
+  renderMap();
+}
+
+// ── SHOW PRODUCTS (new window with images) ────────────────────────────────────
 async function showProducts(brand,cat){
+  if(!brand||!cat)return;
   const ci=CAT_INFO[cat]||{label:cat,dept:'other'};
-  document.getElementById('modalTitle').textContent=`${brand} → ${ci.label}`;
-  document.getElementById('modalDept').innerHTML=`<span class="dept-pill ${ci.dept}">${DEPT_LABEL[ci.dept]||ci.dept}</span>`;
-  document.getElementById('modalBody').innerHTML='<div class="modal-load">Fetching products…</div>';
-  document.getElementById('modal').style.display='';
+  const win=window.open('','_blank');
+  if(!win){alert('Please allow popups for this page.');return;}
+  win.document.write(`<!DOCTYPE html><html><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${esc(brand)} — ${esc(ci.label)}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0f0f1a;color:#eee;font-family:Segoe UI,system-ui,sans-serif;padding:20px}
+h2{color:#c9a96e;font-size:1.1rem;margin-bottom:4px}
+.meta{color:#888;font-size:0.8rem;margin-bottom:18px;display:flex;gap:12px;flex-wrap:wrap}
+.meta b{color:#bbb}
+.pill{display:inline-block;border-radius:8px;padding:1px 8px;font-size:0.65rem;font-weight:700;background:#2a0a18;color:#ff9abf;border:1px solid #6a1a40}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+.card{background:#141428;border:1px solid #2a2a40;border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+.card img{width:100%;height:160px;object-fit:cover;display:block;background:#0a0a18}
+.no-img{height:80px;background:#1a1a30;display:flex;align-items:center;justify-content:center;color:#333;font-size:0.7rem}
+.card .info{padding:9px;flex:1;display:flex;flex-direction:column;gap:4px}
+.card .title{font-size:0.78rem;color:#ddd;font-weight:600;line-height:1.35}
+.card .price{font-size:0.84rem;color:#c9a96e;font-variant-numeric:tabular-nums}
+.card a{font-size:0.72rem;color:#7ab8ff;text-decoration:none;margin-top:auto;padding-top:4px}
+.card a:hover{text-decoration:underline}
+.loading{padding:40px;text-align:center;color:#666}
+.err{color:#ff8a8a}
+.empty{padding:40px;text-align:center;color:#555}
+</style></head><body>
+<h2>${esc(brand)}</h2>
+<div class="meta">
+  <span>Category: <b>${esc(ci.label)}</b></span>
+  <span class="pill">${esc(DEPT_LABEL[ci.dept]||ci.dept)}</span>
+  <span id="pcount" style="color:#666">Loading…</span>
+</div>
+<div id="pgrid" class="grid"><div class="loading">Fetching products…</div></div>
+</body></html>`);
+  win.document.close();
+
   try{
     const q='"'+brand.replace(/"/g,'')+'"';
     const url=relayBase()+'/search?q='+encodeURIComponent(q)+'&cat='+encodeURIComponent(cat)+'&limit=200';
     const r=await fetch(url);
-    if(!r.ok) throw new Error('HTTP '+r.status);
+    if(!r.ok)throw new Error('HTTP '+r.status);
     const j=await r.json();
     const results=(j.results||j||[]).filter(p=>p.b===brand||(p.b||'').toLowerCase()===brand.toLowerCase());
+    if(!win.document.body)return;
+    const pcEl=win.document.getElementById('pcount');
+    if(pcEl)pcEl.textContent=results.length+' product'+(results.length!==1?'s':'');
+    const gridEl=win.document.getElementById('pgrid');
+    if(!gridEl)return;
     if(!results.length){
-      document.getElementById('modalBody').innerHTML=`<div class="modal-empty">No products found for <b>${esc(brand)}</b> in <b>${esc(ci.label)}</b>.<br><small style="color:#555">Try refreshing or the brand name may differ in search index.</small></div>`;
+      gridEl.innerHTML='<div class="empty">No products found for this brand/category.<br><small>The catalog may not include this category for '+esc(brand)+'.</small></div>';
       return;
     }
-    const rows=results.map(p=>`<tr>
-      <td class="ptit">${esc(p.t||'—')}</td>
-      <td class="ppkr">${p.pkr?'৳'+(+p.pkr).toLocaleString():''}</td>
-      <td style="white-space:nowrap"><a href="${esc(p.u||'#')}" target="_blank" rel="noopener">View →</a></td>
-    </tr>`).join('');
-    document.getElementById('modalBody').innerHTML=`
-      <div style="font-size:0.75rem;color:#888;margin-bottom:10px">${results.length} product${results.length>1?'s':''} in this brand/category</div>
-      <table class="product-table">
-        <thead><tr><th>Title</th><th>Price</th><th>Link</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>`;
+    gridEl.innerHTML=results.map(p=>{
+      const imgEl=p.img?`<img src="${esc(p.img)}" alt="" loading="lazy" onerror="this.style.display='none'">`:
+        `<div class="no-img">No image</div>`;
+      const price=p.pkr?'৳'+(+p.pkr).toLocaleString():'';
+      return `<div class="card">${imgEl}<div class="info">
+        <div class="title">${esc(p.t||'—')}</div>
+        <div class="price">${price}</div>
+        <a href="${esc(p.u||'#')}" target="_blank" rel="noopener">View on site →</a>
+      </div></div>`;
+    }).join('');
   }catch(e){
-    document.getElementById('modalBody').innerHTML=`<div class="modal-empty"><span class="err">Error: ${esc(e.message)}</span></div>`;
+    try{
+      const g=win.document.getElementById('pgrid');
+      if(g)g.innerHTML=`<div class="err" style="padding:24px">Error: ${esc(e.message)}</div>`;
+    }catch(_){}
   }
 }
-function closeModal(){document.getElementById('modal').style.display='none';}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+// ── EXPORT CSV ────────────────────────────────────────────────────────────────
+function exportCSV(){
+  if(currentView==='map')exportMapCSV();
+  else if(currentView==='pivot')exportPivotCSV();
+  else exportMapCSV();
+}
+
+function exportMapCSV(){
+  if(!brandMapData){alert('No collection data loaded.');return;}
+  const rows=[['Brand',"Brand's Collection",'Our Category','Dept','Count','Collection URL']];
+  for(const b of brandMapData.brands){
+    for(const c of (b.cols||[])){
+      const ourLabel=collToOurLabel(c)||'';
+      const url=b.host?`https://${b.host}/collections/${c.h}`:'';
+      rows.push([b.name,c.t,ourLabel,c.d||'women',c.n,url]);
+    }
+  }
+  downloadCSV(rows,'brand-category-map.csv');
+}
+
+function exportPivotCSV(){
+  if(!brandIndex){alert('No data loaded.');return;}
+  let cols;
+  if(currentDept==='kids')       cols=[...KIDS_CATS];
+  else if(currentDept==='women') cols=[...WOMEN_CATS];
+  else if(currentDept==='men')   cols=[...MEN_CATS,...OTHER_CATS];
+  else                           cols=[...ALL_CATS];
+  const header=['Brand',...cols.map(k=>CAT_INFO[k].label),'Total'];
+  const rows=[header];
+  for(const [name,catMap] of Object.entries(brandIndex).sort((a,b)=>a[0].localeCompare(b[0]))){
+    const vals=cols.map(k=>catMap[k]||0);
+    rows.push([name,...vals,vals.reduce((a,b)=>a+b,0)]);
+  }
+  downloadCSV(rows,'brand-pivot.csv');
+}
+
+function downloadCSV(rows,filename){
+  const csv=rows.map(r=>r.map(cell=>'"'+String(cell==null?'':cell).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  const blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=filename;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+}
 </script>
 </body>
 </html>
