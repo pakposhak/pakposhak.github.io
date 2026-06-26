@@ -88,15 +88,12 @@ button.subf.on{background:#0d1624;border-color:#7ab8ff;color:#7ab8ff}
 .brow .wtot{background:var(--wom-bg);color:var(--wom-txt)}
 .brow .mtot{background:var(--men-bg);color:var(--men-txt)}
 .brow .ttot{background:#1a1a2a;color:#c9a96e;font-weight:700}
-
-/* Section headers inside accordion */
 .srow-hdr{padding:4px 12px 4px 16px;font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;display:flex;align-items:center;gap:6px}
 .srow-hdr.sect-kids  {background:var(--kids-hd);color:var(--kids-txt)}
 .srow-hdr.sect-women {background:var(--wom-hd); color:var(--wom-txt)}
 .srow-hdr.sect-men   {background:var(--men-hd); color:var(--men-txt)}
 .srow-hdr.sect-other {background:#141414;color:#666}
 .srow-hdr.sect-colls {background:#0c0c1e;color:#555;border-top:1px solid #1a1a30}
-
 .bdetail{display:none;background:#101020}
 .bdetail.open{display:block}
 .srow{display:grid;grid-template-columns:auto 1fr auto;gap:0 8px;align-items:center;padding:5px 12px 5px 28px;border-bottom:1px solid #14142a;font-size:0.75rem}
@@ -107,70 +104,81 @@ button.subf.on{background:#0d1624;border-color:#7ab8ff;color:#7ab8ff}
 .srow .scnt:hover{background:#222240;color:#fff}
 .srow.ov-girls{background:#0d1d0d}.srow.ov-boys{background:#0d0d1d}
 .srow.ov-west{background:#1d1a0a}.srow.ov-east{background:#160d1d}.srow.ov-men{background:#1d0d0d}
-
-/* Brand's own collections */
-.bcoll-row{display:grid;grid-template-columns:70px 110px 1fr auto;gap:0 6px;align-items:center;padding:4px 12px 4px 28px;font-size:0.7rem;color:#666;border-bottom:1px solid #0f0f20}
+.bcoll-row{display:grid;grid-template-columns:70px 120px 1fr auto;gap:0 6px;align-items:center;padding:4px 12px 4px 28px;font-size:0.7rem;color:#666;border-bottom:1px solid #0f0f20}
 .bcoll-row:hover{background:#0e0e24;color:#aaa}
 .bcoll-cnt{font-variant-numeric:tabular-nums;text-align:right;color:#555}
 .bcoll-row.sub-match{background:#0d1624!important;border-left:2px solid #7ab8ff}
 .bcoll-row.sub-dimmed{opacity:.35}
 
-/* ── PIVOT VIEW ───────────────────────────────── */
-#pivotView{overflow:auto;border:1px solid #2a2a40;border-radius:10px;max-height:74vh}
-table{border-collapse:collapse;font-size:0.74rem;white-space:nowrap}
-th,td{padding:5px 7px;border-bottom:1px solid #1e1e32;text-align:right}
-th.brand-col,td.brand-col{text-align:left;position:sticky;left:0;z-index:3;min-width:160px;max-width:200px;white-space:normal;word-break:break-word;background:#141428}
-thead th{position:sticky;top:0;z-index:2;font-size:0.62rem;text-transform:uppercase;letter-spacing:0.3px;padding:5px 6px;border-bottom:2px solid #2a2a40}
-thead th.brand-col{z-index:4}
-thead tr.group-row th{z-index:2;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #1e1e32;padding:3px 6px;text-align:center}
-thead tr.group-row th.brand-col{z-index:4;background:#0f0f22}
-thead tr.group-row .gh-kids  {background:var(--kids-hd);color:var(--kids-txt)}
-thead tr.group-row .gh-women {background:var(--wom-hd); color:var(--wom-txt)}
-thead tr.group-row .gh-men   {background:var(--men-hd); color:var(--men-txt)}
-thead tr.group-row .gh-other {background:#141414;color:#777}
-thead tr.col-row .ch-kids  {background:#0a2016;color:var(--kids-txt)}
-thead tr.col-row .ch-women {background:#220a14;color:var(--wom-txt)}
-thead tr.col-row .ch-men   {background:#080a20;color:var(--men-txt)}
-thead tr.col-row .ch-other {background:#111;color:#666}
-tbody tr:hover td{background:#1b1b32!important}
-tbody tr:hover td.brand-col{background:#1e1e38!important}
-td.nonzero{color:#ddd;font-weight:600;cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px}
-td.nonzero:hover{color:#fff;background:#222240!important}
-td.zero{color:#2a2a3a}
-td.rule-girls{background:#0d1f0d!important;color:#7CFC9A;cursor:pointer}
-td.rule-boys{background:#0d0d1f!important;color:#8fc4ff;cursor:pointer}
-td.rule-west{background:#1f1a0a!important;color:#f0c060;cursor:pointer}
-td.rule-east{background:#180d22!important;color:#c9a0f0;cursor:pointer}
-td.rule-men{background:#1f0d0d!important;color:#ff9a8f;cursor:pointer}
-td.rule-slug{background:#0d1f22!important;color:#80d8e0;cursor:pointer}
-td.brand-col .bname2{font-weight:600;color:#ddd;font-size:0.76rem}
-td.brand-col .brules{display:flex;gap:3px;flex-wrap:wrap;margin-top:2px}
-td.brand-col .btot{font-size:0.62rem;color:#666;margin-top:1px}
-tbody tr.total-row td{background:#0c0c22;color:#c9a96e;font-weight:700;border-top:2px solid #2a2a40}
+/* ── PIVOT VIEW (row-per-collection) ──────────── */
+#pivotView{overflow:auto;border:1px solid #2a2a40;border-radius:10px;max-height:76vh}
+.pv-table{border-collapse:collapse;font-size:0.72rem;white-space:nowrap}
+.pv-table th,.pv-table td{padding:4px 6px;border-bottom:1px solid #1a1a2e;text-align:right}
+/* Sticky left columns */
+.pv-table .c0{position:sticky;left:0;z-index:3;background:#141428;min-width:130px;max-width:150px;text-align:left;white-space:normal;word-break:break-word}
+.pv-table .c1{position:sticky;left:150px;z-index:3;background:#141428;min-width:78px;text-align:left}
+.pv-table .c2{position:sticky;left:228px;z-index:3;background:#141428;min-width:150px;max-width:180px;text-align:left;white-space:normal;word-break:break-word}
+.pv-table thead th{position:sticky;top:0;z-index:2;font-size:0.58rem;text-transform:uppercase;letter-spacing:0.3px;border-bottom:2px solid #2a2a40}
+.pv-table thead th.c0,.pv-table thead th.c1,.pv-table thead th.c2{z-index:4}
+/* Group header row */
+.pv-table tr.grp-row th{z-index:2;font-size:0.58rem;text-transform:uppercase;letter-spacing:0.4px;border-bottom:1px solid #1e1e32;padding:3px 5px;text-align:center}
+.pv-table tr.grp-row th.c0,.pv-table tr.grp-row th.c1,.pv-table tr.grp-row th.c2{z-index:4;background:#0f0f22;text-align:left}
+.pv-table tr.grp-row .gh-kids  {background:var(--kids-hd);color:var(--kids-txt)}
+.pv-table tr.grp-row .gh-women {background:var(--wom-hd); color:var(--wom-txt)}
+.pv-table tr.grp-row .gh-men   {background:var(--men-hd); color:var(--men-txt)}
+/* Col labels row */
+.pv-table tr.col-row th{background:#12122a;color:#666}
+.pv-table tr.col-row .ch-kids  {background:#0a2016;color:var(--kids-txt)}
+.pv-table tr.col-row .ch-women {background:#220a14;color:var(--wom-txt)}
+.pv-table tr.col-row .ch-men   {background:#080a20;color:var(--men-txt)}
+/* Filter row */
+.pv-table tr.filter-row th{background:#0b0b1e;padding:4px 5px;border-bottom:2px solid #2a2a50;z-index:2}
+.pv-table tr.filter-row th.c0,.pv-table tr.filter-row th.c1,.pv-table tr.filter-row th.c2{z-index:4}
+.pv-table tr.filter-row input,.pv-table tr.filter-row select{width:100%;background:#18182e;border:1px solid #2a2a40;color:#ddd;padding:3px 6px;font-size:0.7rem;border-radius:4px;outline:none}
+.pv-table tr.filter-row input:focus,.pv-table tr.filter-row select:focus{border-color:#c9a96e}
+.pv-table tr.filter-row select option{background:#18182e}
+/* Body */
+.pv-table tbody tr:hover td{background:#181830!important}
+.pv-table tbody tr:hover td.c0,.pv-table tbody tr:hover td.c1,.pv-table tbody tr:hover td.c2{background:#1c1c38!important}
+.pv-table td.pv-val{color:#ddd;font-weight:600;cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px;font-variant-numeric:tabular-nums}
+.pv-table td.pv-val:hover{color:#fff;background:#222240!important}
+.pv-table td.pv-empty{color:#1e1e30}
+.pv-table .pv-brand{font-weight:700;color:#ddd;font-size:0.74rem}
+.pv-table .pv-coll{color:#aaa;font-size:0.72rem;cursor:pointer}
+.pv-table .pv-coll:hover{color:#7ab8ff;text-decoration:underline}
+.pv-table .pv-dept{font-size:0.62rem}
+.pv-table tr.grp-sep td{border-top:2px solid #2a2a40!important}
+.pv-info{font-size:0.75rem;color:#666;padding:7px 10px;border-bottom:1px solid #1e1e32;display:flex;gap:14px;align-items:center;flex-wrap:wrap;background:#0d0d1e}
+.pv-info b{color:#aaa}
+.noise-badge{background:#2a1a08;color:#c89060;border:1px solid #5a3a18;border-radius:5px;padding:1px 6px;font-size:0.62rem;font-weight:700}
 
 /* ── MAP (FLAT) VIEW ─────────────────────────── */
-.map-filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px;padding:10px 12px;background:#131320;border:1px solid #2a2a40;border-radius:8px}
-.map-filters input,.map-filters select{font-size:0.8rem;padding:6px 9px}
-.map-filters label{font-size:0.78rem;color:#888}
-.map-count{font-size:0.78rem;color:#888;margin-left:4px}
-#mapView{overflow:auto;border:1px solid #2a2a40;border-radius:10px;max-height:74vh}
-.map-table{width:100%;border-collapse:collapse;font-size:0.78rem;white-space:nowrap}
-.map-table th{position:sticky;top:0;z-index:2;background:#141428;color:#888;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.4px;padding:7px 10px;border-bottom:2px solid #2a2a40;text-align:left;cursor:pointer;user-select:none}
+#mapView{overflow:auto;border:1px solid #2a2a40;border-radius:10px;max-height:76vh}
+.map-table{width:100%;border-collapse:collapse;font-size:0.76rem;white-space:nowrap}
+.map-table th{position:sticky;top:0;z-index:2;background:#141428;color:#888;font-size:0.62rem;text-transform:uppercase;letter-spacing:0.4px;padding:6px 9px;border-bottom:2px solid #2a2a40;text-align:left;cursor:pointer;user-select:none;white-space:nowrap}
 .map-table th:hover{color:#c9a96e}
 .map-table th.sorted{color:#c9a96e}
 .map-table th.sorted::after{content:' ▲';font-size:0.55rem}
 .map-table th.sorted.desc::after{content:' ▼'}
-.map-table td{padding:6px 10px;border-bottom:1px solid #1a1a2e;vertical-align:middle}
+/* Map filter row */
+.map-table tr.map-frow th{background:#0b0b1e;padding:3px 5px;border-bottom:2px solid #2a2a50;cursor:default;font-size:unset;text-transform:unset;letter-spacing:unset;color:unset}
+.map-table tr.map-frow th:hover{color:unset}
+.map-table tr.map-frow input,.map-table tr.map-frow select{width:100%;background:#18182e;border:1px solid #2a2a40;color:#ddd;padding:3px 6px;font-size:0.72rem;border-radius:4px;outline:none}
+.map-table tr.map-frow input:focus,.map-table tr.map-frow select:focus{border-color:#c9a96e}
+.map-table tr.map-frow select option{background:#18182e}
+.map-table td{padding:5px 9px;border-bottom:1px solid #1a1a2e;vertical-align:middle}
 .map-table tr:hover td{background:#1a1a30}
-.map-table .col-brand{font-weight:600;color:#ddd;min-width:130px}
-.map-table .col-coll{color:#aaa;min-width:200px;white-space:normal;max-width:280px}
-.map-table .col-ourlbl{color:#7ab8ff;font-weight:600;min-width:130px}
-.map-table .col-count{text-align:right;font-variant-numeric:tabular-nums}
+.map-table .col-brand{font-weight:600;color:#ddd;min-width:120px}
+.map-table .col-bdept{min-width:60px}
+.map-table .col-coll{color:#aaa;min-width:160px;max-width:240px;white-space:normal}
+.map-table .col-ourlbl{min-width:120px}
+.map-table .col-dept{min-width:60px}
+.map-table .col-count{text-align:right;font-variant-numeric:tabular-nums;min-width:55px}
 .map-table .col-count a{color:#c9a96e;font-weight:600;text-decoration:none}
 .map-table .col-count a:hover{color:#fff;text-decoration:underline}
 .map-table .col-count span{color:#c9a96e;font-weight:600}
 .map-table .no-label{color:#444;font-style:italic}
-.map-group-hdr{background:#141428;padding:5px 10px;font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;border-bottom:1px solid #1e1e32;color:#c9a96e;position:sticky;top:0}
+.map-count{font-size:0.78rem;color:#666;padding:6px 10px;border-bottom:1px solid #1e1e32;background:#0d0d1e}
 
 /* ── Loading / empty ─────────────────────────── */
 #loadMsg{padding:24px;text-align:center;color:#666;font-size:0.9rem}
@@ -195,7 +203,7 @@ tbody tr.total-row td{background:#0c0c22;color:#c9a96e;font-weight:700;border-to
 <!-- App -->
 <div id="app" style="display:none">
   <h1>🗺️ Brand Category Map</h1>
-  <div class="sub">Our categories vs brand's own collections · click any count to view products · Map view = best for comparison</div>
+  <div class="sub">Our categories vs brand collections · click any count to view products · Map = best for comparison · Pivot = cross-tab matrix</div>
 
   <div class="topbar">
     <input type="text" id="brandSearch" placeholder="🔍 Search brand…" oninput="renderAll()">
@@ -211,12 +219,13 @@ tbody tr.total-row td{background:#0c0c22;color:#c9a96e;font-weight:700;border-to
       <button id="vMap"   class="active"   onclick="setView('map')">Map</button>
     </div>
     <label class="tog"><input type="checkbox" id="ruleOnly" onchange="renderAll()"> Rules only</label>
+    <label class="tog"><input type="checkbox" id="hideNoiseTog" checked onchange="renderAll()"> Hide non-clothing</label>
     <label class="tog" id="hideEmptyTog" style="display:none"><input type="checkbox" id="hideEmptyCols" onchange="renderAll()"> Hide empty cols</label>
     <button class="ghost" onclick="exportCSV()" id="btnExport">⬇ CSV</button>
     <button class="ghost" onclick="loadData()">🔄 Refresh</button>
   </div>
 
-  <!-- Style sub-filter (list view only) -->
+  <!-- List style sub-filter -->
   <div class="subf-row" id="subfRow" style="display:none">
     <span class="subf-label">Style filter:</span>
     <button class="subf on" data-v="" onclick="setSubFilter(this,'')">All</button>
@@ -227,33 +236,6 @@ tbody tr.total-row td{background:#0c0c22;color:#c9a96e;font-weight:700;border-to
     <button class="subf" data-v="girls" onclick="setSubFilter(this,'girls')">Girls</button>
     <button class="subf" data-v="boys" onclick="setSubFilter(this,'boys')">Boys</button>
     <span id="subfCount" style="font-size:0.7rem;color:#555;margin-left:6px"></span>
-  </div>
-
-  <!-- Map view filters -->
-  <div id="mapFilters" style="display:none">
-    <div class="map-filters">
-      <label>Our Category:
-        <select id="mapFOurCat" onchange="renderMap()">
-          <option value="">All Our Categories</option>
-        </select>
-      </label>
-      <label>Dept:
-        <select id="mapFDept" onchange="renderMap()">
-          <option value="">All Depts</option>
-          <option value="women">Women</option>
-          <option value="men">Men</option>
-          <option value="kids">Kids</option>
-        </select>
-      </label>
-      <label>Brand:
-        <input type="text" id="mapFBrand" placeholder="brand name…" oninput="renderMap()">
-      </label>
-      <label>Collection:
-        <input type="text" id="mapFColl" placeholder="collection name…" oninput="renderMap()">
-      </label>
-      <label class="tog"><input type="checkbox" id="mapHideNoLabel" onchange="renderMap()"> Hide unmapped</label>
-      <span class="map-count" id="mapCount"></span>
-    </div>
   </div>
 
   <div class="legend" id="legend">
@@ -270,9 +252,7 @@ tbody tr.total-row td{background:#0c0c22;color:#c9a96e;font-weight:700;border-to
 
   <!-- Views -->
   <div id="listView" style="display:none"></div>
-  <div id="pivotView" style="display:none">
-    <table id="tbl"><thead id="thead"></thead><tbody id="tbody"></tbody></table>
-  </div>
+  <div id="pivotView" style="display:none"></div>
   <div id="mapView" style="display:none"></div>
 </div>
 
@@ -345,54 +325,54 @@ function affectedCats(brand){
 
 // ── CATEGORY DEFINITIONS ───────────────────────────────────────────────────────
 const CAT_INFO={
-  kids_infant:        {label:'Kids Infant',       dept:'kids-inf',   group:'kids'},
-  kids_boys_eastern:  {label:'Boys Eastern',       dept:'kids-boys',  group:'kids'},
-  kids_boys_western:  {label:'Boys Western',       dept:'kids-boys',  group:'kids'},
-  kids_boys_formal:   {label:'Boys Formal',        dept:'kids-boys',  group:'kids'},
-  kids_girls_eastern: {label:'Girls Eastern',      dept:'kids-girls', group:'kids'},
-  kids_girls_western: {label:'Girls Western',      dept:'kids-girls', group:'kids'},
-  kids_girls_formal:  {label:'Girls Formal',       dept:'kids-girls', group:'kids'},
-  abaya:              {label:'Abaya',              dept:'women',      group:'women'},
-  bridal:             {label:'Bridal',             dept:'women',      group:'women'},
-  heavy_formal_3pc:   {label:'Heavy Formal 3pc',  dept:'women',      group:'women'},
-  formal_emb_3pc:     {label:'Formal Emb 3pc',    dept:'women',      group:'women'},
-  formal_emb_2pc:     {label:'Formal Emb 2pc',    dept:'women',      group:'women'},
-  handmade_emb:       {label:'Handmade Emb',      dept:'women',      group:'women'},
-  pret_3pc_emb:       {label:'Pret Emb 3pc',      dept:'women',      group:'women'},
-  pret_3pc:           {label:'Pret 3pc',           dept:'women',      group:'women'},
-  pret_2pc_emb:       {label:'Pret Emb 2pc',      dept:'women',      group:'women'},
-  shirt_dupatta_2pc:  {label:'Shirt+Dup 2pc',     dept:'women',      group:'women'},
-  shirt_trouser_2pc:  {label:'Shirt+Trou 2pc',    dept:'women',      group:'women'},
-  kurti_1pc:          {label:'Kurti 1pc',          dept:'women',      group:'women'},
-  western_top:        {label:'Western Top',        dept:'women',      group:'women'},
-  maxi_dress:         {label:'Maxi Dress',         dept:'women',      group:'women'},
-  kaftan:             {label:'Kaftan',             dept:'women',      group:'women'},
-  lehenga:            {label:'Lehenga',            dept:'women',      group:'women'},
-  saree:              {label:'Saree',              dept:'women',      group:'women'},
-  coord_western:      {label:'Coord Western',      dept:'women',      group:'women'},
-  loungewear:         {label:'Loungewear',         dept:'women',      group:'women'},
-  lawn_3pc_unstitch:  {label:'Lawn 3pc Unst',     dept:'women',      group:'women'},
-  unstitch_3pc_emb:   {label:'Unst Emb 3pc',      dept:'women',      group:'women'},
-  shirt_dupatta_2pc_unstitch:{label:'Shirt+Dup Unst',dept:'women',   group:'women'},
-  shirt_trouser_2pc_unstitch:{label:'Shirt+Trou Unst',dept:'women',  group:'women'},
-  kurti_1pc_unstitch: {label:'Kurti Unst',         dept:'women',      group:'women'},
-  winter_3pc_stitch:  {label:'Winter 3pc St',      dept:'women',      group:'women'},
-  winter_3pc_unstitch:{label:'Winter 3pc Unst',    dept:'women',      group:'women'},
-  winter_2pc_stitch:  {label:'Winter 2pc St',      dept:'women',      group:'women'},
-  winter_2pc_unstitch:{label:'Winter 2pc Unst',    dept:'women',      group:'women'},
-  dupatta_only:       {label:'Dupatta',            dept:'women',      group:'women'},
-  shawl:              {label:'Shawl',              dept:'women',      group:'women'},
-  womens_trouser:     {label:'Women Trouser',      dept:'women',      group:'women'},
-  mens_kurta:         {label:'Men Kurta',          dept:'men',        group:'men'},
-  mens_shalwar_kameez:{label:'Men Shalwar Kameez', dept:'men',        group:'men'},
-  mens_sherwani:      {label:'Men Sherwani',       dept:'men',        group:'men'},
-  mens_waistcoat:     {label:'Men Waistcoat',      dept:'men',        group:'men'},
-  mens_suit:          {label:'Men Suit',           dept:'men',        group:'men'},
-  mens_shirt:         {label:'Men Shirt',          dept:'men',        group:'men'},
-  mens_trouser:       {label:'Men Trouser',        dept:'men',        group:'men'},
-  mens_jeans:         {label:'Men Jeans',          dept:'men',        group:'men'},
-  mens_unstitched:    {label:'Men Unstitched',     dept:'men',        group:'men'},
-  footwear:           {label:'Footwear',           dept:'other',      group:'other'},
+  kids_infant:        {label:'Kids Infant',         dept:'kids-inf',   group:'kids'},
+  kids_boys_eastern:  {label:'Boys Eastern',        dept:'kids-boys',  group:'kids'},
+  kids_boys_western:  {label:'Boys Western',        dept:'kids-boys',  group:'kids'},
+  kids_boys_formal:   {label:'Boys Formal',         dept:'kids-boys',  group:'kids'},
+  kids_girls_eastern: {label:'Girls Eastern',       dept:'kids-girls', group:'kids'},
+  kids_girls_western: {label:'Girls Western',       dept:'kids-girls', group:'kids'},
+  kids_girls_formal:  {label:'Girls Formal',        dept:'kids-girls', group:'kids'},
+  abaya:              {label:'Abaya',               dept:'women',      group:'women'},
+  bridal:             {label:'Bridal',              dept:'women',      group:'women'},
+  heavy_formal_3pc:   {label:'Heavy Formal 3pc',   dept:'women',      group:'women'},
+  formal_emb_3pc:     {label:'Formal Emb 3pc',     dept:'women',      group:'women'},
+  formal_emb_2pc:     {label:'Formal Emb 2pc',     dept:'women',      group:'women'},
+  handmade_emb:       {label:'Handmade Emb',       dept:'women',      group:'women'},
+  pret_3pc_emb:       {label:'Pret Emb 3pc',       dept:'women',      group:'women'},
+  pret_3pc:           {label:'Pret 3pc',            dept:'women',      group:'women'},
+  pret_2pc_emb:       {label:'Pret Emb 2pc',       dept:'women',      group:'women'},
+  shirt_dupatta_2pc:  {label:'Shirt+Dup 2pc',      dept:'women',      group:'women'},
+  shirt_trouser_2pc:  {label:'Shirt+Trou 2pc',     dept:'women',      group:'women'},
+  kurti_1pc:          {label:'Kurti 1pc',           dept:'women',      group:'women'},
+  western_top:        {label:'Western Top',         dept:'women',      group:'women'},
+  maxi_dress:         {label:'Maxi Dress',          dept:'women',      group:'women'},
+  kaftan:             {label:'Kaftan',              dept:'women',      group:'women'},
+  lehenga:            {label:'Lehenga',             dept:'women',      group:'women'},
+  saree:              {label:'Saree',               dept:'women',      group:'women'},
+  coord_western:      {label:'Coord Western',       dept:'women',      group:'women'},
+  loungewear:         {label:'Loungewear',          dept:'women',      group:'women'},
+  lawn_3pc_unstitch:  {label:'Lawn 3pc Unst',      dept:'women',      group:'women'},
+  unstitch_3pc_emb:   {label:'Unst Emb 3pc',       dept:'women',      group:'women'},
+  shirt_dupatta_2pc_unstitch:{label:'Shirt+Dup Unst',dept:'women',    group:'women'},
+  shirt_trouser_2pc_unstitch:{label:'Shirt+Trou Unst',dept:'women',   group:'women'},
+  kurti_1pc_unstitch: {label:'Kurti Unst',          dept:'women',      group:'women'},
+  winter_3pc_stitch:  {label:'Winter 3pc St',       dept:'women',      group:'women'},
+  winter_3pc_unstitch:{label:'Winter 3pc Unst',     dept:'women',      group:'women'},
+  winter_2pc_stitch:  {label:'Winter 2pc St',       dept:'women',      group:'women'},
+  winter_2pc_unstitch:{label:'Winter 2pc Unst',     dept:'women',      group:'women'},
+  dupatta_only:       {label:'Dupatta',             dept:'women',      group:'women'},
+  shawl:              {label:'Shawl',               dept:'women',      group:'women'},
+  womens_trouser:     {label:'Women Trouser',       dept:'women',      group:'women'},
+  mens_kurta:         {label:'Men Kurta',           dept:'men',        group:'men'},
+  mens_shalwar_kameez:{label:'Men Shalwar Kameez',  dept:'men',        group:'men'},
+  mens_sherwani:      {label:'Men Sherwani',        dept:'men',        group:'men'},
+  mens_waistcoat:     {label:'Men Waistcoat',       dept:'men',        group:'men'},
+  mens_suit:          {label:'Men Suit',            dept:'men',        group:'men'},
+  mens_shirt:         {label:'Men Shirt',           dept:'men',        group:'men'},
+  mens_trouser:       {label:'Men Trouser',         dept:'men',        group:'men'},
+  mens_jeans:         {label:'Men Jeans',           dept:'men',        group:'men'},
+  mens_unstitched:    {label:'Men Unstitched',      dept:'men',        group:'men'},
+  footwear:           {label:'Footwear',            dept:'other',      group:'other'},
 };
 const DEPT_LABEL={'kids-boys':'Kids Boys','kids-girls':'Kids Girls','kids-inf':'Kids Infant','women':'Women','men':'Men','other':'Other'};
 const KIDS_CATS  =Object.keys(CAT_INFO).filter(k=>CAT_INFO[k].group==='kids');
@@ -417,53 +397,110 @@ const COL_SHORT={
   mens_unstitched:'M-Un',footwear:'Shoes'
 };
 
+// ── PIVOT LABEL COLUMNS (displayed in the cross-tab) ──────────────────────────
+// These are the "Our Category" columns in the pivot — specific PakPoshak categories
+// (no bare Boys/Girls/Kids/Men — those are departments, not categories)
+const PIVOT_LABELS={
+  kids:[
+    'Kids Infant',
+    'Boys Eastern','Boys Western','Boys Formal',
+    'Girls Eastern','Girls Western','Girls Formal',
+    'Kids Eastern','Kids Western',  // gender-neutral kids with section info
+  ],
+  women:[
+    'Abaya','Bridal','Lehenga','Saree','Kaftan',
+    'Eastern Pret','Formal Eastern','Formal',
+    'Lawn Unstitched','Formal Unstitched','Unstitched',
+    'Kurti','Maxi/Dress','Women Trouser',
+    'Dupatta','Shawl','Loungewear/Coord','Western',
+  ],
+  men:[
+    'Men Kurta/SK','Men Unstitched','Men Sherwani','Men Waistcoat',
+    'Men Suit','Men Shirt','Men Trouser','Men Jeans',
+    'Men Western','Men Formal',
+  ],
+};
+const ALL_PIVOT_LABELS=[...PIVOT_LABELS.kids,...PIVOT_LABELS.women,...PIVOT_LABELS.men];
+
+// ── NOISE FILTER (non-clothing collections) ────────────────────────────────────
+const NOISE_RE=/\b(furniture|sofa|chair|table|cushion|curtain|carpet|rug|lamp|decor|candle|bedsheet|pillow|comforter|mattress|toy|toys|teddy|puzzle|game|games|doll|belt|belts|bag|bags|purse|wallet|clutch|handbag|tote|satchel|perfume|fragrance|cologne|attar|deodorant|jewellery|jewelry|necklace|earring|earrings|bracelet|bangle|bangles|makeup|cosmetic|lipstick|foundation|skincare|sunscreen|electronic|phone|mobile|gadget|laptop|stationery|diary|planner|supplement|vitamin|protein|umbrella|sunglasses|spectacle|eyewear|watches)\b/i;
+const SHOES_RE=/\b(sneaker|sneakers|boot|boots|heel|heels|loafer|moccasin|slipper|slippers)\b/i;
+const KEEP_FOOT=/\b(khussa|chappal|kulapuri|kolhapuri|khusa|khusse)\b/i;
+
+function isNoise(col){
+  const txt=((col.h||'')+' '+(col.t||'')).toLowerCase();
+  if(NOISE_RE.test(txt))return true;
+  if(SHOES_RE.test(txt)&&!KEEP_FOOT.test(txt))return true;
+  return false;
+}
+
 // ── COLLECTION → OUR LABEL ─────────────────────────────────────────────────────
 function collToOurLabel(col){
   const d=col.d||'', s=col.s||[], k=col.k||'';
   const h=(col.h||'').toLowerCase(), tl=(col.t||'').toLowerCase();
   const inHT=w=>h.includes(w)||tl.includes(w);
+
   if(d==='kids'){
     if(k==='infant') return 'Kids Infant';
-    const g=k==='girls'?'Girls':k==='boys'?'Boys':'Kids';
-    if(s.includes('eastern')) return g+' Eastern';
-    if(s.includes('western')) return g+' Western';
-    if(s.includes('formal'))  return g+' Formal';
-    return g;
+    const g=k==='girls'?'Girls':k==='boys'?'Boys':null;
+    const base=g||'Kids';
+    if(s.includes('eastern')) return base+' Eastern';
+    if(s.includes('western')) return base+' Western';
+    if(s.includes('formal'))  return base+' Formal';
+    // Infer from title keywords
+    const isWest=inHT('jean')||inHT('tee')||inHT('t-shirt')||inHT('shorts')||inHT('chino')||inHT('trouser')||inHT('pant');
+    const isEast=inHT('kurta')||inHT('shalwar')||inHT('kameez')||inHT('frock')||inHT('sharara')||inHT('gharara');
+    if(isWest&&g) return g+' Western';
+    if(isEast&&g) return g+' Eastern';
+    if(g==='Girls') return 'Girls Eastern'; // Pakistani default: girls clothing = eastern
+    return null; // can't determine gender or style
   }
+
   if(d==='men'){
-    if(s.includes('unstitched'))           return 'Men Unstitched';
-    if(inHT('sherwani'))                   return 'Men Sherwani';
-    if(inHT('waistcoat')||inHT('vest'))    return 'Men Waistcoat';
-    if(inHT('suit')&&!inHT('swim'))        return 'Men Suit';
-    if(inHT('trouser')||inHT('pant'))      return 'Men Trouser';
-    if(inHT('jeans'))                      return 'Men Jeans';
-    if(inHT('shirt'))                      return 'Men Shirt';
-    if(s.includes('eastern')||inHT('kurta')||inHT('shalwar')||inHT('kameez')) return 'Men Kurta/SK';
-    if(s.includes('western'))              return 'Men Western';
-    if(s.includes('formal'))               return 'Men Formal';
-    return 'Men';
+    if(s.includes('unstitched'))                             return 'Men Unstitched';
+    if(inHT('sherwani'))                                     return 'Men Sherwani';
+    if(inHT('waistcoat')||inHT('vest'))                      return 'Men Waistcoat';
+    if(inHT('suit')&&!inHT('swim'))                          return 'Men Suit';
+    if(inHT('trouser')||inHT('pant')&&!inHT('shalwar'))      return 'Men Trouser';
+    if(inHT('jeans'))                                        return 'Men Jeans';
+    if(inHT('shirt')&&!inHT('shalwar'))                      return 'Men Shirt';
+    if(s.includes('eastern')||inHT('kurta')||inHT('shalwar')||inHT('kameez')||inHT('kurta')) return 'Men Kurta/SK';
+    if(s.includes('western'))                                return 'Men Western';
+    if(s.includes('formal'))                                 return 'Men Formal';
+    if(inHT('pret')||inHT('lawn')||inHT('khaddar'))          return 'Men Kurta/SK';
+    return null;
   }
-  if(inHT('abaya'))                        return 'Abaya';
-  if(inHT('bridal')||inHT('wedding'))      return 'Bridal';
-  if(inHT('lehenga'))                      return 'Lehenga';
-  if(inHT('saree')||inHT('sari'))          return 'Saree';
-  if(inHT('kaftan'))                       return 'Kaftan';
-  if(inHT('dupatta')&&!inHT('suit'))       return 'Dupatta';
-  if(inHT('shawl'))                        return 'Shawl';
-  if(inHT('lounge')||inHT('co-ord')||inHT('coord')) return 'Loungewear/Coord';
-  if(inHT('trouser')||inHT('pant'))        return 'Women Trouser';
-  if(inHT('kurti'))                        return 'Kurti';
-  if(inHT('maxi')||inHT('dress'))          return 'Maxi/Dress';
+
+  if(inHT('abaya'))                                          return 'Abaya';
+  if(inHT('bridal')||inHT('wedding')||inHT('barat')||inHT('nikkah')||inHT('nikah')) return 'Bridal';
+  if(inHT('lehenga'))                                        return 'Lehenga';
+  if(inHT('saree')||inHT('sari'))                            return 'Saree';
+  if(inHT('kaftan'))                                         return 'Kaftan';
+  if(inHT('dupatta')&&!inHT('suit')&&!inHT(' set'))          return 'Dupatta';
+  if(inHT('shawl')||inHT('stole'))                           return 'Shawl';
+  if(inHT('lounge')||inHT('co-ord')||inHT('coord'))          return 'Loungewear/Coord';
+  if(inHT('trouser')||(inHT('pant')&&!inHT('dupant')))       return 'Women Trouser';
+  if(inHT('kurti'))                                          return 'Kurti';
+  if(inHT('maxi')||inHT('dress')&&!inHT('dress shirt'))      return 'Maxi/Dress';
+
   const isUn=s.includes('unstitched'),isFo=s.includes('formal'),isEa=s.includes('eastern'),isWe=s.includes('western');
-  if(isUn&&isFo)  return 'Formal Unstitched';
-  if(isUn&&isEa)  return 'Lawn Unstitched';
-  if(isUn)        return 'Unstitched';
-  if(isFo&&isEa)  return 'Formal Eastern';
-  if(isFo)        return 'Formal';
-  if(isEa)        return 'Eastern Pret';
-  if(isWe)        return 'Western';
+  if(isUn&&isFo)   return 'Formal Unstitched';
+  if(isUn&&isEa)   return 'Lawn Unstitched';
+  if(isUn)         return 'Unstitched';
+  if(isFo&&isEa)   return 'Formal Eastern';
+  if(isFo)         return 'Formal';
+  if(isEa)         return 'Eastern Pret';
+  if(isWe)         return 'Western';
+
+  // Infer from fabric/garment keywords for women
+  if(inHT('pret'))                                           return 'Eastern Pret';
+  if((inHT('lawn')||inHT('cotton')||inHT('linen')||inHT('khaddar')||inHT('karandi')||inHT('chiffon')||inHT('georgette')||inHT('silk'))&&!inHT('unstitched')) return 'Eastern Pret';
+  if(inHT('festive')||inHT('eid')||inHT('mehndi'))           return 'Formal Eastern';
+  if(inHT('embroidered')||inHT('luxe')||inHT('luxury')||inHT('premium')&&!inHT('unstitched')) return 'Formal Eastern';
+  if(inHT('ready to wear')||inHT('readytowear')||inHT('rtw')) return 'Eastern Pret';
   return null;
 }
+
 function collMatchesSub(col,sub){
   if(!sub)return true;
   const s=col.s||[], k=col.k||'';
@@ -476,11 +513,35 @@ function collMatchesSub(col,sub){
   return false;
 }
 
+// ── BRAND MAIN DEPT ────────────────────────────────────────────────────────────
+function brandMainDept(name){
+  const cm=brandIndex&&brandIndex[name];
+  let k=0,w=0,m=0;
+  if(cm){
+    k=KIDS_CATS.reduce((s,c)=>s+(cm[c]||0),0);
+    w=WOMEN_CATS.reduce((s,c)=>s+(cm[c]||0),0);
+    m=[...MEN_CATS,...OTHER_CATS].reduce((s,c)=>s+(cm[c]||0),0);
+  }
+  if(!k&&!w&&!m){
+    // Fall back to collections data
+    const bd=brandMapData&&brandMapData.brands.find(b=>b.name===name);
+    if(bd&&bd.cols){for(const c of bd.cols){const d=c.d||'women';if(d==='kids')k+=c.n||0;else if(d==='men')m+=c.n||0;else w+=c.n||0;}}
+  }
+  const tot=k+w+m;
+  if(!tot)return'—';
+  const thr=0.12*tot;
+  const depts=[];
+  if(k>thr)depts.push('Kids');
+  if(w>thr)depts.push('Women');
+  if(m>thr)depts.push('Men');
+  return depts.join('+')||'—';
+}
+
 // ── STATE ──────────────────────────────────────────────────────────────────────
 let brandIndex=null, brandMapData=null, currentDept='all', currentView='map', subFilter='';
 const openBrands=new Set();
 let RENDERED_BRANDS_ARR=[];
-let mapSortCol='ourLabel', mapSortDesc=false;
+let mapSortCol='brand', mapSortDesc=false;
 
 // ── LOAD ───────────────────────────────────────────────────────────────────────
 async function loadData(){
@@ -497,7 +558,6 @@ async function loadData(){
     const idxJ=await idxRes.json();
     brandIndex=idxJ.brands||idxJ;
     brandMapData=mapRes.ok?await mapRes.json():null;
-    if(brandMapData) buildMapFilterOptions();
     attachListeners();
     renderAll();
   }catch(e){
@@ -505,25 +565,8 @@ async function loadData(){
   }
 }
 
-function buildMapFilterOptions(){
-  if(!brandMapData)return;
-  const labels=new Set();
-  for(const b of brandMapData.brands){
-    for(const c of (b.cols||[])){const l=collToOurLabel(c);if(l)labels.add(l);}
-  }
-  const sel=document.getElementById('mapFOurCat');
-  const cur=sel.value;
-  sel.innerHTML='<option value="">All Our Categories</option>'+
-    [...labels].sort().map(l=>`<option value="${esc(l)}"${l===cur?' selected':''}>${esc(l)}</option>`).join('');
-}
-
 function setDept(d){
   currentDept=d;
-  ['all','kids','wom','men'].forEach(id=>{
-    const b=document.getElementById('d'+id.charAt(0).toUpperCase()+id.slice(1));
-    if(b)b.className=(id==='all'?d==='all':id==='wom'?d==='women':d===id)?'active':'inactive';
-  });
-  // fix: dAll vs dKids etc
   document.getElementById('dAll').className=d==='all'?'active':'inactive';
   document.getElementById('dKids').className=d==='kids'?'active':'inactive';
   document.getElementById('dWom').className=d==='women'?'active':'inactive';
@@ -543,7 +586,6 @@ function updateViewUI(){
   document.getElementById('vPivot').className=v==='pivot'?'active':'inactive';
   document.getElementById('vMap').className=v==='map'?'active':'inactive';
   document.getElementById('subfRow').style.display=v==='list'?'':'none';
-  document.getElementById('mapFilters').style.display=v==='map'?'':'none';
   document.getElementById('hideEmptyTog').style.display=v==='pivot'?'':'none';
   document.getElementById('legend').style.display=v==='map'?'none':'';
   document.getElementById('listView').style.display=v==='list'?'':'none';
@@ -592,7 +634,7 @@ function renderAll(){
   document.getElementById('loadMsg').style.display='none';
 
   if(currentView==='list')renderList(brands);
-  else if(currentView==='pivot')renderPivot(brands);
+  else if(currentView==='pivot')renderPivot();
   else renderMap();
 }
 
@@ -600,24 +642,20 @@ function renderAll(){
 function renderList(brands){
   const lv=document.getElementById('listView');
   if(!brands.length){lv.innerHTML='<div class="no-results">No brands match.</div>';return;}
-
   const deptFilter=currentDept;
   const collMap={};
   if(brandMapData)brandMapData.brands.forEach(b=>{collMap[b.name]=b;});
-
   const showCats=deptFilter==='all'?ALL_CATS:ALL_CATS.filter(k=>{
     const g=CAT_INFO[k].group;
     return(deptFilter==='kids'&&g==='kids')||(deptFilter==='women'&&g==='women')||(deptFilter==='men'&&(g==='men'||g==='other'));
   });
-
   const groupDefs=[
-    {group:'kids',  cats:showCats.filter(k=>CAT_INFO[k].group==='kids'),  hdr:'Kids',  cls:'sect-kids'},
-    {group:'women', cats:showCats.filter(k=>CAT_INFO[k].group==='women'), hdr:'Women', cls:'sect-women'},
-    {group:'men',   cats:showCats.filter(k=>CAT_INFO[k].group==='men'||CAT_INFO[k].group==='other'), hdr:'Men', cls:'sect-men'},
+    {group:'kids', cats:showCats.filter(k=>CAT_INFO[k].group==='kids'), hdr:'Kids', cls:'sect-kids'},
+    {group:'women',cats:showCats.filter(k=>CAT_INFO[k].group==='women'),hdr:'Women',cls:'sect-women'},
+    {group:'men',  cats:showCats.filter(k=>CAT_INFO[k].group==='men'||CAT_INFO[k].group==='other'),hdr:'Men',cls:'sect-men'},
   ];
-
   RENDERED_BRANDS_ARR=brands.map(([name])=>name);
-
+  const hideNoise=document.getElementById('hideNoiseTog').checked;
   const rows=brands.map(([name,catMap],idx)=>{
     const rules=brandRules(name);
     const affected=affectedCats(name);
@@ -628,11 +666,6 @@ function renderList(brands){
     const tot=kTot+wTot+mTot+OTHER_CATS.reduce((s,k)=>s+(catMap[k]||0),0);
     const rulesBadges=rules.map(r=>`<span class="badge ${r.k}">${r.label}</span>`).join('');
     const isOpen=openBrands.has(name);
-    const ktShow=(deptFilter==='all'||deptFilter==='kids')?`<span class="ktot">${kTot||'—'}</span>`:'';
-    const wtShow=(deptFilter==='all'||deptFilter==='women')?`<span class="wtot">${wTot||'—'}</span>`:'';
-    const mtShow=(deptFilter==='all'||deptFilter==='men')?`<span class="mtot">${mTot||'—'}</span>`:'';
-
-    // Sub-rows grouped by dept with section headers
     let subRows='';
     for(const {group,cats,hdr,cls} of groupDefs){
       const catRows=cats.filter(cat=>(catMap[cat]||0)>0);
@@ -643,10 +676,8 @@ function renderList(brands){
         const ci=CAT_INFO[cat];
         const aff=affected[cat];
         let ovCls='';
-        if(aff==='girls')ovCls='ov-girls';
-        else if(aff==='boys')ovCls='ov-boys';
-        else if(aff==='west')ovCls='ov-west';
-        else if(aff==='east')ovCls='ov-east';
+        if(aff==='girls')ovCls='ov-girls';else if(aff==='boys')ovCls='ov-boys';
+        else if(aff==='west')ovCls='ov-west';else if(aff==='east')ovCls='ov-east';
         else if(aff==='men')ovCls='ov-men';
         subRows+=`<div class="srow ${ovCls}">
           <span><span class="dept-pill ${ci.dept}">${DEPT_LABEL[ci.dept]}</span></span>
@@ -655,11 +686,10 @@ function renderList(brands){
         </div>`;
       }
     }
-
-    // Brand's own collections
     let collRows='';
     if(bData&&bData.cols&&bData.cols.length){
-      const filtCols=bData.cols.filter(c=>{
+      let filtCols=bData.cols.filter(c=>{
+        if(hideNoise&&isNoise(c))return false;
         if(deptFilter==='kids'&&c.d!=='kids')return false;
         if(deptFilter==='women'&&(c.d==='men'||c.d==='kids'))return false;
         if(deptFilter==='men'&&c.d!=='men')return false;
@@ -673,28 +703,27 @@ function renderList(brands){
             const rowCls='bcoll-row'+(subFilter?(matches?' sub-match':' sub-dimmed'):'');
             const dk=c.d||'women';
             const dpCls=dk==='kids'?'kids-boys':dk==='men'?'men':'women';
-            const dLab=c.d?c.d.charAt(0).toUpperCase()+c.d.slice(1):'—';
             return `<div class="${rowCls}">
-              <span><span class="dept-pill ${dpCls}" style="font-size:0.56rem">${esc(dLab)}</span></span>
-              <span style="color:#6a9af0;font-size:0.68rem;font-weight:600">${ourLabel?esc(ourLabel):''}</span>
+              <span><span class="dept-pill ${dpCls}" style="font-size:0.56rem">${esc(dk)}</span></span>
+              <span style="color:#6a9af0;font-size:0.68rem;font-weight:600">${ourLabel?esc(ourLabel):'<span style="color:#333">—</span>'}</span>
               <span style="color:#777">${esc(c.t)}</span>
               <span class="bcoll-cnt">${c.n}</span>
             </div>`;
           }).join('');
       }
     }
-
     return `<div class="brow${isOpen?' open':''}" data-idx="${idx}">
       <span class="bname"><span class="arrow">▶</span>${esc(name)}${rulesBadges?' '+rulesBadges:''}</span>
-      ${ktShow}${wtShow}${mtShow}
+      <span class="ktot">${kTot||'—'}</span>
+      <span class="wtot">${wTot||'—'}</span>
+      <span class="mtot">${mTot||'—'}</span>
       <span class="ttot">${tot}</span>
     </div>
     <div class="bdetail${isOpen?' open':''}" id="bdt-${idx}">
-      ${subRows||'<div style="padding:8px 28px;color:#555;font-size:0.72rem">No products in this department filter.</div>'}
+      ${subRows||'<div style="padding:8px 28px;color:#555;font-size:0.72rem">No products in this filter.</div>'}
       ${collRows}
     </div>`;
   });
-
   lv.innerHTML=rows.join('');
 }
 
@@ -721,73 +750,150 @@ function attachListeners(){
   });
 }
 
-// ── PIVOT VIEW ─────────────────────────────────────────────────────────────────
-function renderPivot(brands){
-  const hideEmpty=document.getElementById('hideEmptyCols')?.checked;
-  let cols;
-  if(currentDept==='kids')       cols=[...KIDS_CATS];
-  else if(currentDept==='women') cols=[...WOMEN_CATS];
-  else if(currentDept==='men')   cols=[...MEN_CATS,...OTHER_CATS];
-  else                           cols=[...ALL_CATS];
+// ── PIVOT VIEW (row-per-collection cross-tab) ──────────────────────────────────
+function renderPivot(){
+  const pv=document.getElementById('pivotView');
+  if(!brandMapData){pv.innerHTML='<div class="no-results">No collection data. Click Refresh.</div>';return;}
 
-  // Pre-compute totals for hide-empty
-  const colTotals={};
-  brands.forEach(([,cm])=>cols.forEach(k=>{colTotals[k]=(colTotals[k]||0)+(cm[k]||0);}));
-  if(hideEmpty)cols=cols.filter(k=>(colTotals[k]||0)>0);
+  // Read filter inputs (created below in the table header)
+  const fBrand=(document.getElementById('pvFBrand')||{}).value||'';
+  const fDept=(document.getElementById('pvFDept')||{}).value||'';
+  const fColl=(document.getElementById('pvFColl')||{}).value||'';
+  const fLabel=(document.getElementById('pvFLabel')||{}).value||'';
+  const hideUnmapped=(document.getElementById('pvHideUnmapped')||{}).checked||false;
+  const hideNoise=document.getElementById('hideNoiseTog').checked;
+  const globalSearch=(document.getElementById('brandSearch').value||'').toLowerCase();
 
-  const grpCnt=g=>cols.filter(k=>CAT_INFO[k].group===g).length;
-  const groupRow=`<tr class="group-row">
-    <th class="brand-col">Brand</th>
-    ${grpCnt('kids')?`<th class="gh-kids" colspan="${grpCnt('kids')}">Kids</th>`:''}
-    ${grpCnt('women')?`<th class="gh-women" colspan="${grpCnt('women')}">Women</th>`:''}
-    ${grpCnt('men')?`<th class="gh-men" colspan="${grpCnt('men')}">Men</th>`:''}
-    ${grpCnt('other')?`<th class="gh-other" colspan="${grpCnt('other')}">Other</th>`:''}
-  </tr>`;
-  const colRow=`<tr class="col-row"><th class="brand-col">Brand + Rules</th>`+
-    cols.map(k=>`<th class="ch-${CAT_INFO[k].group}" title="${esc(CAT_INFO[k].label)}">${COL_SHORT[k]||k}</th>`).join('')+'</tr>';
-  document.getElementById('thead').innerHTML=groupRow+colRow;
+  // Choose which label groups to show based on dept tab
+  let labelGroups;
+  if(currentDept==='kids')       labelGroups={kids:PIVOT_LABELS.kids};
+  else if(currentDept==='women') labelGroups={women:PIVOT_LABELS.women};
+  else if(currentDept==='men')   labelGroups={men:PIVOT_LABELS.men};
+  else                           labelGroups={kids:PIVOT_LABELS.kids,women:PIVOT_LABELS.women,men:PIVOT_LABELS.men};
 
-  // Set RENDERED_BRANDS_ARR BEFORE building rows so idx mapping is correct
-  RENDERED_BRANDS_ARR=brands.map(([name])=>name);
-  const totals={};
-  const rows=brands.map(([name,catMap],idx)=>{
-    const rules=brandRules(name);
-    const affected=affectedCats(name);
-    const tot=cols.reduce((s,k)=>s+(catMap[k]||0),0);
-    const rulesBadges=rules.map(r=>`<span class="badge ${r.k}">${r.label}</span>`).join('');
-    let cells='';
-    for(const col of cols){
-      const cnt=catMap[col]||0;
-      totals[col]=(totals[col]||0)+cnt;
-      const aff=affected[col];
-      let cls=cnt>0?'nonzero':'zero';
-      if(cnt>0&&aff)cls='rule-'+(aff==='girls'?'girls':aff==='boys'?'boys':aff==='west'?'west':aff==='east'?'east':aff==='men'?'men':'slug');
-      const tip=aff?` title="Rule: ${aff}"`:` title="${CAT_INFO[col]?.label||col}"`;
-      cells+=`<td class="${cls}"${tip}>${cnt||''}</td>`;
+  const shownLabels=Object.values(labelGroups).flat();
+
+  // Build flat row list: one row per brand-collection
+  const rows=[];
+  for(const b of brandMapData.brands){
+    if(globalSearch&&!b.name.toLowerCase().includes(globalSearch))continue;
+    if(fBrand&&!b.name.toLowerCase().includes(fBrand.toLowerCase()))continue;
+    for(const c of(b.cols||[])){
+      if(hideNoise&&isNoise(c))continue;
+      const dept=c.d||'women';
+      if(currentDept!=='all'){
+        if(currentDept==='kids'&&dept!=='kids')continue;
+        if(currentDept==='women'&&dept!=='men'===false&&dept!=='kids'===false){}// skip check; filter by label
+        if(currentDept==='men'&&dept!=='men')continue;
+      }
+      if(fDept&&dept!==fDept)continue;
+      if(fColl&&!c.t.toLowerCase().includes(fColl.toLowerCase()))continue;
+      const ourLabel=collToOurLabel(c);
+      if(hideUnmapped&&!ourLabel)continue;
+      if(fLabel&&ourLabel!==fLabel)continue;
+      rows.push({brand:b.name,host:b.host||'',handle:c.h,collTitle:c.t,ourLabel,dept,count:c.n});
     }
-    return `<tr data-idx="${idx}"><td class="brand-col">
-      <div class="bname2">${esc(name)}</div>
-      <div class="brules">${rulesBadges}</div>
-      <div class="btot">${tot} total</div>
-    </td>${cells}</tr>`;
+  }
+
+  // Sort: brand name then collection count desc
+  rows.sort((a,b)=>a.brand.localeCompare(b.brand)||b.count-a.count);
+
+  // Group header row
+  const grpCols=Object.entries(labelGroups).map(([g,ls])=>
+    `<th class="gh-${g}" colspan="${ls.length}">${g.charAt(0).toUpperCase()+g.slice(1)}</th>`
+  ).join('');
+  // Col labels row
+  const colHdrs=shownLabels.map(l=>{
+    const grp=Object.entries(labelGroups).find(([,ls])=>ls.includes(l))?.[0]||'';
+    const abbr=l.replace('Eastern','E').replace('Western','W').replace('Formal','F')
+               .replace('Unstitched','Un').replace('Loungewear/Coord','Lng').replace('Trouser','Trou')
+               .replace('Men ','M-').replace(' Pret','').replace('Lawn ','Ln-');
+    return `<th class="ch-${grp}" title="${esc(l)}">${esc(abbr)}</th>`;
+  }).join('');
+
+  // Build all-labels select options for filter
+  const labelOpts='<option value="">All Our Categories</option>'+
+    shownLabels.map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join('');
+
+  // Filter row
+  const deptOpts=`<option value="">All Depts</option><option value="women">Women</option><option value="men">Men</option><option value="kids">Kids</option>`;
+  const filterRow=`<tr class="filter-row">
+    <th class="c0"><input type="text" id="pvFBrand" oninput="renderPivot()" placeholder="Brand…" value="${esc(fBrand)}"></th>
+    <th class="c1"><select id="pvFDept" onchange="renderPivot()">${deptOpts.replace(`value="${fDept}"`,'value="'+fDept+'" selected')}</select></th>
+    <th class="c2"><input type="text" id="pvFColl" oninput="renderPivot()" placeholder="Collection…" value="${esc(fColl)}"></th>
+    <th colspan="${shownLabels.length}" style="text-align:left;white-space:nowrap">
+      <select id="pvFLabel" onchange="renderPivot()" style="width:160px">${labelOpts}</select>
+      &nbsp;<label style="font-size:0.68rem;color:#aaa"><input type="checkbox" id="pvHideUnmapped" onchange="renderPivot()"${hideUnmapped?' checked':''}> Hide unmapped</label>
+      &nbsp;<span id="pvCount" style="font-size:0.68rem;color:#666"></span>
+    </th>
+  </tr>`;
+
+  // Body rows
+  let prevBrand='', noiseCount=0;
+  const bodyRows=rows.map(r=>{
+    const isBrandStart=r.brand!==prevBrand;
+    prevBrand=r.brand;
+    const cells=shownLabels.map(l=>{
+      if(r.ourLabel===l)return`<td class="pv-val" data-brand="${esc(r.brand)}" data-label="${esc(l)}" title="View products: ${esc(r.brand)} / ${esc(l)}">${r.count}</td>`;
+      return`<td class="pv-empty">·</td>`;
+    }).join('');
+    const deptCls=r.dept==='kids'?'kids-boys':r.dept==='men'?'men':'women';
+    const collUrl=r.host?`https://${r.host}/collections/${r.handle}`:'';
+    const collCell=collUrl?
+      `<a class="pv-coll" href="${esc(collUrl)}" target="_blank" rel="noopener" title="Open on brand's website">${esc(r.collTitle)}</a>`:
+      `<span class="pv-coll" style="cursor:default">${esc(r.collTitle)}</span>`;
+    const brandDept=brandMainDept(r.brand);
+    return`<tr class="${isBrandStart?'grp-sep':''}">
+      <td class="c0">${isBrandStart?`<span class="pv-brand">${esc(r.brand)}</span>`:''}</td>
+      <td class="c1 pv-dept">${isBrandStart?`<span class="dept-pill ${deptCls}" style="font-size:0.58rem">${esc(brandDept)}</span>`:''}</td>
+      <td class="c2">${collCell}</td>
+      ${cells}
+    </tr>`;
   });
 
-  const totCells=cols.map(c=>`<td>${totals[c]||''}</td>`).join('');
-  const grand=Object.values(totals).reduce((a,b)=>a+b,0);
-  rows.push(`<tr class="total-row"><td class="brand-col">TOTAL — ${grand.toLocaleString()}</td>${totCells}</tr>`);
-  document.getElementById('tbody').innerHTML=rows.join('');
+  // Count noise filtered
+  if(hideNoise&&brandMapData){
+    for(const b of brandMapData.brands)for(const c of(b.cols||[]))if(isNoise(c))noiseCount++;
+  }
 
-  // Add click handlers for non-zero cells — use closure over cols (local) + RENDERED_BRANDS_ARR
-  document.querySelectorAll('#tbody tr[data-idx]').forEach(tr=>{
-    const brIdx=+tr.dataset.idx;
-    tr.querySelectorAll('td.nonzero,td[class^="rule-"]').forEach(td=>{
-      td.addEventListener('click',()=>{
-        const allCells=[...tr.querySelectorAll('td')];
-        const colIdx=allCells.indexOf(td)-1;
-        if(colIdx>=0&&cols[colIdx])showProducts(RENDERED_BRANDS_ARR[brIdx],cols[colIdx]);
-      });
+  pv.innerHTML=`
+    <div class="pv-info">
+      <span><b>${rows.length}</b> collections</span>·
+      <span><b>${[...new Set(rows.map(r=>r.brand))].length}</b> brands</span>·
+      <span><b>${rows.filter(r=>r.ourLabel).length}</b> mapped (${rows.length?Math.round(100*rows.filter(r=>r.ourLabel).length/rows.length):'0'}%)</span>·
+      <span style="color:#c97a40"><b>${rows.filter(r=>!r.ourLabel).length}</b> unmapped</span>
+      ${hideNoise&&noiseCount?`<span class="noise-badge">${noiseCount} non-clothing hidden</span>`:''}
+    </div>
+    <table class="pv-table">
+      <thead>
+        <tr class="grp-row">
+          <th class="c0">Brand</th>
+          <th class="c1">Brand Dept</th>
+          <th class="c2">Brand's Collection</th>
+          ${grpCols}
+        </tr>
+        <tr class="col-row">
+          <th class="c0"></th><th class="c1"></th><th class="c2"></th>
+          ${colHdrs}
+        </tr>
+        ${filterRow}
+      </thead>
+      <tbody>${bodyRows.join('')||'<tr><td colspan="'+(3+shownLabels.length)+'" style="text-align:center;color:#555;padding:24px">No collections match the filters.</td></tr>'}</tbody>
+    </table>`;
+
+  // Pivot cell click: show products
+  pv.querySelectorAll('td.pv-val').forEach(td=>{
+    td.addEventListener('click',()=>{
+      const brand=td.dataset.brand, label=td.dataset.label;
+      showProductsByLabel(brand,label);
     });
   });
+
+  // Fix pvFLabel select value after re-render
+  const pvfl=document.getElementById('pvFLabel');
+  if(pvfl&&fLabel)pvfl.value=fLabel;
+  const pvfd=document.getElementById('pvFDept');
+  if(pvfd&&fDept)pvfd.value=fDept;
 }
 
 // ── MAP (FLAT COMPARISON) VIEW ─────────────────────────────────────────────────
@@ -795,24 +901,31 @@ function renderMap(){
   const mv=document.getElementById('mapView');
   if(!brandMapData){mv.innerHTML='<div class="no-results">No collection data. Click Refresh.</div>';return;}
 
-  const fOurCat=(document.getElementById('mapFOurCat')||{}).value||'';
-  const fDept=(document.getElementById('mapFDept')||{}).value||'';
-  const fBrand=((document.getElementById('mapFBrand')||{}).value||'').toLowerCase();
-  const fColl=((document.getElementById('mapFColl')||{}).value||'').toLowerCase();
-  const hideNoLabel=(document.getElementById('mapHideNoLabel')||{}).checked;
-  const searchBrand=(document.getElementById('brandSearch')||{}).value?.toLowerCase()||'';
+  const fBrand=(document.getElementById('mf-brand')||{}).value||'';
+  const fBDept=(document.getElementById('mf-bdept')||{}).value||'';
+  const fColl=(document.getElementById('mf-coll')||{}).value||'';
+  const fLabel=(document.getElementById('mf-label')||{}).value||'';
+  const fDept=(document.getElementById('mf-dept')||{}).value||'';
+  const fHideNL=(document.getElementById('mf-hide-nl')||{}).checked||false;
+  const hideNoise=document.getElementById('hideNoiseTog').checked;
+  const globalSearch=(document.getElementById('brandSearch').value||'').toLowerCase();
 
   const allRows=[];
   for(const b of brandMapData.brands){
-    if(searchBrand&&!b.name.toLowerCase().includes(searchBrand))continue;
-    if(fBrand&&!b.name.toLowerCase().includes(fBrand))continue;
-    for(const c of (b.cols||[])){
+    if(globalSearch&&!b.name.toLowerCase().includes(globalSearch))continue;
+    if(fBrand&&!b.name.toLowerCase().includes(fBrand.toLowerCase()))continue;
+    for(const c of(b.cols||[])){
+      if(hideNoise&&isNoise(c))continue;
       const ourLabel=collToOurLabel(c);
-      if(hideNoLabel&&!ourLabel)continue;
-      if(fOurCat&&ourLabel!==fOurCat)continue;
+      if(fHideNL&&!ourLabel)continue;
       const dept=c.d||'women';
       if(fDept&&dept!==fDept)continue;
-      if(fColl&&!c.t.toLowerCase().includes(fColl))continue;
+      if(fLabel&&ourLabel!==fLabel)continue;
+      if(fColl&&!c.t.toLowerCase().includes(fColl.toLowerCase()))continue;
+      if(fBDept){
+        const bd=brandMainDept(b.name);
+        if(!bd.toLowerCase().includes(fBDept.toLowerCase()))continue;
+      }
       allRows.push({brand:b.name,host:b.host||'',handle:c.h,collTitle:c.t,ourLabel:ourLabel||null,dept,count:c.n});
     }
   }
@@ -825,11 +938,15 @@ function renderMap(){
     return mapSortDesc?-cmp:cmp;
   });
 
-  document.getElementById('mapCount').textContent=allRows.length+' rows';
+  // Build Our Category options for filter
+  const allLabels=new Set();
+  for(const b of brandMapData.brands)for(const c of(b.cols||[])){const l=collToOurLabel(c);if(l)allLabels.add(l);}
+  const labelOpts='<option value="">All Our Categories</option>'+[...allLabels].sort().map(l=>`<option value="${esc(l)}"${l===fLabel?' selected':''}>${esc(l)}</option>`).join('');
+  const deptOpts=`<option value="">All Depts</option><option value="women"${fDept==='women'?' selected':''}>Women</option><option value="men"${fDept==='men'?' selected':''}>Men</option><option value="kids"${fDept==='kids'?' selected':''}>Kids</option>`;
 
-  const sortHdr=(col,label)=>{
+  const sortHdr=(col,label,extraCls='')=>{
     const isSorted=mapSortCol===col;
-    return `<th class="${isSorted?'sorted'+(mapSortDesc?' desc':''):''}" onclick="mapSort('${col}')">${label}</th>`;
+    return`<th class="${extraCls}${isSorted?' sorted'+(mapSortDesc?' desc':''):''}" onclick="mapSort('${col}')">${label}</th>`;
   };
 
   const tableRows=allRows.map(r=>{
@@ -841,8 +958,11 @@ function renderMap(){
     const ourLblCell=r.ourLabel?
       `<span style="color:#7ab8ff;font-weight:600">${esc(r.ourLabel)}</span>`:
       `<span class="no-label">—</span>`;
-    return `<tr>
+    const bDept=brandMainDept(r.brand);
+    const bdCls=bDept.includes('Kids')?'kids-boys':bDept.includes('Men')?'men':bDept==='—'?'other':'women';
+    return`<tr>
       <td class="col-brand">${esc(r.brand)}</td>
+      <td class="col-bdept"><span class="dept-pill ${bdCls}" style="font-size:0.58rem">${esc(bDept)}</span></td>
       <td class="col-coll">${esc(r.collTitle)}</td>
       <td>${ourLblCell}</td>
       <td><span class="dept-pill ${deptCls}">${r.dept}</span></td>
@@ -850,16 +970,29 @@ function renderMap(){
     </tr>`;
   }).join('');
 
-  mv.innerHTML=`<table class="map-table">
-    <thead><tr>
-      ${sortHdr('brand','Brand')}
-      ${sortHdr('collTitle',"Brand's Collection")}
-      ${sortHdr('ourLabel','Our Category')}
-      ${sortHdr('dept','Dept')}
-      ${sortHdr('count','Count')}
-    </tr></thead>
-    <tbody>${tableRows||'<tr><td colspan="5" style="text-align:center;color:#666;padding:24px">No collections match the filters.</td></tr>'}</tbody>
-  </table>`;
+  mv.innerHTML=`
+    <div class="map-count">${allRows.length} collections · ${allRows.filter(r=>!r.ourLabel).length} unmapped</div>
+    <table class="map-table">
+      <thead>
+        <tr>
+          ${sortHdr('brand','Brand')}
+          ${sortHdr('brandDept','Brand Dept')}
+          ${sortHdr('collTitle',"Brand's Collection")}
+          ${sortHdr('ourLabel','Our Category')}
+          ${sortHdr('dept','Coll Dept')}
+          ${sortHdr('count','Count')}
+        </tr>
+        <tr class="map-frow">
+          <th><input type="text" id="mf-brand" oninput="renderMap()" placeholder="Brand…" value="${esc(fBrand)}"></th>
+          <th><input type="text" id="mf-bdept" oninput="renderMap()" placeholder="Dept…" value="${esc(fBDept)}"></th>
+          <th><input type="text" id="mf-coll" oninput="renderMap()" placeholder="Collection…" value="${esc(fColl)}"></th>
+          <th><select id="mf-label" onchange="renderMap()">${labelOpts}</select></th>
+          <th><select id="mf-dept" onchange="renderMap()">${deptOpts}</select></th>
+          <th><label style="font-size:0.7rem;white-space:nowrap;color:#aaa"><input type="checkbox" id="mf-hide-nl" onchange="renderMap()"${fHideNL?' checked':''}> Mapped</label></th>
+        </tr>
+      </thead>
+      <tbody>${tableRows||'<tr><td colspan="6" style="text-align:center;color:#666;padding:24px">No collections match filters.</td></tr>'}</tbody>
+    </table>`;
 }
 
 function mapSort(col){
@@ -869,14 +1002,44 @@ function mapSort(col){
 }
 
 // ── SHOW PRODUCTS (new window with images) ────────────────────────────────────
-async function showProducts(brand,cat){
+// Map from our pivot label → CAT_INFO keys (for VPS search)
+const LABEL_TO_CATS={
+  'Kids Infant':['kids_infant'],
+  'Boys Eastern':['kids_boys_eastern'],'Boys Western':['kids_boys_western'],'Boys Formal':['kids_boys_formal'],
+  'Girls Eastern':['kids_girls_eastern'],'Girls Western':['kids_girls_western'],'Girls Formal':['kids_girls_formal'],
+  'Kids Eastern':['kids_boys_eastern','kids_girls_eastern'],
+  'Kids Western':['kids_boys_western','kids_girls_western'],
+  'Abaya':['abaya'],'Bridal':['bridal'],'Lehenga':['lehenga'],'Saree':['saree'],'Kaftan':['kaftan'],
+  'Dupatta':['dupatta_only'],'Shawl':['shawl'],
+  'Loungewear/Coord':['loungewear','coord_western'],
+  'Women Trouser':['womens_trouser'],'Kurti':['kurti_1pc','kurti_1pc_unstitch'],
+  'Maxi/Dress':['maxi_dress'],'Western':['western_top','coord_western'],
+  'Eastern Pret':['pret_3pc','shirt_dupatta_2pc','shirt_trouser_2pc'],
+  'Formal Eastern':['formal_emb_3pc','formal_emb_2pc','heavy_formal_3pc','pret_3pc_emb'],
+  'Formal':['formal_emb_3pc','formal_emb_2pc','heavy_formal_3pc'],
+  'Lawn Unstitched':['lawn_3pc_unstitch'],'Formal Unstitched':['unstitch_3pc_emb','shirt_dupatta_2pc_unstitch'],
+  'Unstitched':['lawn_3pc_unstitch','unstitch_3pc_emb'],
+  'Men Kurta/SK':['mens_kurta','mens_shalwar_kameez'],'Men Unstitched':['mens_unstitched'],
+  'Men Sherwani':['mens_sherwani'],'Men Waistcoat':['mens_waistcoat'],'Men Suit':['mens_suit'],
+  'Men Shirt':['mens_shirt'],'Men Trouser':['mens_trouser'],'Men Jeans':['mens_jeans'],
+  'Men Western':['western_top'],'Men Formal':['formal_emb_3pc'],
+};
+
+function showProductsByLabel(brand,label){
+  const cats=LABEL_TO_CATS[label];
+  if(!cats||!cats.length){alert('No catalog mapping for: '+label);return;}
+  showProducts(brand,cats[0],label);
+}
+
+async function showProducts(brand,cat,labelOverride){
   if(!brand||!cat)return;
-  const ci=CAT_INFO[cat]||{label:cat,dept:'other'};
+  const ci=CAT_INFO[cat]||{label:labelOverride||cat,dept:'other'};
+  const displayLabel=labelOverride||ci.label;
   const win=window.open('','_blank');
   if(!win){alert('Please allow popups for this page.');return;}
   win.document.write(`<!DOCTYPE html><html><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${esc(brand)} — ${esc(ci.label)}</title>
+<title>${esc(brand)} — ${esc(displayLabel)}</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#0f0f1a;color:#eee;font-family:Segoe UI,system-ui,sans-serif;padding:20px}
@@ -899,21 +1062,22 @@ h2{color:#c9a96e;font-size:1.1rem;margin-bottom:4px}
 </style></head><body>
 <h2>${esc(brand)}</h2>
 <div class="meta">
-  <span>Category: <b>${esc(ci.label)}</b></span>
+  <span>Category: <b>${esc(displayLabel)}</b></span>
   <span class="pill">${esc(DEPT_LABEL[ci.dept]||ci.dept)}</span>
   <span id="pcount" style="color:#666">Loading…</span>
 </div>
 <div id="pgrid" class="grid"><div class="loading">Fetching products…</div></div>
 </body></html>`);
   win.document.close();
-
   try{
     const q='"'+brand.replace(/"/g,'')+'"';
     const url=relayBase()+'/search?q='+encodeURIComponent(q)+'&cat='+encodeURIComponent(cat)+'&limit=200';
     const r=await fetch(url);
     if(!r.ok)throw new Error('HTTP '+r.status);
     const j=await r.json();
-    const results=(j.results||j||[]).filter(p=>p.b===brand||(p.b||'').toLowerCase()===brand.toLowerCase());
+    // Fixed: use j.products (actual API response field)
+    const products=j.products||j.results||[];
+    const results=products.filter(p=>p.b===brand||(p.b||'').toLowerCase()===brand.toLowerCase());
     if(!win.document.body)return;
     const pcEl=win.document.getElementById('pcount');
     if(pcEl)pcEl.textContent=results.length+' product'+(results.length!==1?'s':'');
@@ -927,7 +1091,7 @@ h2{color:#c9a96e;font-size:1.1rem;margin-bottom:4px}
       const imgEl=p.img?`<img src="${esc(p.img)}" alt="" loading="lazy" onerror="this.style.display='none'">`:
         `<div class="no-img">No image</div>`;
       const price=p.pkr?'৳'+(+p.pkr).toLocaleString():'';
-      return `<div class="card">${imgEl}<div class="info">
+      return`<div class="card">${imgEl}<div class="info">
         <div class="title">${esc(p.t||'—')}</div>
         <div class="price">${price}</div>
         <a href="${esc(p.u||'#')}" target="_blank" rel="noopener">View on site →</a>
@@ -943,38 +1107,45 @@ h2{color:#c9a96e;font-size:1.1rem;margin-bottom:4px}
 
 // ── EXPORT CSV ────────────────────────────────────────────────────────────────
 function exportCSV(){
-  if(currentView==='map')exportMapCSV();
-  else if(currentView==='pivot')exportPivotCSV();
+  if(currentView==='pivot')exportPivotCSV();
   else exportMapCSV();
 }
 
 function exportMapCSV(){
   if(!brandMapData){alert('No collection data loaded.');return;}
-  const rows=[['Brand',"Brand's Collection",'Our Category','Dept','Count','Collection URL']];
+  const hideNoise=document.getElementById('hideNoiseTog').checked;
+  const rows=[['Brand','Brand Dept',"Brand's Collection",'Our Category','Collection Dept','Count','Collection URL']];
   for(const b of brandMapData.brands){
-    for(const c of (b.cols||[])){
+    const bd=brandMainDept(b.name);
+    for(const c of(b.cols||[])){
+      if(hideNoise&&isNoise(c))continue;
       const ourLabel=collToOurLabel(c)||'';
       const url=b.host?`https://${b.host}/collections/${c.h}`:'';
-      rows.push([b.name,c.t,ourLabel,c.d||'women',c.n,url]);
+      rows.push([b.name,bd,c.t,ourLabel,c.d||'women',c.n,url]);
     }
   }
   downloadCSV(rows,'brand-category-map.csv');
 }
 
+// Per-collection pivot CSV (one row per brand-collection, our-label columns)
 function exportPivotCSV(){
-  if(!brandIndex){alert('No data loaded.');return;}
-  let cols;
-  if(currentDept==='kids')       cols=[...KIDS_CATS];
-  else if(currentDept==='women') cols=[...WOMEN_CATS];
-  else if(currentDept==='men')   cols=[...MEN_CATS,...OTHER_CATS];
-  else                           cols=[...ALL_CATS];
-  const header=['Brand',...cols.map(k=>CAT_INFO[k].label),'Total'];
+  if(!brandMapData){alert('No collection data loaded.');return;}
+  const hideNoise=document.getElementById('hideNoiseTog').checked;
+  const header=['Brand','Brand Dept',"Brand's Collection",'Collection Dept','Unmapped',
+    ...PIVOT_LABELS.kids,...PIVOT_LABELS.women,...PIVOT_LABELS.men,'Grand Total'];
   const rows=[header];
-  for(const [name,catMap] of Object.entries(brandIndex).sort((a,b)=>a[0].localeCompare(b[0]))){
-    const vals=cols.map(k=>catMap[k]||0);
-    rows.push([name,...vals,vals.reduce((a,b)=>a+b,0)]);
+  for(const b of brandMapData.brands){
+    const bd=brandMainDept(b.name);
+    for(const c of(b.cols||[])){
+      if(hideNoise&&isNoise(c))continue;
+      const ourLabel=collToOurLabel(c)||'';
+      const labelCols=ALL_PIVOT_LABELS.map(l=>l===ourLabel?c.n:'');
+      const unmapped=ourLabel?'':c.n;
+      const total=c.n;
+      rows.push([b.name,bd,c.t,c.d||'women',unmapped,...labelCols,total]);
+    }
   }
-  downloadCSV(rows,'brand-pivot.csv');
+  downloadCSV(rows,'brand-pivot-collections.csv');
 }
 
 function downloadCSV(rows,filename){
