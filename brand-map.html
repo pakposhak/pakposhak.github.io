@@ -397,30 +397,23 @@ const COL_SHORT={
   mens_unstitched:'M-Un',footwear:'Shoes'
 };
 
-// ── PIVOT LABEL COLUMNS (displayed in the cross-tab) ──────────────────────────
-// These are the "Our Category" columns in the pivot — specific PakPoshak categories
-// (no bare Boys/Girls/Kids/Men — those are departments, not categories)
-const PIVOT_LABELS={
-  kids:[
-    'Kids Infant',
-    'Boys Eastern','Boys Western','Boys Formal',
-    'Girls Eastern','Girls Western','Girls Formal',
-    'Kids Eastern','Kids Western',  // gender-neutral kids with section info
-  ],
-  women:[
-    'Abaya','Bridal','Lehenga','Saree','Kaftan',
-    'Eastern Pret','Formal Eastern','Formal',
-    'Lawn Unstitched','Formal Unstitched','Unstitched',
-    'Kurti','Maxi/Dress','Women Trouser',
-    'Dupatta','Shawl','Loungewear/Coord','Western',
-  ],
-  men:[
-    'Men Kurta/SK','Men Unstitched','Men Sherwani','Men Waistcoat',
-    'Men Suit','Men Shirt','Men Trouser','Men Jeans',
-    'Men Western','Men Formal',
-  ],
-};
-const ALL_PIVOT_LABELS=[...PIVOT_LABELS.kids,...PIVOT_LABELS.women,...PIVOT_LABELS.men];
+// ── PIVOT CATEGORY COLUMNS (displayed in the cross-tab) ───────────────────────
+// The "Our Category" columns ARE the 46 real PakPoshak categories (CAT_INFO) — no
+// invented abstractions. Each brand collection maps to exactly ONE of these keys,
+// and the department is whatever that category's dept is (so an abaya collection is
+// ALWAYS Women regardless of the brand's overall mix). Columns built straight from
+// CAT_INFO so they stay in sync automatically. footwear (group 'other') shows under
+// Women. Order follows CAT_INFO's grouping.
+const PIVOT_KEYS={kids:[],women:[],men:[]};
+for(const k in CAT_INFO){
+  const g=CAT_INFO[k].group;
+  if(g==='kids')      PIVOT_KEYS.kids.push(k);
+  else if(g==='men')  PIVOT_KEYS.men.push(k);
+  else                PIVOT_KEYS.women.push(k);   // women + other(footwear)
+}
+const ALL_PIVOT_KEYS=[...PIVOT_KEYS.kids,...PIVOT_KEYS.women,...PIVOT_KEYS.men];
+// Reverse lookup: a category's display label → its key (for pivot cell clicks)
+const LABEL2KEY={}; for(const k in CAT_INFO) LABEL2KEY[CAT_INFO[k].label]=k;
 
 // ── NOISE FILTER (non-clothing collections) ────────────────────────────────────
 const NOISE_RE=/\b(furniture|sofa|chair|table|cushion|curtain|carpet|rug|lamp|decor|candle|bedsheet|pillow|comforter|mattress|toy|toys|teddy|puzzle|game|games|doll|belt|belts|bag|bags|purse|wallet|clutch|handbag|tote|satchel|perfume|fragrance|cologne|attar|deodorant|jewellery|jewelry|necklace|earring|earrings|bracelet|bangle|bangles|makeup|cosmetic|lipstick|foundation|skincare|sunscreen|electronic|phone|mobile|gadget|laptop|stationery|diary|planner|supplement|vitamin|protein|umbrella|sunglasses|spectacle|eyewear|watches|cap|caps|scrunchie|scrunchies|cufflink|cufflinks|undergarment|undergarments|lingerie|turban|turbans|potli|body\s*mist|slides|pumps|nail|mascara|kohl|liner|blush|concealer|primer|palette|lashes|lash|serum|toner|moisturiser|moisturizer|diffuser|incense|room\s*spray|home\s*decor|throw|runner)\b/i;
@@ -435,113 +428,158 @@ function isNoise(col){
 }
 
 // ── COLLECTION → OUR LABEL ─────────────────────────────────────────────────────
-function collToOurLabel(col){
-  const d=col.d||'', s=col.s||[], k=col.k||'';
-  const h=(col.h||'').toLowerCase(), tl=(col.t||'').toLowerCase();
-  const txt=h+' '+tl;
-  const inHT=w=>txt.includes(w);
-  const anyOf=(...ws)=>ws.some(w=>inHT(w));
+// ═══════════════════════════════════════════════════════════════════════════════
+// LIVE-CATALOG CLASSIFIER — ported VERBATIM from app.src.js so the brand-map maps
+// each collection to the SAME real category the live catalog would. Keep in sync.
+// ═══════════════════════════════════════════════════════════════════════════════
+// Women's category from type/title (`s`) + tags. MIRRORS app.src.js classifyWomenCat.
+function classifyWomenCat(s, tags){
+  tags = tags || ''; const both = s + ' ' + tags;
+  const stitched = /\bpret\b|\bstitched\b|ready[\s-]?to[\s-]?wear|\brtw\b/.test(s);
+  const unstitch = !stitched && (/\bunstitch/.test(both) || /\buns\b/.test(tags) || /\b(un[\s-]?stitch(?:ed)?)\b/.test(s) || /\bunstiched\b/.test(s));
+  const emb = /embroid|\bemb\b|chikankari|zari|schiffli|adda/.test(both);
+  const two   = /\b2[\s-]?(pc|piece|pcs)\b/.test(s);
+  const three = /\b3[\s-]?(pc|piece|pcs)\b/.test(s);
+  if(/\bshawl\b|pashmina|\bstole\b/.test(s)) return 'shawl';
+  if(/\bdupatta\b|\bscarf\b/.test(s) && !/shirt|kurti|kurta|kameez|suit|[23][\s-]?(pc|piece)|trouser|bottom/.test(s)) return 'dupatta_only';
+  if(/\bsaree\b|\bsari\b/.test(s)) return 'saree';
+  if(/lehenga|gharara|sharara/.test(s)) return 'lehenga';
+  if(/abaya|jilbab|burqa|niqab|niqaab|\bhijab\b|khimar|\bnaqab\b/.test(s)) return 'abaya';
+  if(/kaftan|kaftaan|caftan/.test(s)) return 'kaftan';
+  if(/\bbridal\b|dulhan|dulha|\bbride\b/.test(s)) return 'bridal';
+  // Wedding-occasion collections (Mehndi/Barat/Valima/Shaadi/Nikkah/Mayun/Dholki/Sangeet)
+  // are heavy festive wear → Heavy Formal 3pc (per Danish 2026-06-26).
+  if(/mehndi|mayon|mayun|dholki|sangeet|\bbaraat?\b|barat|walima|valima|\bshaadi\b|\bshadi\b|nikk?ah/.test(s)) return 'heavy_formal_3pc';
+  if(/\bwinter\b|khaddar|khadar|karandi|\bwool|woolen|velvet|marina|corduroy/.test(both)){
+    if(two) return unstitch ? 'winter_2pc_unstitch' : 'winter_2pc_stitch';
+    return unstitch ? 'winter_3pc_unstitch' : 'winter_3pc_stitch';
+  }
+  if(/\btank\b|crop[\s-]?top|t[\s-]?shirt|\btee\b|camisole|\bcami\b|western[\s-]?top|halter|\bbodysuit\b/.test(s)
+     && !/kurti|kurta|kameez|\bsuit\b|dupatta|[23][\s-]?(pc|piece)|trouser|shalwar/.test(s)) return 'western_top';
+  if(/heavy[\s-]?formal|organza|tissue|jamawar/.test(s)) return 'heavy_formal_3pc';
+  if(/\bformal\b|party[\s-]?wear/.test(s)) return two ? 'formal_emb_2pc' : 'formal_emb_3pc';
+  if(/night|sleep[\s-]?wear|lounge|loungewear|pyjama|pajama|\bnighty\b/.test(s)) return 'loungewear';
+  if(three || /(shalwar|trouser|pant|bottom|gharara)[\s\w]*dupatta|dupatta[\s\w]*(shalwar|trouser|pant|bottom)/.test(s)){
+    if(unstitch) return emb ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch';
+    return emb ? 'pret_3pc_emb' : 'pret_3pc';
+  }
+  if(two || /shirt[\s-]?dupatta|(shirt|kameez|kurti)[\s\w]{0,10}dupatta/.test(s)){
+    if(emb && !unstitch) return 'pret_2pc_emb';
+    const coord = /co[\s-]?ord|coord|(shirt|kameez)[\s\w]{0,10}(trouser|pant|shalwar)|(trouser|pant|shalwar)[\s\w]{0,10}(shirt|kameez)/.test(s);
+    if(coord) return unstitch ? 'shirt_trouser_2pc_unstitch' : 'shirt_trouser_2pc';
+    return unstitch ? 'shirt_dupatta_2pc_unstitch' : 'shirt_dupatta_2pc';
+  }
+  if(/shalwar[\s-]?kameez|kameez[\s-]?shalwar|(shirt|kurti|kurta|kameez)\b[\s\w]{0,12}\b(trouser|bottom|pant|shalwar)\b|\b(trouser|bottom|pant|shalwar)\b[\s\w]{0,12}\b(shirt|kurti|kurta|kameez)\b/.test(s)){
+    if(emb && !unstitch) return 'pret_2pc_emb';
+    return unstitch ? 'shirt_trouser_2pc_unstitch' : 'shirt_trouser_2pc';
+  }
+  if(/\bsuit\b/.test(s)){ if(unstitch) return emb ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch'; return emb ? 'pret_3pc_emb' : 'pret_3pc'; }
+  if(/co[\s-]?ord|coord/.test(s)) return unstitch ? 'shirt_trouser_2pc_unstitch' : 'coord_western';
+  if(/trouser|pant|palazzo|plazo|capri|culotte|tights|leggings?/.test(s) && !/shirt|kurti|kurta|kameez/.test(s)) return 'womens_trouser';
+  if(/dress|maxi|gown|jumpsuit|\bfrock\b|anarkali/.test(s)) return 'maxi_dress';
+  if(/kurti|kurta|shirt|tunic|\bcape\b|\btop\b|peplum|blouse/.test(s)) return unstitch ? 'kurti_1pc_unstitch' : 'kurti_1pc';
+  if(/\blawn\b|cambric|voile|khaddar|karandi|fabric|piece[\s-]?goods/.test(s)) return emb ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch';
+  return unstitch ? 'lawn_3pc_unstitch' : 'pret_3pc';
+}
+// Men's product_type/title → men's category. MIRRORS app.src.js PT_CAT_MEN.
+const PT_CAT_MEN=[
+  [/sherwani|prince[\s-]?coat/i,                              'mens_sherwani'],
+  [/waist[\s-]?coat|nehru[\s-]?jacket/i,                      'mens_waistcoat'],
+  [/unstitch|fabric|suiting|wash[\s-]?n?[\s-]?wear|gabardine/i,'mens_unstitched'],
+  [/pant[\s-]?coat|coat[\s-]?pant|blazer|2[\s-]?pc[\s-]?suit|formal[\s-]?suit|tuxedo|3[\s-]?pc[\s-]?suit/i,'mens_suit'],
+  [/shalwar[\s-]?kameez|kameez[\s-]?shalwar|shalwar[\s-]?suit|kurta[\s-]?shalwar|kurta[\s-]?pajama/i,'mens_shalwar_kameez'],
+  [/jeans|denim/i,                                             'mens_jeans'],
+  [/trouser|chino|cargo[\s-]?pant/i,                           'mens_trouser'],
+  [/polo|t[\s-]?shirt/i,                                       'mens_shirt'],
+  [/kurta|kameez/i,                                            'mens_kurta'],
+  [/shirt/i,                                                   'mens_shirt'],
+  [/suit/i,                                                   'mens_shalwar_kameez'],
+];
+function mapPtToCatMen(pt){ const s=(pt||'').toLowerCase(); for(const[re,c] of PT_CAT_MEN){ if(re.test(s)) return c; } return ''; }
 
-  // ── KIDS ──────────────────────────────────────────────────────────────────────
-  if(d==='kids'){
-    if(k==='infant') return 'Kids Infant';
-    const g=k==='girls'?'Girls':k==='boys'?'Boys':null;
-    const base=g||'Kids';
-    if(s.includes('eastern')) return base+' Eastern';
-    if(s.includes('western')) return base+' Western';
-    if(s.includes('formal'))  return base+' Formal';
-    const isFormal=anyOf('sherwani','achkan','bandgala');
-    const isWest=anyOf('jean','jeans','tee','t-shirt','shorts','chino','trouser','pant','polo','hoodie','sweatshirt','cargo','denim','jogger');
-    const isEast=anyOf('kurta','shalwar','kameez','frock','sharara','gharara','salwar','angrakha','lawn','pret');
-    if(isFormal) return base+' Formal';
-    if(isWest&&g) return g+' Western';
-    if(isEast&&g) return g+' Eastern';
-    if(isWest) return base+' Western';
-    if(isEast) return base+' Eastern';
-    // Default: eastern is Pakistani/Bangladeshi standard for kids
-    return g ? g+' Eastern' : 'Kids Eastern';
+// A brand's kids gender skew (from the live brand-index) — picks girls/boys when a
+// kids collection title doesn't say. Pakistani kids fashion skews girls, so default girls.
+function brandKidGender(name){
+  const cm=brandIndex&&brandIndex[name];
+  if(cm){
+    const g=(cm.kids_girls_eastern||0)+(cm.kids_girls_western||0)+(cm.kids_girls_formal||0);
+    const b=(cm.kids_boys_eastern||0)+(cm.kids_boys_western||0)+(cm.kids_boys_formal||0);
+    if(g||b) return g>=b ? 'girls' : 'boys';
+  }
+  return 'girls';
+}
+
+// ── COLLECTION → REAL CATEGORY KEY ──────────────────────────────────────────────
+// Returns ONE real CAT_INFO key. Department is then defined by that category
+// (abaya⇒women, sherwani⇒men, girls_eastern⇒kids) — never the brand's overall mix.
+// Routing: decide kids → men → women (catalogue is women-dominated), then classify.
+function collToOurCatKey(col, brandName){
+  const t=(col.t||'');
+  const sect=col.s||[], kid=col.k||'';
+  // CATEGORY string = TITLE + section/kidSub hints ONLY. The handle is deliberately
+  // EXCLUDED — collection handles are SEO-stuffed ("pakistani-women-dresses",
+  // "ready-to-wear-dresses") and would mis-fire "dress"/"unstitched"/etc. The live
+  // catalog classifier reads product type+title, never the collection handle.
+  // LOWERCASE — the ported classifier regexes are case-sensitive (the live catalog
+  // pre-lowercases product type+title before calling them). Titles like "Abayas",
+  // "Bridal", "Saree" must be lowercased or they fall through to the pret_3pc default.
+  let s=t.toLowerCase();
+  if(sect.includes('unstitched')) s+=' unstitched';
+  if(sect.includes('formal'))     s+=' formal';
+  if(sect.includes('western'))    s+=' western';
+  if(kid==='infant')              s+=' infant';
+  if(kid==='girls')               s+=' girls';
+  if(kid==='boys')                s+=' boys';
+  const sl=s;   // already lowercase
+  // The handle IS reliable for explicit gender PATH tokens (not garment words) — use
+  // it only to help decide the department when the title is silent.
+  const hRaw=(col.h||'').toLowerCase();
+  const hGender = /(^|[\/_-])(women|womens|woman|ladies)([\/_-]|$)/.test(hRaw) ? 'women'
+                : /(^|[\/_-])(men|mens|man|gents)([\/_-]|$)/.test(hRaw) ? 'men'
+                : /(^|[\/_-])(boys?|girls?|kids?|infant|baby|toddler|junior)([\/_-]|$)/.test(hRaw) ? 'kids'
+                : '';
+
+  // 1. KIDS — any kids signal (harvested dept/kidSub, handle gender, or a kid/boy/girl word).
+  const isKids = col.d==='kids' || !!kid || hGender==='kids' ||
+    /\b(kids?|boys?|girls?|infant|toddler|newborn|baby|junior|teen|child|children)\b/.test(sl);
+  if(isKids){
+    if(kid==='infant' || /\binfant\b|new[\s-]?born|\btoddler\b|baby[\s-]?(boy|girl|wear|set|frock|suit|romper)|\bromper\b/.test(sl)) return 'kids_infant';
+    const g = (kid==='girls'||/\bgirls?\b/.test(sl)) ? 'girls'
+            : (kid==='boys' ||/\bboys?\b/.test(sl)) ? 'boys'
+            : brandKidGender(brandName);
+    if(sect.includes('formal') || /\bformal\b|\bparty\b|festive|\beid\b|ceremon|wedding|\bgown\b|sherwani|waist[\s-]?coat/.test(sl)) return 'kids_'+g+'_formal';
+    if(sect.includes('western')|| /\btee\b|t[\s-]?shirt|\bpolo\b|jean|denim|trouser|\bpant|short|legging|tights|jogger|hoodie|sweat|jacket|\bwestern\b|\bskirt\b/.test(sl)) return 'kids_'+g+'_western';
+    return 'kids_'+g+'_eastern';   // eastern = Pakistani kids default
   }
 
-  // ── MEN ───────────────────────────────────────────────────────────────────────
-  if(d==='men'){
-    if(s.includes('unstitched'))                               return 'Men Unstitched';
-    if(anyOf('sherwani','achkan','bandgala'))                   return 'Men Sherwani';
-    if(anyOf('waistcoat','vest'))                              return 'Men Waistcoat';
-    if(anyOf('blazer','suit')&&!inHT('swim'))                  return 'Men Suit';
-    if(anyOf('jeans','denim'))                                 return 'Men Jeans';
-    if(anyOf('shirt')&&!inHT('shalwar'))                       return 'Men Shirt';
-    if(anyOf('trouser','chino','shorts','bottom')&&!inHT('shalwar')) return 'Men Trouser';
-    if(inHT('pant')&&!anyOf('shalwar','dupant'))               return 'Men Trouser';
-    if(anyOf('activewear','athletic','sportswear','sport','gym','jogger','track')) return 'Men Western';
-    if(anyOf('outerwear','jacket','coat','parka','windbreaker','bomber')) return 'Men Western';
-    if(s.includes('western'))                                  return 'Men Western';
-    if(anyOf('formal','semi-formal','semiformal'))             return 'Men Formal';
-    if(s.includes('formal'))                                   return 'Men Formal';
-    if(anyOf('kurta','shalwar','kameez','thobe','thoub','jubba','kandora','kandura')) return 'Men Kurta/SK';
-    if(s.includes('eastern'))                                  return 'Men Kurta/SK';
-    if(anyOf('pret','lawn','khaddar','karandi','linen','cotton','winter','eid','festive')) return 'Men Kurta/SK';
-    return 'Men Kurta/SK'; // nothing unmapped — default men = kurta/SK
+  // 2. MEN — harvested dept, handle gender, a men word, or an unambiguously-men garment.
+  const isMen = col.d==='men' || hGender==='men' ||
+    /(^|[\s\/_-])(men|mens|man|gents|gentlemen|male|groom|dulha)([\s\/_-]|$)/.test(sl) ||
+    /sherwani|waist[\s-]?coat|prince[\s-]?coat|kurta[\s-]?pajama|\bthobe\b|\bthoub\b|\bjubba\b|kandora|kandura/.test(sl);
+  if(isMen){
+    const c=mapPtToCatMen(s);
+    if(c) return c;
+    if(/unstitch|fabric|suiting/.test(sl)) return 'mens_unstitched';
+    if(/\bshirt\b/.test(sl)) return 'mens_shirt';
+    if(/trouser|chino|\bpant/.test(sl)) return 'mens_trouser';
+    return 'mens_kurta';
   }
 
-  // ── GENERAL (d='' or d='women') ──────────────────────────────────────────────
-  // Men-specific items in untagged (d='') collections
-  if(d===''&&anyOf('sherwani','achkan','bandgala'))             return 'Men Sherwani';
-  if(d===''&&inHT('waistcoat')&&!inHT('women'))                return 'Men Waistcoat';
-  if(d===''&&anyOf('thobe','thoub','jubba','kandora','kandura')) return 'Men Kurta/SK';
-  // Detect men-labelled untagged collections
-  const looksLikeMen=d===''&&(tl.startsWith('men')||tl.startsWith("men's")||inHT(' men ')||inHT(' mens ')||inHT("men's "));
+  // 3. WOMEN — everything else. classifyWomenCat is the live catalog's women rule.
+  return classifyWomenCat(s, sect.join(' '));
+}
 
-  if(anyOf('abaya','niqab','jilbab'))                          return 'Abaya';
-  if(anyOf('bridal','wedding','barat','nikkah','nikah','shaadi','valima')) return 'Bridal';
-  if(inHT('lehenga'))                                          return 'Lehenga';
-  if(anyOf('saree','sari'))                                    return 'Saree';
-  if(inHT('kaftan'))                                           return 'Kaftan';
-  if(inHT('dupatta')&&!anyOf('suit',' set','kameez','3 piece','3-piece','3pc')) return 'Dupatta';
-  if(anyOf('shawl','stole','scarf','scarves','pashmina'))       return 'Shawl';
-  if(anyOf('lounge','co-ord','coord','coordinate'))             return 'Loungewear/Coord';
-  if(anyOf('tights','legging','leggings'))                     return 'Women Trouser';
-  if(inHT('trouser')&&!inHT('shalwar'))                        return looksLikeMen?'Men Trouser':'Women Trouser';
-  if(inHT('pant')&&!anyOf('shalwar','dupant'))                 return looksLikeMen?'Men Trouser':'Women Trouser';
-  if(inHT('kurti'))                                            return 'Kurti';
-  if(anyOf('maxi','gown')&&!inHT('swim'))                      return 'Maxi/Dress';
-  if(inHT('dress')&&!anyOf('dress shirt','address','addressed')) return 'Maxi/Dress';
-  if(anyOf('peshwas','peshwaz'))                               return 'Formal Eastern';
-
-  const isUn=s.includes('unstitched'),isFo=s.includes('formal'),isEa=s.includes('eastern'),isWe=s.includes('western');
-  if(isUn&&isFo)   return 'Formal Unstitched';
-  if(isUn&&isEa)   return 'Lawn Unstitched';
-  if(isUn)         return 'Unstitched';
-  if(isFo&&isEa)   return 'Formal Eastern';
-  if(isFo)         return 'Formal';
-  if(isEa)         return 'Eastern Pret';
-  if(isWe)         return looksLikeMen?'Men Western':'Western';
-
-  // Keyword inference
-  if(anyOf('pret','ready to wear','readytowear','rtw'))         return 'Eastern Pret';
-  if(anyOf('activewear','athletic','sportswear','sport','gym','yoga','fitness','active')) return looksLikeMen?'Men Western':'Western';
-  if(anyOf('outerwear','jacket','coat','parka','bomber','windbreaker')) return looksLikeMen?'Men Western':'Western';
-  if(anyOf('blazer','suit')&&!inHT('swim'))                    return looksLikeMen?'Men Suit':'Formal';
-  if(anyOf('velvet','makhmal','jacquard','tissue','net'))       return 'Formal Eastern';
-  if(anyOf('embroidered','embroidery','luxe','luxury','heavy formal','couture')) return 'Formal Eastern';
-  if(anyOf('festive','eid','mehndi','dholki','walima'))         return 'Formal Eastern';
-  if(anyOf('premium','semi-formal','formal'))                  return 'Formal Eastern';
-  // 2-piece / 3-piece unstitched
-  if(anyOf('unstitched','fabric suit','suit fabric'))          return 'Unstitched';
-  if(anyOf('2 piece unstitched','2pc unstitched','2-piece unstitched','shirt dupatta unstitch')) return 'Lawn Unstitched';
-  if(anyOf('3 piece unstitched','3pc unstitched','3-piece unstitched')) return 'Unstitched';
-  // 2-piece / 3-piece stitched
-  if(anyOf('2 piece','2-piece','2pc','shirt dupatta','shirt & dupatta','shirt and dupatta')) return 'Eastern Pret';
-  if(anyOf('3 piece','3-piece','3pc','three piece','shalwar kameez')) return 'Eastern Pret';
-  // Fabrics → Eastern Pret (stitched context)
-  if(anyOf('lawn','cotton','linen','khaddar','karandi','chiffon','georgette','silk','banarsi','cambric','marina','fleece','kashmiri')) return 'Eastern Pret';
-  if(anyOf('kurta','kameez','shalwar','frock','gharara','sharara','angrakha','anarkali')) return 'Eastern Pret';
-  // Winter / seasonal
-  if(anyOf('winter','khassi','wool','quilted','shearling','warmth','fall','autumn')) return 'Eastern Pret';
-  if(anyOf('summer','spring','casual','everyday','basics','staples','essentials','classic')) return 'Eastern Pret';
-  // Men-coded fallback
-  if(looksLikeMen) return 'Men Kurta/SK';
-  // Nothing can be unmapped — default to Eastern Pret
-  return 'Eastern Pret';
+// Display label for a collection's mapped category (real PakPoshak label).
+function collToOurLabel(col, brandName){
+  const k=collToOurCatKey(col, brandName);
+  return (k && CAT_INFO[k]) ? CAT_INFO[k].label : '';
+}
+// SINGLE department for a collection — defined by its mapped category, NOT the brand.
+// (abaya⇒Women fixes Eminent "kids+Men" / Stylo "Men" bugs.) Returns women|men|kids.
+function collDeptKey(col, brandName){
+  const k=collToOurCatKey(col, brandName);
+  const g=(k && CAT_INFO[k]) ? CAT_INFO[k].group : 'women';
+  return g==='kids' ? 'kids' : g==='men' ? 'men' : 'women';   // 'other'(footwear)→women
 }
 
 function collMatchesSub(col,sub){
@@ -733,18 +771,19 @@ function renderList(brands){
     if(bData&&bData.cols&&bData.cols.length){
       let filtCols=bData.cols.filter(c=>{
         if(hideNoise&&isNoise(c))return false;
-        if(deptFilter==='kids'&&c.d!=='kids')return false;
-        if(deptFilter==='women'&&(c.d==='men'||c.d==='kids'))return false;
-        if(deptFilter==='men'&&c.d!=='men')return false;
+        const cd=collDeptKey(c,name);   // single per-collection dept (from mapped category)
+        if(deptFilter==='kids'&&cd!=='kids')return false;
+        if(deptFilter==='women'&&cd!=='women')return false;
+        if(deptFilter==='men'&&cd!=='men')return false;
         return true;
       }).sort((a,b)=>(b.n||0)-(a.n||0)).slice(0,80);
       if(filtCols.length){
-        collRows=`<div class="srow-hdr sect-colls">Brand's Own Collections (${filtCols.length}) — their names → our label</div>`+
+        collRows=`<div class="srow-hdr sect-colls">Brand's Own Collections (${filtCols.length}) — their names → our category</div>`+
           filtCols.map(c=>{
-            const ourLabel=collToOurLabel(c);
+            const ourLabel=collToOurLabel(c,name);
             const matches=collMatchesSub(c,subFilter);
             const rowCls='bcoll-row'+(subFilter?(matches?' sub-match':' sub-dimmed'):'');
-            const dk=c.d||'women';
+            const dk=collDeptKey(c,name);
             const dpCls=dk==='kids'?'kids-boys':dk==='men'?'men':'women';
             return `<div class="${rowCls}">
               <span><span class="dept-pill ${dpCls}" style="font-size:0.56rem">${esc(dk)}</span></span>
@@ -807,34 +846,31 @@ function renderPivot(){
   const hideNoise=document.getElementById('hideNoiseTog').checked;
   const globalSearch=(document.getElementById('brandSearch').value||'').toLowerCase();
 
-  // Choose which label groups to show based on dept tab
-  let labelGroups;
-  if(currentDept==='kids')       labelGroups={kids:PIVOT_LABELS.kids};
-  else if(currentDept==='women') labelGroups={women:PIVOT_LABELS.women};
-  else if(currentDept==='men')   labelGroups={men:PIVOT_LABELS.men};
-  else                           labelGroups={kids:PIVOT_LABELS.kids,women:PIVOT_LABELS.women,men:PIVOT_LABELS.men};
+  // Choose which category-key columns to show based on the dept tab
+  let keyGroups;
+  if(currentDept==='kids')       keyGroups={kids:PIVOT_KEYS.kids};
+  else if(currentDept==='women') keyGroups={women:PIVOT_KEYS.women};
+  else if(currentDept==='men')   keyGroups={men:PIVOT_KEYS.men};
+  else                           keyGroups={kids:PIVOT_KEYS.kids,women:PIVOT_KEYS.women,men:PIVOT_KEYS.men};
 
-  const shownLabels=Object.values(labelGroups).flat();
+  const shownKeys=Object.values(keyGroups).flat();
 
-  // Build flat row list: one row per brand-collection
+  // Build flat row list: one row per brand-collection. Department + category are
+  // BOTH derived from the collection (collDeptKey / collToOurCatKey) — never the brand.
   const rows=[];
   for(const b of brandMapData.brands){
     if(globalSearch&&!b.name.toLowerCase().includes(globalSearch))continue;
     if(fBrand&&!b.name.toLowerCase().includes(fBrand.toLowerCase()))continue;
     for(const c of(b.cols||[])){
       if(hideNoise&&isNoise(c))continue;
-      const dept=c.d||'women';
-      if(currentDept!=='all'){
-        if(currentDept==='kids'&&dept!=='kids')continue;
-        if(currentDept==='women'&&dept!=='men'===false&&dept!=='kids'===false){}// skip check; filter by label
-        if(currentDept==='men'&&dept!=='men')continue;
-      }
+      const catKey=collToOurCatKey(c,b.name);
+      const dept=collDeptKey(c,b.name);
+      if(currentDept!=='all'&&dept!==currentDept)continue;
       if(fDept&&dept!==fDept)continue;
       if(fColl&&!c.t.toLowerCase().includes(fColl.toLowerCase()))continue;
-      const ourLabel=collToOurLabel(c);
-      if(hideUnmapped&&!ourLabel)continue;
-      if(fLabel&&ourLabel!==fLabel)continue;
-      rows.push({brand:b.name,host:b.host||'',handle:c.h,collTitle:c.t,ourLabel,dept,count:c.n});
+      const ourLabel=(catKey&&CAT_INFO[catKey])?CAT_INFO[catKey].label:'';
+      if(fLabel&&catKey!==fLabel)continue;
+      rows.push({brand:b.name,host:b.host||'',handle:c.h,collTitle:c.t,catKey,ourLabel,dept,count:c.n});
     }
   }
 
@@ -842,21 +878,19 @@ function renderPivot(){
   rows.sort((a,b)=>a.brand.localeCompare(b.brand)||b.count-a.count);
 
   // Group header row
-  const grpCols=Object.entries(labelGroups).map(([g,ls])=>
-    `<th class="gh-${g}" colspan="${ls.length}">${g.charAt(0).toUpperCase()+g.slice(1)}</th>`
+  const grpCols=Object.entries(keyGroups).map(([g,ks])=>
+    `<th class="gh-${g}" colspan="${ks.length}">${g.charAt(0).toUpperCase()+g.slice(1)}</th>`
   ).join('');
-  // Col labels row
-  const colHdrs=shownLabels.map(l=>{
-    const grp=Object.entries(labelGroups).find(([,ls])=>ls.includes(l))?.[0]||'';
-    const abbr=l.replace('Eastern','E').replace('Western','W').replace('Formal','F')
-               .replace('Unstitched','Un').replace('Loungewear/Coord','Lng').replace('Trouser','Trou')
-               .replace('Men ','M-').replace(' Pret','').replace('Lawn ','Ln-');
-    return `<th class="ch-${grp}" title="${esc(l)}">${esc(abbr)}</th>`;
+  // Col headers — real category short label, full label on hover
+  const colHdrs=shownKeys.map(k=>{
+    const grp=Object.entries(keyGroups).find(([,ks])=>ks.includes(k))?.[0]||'';
+    const abbr=COL_SHORT[k]||CAT_INFO[k].label;
+    return `<th class="ch-${grp}" title="${esc(CAT_INFO[k].label)}">${esc(abbr)}</th>`;
   }).join('');
 
-  // Build all-labels select options for filter
-  const labelOpts='<option value="">All Our Categories</option>'+
-    shownLabels.map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join('');
+  // Category filter select — real categories (by key)
+  const catOpts='<option value="">All Our Categories</option>'+
+    shownKeys.map(k=>`<option value="${esc(k)}"${k===fLabel?' selected':''}>${esc(CAT_INFO[k].label)}</option>`).join('');
 
   // Filter row
   const deptOpts=`<option value="">All Depts</option><option value="women">Women</option><option value="men">Men</option><option value="kids">Kids</option>`;
@@ -864,31 +898,30 @@ function renderPivot(){
     <th class="c0"><input type="text" id="pvFBrand" oninput="renderPivot()" placeholder="Brand…" value="${esc(fBrand)}"></th>
     <th class="c1"><select id="pvFDept" onchange="renderPivot()">${deptOpts.replace(`value="${fDept}"`,'value="'+fDept+'" selected')}</select></th>
     <th class="c2"><input type="text" id="pvFColl" oninput="renderPivot()" placeholder="Collection…" value="${esc(fColl)}"></th>
-    <th colspan="${shownLabels.length}" style="text-align:left;white-space:nowrap">
-      <select id="pvFLabel" onchange="renderPivot()" style="width:160px">${labelOpts}</select>
-      &nbsp;<label style="font-size:0.68rem;color:#aaa"><input type="checkbox" id="pvHideUnmapped" onchange="renderPivot()"${hideUnmapped?' checked':''}> Hide unmapped</label>
+    <th colspan="${shownKeys.length}" style="text-align:left;white-space:nowrap">
+      <select id="pvFLabel" onchange="renderPivot()" style="width:180px">${catOpts}</select>
       &nbsp;<span id="pvCount" style="font-size:0.68rem;color:#666"></span>
     </th>
   </tr>`;
 
-  // Body rows
+  // Body rows — dept pill shown on EVERY collection row (per-collection, single dept)
   let prevBrand='', noiseCount=0;
   const bodyRows=rows.map(r=>{
     const isBrandStart=r.brand!==prevBrand;
     prevBrand=r.brand;
-    const cells=shownLabels.map(l=>{
-      if(r.ourLabel===l)return`<td class="pv-val" data-brand="${esc(r.brand)}" data-label="${esc(l)}" title="View products: ${esc(r.brand)} / ${esc(l)}">${r.count}</td>`;
+    const cells=shownKeys.map(k=>{
+      if(r.catKey===k)return`<td class="pv-val" data-brand="${esc(r.brand)}" data-cat="${esc(k)}" title="View products: ${esc(r.brand)} / ${esc(CAT_INFO[k].label)}">${r.count}</td>`;
       return`<td class="pv-empty">·</td>`;
     }).join('');
     const deptCls=r.dept==='kids'?'kids-boys':r.dept==='men'?'men':'women';
+    const deptTxt=r.dept.charAt(0).toUpperCase()+r.dept.slice(1);
     const collUrl=r.host?`https://${r.host}/collections/${r.handle}`:'';
     const collCell=collUrl?
       `<a class="pv-coll" href="${esc(collUrl)}" target="_blank" rel="noopener" title="Open on brand's website">${esc(r.collTitle)}</a>`:
       `<span class="pv-coll" style="cursor:default">${esc(r.collTitle)}</span>`;
-    const brandDept=brandMainDept(r.brand);
     return`<tr class="${isBrandStart?'grp-sep':''}">
       <td class="c0">${isBrandStart?`<span class="pv-brand">${esc(r.brand)}</span>`:''}</td>
-      <td class="c1 pv-dept">${isBrandStart?`<span class="dept-pill ${deptCls}" style="font-size:0.58rem">${esc(brandDept)}</span>`:''}</td>
+      <td class="c1 pv-dept"><span class="dept-pill ${deptCls}" style="font-size:0.58rem">${esc(deptTxt)}</span></td>
       <td class="c2">${collCell}</td>
       ${cells}
     </tr>`;
@@ -903,15 +936,14 @@ function renderPivot(){
     <div class="pv-info">
       <span><b>${rows.length}</b> collections</span>·
       <span><b>${[...new Set(rows.map(r=>r.brand))].length}</b> brands</span>·
-      <span><b>${rows.filter(r=>r.ourLabel).length}</b> mapped (${rows.length?Math.round(100*rows.filter(r=>r.ourLabel).length/rows.length):'0'}%)</span>·
-      <span style="color:#c97a40"><b>${rows.filter(r=>!r.ourLabel).length}</b> unmapped</span>
+      <span><b>${rows.length}</b> mapped (100%)</span>
       ${hideNoise&&noiseCount?`<span class="noise-badge">${noiseCount} non-clothing hidden</span>`:''}
     </div>
     <table class="pv-table">
       <thead>
         <tr class="grp-row">
           <th class="c0">Brand</th>
-          <th class="c1">Brand Dept</th>
+          <th class="c1">Dept</th>
           <th class="c2">Brand's Collection</th>
           ${grpCols}
         </tr>
@@ -921,18 +953,17 @@ function renderPivot(){
         </tr>
         ${filterRow}
       </thead>
-      <tbody>${bodyRows.join('')||'<tr><td colspan="'+(3+shownLabels.length)+'" style="text-align:center;color:#555;padding:24px">No collections match the filters.</td></tr>'}</tbody>
+      <tbody>${bodyRows.join('')||'<tr><td colspan="'+(3+shownKeys.length)+'" style="text-align:center;color:#555;padding:24px">No collections match the filters.</td></tr>'}</tbody>
     </table>`;
 
-  // Pivot cell click: show products
+  // Pivot cell click: show products for that brand + real category
   pv.querySelectorAll('td.pv-val').forEach(td=>{
     td.addEventListener('click',()=>{
-      const brand=td.dataset.brand, label=td.dataset.label;
-      showProductsByLabel(brand,label);
+      showProducts(td.dataset.brand,td.dataset.cat);
     });
   });
 
-  // Fix pvFLabel select value after re-render
+  // Restore filter select values after re-render
   const pvfl=document.getElementById('pvFLabel');
   if(pvfl&&fLabel)pvfl.value=fLabel;
   const pvfd=document.getElementById('pvFDept');
@@ -945,11 +976,9 @@ function renderMap(){
   if(!brandMapData){mv.innerHTML='<div class="no-results">No collection data. Click Refresh.</div>';return;}
 
   const fBrand=(document.getElementById('mf-brand')||{}).value||'';
-  const fBDept=(document.getElementById('mf-bdept')||{}).value||'';
   const fColl=(document.getElementById('mf-coll')||{}).value||'';
   const fLabel=(document.getElementById('mf-label')||{}).value||'';
   const fDept=(document.getElementById('mf-dept')||{}).value||'';
-  const fHideNL=(document.getElementById('mf-hide-nl')||{}).checked||false;
   const hideNoise=document.getElementById('hideNoiseTog').checked;
   const globalSearch=(document.getElementById('brandSearch').value||'').toLowerCase();
 
@@ -959,17 +988,13 @@ function renderMap(){
     if(fBrand&&!b.name.toLowerCase().includes(fBrand.toLowerCase()))continue;
     for(const c of(b.cols||[])){
       if(hideNoise&&isNoise(c))continue;
-      const ourLabel=collToOurLabel(c);
-      if(fHideNL&&!ourLabel)continue;
-      const dept=c.d||'women';
+      const catKey=collToOurCatKey(c,b.name);
+      const ourLabel=(catKey&&CAT_INFO[catKey])?CAT_INFO[catKey].label:'';
+      const dept=collDeptKey(c,b.name);   // SINGLE per-collection dept (from category)
       if(fDept&&dept!==fDept)continue;
-      if(fLabel&&ourLabel!==fLabel)continue;
+      if(fLabel&&catKey!==fLabel)continue;
       if(fColl&&!c.t.toLowerCase().includes(fColl.toLowerCase()))continue;
-      if(fBDept){
-        const bd=brandMainDept(b.name);
-        if(!bd.toLowerCase().includes(fBDept.toLowerCase()))continue;
-      }
-      allRows.push({brand:b.name,host:b.host||'',handle:c.h,collTitle:c.t,ourLabel:ourLabel||null,dept,count:c.n});
+      allRows.push({brand:b.name,host:b.host||'',handle:c.h,collTitle:c.t,catKey,ourLabel,dept,count:c.n});
     }
   }
 
@@ -981,10 +1006,12 @@ function renderMap(){
     return mapSortDesc?-cmp:cmp;
   });
 
-  // Build Our Category options for filter
-  const allLabels=new Set();
-  for(const b of brandMapData.brands)for(const c of(b.cols||[])){const l=collToOurLabel(c);if(l)allLabels.add(l);}
-  const labelOpts='<option value="">All Our Categories</option>'+[...allLabels].sort().map(l=>`<option value="${esc(l)}"${l===fLabel?' selected':''}>${esc(l)}</option>`).join('');
+  // Category filter options — real categories (value = key, shown = label), grouped by dept
+  const catOpt=k=>`<option value="${esc(k)}"${k===fLabel?' selected':''}>${esc(CAT_INFO[k].label)}</option>`;
+  const labelOpts='<option value="">All Our Categories</option>'
+    +'<optgroup label="Kids">'+PIVOT_KEYS.kids.map(catOpt).join('')+'</optgroup>'
+    +'<optgroup label="Women">'+PIVOT_KEYS.women.map(catOpt).join('')+'</optgroup>'
+    +'<optgroup label="Men">'+PIVOT_KEYS.men.map(catOpt).join('')+'</optgroup>';
   const deptOpts=`<option value="">All Depts</option><option value="women"${fDept==='women'?' selected':''}>Women</option><option value="men"${fDept==='men'?' selected':''}>Men</option><option value="kids"${fDept==='kids'?' selected':''}>Kids</option>`;
 
   const sortHdr=(col,label,extraCls='')=>{
@@ -998,44 +1025,43 @@ function renderMap(){
       `<a href="${esc(collUrl)}" target="_blank" rel="noopener">${r.count}</a>`:
       `<span>${r.count}</span>`;
     const deptCls=r.dept==='kids'?'kids-boys':r.dept==='men'?'men':'women';
-    const ourLblCell=r.ourLabel?
-      `<span style="color:#7ab8ff;font-weight:600">${esc(r.ourLabel)}</span>`:
-      `<span class="no-label">—</span>`;
-    const bDept=brandMainDept(r.brand);
-    const bdCls=bDept.includes('Kids')?'kids-boys':bDept.includes('Men')?'men':bDept==='—'?'other':'women';
+    const deptTxt=r.dept.charAt(0).toUpperCase()+r.dept.slice(1);
+    const ourLblCell=`<span class="ourcat-cell" data-brand="${esc(r.brand)}" data-cat="${esc(r.catKey)}" title="View one product to verify">${esc(r.ourLabel)}</span>`;
     return`<tr>
       <td class="col-brand">${esc(r.brand)}</td>
-      <td class="col-bdept"><span class="dept-pill ${bdCls}" style="font-size:0.58rem">${esc(bDept)}</span></td>
+      <td><span class="dept-pill ${deptCls}" style="font-size:0.58rem">${esc(deptTxt)}</span></td>
       <td class="col-coll">${esc(r.collTitle)}</td>
       <td>${ourLblCell}</td>
-      <td><span class="dept-pill ${deptCls}">${r.dept}</span></td>
       <td class="col-count">${countCell}</td>
     </tr>`;
   }).join('');
 
   mv.innerHTML=`
-    <div class="map-count">${allRows.length} collections · ${allRows.filter(r=>!r.ourLabel).length} unmapped</div>
+    <div class="map-count">${allRows.length} collections · every collection mapped to one real category</div>
     <table class="map-table">
       <thead>
         <tr>
           ${sortHdr('brand','Brand')}
-          ${sortHdr('brandDept','Brand Dept')}
+          ${sortHdr('dept','Dept')}
           ${sortHdr('collTitle',"Brand's Collection")}
           ${sortHdr('ourLabel','Our Category')}
-          ${sortHdr('dept','Coll Dept')}
           ${sortHdr('count','Count')}
         </tr>
         <tr class="map-frow">
           <th><input type="text" id="mf-brand" oninput="renderMap()" placeholder="Brand…" value="${esc(fBrand)}"></th>
-          <th><input type="text" id="mf-bdept" oninput="renderMap()" placeholder="Dept…" value="${esc(fBDept)}"></th>
+          <th><select id="mf-dept" onchange="renderMap()">${deptOpts}</select></th>
           <th><input type="text" id="mf-coll" oninput="renderMap()" placeholder="Collection…" value="${esc(fColl)}"></th>
           <th><select id="mf-label" onchange="renderMap()">${labelOpts}</select></th>
-          <th><select id="mf-dept" onchange="renderMap()">${deptOpts}</select></th>
-          <th><label style="font-size:0.7rem;white-space:nowrap;color:#aaa"><input type="checkbox" id="mf-hide-nl" onchange="renderMap()"${fHideNL?' checked':''}> Mapped</label></th>
+          <th></th>
         </tr>
       </thead>
-      <tbody>${tableRows||'<tr><td colspan="6" style="text-align:center;color:#666;padding:24px">No collections match filters.</td></tr>'}</tbody>
+      <tbody>${tableRows||'<tr><td colspan="5" style="text-align:center;color:#666;padding:24px">No collections match filters.</td></tr>'}</tbody>
     </table>`;
+
+  // Click a category cell → preview one product of that brand+category (verify the mapping)
+  mv.querySelectorAll('.ourcat-cell').forEach(el=>{
+    el.addEventListener('click',()=>{ if(el.dataset.cat) showProducts(el.dataset.brand,el.dataset.cat); });
+  });
 }
 
 function mapSort(col){
@@ -1045,34 +1071,7 @@ function mapSort(col){
 }
 
 // ── SHOW PRODUCTS (new window with images) ────────────────────────────────────
-// Map from our pivot label → CAT_INFO keys (for VPS search)
-const LABEL_TO_CATS={
-  'Kids Infant':['kids_infant'],
-  'Boys Eastern':['kids_boys_eastern'],'Boys Western':['kids_boys_western'],'Boys Formal':['kids_boys_formal'],
-  'Girls Eastern':['kids_girls_eastern'],'Girls Western':['kids_girls_western'],'Girls Formal':['kids_girls_formal'],
-  'Kids Eastern':['kids_boys_eastern','kids_girls_eastern'],
-  'Kids Western':['kids_boys_western','kids_girls_western'],
-  'Abaya':['abaya'],'Bridal':['bridal'],'Lehenga':['lehenga'],'Saree':['saree'],'Kaftan':['kaftan'],
-  'Dupatta':['dupatta_only'],'Shawl':['shawl'],
-  'Loungewear/Coord':['loungewear','coord_western'],
-  'Women Trouser':['womens_trouser'],'Kurti':['kurti_1pc','kurti_1pc_unstitch'],
-  'Maxi/Dress':['maxi_dress'],'Western':['western_top','coord_western'],
-  'Eastern Pret':['pret_3pc','shirt_dupatta_2pc','shirt_trouser_2pc'],
-  'Formal Eastern':['formal_emb_3pc','formal_emb_2pc','heavy_formal_3pc','pret_3pc_emb'],
-  'Formal':['formal_emb_3pc','formal_emb_2pc','heavy_formal_3pc'],
-  'Lawn Unstitched':['lawn_3pc_unstitch'],'Formal Unstitched':['unstitch_3pc_emb','shirt_dupatta_2pc_unstitch'],
-  'Unstitched':['lawn_3pc_unstitch','unstitch_3pc_emb'],
-  'Men Kurta/SK':['mens_kurta','mens_shalwar_kameez'],'Men Unstitched':['mens_unstitched'],
-  'Men Sherwani':['mens_sherwani'],'Men Waistcoat':['mens_waistcoat'],'Men Suit':['mens_suit'],
-  'Men Shirt':['mens_shirt'],'Men Trouser':['mens_trouser'],'Men Jeans':['mens_jeans'],
-  'Men Western':['western_top'],'Men Formal':['formal_emb_3pc'],
-};
-
-function showProductsByLabel(brand,label){
-  const cats=LABEL_TO_CATS[label];
-  if(!cats||!cats.length){alert('No catalog mapping for: '+label);return;}
-  showProducts(brand,cats[0],label);
-}
+// Cells now carry the real CAT_INFO key directly, so we call showProducts(brand,key).
 
 async function showProducts(brand,cat,labelOverride){
   if(!brand||!cat)return;
@@ -1157,35 +1156,33 @@ function exportCSV(){
 function exportMapCSV(){
   if(!brandMapData){alert('No collection data loaded.');return;}
   const hideNoise=document.getElementById('hideNoiseTog').checked;
-  const rows=[['Brand','Brand Dept',"Brand's Collection",'Our Category','Collection Dept','Count','Collection URL']];
+  const rows=[['Brand','Dept',"Brand's Collection",'Our Category','Count','Collection URL']];
   for(const b of brandMapData.brands){
-    const bd=brandMainDept(b.name);
     for(const c of(b.cols||[])){
       if(hideNoise&&isNoise(c))continue;
-      const ourLabel=collToOurLabel(c)||'';
+      const ourLabel=collToOurLabel(c,b.name)||'';
+      const dept=collDeptKey(c,b.name);
       const url=b.host?`https://${b.host}/collections/${c.h}`:'';
-      rows.push([b.name,bd,c.t,ourLabel,c.d||'women',c.n,url]);
+      rows.push([b.name,dept,c.t,ourLabel,c.n,url]);
     }
   }
   downloadCSV(rows,'brand-category-map.csv');
 }
 
-// Per-collection pivot CSV (one row per brand-collection, our-label columns)
+// Per-collection pivot CSV (one row per brand-collection, real-category columns)
 function exportPivotCSV(){
   if(!brandMapData){alert('No collection data loaded.');return;}
   const hideNoise=document.getElementById('hideNoiseTog').checked;
-  const header=['Brand','Brand Dept',"Brand's Collection",'Collection Dept','Unmapped',
-    ...PIVOT_LABELS.kids,...PIVOT_LABELS.women,...PIVOT_LABELS.men,'Grand Total'];
+  const colLabels=ALL_PIVOT_KEYS.map(k=>CAT_INFO[k].label);
+  const header=['Brand','Dept',"Brand's Collection",...colLabels,'Grand Total'];
   const rows=[header];
   for(const b of brandMapData.brands){
-    const bd=brandMainDept(b.name);
     for(const c of(b.cols||[])){
       if(hideNoise&&isNoise(c))continue;
-      const ourLabel=collToOurLabel(c)||'';
-      const labelCols=ALL_PIVOT_LABELS.map(l=>l===ourLabel?c.n:'');
-      const unmapped=ourLabel?'':c.n;
-      const total=c.n;
-      rows.push([b.name,bd,c.t,c.d||'women',unmapped,...labelCols,total]);
+      const catKey=collToOurCatKey(c,b.name);
+      const dept=collDeptKey(c,b.name);
+      const catCols=ALL_PIVOT_KEYS.map(k=>k===catKey?c.n:'');
+      rows.push([b.name,dept,c.t,...catCols,c.n]);
     }
   }
   downloadCSV(rows,'brand-pivot-collections.csv');
