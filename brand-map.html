@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<title>PakPoshak — Brand Category Map</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0f0f1a;color:#eee;font-family:'Segoe UI',system-ui,sans-serif;padding:14px;line-height:1.4}
+h1{color:#c9a96e;font-size:1.3rem;letter-spacing:0.5px;margin-bottom:2px}
+.sub{color:#888;font-size:0.8rem;margin-bottom:14px}
+a{color:#7ab8ff;text-decoration:none}
+button{background:#c9a96e;color:#12122a;border:none;border-radius:7px;padding:7px 13px;font-weight:700;font-size:0.8rem;cursor:pointer;transition:opacity .15s}
+button:hover{opacity:.85}
+button.ghost{background:transparent;border:1.5px solid #444;color:#bbb;padding:6px 11px}
+button.ghost:hover{border-color:#c9a96e;color:#c9a96e}
+button.active{background:#c9a96e;color:#12122a}
+button.inactive{background:transparent;border:1.5px solid #444;color:#999}
+input[type=text],input[type=password]{background:#1a1a2e;border:1.5px solid #333;border-radius:7px;color:#eee;padding:8px 11px;font-size:0.82rem;outline:none;font-family:inherit}
+input:focus{border-color:#c9a96e}
+.err{color:#ff8a8a;font-size:0.84rem}
+.ok{color:#7CFC9A;font-size:0.82rem}
+.hint{font-size:0.74rem;color:#777}
+
+/* Gate */
+#gate{max-width:400px;margin:70px auto;background:#16162a;border:1px solid #2a2a40;border-radius:14px;padding:24px;text-align:center}
+#gate h2{color:#c9a96e;font-size:1.05rem;margin-bottom:6px}
+#gate p{color:#999;font-size:0.82rem;margin-bottom:14px}
+#gate input{width:100%;margin-bottom:11px;text-align:center;letter-spacing:2px}
+#gate button{width:100%}
+
+/* Top bar */
+.topbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+#brandSearch{flex:1;min-width:180px}
+.dept-tabs{display:flex;gap:5px}
+.stat-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px;font-size:0.78rem;color:#888}
+.stat-row b{color:#eee}
+
+/* Legend */
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;font-size:0.72rem;color:#aaa}
+.leg{display:flex;align-items:center;gap:4px}
+.leg-dot{width:11px;height:11px;border-radius:3px;flex-shrink:0}
+
+/* Table wrapper */
+.tablewrap{overflow:auto;border:1px solid #2a2a40;border-radius:10px;max-height:75vh}
+table{border-collapse:collapse;font-size:0.74rem;white-space:nowrap}
+/* Sticky brand column */
+th,td{padding:5px 8px;border-bottom:1px solid #1e1e32;text-align:right}
+th.brand-col,td.brand-col{text-align:left;position:sticky;left:0;background:#141428;z-index:3;min-width:180px;max-width:200px;white-space:normal;word-break:break-word}
+/* Sticky header */
+thead th{position:sticky;top:0;z-index:2;background:#0f0f22;color:#888;font-size:0.62rem;text-transform:uppercase;letter-spacing:0.3px;padding:6px 7px;cursor:default;border-bottom:2px solid #2a2a40}
+thead th.brand-col{z-index:4;font-size:0.7rem;color:#c9a96e}
+/* Group headers */
+thead tr.group-row th{z-index:2;background:#0c0c1e;color:#666;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #1e1e32;padding:4px 7px;text-align:center}
+thead tr.group-row th.brand-col{z-index:4}
+/* Body */
+tbody tr:hover td{background:#1b1b32!important}
+tbody tr:hover td.brand-col{background:#1e1e38!important}
+td.zero{color:#333}
+td.nonzero{color:#ddd;font-weight:600}
+/* Highlight: rule-moved cells */
+td.rule-girls{background:#1a2a1a;color:#7CFC9A}
+td.rule-boys{background:#1a1a2a;color:#8fc4ff}
+td.rule-west{background:#2a2010;color:#f0c060}
+td.rule-east{background:#1e1826;color:#c9a0f0}
+td.rule-men{background:#2a1a1a;color:#ff9a8f}
+td.rule-slug{background:#1a2025;color:#80d8e0}
+td.rule-any{background:#1f1f2e}
+/* Brand name cell */
+.brand-name{font-weight:600;color:#ddd;font-size:0.76rem}
+.brand-rules{display:flex;gap:3px;flex-wrap:wrap;margin-top:2px}
+.badge{display:inline-block;font-size:0.58rem;padding:1px 5px;border-radius:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.3px}
+.badge.gk{background:#1a3a1a;color:#7CFC9A;border:1px solid #2a5a2a}
+.badge.bk{background:#1a1a3a;color:#8fc4ff;border:1px solid #2a2a5a}
+.badge.wk{background:#3a2a10;color:#f0c060;border:1px solid #5a4a20}
+.badge.ek{background:#281832;color:#c9a0f0;border:1px solid #4a2a5a}
+.badge.mk{background:#3a1a1a;color:#ff9a8f;border:1px solid #5a2a2a}
+.badge.sg{background:#10282d;color:#80d8e0;border:1px solid #205060}
+.badge.ti{background:#2a2a10;color:#e0c860;border:1px solid #4a4a20}
+/* Empty / loading */
+#loadMsg{padding:30px;text-align:center;color:#666;font-size:0.9rem}
+/* Totals row */
+tbody tr.totals td{background:#0c0c22;color:#c9a96e;font-weight:700;border-top:2px solid #2a2a40;border-bottom:none;font-size:0.72rem}
+tbody tr.totals td.brand-col{color:#c9a96e}
+/* Sticky totals at bottom - handled via JS */
+.no-results{padding:24px;text-align:center;color:#666}
+/* checkbox toggle */
+.tog{display:flex;align-items:center;gap:7px;font-size:0.78rem;color:#aaa;cursor:pointer;user-select:none}
+.tog input{accent-color:#c9a96e}
+</style>
+</head>
+<body>
+
+<a href="admin-dashboard.html" style="position:fixed;top:11px;right:13px;z-index:60;background:#16162a;border:1.5px solid #444;color:#cbb88a;border-radius:7px;padding:6px 11px;font-size:0.78rem;font-weight:700;text-decoration:none">✕ Dashboard</a>
+
+<!-- Password gate -->
+<div id="gate">
+  <h2>🗺️ Brand Category Map</h2>
+  <p>Admin password required.</p>
+  <input id="gatePw" type="password" placeholder="Admin password" autocomplete="current-password"
+    onkeydown="if(event.key==='Enter')unlock()"/>
+  <button onclick="unlock()">Unlock</button>
+  <div id="gateMsg" class="hint" style="margin-top:8px"></div>
+  <div class="hint" style="margin-top:12px">Relay: <span id="gateRelay"></span> · <a href="#" onclick="setRelay();return false">change</a></div>
+</div>
+
+<!-- App -->
+<div id="app" style="display:none">
+  <h1>🗺️ Brand Category Map</h1>
+  <div class="sub">Current product distribution per brand per category · highlighted cells = our rules overrode brand's own classification · <a href="admin-dashboard.html">← Dashboard</a></div>
+
+  <div class="topbar">
+    <input type="text" id="brandSearch" placeholder="🔍 Search brand…" oninput="renderTable()">
+    <div class="dept-tabs">
+      <button id="dAll"  class="active"   onclick="setDept('all')">All depts</button>
+      <button id="dKids" class="inactive" onclick="setDept('kids')">Kids</button>
+      <button id="dWom"  class="inactive" onclick="setDept('women')">Women</button>
+      <button id="dMen"  class="inactive" onclick="setDept('men')">Men</button>
+    </div>
+    <label class="tog"><input type="checkbox" id="ruleOnly" onchange="renderTable()"> Rule-modified only</label>
+    <button class="ghost" onclick="loadData()">🔄 Refresh</button>
+  </div>
+
+  <div class="legend">
+    <span class="leg"><span class="leg-dot" style="background:#2a4a2a"></span>Girls-only brand (boys→girls)</span>
+    <span class="leg"><span class="leg-dot" style="background:#2a2a4a"></span>Boys-only brand (girls→boys)</span>
+    <span class="leg"><span class="leg-dot" style="background:#3a3010"></span>Western-only kids (east→west)</span>
+    <span class="leg"><span class="leg-dot" style="background:#28183a"></span>Modest kids (west→east)</span>
+    <span class="leg"><span class="leg-dot" style="background:#3a1a1a"></span>Men items re-routed to men</span>
+    <span class="leg"><span class="leg-dot" style="background:#10282d"></span>Slug-gender correction</span>
+  </div>
+
+  <div class="stat-row" id="statRow"></div>
+
+  <div class="tablewrap">
+    <div id="loadMsg">Loading brand index…</div>
+    <table id="tbl" style="display:none">
+      <thead id="thead"></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────────
+const DEFAULT_RELAY = 'https://103.83.91.34.sslip.io';
+function relayBase(){ return ((localStorage.getItem('psb_relay_url')||'').trim()||DEFAULT_RELAY).replace(/\/+$/,''); }
+async function sha256hex(s){ const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
+document.getElementById('gateRelay').textContent = relayBase();
+function setRelay(){
+  const cur=localStorage.getItem('psb_relay_url')||'';
+  const v=prompt('Relay base URL (https://…). Leave blank for default.',cur);
+  if(v===null)return;const t=v.trim();
+  if(t&&!/^https:\/\//i.test(t)){alert('Must start with https://');return;}
+  if(t)localStorage.setItem('psb_relay_url',t);else localStorage.removeItem('psb_relay_url');
+  document.getElementById('gateRelay').textContent=relayBase();
+}
+async function unlock(){
+  const pw=document.getElementById('gatePw').value;
+  const msg=document.getElementById('gateMsg');
+  if(!pw){msg.innerHTML='<span class="err">Enter the password.</span>';return;}
+  msg.textContent='Checking…';msg.className='hint';
+  try{
+    const h=await sha256hex(pw);
+    const res=await fetch(relayBase()+'/admin/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash:h})});
+    const j=await res.json().catch(()=>null);
+    if(j&&j.ok){sessionStorage.setItem('psb_admin_h',h);enterApp();}
+    else msg.innerHTML='<span class="err">Wrong password.</span>';
+  }catch(e){msg.innerHTML='<span class="err">Cannot reach relay. <a href="#" onclick="setRelay();return false">Change URL</a></span>';}
+}
+function enterApp(){
+  document.getElementById('gate').style.display='none';
+  document.getElementById('app').style.display='';
+  loadData();
+}
+if(sessionStorage.getItem('psb_admin_h')) enterApp();
+
+// ── RULE KNOWLEDGE (mirrored from catalog-cleanup.js) ─────────────────────────
+// Girls-only kids brands: kids_boys_* products were moved → kids_girls_*
+const GIRLS_KIDS = new Set(['Alizeh','ETHNC','Sana Safinaz','Senorita','Agha Noor','Sha Posh',
+  'Sadaf Fawad Khan','Charizma','Armas','Vanya','Black Camels','Hijabi.pk','Hijab-ul-Hareem',
+  'Abaya.pk','The Ummatis','The Women Zone','Limelight','Nureh','Salitex','Zeen (by Cambridge)',
+  'Mohagni','Khas Stores']);
+// Boys-only kids brands: kids_girls_* products were moved → kids_boys_*
+const BOYS_KIDS = new Set(['Cambridge','Innerlines','Monark']);
+// Western-only kids brands: kids_*_eastern → kids_*_western
+const WEST_KIDS = new Set(['Engine']);
+// Modest kids brands: kids_*_western → kids_*_eastern (for modest garments)
+const MODEST_KIDS = new Set(['The Women Zone','Hijabi.pk','Hijab-ul-Hareem','Abaya.pk','The Ummatis','Black Camels','Hijab & Co']);
+// Kurta Corner: unconditional kids_girls → kids_boys rule
+const KURTA_CORNER = new Set(['Kurta Corner']);
+// Men re-routing brands
+const MENS_2PC = new Set(['Azure','Al-Deebaj']);
+// Slug-gender brands
+const SLUG_GENDER = new Set(['Zellbury','Diners']);
+// Kids brands with KGIRL_SOFT / KGIRL_STRONG (girl-garment keyword rules that move kids_boys→girls)
+// These apply to ALL brands (title-based) — flag ALL brands that have kids products
+const TITLE_RULES_ALWAYS = true;
+// Jewellery drop brands
+const JEWEL_DROP = new Set(['Agha Noor','Zara Shahjahan']);
+
+function brandRules(name){
+  const r=[];
+  if(GIRLS_KIDS.has(name)) r.push({k:'gk',label:'Girls-only kids'});
+  if(BOYS_KIDS.has(name))  r.push({k:'bk',label:'Boys-only kids'});
+  if(KURTA_CORNER.has(name)) r.push({k:'bk',label:'Boys kids (force)'});
+  if(WEST_KIDS.has(name))  r.push({k:'wk',label:'Western-only kids'});
+  if(MODEST_KIDS.has(name)&&!GIRLS_KIDS.has(name)) r.push({k:'ek',label:'Modest→eastern'});
+  if(MENS_2PC.has(name))   r.push({k:'mk',label:'SK→men re-routed'});
+  if(SLUG_GENDER.has(name)) r.push({k:'sg',label:'Slug gender'});
+  return r;
+}
+
+// ── CATEGORY DEFINITIONS ──────────────────────────────────────────────────────
+const CATS = {
+  kids:[
+    {k:'kids_infant',       short:'Infant',   group:'kids'},
+    {k:'kids_boys_eastern', short:'Boys-E',   group:'kids', rule:'boys'},
+    {k:'kids_boys_western', short:'Boys-W',   group:'kids', rule:'boys'},
+    {k:'kids_boys_formal',  short:'Boys-F',   group:'kids', rule:'boys'},
+    {k:'kids_girls_eastern',short:'Girls-E',  group:'kids', rule:'girls'},
+    {k:'kids_girls_western',short:'Girls-W',  group:'kids', rule:'girls'},
+    {k:'kids_girls_formal', short:'Girls-F',  group:'kids', rule:'girls'},
+  ],
+  women:[
+    {k:'abaya',                    short:'Abaya',      group:'women'},
+    {k:'bridal',                   short:'Bridal',     group:'women'},
+    {k:'heavy_formal_3pc',         short:'HvyFrml',    group:'women'},
+    {k:'formal_emb_3pc',           short:'Frml-3pc',   group:'women'},
+    {k:'formal_emb_2pc',           short:'Frml-2pc',   group:'women'},
+    {k:'handmade_emb',             short:'Hmde',       group:'women'},
+    {k:'pret_3pc_emb',             short:'Pret-3pe',   group:'women'},
+    {k:'pret_3pc',                 short:'Pret-3p',    group:'women'},
+    {k:'pret_2pc_emb',             short:'Pret-2pe',   group:'women'},
+    {k:'shirt_dupatta_2pc',        short:'SD-2pc',     group:'women'},
+    {k:'shirt_trouser_2pc',        short:'ST-2pc',     group:'women', rule:'men'},
+    {k:'kurti_1pc',                short:'Kurti',      group:'women'},
+    {k:'western_top',              short:'W-Top',      group:'women'},
+    {k:'maxi_dress',               short:'Maxi',       group:'women'},
+    {k:'kaftan',                   short:'Kaftan',     group:'women'},
+    {k:'lehenga',                  short:'Lehenga',    group:'women'},
+    {k:'saree',                    short:'Saree',      group:'women'},
+    {k:'coord_western',            short:'Coord',      group:'women'},
+    {k:'loungewear',               short:'Lounge',     group:'women'},
+    {k:'lawn_3pc_unstitch',        short:'Lawn-3pu',   group:'women'},
+    {k:'unstitch_3pc_emb',         short:'Un-3pe',     group:'women'},
+    {k:'shirt_dupatta_2pc_unstitch',short:'SDu-2pu',   group:'women'},
+    {k:'shirt_trouser_2pc_unstitch',short:'STu-2pu',   group:'women'},
+    {k:'kurti_1pc_unstitch',       short:'Kurti-U',    group:'women'},
+    {k:'winter_3pc_stitch',        short:'Win-3ps',    group:'women'},
+    {k:'winter_3pc_unstitch',      short:'Win-3pu',    group:'women'},
+    {k:'winter_2pc_stitch',        short:'Win-2ps',    group:'women'},
+    {k:'winter_2pc_unstitch',      short:'Win-2pu',    group:'women'},
+    {k:'dupatta_only',             short:'Dupatta',    group:'women'},
+    {k:'shawl',                    short:'Shawl',      group:'women'},
+    {k:'womens_trouser',           short:'W-Trou',     group:'women'},
+  ],
+  men:[
+    {k:'mens_kurta',         short:'M-Kurta',   group:'men'},
+    {k:'mens_shalwar_kameez',short:'M-SK',      group:'men'},
+    {k:'mens_sherwani',      short:'M-Shwn',    group:'men'},
+    {k:'mens_waistcoat',     short:'M-WC',      group:'men'},
+    {k:'mens_suit',          short:'M-Suit',    group:'men'},
+    {k:'mens_shirt',         short:'M-Shirt',   group:'men'},
+    {k:'mens_trouser',       short:'M-Trou',    group:'men'},
+    {k:'mens_jeans',         short:'M-Jeans',   group:'men'},
+    {k:'mens_unstitched',    short:'M-Un',      group:'men'},
+  ],
+  other:[
+    {k:'footwear',           short:'Shoes',     group:'other'},
+  ]
+};
+const ALL_CATS = [...CATS.kids,...CATS.women,...CATS.men,...CATS.other];
+const CAT_MAP = {}; ALL_CATS.forEach(c=>CAT_MAP[c.k]=c);
+
+// Which categories are "affected" by rules for a given brand
+function affectedCats(brand){
+  const af={};
+  const rules=brandRules(brand);
+  const rkeys=new Set(rules.map(r=>r.k));
+  if(rkeys.has('gk')){
+    // kids_girls_* contains products potentially moved from kids_boys_* by our rule
+    af.kids_girls_eastern='girls'; af.kids_girls_western='girls'; af.kids_girls_formal='girls';
+  }
+  if(rkeys.has('bk')){
+    af.kids_boys_eastern='boys'; af.kids_boys_western='boys'; af.kids_boys_formal='boys';
+  }
+  if(rkeys.has('wk')){
+    af.kids_boys_western='west'; af.kids_girls_western='west';
+  }
+  if(rkeys.has('ek')){
+    af.kids_girls_eastern='east'; af.kids_boys_eastern='east';
+  }
+  if(rkeys.has('mk')){
+    af.mens_shalwar_kameez='men';
+  }
+  if(rkeys.has('sg')){
+    af.kids_boys_eastern='slug'; af.kids_boys_western='slug';
+    af.kids_girls_eastern='slug'; af.kids_girls_western='slug';
+    af.mens_shalwar_kameez='slug';
+  }
+  return af;
+}
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let brandIndex = null;  // {brandName: {cat: count}}
+let currentDept = 'all';
+
+// ── LOAD ──────────────────────────────────────────────────────────────────────
+async function loadData(){
+  document.getElementById('loadMsg').textContent = 'Loading brand index…';
+  document.getElementById('loadMsg').style.display='';
+  document.getElementById('tbl').style.display='none';
+  try{
+    const r = await fetch(relayBase()+'/search/brand-index');
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const j = await r.json();
+    brandIndex = j.brands || j;
+    renderTable();
+  }catch(e){
+    document.getElementById('loadMsg').innerHTML='<span class="err">Failed to load brand index: '+e.message+'</span>';
+  }
+}
+
+function setDept(d){
+  currentDept=d;
+  ['All','Kids','Wom','Men'].forEach(x=>{
+    const el=document.getElementById('d'+x);
+    if(el) el.className=(x.toLowerCase().replace('all','all').replace('wom','wom')===d||
+      (x==='All'&&d==='all')||(x==='Kids'&&d==='kids')||(x==='Wom'&&d==='women')||(x==='Men'&&d==='men'))?'active':'inactive';
+  });
+  renderTable();
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function renderTable(){
+  if(!brandIndex){return;}
+  const search = (document.getElementById('brandSearch').value||'').toLowerCase();
+  const ruleOnly = document.getElementById('ruleOnly').checked;
+
+  // Which category columns to show
+  let depts;
+  if(currentDept==='kids')       depts=['kids'];
+  else if(currentDept==='women') depts=['women'];
+  else if(currentDept==='men')   depts=['men'];
+  else                           depts=['kids','women','men','other'];
+  const cols = depts.flatMap(d=>CATS[d]||[]);
+
+  // Filter brands
+  let brands = Object.entries(brandIndex);
+  if(search) brands = brands.filter(([n])=>n.toLowerCase().includes(search));
+  if(ruleOnly) brands = brands.filter(([n])=>brandRules(n).length>0);
+  brands.sort((a,b)=>a[0].localeCompare(b[0]));
+
+  // Build header
+  const thead = document.getElementById('thead');
+  const groupRow = `<tr class="group-row">
+    <th class="brand-col">Brand</th>
+    <th style="text-align:center" colspan="${cols.filter(c=>c.group==='kids').length||0}">Kids</th>
+    <th style="text-align:center" colspan="${cols.filter(c=>c.group==='women').length||0}">Women</th>
+    <th style="text-align:center" colspan="${cols.filter(c=>c.group==='men').length||0}">Men</th>
+    <th style="text-align:center" colspan="${cols.filter(c=>c.group==='other').length||0}">Other</th>
+  </tr>`;
+  const colRow = `<tr><th class="brand-col">Brand + Rules</th>` +
+    cols.map(c=>`<th title="${c.k}">${c.short}</th>`).join('') + `</tr>`;
+  thead.innerHTML = (currentDept==='all' ? groupRow : '') + colRow;
+
+  // Build body
+  const tbody = document.getElementById('tbody');
+  if(!brands.length){
+    tbody.innerHTML=`<tr><td colspan="${cols.length+1}" class="no-results">No brands match</td></tr>`;
+    document.getElementById('tbl').style.display='';
+    document.getElementById('loadMsg').style.display='none';
+    return;
+  }
+
+  // Totals
+  const totals = {};
+
+  const rows = brands.map(([name, catMap])=>{
+    const rules = brandRules(name);
+    const affected = affectedCats(name);
+    const total = Object.values(catMap).reduce((a,b)=>a+b,0);
+
+    const badgeHtml = rules.map(r=>`<span class="badge ${r.k}">${r.label}</span>`).join('');
+    const hasKidsWithTitle = Object.keys(catMap).some(k=>k.startsWith('kids_'));
+
+    let cells = '';
+    for(const col of cols){
+      const cnt = catMap[col.k]||0;
+      totals[col.k]=(totals[col.k]||0)+cnt;
+      let cls = cnt>0 ? 'nonzero' : 'zero';
+      const aff = affected[col.k];
+      if(cnt>0 && aff){
+        if(aff==='girls') cls='rule-girls';
+        else if(aff==='boys') cls='rule-boys';
+        else if(aff==='west') cls='rule-west';
+        else if(aff==='east') cls='rule-east';
+        else if(aff==='men')  cls='rule-men';
+        else if(aff==='slug') cls='rule-slug';
+        else cls='rule-any';
+      }
+      // Title-based kid moves apply to any brand with kids products
+      if(cnt>0 && !aff && hasKidsWithTitle && col.group==='kids'){
+        // subtle indicator that title rules may apply
+        cls=(cnt>0?'nonzero':'zero');
+      }
+      const title = aff ? ` title="Rule-moved: ${aff==='girls'?'boys→girls (brand is girls-only)':aff==='boys'?'girls→boys (brand is boys-only)':aff==='west'?'eastern→western (brand is western-only)':aff==='east'?'western→eastern (modest brand)':aff==='men'?'re-routed to men category':aff==='slug'?'slug-gender correction':''}"` : '';
+      cells += `<td class="${cls}"${title}>${cnt>0?cnt:''}</td>`;
+    }
+
+    return `<tr>
+      <td class="brand-col">
+        <div class="brand-name">${esc(name)}</div>
+        ${badgeHtml ? `<div class="brand-rules">${badgeHtml}</div>` : ''}
+        <div style="font-size:0.62rem;color:#666;margin-top:1px">${total} total</div>
+      </td>
+      ${cells}
+    </tr>`;
+  });
+
+  // Totals row
+  const totalRowCells = cols.map(c=>{
+    const v=totals[c.k]||0;
+    return `<td style="font-size:0.7rem">${v>0?v:''}</td>`;
+  }).join('');
+  const grandTotal = Object.values(totals).reduce((a,b)=>a+b,0);
+  rows.push(`<tr class="totals"><td class="brand-col">TOTAL (${brands.length} brands) — ${grandTotal.toLocaleString()} products</td>${totalRowCells}</tr>`);
+
+  tbody.innerHTML = rows.join('');
+  document.getElementById('tbl').style.display='';
+  document.getElementById('loadMsg').style.display='none';
+
+  // Stats
+  const ruleAffected = Object.keys(brandIndex).filter(n=>brandRules(n).length>0).length;
+  const totalBrands = Object.keys(brandIndex).length;
+  const totalProducts = Object.values(brandIndex).flatMap(m=>Object.values(m)).reduce((a,b)=>a+b,0);
+  document.getElementById('statRow').innerHTML =
+    `<span><b>${brands.length}</b> shown of <b>${totalBrands}</b> brands</span> ·
+     <span><b>${ruleAffected}</b> have rule overrides</span> ·
+     <span><b>${totalProducts.toLocaleString()}</b> total products in catalog</span>`;
+}
+
+const esc = s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+</script>
+</body>
+</html>
