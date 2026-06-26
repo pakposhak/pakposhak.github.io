@@ -5638,7 +5638,7 @@
     { g:'w', key:'pret_3pc', cats:['pret_3pc','pret_3pc_emb'], en:'Stitched 3 pc', bn:'সেলাই করা ৩ পিস', e:'👗' },
     { g:'w', key:'lawn_3pc_unstitch', cats:['lawn_3pc_unstitch','unstitch_3pc_emb'], en:'Unstitched', bn:'আনস্টিচড', e:'🧵' },
     { g:'w', key:'kurti_1pc_unstitch',   en:'Unstitched 1pc',  bn:'আনস্টিচড ১ পিস',    e:'🧵' },
-    { g:'w', key:'shirt_dupatta_2pc', cats:['shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','pret_2pc_emb'], en:'2-Piece', bn:'২ পিস', e:'👚' },
+    { g:'w', key:'shirt_dupatta_2pc', cats:['shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','pret_2pc_emb'], en:'Stitched 2 pc', bn:'সেলাই করা ২ পিস', e:'👚' },
     { g:'w', key:'shirt_trouser_2pc', cats:['shirt_trouser_2pc','coord_western','shirt_trouser_2pc_unstitch'], en:'Co-ord Set', bn:'কো-অর্ড সেট', e:'🧶' },
     { g:'w', key:'kurti_1pc',            en:'Kurti / 1pc',     bn:'কুর্তি / ১ পিস',    e:'👕' },
     { g:'w', key:'western_top',          en:'Western Top',     bn:'ওয়েস্টার্ন টপ',     e:'👚' },
@@ -5783,8 +5783,8 @@
   // page the grid loads (psHarvestThumbs), and by a throttled gap-fill fetch (psLoadShopThumbs).
   const PS_THUMB_TTL = 14 * 24 * 3600 * 1000;
   let _psThumbs = {};
-  try { _psThumbs = JSON.parse(localStorage.getItem('psb_cat_thumbs_v5') || '{}') || {}; } catch(e){ _psThumbs = {}; }   // _v4: re-fetch after the kids eastern/western fix so "Boys Eastern" shows a kurta, not a western suit
-  function _psThumbsSave(){ try{ localStorage.setItem('psb_cat_thumbs_v5', JSON.stringify(_psThumbs)); }catch(e){} }
+  try { _psThumbs = JSON.parse(localStorage.getItem('psb_cat_thumbs_v6') || '{}') || {}; } catch(e){ _psThumbs = {}; }   // _v4: re-fetch after the kids eastern/western fix so "Boys Eastern" shows a kurta, not a western suit
+  function _psThumbsSave(){ try{ localStorage.setItem('psb_cat_thumbs_v6', JSON.stringify(_psThumbs)); }catch(e){} }
   function psThumbGet(key){ const t = _psThumbs[key]; return (t && t.u && (Date.now() - t.t < PS_THUMB_TTL)) ? t.u : ''; }
   function psThumbSet(key, url){ if(!key || !url) return; _psThumbs[key] = { u:url, t:Date.now() }; _psThumbsSave(); }
   // Record the first GENDER-APPROPRIATE image seen for any category from a freshly-loaded product page.
@@ -6934,7 +6934,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-26c';
+  const PSB_BUILD = '2026-06-26d';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
