@@ -1,0 +1,20 @@
+{
+  "Vanya||vanya-bfcm": "coord_western",
+  "Vanya||van": "coord_western",
+  "Vanya||wraps": "coord_western",
+  "Zarif||arzou": "formal_emb_3pc",
+  "Zarif||falesia": "formal_emb_3pc",
+  "Zarif||inara": "formal_emb_3pc",
+  "Zarif||ready-to-dispatch": "pret_3pc",
+  "Zarif||sahiba": "saree",
+  "Zarif||saheera": "formal_emb_3pc",
+  "Zarif||tabeer": "pret_3pc_emb",
+  "Zuruj||chappals": "footwear",
+  "Zuruj||hair-band": "UNSURE",
+  "Zuruj||heritage-huaraches": "dupatta_only",
+  "Zuruj||luxury": "pret_3pc",
+  "Zuruj||signature-couture": "pret_3pc_emb",
+  "Zuruj||transparent-chappals": "footwear",
+  "Zuruj||transparent-mules": "footwear",
+  "Zuruj||zaritale": "pret_3pc"
+}
