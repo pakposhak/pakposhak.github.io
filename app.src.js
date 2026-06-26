@@ -5699,7 +5699,17 @@
     if(psFacetCats && psFacetCats.size) t = t.filter(x => (x.cats || [x.key]).some(k => psFacetCats.has(k)));
     return t;
   }
-  function psSetShopGender(g){ psShopMode = 'cat'; psShopGender = g; psBuildShopCat(); }
+  function psSetShopGender(g){
+    psShopMode = 'cat'; psShopGender = g;
+    // Tapping a department also FILTERS the product grid to that department (req: Danish 2026-06-26):
+    // Women/Men/Kids → that dept's real categories; West → the cross-gender western keys. Preserves an
+    // active price/brand selection; a later category-tile tap narrows from here.
+    const deptCats = (g === 'x') ? [...PS_WEST_KEYS] : _psDeptCats(g);
+    psSel = { prices:new Set(psSel.prices), cats:new Set(deptCats), brands:new Set(psSel.brands) };
+    psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort();
+    psBuildShopCat();
+    psApply();
+  }
   function psShopBrandsMode(){
     if(psShopMode === 'brand'){ psShopMode = 'cat'; }                 // re-tap Brands → back to categories
     else { psShopMode = 'brand'; psShopDept = (psShopGender === 'x') ? 'w' : psShopGender; }   // enter Brands on the same dept (West has no brand pool → Women)
@@ -5794,6 +5804,9 @@
     }
     return '';
   }
+  // Restart the carousel fade/slide animation when its tiles are swapped (dept/brand switch),
+  // so it reads as a transition instead of a hard refresh (req: Danish 2026-06-26).
+  function _pscSwapAnim(wrap){ if(!wrap) return; wrap.classList.remove('psc-swap'); void wrap.offsetWidth; wrap.classList.add('psc-swap'); }
   function psBuildShopCat(){
     // ONE tab row, double duty: catalogue mode = Women/Men/Kids (categories); Brands mode =
     // Women/Men/Kids/Premium (brand departments). The Brands toggle on the right switches modes.
@@ -5850,6 +5863,7 @@
           + `<span class="psc-lbl">${esc(n)}</span></button>`;
       }).join('');
       wrap.scrollLeft = 0;
+      _pscSwapAnim(wrap);
       psLoadBrandThumbs(brands, psShopDept);
       return;
     }
@@ -5865,6 +5879,7 @@
         + `<span class="psc-lbl">${esc(lbl)}</span></button>`;
     }).join('');
     wrap.scrollLeft = 0;
+    _pscSwapAnim(wrap);   // fade/slide the new tiles in (transition, not a hard refresh — req: Danish)
     psLoadShopThumbs();
   }
   // ── Brand-tile photos: one representative photo per brand PER DEPARTMENT (so a multi-dept brand
@@ -6919,7 +6934,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-26b';
+  const PSB_BUILD = '2026-06-26c';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
