@@ -442,7 +442,7 @@ function classifyWomenCat(s, tags){
   const three = /\b3[\s-]?(pc|piece|pcs)\b/.test(s);
   if(/\bshawl\b|pashmina|\bstole\b/.test(s)) return 'shawl';
   if(/\bdupatta\b|\bscarf\b/.test(s) && !/shirt|kurti|kurta|kameez|suit|[23][\s-]?(pc|piece)|trouser|bottom/.test(s)) return 'dupatta_only';
-  if(/\bsaree\b|\bsari\b/.test(s)) return 'saree';
+  if(/\bsarees?\b|\bsaris?\b/.test(s)) return 'saree';
   if(/lehenga|gharara|sharara/.test(s)) return 'lehenga';
   if(/abaya|jilbab|burqa|niqab|niqaab|\bhijab\b|khimar|\bnaqab\b/.test(s)) return 'abaya';
   if(/kaftan|kaftaan|caftan/.test(s)) return 'kaftan';
@@ -454,10 +454,10 @@ function classifyWomenCat(s, tags){
     if(two) return unstitch ? 'winter_2pc_unstitch' : 'winter_2pc_stitch';
     return unstitch ? 'winter_3pc_unstitch' : 'winter_3pc_stitch';
   }
-  if(/\btank\b|crop[\s-]?top|t[\s-]?shirt|\btee\b|camisole|\bcami\b|western[\s-]?top|halter|\bbodysuit\b/.test(s)
+  if(/\btank\b|crop[\s-]?top|t[\s-]?shirt|\btee\b|camisole|\bcami\b|western[\s-]?top|halter|\bbodysuit\b|hoodie|sweat\s?shirt|\bsweater\b|jumper|\bpullover\b|cardigan/.test(s)
      && !/kurti|kurta|kameez|\bsuit\b|dupatta|[23][\s-]?(pc|piece)|trouser|shalwar/.test(s)) return 'western_top';
   if(/heavy[\s-]?formal|organza|tissue|jamawar/.test(s)) return 'heavy_formal_3pc';
-  if(/\bformal\b|party[\s-]?wear/.test(s)) return two ? 'formal_emb_2pc' : 'formal_emb_3pc';
+  if(/\bformal\b|party[\s-]?wear/.test(s)){ if(unstitch) return 'unstitch_3pc_emb'; return two ? 'formal_emb_2pc' : 'formal_emb_3pc'; }
   if(/night|sleep[\s-]?wear|lounge|loungewear|pyjama|pajama|\bnighty\b/.test(s)) return 'loungewear';
   if(three || /(shalwar|trouser|pant|bottom|gharara)[\s\w]*dupatta|dupatta[\s\w]*(shalwar|trouser|pant|bottom)/.test(s)){
     if(unstitch) return emb ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch';
@@ -475,10 +475,10 @@ function classifyWomenCat(s, tags){
   }
   if(/\bsuit\b/.test(s)){ if(unstitch) return emb ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch'; return emb ? 'pret_3pc_emb' : 'pret_3pc'; }
   if(/co[\s-]?ord|coord/.test(s)) return unstitch ? 'shirt_trouser_2pc_unstitch' : 'coord_western';
-  if(/trouser|pant|palazzo|plazo|capri|culotte|tights|leggings?/.test(s) && !/shirt|kurti|kurta|kameez/.test(s)) return 'womens_trouser';
-  if(/dress|maxi|gown|jumpsuit|\bfrock\b|anarkali/.test(s)) return 'maxi_dress';
+  if(/trouser|pant|palazzo|plazo|capri|culotte|tights|leggings?|\bjeans?\b|\bdenim\b|\bskirt\b|\bshorts?\b/.test(s) && !/shirt|kurti|kurta|kameez/.test(s)) return 'womens_trouser';
+  if(/dress|maxi|gown|jumpsuit|\bfrock\b|anarkali/.test(s) && !unstitch) return 'maxi_dress';
   if(/kurti|kurta|shirt|tunic|\bcape\b|\btop\b|peplum|blouse/.test(s)) return unstitch ? 'kurti_1pc_unstitch' : 'kurti_1pc';
-  if(/\blawn\b|cambric|voile|khaddar|karandi|fabric|piece[\s-]?goods/.test(s)) return emb ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch';
+  if(/\blawn\b|cambric|voile|khaddar|karandi|fabric|piece[\s-]?goods/.test(s)) return stitched ? 'pret_3pc' : (emb ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch');
   return unstitch ? 'lawn_3pc_unstitch' : 'pret_3pc';
 }
 // Men's product_type/title → men's category. MIRRORS app.src.js PT_CAT_MEN.
@@ -509,6 +509,22 @@ function brandKidGender(name){
   return 'girls';
 }
 
+// A brand's primary department from the live brand-index (plurality of catalog products).
+// Used as the fallback dept for collections whose title carries no gender signal.
+function brandPrimaryDept(name){
+  const cm=brandIndex&&brandIndex[name];
+  if(!cm) return 'women';
+  let k=0,w=0,m=0;
+  for(const key in cm){
+    const ci=CAT_INFO[key]; if(!ci) continue;
+    const n=cm[key]||0;
+    if(ci.group==='kids') k+=n; else if(ci.group==='men') m+=n; else w+=n;
+  }
+  if(m>=w && m>=k && m>0) return 'men';
+  if(k>w && k>=m && k>0) return 'kids';
+  return 'women';
+}
+
 // ── COLLECTION → REAL CATEGORY KEY ──────────────────────────────────────────────
 // Returns ONE real CAT_INFO key. Department is then defined by that category
 // (abaya⇒women, sherwani⇒men, girls_eastern⇒kids) — never the brand's overall mix.
@@ -520,10 +536,11 @@ function collToOurCatKey(col, brandName){
   // EXCLUDED — collection handles are SEO-stuffed ("pakistani-women-dresses",
   // "ready-to-wear-dresses") and would mis-fire "dress"/"unstitched"/etc. The live
   // catalog classifier reads product type+title, never the collection handle.
-  // LOWERCASE — the ported classifier regexes are case-sensitive (the live catalog
-  // pre-lowercases product type+title before calling them). Titles like "Abayas",
+  // LOWERCASE + normalise separators (+ & / \ |) to spaces so "Shirt + Dupatta" and
+  // "Eastern\Kurta\Pajama" classify correctly. The classifier regexes are
+  // case-sensitive (the live catalog pre-lowercases), so titles like "Abayas",
   // "Bridal", "Saree" must be lowercased or they fall through to the pret_3pc default.
-  let s=t.toLowerCase();
+  let s=t.toLowerCase().replace(/[+&\/\\|]/g,' ').replace(/\bun[\s-]?stitch/g,'unstitch');
   if(sect.includes('unstitched')) s+=' unstitched';
   if(sect.includes('formal'))     s+=' formal';
   if(sect.includes('western'))    s+=' western';
@@ -556,17 +573,41 @@ function collToOurCatKey(col, brandName){
   const isMen = col.d==='men' || hGender==='men' ||
     /(^|[\s\/_-])(men|mens|man|gents|gentlemen|male|groom|dulha)([\s\/_-]|$)/.test(sl) ||
     /sherwani|waist[\s-]?coat|prince[\s-]?coat|kurta[\s-]?pajama|\bthobe\b|\bthoub\b|\bjubba\b|kandora|kandura/.test(sl);
-  if(isMen){
-    const c=mapPtToCatMen(s);
-    if(c) return c;
-    if(/unstitch|fabric|suiting/.test(sl)) return 'mens_unstitched';
-    if(/\bshirt\b/.test(sl)) return 'mens_shirt';
-    if(/trouser|chino|\bpant/.test(sl)) return 'mens_trouser';
-    return 'mens_kurta';
-  }
+  if(isMen) return classifyMen(s, brandName);
 
-  // 3. WOMEN — everything else. classifyWomenCat is the live catalog's women rule.
+  // 3. BRAND-PRIMARY fallback — a collection with NO gender/women-garment signal on a
+  // men-dominant brand (Uniworth "Hoodies", "Essentials") is men, not the women default.
+  // An explicit "Women"/"Ladies" word in the title always keeps it women.
+  const womenWord = hGender==='women' || /(^|[\s\/_-])(women|womens|woman|ladies|female)([\s\/_-]|$)/.test(sl);
+  if(!womenWord && brandPrimaryDept(brandName)==='men'
+     && !/abaya|niqab|jilbab|hijab|saree|sari|lehenga|gharara|sharara|kaftan|kurti|frock|maxi|gown|\bdupatta\b|blouse|bridal|lawn|unstitch|\b2\s?pc\b|\b3\s?pc\b|2\s?piece|3\s?piece|kameez/.test(sl))
+    return classifyMen(s, brandName);
+
+  // 4. WOMEN — everything else. classifyWomenCat is the live catalog's women rule.
   return classifyWomenCat(s, sect.join(' '));
+}
+
+// Men's category from a (lowercased) collection string.
+function classifyMen(s, brandName){
+  const c=mapPtToCatMen(s);
+  if(c) return c;
+  if(/unstitch|fabric|suiting/.test(s)) return 'mens_unstitched';
+  if(/\bshirt\b/.test(s)) return 'mens_shirt';
+  // Men's western tops (tee/hoodie/sweat/etc.) → Men Shirt (no separate men-western cat)
+  if(/\btee\b|t\s?shirt|polo|hoodie|sweat|pullover|jersey|jumper|cardigan|\bupper\b|\btops?\b/.test(s)) return 'mens_shirt';
+  if(/trouser|chino|\bpant/.test(s)) return 'mens_trouser';
+  return brandMenDefault(brandName);   // vague men collection → kurta vs shirt by catalog skew
+}
+// A men-brand's default garment for vague collections: shirt for western menswear
+// (Royal Tag, Uniworth), kurta otherwise — from the live brand-index skew.
+function brandMenDefault(name){
+  const cm=brandIndex&&brandIndex[name];
+  if(cm){
+    const shirt=cm.mens_shirt||0;
+    const kurta=(cm.mens_kurta||0)+(cm.mens_shalwar_kameez||0);
+    if(shirt>kurta && shirt>0) return 'mens_shirt';
+  }
+  return 'mens_kurta';
 }
 
 // Display label for a collection's mapped category (real PakPoshak label).
