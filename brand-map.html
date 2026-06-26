@@ -979,10 +979,8 @@ function renderPivot(){
     }).join('');
     const deptCls=r.dept==='kids'?'kids-boys':r.dept==='men'?'men':'women';
     const deptTxt=r.dept.charAt(0).toUpperCase()+r.dept.slice(1);
-    const collUrl=r.host?`https://${r.host}/collections/${r.handle}`:'';
-    const collCell=collUrl?
-      `<a class="pv-coll" href="${esc(collUrl)}" target="_blank" rel="noopener" title="Open on brand's website">${esc(r.collTitle)}</a>`:
-      `<span class="pv-coll" style="cursor:default">${esc(r.collTitle)}</span>`;
+    // Plain text — no per-row <a href> link (removed: it bloated the 16k-row pivot HTML).
+    const collCell=`<span class="pv-coll" style="cursor:default">${esc(r.collTitle)}</span>`;
     return`<tr class="${isBrandStart?'grp-sep':''}">
       <td class="c0">${isBrandStart?`<span class="pv-brand">${esc(r.brand)}</span>`:''}</td>
       <td class="c1 pv-dept"><span class="dept-pill ${deptCls}" style="font-size:0.58rem">${esc(deptTxt)}</span></td>
@@ -1100,8 +1098,10 @@ function renderMap(){
     </tr>`;
   }).join('');
 
+  const totalPcs=allRows.reduce((s,r)=>s+(+r.count||0),0);
+  const isFiltered=!!(fBrand||fColl||fLabel||fDept||globalSearch);
   mv.innerHTML=`
-    <div class="map-count">${allRows.length} collections · every collection mapped to one real category</div>
+    <div class="map-count">${allRows.length.toLocaleString()} collections · <b style="color:#c9a96e">${totalPcs.toLocaleString()} pcs</b>${isFiltered?' &nbsp;(filtered selection)':' · every collection mapped to one real category'}</div>
     <table class="map-table">
       <thead>
         <tr>
