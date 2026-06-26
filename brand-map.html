@@ -416,7 +416,7 @@ const ALL_PIVOT_KEYS=[...PIVOT_KEYS.kids,...PIVOT_KEYS.women,...PIVOT_KEYS.men];
 const LABEL2KEY={}; for(const k in CAT_INFO) LABEL2KEY[CAT_INFO[k].label]=k;
 
 // ── NOISE FILTER (non-clothing collections) ────────────────────────────────────
-const NOISE_RE=/\b(furniture|sofa|chair|table|cushion|curtain|carpet|rug|lamp|decor|candle|bedsheet|pillow|comforter|mattress|toy|toys|teddy|puzzle|game|games|doll|belt|belts|bag|bags|purse|wallet|clutch|handbag|tote|satchel|perfume|fragrance|cologne|attar|deodorant|jewellery|jewelry|necklace|earring|earrings|bracelet|bangle|bangles|makeup|cosmetic|lipstick|foundation|skincare|sunscreen|electronic|phone|mobile|gadget|laptop|stationery|diary|planner|supplement|vitamin|protein|umbrella|sunglasses|spectacle|eyewear|watches|cap|caps|scrunchie|scrunchies|cufflink|cufflinks|undergarment|undergarments|lingerie|turban|turbans|potli|body\s*mist|slides|pumps|nail|mascara|kohl|liner|blush|concealer|primer|palette|lashes|lash|serum|toner|moisturiser|moisturizer|diffuser|incense|room\s*spray|home\s*decor|throw|runner)\b/i;
+const NOISE_RE=/\b(furniture|sofa|chair|table|cushion|curtain|carpet|rug|lamp|decor|candle|bedsheet|pillow|comforter|mattress|toy|toys|teddy|puzzle|game|games|doll|belt|belts|bag|bags|purse|wallet|clutch|handbag|tote|satchel|perfume|fragrance|cologne|attar|deodorant|jewellery|jewelry|necklace|earring|earrings|bracelet|bangle|bangles|makeup|cosmetic|lipstick|foundation|skincare|sunscreen|electronic|phone|mobile|gadget|laptop|stationery|diary|planner|supplement|vitamin|protein|umbrella|sunglasses|spectacle|eyewear|watches|cap|caps|scrunchie|scrunchies|cufflink|cufflinks|undergarment|undergarments|lingerie|turban|turbans|potli|body\s*mist|slides|pumps|nail|mascara|kohl|liner|blush|concealer|primer|palette|lashes|lash|serum|toner|moisturiser|moisturizer|diffuser|incense|room\s*spray|home\s*decor|throw|runner|acne|ageing|aging|brightening|scarring|wrinkle|cleanser|exfoliat|micellar|niacinamide|retinol|sunblock|body\s*wash|face\s*wash|hair\s*oil|shampoo|conditioner|grooming|\bbeard\b|shaving|swimwear|swimsuit|bikini|burkini|gift\s*card|e-?gift|\bvoucher\b|gift\s*box|gift\s*hamper|bundle\s*builder|tasbeeh|tasbih|janamaz|prayer\s*mat|miswak|\bsocks?\b|\bgloves?\b|keychain|\bmug\b)\b/i;
 const SHOES_RE=/\b(sneaker|sneakers|boot|boots|heel|heels|loafer|loafers|moccasin|moccasins|slipper|slippers|stiletto|stilettos|wedge|wedges|pump)\b/i;
 const KEEP_FOOT=/\b(khussa|chappal|kulapuri|kolhapuri|khusa|khusse)\b/i;
 
@@ -440,7 +440,7 @@ function classifyWomenCat(s, tags){
   const emb = /embroid|\bemb\b|chikankari|zari|schiffli|adda/.test(both);
   const two   = /\b2[\s-]?(pc|piece|pcs)\b/.test(s);
   const three = /\b3[\s-]?(pc|piece|pcs)\b/.test(s);
-  if(/\bshawl\b|pashmina|\bstole\b/.test(s)) return 'shawl';
+  if(/\bshawl\b|pashmina|\bstole\b|chadar|chaddar|chaadar|dhussa|\bloi\b/.test(s)) return 'shawl';
   if(/\bdupatta\b|\bscarf\b/.test(s) && !/shirt|kurti|kurta|kameez|suit|[23][\s-]?(pc|piece)|trouser|bottom/.test(s)) return 'dupatta_only';
   if(/\bsarees?\b|\bsaris?\b/.test(s)) return 'saree';
   if(/lehenga|gharara|sharara/.test(s)) return 'lehenga';
@@ -475,7 +475,7 @@ function classifyWomenCat(s, tags){
   }
   if(/\bsuit\b/.test(s)){ if(unstitch) return emb ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch'; return emb ? 'pret_3pc_emb' : 'pret_3pc'; }
   if(/co[\s-]?ord|coord/.test(s)) return unstitch ? 'shirt_trouser_2pc_unstitch' : 'coord_western';
-  if(/trouser|pant|palazzo|plazo|capri|culotte|tights|leggings?|\bjeans?\b|\bdenim\b|\bskirt\b|\bshorts?\b/.test(s) && !/shirt|kurti|kurta|kameez/.test(s)) return 'womens_trouser';
+  if(/trouser|pant|palazzo|plazo|capri|culotte|tights|leggings?|\bjeans?\b|\bdenim\b|\bskirt\b|\bshorts?\b|\bbottoms?\b/.test(s) && !/shirt|kurti|kurta|kameez/.test(s)) return 'womens_trouser';
   if(/dress|maxi|gown|jumpsuit|\bfrock\b|anarkali/.test(s) && !unstitch) return 'maxi_dress';
   if(/kurti|kurta|shirt|tunic|\bcape\b|\btop\b|peplum|blouse/.test(s)) return unstitch ? 'kurti_1pc_unstitch' : 'kurti_1pc';
   if(/\blawn\b|cambric|voile|khaddar|karandi|fabric|piece[\s-]?goods/.test(s)) return stitched ? 'pret_3pc' : (emb ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch');
@@ -595,7 +595,7 @@ function classifyMen(s, brandName){
   if(/\bshirt\b/.test(s)) return 'mens_shirt';
   // Men's western tops (tee/hoodie/sweat/etc.) → Men Shirt (no separate men-western cat)
   if(/\btee\b|t\s?shirt|polo|hoodie|sweat|pullover|jersey|jumper|cardigan|\bupper\b|\btops?\b/.test(s)) return 'mens_shirt';
-  if(/trouser|chino|\bpant/.test(s)) return 'mens_trouser';
+  if(/trouser|chino|\bpant|\bbottoms?\b|pajama|pyjama/.test(s)) return 'mens_trouser';   // men pant/jeans/pyjama → Men Bottoms
   return brandMenDefault(brandName);   // vague men collection → kurta vs shirt by catalog skew
 }
 // A men-brand's default garment for vague collections: shirt for western menswear
