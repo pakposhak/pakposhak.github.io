@@ -423,8 +423,8 @@ const PIVOT_LABELS={
 const ALL_PIVOT_LABELS=[...PIVOT_LABELS.kids,...PIVOT_LABELS.women,...PIVOT_LABELS.men];
 
 // ── NOISE FILTER (non-clothing collections) ────────────────────────────────────
-const NOISE_RE=/\b(furniture|sofa|chair|table|cushion|curtain|carpet|rug|lamp|decor|candle|bedsheet|pillow|comforter|mattress|toy|toys|teddy|puzzle|game|games|doll|belt|belts|bag|bags|purse|wallet|clutch|handbag|tote|satchel|perfume|fragrance|cologne|attar|deodorant|jewellery|jewelry|necklace|earring|earrings|bracelet|bangle|bangles|makeup|cosmetic|lipstick|foundation|skincare|sunscreen|electronic|phone|mobile|gadget|laptop|stationery|diary|planner|supplement|vitamin|protein|umbrella|sunglasses|spectacle|eyewear|watches)\b/i;
-const SHOES_RE=/\b(sneaker|sneakers|boot|boots|heel|heels|loafer|moccasin|slipper|slippers)\b/i;
+const NOISE_RE=/\b(furniture|sofa|chair|table|cushion|curtain|carpet|rug|lamp|decor|candle|bedsheet|pillow|comforter|mattress|toy|toys|teddy|puzzle|game|games|doll|belt|belts|bag|bags|purse|wallet|clutch|handbag|tote|satchel|perfume|fragrance|cologne|attar|deodorant|jewellery|jewelry|necklace|earring|earrings|bracelet|bangle|bangles|makeup|cosmetic|lipstick|foundation|skincare|sunscreen|electronic|phone|mobile|gadget|laptop|stationery|diary|planner|supplement|vitamin|protein|umbrella|sunglasses|spectacle|eyewear|watches|cap|caps|scrunchie|scrunchies|cufflink|cufflinks|undergarment|undergarments|lingerie|turban|turbans|potli|body\s*mist|slides|pumps|nail|mascara|kohl|liner|blush|concealer|primer|palette|lashes|lash|serum|toner|moisturiser|moisturizer|diffuser|incense|room\s*spray|home\s*decor|throw|runner)\b/i;
+const SHOES_RE=/\b(sneaker|sneakers|boot|boots|heel|heels|loafer|loafers|moccasin|moccasins|slipper|slippers|stiletto|stilettos|wedge|wedges|pump)\b/i;
 const KEEP_FOOT=/\b(khussa|chappal|kulapuri|kolhapuri|khusa|khusse)\b/i;
 
 function isNoise(col){
@@ -438,8 +438,11 @@ function isNoise(col){
 function collToOurLabel(col){
   const d=col.d||'', s=col.s||[], k=col.k||'';
   const h=(col.h||'').toLowerCase(), tl=(col.t||'').toLowerCase();
-  const inHT=w=>h.includes(w)||tl.includes(w);
+  const txt=h+' '+tl;
+  const inHT=w=>txt.includes(w);
+  const anyOf=(...ws)=>ws.some(w=>inHT(w));
 
+  // ── KIDS ──────────────────────────────────────────────────────────────────────
   if(d==='kids'){
     if(k==='infant') return 'Kids Infant';
     const g=k==='girls'?'Girls':k==='boys'?'Boys':null;
@@ -447,41 +450,62 @@ function collToOurLabel(col){
     if(s.includes('eastern')) return base+' Eastern';
     if(s.includes('western')) return base+' Western';
     if(s.includes('formal'))  return base+' Formal';
-    // Infer from title keywords
-    const isWest=inHT('jean')||inHT('tee')||inHT('t-shirt')||inHT('shorts')||inHT('chino')||inHT('trouser')||inHT('pant');
-    const isEast=inHT('kurta')||inHT('shalwar')||inHT('kameez')||inHT('frock')||inHT('sharara')||inHT('gharara');
+    const isFormal=anyOf('sherwani','achkan','bandgala');
+    const isWest=anyOf('jean','jeans','tee','t-shirt','shorts','chino','trouser','pant','polo','hoodie','sweatshirt','cargo','denim','jogger');
+    const isEast=anyOf('kurta','shalwar','kameez','frock','sharara','gharara','salwar','angrakha','lawn','pret');
+    if(isFormal) return base+' Formal';
     if(isWest&&g) return g+' Western';
     if(isEast&&g) return g+' Eastern';
-    if(g==='Girls') return 'Girls Eastern'; // Pakistani default: girls clothing = eastern
-    return null; // can't determine gender or style
+    if(isWest) return base+' Western';
+    if(isEast) return base+' Eastern';
+    // Default: eastern is Pakistani/Bangladeshi standard for kids
+    return g ? g+' Eastern' : 'Kids Eastern';
   }
 
+  // ── MEN ───────────────────────────────────────────────────────────────────────
   if(d==='men'){
-    if(s.includes('unstitched'))                             return 'Men Unstitched';
-    if(inHT('sherwani'))                                     return 'Men Sherwani';
-    if(inHT('waistcoat')||inHT('vest'))                      return 'Men Waistcoat';
-    if(inHT('suit')&&!inHT('swim'))                          return 'Men Suit';
-    if(inHT('trouser')||inHT('pant')&&!inHT('shalwar'))      return 'Men Trouser';
-    if(inHT('jeans'))                                        return 'Men Jeans';
-    if(inHT('shirt')&&!inHT('shalwar'))                      return 'Men Shirt';
-    if(s.includes('eastern')||inHT('kurta')||inHT('shalwar')||inHT('kameez')||inHT('kurta')) return 'Men Kurta/SK';
-    if(s.includes('western'))                                return 'Men Western';
-    if(s.includes('formal'))                                 return 'Men Formal';
-    if(inHT('pret')||inHT('lawn')||inHT('khaddar'))          return 'Men Kurta/SK';
-    return null;
+    if(s.includes('unstitched'))                               return 'Men Unstitched';
+    if(anyOf('sherwani','achkan','bandgala'))                   return 'Men Sherwani';
+    if(anyOf('waistcoat','vest'))                              return 'Men Waistcoat';
+    if(anyOf('blazer','suit')&&!inHT('swim'))                  return 'Men Suit';
+    if(anyOf('jeans','denim'))                                 return 'Men Jeans';
+    if(anyOf('shirt')&&!inHT('shalwar'))                       return 'Men Shirt';
+    if(anyOf('trouser','chino','shorts','bottom')&&!inHT('shalwar')) return 'Men Trouser';
+    if(inHT('pant')&&!anyOf('shalwar','dupant'))               return 'Men Trouser';
+    if(anyOf('activewear','athletic','sportswear','sport','gym','jogger','track')) return 'Men Western';
+    if(anyOf('outerwear','jacket','coat','parka','windbreaker','bomber')) return 'Men Western';
+    if(s.includes('western'))                                  return 'Men Western';
+    if(anyOf('formal','semi-formal','semiformal'))             return 'Men Formal';
+    if(s.includes('formal'))                                   return 'Men Formal';
+    if(anyOf('kurta','shalwar','kameez','thobe','thoub','jubba','kandora','kandura')) return 'Men Kurta/SK';
+    if(s.includes('eastern'))                                  return 'Men Kurta/SK';
+    if(anyOf('pret','lawn','khaddar','karandi','linen','cotton','winter','eid','festive')) return 'Men Kurta/SK';
+    return 'Men Kurta/SK'; // nothing unmapped — default men = kurta/SK
   }
 
-  if(inHT('abaya'))                                          return 'Abaya';
-  if(inHT('bridal')||inHT('wedding')||inHT('barat')||inHT('nikkah')||inHT('nikah')) return 'Bridal';
-  if(inHT('lehenga'))                                        return 'Lehenga';
-  if(inHT('saree')||inHT('sari'))                            return 'Saree';
-  if(inHT('kaftan'))                                         return 'Kaftan';
-  if(inHT('dupatta')&&!inHT('suit')&&!inHT(' set'))          return 'Dupatta';
-  if(inHT('shawl')||inHT('stole'))                           return 'Shawl';
-  if(inHT('lounge')||inHT('co-ord')||inHT('coord'))          return 'Loungewear/Coord';
-  if(inHT('trouser')||(inHT('pant')&&!inHT('dupant')))       return 'Women Trouser';
-  if(inHT('kurti'))                                          return 'Kurti';
-  if(inHT('maxi')||inHT('dress')&&!inHT('dress shirt'))      return 'Maxi/Dress';
+  // ── GENERAL (d='' or d='women') ──────────────────────────────────────────────
+  // Men-specific items in untagged (d='') collections
+  if(d===''&&anyOf('sherwani','achkan','bandgala'))             return 'Men Sherwani';
+  if(d===''&&inHT('waistcoat')&&!inHT('women'))                return 'Men Waistcoat';
+  if(d===''&&anyOf('thobe','thoub','jubba','kandora','kandura')) return 'Men Kurta/SK';
+  // Detect men-labelled untagged collections
+  const looksLikeMen=d===''&&(tl.startsWith('men')||tl.startsWith("men's")||inHT(' men ')||inHT(' mens ')||inHT("men's "));
+
+  if(anyOf('abaya','niqab','jilbab'))                          return 'Abaya';
+  if(anyOf('bridal','wedding','barat','nikkah','nikah','shaadi','valima')) return 'Bridal';
+  if(inHT('lehenga'))                                          return 'Lehenga';
+  if(anyOf('saree','sari'))                                    return 'Saree';
+  if(inHT('kaftan'))                                           return 'Kaftan';
+  if(inHT('dupatta')&&!anyOf('suit',' set','kameez','3 piece','3-piece','3pc')) return 'Dupatta';
+  if(anyOf('shawl','stole','scarf','scarves','pashmina'))       return 'Shawl';
+  if(anyOf('lounge','co-ord','coord','coordinate'))             return 'Loungewear/Coord';
+  if(anyOf('tights','legging','leggings'))                     return 'Women Trouser';
+  if(inHT('trouser')&&!inHT('shalwar'))                        return looksLikeMen?'Men Trouser':'Women Trouser';
+  if(inHT('pant')&&!anyOf('shalwar','dupant'))                 return looksLikeMen?'Men Trouser':'Women Trouser';
+  if(inHT('kurti'))                                            return 'Kurti';
+  if(anyOf('maxi','gown')&&!inHT('swim'))                      return 'Maxi/Dress';
+  if(inHT('dress')&&!anyOf('dress shirt','address','addressed')) return 'Maxi/Dress';
+  if(anyOf('peshwas','peshwaz'))                               return 'Formal Eastern';
 
   const isUn=s.includes('unstitched'),isFo=s.includes('formal'),isEa=s.includes('eastern'),isWe=s.includes('western');
   if(isUn&&isFo)   return 'Formal Unstitched';
@@ -490,15 +514,34 @@ function collToOurLabel(col){
   if(isFo&&isEa)   return 'Formal Eastern';
   if(isFo)         return 'Formal';
   if(isEa)         return 'Eastern Pret';
-  if(isWe)         return 'Western';
+  if(isWe)         return looksLikeMen?'Men Western':'Western';
 
-  // Infer from fabric/garment keywords for women
-  if(inHT('pret'))                                           return 'Eastern Pret';
-  if((inHT('lawn')||inHT('cotton')||inHT('linen')||inHT('khaddar')||inHT('karandi')||inHT('chiffon')||inHT('georgette')||inHT('silk'))&&!inHT('unstitched')) return 'Eastern Pret';
-  if(inHT('festive')||inHT('eid')||inHT('mehndi'))           return 'Formal Eastern';
-  if(inHT('embroidered')||inHT('luxe')||inHT('luxury')||inHT('premium')&&!inHT('unstitched')) return 'Formal Eastern';
-  if(inHT('ready to wear')||inHT('readytowear')||inHT('rtw')) return 'Eastern Pret';
-  return null;
+  // Keyword inference
+  if(anyOf('pret','ready to wear','readytowear','rtw'))         return 'Eastern Pret';
+  if(anyOf('activewear','athletic','sportswear','sport','gym','yoga','fitness','active')) return looksLikeMen?'Men Western':'Western';
+  if(anyOf('outerwear','jacket','coat','parka','bomber','windbreaker')) return looksLikeMen?'Men Western':'Western';
+  if(anyOf('blazer','suit')&&!inHT('swim'))                    return looksLikeMen?'Men Suit':'Formal';
+  if(anyOf('velvet','makhmal','jacquard','tissue','net'))       return 'Formal Eastern';
+  if(anyOf('embroidered','embroidery','luxe','luxury','heavy formal','couture')) return 'Formal Eastern';
+  if(anyOf('festive','eid','mehndi','dholki','walima'))         return 'Formal Eastern';
+  if(anyOf('premium','semi-formal','formal'))                  return 'Formal Eastern';
+  // 2-piece / 3-piece unstitched
+  if(anyOf('unstitched','fabric suit','suit fabric'))          return 'Unstitched';
+  if(anyOf('2 piece unstitched','2pc unstitched','2-piece unstitched','shirt dupatta unstitch')) return 'Lawn Unstitched';
+  if(anyOf('3 piece unstitched','3pc unstitched','3-piece unstitched')) return 'Unstitched';
+  // 2-piece / 3-piece stitched
+  if(anyOf('2 piece','2-piece','2pc','shirt dupatta','shirt & dupatta','shirt and dupatta')) return 'Eastern Pret';
+  if(anyOf('3 piece','3-piece','3pc','three piece','shalwar kameez')) return 'Eastern Pret';
+  // Fabrics → Eastern Pret (stitched context)
+  if(anyOf('lawn','cotton','linen','khaddar','karandi','chiffon','georgette','silk','banarsi','cambric','marina','fleece','kashmiri')) return 'Eastern Pret';
+  if(anyOf('kurta','kameez','shalwar','frock','gharara','sharara','angrakha','anarkali')) return 'Eastern Pret';
+  // Winter / seasonal
+  if(anyOf('winter','khassi','wool','quilted','shearling','warmth','fall','autumn')) return 'Eastern Pret';
+  if(anyOf('summer','spring','casual','everyday','basics','staples','essentials','classic')) return 'Eastern Pret';
+  // Men-coded fallback
+  if(looksLikeMen) return 'Men Kurta/SK';
+  // Nothing can be unmapped — default to Eastern Pret
+  return 'Eastern Pret';
 }
 
 function collMatchesSub(col,sub){
