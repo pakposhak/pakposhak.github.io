@@ -179,6 +179,22 @@ button.subf.on{background:#0d1624;border-color:#7ab8ff;color:#7ab8ff}
 .map-table .no-label{color:#444;font-style:italic}
 .map-count{font-size:0.78rem;color:#666;padding:6px 10px;border-bottom:1px solid #1e1e32;background:#0d0d1e}
 
+/* ── Table view (brand × category cross-tab) ───────────── */
+.tv-scroll{overflow:auto;max-height:calc(100vh - 150px)}
+.tv-table{border-collapse:separate;border-spacing:0;font-size:0.7rem;white-space:nowrap}
+.tv-table th,.tv-table td{border-right:1px solid #1c1c30;border-bottom:1px solid #16162a;padding:3px 7px}
+.tv-table thead th{position:sticky;top:0;z-index:3;background:#15152a;color:#c9a96e;font-weight:600;text-align:right;vertical-align:bottom}
+.tv-table th.tv-brand{text-align:left}
+.tv-table .tv-brand{position:sticky;left:0;z-index:2;background:#101022;color:#ddd;text-align:left;font-weight:600;min-width:150px;max-width:150px;overflow:hidden;text-overflow:ellipsis}
+.tv-table thead th.tv-brand{z-index:4}
+.tv-table .tv-num{text-align:right;color:#cdd;font-variant-numeric:tabular-nums}
+.tv-table tbody tr:hover td{background:#191934}
+.tv-table tbody tr:hover .tv-brand{background:#20203e}
+.tv-table .tv-rowtot{font-weight:700;color:#c9a96e;background:#13132600}
+.tv-table tfoot td{position:sticky;bottom:0;z-index:3;background:#15152a;color:#c9a96e;font-weight:700;text-align:right}
+.tv-table tfoot td.tv-brand{z-index:4;text-align:left}
+.tv-table .tv-grand{color:#fff;background:#2a2a18}
+
 /* ── Loading / empty ─────────────────────────── */
 #loadMsg{padding:24px;text-align:center;color:#666;font-size:0.9rem}
 .no-results{padding:24px;text-align:center;color:#666}
@@ -213,9 +229,8 @@ button.subf.on{background:#0d1624;border-color:#7ab8ff;color:#7ab8ff}
       <button id="dMen"  class="inactive" onclick="setDept('men')">Men</button>
     </div>
     <div class="view-tabs">
-      <button id="vList"  class="inactive" onclick="setView('list')">List</button>
-      <button id="vPivot" class="inactive" onclick="setView('pivot')">Pivot</button>
-      <button id="vMap"   class="active"   onclick="setView('map')">Map</button>
+      <button id="vTable" class="active"   onclick="setView('table')">Table</button>
+      <button id="vMap"   class="inactive" onclick="setView('map')">Map</button>
     </div>
     <label class="tog"><input type="checkbox" id="ruleOnly" onchange="renderAll()"> Rules only</label>
     <label class="tog"><input type="checkbox" id="hideNoiseTog" checked onchange="renderAll()"> Hide non-clothing</label>
@@ -255,6 +270,7 @@ button.subf.on{background:#0d1624;border-color:#7ab8ff;color:#7ab8ff}
   <!-- Views -->
   <div id="listView" style="display:none"></div>
   <div id="pivotView" style="display:none"></div>
+  <div id="tableView" style="display:none"></div>
   <div id="mapView" style="display:none"></div>
 </div>
 
@@ -676,7 +692,7 @@ function brandMainDept(name){
 }
 
 // ── STATE ──────────────────────────────────────────────────────────────────────
-let brandIndex=null, brandMapData=null, currentDept='all', currentView='map', subFilter='';
+let brandIndex=null, brandMapData=null, currentDept='all', currentView='table', subFilter='';
 // Per-collection category overrides, keyed "BrandName||handle", produced by
 // classify-vague-collections.js (reads each vague collection's real product type/tags).
 let collOverrides={};
@@ -729,14 +745,14 @@ function setView(v){
 
 function updateViewUI(){
   const v=currentView;
-  document.getElementById('vList').className=v==='list'?'active':'inactive';
-  document.getElementById('vPivot').className=v==='pivot'?'active':'inactive';
+  document.getElementById('vTable').className=v==='table'?'active':'inactive';
   document.getElementById('vMap').className=v==='map'?'active':'inactive';
-  document.getElementById('subfRow').style.display=v==='list'?'':'none';
-  document.getElementById('hideEmptyTog').style.display=v==='pivot'?'':'none';
+  document.getElementById('subfRow').style.display='none';
+  document.getElementById('hideEmptyTog').style.display='none';
   document.getElementById('legend').style.display=v==='map'?'none':'';
-  document.getElementById('listView').style.display=v==='list'?'':'none';
-  document.getElementById('pivotView').style.display=v==='pivot'?'':'none';
+  document.getElementById('listView').style.display='none';
+  document.getElementById('pivotView').style.display='none';
+  document.getElementById('tableView').style.display=v==='table'?'':'none';
   document.getElementById('mapView').style.display=v==='map'?'':'none';
 }
 
@@ -793,9 +809,39 @@ function renderAll(){
   updateViewUI();
   document.getElementById('loadMsg').style.display='none';
 
-  if(currentView==='list')renderList(brands);
-  else if(currentView==='pivot')renderPivot();
-  else renderMap();
+  if(currentView==='map')renderMap();
+  else renderTable(brands);
+}
+
+// ── TABLE VIEW — brand × category cross-tab from the LIVE brand-index ───────────
+// Cells are REAL catalog product counts (deduplicated — a product is counted once,
+// not once per collection), so the Grand Total is the true catalogue size (~59k),
+// not the overlap-inflated collection sum. Row total = brand's products; column
+// total (the Grand Total row) = that category's products across all brands.
+function renderTable(brands){
+  const tv=document.getElementById('tableView');
+  if(!brandIndex){tv.innerHTML='<div class="no-results">No data. Click Refresh.</div>';return;}
+  const cols=Object.keys(CAT_INFO).sort((a,b)=>CAT_INFO[a].label.localeCompare(CAT_INFO[b].label));
+  const colTot={}; cols.forEach(k=>colTot[k]=0);
+  let grand=0;
+  const bodyRows=brands.map(([name,cm])=>{
+    let rowTot=0;
+    const cells=cols.map(k=>{
+      const n=(cm&&cm[k])||0; if(n){ colTot[k]+=n; rowTot+=n; }
+      return `<td class="tv-num">${n?n.toLocaleString():''}</td>`;
+    }).join('');
+    grand+=rowTot;
+    return `<tr><td class="tv-brand">${esc(name)}</td>${cells}<td class="tv-num tv-rowtot">${rowTot.toLocaleString()}</td></tr>`;
+  }).join('');
+  const headCols=cols.map(k=>`<th class="tv-cat" title="${esc(CAT_INFO[k].label)}">${esc(CAT_INFO[k].label)}</th>`).join('');
+  const footCols=cols.map(k=>`<td class="tv-num tv-coltot">${(colTot[k]||0).toLocaleString()}</td>`).join('');
+  tv.innerHTML=`
+    <div class="map-count"><b>${brands.length.toLocaleString()}</b> brands · <b style="color:#c9a96e">${grand.toLocaleString()} pcs</b> total — real catalogue count (each product counted once)</div>
+    <div class="tv-scroll"><table class="tv-table">
+      <thead><tr><th class="tv-brand">Brand</th>${headCols}<th class="tv-rowtot">Grand Total</th></tr></thead>
+      <tbody>${bodyRows}</tbody>
+      <tfoot><tr><td class="tv-brand">Grand Total</td>${footCols}<td class="tv-num tv-grand">${grand.toLocaleString()}</td></tr></tfoot>
+    </table></div>`;
 }
 
 // ── LIST VIEW ──────────────────────────────────────────────────────────────────
@@ -1242,8 +1288,28 @@ h2{color:#c9a96e;font-size:1.1rem;margin-bottom:4px}
 
 // ── EXPORT CSV ────────────────────────────────────────────────────────────────
 function exportCSV(){
-  if(currentView==='pivot')exportPivotCSV();
-  else exportMapCSV();
+  if(currentView==='map'){ exportMapCSV(); return; }
+  exportTableCSV();
+}
+// Brand × category cross-tab with REAL catalogue counts (deduplicated) — Grand Total ~59k.
+function exportTableCSV(){
+  if(!brandIndex){alert('No data loaded.');return;}
+  const search=(document.getElementById('brandSearch').value||'').toLowerCase();
+  let brands=Object.entries(brandIndex);
+  if(search)brands=brands.filter(([n])=>n.toLowerCase().includes(search));
+  brands.sort((a,b)=>a[0].localeCompare(b[0]));
+  const cols=Object.keys(CAT_INFO).sort((a,b)=>CAT_INFO[a].label.localeCompare(CAT_INFO[b].label));
+  const header=['Brand',...cols.map(k=>CAT_INFO[k].label),'Grand Total'];
+  const rows=[header];
+  const colTot={}; cols.forEach(k=>colTot[k]=0); let grand=0;
+  for(const [name,cm] of brands){
+    let rowTot=0;
+    const cells=cols.map(k=>{ const n=(cm&&cm[k])||0; if(n){colTot[k]+=n;rowTot+=n;} return n||''; });
+    grand+=rowTot;
+    rows.push([name,...cells,rowTot]);
+  }
+  rows.push(['Grand Total',...cols.map(k=>colTot[k]||0),grand]);
+  downloadCSV(rows,'brand-category-totals.csv');
 }
 
 function exportMapCSV(){
