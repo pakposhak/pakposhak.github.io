@@ -140,8 +140,7 @@ button.subf.on{background:#0d1624;border-color:#7ab8ff;color:#7ab8ff}
 /* Body */
 .pv-table tbody tr:hover td{background:#181830!important}
 .pv-table tbody tr:hover td.c0,.pv-table tbody tr:hover td.c1,.pv-table tbody tr:hover td.c2{background:#1c1c38!important}
-.pv-table td.pv-val{color:#ddd;font-weight:600;cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px;font-variant-numeric:tabular-nums}
-.pv-table td.pv-val:hover{color:#fff;background:#222240!important}
+.pv-table td.pv-val{color:#ddd;font-weight:600;font-variant-numeric:tabular-nums}
 .pv-table td.pv-empty{color:#1e1e30}
 .pv-table .pv-brand{font-weight:700;color:#ddd;font-size:0.74rem}
 .pv-table .pv-coll{color:#aaa;font-size:0.72rem;cursor:pointer}
@@ -235,6 +234,9 @@ button.subf.on{background:#0d1624;border-color:#7ab8ff;color:#7ab8ff}
     <button class="subf" data-v="unstitched" onclick="setSubFilter(this,'unstitched')">Unstitched</button>
     <button class="subf" data-v="girls" onclick="setSubFilter(this,'girls')">Girls</button>
     <button class="subf" data-v="boys" onclick="setSubFilter(this,'boys')">Boys</button>
+    <span class="subf-label" style="margin-left:14px">Category:</span>
+    <select id="listCatSel" onchange="setListCat(this.value)" title="Filter the list to one of our categories"
+            style="background:#15152a;color:#cfd;border:1px solid #33335a;border-radius:6px;padding:3px 6px;font-size:0.72rem"></select>
     <span id="subfCount" style="font-size:0.7rem;color:#555;margin-left:6px"></span>
   </div>
 
@@ -744,6 +746,19 @@ function setSubFilter(btn,v){
   renderAll();
 }
 
+// List page: single dropdown of ALL our categories (grouped) to filter the list.
+let listCatFilter='';
+function setListCat(v){ listCatFilter=v; renderAll(); }
+function buildListCatSel(){
+  const sel=document.getElementById('listCatSel'); if(!sel||sel.options.length>1) return;
+  let html='<option value="">All categories</option>';
+  for(const [grp,label] of [['kids','Kids'],['women','Women'],['men','Men']]){
+    const keys=Object.keys(CAT_INFO).filter(k=>CAT_INFO[k].group===grp||(grp==='women'&&CAT_INFO[k].group==='other'));
+    html+='<optgroup label="'+label+'">'+keys.map(k=>'<option value="'+k+'">'+esc(CAT_INFO[k].label)+'</option>').join('')+'</optgroup>';
+  }
+  sel.innerHTML=html;
+}
+
 function renderAll(){
   if(!brandIndex)return;
   const search=(document.getElementById('brandSearch').value||'').toLowerCase();
@@ -786,7 +801,17 @@ function renderAll(){
 // ── LIST VIEW ──────────────────────────────────────────────────────────────────
 function renderList(brands){
   const lv=document.getElementById('listView');
-  if(!brands.length){lv.innerHTML='<div class="no-results">No brands match.</div>';return;}
+  buildListCatSel();
+  const lcat=listCatFilter;
+  const _lcatSel=document.getElementById('listCatSel'); if(_lcatSel)_lcatSel.value=lcat;
+  if(lcat){
+    brands=brands.filter(([name,catMap])=>{
+      if((catMap[lcat]||0)>0)return true;
+      const bd=brandMapData&&brandMapData.brands.find(b=>b.name===name);
+      return !!(bd&&bd.cols&&bd.cols.some(c=>!isNoise(c,name)&&collToOurCatKey(c,name)===lcat));
+    });
+  }
+  if(!brands.length){lv.innerHTML='<div class="no-results">No brands match'+(lcat?' for '+esc(CAT_INFO[lcat].label):'')+'.</div>';return;}
   const deptFilter=currentDept;
   const collMap={};
   if(brandMapData)brandMapData.brands.forEach(b=>{collMap[b.name]=b;});
@@ -810,10 +835,10 @@ function renderList(brands){
     const mTot=MEN_CATS.reduce((s,k)=>s+(catMap[k]||0),0);
     const tot=kTot+wTot+mTot+OTHER_CATS.reduce((s,k)=>s+(catMap[k]||0),0);
     const rulesBadges=rules.map(r=>`<span class="badge ${r.k}">${r.label}</span>`).join('');
-    const isOpen=openBrands.has(name);
+    const isOpen=lcat?true:openBrands.has(name);   // auto-expand when a category filter is active
     let subRows='';
     for(const {group,cats,hdr,cls} of groupDefs){
-      const catRows=cats.filter(cat=>(catMap[cat]||0)>0);
+      const catRows=cats.filter(cat=>(catMap[cat]||0)>0&&(!lcat||cat===lcat));
       if(!catRows.length)continue;
       subRows+=`<div class="srow-hdr ${cls}">${hdr} — ${catRows.reduce((s,k)=>s+(catMap[k]||0),0)} products</div>`;
       for(const cat of catRows){
@@ -835,6 +860,7 @@ function renderList(brands){
     if(bData&&bData.cols&&bData.cols.length){
       let filtCols=bData.cols.filter(c=>{
         if(hideNoise&&isNoise(c,name))return false;
+        if(lcat&&collToOurCatKey(c,name)!==lcat)return false;   // single-category filter (list page)
         const cd=collDeptKey(c,name);   // single per-collection dept (from mapped category)
         if(deptFilter==='kids'&&cd!=='kids')return false;
         if(deptFilter==='women'&&cd!=='women')return false;
@@ -974,7 +1000,7 @@ function renderPivot(){
     const isBrandStart=r.brand!==prevBrand;
     prevBrand=r.brand;
     const cells=shownKeys.map(k=>{
-      if(r.catKey===k)return`<td class="pv-val" data-brand="${esc(r.brand)}" data-cat="${esc(k)}" title="View products: ${esc(r.brand)} / ${esc(CAT_INFO[k].label)}">${r.count}</td>`;
+      if(r.catKey===k)return`<td class="pv-val">${r.count}</td>`;
       return`<td class="pv-empty">·</td>`;
     }).join('');
     const deptCls=r.dept==='kids'?'kids-boys':r.dept==='men'?'men':'women';
@@ -1018,12 +1044,7 @@ function renderPivot(){
       <tbody>${bodyRows.join('')||'<tr><td colspan="'+(3+shownKeys.length)+'" style="text-align:center;color:#555;padding:24px">No collections match the filters.</td></tr>'}</tbody>
     </table>`;
 
-  // Pivot cell click: show products for that brand + real category
-  pv.querySelectorAll('td.pv-val').forEach(td=>{
-    td.addEventListener('click',()=>{
-      showProducts(td.dataset.brand,td.dataset.cat);
-    });
-  });
+  // (Pivot number cells are plain text now — no per-cell product link, lighter sheet.)
 
   // Restore filter select values after re-render
   const pvfl=document.getElementById('pvFLabel');
@@ -1098,7 +1119,15 @@ function renderMap(){
     </tr>`;
   }).join('');
 
-  const totalPcs=allRows.reduce((s,r)=>s+(+r.count||0),0);
+  // Real piece count = the live brand-index catalog count, deduped per brand×category.
+  // (Summing collection counts overcounts massively — products belong to many collections.)
+  const _seenBC=new Set(); let totalPcs=0;
+  for(const r of allRows){
+    const bk=r.brand+''+r.catKey;
+    if(_seenBC.has(bk))continue; _seenBC.add(bk);
+    const bi=brandIndex&&brandIndex[r.brand];
+    totalPcs+=(bi&&bi[r.catKey])||0;
+  }
   const isFiltered=!!(fBrand||fColl||fLabel||fDept||globalSearch);
   mv.innerHTML=`
     <div class="map-count">${allRows.length.toLocaleString()} collections · <b style="color:#c9a96e">${totalPcs.toLocaleString()} pcs</b>${isFiltered?' &nbsp;(filtered selection)':' · every collection mapped to one real category'}</div>
