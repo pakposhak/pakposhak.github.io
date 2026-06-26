@@ -5743,6 +5743,32 @@
       if(/\bsuiting\b|\bsuit\b|\bblazer\b|\bgilet\b|\bupper\b|zip[\s-]?up|\bjeans?\b|\bdenim\s+(?:jacket|shirt)|t-?shirt|\btee\b|\bpolo\b|\bhoodie\b|\bsweat|\bjacket\b|loungewear|\bpaj?ama|\bpyjama|\bathletic\b|\btrack\b|\bshorts?\b|\bjogger|\bbomber\b|\bcardigan\b/i.test(t)) return false;   // clearly western → never on an eastern tile
       return false;   // unknown garment → skip; wait for a clear eastern photo
     }
+    // Kids WESTERN tile must show WESTERN garment (t-shirt, jeans, dress, etc.), never eastern.
+    if(/^kids_(?:boys|girls)_western$/.test(catKey)){
+      if(/\bsuiting\b|\bsuit\b|\bblazer\b|\bgilet\b|\bupper\b|zip[\s-]?up|\bjeans?\b|\bdenim\s+(?:jacket|shirt)|t-?shirt|\btee\b|\bpolo\b|\bhoodie\b|\bsweat|\bjacket\b|loungewear|\bpaj?ama|\bpyjama|\bathletic\b|\btrack\b|\bshorts?\b|\bjogger|\bbomber\b|\bcardigan\b|\bdress\b/i.test(t)) return true;   // a real western garment → use it
+      if(/\bkurta|kameez|shalwar|sherwani|waist\s?coat|\bfrock\b|anarkali|lehenga|gharara|sharara|\bethnic\b|\beastern\b|peshwas|\bkurti\b/i.test(t)) return false;   // eastern → never on a western tile
+      return false;   // unknown garment → skip
+    }
+    // Unstitched tile should prefer 3pc/fabric, not single-piece stitched items.
+    if(/unstitch/.test(catKey)){
+      if(/\b3[\s-]?pc|\b2[\s-]?pc|lawn|fabric|tissue|karandi|khaddar|\bunstitched\b/i.test(t)) return true;   // multi-piece or fabric → good for unstitched tile
+      if(/\b1[\s-]?pc|kurti|shirt|top|trouser|\bsuit\b/i.test(t)) return false;   // single stitched items → skip
+    }
+    // Maxi/Dress tile should prefer maxi, dresses, not other garments.
+    if(/maxi|dress/i.test(catKey)){
+      if(/\bmaxi\b|\bdress\b|gown|abaya|burka|\bevening\b/i.test(t)) return true;   // maxi/dress item → good
+      if(/\bkurti\b|\bshirt\b|trouser|jeans|\bpant\b|\btop\b|saree|lehenga|gharara/i.test(t)) return false;   // other garments → skip
+    }
+    // Shirt (Men's) tile should prefer shirts, not other garments.
+    if(/mens.*shirt|shirt.*mens/i.test(catKey)){
+      if(/\bshirt\b/i.test(t) && !/_RE/.test(t)) return true;   // shirt item → good
+      if(/\bpolo\b|\bwaistcoat\b|\bsherwani\b|trouser|pant|formal|suit/i.test(t)) return false;   // not a shirt → skip
+    }
+    // Infant tile should prefer actual infant sizes, not regular clothing.
+    if(/infant|baby/i.test(catKey)){
+      if(/\binfant\b|\bbaby\b|\bnewborn\b|\b0[\s-]?[36]|[\s-]?[36]\bmonth|\b6[\s-]?month|[\s-]?12[\s-]?month|\b[0-2]y|\b[0-3][\s-]?year|onesie|romper/i.test(t)) return true;   // infant size → good
+      if(/\b[3-9]y|10|adult|regular|standard/i.test(t)) return false;   // older kids/adult → skip
+    }
     return true;
   }
   // Per-category representative photo, cached in localStorage (14-day TTL) so the strip

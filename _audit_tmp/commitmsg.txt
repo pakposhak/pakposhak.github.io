@@ -1,0 +1,25 @@
+Whole-cart capture (?cart=) + fix first-visit SW reload wiping deep-link drafts (build 24e / psb-v33)
+
+WHOLE CART: an iOS Shortcut can run JS on a Shopify brand page to read its /cart.js
+and open order-form.html?cart=<all product links>. handleSharedUrl now handles ?cart=:
+extracts every https URL, validates each through the SAME parseUrl + isKnownBrand +
+scheme gate as a single share (factored into _validSharedLink), de-dupes, caps at 40,
+and creates one draft per item. Single ?add=/?url= path unchanged. Recipe + customer
+how-to (incl. the Shopify-only caveat + SFCC fallback): LINK-CAPTURE-SETUP.md.
+
+BUG FOUND + FIXED (affected the already-shipped ?add= too): the SW controllerchange
+handler did location.reload() on EVERY first control, including the very first install.
+On a first-time share visit the sequence was: handleSharedUrl creates the draft and
+strips ?add= from the URL -> SW installs, claims the page -> controllerchange -> reload
+-> URL no longer has the param -> the freshly-created draft is lost. Fix: capture whether
+a controller already existed at load (_hadController); only auto-reload for a genuine
+BUILD UPDATE (replacing an existing controller), never on first install. Stale-build
+protection is preserved for returning users (controller existed -> reload still fires),
+and the separate app.js?_v= auto-updater remains a second safety net.
+
+Verified in preview (build 24e): ?cart= with 3 links -> 3 drafts; 4 links with a dup +
+an unsupported host -> 2 drafts (dup merged, non-brand dropped); single ?add= -> 1 draft
+with correct component price (107,250 Full Set); manual paste unaffected; address bar
+cleared (refresh-safe); drafts now survive the first-install SW activation.
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
