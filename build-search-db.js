@@ -24,7 +24,7 @@ const Database = require('better-sqlite3');
 // the harvest step ever skips cleanup. Requires catalog-cleanup.js alongside this file on the VPS.
 const { cleanupProducts } = require('./catalog-cleanup');
 
-const CATALOG_URL = process.env.PSB_CATALOG_URL || 'https://pakposhak.github.io/catalog.json';
+const CATALOG_URL = process.env.PSB_CATALOG_URL || 'https://pakposhakonline.com/catalog.json';
 const CONFIG_URL  = process.env.PSB_CONFIG_URL  || 'http://127.0.0.1:8787/config';
 const DB_PATH     = process.env.PSB_DB          || path.join(__dirname, 'search.db');
 
