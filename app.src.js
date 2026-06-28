@@ -2632,6 +2632,7 @@
     try { if(typeof psRenderBanner === 'function') psRenderBanner(); } catch(e){}   // value banner is JS-rendered, refresh its language
     try { if(typeof psRenderColls === 'function') psRenderColls(); } catch(e){}     // collection tiles are JS-rendered too
     try { if(typeof psRenderPromises === 'function') psRenderPromises(); } catch(e){}  // promise strip too
+    try { if(typeof psMoveGenInd === 'function') psMoveGenInd(); } catch(e){}        // re-place the sliding underline (tab widths change with BN)
   }
   function toggleLang(){ setLang(_lang === 'en' ? 'bn' : 'en'); }
 
@@ -4533,8 +4534,8 @@
     {lo:4500,  hi:6000,  lbl:'৳4.5–6k'},
     {lo:6000,  hi:8000,  lbl:'৳6–8k'},
     {lo:8000,  hi:10000, lbl:'৳8–10k'},
-    {lo:10000, hi:15000, lbl:'৳10–15k'},
-    {lo:15000, hi:1e12,  lbl:'৳15k+'}
+    {lo:10000, hi:15000, lbl:'৳10k+'},   // shown as "10k+" in the filter; Home view caps at 15k so this IS the 10k+ band there
+    {lo:15000, hi:1e12,  lbl:'৳15k+'}    // bucket 6 exists for the Premium/Luxe band (price 5,6) but is HIDDEN from the filter chips (req)
   ];
   const PS_CAT_LABELS = {
     pret_3pc:'Stitched 3-piece', pret_3pc_emb:'Stitched 3pc — embroidered', pret_2pc_emb:'Stitched 2pc — embroidered',
@@ -5630,7 +5631,9 @@
 
   // ── PRICE (multi-select, OR within itself) — re-tap a bucket to clear it ──
   function psBuildPriceFilter(){
-    document.getElementById('psPrice').innerHTML = PS_BUCKETS.map((b,i) =>
+    // Render buckets 0-5 only — the "15k+" bucket (index 6) is hidden from the filter (req: Home tops out
+    // at the "10k+" slab, which caps at 15k; Premium/Luxe still shows 15k+ via its band, just not a chip).
+    document.getElementById('psPrice').innerHTML = PS_BUCKETS.slice(0, 6).map((b,i) =>
       `<button type="button" class="ps-bucket${psSel.prices.has(i)?' on':''}" onclick="psTogglePrice(${i})">${b.lbl}</button>`).join('');
     // Reflect the active price-bucket count on the compact "Price ৳" chip in the results bar
     const n = document.getElementById('psPriceN'); if(n) n.textContent = psSel.prices.size ? '('+psSel.prices.size+')' : '';
@@ -5875,6 +5878,19 @@
   // Women/Men/Kids → that department's categories. The accent (--accent) shifts per
   // department via a data-gender attribute on <html>, so the app re-tints without
   // restyling everything. Preserves any active price/brand selection.
+  // Myntra-style sliding gender underline (#2): position one indicator under the active tab; CSS
+  // transitions its left+width. Called on gender change, load, resize, and language switch.
+  function psMoveGenInd(){
+    var rail = document.getElementById('psGenRail'); if(!rail) return;
+    var ind = rail.querySelector('.ps-gen-ind'), act = rail.querySelector('.ps-gen.on');
+    if(!ind) return;
+    if(!act){ ind.style.opacity = '0'; return; }
+    ind.style.left = act.offsetLeft + 'px';
+    ind.style.width = act.offsetWidth + 'px';
+    ind.style.opacity = '1';
+  }
+  window.psMoveGenInd = psMoveGenInd;
+  window.addEventListener('resize', function(){ try{ psMoveGenInd(); }catch(e){} }, { passive:true });
   function psSetGender(g){
     const root = document.documentElement;
     if(g === 'all') root.removeAttribute('data-gender'); else root.setAttribute('data-gender', g);
@@ -5884,6 +5900,7 @@
       btns[i].classList.toggle('on', on);
       btns[i].setAttribute('aria-pressed', on ? 'true' : 'false');
     }
+    psMoveGenInd();
     // If the BRANDS view is showing, the rail drives the brand directory's gender instead
     // (#bbGtabs is hidden now). Otherwise it drives the products grid + carousel below.
     if(typeof psOnProductsTab === 'function' && !psOnProductsTab()){
@@ -6481,7 +6498,7 @@
       + '<button type="button" class="ps-qchip'+(psNewOnly?' on':'')+'" onclick="psToggleNew()">'+esc(tr('ps_new'))+'</button>'
       + '<button type="button" class="ps-qchip'+(psSaleOnly?' on':'')+'" onclick="psToggleSale()">'+esc(tr('ps_sale'))+'</button>';
     var price = '<span class="ps-qlabel">'+esc(tr('ps_price_short'))+'</span>'
-      + PS_BUCKETS.map(function(b,i){ return '<button type="button" class="ps-qchip'+(psSel.prices.has(i)?' on':'')+'" onclick="psTogglePrice('+i+')">'+esc(b.lbl)+'</button>'; }).join('');
+      + PS_BUCKETS.slice(0, 6).map(function(b,i){ return '<button type="button" class="ps-qchip'+(psSel.prices.has(i)?' on':'')+'" onclick="psTogglePrice('+i+')">'+esc(b.lbl)+'</button>'; }).join('');   // hide 15k+ (req)
     el.innerHTML = sort + price;
   }
   function psToggleSortPop(){
@@ -6651,6 +6668,7 @@
     } else {
       grid.innerHTML = psFiltered.slice(0, limit).map((p,i) => psCard(p, i)).join('');
       _psAnimateIn();
+      grid.classList.remove('ps-gridfade'); void grid.offsetWidth; grid.classList.add('ps-gridfade');   // cross-fade on reset, never a hard refresh (#3)
     }
     const shown = grid.children.length;
     const more  = psApiMode ? (shown < total) : (shown < psFiltered.length);
@@ -7328,7 +7346,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28s';
+  const PSB_BUILD = '2026-06-28t';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
@@ -7373,6 +7391,8 @@
     try { psRenderColls(); } catch(e){}   // render the collection-first home tiles
     try { psRenderPromises(); } catch(e){}   // render the promise/trust strip (search page)
     try { psFiltersInit(); } catch(e){}      // move the filter containers into the ▦ sheet
+    try { psMoveGenInd(); } catch(e){}                                  // place the sliding gender underline (#2)
+    setTimeout(function(){ try{ psMoveGenInd(); }catch(e){} }, 350);    // re-place once fonts/sticky layout settle
   });
 
 
