@@ -124,6 +124,18 @@
 
 <div class="container">
 
+  <!-- Global department rail — top-level filter for products AND brands (redesign Phase 1). -->
+  <nav class="ps-genrail" id="psGenRail" aria-label="Shop by department">
+    <button type="button" class="ps-gen on" data-g="all" aria-pressed="true"  onclick="psSetGender('all')" data-i18n="gen_all">All</button>
+    <button type="button" class="ps-gen"    data-g="w"   aria-pressed="false" onclick="psSetGender('w')"   data-i18n="gen_women">Women</button>
+    <button type="button" class="ps-gen"    data-g="m"   aria-pressed="false" onclick="psSetGender('m')"   data-i18n="gen_men">Men</button>
+    <button type="button" class="ps-gen"    data-g="k"   aria-pressed="false" onclick="psSetGender('k')"   data-i18n="gen_kids">Kids</button>
+    <span class="ps-gen-spacer"></span>
+    <button type="button" class="ps-gen-cat" aria-label="All categories" title="All categories" onclick="psToggleFiltPop('cat')">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zm10 0h6v6h-6zM4 14h6v6H4zm10 0h6v6h-6z"/></svg>
+    </button>
+  </nav>
+
   <!-- Browse: switch between the brand directory and the multi-brand product search -->
   <div class="browse-tabs">
     <button type="button" class="browse-tab on" id="bt-products" onclick="switchBrowse('products')"><span aria-hidden="true">🔎</span> <span data-i18n="tab_products">Browse products</span></button>

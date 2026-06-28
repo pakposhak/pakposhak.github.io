@@ -19,6 +19,7 @@
       --txt-muted: #6E6E6E;
       --bdr:       rgba(31,36,51,0.12);
       --bdr-med:   rgba(31,36,51,0.22);
+      --accent:    var(--gold);
     }
     [data-theme="dark"]{
       --bg:        #080E1C;
@@ -35,6 +36,23 @@
       --bdr:       rgba(201,169,110,0.15);
       --bdr-med:   rgba(201,169,110,0.25);
     }
+    /* Gender accent — shifts per department, contrast-verified on light AND dark (redesign Phase 1). */
+    :root[data-gender="w"]{ --accent:#B14A63; }
+    :root[data-gender="m"]{ --accent:#2E6E4E; }
+    :root[data-gender="k"]{ --accent:#A85D10; }
+    [data-theme="dark"][data-gender="w"]{ --accent:#E68AA0; }
+    [data-theme="dark"][data-gender="m"]{ --accent:#5FB389; }
+    [data-theme="dark"][data-gender="k"]{ --accent:#E0922F; }
+    /* Global department rail — one top-level filter for products + brands. */
+    .ps-genrail{display:flex;align-items:center;gap:2px;margin:4px 0 8px;padding:6px 2px 0;border-bottom:1px solid var(--bdr);overflow-x:auto;scrollbar-width:none}
+    .ps-genrail::-webkit-scrollbar{display:none}
+    .ps-gen{flex:0 0 auto;background:none;border:0;font:inherit;font-size:0.95rem;font-weight:700;color:var(--txt-muted);padding:8px 14px;cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap;transition:color .18s ease}
+    .ps-gen.on{color:var(--accent);border-bottom-color:var(--accent)}
+    .ps-gen:not(.on):active{color:var(--txt-sec)}
+    .ps-gen-spacer{flex:1 1 auto}
+    .ps-gen-cat{flex:0 0 auto;background:none;border:0;color:var(--accent);padding:8px 10px;cursor:pointer;display:flex;align-items:center}
+    .ps-gen-cat svg{width:21px;height:21px;fill:currentColor}
+    @media (prefers-reduced-motion:reduce){.ps-gen{transition:none}}
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:70px}
     .tl-chip{display:inline-flex;align-items:center;gap:5px;background:var(--surface);
