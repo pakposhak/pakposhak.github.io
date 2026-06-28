@@ -265,7 +265,13 @@
     setTimeout(()=>{ btn.textContent='Save Rates'; btn.style.background=''; }, 2500);
   }
 
-  const TRANS_FEE = 100;
+  const TRANS_FEE = 100;            // legacy flat per-order fee — REPLACED by per-suit local delivery below
+  const LOCAL_DELIVERY = 100;       // ৳ per suit (piece), added in the Bag at checkout (req: Danish, replaces TRANS_FEE)
+  // Total suits (pieces) in the cart = sum of every size's qty across all items — drives local delivery.
+  function cartSuitCount(){
+    if(typeof cart === 'undefined' || !cart) return 0;
+    return cart.reduce(function(s, it){ return s + (it.sizes || [{qty:1}]).reduce(function(a, z){ return a + (z.qty || 0); }, 0); }, 0);
+  }
 
   // ── WEIGHT SYSTEM ────────────────────────────────────────────────────────
   // Keys match dropdown option values and detectCategory() returns.
@@ -2485,7 +2491,7 @@
       btn_back:'← Back', btn_review:'Review My Order →', d_questions:'Questions?', d_wachat:'Chat on WhatsApp',
       r_review:'Review Your Order', r_summary:'Order Summary',
       r_intro:"Please review everything below before placing your order.",
-      r_products:'Products (PKR value)', r_logistics:'Logistics (est. weight × ৳1,600/kg)', r_txfee:'Transaction Fee', r_total:'ESTIMATED TOTAL (BDT)',
+      r_products:'Products (PKR value)', r_logistics:'Logistics (est. weight × ৳1,600/kg)', r_txfee:'Transaction Fee', r_delivery:'Local delivery', r_total:'ESTIMATED TOTAL (BDT)',
       r_avail:"⚠️ Items are subject to availability. If anything goes out of stock, we'll contact you on WhatsApp before proceeding.",
       btn_editdetails:'← Edit Details', btn_confirmsubmit:'✓ Confirm & Submit Order',
       s_submitted:'Order Request Submitted!', s_confirm_wa:"Pay using the details below to complete your order. We'll only message you on WhatsApp if a product is unavailable or the weight is much higher than estimated.",
@@ -2556,7 +2562,7 @@
       btn_back:'← পেছনে', btn_review:'আমার অর্ডার রিভিউ করি →', d_questions:'কোনো প্রশ্ন?', d_wachat:'হোয়াটসঅ্যাপে চ্যাট করুন',
       r_review:'আপনার অর্ডার রিভিউ করুন', r_summary:'অর্ডার সারসংক্ষেপ',
       r_intro:'অর্ডার করার আগে নিচের সবকিছু একবার দেখে নিন।',
-      r_products:'পণ্য (PKR মূল্যে)', r_logistics:'শিপিং (আনুমানিক ওজন × ৳১,৬০০/কেজি)', r_txfee:'ট্রান্সঅ্যাকশন ফি', r_total:'আনুমানিক মোট (টাকায়)',
+      r_products:'পণ্য (PKR মূল্যে)', r_logistics:'শিপিং (আনুমানিক ওজন × ৳১,৬০০/কেজি)', r_txfee:'ট্রান্সঅ্যাকশন ফি', r_delivery:'লোকাল ডেলিভারি', r_total:'আনুমানিক মোট (টাকায়)',
       r_avail:'⚠️ পণ্য স্টকে থাকা সাপেক্ষে। কিছু স্টকে না থাকলে এগোনোর আগে আমরা হোয়াটসঅ্যাপে জানাব।',
       btn_editdetails:'← তথ্য ঠিক করুন', btn_confirmsubmit:'✓ নিশ্চিত করে অর্ডার দিন',
       s_submitted:'অর্ডার রিকোয়েস্ট জমা হয়েছে!', s_confirm_wa:'অর্ডার শেষ করতে নিচের তথ্য দিয়ে পেমেন্ট করুন। কোনো পণ্য না থাকলে বা ওজন অনুমানের চেয়ে অনেক বেশি হলে কেবল তখনই আমরা হোয়াটসঅ্যাপে জানাব।',
@@ -3645,14 +3651,19 @@
     list.innerHTML = html;
 
     // Running total
+    // Logistics is folded into the BDT total (not shown separately); the only visible add-on is the
+    // ৳100/suit local delivery (req: Danish — replaces the flat TRANS_FEE).
     const productBdt = Math.round(totalPkr * r.CONV_RATE);
     const commission = cartCommission(r);
     const logistics  = Math.round(totalWeight * r.LOG_RATE);
-    const totalBdt   = productBdt + commission + logistics + TRANS_FEE;
+    const suits      = cartSuitCount();
+    const localDel   = LOCAL_DELIVERY * suits;
+    const totalBdt   = productBdt + commission + logistics + localDel;
     document.getElementById('rt-item-count').textContent = cart.length;
     document.getElementById('rt-pkr').textContent  = 'PKR ' + totalPkr.toLocaleString();
     const rtW = document.getElementById('rt-weight'); if(rtW) rtW.textContent = '≈ ' + totalWeight.toFixed(2) + ' kg';
-    document.getElementById('rt-logistics').textContent = '৳ ' + logistics.toLocaleString();
+    var rtSuits = document.getElementById('rt-suits'); if(rtSuits) rtSuits.textContent = suits;
+    var rtDel = document.getElementById('rt-delivery'); if(rtDel) rtDel.textContent = '৳ ' + localDel.toLocaleString();
     document.getElementById('rt-total').textContent = '৳ ' + totalBdt.toLocaleString();
     rtBox.style.display = '';
     saveCartToStorage();
@@ -3780,10 +3791,13 @@
     const productBdt = Math.round(totalPkr * r.CONV_RATE);
     const commission = cartCommission(r);
     const logistics  = Math.round(totalWeight * r.LOG_RATE);
-    const totalBdt   = productBdt + commission + logistics + TRANS_FEE;
-    document.getElementById('sum-pkr').textContent       = 'PKR ' + totalPkr.toLocaleString();
-    document.getElementById('sum-logistics').textContent = '৳ ' + logistics.toLocaleString();
-    document.getElementById('sum-total').textContent     = '৳ ' + totalBdt.toLocaleString();
+    const suits      = cartSuitCount();
+    const localDel   = LOCAL_DELIVERY * suits;
+    const totalBdt   = productBdt + commission + logistics + localDel;
+    document.getElementById('sum-pkr').textContent   = 'PKR ' + totalPkr.toLocaleString();
+    var _ssuits = document.getElementById('sum-suits'); if(_ssuits) _ssuits.textContent = suits;
+    var _sdel = document.getElementById('sum-delivery'); if(_sdel) _sdel.textContent = '৳ ' + localDel.toLocaleString();
+    document.getElementById('sum-total').textContent = '৳ ' + totalBdt.toLocaleString();
     const name    = document.getElementById('buyerName').value.trim();
     const wa      = document.getElementById('buyerWA').value.trim();
     const email   = document.getElementById('buyerEmail').value.trim();
@@ -3813,7 +3827,7 @@
     const productBdt = Math.round(totalPkr * r.CONV_RATE);
     const commission = cartCommission(r);
     const logistics  = Math.round(totalWeight * r.LOG_RATE);
-    const totalBdt   = productBdt + commission + logistics + TRANS_FEE;
+    const totalBdt   = productBdt + commission + logistics + (LOCAL_DELIVERY * cartSuitCount());   // ৳100/suit local delivery (replaces flat fee)
 
     const orderId = 'PSB-' + Date.now().toString(36).toUpperCase();
     const name    = document.getElementById('buyerName').value.trim();
@@ -7395,7 +7409,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28w';
+  const PSB_BUILD = '2026-06-28x';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
