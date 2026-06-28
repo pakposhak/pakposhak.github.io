@@ -89,6 +89,9 @@
     .ps-sp-tool span{font-weight:700;font-size:0.9rem}
     .ps-sp-tool small{color:var(--txt-muted);font-size:0.7rem}
     .ps-sp-brands{width:100%;background:none;border:1px solid var(--bdr-med);border-radius:11px;padding:13px;font-size:0.92rem;font-weight:700;color:var(--accent);cursor:pointer}
+    /* Brands' own gender tabs retired — the top rail drives the brand directory now. */
+    #bbGtabs{display:none}
+    .bb-back{background:none;border:0;color:var(--accent);font-size:0.9rem;font-weight:700;padding:8px 2px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;margin-bottom:4px}
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:70px}
     .tl-chip{display:inline-flex;align-items:center;gap:5px;background:var(--surface);
@@ -809,7 +812,7 @@
     }
 
     /* ── Browse tabs: Brands | Products ── */
-    .browse-tabs{display:flex;gap:8px;margin-bottom:7px}
+    .browse-tabs{display:none}  /* Products/Brands toggle retired — gender rail is the single nav (redesign P1). */
     .order-ways{background:var(--gold-dim);border:1px solid var(--gold-bdr);border-radius:12px;padding:9px 13px;margin-bottom:11px;font-size:0.86rem;font-weight:600;color:var(--txt);line-height:1.45;text-align:center}
     .browse-tab{flex:1;padding:11px 8px;background:var(--surface);border:1.5px solid var(--bdr-med);border-radius:10px;
       color:var(--txt-sec);font-weight:700;font-size:0.86rem;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px}
