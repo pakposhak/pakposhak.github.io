@@ -3136,6 +3136,9 @@
   function closeDraftModal(){
     const m = document.getElementById('draftModal'); if(m) m.style.display = 'none';
     document.body.classList.remove('dm-open');
+    // Keep the bottom bar visible after the popup closes so the updated Bag badge is in view
+    // (and the overflow-lock release can't leave it stuck hidden).
+    const bn = document.getElementById('bottomNav'); if(bn) bn.classList.remove('bottom-nav--hidden');
   }
   // ✕ / backdrop: cancel this add — discard any in-progress draft(s), keep the cart.
   function cancelDraftModal(){
@@ -4435,18 +4438,20 @@
       window.scrollTo({top:0, behavior:'smooth'});
     }
   }
-  // Bottom nav auto-hide: slide it away while scrolling DOWN, bring it back when scrolling stops or
-  // reverses (redesign batch 2). Time-throttled (no rAF dependency) so it works in all webviews.
+  // Bottom nav auto-hide: slide it away while actively scrolling DOWN; bring it back on a deliberate
+  // scroll UP or near the top. Time-throttled (no rAF dependency) so it works in all webviews.
+  // NOTE: there is intentionally NO "show after scrolling stops" — that re-showed the bar on every
+  // pause, so it POPPED back up after every little scroll (req: Danish, "bottom bar keeps popping up
+  // after adding to the bag"). Now it stays put while you read, and only returns when you mean it.
   (function(){
-    var lastY = 0, stopT = null;
+    var lastY = 0;
     function onScroll(){
       var n = document.getElementById('bottomNav'); if(!n) return;
       var y = window.scrollY || window.pageYOffset || 0;
-      if(y > lastY + 5 && y > 130){ n.classList.add('bottom-nav--hidden'); }       // scrolling down → hide
-      else if(y < lastY - 5){ n.classList.remove('bottom-nav--hidden'); }            // scrolling up → show
+      if(y < 80){ n.classList.remove('bottom-nav--hidden'); }                       // near the top → always show
+      else if(y > lastY + 6 && y > 130){ n.classList.add('bottom-nav--hidden'); }   // scrolling down → hide
+      else if(y < lastY - 8){ n.classList.remove('bottom-nav--hidden'); }           // deliberate scroll up → show
       lastY = y;
-      if(stopT) clearTimeout(stopT);
-      stopT = setTimeout(function(){ var m = document.getElementById('bottomNav'); if(m) m.classList.remove('bottom-nav--hidden'); }, 240);   // stopped → show
     }
     window.addEventListener('scroll', onScroll, { passive:true });
   })();
@@ -7508,7 +7513,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28-cats';
+  const PSB_BUILD = '2026-06-28-navfix';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
