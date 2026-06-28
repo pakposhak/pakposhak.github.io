@@ -82,6 +82,10 @@
     /* Compact sort / sale / new buttons; price buckets ~half size (req) */
     .ps-filterbar .ps-sortbtn{font-size:0.74rem;padding:6px 13px;border-radius:15px}
     .ps-filterbar .ps-bucket{font-size:0.7rem;padding:4px 9px;border-radius:11px}
+    /* Clear-filters row inside the bar */
+    .ps-fb-foot{display:flex;justify-content:flex-end;padding-top:2px;border-top:1px solid var(--bdr);margin-top:2px}
+    .ps-fb-clear{font-size:0.74rem;font-weight:700;padding:6px 14px;border:1.5px solid var(--bdr-med);border-radius:15px;background:none;color:var(--txt-sec);cursor:pointer;font-family:inherit}
+    .ps-fb-clear:hover,.ps-fb-clear:active{border-color:var(--gold);color:var(--gold)}
     /* Myntra-style sliding underline (#2): one indicator slides + resizes under the active gender tab (psMoveGenInd). */
     .ps-gen-ind{position:absolute;bottom:-1px;left:0;width:0;height:2.5px;background:var(--accent);border-radius:2px;opacity:0;pointer-events:none;transition:left .3s cubic-bezier(.4,0,.2,1),width .3s cubic-bezier(.4,0,.2,1),opacity .2s ease,background-color .18s}
     /* #3 "every interaction transitions, never a hard refresh": grid cross-fade on reset, a view-swap
