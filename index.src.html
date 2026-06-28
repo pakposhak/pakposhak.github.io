@@ -430,8 +430,7 @@
       <div class="rt-row"><span>Products (<span id="rt-item-count">0</span> items)</span><span id="rt-pkr">PKR —</span></div>
       <div class="rt-row"><span>Local delivery (<span id="rt-suits">0</span> × ৳100)</span><span id="rt-delivery">৳ —</span></div>
       <div class="rt-total"><span>ESTIMATED TOTAL</span><span id="rt-total">৳ —</span></div>
-      <div class="rt-note">* The total above is what you pay — your order is processed automatically.</div>
-      <div class="rt-note" style="margin-top:6px;color:var(--txt);font-weight:600">⚖️ Shipping is charged by your parcel's actual weight, so this is a very close estimate. We'll only message you on WhatsApp if a product is unavailable or the weight turns out much higher than estimated.</div>
+      <div class="rt-note" style="color:var(--txt);font-weight:600">⚖️ Shipping is charged by your parcel's actual weight, so this is a very close estimate. We'll only message you on WhatsApp if a product is unavailable or the weight turns out much higher than estimated.</div>
     </div>
   </div>
 
@@ -447,30 +446,14 @@
       style="width:100%;padding:13px;background:var(--surface);border:1.5px solid var(--gold);color:var(--gold);border-radius:12px;font-weight:700;font-size:0.95rem;cursor:pointer">➕ Add Another Product</button>
   </div>
 
-  <!-- Secondary add path (paste a link). HIDDEN until the bag has an item (renderCart reveals it).
-       On order-form.html this wrapper id is absent, so the box there stays always-visible. -->
+  <!-- Hidden helper — psAdd()/handleAddUrl() set & read #urlInput (checkAddUrlLock uses #addUrlBtn,
+       showUrlError uses #urlInputErr). The visible "Add Products to Your Order" box AND the bottom
+       trust links were removed from the Bag (req: Danish — not needed here; add by tapping a product
+       or via the Paste tab on Brands/Price-Check). The Bag now ends at "Add Another Product". -->
   <div id="addProductsSection" style="display:none">
-  <div class="section-label" style="margin-top:24px" data-i18n="lbl_addproducts">Add Products to Your Order</div>
-
-  <div class="url-input-box">
-    <span class="input-label" data-i18n="url_label">Easiest: on a brand's page, tap Share then PakPoshak. Or paste a product link below.</span>
-    <!-- FIRST URL input — hidden once draft cards exist -->
-    <div id="urlInputRow" class="url-row">
-      <input type="url" id="urlInput" placeholder="https://brand.com/products/product-name"/>
-      <button class="add-btn" id="addUrlBtn" onclick="handleAddUrl()" data-i18n="btn_addurl">+ Add URL</button>
-    </div>
+    <div id="urlInputRow" class="url-row"><input type="url" id="urlInput" placeholder="https://brand.com/products/product-name"/>
+      <button class="add-btn" id="addUrlBtn" onclick="handleAddUrl()" data-i18n="btn_addurl">+ Add URL</button></div>
     <div id="urlInputErr" style="display:none;margin-top:9px;padding:10px 14px;border-radius:9px;background:rgba(192,57,43,0.13);border:1px solid rgba(192,57,43,0.40);color:#ff9a9a;font-size:0.82rem;line-height:1.5"></div>
-  </div>
-  </div><!-- /addProductsSection -->
-
-  <!-- Trust / help links — reassurance + discoverability for first-time buyers -->
-  <div style="margin-top:28px;padding-top:18px;border-top:1px solid var(--gold-bdr);text-align:center">
-    <div style="font-size:0.74rem;color:var(--txt-muted);margin-bottom:9px;letter-spacing:0.3px" data-i18n="tl_help">New here? Start with these:</div>
-    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">
-      <a href="faq.html" class="tl-chip" data-i18n="tl_faq">❓ How it works &amp; our promise</a>
-      <a href="tracking.html" class="tl-chip" data-i18n="tl_track">📦 Track an order</a>
-      <a href="weight-chart.html" class="tl-chip" data-i18n="tl_weights">⚖️ Shipping weights</a>
-    </div>
   </div>
 
   </div><!-- /bagView -->

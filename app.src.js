@@ -3653,7 +3653,7 @@
     }
     if(empty) empty.style.display = 'none';
     if(oll) oll.style.display = '';
-    if(aps) aps.style.display = '';
+    if(aps) aps.style.display = 'none';   // #addProductsSection is now a HIDDEN helper (paste box removed from the Bag); keep it hidden
     if(bagNav) bagNav.style.display = '';
     badge.style.display = '';
     badge.textContent = cart.length + (cart.length === 1 ? ' item' : ' items');
@@ -7577,7 +7577,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28-bagpage';
+  const PSB_BUILD = '2026-06-28-bag2';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
