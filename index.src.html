@@ -211,13 +211,21 @@
     <div class="ps-sp-body">
       <ul class="ps-sp-sug" id="psSearchPageSug"></ul>
       <div class="ps-sp-msg" id="psSpMsg" hidden></div>
-      <!-- Promise / trust strip (reusable, redesign P1) -->
-      <div class="ps-promises" id="psPromises"></div>
+      <!-- Price-check banner (our USP): paste any listed-brand link → see its real price in PKR -->
       <div class="ps-sp-remind">
-        <div class="ps-sp-remind-t" data-i18n="sp_remind_t">Found it on a brand's own site?</div>
-        <div class="ps-sp-remind-d" data-i18n="sp_remind_d">Copy the product link and paste it here. We'll order it for you at Pakistani prices.</div>
+        <div class="ps-sp-remind-t" data-i18n="sp_remind_t">Check any product's price in PKR</div>
+        <div class="ps-sp-remind-d" data-i18n="sp_remind_d">Found it on a brand's own site? Paste the link to see the real price of any listed brand in PKR.</div>
         <button type="button" class="ps-sp-paste" onclick="psSearchClose();location.href='order-form.html'" data-i18n="sp_paste">Paste a product link</button>
       </div>
+
+      <!-- Shop by category — real photos pulled from the catalog (filled by psSpFillTiles) -->
+      <div class="ps-sp-hd" data-i18n="sp_cats_hd">Shop by category</div>
+      <div class="ps-sp-grid" id="psSpCats"></div>
+
+      <!-- Popular brands -->
+      <div class="ps-sp-hd" data-i18n="sp_brands_hd">Popular brands</div>
+      <div class="ps-sp-grid ps-sp-brandgrid" id="psSpBrands"></div>
+
       <div class="ps-sp-tools">
         <button type="button" class="ps-sp-tool" onclick="psVisualSearch()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V8a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.5"/></svg>

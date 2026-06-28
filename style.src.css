@@ -129,7 +129,20 @@
     .ps-sp-remind-t{font-weight:800;color:var(--txt);font-size:0.95rem;margin-bottom:4px}
     .ps-sp-remind-d{color:var(--txt-sec);font-size:0.82rem;line-height:1.5;margin-bottom:11px}
     .ps-sp-paste{background:var(--accent);color:#fff;border:0;border-radius:9px;padding:10px 16px;font-size:0.88rem;font-weight:700;cursor:pointer}
-    .ps-sp-tools{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+    /* Search-page image tiles: "Shop by category" + "Popular brands" (Myntra-style, our catalog). */
+    .ps-sp-hd{font-size:0.96rem;font-weight:800;color:var(--txt);letter-spacing:.2px;margin:20px 2px 11px}
+    .ps-sp-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin-bottom:6px}
+    .ps-sp-tile{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--bdr-med);border-radius:14px;overflow:hidden;cursor:pointer;padding:0;text-align:left;font-family:inherit;transition:transform .12s,box-shadow .12s}
+    .ps-sp-tile:active{transform:scale(.98)}
+    .ps-sp-tile-img{position:relative;width:100%;aspect-ratio:1.5/1;background:var(--raised);overflow:hidden}
+    .ps-sp-tile-img::before{content:attr(data-emoji);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.9rem;opacity:.5}
+    .ps-sp-tile-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top}
+    .ps-sp-tile-lbl{padding:9px 11px;font-size:0.82rem;font-weight:700;color:var(--txt);line-height:1.25}
+    .ps-sp-brandgrid{grid-template-columns:repeat(3,1fr)}
+    .ps-sp-brandgrid .ps-sp-tile-img{aspect-ratio:1.25/1}
+    .ps-sp-brandgrid .ps-sp-tile-img::before{font-size:1.4rem}
+    .ps-sp-brandgrid .ps-sp-tile-lbl{font-size:0.72rem;text-align:center;padding:7px 5px}
+    .ps-sp-tools{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0 14px}
     .ps-sp-tool{display:flex;flex-direction:column;align-items:flex-start;gap:5px;background:var(--surface);border:1px solid var(--bdr-med);border-radius:12px;padding:13px;cursor:pointer;color:var(--txt)}
     .ps-sp-tool svg{width:24px;height:24px;color:var(--accent)}
     .ps-sp-tool span{font-weight:700;font-size:0.9rem}
