@@ -117,6 +117,25 @@
     .ps-promise-tx{min-width:0}
     .ps-promise-tx b{display:block;font-size:0.82rem;font-weight:800;color:var(--txt);line-height:1.2}
     .ps-promise-tx span{font-size:0.68rem;color:var(--txt-muted);line-height:1.3}
+    /* Search = top bar + overlay; filters/sort = ▦ sheet. Retire the old inline search + filter pills
+       (redesign P1). !important beats the legacy base rules + their desktop media-query overrides. */
+    .ps-search-mobile, .ps-resbar, .ps-filtrow{display:none !important}
+    /* Filter & sort sheet (opened by the ▦ icon). */
+    .ps-fsheet{position:fixed;inset:0;z-index:1100;display:flex;flex-direction:column;justify-content:flex-end}
+    .ps-fsheet[hidden]{display:none}
+    .ps-fsheet-bg{position:absolute;inset:0;background:rgba(0,0,0,0.42)}
+    .ps-fsheet-panel{position:relative;background:var(--bg);border-radius:16px 16px 0 0;max-height:82vh;display:flex;flex-direction:column;box-shadow:0 -6px 24px rgba(0,0,0,0.18)}
+    .ps-fsheet-top{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--bdr)}
+    .ps-fsheet-title{font-weight:800;font-size:1rem;color:var(--txt)}
+    .ps-fsheet-x{background:none;border:0;font-size:1.05rem;color:var(--txt-muted);cursor:pointer;padding:4px 9px}
+    .ps-fsheet-body{flex:1;overflow-y:auto;padding:4px 16px 12px}
+    .ps-fsheet-sec{padding:14px 0;border-bottom:1px solid var(--bdr)}
+    .ps-fsheet-sec:last-child{border-bottom:0}
+    .ps-fsheet-h{font-weight:700;font-size:0.85rem;color:var(--txt);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+    .ps-fsheet-h span[id]{color:var(--accent);font-size:0.78rem}
+    .ps-fsheet-foot{display:flex;gap:10px;padding:12px 16px;border-top:1px solid var(--bdr);padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+    .ps-fsheet-clear{flex:1;background:none;border:1px solid var(--bdr-med);border-radius:10px;padding:12px;font-weight:700;color:var(--txt-sec);cursor:pointer}
+    .ps-fsheet-apply{flex:1;background:var(--accent);border:0;border-radius:10px;padding:12px;font-weight:700;color:#fff;cursor:pointer}
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:70px}
     .tl-chip{display:inline-flex;align-items:center;gap:5px;background:var(--surface);

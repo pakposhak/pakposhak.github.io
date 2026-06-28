@@ -132,7 +132,7 @@
     <button type="button" class="ps-gen"    data-g="m"   aria-pressed="false" onclick="psSetGender('m')"   data-i18n="gen_men">Men</button>
     <button type="button" class="ps-gen"    data-g="k"   aria-pressed="false" onclick="psSetGender('k')"   data-i18n="gen_kids">Kids</button>
     <span class="ps-gen-spacer"></span>
-    <button type="button" class="ps-gen-cat" aria-label="All categories" title="All categories" onclick="psToggleFiltPop('cat')">
+    <button type="button" class="ps-gen-cat" id="psFiltBtn" aria-label="Filters and sort" title="Filters and sort" onclick="psFilters(true)">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zm10 0h6v6h-6zM4 14h6v6H4zm10 0h6v6h-6z"/></svg>
     </button>
   </nav>
@@ -179,6 +179,29 @@
         </button>
       </div>
       <button type="button" class="ps-sp-brands" onclick="psSearchClose();switchBrowse('brands')" data-i18n="sp_brands">Browse all 150+ brands ›</button>
+    </div>
+  </div>
+
+  <!-- Filter & sort sheet (opened by the ▦ icon on the gender rail). The real filter containers
+       (#psSortTabs/#psCat/#psBrands/#psPrice + count spans) are MOVED into the slots below by
+       psFiltersInit() so the existing build functions keep populating them (redesign P1). -->
+  <div id="psFilterSheet" class="ps-fsheet" hidden role="dialog" aria-label="Filters and sort">
+    <div class="ps-fsheet-bg" onclick="psFilters(false)"></div>
+    <div class="ps-fsheet-panel">
+      <div class="ps-fsheet-top">
+        <span class="ps-fsheet-title" data-i18n="filters_sort">Filters &amp; sort</span>
+        <button type="button" class="ps-fsheet-x" onclick="psFilters(false)" aria-label="Close">✕</button>
+      </div>
+      <div class="ps-fsheet-body">
+        <div class="ps-fsheet-sec"><div class="ps-fsheet-h"><span data-i18n="sort_hd">Sort</span></div><div id="psFsSort"></div></div>
+        <div class="ps-fsheet-sec"><div class="ps-fsheet-h"><span data-i18n="ps_category_short">Categories</span> <span id="psFsCatN"></span></div><div id="psFsCat"></div></div>
+        <div class="ps-fsheet-sec"><div class="ps-fsheet-h"><span data-i18n="ps_brands">Brands</span> <span id="psFsBrandN"></span></div><div id="psFsBrand"></div></div>
+        <div class="ps-fsheet-sec"><div class="ps-fsheet-h"><span data-i18n="ps_price_short">Price</span> <span id="psFsPriceN"></span></div><div id="psFsPrice"></div></div>
+      </div>
+      <div class="ps-fsheet-foot">
+        <button type="button" class="ps-fsheet-clear" onclick="psClearFilters()" data-i18n="ps_clear">Clear all</button>
+        <button type="button" class="ps-fsheet-apply" onclick="psFilters(false)" data-i18n="filters_done">Done</button>
+      </div>
     </div>
   </div>
 
