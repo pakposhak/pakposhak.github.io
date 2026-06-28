@@ -704,8 +704,8 @@
     .psc-empty{width:100%;padding:26px 10px;text-align:center;color:var(--txt-muted);font-size:0.84rem}
     .ps-shopcat-scroll{display:flex;gap:11px;overflow-x:auto;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:1px 2px 6px}
     .ps-shopcat-scroll::-webkit-scrollbar{display:none}
-    .psc-tile{flex:0 0 auto;width:80px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:none;padding:0;cursor:pointer;font-family:inherit}
-    .psc-img{width:80px;height:96px;border-radius:14px;overflow:hidden;background:linear-gradient(150deg,var(--gold-dim),var(--raised));border:1.5px solid var(--gold-bdr);display:flex;align-items:center;justify-content:center;position:relative;transition:transform .12s,border-color .12s,box-shadow .12s}
+    .psc-tile{flex:0 0 auto;width:96px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:none;padding:0;cursor:pointer;font-family:inherit}
+    .psc-img{width:96px;height:116px;border-radius:15px;overflow:hidden;background:linear-gradient(150deg,var(--gold-dim),var(--raised));border:1.5px solid var(--gold-bdr);display:flex;align-items:center;justify-content:center;position:relative;transition:transform .12s,border-color .12s,box-shadow .12s}
     .psc-img img{width:100%;height:100%;object-fit:cover;display:block}
     .psc-tile.psc-noimg .psc-img::after{content:attr(data-emoji);font-size:1.9rem;opacity:0.85}
     .psc-tile:hover .psc-img{border-color:var(--gold)}
@@ -720,7 +720,7 @@
     #psShopScroll.psc-swap .psc-tile:nth-child(4){animation-delay:.075s}
     #psShopScroll.psc-swap .psc-tile:nth-child(n+5){animation-delay:.1s}
     @media (prefers-reduced-motion:reduce){#psShopScroll.psc-swap,#psShopScroll.psc-swap .psc-tile{animation:none}}
-    .psc-lbl{font-size:0.7rem;font-weight:700;color:var(--txt);line-height:1.15;text-align:center;width:84px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .psc-lbl{font-size:0.75rem;font-weight:700;color:var(--txt);line-height:1.18;text-align:center;width:100px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
     @media (min-width:820px){
       .ps-shopcat{margin-bottom:16px} .psc-gtab{font-size:0.8rem;padding:6px 16px} .psc-tile{width:104px} .psc-img{width:104px;height:124px;border-radius:16px} .psc-lbl{width:108px;font-size:0.76rem} .psc-tile.psc-noimg .psc-img::after{font-size:2.2rem}
       /* DESKTOP dual-cluster tab row (req): Brands cluster (left, teal-tinted) + Categories cluster
