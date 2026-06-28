@@ -1238,8 +1238,10 @@
     .ps-detail-card{background:var(--surface);border:1px solid var(--bdr-med);border-radius:14px;max-width:560px;width:100%;max-height:92vh;overflow-y:auto;position:relative}
     .ps-detail-x{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;background:var(--raised);border:1px solid var(--bdr-med);color:var(--txt);font-size:1.05rem;cursor:pointer;z-index:3;display:flex;align-items:center;justify-content:center}
     /* LAAM-style: a vertical big-image gallery BELOW the details (no carousel thumbnails). */
-    .ps-d-gallery{display:flex;flex-direction:column;gap:8px;padding:4px 12px 14px;background:var(--raised)}
-    .ps-d-shot{width:100%;height:auto;display:block;object-fit:contain;background:var(--raised);border-radius:12px}
+    /* IMAGE gallery on TOP: a HORIZONTAL swipe strip of big full-width photos (scroll from the right). */
+    .ps-d-gallery{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;background:var(--raised);border-radius:14px 14px 0 0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .ps-d-gallery::-webkit-scrollbar{display:none}
+    .ps-d-shot{flex:0 0 100%;width:100%;height:auto;display:block;object-fit:contain;max-height:62vh;scroll-snap-align:center;background:var(--raised)}
     .ps-d-details{margin:14px 0 2px}
     .ps-d-details-h,.ps-d-desc-h{font-size:0.62rem;font-weight:800;letter-spacing:0.6px;text-transform:uppercase;color:var(--gold);margin:0 0 6px}
     .ps-d-desc-h{margin-top:14px}
@@ -1249,9 +1251,9 @@
     .ps-d-k{color:var(--txt-muted);width:40%;font-weight:600}
     .ps-d-v{color:var(--txt);font-weight:600}
     .ps-d-disc{font-size:0.72rem;color:var(--txt-muted);font-style:italic;margin:8px 0 0}
-    .ps-d-body{padding:18px 16px 8px}
+    .ps-d-body{padding:12px 16px 8px}
     .ps-d-brand{font-size:0.72rem;color:var(--txt-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.4px}
-    .ps-d-title{font-size:1rem;font-weight:700;color:var(--txt);margin:2px 0 6px;line-height:1.3;padding-right:36px}
+    .ps-d-title{font-size:1rem;font-weight:700;color:var(--txt);margin:2px 0 6px;line-height:1.3}
     .ps-d-price{font-size:1.15rem;font-weight:800;color:var(--txt)}
     .ps-d-pkr{font-size:0.78rem;color:var(--txt-muted);margin-bottom:6px}
     .ps-d-szrow{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}

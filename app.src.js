@@ -6927,12 +6927,13 @@
     const p = psFiltered[idx]; if(!p) return;
     const bdt = (p._bdt != null) ? p._bdt : estLandedBdt(p.pkr, p.cat);
     const sz = (p.sz || []).slice(0,12).map(s => `<span class="ps-sz">${esc(s)}</span>`).join('');
-    // LAAM-style layout (req): product INFO + details on TOP, then the bigger images in a VERTICAL
-    // scroll BELOW (no carousel slides). The whole .ps-detail-card scrolls, so you read the details
-    // first then scroll down to the photos. Gallery is seeded with the catalog thumb (instant) and
-    // upgraded to the brand's full-size gallery by psEnrichDetail.
+    // LAAM-style layout (req): the IMAGE gallery on TOP — a HORIZONTAL swipe strip of big full-width
+    // photos (scroll it from the right; no thumbnail picker) — then ALL the product info, sizes,
+    // details + the full brand description BELOW the image. The whole .ps-detail-card scrolls. The
+    // gallery is seeded with the catalog thumb (instant) and upgraded to the brand's full-size gallery.
     document.getElementById('psDetailInner').innerHTML =
-        `<div class="ps-d-body">`
+        `<div class="ps-d-gallery" id="psDGallery"><img class="ps-d-shot" src="${esc(p.img)}" alt="${esc(p.t)}"></div>`
+      + `<div class="ps-d-body">`
       +   `<div class="ps-d-brand">${esc(p.b)}</div>`
       +   `<div class="ps-d-title">${esc(p.t)}</div>`
       +   `<div class="ps-d-price">≈ ৳${bdt.toLocaleString()}</div>`
@@ -6946,8 +6947,7 @@
       +   `<div class="ps-d-details" id="psDDetails"></div>`
       +   `<div class="ps-d-loading" id="psDDesc">${tr('ps_d_loading')}</div>`
       +   `<button type="button" class="ps-d-more" onclick="psMoreFromBrand(${idx})">${tr('ps_d_more')} ${esc(p.b)} →</button>`
-      + `</div>`
-      + `<div class="ps-d-gallery" id="psDGallery"><img class="ps-d-shot" src="${esc(p.img)}" alt="${esc(p.t)}"></div>`;
+      + `</div>`;
     document.getElementById('psDetail').style.display = 'flex';
     const _card = document.querySelector('.ps-detail-card'); if(_card) _card.scrollTop = 0;
     psEnrichDetail(p);
@@ -6999,7 +6999,7 @@
         if(detEl) detEl.innerHTML = psBuildDetailRows(prod);
         const desc = (prod.body_html || '').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/\s+/g,' ').trim();
         if(descEl) descEl.innerHTML = desc
-          ? `<div class="ps-d-desc-h">Description</div><div class="ps-d-desc">${esc(desc.slice(0, 1000))}</div><div class="ps-d-disc">Actual colour may vary slightly from the image.</div>`
+          ? `<div class="ps-d-desc-h">Description</div><div class="ps-d-desc">${esc(desc)}</div><div class="ps-d-disc">Actual colour may vary slightly from the image.</div>`
           : tr('ps_d_nodesc');
       })
       .catch(() => { if(descEl) descEl.innerHTML = tr('ps_d_nofetch'); });
@@ -7473,7 +7473,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28-popup';
+  const PSB_BUILD = '2026-06-28-popup2';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
