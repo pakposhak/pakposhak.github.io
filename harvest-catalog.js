@@ -819,6 +819,18 @@ async function harvestKidsBrand(name, host){
   // correct department / kids-gender / east-west / stitched-ness. Absent ⇒ null ⇒ title-only (unchanged).
   // The file is gitignored, so run-harvest.sh's `git reset --hard` keeps it across cron runs.
   const _mem = loadMembership(process.env.PSB_MEMBERSHIP || 'collection-membership.jsonl');
+  // SAFEGUARD (2026-06-29): collection-membership.jsonl is an UNTRACKED data artifact. If it ever
+  // goes missing or is truncated, regenerating the catalog WITHOUT it would silently un-refile ~900
+  // products — and that ~1.5% category churn slips UNDER the 8% churn gate, so nothing else would
+  // catch it. Refuse to write a non-refiled catalog unless explicitly allowed. Restore the file from
+  // ~/membership-backups, or set PSB_ALLOW_NO_MEMBERSHIP=1 to override (e.g. a deliberate first run).
+  const _MIN_MEM = parseInt(process.env.PSB_MIN_MEMBERSHIP || '150000', 10);
+  if (_mem.size < _MIN_MEM && process.env.PSB_ALLOW_NO_MEMBERSHIP !== '1') {
+    console.error(`FATAL: collection-membership has only ${_mem.size} products (< ${_MIN_MEM}). ` +
+      `Refusing to regenerate catalog.json — it would silently un-refile categories. ` +
+      `Restore collection-membership.jsonl (backups: ~/membership-backups) or set PSB_ALLOW_NO_MEMBERSHIP=1.`);
+    process.exit(1);
+  }
   const _memArg = _mem.size ? _mem : null;
   if (_mem.size) console.log('  collection-membership:', _mem.size, 'products');
   const _clean = cleanupProducts(deduped, _memArg);
