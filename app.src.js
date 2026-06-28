@@ -4327,7 +4327,9 @@
   function psLuxeMode(on){
     var html = document.documentElement, inLuxe = document.body.classList.contains('ps-luxe');
     if(on && !inLuxe){
-      _psPrevTheme = html.getAttribute('data-theme') || 'light';
+      // Remember the buyer's REAL theme preference (not the possibly-forced-dark attribute) so leaving
+      // Luxe restores it even on a refresh-in-Luxe where the page already booted dark.
+      try{ _psPrevTheme = (localStorage.getItem('psb_theme') === 'dark') ? 'dark' : 'light'; }catch(e){ _psPrevTheme = 'light'; }
       html.setAttribute('data-theme', 'dark');
       document.body.classList.add('ps-luxe');
     } else if(!on && inLuxe){
@@ -4574,7 +4576,9 @@
   let _psNavDir = 0;   // +1 = going forward (next page), -1 = back, 0 = no page-turn animation
   let psSaleOnly = false;                          // Sale filter: show only discounted items
   let psNewOnly = false;                           // New filter: newest NON-sale items (⇄ Sale; the ৳ price sort orders within)
-  let psStore = 'everyday';                        // Storefront (batch 2): 'everyday' = under 15k (buckets 0-5), 'premium' = 10k+ (buckets 5-6); 10-15k overlaps. Yields to a manual price selection.
+  // Storefront (batch 2): PERSISTED so a hard refresh in Luxe stays in Luxe. 'everyday' = under 15k
+  // (buckets 0-5), 'premium' = 10k+ (buckets 5-6); 10-15k overlaps. Yields to a manual price selection.
+  let psStore = (function(){ try{ return localStorage.getItem('psb_store') === 'premium' ? 'premium' : 'everyday'; }catch(e){ return 'everyday'; } })();
 
   // ── Search-API mode ── Browse Products served by the VPS /search endpoint (returns only
   //    the filtered page) instead of downloading the whole catalog.json — scales to 100k+.
@@ -5923,6 +5927,7 @@
   // ── Everyday / Premium storefront (redesign P1) ───────────────────────────
   function psSetStore(s){
     psStore = s;
+    try{ localStorage.setItem('psb_store', s); }catch(e){}   // persist Home vs Luxe so a refresh restores it
     var btns = document.querySelectorAll('#psStoreRow .ps-store');
     for(var i=0;i<btns.length;i++){ var on = btns[i].getAttribute('data-store') === s; btns[i].classList.toggle('on', on); btns[i].setAttribute('aria-pressed', on?'true':'false'); }
     try { psApply(); } catch(e){}
@@ -7374,7 +7379,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28u';
+  const PSB_BUILD = '2026-06-28v';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
@@ -7421,6 +7426,16 @@
     try { psFiltersInit(); } catch(e){}      // move the filter containers into the ▦ sheet
     try { psMoveGenInd(); } catch(e){}                                  // place the sliding gender underline (#2)
     setTimeout(function(){ try{ psMoveGenInd(); }catch(e){} }, 350);    // re-place once fonts/sticky layout settle
+    // Restore the Luxe room on a hard refresh: psStore was read from localStorage; if it's premium,
+    // re-apply the deep-forest look + the active Luxe tab (the feed already loads premium from psStore).
+    try {
+      if(psStore === 'premium'){
+        psLuxeMode(true);
+        var _bh = document.getElementById('bnav-home'), _bl = document.getElementById('bnav-luxe');
+        if(_bh) _bh.classList.remove('active');
+        if(_bl) _bl.classList.add('active');
+      }
+    } catch(e){}
   });
 
 

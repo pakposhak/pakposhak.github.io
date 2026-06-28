@@ -48,7 +48,7 @@
   (function(){
     try{
       var s = localStorage.getItem('psb_theme');
-      var dark = (s === 'dark');
+      var dark = (s === 'dark') || (localStorage.getItem('psb_store') === 'premium');   // Luxe room is always dark — avoid a light flash on refresh-in-Luxe
       document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
     }catch(e){ document.documentElement.setAttribute('data-theme','light'); }
   })();
