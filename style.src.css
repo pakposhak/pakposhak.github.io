@@ -117,11 +117,18 @@
     .ps-store{flex:1;text-align:center;background:var(--surface);border:1px solid var(--bdr-med);border-radius:20px;padding:8px 10px;font-size:0.9rem;font-weight:700;color:var(--txt-sec);cursor:pointer;transition:color .15s,background .15s,border-color .15s}
     .ps-store.on{background:var(--accent);border-color:var(--accent);color:#fff}
     @media (prefers-reduced-motion:reduce){.ps-store{transition:none}}
-    .ps-banner{background:var(--raised);border:1px solid var(--bdr);border-radius:12px;padding:14px 16px;margin:0 0 12px;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:54px}
-    .ps-banner-txt{color:var(--txt);font-size:0.92rem;font-weight:700;line-height:1.4}
-    .ps-banner-dots{display:flex;gap:5px;flex-shrink:0}
-    .ps-bdot{width:6px;height:6px;border-radius:50%;background:var(--bdr-med)}
-    .ps-bdot.on{background:var(--accent);width:16px;border-radius:3px}
+    /* Hero banners (#6): two rotating slides, a catalogue photo under a left-dark gradient + claim. */
+    .ps-banner{position:relative;width:100%;aspect-ratio:2.1/1;max-height:210px;border-radius:14px;overflow:hidden;margin:0 0 14px;background:linear-gradient(135deg,#0b3a22,#0a5230)}
+    .ps-hero-slide{position:absolute;inset:0;background-size:cover;background-position:center 20%;opacity:0;transition:opacity .7s ease;display:flex;align-items:flex-end}
+    .ps-hero-slide.on{opacity:1}
+    .ps-hero-ov{position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,18,10,0.85) 0%,rgba(4,18,10,0.55) 42%,rgba(4,18,10,0.12) 100%)}
+    .ps-hero-tx{position:relative;padding:15px 17px;max-width:78%}
+    .ps-hero-t{display:block;color:#fff;font-size:1.16rem;font-weight:800;line-height:1.2;letter-spacing:0.2px;text-shadow:0 1px 5px rgba(0,0,0,0.55)}
+    .ps-hero-s{display:block;color:#F1E8CF;font-size:0.8rem;font-weight:600;line-height:1.35;margin-top:5px;text-shadow:0 1px 4px rgba(0,0,0,0.55)}
+    .ps-hero-dots{position:absolute;bottom:10px;right:13px;display:flex;gap:5px;z-index:2}
+    .ps-hero-dots .ps-bdot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.5);transition:width .25s,background .25s}
+    .ps-hero-dots .ps-bdot.on{background:#fff;width:16px;border-radius:3px}
+    body.ps-luxe .ps-banner{display:none}   /* banner is landing-only (hidden in the Luxe room) */
     /* Collection-first home tiles (redesign P1) — plain for now, photos come later. */
     .ps-colls-hd{font-size:0.95rem;font-weight:800;color:var(--txt);margin:0 0 8px}
     .ps-colls{display:flex;gap:9px;overflow-x:auto;margin:0 0 14px;padding-bottom:2px;scrollbar-width:none}

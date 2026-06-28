@@ -5929,25 +5929,52 @@
   }
   window.psSetStore = psSetStore;
   // ── Rotating value banner (redesign P1) — static copy, accent-tinted, per-rotation ──
+  // Two rotating HERO banners on the landing (batch 2, #6) — promise/pricing claims over a hero photo
+  // pulled from the catalogue. No "cheapest" wording; no minimum order; PKR-price tie-in (Price Check).
   const PS_BANNERS = [
-    { en:'Genuine Pakistani brands, delivered to Bangladesh.', bn:'আসল পাকিস্তানি ব্র্যান্ড, বাংলাদেশে ডেলিভারি।' },
-    { en:'Real Pakistani prices, no inflated markups.',        bn:'আসল পাকিস্তানি দাম, কোনো বাড়তি মার্কআপ নেই।' },
-    { en:'150+ brands, one cart, one checkout.',               bn:'১৫০+ ব্র্যান্ড, এক কার্ট, এক চেকআউট।' }
+    { en_t:'Real Pakistani prices, in PKR', en_s:'The most economical way to buy 100% genuine Pakistani fashion. See the real PKR price on any piece.',
+      bn_t:'আসল পাকিস্তানি দাম, পিকেআর-এ', bn_s:'১০০% আসল পাকিস্তানি ফ্যাশন কেনার সবচেয়ে সাশ্রয়ী উপায়। যেকোনো পণ্যের আসল পিকেআর দাম দেখুন।' },
+    { en_t:'No minimum order', en_s:'One piece or ten, we bring it for you. Delivered across Bangladesh.',
+      bn_t:'কোনো ন্যূনতম অর্ডার নেই', bn_s:'এক পিস হোক বা দশ, আমরা এনে দিই। সারা বাংলাদেশে ডেলিভারি।' }
   ];
-  let _psBanIdx = 0, _psBanT = null;
+  let _psBanIdx = 0, _psBanT = null, _psBanImgs = [];
+  // Fill the two hero images from the loaded catalogue (once). Picks photos a little down the feed so
+  // they differ from the first grid rows. Re-renders the banner when ready.
+  function psFillBannerImgs(){
+    if(_psBanImgs.length >= 2) return;
+    try {
+      var pool = (typeof psFiltered !== 'undefined' ? psFiltered : []).filter(function(p){ return p && p.img; });
+      if(pool.length < 2) return;
+      _psBanImgs = [ pool[Math.min(2, pool.length-1)].img, pool[Math.min(8, pool.length-1)].img ];
+      psRenderBanner();
+    } catch(e){}
+  }
+  window.psFillBannerImgs = psFillBannerImgs;
   function psRenderBanner(){
     var el = document.getElementById('psBanner'); if(!el) return;
-    var b = PS_BANNERS[_psBanIdx] || PS_BANNERS[0];
-    var txt = (typeof _lang !== 'undefined' && _lang === 'bn') ? b.bn : b.en;
-    el.innerHTML = '<div class="ps-banner-txt">'+esc(txt)+'</div><div class="ps-banner-dots">'+
-      PS_BANNERS.map(function(_,i){ return '<span class="ps-bdot'+(i===_psBanIdx?' on':'')+'"></span>'; }).join('')+'</div>';
+    var bn = (typeof _lang !== 'undefined' && _lang === 'bn');
+    el.innerHTML = PS_BANNERS.map(function(b,i){
+      var t = bn ? b.bn_t : b.en_t, s = bn ? b.bn_s : b.en_s;
+      var bg = _psBanImgs[i] ? ' style="background-image:url(\'' + esc(_psBanImgs[i]) + '\')"' : '';
+      return '<div class="ps-hero-slide' + (i===_psBanIdx ? ' on' : '') + '"' + bg + '>'
+        + '<span class="ps-hero-ov"></span>'
+        + '<span class="ps-hero-tx"><b class="ps-hero-t">' + esc(t) + '</b><span class="ps-hero-s">' + esc(s) + '</span></span></div>';
+    }).join('') + '<div class="ps-hero-dots">'
+      + PS_BANNERS.map(function(_,i){ return '<span class="ps-bdot' + (i===_psBanIdx ? ' on' : '') + '"></span>'; }).join('')
+      + '</div>';
+  }
+  function psBannerTick(){
+    _psBanIdx = (_psBanIdx + 1) % PS_BANNERS.length;
+    var el = document.getElementById('psBanner'); if(!el) return;
+    el.querySelectorAll('.ps-hero-slide').forEach(function(sl,i){ sl.classList.toggle('on', i===_psBanIdx); });
+    el.querySelectorAll('.ps-bdot').forEach(function(d,i){ d.classList.toggle('on', i===_psBanIdx); });
   }
   function psBannerStart(){
     if(!document.getElementById('psBanner')) return;
     psRenderBanner();
     if(_psBanT) clearInterval(_psBanT);
     try { if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return; } catch(e){}
-    _psBanT = setInterval(function(){ _psBanIdx = (_psBanIdx+1) % PS_BANNERS.length; psRenderBanner(); }, 4800);
+    _psBanT = setInterval(psBannerTick, 5200);
   }
   window.psRenderBanner = psRenderBanner;
   // ── Collection-first home tiles (redesign P1) — wired to EXISTING filters/search ──
@@ -6648,6 +6675,7 @@
     if(!grid) return;
     psSyncDeptTiles();
     psHarvestThumbs(psFiltered);   // opportunistically fill Shop-by-Category photos (catalog mode too)
+    try{ psFillBannerImgs(); }catch(e){}   // fill the two hero-banner photos from the catalogue once (#6)
     const psCountEl = document.getElementById('psCount');   // count element was removed from the resbar; guard it
     const total = psApiMode ? psApiTotal : psFiltered.length;
     if(psCountEl) psCountEl.textContent = total ? (total.toLocaleString() + ' ' + tr('ps_results')) : '';
@@ -7346,7 +7374,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28t';
+  const PSB_BUILD = '2026-06-28u';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
