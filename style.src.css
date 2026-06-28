@@ -713,8 +713,15 @@
     .draft-divider{border:none;border-top:1px solid var(--bdr);margin:10px 0}
 
     /* Cart list */
-    .cart-empty{text-align:center;padding:28px;color:var(--txt-muted);font-size:0.85rem;
-      background:var(--surface);border-radius:8px;border:1.5px dashed var(--bdr-med)}
+    .cart-empty{text-align:center;padding:34px 28px;color:var(--txt-muted);font-size:0.85rem;
+      background:var(--surface);border-radius:12px;border:1.5px dashed var(--bdr-med)}
+    /* ── BAG / BASKET PAGE (step-1 bag view) ─────────────────────────────────
+       Its own page now (req: Danish). A narrow centred column (the browse view is full-width),
+       sticky header retained, bottom padding so the trust links clear the fixed bottom-nav. */
+    body.psb-bag #step1 > .container{max-width:680px;padding-top:14px;
+      padding-bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+    #bagView{min-height:46vh}
+    #bagView #orderListLabel{font-size:1.15rem}
     .cart-item{background:var(--surface);border:1.5px solid var(--bdr-med);border-radius:10px;padding:14px;
       margin-bottom:10px;display:flex;gap:12px;align-items:flex-start}
     .item-num{background:var(--gold);color:#0A1628;font-size:0.7rem;font-weight:700;

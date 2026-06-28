@@ -125,6 +125,11 @@
 
 <div class="container">
 
+  <!-- BROWSE VIEW — the storefront (department rail, search, collections, product grid, brands).
+       One of the two faces of step 1; the BAG view (further down) is the other. setOrderView()
+       toggles them so the basket is its own page (req: Danish). -->
+  <div id="browseView">
+
   <!-- Sticky top group (redesign P1): gender rail + search bar pin to the top of the viewport
        while scrolling the product feed, so search AND department switching stay reachable (req).
        On mobile browse the header is position:relative (scrolls away), so this becomes the
@@ -336,6 +341,7 @@
       </section>
     </div>
   </div>
+  </div><!-- /browseView -->
 
   <!-- PRODUCT DETAIL POPUP — opened by a card's ⓘ icon; X closes & stays on the page -->
   <!-- Brand-site warning: shown before ANY "go to the brand site" tap so buyers don't add to the brand's own cart -->
@@ -380,27 +386,7 @@
     </aside>
   </div>
 
-  <!-- Add-Products / paste-link box: HIDDEN on the landing/browse view; renderCart() reveals it
-       once the order has an item (req: show only after a product is selected). The paste-a-link
-       entry point on the landing lives on the search page now. On order-form.html this wrapper id
-       is absent, so the box there stays always-visible. -->
-  <div id="addProductsSection" style="display:none">
-  <div class="section-label" style="margin-top:28px" data-i18n="lbl_addproducts">Add Products to Your Order</div>
-
-  <div class="url-input-box">
-    <span class="input-label" data-i18n="url_label">Easiest: on a brand's page, tap Share then PakPoshak. Or paste a product link below.</span>
-    <!-- Pasting is handled by the always-visible floating Paste tab (bottom-right) —
-         no inline paste button needed here. -->
-    <!-- FIRST URL input — hidden once draft cards exist -->
-    <div id="urlInputRow" class="url-row">
-      <input type="url" id="urlInput" placeholder="https://brand.com/products/product-name"/>
-      <button class="add-btn" id="addUrlBtn" onclick="handleAddUrl()" data-i18n="btn_addurl">+ Add URL</button>
-    </div>
-    <div id="urlInputErr" style="display:none;margin-top:9px;padding:10px 14px;border-radius:9px;background:rgba(192,57,43,0.13);border:1px solid rgba(192,57,43,0.40);color:#ff9a9a;font-size:0.82rem;line-height:1.5"></div>
-  </div>
-  </div><!-- /addProductsSection -->
-
-  <!-- ADD-TO-ORDER POPUP — size, qty & price for the product being added. The draft card(s)
+  <!-- ADD-TO-ORDER POPUP (overlay — always available from BOTH Browse and Bag). The draft card(s)
        live here; "Add to Bag" (saveAllDrafts) saves them to the bag and closes. Opened by every
        add path (tap a product, paste, share, edit) via openDraftModal(). -->
   <div id="draftModal" class="dm-wrap" style="display:none" onclick="if(event.target===this)cancelDraftModal()">
@@ -420,15 +406,23 @@
     </div>
   </div>
 
-  <!-- Order list label -->
-  <div class="section-label" id="orderListLabel" style="margin-top:32px;display:none">Your Order List
+  <!-- ═══ BAG / BASKET — step 1's other face: your items + total first, then Proceed to checkout.
+       Shown by setOrderView('bag') (bottom-nav Bag / desktop Cart chip); hidden while browsing. ═══ -->
+  <div id="bagView" style="display:none">
+
+  <!-- Bag heading (NOTE: no data-i18n — it carries the live item-count badge child) -->
+  <div class="section-label" id="orderListLabel" style="margin-top:8px;display:none">🛍️ Your Bag
     <span id="itemCountBadge" style="font-size:0.72rem;background:var(--gold);color:#12122a;border-radius:10px;padding:2px 9px;margin-left:8px;display:none;font-weight:700"></span>
   </div>
 
+  <!-- Empty-bag state — shown on the Bag page when there are no items. -->
   <div class="cart-empty" id="cartEmpty" style="display:none">
-    <div style="font-size:2rem;margin-bottom:8px">🛍️</div>
-    No items yet. Share a product from any brand, or paste a link above to start.
+    <div style="font-size:2.4rem;margin-bottom:10px">🛍️</div>
+    <div style="font-weight:700;color:var(--txt);font-size:1.02rem" data-i18n="bag_empty">Your bag is empty</div>
+    <div style="font-size:0.84rem;color:var(--txt-sec);margin-top:5px" data-i18n="bag_empty_sub">Browse Pakistani brands and tap + Add to drop items here.</div>
+    <button type="button" class="btn-next" style="margin-top:16px;max-width:280px" onclick="showBrowseView()" data-i18n="bag_browse">🛍️ Browse products</button>
   </div>
+
   <div id="cartList"></div>
 
   <div id="runningTotal" style="display:none">
@@ -441,16 +435,33 @@
     </div>
   </div>
 
-  <!-- After ≥1 item saved: a clear choice — add another, or continue. -->
-  <div id="addMoreRow" style="display:none;margin-top:22px">
+  <!-- Primary checkout CTA — revealed by renderCart() once the bag has an item. -->
+  <div class="nav-row" id="bagNav" style="display:none;margin-top:18px">
+    <button class="btn-next" onclick="nextFromStep1()" data-i18n="bag_proceed">Proceed to My Details →</button>
+  </div>
+
+  <!-- After ≥1 item: add another, or continue. -->
+  <div id="addMoreRow" style="display:none;margin-top:16px">
     <div style="text-align:center;font-size:0.82rem;color:var(--txt-sec);font-weight:600;margin-bottom:11px" data-i18n="addmore_hint">✓ Item saved! Add another product, or continue to your details.</div>
     <button type="button" onclick="addAnotherProduct()" data-i18n="addmore_btn"
       style="width:100%;padding:13px;background:var(--surface);border:1.5px solid var(--gold);color:var(--gold);border-radius:12px;font-weight:700;font-size:0.95rem;cursor:pointer">➕ Add Another Product</button>
   </div>
 
-  <div class="nav-row">
-    <button class="btn-next" onclick="nextFromStep1()">Next: My Details →</button>
+  <!-- Secondary add path (paste a link). HIDDEN until the bag has an item (renderCart reveals it).
+       On order-form.html this wrapper id is absent, so the box there stays always-visible. -->
+  <div id="addProductsSection" style="display:none">
+  <div class="section-label" style="margin-top:24px" data-i18n="lbl_addproducts">Add Products to Your Order</div>
+
+  <div class="url-input-box">
+    <span class="input-label" data-i18n="url_label">Easiest: on a brand's page, tap Share then PakPoshak. Or paste a product link below.</span>
+    <!-- FIRST URL input — hidden once draft cards exist -->
+    <div id="urlInputRow" class="url-row">
+      <input type="url" id="urlInput" placeholder="https://brand.com/products/product-name"/>
+      <button class="add-btn" id="addUrlBtn" onclick="handleAddUrl()" data-i18n="btn_addurl">+ Add URL</button>
+    </div>
+    <div id="urlInputErr" style="display:none;margin-top:9px;padding:10px 14px;border-radius:9px;background:rgba(192,57,43,0.13);border:1px solid rgba(192,57,43,0.40);color:#ff9a9a;font-size:0.82rem;line-height:1.5"></div>
   </div>
+  </div><!-- /addProductsSection -->
 
   <!-- Trust / help links — reassurance + discoverability for first-time buyers -->
   <div style="margin-top:28px;padding-top:18px;border-top:1px solid var(--gold-bdr);text-align:center">
@@ -461,6 +472,8 @@
       <a href="weight-chart.html" class="tl-chip" data-i18n="tl_weights">⚖️ Shipping weights</a>
     </div>
   </div>
+
+  </div><!-- /bagView -->
 
 </div><!-- end container step1 -->
 </div><!-- end step1 -->
@@ -514,7 +527,7 @@
   </div>
 
   <div class="nav-row">
-    <button class="btn-back" onclick="goToStep(1)" data-i18n="btn_back">← Back</button>
+    <button class="btn-back" onclick="showBagView()" data-i18n="btn_back">← Back</button>
     <button class="btn-next" onclick="nextFromStep2()" data-i18n="btn_review">Review My Order →</button>
   </div>
 

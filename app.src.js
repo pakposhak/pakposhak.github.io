@@ -1579,6 +1579,7 @@
     if(!Object.keys(drafts).length){
       document.getElementById('draftsContainer').style.display = 'none';
       closeDraftModal();  // last card gone → close the popup
+      restoreEditStash(); // removing the edit card = cancel → put the item back
       showTopUrlInput(); // show top input again when all cards gone
     }
     checkAddUrlLock();
@@ -2491,6 +2492,7 @@
       url_label:"Easiest: on a brand's page, tap Share then PakPoshak. Or paste a product link below.",
       btn_addurl:'+ Add URL', btn_paste:'📋 Paste Link & Auto-Fill', pp_tap:'Tap a product to add it — no copy-paste needed', pp_search:'🔍 Search this brand…', pp_site:'🌐 Open full brand site instead', fab_paste:'Paste link',
       dm_title:'Choose size & confirm price', dm_addbag:'Add to Bag', dm_addbag_n:'Add {n} items to Bag', dc_final:'Final price:',
+      bag_proceed:'Proceed to My Details →', bag_empty:'Your bag is empty', bag_empty_sub:'Browse Pakistani brands and tap + Add to drop items here.', bag_browse:'🛍️ Browse products', bag_added:'Added to your bag', bag_view:'View Bag',
       nav_home:'Home', nav_brands:'Brands', nav_cart:'Cart', nav_how:'How To', nav_guide:'Guide', nav_wish:'Wishlist', nav_help:'Help',
       nav_luxe:'Luxe', nav_bag:'Bag', nav_pricecheck:'Price Check',
       tl_help:'New here? Start with these:', tl_faq:'❓ How it works & our promise', tl_track:'📦 Track an order', tl_weights:'⚖️ Shipping weights', tl_wa:'💬 Chat on WhatsApp',
@@ -2563,6 +2565,7 @@
       btn_addurl:'+ লিংক যোগ করুন',
       btn_paste:'📋 লিংক পেস্ট করে অটো-ফিল', pp_tap:'পণ্যে ট্যাপ করেই যোগ করুন — কপি-পেস্ট লাগবে না', pp_search:'🔍 এই ব্র্যান্ডে খুঁজুন…', pp_site:'🌐 বদলে পুরো ব্র্যান্ড সাইট খুলুন', fab_paste:'লিংক পেস্ট',
       dm_title:'সাইজ বেছে নিন ও দাম দেখুন', dm_addbag:'ব্যাগে যোগ করুন', dm_addbag_n:'{n}টি আইটেম ব্যাগে যোগ করুন', dc_final:'চূড়ান্ত দাম:',
+      bag_proceed:'আমার তথ্যে এগিয়ে যান →', bag_empty:'আপনার ব্যাগ খালি', bag_empty_sub:'পাকিস্তানি ব্র্যান্ড দেখুন আর + Add চেপে পণ্য এখানে যোগ করুন।', bag_browse:'🛍️ পণ্য ব্রাউজ করুন', bag_added:'ব্যাগে যোগ হয়েছে', bag_view:'ব্যাগ দেখুন',
       nav_home:'হোম', nav_brands:'ব্র্যান্ড', nav_cart:'কার্ট', nav_how:'গাইড', nav_guide:'গাইড', nav_wish:'পছন্দ', nav_help:'সাহায্য',
       nav_luxe:'লাক্স', nav_bag:'ব্যাগ', nav_pricecheck:'দাম যাচাই',
       tl_help:'নতুন? শুরুটা এখান থেকে করুন:', tl_faq:'❓ কীভাবে কাজ করে ও আমাদের প্রতিশ্রুতি', tl_track:'📦 অর্ডার ট্র্যাক করুন', tl_weights:'⚖️ শিপিং ওজন', tl_wa:'💬 হোয়াটসঅ্যাপে চ্যাট',
@@ -3145,6 +3148,7 @@
     Object.keys(drafts).map(Number).forEach(id => { document.getElementById(`dc_${id}`)?.remove(); delete drafts[id]; });
     const dc = document.getElementById('draftsContainer'); if(dc) dc.style.display = 'none';
     closeDraftModal();
+    restoreEditStash();   // cancelling an edit puts the original item back in the bag
     try{ showTopUrlInput(); }catch(e){}
     try{ updateSaveAllBtn(); }catch(e){}
     try{ checkAddUrlLock(); }catch(e){}
@@ -3461,17 +3465,29 @@
       });
       cart.push({ url, brand, cat, sizes, pkr, weight: getWeight(cat), img: (dft && dft.img) || '', imgs: (dft && dft.imgs) || [], title: (dft && dft.title) || '' });
     });
+    _editStash = [];   // the edited item (if any) was just re-added — don't restore it on a later cancel
     // Clear all drafts
     ids.forEach(id => { document.getElementById(`dc_${id}`)?.remove(); delete drafts[id]; });
     document.getElementById('draftsContainer').style.display = 'none';
-    closeDraftModal();  // saved → close the popup, reveal the bag below
+    closeDraftModal();  // saved → close the popup
     showTopUrlInput(); // show top input again, clear it — ready for the next product
     checkAddUrlLock();
     renderCart();
+    // Bag is its own page now: confirm the add when the buyer is still browsing (not already on the Bag).
+    if(!document.body.classList.contains('psb-bag')){ try{ psAddedToBagToast(); }catch(e){} }
   }
 
   // ── CART ─────────────────────────────────────────────────────────────────
   let cart = [];
+  // Items pulled OUT of the cart by editItem() while they're being edited in the popup. If the buyer
+  // cancels the edit (✕ / backdrop / removing the card) we put them BACK so editing never loses an
+  // item; a successful "Add to Bag" clears this (the edited item is re-added by the save).
+  let _editStash = [];
+  function restoreEditStash(){
+    if(!_editStash.length) return;
+    while(_editStash.length){ const e = _editStash.shift(); cart.splice(Math.min(e.idx, cart.length), 0, e.item); }
+    try{ renderCart(); }catch(e){}
+  }
 
   // Persist cart to localStorage so a refresh doesn't wipe the basket
   function saveCartToStorage(){ try{ localStorage.setItem('psb_cart', JSON.stringify(cart)); }catch(e){} }
@@ -3558,9 +3574,10 @@
   function editItem(idx){
     const item = cart[idx];
     cart.splice(idx, 1);
+    _editStash.push({ idx: idx, item: item });   // restore it if the buyer cancels the edit
     renderCart();
-    // Always return to step 1 so the draft card is visible
-    goToStep(1);
+    // Editing happens from the Bag page (the popup then opens over it)
+    showBagView();
     // Hide top URL input row — the draft panel handles adding more URLs
     document.getElementById('urlInputRow').style.display = 'none';
 
@@ -3617,10 +3634,13 @@
     const aps   = document.getElementById('addProductsSection');   // landing only: paste-link box, revealed once cart has an item (req)
     updateAddMoreRow();
 
+    const bagNav = document.getElementById('bagNav');
     if(!cart.length){
-      if(empty) empty.style.display = 'none';
+      // Empty-bag state shows only where there's a dedicated Bag page (index); hidden on order-form.
+      if(empty) empty.style.display = document.getElementById('bagView') ? '' : 'none';
       if(oll) oll.style.display = 'none';
       if(aps) aps.style.display = 'none';
+      if(bagNav) bagNav.style.display = 'none';
       rtBox.style.display = 'none';
       badge.style.display = 'none';
       list.innerHTML = '';
@@ -3634,6 +3654,7 @@
     if(empty) empty.style.display = 'none';
     if(oll) oll.style.display = '';
     if(aps) aps.style.display = '';
+    if(bagNav) bagNav.style.display = '';
     badge.style.display = '';
     badge.textContent = cart.length + (cart.length === 1 ? ' item' : ' items');
     updateCartBadges(cart.length);
@@ -3738,6 +3759,7 @@
     });
     currentStep = n;
     document.body.classList.toggle('psb-browse', n === 1);
+    if(n !== 1) document.body.classList.remove('psb-bag');   // bag view only exists on step 1
     const _bh=document.getElementById('appHeader');if(_bh)_bh.style.position=(n===1&&window.innerWidth<820)?'relative':'';
     // Bottom bar now stays visible on every step — it IS the order-progress
     // indicator (Home · 1·2·3·4 · Cart); Home/Cart work from any step.
@@ -3754,7 +3776,7 @@
     const fab = document.getElementById('pasteFab');
     if(!fab) return;
     // ...and never while the share toast is up (they'd overlap bottom-right).
-    fab.classList.toggle('show', currentStep === 1 && !psOnProductsTab() && !psShareToastActive);
+    fab.classList.toggle('show', currentStep === 1 && !document.body.classList.contains('psb-bag') && !psOnProductsTab() && !psShareToastActive);
   }
   // When the user switches BACK to PakPoshak (e.g. after copying a link in
   // Chrome), pulse the Paste button so it's obvious where to tap next.
@@ -4153,6 +4175,7 @@
     checkAddUrlLock(); // re-enables Add URL buttons
     renderCart();
     goToStep(1);
+    try{ showBrowseView(); }catch(e){}   // fresh start → storefront, not an empty bag
   }
 
   // ── UTILITIES ─────────────────────────────────────────────────────────────
@@ -4410,6 +4433,50 @@
     }
   }
   window.psLuxeMode = psLuxeMode;
+
+  // ── BAG vs BROWSE (the two faces of step 1) ─────────────────────────────────
+  // The storefront (#browseView) and the basket (#bagView) are siblings inside step 1.
+  // setOrderView() shows one and hides the other so the Bag is its OWN page (req: Danish —
+  // "basket shall have its own page", not a form glued under the product grid). On
+  // order-form.html neither id exists, so this is a safe no-op there.
+  function setOrderView(view){
+    var bag = (view === 'bag');
+    var bv = document.getElementById('browseView');
+    var gv = document.getElementById('bagView');
+    if(!bv && !gv) return;                       // order-form.html — nothing to toggle
+    if(bv) bv.style.display = bag ? 'none' : '';
+    if(gv){
+      gv.style.display = bag ? '' : 'none';
+      if(bag){ gv.classList.remove('ps-viewfade'); void gv.offsetWidth; gv.classList.add('ps-viewfade'); }  // fade in, never a hard cut (#3)
+    }
+    document.body.classList.toggle('psb-bag', bag);
+    document.body.classList.toggle('psb-browse', !bag);
+    var h = document.getElementById('appHeader');
+    if(h) h.style.position = (!bag && window.innerWidth < 820) ? 'relative' : '';   // bag keeps the sticky header; browse hands off to .ps-topstick
+    try{ updatePasteFab(); }catch(e){}
+  }
+  function showBrowseView(){ setOrderView('browse'); }
+  function showBagView(){
+    if(!document.getElementById('step1').classList.contains('active')) goToStep(1);
+    setOrderView('bag');
+    try{ renderCart(); }catch(e){}
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  window.setOrderView = setOrderView;
+  window.showBrowseView = showBrowseView;
+  window.showBagView = showBagView;
+
+  // Brief confirmation after an item is saved while the buyer is still browsing — the Bag is its
+  // own page now, so without this an add would feel like nothing happened. Tapping it opens the Bag.
+  function psAddedToBagToast(){
+    var t = document.getElementById('psBagToast');
+    if(!t){ t = document.createElement('div'); t.id = 'psBagToast'; t.className = 'ps-share-toast'; t.setAttribute('role','status'); document.body.appendChild(t); }
+    t.innerHTML = '<span>✓ ' + esc(tr('bag_added')) + '</span><button type="button" onclick="showBagView()">' + esc(tr('bag_view')) + '</button>';
+    t.classList.add('on');
+    clearTimeout(t._h); t._h = setTimeout(function(){ if(t) t.classList.remove('on'); }, 3800);
+  }
+  window.psAddedToBagToast = psAddedToBagToast;
+
   function bottomNavGo(tab){
     try{ psThemeFlash(); }catch(e){}   // smooth any theme/Luxe colour flip this tap triggers (#3)
     // Bottom nav (redesign batch 2) = Home · Luxe · Bag(cart) · Price Check. Bag uses id bnav-bag.
@@ -4498,12 +4565,8 @@
     }
   }
 
-  // Desktop "Cart" chip (beside the stepper): the cart lives on step 1, so jump
-  // back there first if we're deeper in the flow, then scroll to it.
-  function gotoCart(){
-    if(!document.getElementById('step1').classList.contains('active')) goToStep(1);
-    setTimeout(scrollToCart, 80);
-  }
+  // "Bag" (bottom-nav + desktop Cart chip): open the Bag as its own page (step-1 bag view).
+  function gotoCart(){ showBagView(); }
 
   // ── CART BADGE SYNC ──────────────────────────────────────────────────────
   function updateCartBadges(count){
@@ -5475,6 +5538,7 @@
   }
 
   function switchBrowse(which){
+    try{ setOrderView('browse'); }catch(e){}   // a browse-tab switch always means: show the storefront, hide the Bag
     const brands = which === 'brands';
     const tb = document.getElementById('tabBrands'), tp = document.getElementById('tabProducts');
     if(tb) tb.style.display = brands ? '' : 'none';
@@ -7513,7 +7577,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28-navfix';
+  const PSB_BUILD = '2026-06-28-bagpage';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
