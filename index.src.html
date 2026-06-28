@@ -56,18 +56,19 @@
 
 <header id="appHeader">
   <div class="hdr-inner">
-    <button class="hdr-lang" id="hdrLangBtn" onclick="toggleLang()" aria-label="Change language">বাংলা</button>
     <div class="hdr-logo">
-      <img class="hdr-logo-img" src="pakposhak-icon-192.png" alt="PakPoshak app icon" width="40" height="40"/>
-      <div>
-        <div class="hdr-brand">PakPoshak</div>
-        <div class="hdr-tagline" data-i18n="tagline">Pakistani Fashion · Bangladesh Delivery</div>
-      </div>
+      <img class="hdr-logo-img" src="pakposhak-icon-192.png" alt="PakPoshak" width="30" height="30"/>
+      <div class="hdr-brand">PakPoshak</div>
     </div>
-    <!-- right header slot — wishlist + light/dark theme toggle -->
-    <div class="hdr-right-slot" style="grid-column:3;justify-self:end;display:flex;gap:7px;align-items:center">
-      <button class="hdr-lang hdr-wish" id="hdrWishBtn" onclick="psWishOpen()" aria-label="Wishlist" title="Wishlist"><svg class="ps-heart-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span class="hdr-wish-badge" id="hdrWishBadge" style="display:none">0</span></button>
-      <button class="hdr-lang" id="hdrThemeBtn" onclick="toggleTheme()" aria-label="Switch between light and dark theme" title="Light / dark theme">🌙</button>
+    <!-- right slot: wishlist + overflow menu (language / theme / guide live inside the menu now) -->
+    <div class="hdr-right-slot">
+      <button class="hdr-icon-btn hdr-wish" id="hdrWishBtn" onclick="psWishOpen()" aria-label="Wishlist" title="Wishlist"><svg class="ps-heart-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span class="hdr-wish-badge" id="hdrWishBadge" style="display:none">0</span></button>
+      <button class="hdr-icon-btn" id="hdrMenuBtn" onclick="psHdrMenu()" aria-label="Menu" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+      <div class="hdr-menu" id="hdrMenu" role="menu" hidden>
+        <button class="hdr-menu-item" role="menuitem" onclick="toggleLang()"><span class="hdr-menu-lbl" data-i18n="menu_language">Language</span><span class="hdr-menu-val" id="hdrLangBtn">বাংলা</span></button>
+        <button class="hdr-menu-item" role="menuitem" onclick="toggleTheme()"><span class="hdr-menu-lbl" data-i18n="menu_theme">Theme</span><span class="hdr-menu-val" id="hdrThemeBtn">🌙</span></button>
+        <a class="hdr-menu-item" role="menuitem" href="how-to-video.html"><span class="hdr-menu-lbl" data-i18n="menu_guide">Guide</span><span class="hdr-menu-val" aria-hidden="true">›</span></a>
+      </div>
     </div>
   </div>
 </header>
