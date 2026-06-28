@@ -2627,6 +2627,7 @@
     if(lb) lb.textContent = (_lang === 'en') ? 'বাংলা' : 'EN';
     try { if(typeof psRenderBanner === 'function') psRenderBanner(); } catch(e){}   // value banner is JS-rendered, refresh its language
     try { if(typeof psRenderColls === 'function') psRenderColls(); } catch(e){}     // collection tiles are JS-rendered too
+    try { if(typeof psRenderPromises === 'function') psRenderPromises(); } catch(e){}  // promise strip too
   }
   function toggleLang(){ setLang(_lang === 'en' ? 'bn' : 'en'); }
 
@@ -5881,6 +5882,28 @@
     try { var g = document.querySelector('.ps-results') || document.getElementById('psGrid'); if(g) g.scrollIntoView({ behavior:'smooth', block:'start' }); } catch(e){}
   }
   window.psCollGo = psCollGo; window.psRenderColls = psRenderColls;
+  // ── Reusable promise / trust strip (redesign P1) — drop a <div class="ps-promises" id="..">
+  // anywhere and call psRenderPromises(el). Promotes PakPoshak's promises; used on the search page. ──
+  const PS_PROMISES = [
+    { t_en:'100% genuine',     t_bn:'১০০% আসল',        s_en:"From the brand's Pakistani store", s_bn:'ব্র্যান্ডের পাকিস্তানি স্টোর থেকে', ic:'shield' },
+    { t_en:'Pakistani prices', t_bn:'পাকিস্তানি দাম',   s_en:'No inflated markups',              s_bn:'কোনো বাড়তি মার্কআপ নেই',          ic:'tag' },
+    { t_en:'To your door',     t_bn:'আপনার দরজায়',     s_en:'Delivered across Bangladesh',      s_bn:'সারা বাংলাদেশে ডেলিভারি',         ic:'truck' },
+    { t_en:'150+ brands',      t_bn:'১৫০+ ব্র্যান্ড',    s_en:'One cart, one checkout',           s_bn:'এক কার্ট, এক চেকআউট',             ic:'bag' }
+  ];
+  const PS_PROMISE_ICONS = {
+    shield:'<path d="M12 3l7 3v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/>',
+    tag:'<path d="M20.6 12.5l-8.1 8.1a1.4 1.4 0 01-2 0L2.5 12.5V3.5h9z"/><circle cx="7.5" cy="7.5" r="1.1"/>',
+    truck:'<path d="M3 6h11v9H3z"/><path d="M14 9h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/>',
+    bag:'<path d="M6 8h12l-1 12H7z"/><path d="M9 8V6a3 3 0 016 0v2"/>'
+  };
+  function psRenderPromises(el){
+    el = el || document.getElementById('psPromises'); if(!el) return;
+    var bn = (typeof _lang !== 'undefined' && _lang === 'bn');
+    el.innerHTML = PS_PROMISES.map(function(p){
+      return '<div class="ps-promise"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+PS_PROMISE_ICONS[p.ic]+'</svg><div class="ps-promise-tx"><b>'+esc(bn?p.t_bn:p.t_en)+'</b><span>'+esc(bn?p.s_bn:p.s_en)+'</span></div></div>';
+    }).join('');
+  }
+  window.psRenderPromises = psRenderPromises;
   function psShopBrandsMode(){
     if(psShopMode === 'brand'){ psShopMode = 'cat'; }                 // re-tap Brands → back to categories
     else { psShopMode = 'brand'; psShopDept = (psShopGender === 'x') ? 'w' : psShopGender; }   // enter Brands on the same dept (West has no brand pool → Women)
@@ -7105,7 +7128,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28g';
+  const PSB_BUILD = '2026-06-28h';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
@@ -7148,6 +7171,7 @@
     document.body.appendChild(tag);
     try { psBannerStart(); } catch(e){}   // start the rotating value banner (redesign P1)
     try { psRenderColls(); } catch(e){}   // render the collection-first home tiles
+    try { psRenderPromises(); } catch(e){}   // render the promise/trust strip (search page)
   });
 
 

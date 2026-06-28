@@ -110,6 +110,13 @@
     .ps-coll-lbl{font-weight:800;font-size:0.88rem;color:var(--accent)}
     .ps-coll-sub{font-size:0.7rem;color:var(--txt-muted);font-weight:600}
     .ps-coll:active{border-color:var(--accent)}
+    /* Reusable promise / trust strip (redesign P1). */
+    .ps-promises{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:0 0 14px}
+    .ps-promise{display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--bdr);border-radius:11px;padding:11px}
+    .ps-promise svg{width:24px;height:24px;color:var(--accent);flex-shrink:0}
+    .ps-promise-tx{min-width:0}
+    .ps-promise-tx b{display:block;font-size:0.82rem;font-weight:800;color:var(--txt);line-height:1.2}
+    .ps-promise-tx span{font-size:0.68rem;color:var(--txt-muted);line-height:1.3}
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:70px}
     .tl-chip{display:inline-flex;align-items:center;gap:5px;background:var(--surface);
