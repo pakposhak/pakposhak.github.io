@@ -6647,16 +6647,12 @@
   // Tapping the active sort/Sale chip clears it.
   function psBuildSort(){
     const el = document.getElementById('psSortTabs'); if(!el) return;
-    // Sort is a DROPDOWN (like the Price tab): tap it open, then SELECT ৳ Low→High or ৳ High→Low
-    // as pills (no confusing cycling). The button shows the active choice.
-    const sortLbl = psSort === 'asc' ? tr('ps_sort_lh') : psSort === 'desc' ? tr('ps_sort_hl') : tr('ps_sort_price');
+    // Two DIRECT sort buttons (৳ Low→High / ৳ High→Low) — no dropdown, which was unreliable on
+    // touch — plus Sale + New, all on one row. Re-tapping the active sort clears it.
     el.innerHTML =
-        `<span class="ps-sortgrp ps-sortdd" id="psSortDd">`
-      +   `<button type="button" class="ps-sortbtn ps-sortddbtn${psSort?' on':''}" id="psSortBtn" onclick="psToggleSortPop()" aria-haspopup="true" aria-expanded="false">${esc(sortLbl)} <span class="ps-sortcar">▾</span></button>`
-      +   `<div class="ps-sortpop" id="psSortPop">`
-      +     `<button type="button" class="ps-sort-opt${psSort==='asc'?' on':''}" onclick="psSetSortVal('asc')">${tr('ps_sort_lh')}</button>`
-      +     `<button type="button" class="ps-sort-opt${psSort==='desc'?' on':''}" onclick="psSetSortVal('desc')">${tr('ps_sort_hl')}</button>`
-      +   `</div>`
+        `<span class="ps-sortgrp">`
+      +   `<button type="button" class="ps-sortbtn${psSort==='asc'?' on':''}" onclick="psSetSortVal('asc')">${tr('ps_sort_lh')}</button>`
+      +   `<button type="button" class="ps-sortbtn${psSort==='desc'?' on':''}" onclick="psSetSortVal('desc')">${tr('ps_sort_hl')}</button>`
       + `</span>`
       + `<span class="ps-sortgrp">`
       +   `<button type="button" class="ps-sortbtn ps-salebtn${psSaleOnly?' on':''}" onclick="psToggleSale()">${tr('ps_sale')}</button>`
@@ -7585,7 +7581,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28-filterbar';
+  const PSB_BUILD = '2026-06-28-filtersize';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
