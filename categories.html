@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+  <meta name="google" content="notranslate"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <title>Categories – PakPoshak</title>
+  <link rel="icon" type="image/png" sizes="192x192" href="pakposhak-icon-192.png"/>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
+  <style>
+    :root {
+      --gold: #B8860B;
+      --gold-light: #F5E6C0;
+      --bg: #FDFAF5;
+      --surface: #FFFFFF;
+      --surface2: #F7F3EC;
+      --border: #E8E0D0;
+      --text: #1A1208;
+      --text2: #6B5A3E;
+      --text3: #9E8B6E;
+      --radius: 8px;
+    }
+    [data-theme="dark"] {
+      --bg: #141008;
+      --surface: #1E180C;
+      --surface2: #271F10;
+      --border: #3A2F1C;
+      --text: #F5E6C0;
+      --text2: #C4A96E;
+      --text3: #8A7550;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); }
+    body { display: flex; flex-direction: column; height: 100dvh; }
+
+    /* ── Header ── */
+    .cat-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px; padding-top: calc(12px + env(safe-area-inset-top));
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      flex-shrink: 0; position: sticky; top: 0; z-index: 10;
+    }
+    .cat-header a { color: var(--text2); text-decoration: none; font-size: 20px; line-height: 1; }
+    .cat-header h1 { font-size: 16px; font-weight: 600; flex: 1; color: var(--text); }
+    .cat-header .hdr-icons { display: flex; gap: 16px; }
+    .cat-header .hdr-icons a { font-size: 20px; }
+
+    /* ── Body: rail + panel ── */
+    .cat-body { display: flex; flex: 1; min-height: 0; }
+
+    /* ── Left rail ── */
+    .cat-rail {
+      width: 88px; flex-shrink: 0;
+      background: var(--surface2); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; overflow-y: auto;
+      padding: 6px 0;
+    }
+    .rail-item {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      padding: 12px 6px; cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: background 0.15s;
+    }
+    .rail-item.active {
+      background: var(--surface);
+      border-left-color: var(--gold);
+    }
+    .rail-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; border: 1.5px solid var(--border);
+      background: var(--surface); overflow: hidden;
+    }
+    .rail-item.active .rail-icon { border-color: var(--gold); }
+    .rail-label {
+      font-size: 10.5px; color: var(--text3); text-align: center;
+      line-height: 1.3; font-weight: 500;
+    }
+    .rail-item.active .rail-label { color: var(--gold); }
+    .rail-divider { height: 1px; background: var(--border); margin: 4px 12px; }
+
+    /* ── Right panel ── */
+    .cat-panel { flex: 1; overflow-y: auto; padding-bottom: 24px; }
+
+    /* Category chips */
+    .sec-title {
+      font-size: 13px; font-weight: 600; color: var(--text);
+      padding: 14px 14px 6px; letter-spacing: 0.01em;
+    }
+    .sec-divider { height: 1px; background: var(--border); margin: 0 14px 10px; }
+    .sub-heading {
+      font-size: 10px; font-weight: 600; color: var(--text3);
+      padding: 0 14px 6px; text-transform: uppercase; letter-spacing: 0.07em;
+    }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 12px 12px; }
+    .chip {
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+      width: 70px; cursor: pointer;
+    }
+    .chip-circle {
+      width: 56px; height: 56px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 600; text-align: center;
+      line-height: 1.25; padding: 6px;
+      border: 1.5px solid transparent;
+      transition: transform 0.12s, border-color 0.12s;
+    }
+    .chip:active .chip-circle { transform: scale(0.92); }
+    .chip-label { font-size: 10px; color: var(--text2); text-align: center; line-height: 1.3; }
+    /* Colour themes per section */
+    .c-eastern  { background: #FDF0DC; color: #7A4800; border-color: #E8C97A; }
+    .c-western  { background: #E4EEF9; color: #1A4B82; border-color: #9BBDE0; }
+    .c-festive  { background: #FAE8F0; color: #7A2040; border-color: #E0A0BC; }
+    .c-access   { background: #E8F5EC; color: #1A5C30; border-color: #90CCA0; }
+
+    /* ── Brand grid ── */
+    .brand-search-wrap { padding: 10px 12px 4px; }
+    .brand-search {
+      width: 100%; padding: 9px 14px; font-size: 14px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 24px; color: var(--text); outline: none;
+    }
+    .brand-search:focus { border-color: var(--gold); }
+    .gender-seg {
+      display: flex; margin: 8px 12px 10px;
+      border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
+    }
+    .gseg-btn {
+      flex: 1; text-align: center; padding: 7px 4px;
+      font-size: 12px; font-weight: 600; color: var(--text2);
+      background: var(--surface2); cursor: pointer; border: none;
+      transition: background 0.15s, color 0.15s;
+    }
+    .gseg-btn:not(:last-child) { border-right: 1px solid var(--border); }
+    .gseg-btn.on { background: var(--gold); color: #fff; }
+    .brand-grid {
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px; padding: 0 12px 16px;
+    }
+    .brand-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; display: flex; flex-direction: column;
+      align-items: center; gap: 7px; padding: 14px 8px 12px;
+      cursor: pointer; text-decoration: none; color: inherit;
+      transition: border-color 0.15s, transform 0.12s;
+    }
+    .brand-card:active { transform: scale(0.96); border-color: var(--gold); }
+    .brand-logo {
+      width: 68px; height: 68px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; text-align: center;
+      line-height: 1.3; color: #fff; overflow: hidden; flex-shrink: 0;
+    }
+    .brand-logo img {
+      width: 100%; height: 100%; object-fit: contain;
+      background: var(--surface);
+    }
+    .brand-card-name {
+      font-size: 11.5px; font-weight: 600; color: var(--text);
+      text-align: center; line-height: 1.3;
+    }
+    .brand-card-dept {
+      font-size: 10px; color: var(--text3); text-align: center;
+      line-height: 1.3;
+    }
+    .brand-empty {
+      grid-column: 1/-1; text-align: center;
+      color: var(--text3); font-size: 13px; padding: 32px 0;
+    }
+  </style>
+</head>
+<body>
+<!-- Apply saved theme before paint -->
+<script>
+(function(){
+  var t = localStorage.getItem('psb_theme');
+  if(t==='dark') document.documentElement.setAttribute('data-theme','dark');
+})();
+</script>
+
+<header class="cat-header">
+  <a href="index.html" aria-label="Back to home">&#8592;</a>
+  <h1>Categories</h1>
+  <nav class="hdr-icons">
+    <a href="index.html#cart" aria-label="Cart">&#128717;</a>
+  </nav>
+</header>
+
+<div class="cat-body">
+  <!-- Left rail -->
+  <nav class="cat-rail" role="navigation" aria-label="Gender tabs">
+    <div class="rail-item active" data-tab="w" onclick="switchTab('w',this)">
+      <div class="rail-icon">👗</div>
+      <span class="rail-label">Women's<br>Wear</span>
+    </div>
+    <div class="rail-item" data-tab="m" onclick="switchTab('m',this)">
+      <div class="rail-icon">👔</div>
+      <span class="rail-label">Men's<br>Wear</span>
+    </div>
+    <div class="rail-item" data-tab="k" onclick="switchTab('k',this)">
+      <div class="rail-icon">🧒</div>
+      <span class="rail-label">Kids'<br>Wear</span>
+    </div>
+    <div class="rail-divider"></div>
+    <div class="rail-item" data-tab="brands" onclick="switchTab('brands',this)">
+      <div class="rail-icon">🏪</div>
+      <span class="rail-label">Browse<br>Brands</span>
+    </div>
+  </nav>
+
+  <!-- Right panel -->
+  <main class="cat-panel" id="catPanel" role="main"></main>
+</div>
+
+<script>
+// ── Category tree ─────────────────────────────────────────────────────────────
+const CAT_DATA = {
+  w: [
+    { sec: 'Eastern Wear', cls: 'c-eastern', groups: [
+      { sub: 'Stitched', items: [
+        ['kurti_1pc',         'Kurti / Shirt'],
+        ['kaftan',            'Kaftan'],
+        ['shirt_dupatta_2pc', '2pc Shirt + Dupatta'],
+        ['shirt_trouser_2pc', '2pc Shirt + Trouser'],
+        ['pret_2pc_emb',      '2pc Embroidered'],
+        ['pret_3pc',          '3pc Printed / Plain'],
+        ['pret_3pc_emb',      '3pc Embroidered'],
+        ['formal_emb_3pc',    '3pc Formal'],
+        ['heavy_formal_3pc',  '3pc Heavy Formal'],
+        ['handmade_emb',      'Full Handwork (adda)'],
+      ]},
+      { sub: 'Festive / Bridal', items: [
+        ['saree',    'Saree'],
+        ['lehenga',  'Lehenga / Gharara'],
+        ['bridal',   'Bridal / Velvet'],
+        ['abaya',    'Abaya / Hijab'],
+      ]},
+      { sub: 'Winter', items: [
+        ['winter_2pc_stitch', 'Winter 2pc — Stitched'],
+        ['winter_3pc_stitch', 'Winter 3pc — Stitched'],
+      ]},
+      { sub: 'Unstitched Fabric', items: [
+        ['lawn_3pc_unstitch',          '3pc Printed / Plain'],
+        ['unstitch_3pc_emb',           '3pc Embroidered'],
+        ['shirt_dupatta_2pc_unstitch', '2pc — Shirt + Dupatta'],
+        ['winter_2pc_unstitch',        'Winter 2pc'],
+        ['winter_3pc_unstitch',        'Winter 3pc'],
+      ]},
+    ]},
+    { sec: 'Western Wear', cls: 'c-western', groups: [
+      { sub: '', items: [
+        ['western_top',    'Western Top / Tee'],
+        ['maxi_dress',     'Maxi / Gown / Dress'],
+        ['womens_trouser', 'Trouser / Pants'],
+        ['coord_western',  '2pc Western Co-ord'],
+        ['loungewear',     'Loungewear / Nightwear'],
+      ]},
+    ]},
+    { sec: 'Accessories', cls: 'c-access', groups: [
+      { sub: '', items: [
+        ['dupatta_only', 'Dupatta / Stole / Scarf'],
+        ['shawl',        'Shawl'],
+        ['footwear',     'Footwear / Khussa'],
+      ]},
+    ]},
+  ],
+  m: [
+    { sec: 'Eastern Wear', cls: 'c-eastern', groups: [
+      { sub: 'Traditional', items: [
+        ['mens_kurta',          'Kurta / Kameez (1pc)'],
+        ['mens_shalwar_kameez', 'Shalwar Kameez (2pc)'],
+        ['mens_waistcoat',      'Waistcoat'],
+        ['mens_sherwani',       'Sherwani / Prince Coat'],
+        ['mens_unstitched',     'Unstitched Fabric'],
+      ]},
+    ]},
+    { sec: 'Western Wear', cls: 'c-western', groups: [
+      { sub: 'Casual', items: [
+        ['mens_shirt',   'Shirt / Polo / Tee'],
+        ['mens_trouser', 'Trouser / Chinos'],
+        ['mens_jeans',   'Jeans / Denim'],
+        ['mens_suit',    'Suit / Blazer (2pc)'],
+      ]},
+    ]},
+  ],
+  k: [
+    { sec: 'Eastern Wear', cls: 'c-eastern', groups: [
+      { sub: 'Boys', items: [
+        ['kids_boys_eastern', 'Boys — Kurta / 2-3pc'],
+        ['kids_boys_formal',  'Boys — Party / Formal'],
+      ]},
+      { sub: 'Girls', items: [
+        ['kids_girls_eastern', 'Girls — Frock / 2-3pc'],
+        ['kids_girls_formal',  'Girls — Party / Formal'],
+      ]},
+      { sub: 'Baby', items: [
+        ['kids_infant', 'Infant / Baby (0–2y)'],
+      ]},
+    ]},
+    { sec: 'Western Wear', cls: 'c-western', groups: [
+      { sub: 'Boys', items: [['kids_boys_western', 'Boys — Tee / Jeans']] },
+      { sub: 'Girls', items: [['kids_girls_western', 'Girls — Dress / Tee']] },
+    ]},
+  ],
+};
+
+// ── Brand list — mirrors BRANDS array in app.src.js, with gender tags ─────────
+// c: md=multi-dept, w=women, p=premium(women), m=men, k=kids
+// g: derived gender chips  w=women m=men k=kids
+const BRANDS = [
+  // Multi-department
+  {n:'Sapphire',       u:'pk.sapphireonline.pk',   c:'md', g:['w','m','k']},
+  {n:'Khaadi',         u:'pk.khaadi.com',           c:'md', g:['w','m','k']},
+  {n:'Alkaram Studio', u:'alkaramstudio.com',       c:'md', g:['w','m','k']},
+  {n:'Almirah',        u:'almirah.com.pk',          c:'md', g:['w','m','k']},
+  {n:'Breakout',       u:'breakout.com.pk',         c:'md', g:['w','m','k']},
+  {n:'Edenrobe',       u:'edenrobe.com',            c:'md', g:['w','m','k']},
+  {n:'Limelight',      u:'limelight.pk',            c:'md', g:['w','k']},
+  {n:'Outfitters',     u:'outfitters.com.pk',       c:'md', g:['m','k']},
+  {n:'Bonanza Satrangi',u:'bonanzasatrangi.com',    c:'md', g:['w','m','k']},
+  {n:'Gul Ahmed',      u:'gulahmedshop.com',        c:'md', g:['w','m','k']},
+  {n:'J. Junaid Jamshed',u:'junaidjamshed.com',     c:'md', g:['w','m','k']},
+  {n:'Khas Stores',    u:'khasstores.com',          c:'md', g:['w','m','k']},
+  {n:'Leisure Club',   u:'leisureclub.pk',          c:'md', g:['w','m','k']},
+  {n:'Nishat Linen',   u:'nishatlinen.com',         c:'md', g:['w','m','k']},
+  {n:'Diners',         u:'diners.com.pk',           c:'md', g:['w','m']},
+  {n:'Zellbury',       u:'zellbury.com',            c:'md', g:['w','m','k']},
+  // Women's pret & unstitched
+  {n:'Agha Noor',      u:'aghanoorofficial.com',    c:'w', g:['w']},
+  {n:'Alizeh',         u:'alizeh.pk',               c:'w', g:['w']},
+  {n:'Beechtree',      u:'beechtree.pk',            c:'w', g:['w']},
+  {n:'Charizma',       u:'houseofcharizma.com',     c:'w', g:['w']},
+  {n:'Chinyere',       u:'chinyere.pk',             c:'w', g:['w']},
+  {n:'Cross Stitch',   u:'crossstitch.pk',          c:'w', g:['w']},
+  {n:'Ego',            u:'wearego.com',             c:'w', g:['w']},
+  {n:'ETHNC',          u:'pk.ethnc.com',            c:'w', g:['w']},
+  {n:'Generation',     u:'generation.com.pk',       c:'w', g:['w','m']},
+  {n:'Jazmin',         u:'jazmin.pk',               c:'w', g:['w']},
+  {n:'Kayseria',       u:'kayseria.com.pk',         c:'w', g:['w']},
+  {n:'LAAM',           u:'laam.pk',                 c:'w', g:['w']},
+  {n:'Lulusar',        u:'lulusar.com',             c:'w', g:['w']},
+  {n:'Maria B',        u:'mariab.pk',               c:'w', g:['w']},
+  {n:'Mausummery',     u:'mausummery.com',          c:'w', g:['w']},
+  {n:'Motifz',         u:'motifz.com.pk',           c:'w', g:['w']},
+  {n:'Nureh',          u:'nureh.pk',                c:'w', g:['w']},
+  {n:'Rang Ja',        u:'myrangja.com',            c:'w', g:['w']},
+  {n:'Ramsha',         u:'ramsha.pk',               c:'w', g:['w']},
+  {n:'Saya',           u:'saya.pk',                 c:'w', g:['w']},
+  {n:'So Kamal',       u:'sokamal.com',             c:'w', g:['w']},
+  {n:'Warda',          u:'warda.com.pk',            c:'w', g:['w']},
+  {n:'Zeen',           u:'zeenwoman.com',           c:'w', g:['w']},
+  {n:'Bin Saeed',      u:'binsaeedfabric.com',      c:'w', g:['w']},
+  {n:'Rang Rasiya',    u:'rangrasiya.com.pk',       c:'w', g:['w']},
+  {n:'So Kamal',       u:'sokamal.com',             c:'w', g:['w']},
+  {n:'Thredz',         u:'thredzonline.com',        c:'w', g:['w']},
+  {n:'Gulaal',         u:'gulaal.pk',               c:'w', g:['w']},
+  {n:'Salitex',        u:'salitexonline.com',       c:'w', g:['w']},
+  {n:'Zarif',          u:'zarif.pk',                c:'w', g:['w']},
+  // Premium
+  {n:'Asim Jofa',      u:'asimjofa.com',            c:'p', g:['w']},
+  {n:'Bareeze',        u:'bareezepk.com',           c:'p', g:['w']},
+  {n:'Baroque',        u:'baroque.com.pk',          c:'p', g:['w']},
+  {n:'Crimson',        u:'crimson.com.pk',          c:'p', g:['w']},
+  {n:'Elan',           u:'elan.pk',                 c:'p', g:['w']},
+  {n:'Emaan Adeel',    u:'emaanadeel.com',          c:'p', g:['w']},
+  {n:'Maryum N Maria', u:'maryumnmaria.com',        c:'p', g:['w']},
+  {n:'Mushq',          u:'mushq.com',               c:'p', g:['w']},
+  {n:'Sana Safinaz',   u:'sanasafinaz.com',         c:'p', g:['w']},
+  {n:'Sania Maskatiya',u:'pk.saniamaskatiya.com',   c:'p', g:['w']},
+  {n:'Zaha by Elan',   u:'zaha.pk',                 c:'p', g:['w']},
+  {n:'Zainab Chottani',u:'pk.zainabchottani.com',   c:'p', g:['w']},
+  {n:'Afrozeh',        u:'afrozeh.com',             c:'p', g:['w']},
+  {n:'Faiza Saqlain',  u:'faizasaqlain.pk',         c:'p', g:['w']},
+  {n:'Imrozia Premium',u:'imroziapremium.com',      c:'p', g:['w']},
+  {n:'Nomi Ansari',    u:'nomiansari.com.pk',       c:'p', g:['w']},
+  {n:'Zara Shahjahan', u:'zarashahjahan.com',       c:'p', g:['w']},
+  // Men
+  {n:'Amir Adnan',     u:'amiradnan.com',           c:'m', g:['m']},
+  {n:'Cambridge',      u:'thecambridgeshop.com',    c:'m', g:['m']},
+  {n:'Charcoal',       u:'charcoal.com.pk',         c:'m', g:['m']},
+  {n:'Cougar',         u:'cougar.com.pk',           c:'m', g:['m']},
+  {n:'Deepak Perwani', u:'deepakperwani.com',       c:'m', g:['m']},
+  {n:'Monark',         u:'monark.com.pk',           c:'m', g:['m']},
+  {n:'Royal Tag',      u:'royaltag.com.pk',         c:'m', g:['m']},
+  {n:'Shahzeb Saeed',  u:'shahzebsaeed.com',        c:'m', g:['m']},
+  {n:'Furor',          u:'furorjeans.com',          c:'m', g:['m']},
+  {n:'Dynasty Fabrics',u:'dynastyfabrics.com',      c:'m', g:['m']},
+  // Kids
+  {n:'Minnie Minors',  u:'minnieminors.com',        c:'k', g:['k']},
+  {n:'Pepperland',     u:'pepperland.pk',           c:'k', g:['k']},
+  {n:'Bachaa Party',   u:'bachaaparty.com',         c:'k', g:['k']},
+  {n:'Hopscotch',      u:'ilovehopscotch.com',      c:'k', g:['k']},
+];
+
+// Remove any accidental duplicates by name
+const _seen = new Set();
+const BRANDS_DEDUPED = BRANDS.filter(b => { if(_seen.has(b.n)) return false; _seen.add(b.n); return true; });
+
+// ── Logo colour fallbacks ─────────────────────────────────────────────────────
+const LOGO_COLORS = [
+  '#534AB7','#0F6E56','#993C1D','#185FA5','#854F0B',
+  '#993556','#3B6D11','#633806','#0C447C','#72243E',
+  '#27500A','#A32D2D','#2C5A6E','#6E2C52','#1A5E1A',
+];
+function brandColor(idx){ return LOGO_COLORS[idx % LOGO_COLORS.length]; }
+function initials(name){ return name.split(/[\s\-\.&\/]+/).map(w=>w[0]||'').join('').slice(0,2).toUpperCase() || '?'; }
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let activeTab = 'w';
+let brandGender = 'all';
+let brandQuery  = '';
+
+// ── Render helpers ────────────────────────────────────────────────────────────
+function renderCats(g) {
+  const sections = CAT_DATA[g];
+  let html = '';
+  sections.forEach(sec => {
+    html += `<div class="sec-title">${esc(sec.sec)}</div><div class="sec-divider"></div>`;
+    sec.groups.forEach(grp => {
+      if (grp.sub) html += `<div class="sub-heading">${esc(grp.sub)}</div>`;
+      html += `<div class="chip-row">`;
+      grp.items.forEach(([key, label]) => {
+        const ini = label.split(/[\s\/\-–\(]+/).map(w=>w[0]||'').filter(Boolean).join('').slice(0,3).toUpperCase();
+        html += `<div class="chip" onclick="goProducts('${key}','${esc(label)}')" role="button" tabindex="0">
+          <div class="chip-circle ${sec.cls}">${ini}</div>
+          <span class="chip-label">${esc(label)}</span>
+        </div>`;
+      });
+      html += `</div>`;
+    });
+  });
+  document.getElementById('catPanel').innerHTML = html;
+}
+
+function renderBrands() {
+  const q = brandQuery.toLowerCase().trim();
+  const filtered = BRANDS_DEDUPED.filter(b => {
+    const gMatch = brandGender === 'all' || b.g.includes(brandGender);
+    const qMatch = !q || b.n.toLowerCase().includes(q);
+    return gMatch && qMatch;
+  });
+
+  const seg = [['all','All'],['w','Women'],['m','Men'],['k','Kids']].map(([v,l]) =>
+    `<button type="button" class="gseg-btn${v===brandGender?' on':''}" onclick="setBrandGender('${v}')">${l}</button>`
+  ).join('');
+
+  let cards = '';
+  if (!filtered.length) {
+    cards = `<div class="brand-empty">No brands found</div>`;
+  } else {
+    filtered.forEach((b, i) => {
+      const col = brandColor(i);
+      const ini = initials(b.n);
+      // Google favicon service — reliable for most brand Shopify stores
+      const logoUrl = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(b.u)}&sz=128`;
+      cards += `<a class="brand-card" href="index.html?brand=${encodeURIComponent(b.n)}" aria-label="${esc(b.n)}">
+        <div class="brand-logo" style="background:${col};" data-domain="${esc(b.u)}">
+          <img src="${esc(logoUrl)}" alt="${esc(b.n)}" loading="lazy"
+               onload="this.parentElement.style.background='var(--surface)'"
+               onerror="this.remove()"/>
+        </div>
+        <span class="brand-card-name">${esc(b.n)}</span>
+        <span class="brand-card-dept">${esc(deptLabel(b))}</span>
+      </a>`;
+    });
+  }
+
+  document.getElementById('catPanel').innerHTML = `
+    <div class="sec-title">Browse Brands</div>
+    <div class="sec-divider"></div>
+    <div class="brand-search-wrap">
+      <input class="brand-search" type="search" placeholder="Search 150+ brands…"
+             value="${esc(brandQuery)}"
+             oninput="brandQuery=this.value;renderBrands()"
+             autocomplete="off" autocorrect="off" spellcheck="false"/>
+    </div>
+    <div class="gender-seg">${seg}</div>
+    <div class="brand-grid" id="brandGrid">${cards}</div>
+  `;
+}
+
+function deptLabel(b) {
+  if (b.c === 'md') return 'Women · Men · Kids';
+  if (b.c === 'p')  return 'Premium — Women';
+  if (b.c === 'w')  return "Women's wear";
+  if (b.c === 'm')  return "Men's wear";
+  if (b.c === 'k')  return "Kids' wear";
+  return '';
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Navigation ────────────────────────────────────────────────────────────────
+function switchTab(g, el) {
+  document.querySelectorAll('.rail-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  activeTab = g;
+  if (g === 'brands') renderBrands();
+  else renderCats(g);
+}
+
+function setBrandGender(v) {
+  brandGender = v;
+  renderBrands();
+}
+
+// Tap a category chip → go to Browse Products with that category pre-filtered
+function goProducts(catKey, label) {
+  window.location.href = 'index.html?fromcat=' + encodeURIComponent(catKey);
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+renderCats('w');
+</script>
+</body>
+</html>

@@ -65,8 +65,9 @@
     .ps-gen.on{color:var(--accent)}   /* underline is now the sliding indicator below (#2) */
     .ps-gen:not(.on):active{color:var(--txt-sec)}
     .ps-gen-spacer{flex:1 1 auto}
-    .ps-gen-cat{flex:0 0 auto;background:none;border:0;color:var(--accent);padding:8px 10px;cursor:pointer;display:flex;align-items:center}
+    .ps-gen-cat{flex:0 0 auto;background:none;border:0;color:var(--accent);padding:8px 10px;cursor:pointer;display:flex;align-items:center;text-decoration:none}
     .ps-gen-cat svg{width:21px;height:21px;fill:currentColor}
+    #psCatsBtn{margin-left:-2px}
     /* Myntra-style sliding underline (#2): one indicator slides + resizes under the active gender tab (psMoveGenInd). */
     .ps-gen-ind{position:absolute;bottom:-1px;left:0;width:0;height:2.5px;background:var(--accent);border-radius:2px;opacity:0;pointer-events:none;transition:left .3s cubic-bezier(.4,0,.2,1),width .3s cubic-bezier(.4,0,.2,1),opacity .2s ease,background-color .18s}
     /* #3 "every interaction transitions, never a hard refresh": grid cross-fade on reset, a view-swap

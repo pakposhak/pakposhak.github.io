@@ -7469,11 +7469,46 @@
   try{ switchBrowse(localStorage.getItem('psb_browse') === 'brands' ? 'brands' : 'products'); }
   catch(e){ try{ switchBrowse('products'); }catch(_){} }
 
+  // ── Deep-link from categories.html ──────────────────────────────────────────
+  // The full categories page (categories.html, opened by the ▦ button on the gender
+  // rail) links back here with ?fromcat=<catKey> or ?brand=<name>. Apply that filter
+  // on load, sync the department rail to the category's gender, then clean the URL.
+  (function(){
+    try{
+      var q = new URLSearchParams(location.search);
+      var fromCat = q.get('fromcat');
+      var fromBrand = q.get('brand');
+      if(!fromCat && !fromBrand) return;
+      try{ switchBrowse('products'); }catch(e){}
+      if(fromCat){
+        var g = /^mens_/.test(fromCat) ? 'm' : /^kids_/.test(fromCat) ? 'k' : 'w';
+        // Highlight the gender on the rail VISUALLY only. We deliberately do NOT call
+        // psSetGender()/psSetShopGender() here: on a cold load those kick off an async
+        // department-index fetch whose callback would clobber our single-category filter.
+        try{
+          var _root = document.documentElement; _root.setAttribute('data-gender', g);
+          var _gb = document.querySelectorAll('#psGenRail .ps-gen');
+          for(var _i=0;_i<_gb.length;_i++){ var _on = _gb[_i].getAttribute('data-g')===g; _gb[_i].classList.toggle('on', _on); _gb[_i].setAttribute('aria-pressed', _on?'true':'false'); }
+          if(typeof psMoveGenInd === 'function') psMoveGenInd();
+        }catch(e){}
+        psSel = { prices:new Set(psSel.prices), cats:new Set([fromCat]), brands:new Set() };
+        try{ psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply(); }catch(e){}
+      } else if(fromBrand){
+        psSel = { prices:new Set(psSel.prices), cats:new Set(), brands:new Set([fromBrand]) };
+        try{ psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply(); }catch(e){}
+      }
+      var clean = new URL(location.href);
+      clean.searchParams.delete('fromcat'); clean.searchParams.delete('brand');
+      history.replaceState(null, '', clean.toString());
+      setTimeout(function(){ try{ psScrollToResults(); }catch(e){} }, 200);
+    }catch(e){}
+  })();
+
   // ── BUILD STAMP ──────────────────────────────────────────────────────────
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28-popup2';
+  const PSB_BUILD = '2026-06-28-cats';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
