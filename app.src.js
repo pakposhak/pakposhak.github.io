@@ -2472,6 +2472,7 @@
       url_label:"Easiest: on a brand's page, tap Share then PakPoshak. Or paste a product link below.",
       btn_addurl:'+ Add URL', btn_paste:'📋 Paste Link & Auto-Fill', pp_tap:'Tap a product to add it — no copy-paste needed', pp_search:'🔍 Search this brand…', pp_site:'🌐 Open full brand site instead', fab_paste:'Paste link',
       nav_home:'Home', nav_brands:'Brands', nav_cart:'Cart', nav_how:'How To', nav_guide:'Guide', nav_wish:'Wishlist', nav_help:'Help',
+      nav_luxe:'Luxe', nav_bag:'Bag', nav_pricecheck:'Price Check',
       tl_help:'New here? Start with these:', tl_faq:'❓ How it works & our promise', tl_track:'📦 Track an order', tl_weights:'⚖️ Shipping weights', tl_wa:'💬 Chat on WhatsApp',
       addmore_hint:'✓ Item saved! Add another product, or continue to your details.', addmore_btn:'➕ Add Another Product',
       word_brands:'brands',
@@ -2542,6 +2543,7 @@
       btn_addurl:'+ লিংক যোগ করুন',
       btn_paste:'📋 লিংক পেস্ট করে অটো-ফিল', pp_tap:'পণ্যে ট্যাপ করেই যোগ করুন — কপি-পেস্ট লাগবে না', pp_search:'🔍 এই ব্র্যান্ডে খুঁজুন…', pp_site:'🌐 বদলে পুরো ব্র্যান্ড সাইট খুলুন', fab_paste:'লিংক পেস্ট',
       nav_home:'হোম', nav_brands:'ব্র্যান্ড', nav_cart:'কার্ট', nav_how:'গাইড', nav_guide:'গাইড', nav_wish:'পছন্দ', nav_help:'সাহায্য',
+      nav_luxe:'লাক্স', nav_bag:'ব্যাগ', nav_pricecheck:'দাম যাচাই',
       tl_help:'নতুন? শুরুটা এখান থেকে করুন:', tl_faq:'❓ কীভাবে কাজ করে ও আমাদের প্রতিশ্রুতি', tl_track:'📦 অর্ডার ট্র্যাক করুন', tl_weights:'⚖️ শিপিং ওজন', tl_wa:'💬 হোয়াটসঅ্যাপে চ্যাট',
       addmore_hint:'✓ পণ্যটি সেভ হয়েছে! আরেকটি যোগ করুন, বা আপনার তথ্য দিতে এগিয়ে যান।', addmore_btn:'➕ আরেকটি পণ্য যোগ করুন',
       word_brands:'ব্র্যান্ড',
@@ -4318,15 +4320,43 @@
 
   // ── BOTTOM NAV ───────────────────────────────────────────────────────────
   function bottomNavGo(tab){
-    // Bottom bar = Home · Wishlist · Cart · Help (no step dots — the order steps live in the page).
-    ['home','cart'].forEach(t => { const b = document.getElementById('bnav-'+t); if(b) b.classList.toggle('active', t===tab); });
+    // Bottom nav (redesign batch 2) = Home · Luxe · Bag(cart) · Price Check. Bag uses id bnav-bag.
+    var idmap = { home:'bnav-home', luxe:'bnav-luxe', cart:'bnav-bag', pricecheck:'bnav-pricecheck' };
+    Object.keys(idmap).forEach(function(t){ var b = document.getElementById(idmap[t]); if(b) b.classList.toggle('active', t === tab); });
     if(tab === 'home'){
+      if(typeof switchBrowse === 'function') switchBrowse('products');
+      try{ psSetStore('everyday'); }catch(e){}   // Home = the everyday feed (under 10k)
+      if(currentStep !== 1) goToStep(1);
+      window.scrollTo({top:0, behavior:'smooth'});
+    } else if(tab === 'luxe'){
+      if(typeof switchBrowse === 'function') switchBrowse('products');
+      try{ psSetStore('premium'); }catch(e){}    // Luxe = the 10k+ feed (replaces the old toggle)
       if(currentStep !== 1) goToStep(1);
       window.scrollTo({top:0, behavior:'smooth'});
     } else if(tab === 'cart'){
-      gotoCart();   // jumps back to step 1 if needed, then scrolls to the cart
+      gotoCart();   // Bag → jumps back to step 1 if needed, then scrolls to the order list
+    } else if(tab === 'pricecheck'){
+      // Price Check = the brands / paste-a-link page where we reveal the real PKR price.
+      if(currentStep !== 1) goToStep(1);
+      if(typeof switchBrowse === 'function') switchBrowse('brands');
+      window.scrollTo({top:0, behavior:'smooth'});
     }
   }
+  // Bottom nav auto-hide: slide it away while scrolling DOWN, bring it back when scrolling stops or
+  // reverses (redesign batch 2). Time-throttled (no rAF dependency) so it works in all webviews.
+  (function(){
+    var lastY = 0, stopT = null;
+    function onScroll(){
+      var n = document.getElementById('bottomNav'); if(!n) return;
+      var y = window.scrollY || window.pageYOffset || 0;
+      if(y > lastY + 5 && y > 130){ n.classList.add('bottom-nav--hidden'); }       // scrolling down → hide
+      else if(y < lastY - 5){ n.classList.remove('bottom-nav--hidden'); }            // scrolling up → show
+      lastY = y;
+      if(stopT) clearTimeout(stopT);
+      stopT = setTimeout(function(){ var m = document.getElementById('bottomNav'); if(m) m.classList.remove('bottom-nav--hidden'); }, 240);   // stopped → show
+    }
+    window.addEventListener('scroll', onScroll, { passive:true });
+  })();
   // Help tab → toggle the guide popup (Watch video + How it works). Replaces the old broken
   // "bottomNavGuide" handler (it was never defined → the button did nothing).
   function bottomNavHelp(ev){
@@ -7221,7 +7251,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28m';
+  const PSB_BUILD = '2026-06-28n';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

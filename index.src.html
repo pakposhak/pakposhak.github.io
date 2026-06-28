@@ -62,7 +62,7 @@
     </div>
     <!-- right slot: wishlist + overflow menu (language / theme / guide live inside the menu now) -->
     <div class="hdr-right-slot">
-      <button class="hdr-icon-btn hdr-wish" id="hdrWishBtn" onclick="psWishOpen()" aria-label="Wishlist" title="Wishlist"><svg class="ps-heart-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span class="hdr-wish-badge" id="hdrWishBadge" style="display:none">0</span></button>
+      <button class="hdr-icon-btn hdr-wish" id="hdrWishBtn" onclick="psWishOpen()" aria-label="Wishlist" title="Wishlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.3 4.25 12.55a4.55 4.55 0 0 1 6.43-6.43L12 7.44l1.32-1.32a4.55 4.55 0 0 1 6.43 6.43z"/></svg><span class="hdr-wish-badge" id="hdrWishBadge" style="display:none">0</span></button>
       <button class="hdr-icon-btn" id="hdrMenuBtn" onclick="psHdrMenu()" aria-label="Menu" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
       <div class="hdr-menu" id="hdrMenu" role="menu" hidden>
         <button class="hdr-menu-item" role="menuitem" onclick="toggleLang()"><span class="hdr-menu-lbl" data-i18n="menu_language">Language</span><span class="hdr-menu-val" id="hdrLangBtn">বাংলা</span></button>
@@ -267,11 +267,7 @@
 
   <!-- BROWSE PRODUCTS — multi-brand search over catalog.json (price / category / brand filters) -->
   <div id="tabProducts">
-    <!-- Everyday / Premium storefront (split at 10k BDT) + rotating value banner (redesign P1). -->
-    <div class="ps-storerow" id="psStoreRow" role="tablist" aria-label="Storefront">
-      <button type="button" class="ps-store on" data-store="everyday" aria-pressed="true" onclick="psSetStore('everyday')" data-i18n="store_everyday">Everyday</button>
-      <button type="button" class="ps-store" data-store="premium" aria-pressed="false" onclick="psSetStore('premium')" data-i18n="store_premium">Premium</button>
-    </div>
+    <!-- Storefront toggle removed (redesign batch 2): Home = everyday feed, the Luxe bottom tab = 10k+ feed. -->
     <div class="ps-banner" id="psBanner"></div>
     <!-- Collection-first home: collection tiles before the product grid (redesign P1). -->
     <div class="ps-colls-hd" data-i18n="colls_hd">Collections</div>
@@ -818,22 +814,24 @@
 </button>
 
 <!-- BOTTOM NAVIGATION BAR — Home · Wishlist · Cart · Help (mobile only; desktop uses the top steps-bar) -->
+<!-- Bottom nav (redesign batch 2): Home (icon only) · Luxe · Bag · Price Check.
+     Auto-hides while scrolling DOWN, reappears when scrolling stops or scrolls up (psBnavScroll). -->
 <nav class="bottom-nav" id="bottomNav">
-  <button class="bnav-btn active" id="bnav-home" onclick="bottomNavGo('home')">
-    <span class="icon">🏠</span><span data-i18n="nav_home">Home</span>
+  <button class="bnav-btn bnav-iconly active" id="bnav-home" onclick="bottomNavGo('home')" aria-label="Home">
+    <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.3 12 4l9 7.3"/><path d="M5.5 9.8V19a1 1 0 0 0 1 1H10v-4.8a2 2 0 0 1 4 0V20h3.5a1 1 0 0 0 1-1V9.8"/></svg></span>
   </button>
-  <button class="bnav-btn" id="bnav-wish" onclick="psWishOpen()">
-    <span class="icon"><svg class="ps-heart-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>
-    <span class="bnav-badge" id="bnavWishBadge" style="display:none">0</span>
-    <span data-i18n="nav_wish">Wishlist</span>
+  <button class="bnav-btn" id="bnav-luxe" onclick="bottomNavGo('luxe')">
+    <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h14l3 5-10 13L2 8z"/><path d="M2 8h20M9 3 6.5 8 12 21l5.5-13L15 3"/></svg></span>
+    <span data-i18n="nav_luxe">Luxe</span>
   </button>
-  <button class="bnav-btn" id="bnav-cart" onclick="bottomNavGo('cart')">
-    <span class="icon">🛒</span>
+  <button class="bnav-btn" id="bnav-bag" onclick="bottomNavGo('cart')">
+    <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8h12l-1 11.2a1 1 0 0 1-1 .8H8a1 1 0 0 1-1-.8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg></span>
     <span class="bnav-badge" id="bnavBadge" style="display:none">0</span>
-    <span data-i18n="nav_cart">Cart</span>
+    <span data-i18n="nav_bag">Bag</span>
   </button>
-  <button class="bnav-btn" id="bnav-help" onclick="bottomNavHelp(event)">
-    <span class="icon">💬</span><span data-i18n="nav_help">Help</span>
+  <button class="bnav-btn" id="bnav-pricecheck" onclick="bottomNavGo('pricecheck')">
+    <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 12.3 12.3 20.5a1.5 1.5 0 0 1-2.1 0L3 13.2V4h9.2z"/><circle cx="7.7" cy="7.7" r="1.3"/><path d="m9.6 13.1 1.8 1.8 3.4-3.4"/></svg></span>
+    <span data-i18n="nav_pricecheck">Price Check</span>
   </button>
 </nav>
 <div id="guidePop" class="guide-pop" style="display:none">
