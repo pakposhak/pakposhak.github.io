@@ -177,6 +177,7 @@ button.subf.on{background:#0d1624;border-color:#7ab8ff;color:#7ab8ff}
 .map-table .col-count a:hover{color:#fff;text-decoration:underline}
 .map-table .col-count span{color:#c9a96e;font-weight:600}
 .map-table .no-label{color:#444;font-style:italic}
+.map-table .col-path{color:#9a9ac0;font-size:0.72rem;min-width:58px;white-space:nowrap}
 .map-count{font-size:0.78rem;color:#666;padding:6px 10px;border-bottom:1px solid #1e1e32;background:#0d0d1e}
 
 /* ── Table view (brand × category cross-tab) ───────────── */
@@ -1108,6 +1109,11 @@ function renderMap(){
   const fColl=(document.getElementById('mf-coll')||{}).value||'';
   const fLabel=(document.getElementById('mf-label')||{}).value||'';
   const fDept=(document.getElementById('mf-dept')||{}).value||'';
+  const fSw=(document.getElementById('mf-sw')||{}).value||'';
+  const fEw=(document.getElementById('mf-ew')||{}).value||'';
+  const fSe=(document.getElementById('mf-se')||{}).value||'';
+  const fOc=(document.getElementById('mf-oc')||{}).value||'';
+  const fOt=(document.getElementById('mf-ot')||{}).value||'';
   const hideNoise=document.getElementById('hideNoiseTog').checked;
   const globalSearch=(document.getElementById('brandSearch').value||'').toLowerCase();
 
@@ -1123,7 +1129,13 @@ function renderMap(){
       if(fDept&&dept!==fDept)continue;
       if(fLabel&&catKey!==fLabel)continue;
       if(fColl&&!c.t.toLowerCase().includes(fColl.toLowerCase()))continue;
-      allRows.push({brand:b.name,host:b.host||'',handle:c.h,collTitle:c.t,catKey,ourLabel,dept,count:c.n});
+      const sw=c.sw||'',ew=c.ew||'',se=c.se||'',oc=c.oc||'',ot=c.ot||'';
+      if(fSw&&!sw.toLowerCase().includes(fSw.toLowerCase()))continue;
+      if(fEw&&!ew.toLowerCase().includes(fEw.toLowerCase()))continue;
+      if(fSe&&!se.toLowerCase().includes(fSe.toLowerCase()))continue;
+      if(fOc&&!oc.toLowerCase().includes(fOc.toLowerCase()))continue;
+      if(fOt&&!ot.toLowerCase().includes(fOt.toLowerCase()))continue;
+      allRows.push({brand:b.name,host:b.host||'',handle:c.h,collTitle:c.t,catKey,ourLabel,dept,sw,ew,se,oc,ot,count:c.n});
     }
   }
 
@@ -1159,6 +1171,11 @@ function renderMap(){
     return`<tr>
       <td class="col-brand">${esc(r.brand)}</td>
       <td><span class="dept-pill ${deptCls}" style="font-size:0.58rem">${esc(deptTxt)}</span></td>
+      <td class="col-path">${r.sw?esc(r.sw):'<span class="no-label">·</span>'}</td>
+      <td class="col-path">${r.ew?esc(r.ew):'<span class="no-label">·</span>'}</td>
+      <td class="col-path">${r.se?esc(r.se):'<span class="no-label">·</span>'}</td>
+      <td class="col-path">${r.oc?esc(r.oc):'<span class="no-label">·</span>'}</td>
+      <td class="col-path">${r.ot?esc(r.ot):'<span class="no-label">·</span>'}</td>
       <td class="col-coll">${esc(r.collTitle)}</td>
       <td>${ourLblCell}</td>
       <td class="col-count">${countCell}</td>
@@ -1182,6 +1199,11 @@ function renderMap(){
         <tr>
           ${sortHdr('brand','Brand')}
           ${sortHdr('dept','Dept')}
+          ${sortHdr('sw','Stitch')}
+          ${sortHdr('ew','East/West')}
+          ${sortHdr('se','Season')}
+          ${sortHdr('oc','Occasion')}
+          ${sortHdr('ot','Others')}
           ${sortHdr('collTitle',"Brand's Collection")}
           ${sortHdr('ourLabel','Our Category')}
           ${sortHdr('count','Count')}
@@ -1189,12 +1211,17 @@ function renderMap(){
         <tr class="map-frow">
           <th><input type="text" id="mf-brand" oninput="renderMap()" placeholder="Brand…" value="${esc(fBrand)}"></th>
           <th><select id="mf-dept" onchange="renderMap()">${deptOpts}</select></th>
+          <th><input type="text" id="mf-sw" oninput="renderMap()" placeholder="Stitch…" value="${esc(fSw)}"></th>
+          <th><input type="text" id="mf-ew" oninput="renderMap()" placeholder="E/W…" value="${esc(fEw)}"></th>
+          <th><input type="text" id="mf-se" oninput="renderMap()" placeholder="Season…" value="${esc(fSe)}"></th>
+          <th><input type="text" id="mf-oc" oninput="renderMap()" placeholder="Occasion…" value="${esc(fOc)}"></th>
+          <th><input type="text" id="mf-ot" oninput="renderMap()" placeholder="Others…" value="${esc(fOt)}"></th>
           <th><input type="text" id="mf-coll" oninput="renderMap()" placeholder="Collection…" value="${esc(fColl)}"></th>
           <th><select id="mf-label" onchange="renderMap()">${labelOpts}</select></th>
           <th></th>
         </tr>
       </thead>
-      <tbody>${tableRows||'<tr><td colspan="5" style="text-align:center;color:#666;padding:24px">No collections match filters.</td></tr>'}</tbody>
+      <tbody>${tableRows||'<tr><td colspan="10" style="text-align:center;color:#666;padding:24px">No collections match filters.</td></tr>'}</tbody>
     </table>`;
 
   // Click a category cell → preview one product of that brand+category (verify the mapping)
