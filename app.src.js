@@ -1578,6 +1578,7 @@
     updateSaveAllBtn();
     if(!Object.keys(drafts).length){
       document.getElementById('draftsContainer').style.display = 'none';
+      closeDraftModal();  // last card gone → close the popup
       showTopUrlInput(); // show top input again when all cards gone
     }
     checkAddUrlLock();
@@ -1722,6 +1723,7 @@
       }
     }
     renderCatUI(id);
+    try{ updateDraftPriceHint(id); }catch(e){}   // refresh the Final ৳BDT for this category's weight
     checkAddUrlLock();
   }
 
@@ -1804,14 +1806,25 @@
     updateDraftPriceHint(id);
   }
 
+  // Buyer-facing price echo under the price input: the FINAL ৳BDT price (matches the
+  // Browse card the buyer tapped). Logistics + commission are folded in; the only
+  // add-on left is the ৳100/suit local delivery, shown later in the Bag. When the
+  // price is entered in USD we also echo the PKR it converts to.
   function updateDraftPriceHint(id){
     const d = drafts[id]; if(!d) return;
     const val = parseFloat(document.getElementById(`dc_price_${id}`).value);
     const hint = document.getElementById(`dc_phint_${id}`);
-    const usdRate = getUsdRate();
+    if(!hint) return;
     if(!val || val <= 0){ hint.textContent=''; return; }
-    if(d.currency==='PKR') hint.innerHTML=`≈ <strong>$${(val/usdRate).toFixed(2)} USD</strong>`;
-    else hint.innerHTML=`≈ <strong>PKR ${Math.round(val*usdRate).toLocaleString()}</strong>`;
+    const usdRate = getUsdRate();
+    const pkr = (d.currency==='USD') ? Math.round(val*usdRate) : val;
+    const cat = (document.getElementById(`dc_cat_${id}`)||{}).value || d.cat || '';
+    let html = '';
+    if(d.currency==='USD') html += `≈ PKR ${pkr.toLocaleString()} · `;
+    if(typeof estLandedBdt === 'function'){
+      html += `${tr('dc_final')} <strong>≈ ৳${estLandedBdt(pkr, cat).toLocaleString()}</strong>`;
+    }
+    hint.innerHTML = html;
   }
 
   function showDraftCurrencyNote(id, isPk){
@@ -2183,7 +2196,7 @@
   function updateSaveAllBtn(){
     const n = Object.keys(drafts).length;
     const btn = document.getElementById('saveAllBtn');
-    if(btn) btn.textContent = n>1 ? `✓ Save ${n} items to Order List` : '✓ Save to Order List';
+    if(btn) btn.textContent = '🛍️ ' + (n>1 ? tr('dm_addbag_n').replace('{n}', n) : tr('dm_addbag'));
     updateAddMoreRow();
   }
 
@@ -2477,6 +2490,7 @@
       lbl_addproducts:'Add Products to Your Order',
       url_label:"Easiest: on a brand's page, tap Share then PakPoshak. Or paste a product link below.",
       btn_addurl:'+ Add URL', btn_paste:'📋 Paste Link & Auto-Fill', pp_tap:'Tap a product to add it — no copy-paste needed', pp_search:'🔍 Search this brand…', pp_site:'🌐 Open full brand site instead', fab_paste:'Paste link',
+      dm_title:'Choose size & confirm price', dm_addbag:'Add to Bag', dm_addbag_n:'Add {n} items to Bag', dc_final:'Final price:',
       nav_home:'Home', nav_brands:'Brands', nav_cart:'Cart', nav_how:'How To', nav_guide:'Guide', nav_wish:'Wishlist', nav_help:'Help',
       nav_luxe:'Luxe', nav_bag:'Bag', nav_pricecheck:'Price Check',
       tl_help:'New here? Start with these:', tl_faq:'❓ How it works & our promise', tl_track:'📦 Track an order', tl_weights:'⚖️ Shipping weights', tl_wa:'💬 Chat on WhatsApp',
@@ -2548,6 +2562,7 @@
       url_label:'সবচেয়ে সহজ: ব্র্যান্ডের পেজে Share চেপে PakPoshak বেছে নিন। অথবা নিচে পণ্যের লিংক পেস্ট করুন।',
       btn_addurl:'+ লিংক যোগ করুন',
       btn_paste:'📋 লিংক পেস্ট করে অটো-ফিল', pp_tap:'পণ্যে ট্যাপ করেই যোগ করুন — কপি-পেস্ট লাগবে না', pp_search:'🔍 এই ব্র্যান্ডে খুঁজুন…', pp_site:'🌐 বদলে পুরো ব্র্যান্ড সাইট খুলুন', fab_paste:'লিংক পেস্ট',
+      dm_title:'সাইজ বেছে নিন ও দাম দেখুন', dm_addbag:'ব্যাগে যোগ করুন', dm_addbag_n:'{n}টি আইটেম ব্যাগে যোগ করুন', dc_final:'চূড়ান্ত দাম:',
       nav_home:'হোম', nav_brands:'ব্র্যান্ড', nav_cart:'কার্ট', nav_how:'গাইড', nav_guide:'গাইড', nav_wish:'পছন্দ', nav_help:'সাহায্য',
       nav_luxe:'লাক্স', nav_bag:'ব্যাগ', nav_pricecheck:'দাম যাচাই',
       tl_help:'নতুন? শুরুটা এখান থেকে করুন:', tl_faq:'❓ কীভাবে কাজ করে ও আমাদের প্রতিশ্রুতি', tl_track:'📦 অর্ডার ট্র্যাক করুন', tl_weights:'⚖️ শিপিং ওজন', tl_wa:'💬 হোয়াটসঅ্যাপে চ্যাট',
@@ -3095,18 +3110,45 @@
       return;
     }
     clearUrlError();
-    // Hide top input row — bottom "Add Another URL" takes over from here
+    // Hide top input row — the popup takes over from here
     document.getElementById('urlInputRow').style.display = 'none';
-    document.getElementById('draftsContainer').style.display = '';
     createDraft(url);
     document.getElementById('urlInput').value = '';
-    document.getElementById('draftsContainer').scrollIntoView({ behavior:'smooth', block:'nearest' });
+    openDraftModal();   // size/qty/price now live in the popup
   }
 
   function showTopUrlInput(){
     document.getElementById('urlInputRow').style.display = '';
     document.getElementById('urlInput').value = '';
   }
+
+  // ── ADD-TO-ORDER POPUP ─────────────────────────────────────────────────────
+  // The size/qty/price draft card(s) live inside a modal (#draftModal). Every path
+  // that creates a draft (tap a product, paste, share, edit) opens it; "Add to Bag"
+  // (saveAllDrafts) or the ✕ (cancel) closes it. The draft-card internals and all
+  // dc_* logic are UNCHANGED — only their container moved into the modal.
+  function openDraftModal(){
+    const dc = document.getElementById('draftsContainer'); if(dc) dc.style.display = '';
+    const m  = document.getElementById('draftModal');
+    if(m){ m.style.display = 'flex'; document.body.classList.add('dm-open'); }
+    const body = document.getElementById('dmBody'); if(body) body.scrollTop = 0;
+  }
+  function closeDraftModal(){
+    const m = document.getElementById('draftModal'); if(m) m.style.display = 'none';
+    document.body.classList.remove('dm-open');
+  }
+  // ✕ / backdrop: cancel this add — discard any in-progress draft(s), keep the cart.
+  function cancelDraftModal(){
+    Object.keys(drafts).map(Number).forEach(id => { document.getElementById(`dc_${id}`)?.remove(); delete drafts[id]; });
+    const dc = document.getElementById('draftsContainer'); if(dc) dc.style.display = 'none';
+    closeDraftModal();
+    try{ showTopUrlInput(); }catch(e){}
+    try{ updateSaveAllBtn(); }catch(e){}
+    try{ checkAddUrlLock(); }catch(e){}
+  }
+  window.openDraftModal = openDraftModal;
+  window.closeDraftModal = closeDraftModal;
+  window.cancelDraftModal = cancelDraftModal;
 
   // Show the "Add another product / Next" choice only once an item is saved AND
   // no draft is mid-edit — so the flow is: save this item first, then add another.
@@ -3292,9 +3334,8 @@
           .slice(0, _CART_MAX);                            // cap the fan-out
         if(links.length){
           document.getElementById('urlInputRow').style.display = 'none';
-          document.getElementById('draftsContainer').style.display = '';
           links.forEach(u => createDraft(u));              // one draft per cart item
-          focusOrderView();                                // order first, not Browse images
+          openDraftModal();                                // size/qty/price in the popup
         }
         history.replaceState(null, '', location.pathname);
         return;
@@ -3420,6 +3461,7 @@
     // Clear all drafts
     ids.forEach(id => { document.getElementById(`dc_${id}`)?.remove(); delete drafts[id]; });
     document.getElementById('draftsContainer').style.display = 'none';
+    closeDraftModal();  // saved → close the popup, reveal the bag below
     showTopUrlInput(); // show top input again, clear it — ready for the next product
     checkAddUrlLock();
     renderCart();
@@ -3524,7 +3566,6 @@
     const isPk  = /\.(pk|com\.pk)(\/|$)/.test(_host + '/') || _host === 'pk.ethnc.com';
     const id = draftIdCtr++;
     drafts[id] = { currency: 'PKR', sizeCounter: 0, catFetchDone: true, catUserSet: true, catPickerOpen: false };
-    document.getElementById('draftsContainer').style.display = '';
     document.getElementById('draftCards').insertAdjacentHTML('beforeend', buildDraftCard(id, item.url, item.brand, isPk));
     if(item.img) drafts[id].img = item.img;
     if(item.imgs) drafts[id].imgs = item.imgs;
@@ -3538,8 +3579,8 @@
       `<div style="background:rgba(249,168,37,0.12);border-bottom:2px solid #f9a825;padding:9px 14px;
          border-radius:10px 10px 0 0;margin:-1px -1px 0;font-size:0.82rem;font-weight:700;
          color:var(--txt);display:flex;align-items:center;gap:8px">
-        ✏️ Editing item — change anything below, then click <span style="background:#f9a825;color:#12122a;
-          padding:1px 8px;border-radius:5px;font-size:0.78rem">Save to Order List</span>
+        ✏️ Editing item — change anything below, then tap <span style="background:#f9a825;color:#12122a;
+          padding:1px 8px;border-radius:5px;font-size:0.78rem">Add to Bag</span>
       </div>`);
 
     // Fill in saved values
@@ -3561,7 +3602,7 @@
     }
     updateSaveAllBtn();
     checkAddUrlLock();
-    document.getElementById('draftsContainer').scrollIntoView({ behavior:'smooth', block:'start' });
+    openDraftModal();   // edit happens in the popup, same as add
   }
 
   function renderCart(){
@@ -4101,6 +4142,7 @@
     draftIdCtr = 0;
     document.getElementById('draftCards').innerHTML = '';
     document.getElementById('draftsContainer').style.display = 'none';
+    closeDraftModal();
     showTopUrlInput();
     document.getElementById('buyerNotes').value = '';
     document.getElementById('confirmSubmitBtn').disabled = false;
@@ -4275,9 +4317,8 @@
     const url = _ppOrigin + '/products/' + handle;
     closeProductPicker();
     document.getElementById('urlInputRow').style.display = 'none';
-    document.getElementById('draftsContainer').style.display = '';
     createDraft(url);              // SAME pipeline as paste — currency/stock/category
-    document.getElementById('draftsContainer').scrollIntoView({ behavior:'smooth', block:'nearest' });
+    openDraftModal();
   }
 
   function closeProductPicker(){
@@ -6609,10 +6650,10 @@
   // Per-card estimated landed ৳BDT (product + base commission + weight×logistics).
   function estLandedBdt(pkr, cat){
     const r = getRates();
-    // The PRODUCT price delivered to Bangladesh, BEFORE the per-order ৳100 transaction fee — this is
-    // the number shown on the Browse card. Component-wise rounding MATCHES the basket total
-    // (renderCart) so the basket = this card price + ৳100 exactly for a single item (buyer sees the
-    // listed price, then +৳100 transaction fee at checkout).
+    // The full landed ৳BDT for ONE piece (product + commission + weight×logistics), BEFORE the
+    // ৳100/suit local delivery that's added in the Bag. This is the number shown on the Browse card
+    // AND echoed in the add-to-order popup, so the price the buyer taps == the price they confirm.
+    // Component-wise rounding MATCHES the basket total (renderCart): basket = Σ this + ৳100×suits.
     const productBdt = Math.round(pkr * r.CONV_RATE);
     const commission = pkr < (r.PKR_LOW_THRESHOLD || 2100)
       ? (r.COMM_LOW_BDT || 200)
@@ -7409,7 +7450,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28x';
+  const PSB_BUILD = '2026-06-28y';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

@@ -288,14 +288,24 @@
       <button class="add-btn" id="addUrlBtn" onclick="handleAddUrl()" data-i18n="btn_addurl">+ Add URL</button>
     </div>
     <div id="urlInputErr" style="display:none;margin-top:9px;padding:10px 14px;border-radius:9px;background:rgba(192,57,43,0.13);border:1px solid rgba(192,57,43,0.40);color:#ff9a9a;font-size:0.82rem;line-height:1.5"></div>
+  </div>
 
-    <!-- Draft cards + "Add another" input — shown after first URL added -->
-    <div id="draftsContainer" style="display:none;margin-top:18px">
-      <div id="draftCards"></div>
-
-      <button class="save-item-btn" id="saveAllBtn" onclick="saveAllDrafts()">✓ Save to Order List</button>
-      <div style="text-align:center;font-size:0.74rem;color:var(--txt-muted);margin-top:9px">
-        ✅ Save this item first, then you can add another product.
+  <!-- ADD-TO-ORDER POPUP — size, qty & price for the product being added. The draft card(s)
+       live here; "Add to Bag" (saveAllDrafts) saves them to the bag and closes. Opened by every
+       add path (tap a product, paste, share, edit) via openDraftModal(). -->
+  <div id="draftModal" class="dm-wrap" style="display:none" onclick="if(event.target===this)cancelDraftModal()">
+    <div class="dm-sheet" role="dialog" aria-modal="true" aria-label="Add to your order">
+      <div class="dm-head">
+        <span class="dm-title" data-i18n="dm_title">Choose size &amp; confirm price</span>
+        <button type="button" class="dm-x" onclick="cancelDraftModal()" aria-label="Close">✕</button>
+      </div>
+      <div class="dm-body" id="dmBody">
+        <div id="draftsContainer" style="display:none">
+          <div id="draftCards"></div>
+        </div>
+      </div>
+      <div class="dm-foot">
+        <button class="save-item-btn" id="saveAllBtn" onclick="saveAllDrafts()" data-i18n="dm_addbag">Add to Bag</button>
       </div>
     </div>
   </div>
