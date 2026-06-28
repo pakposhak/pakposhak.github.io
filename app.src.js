@@ -6237,11 +6237,30 @@
       var src=document.getElementById(m[0]), dst=document.getElementById(m[1]);
       if(src && dst && src.parentNode!==dst) dst.appendChild(src);
     });
+    // Auto-close the bar a couple of seconds after the last filter tap so it doesn't
+    // linger over the products. Delegated (the sort/price buttons are re-rendered), and
+    // debounced — each new tap resets the timer, so multi-select stays open until done.
+    var bar = document.getElementById('psFilterBar');
+    if(bar && !bar._psAcWired){
+      bar._psAcWired = true;
+      bar.addEventListener('click', function(e){
+        if(e.target.closest('.ps-sortbtn, .ps-bucket')) psFilterBarAutoClose();
+      });
+    }
+  }
+  var _psFilterBarTimer = null;
+  function psFilterBarAutoClose(){
+    clearTimeout(_psFilterBarTimer);
+    _psFilterBarTimer = setTimeout(function(){
+      var bar = document.getElementById('psFilterBar');
+      if(bar && !bar.hasAttribute('hidden')) psFilters(false);
+    }, 2200);
   }
   // Toggle the inline, pinned filter bar (no separate page/sheet). Called with no
   // argument from the funnel = toggle; a boolean forces open/closed.
   function psFilters(open){
     var bar=document.getElementById('psFilterBar'); if(!bar) return;
+    clearTimeout(_psFilterBarTimer);   // cancel any pending auto-close on a manual toggle
     var show = (typeof open === 'boolean') ? open : bar.hasAttribute('hidden');
     if(show) bar.removeAttribute('hidden'); else bar.setAttribute('hidden','');
     var btn=document.getElementById('psFiltBtn'); if(btn) btn.setAttribute('aria-expanded', show?'true':'false');
@@ -7623,7 +7642,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28-bag4';
+  const PSB_BUILD = '2026-06-28-filterautoclose';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
