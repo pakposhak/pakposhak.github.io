@@ -2450,7 +2450,7 @@
       hiw_confirm_pay:'Confirm price & pay (bKash/Nagad)',
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search 150+ Pakistani brands…',
-      tab_brands:'Browse brands', tab_products:'Browse products', gen_all:'All', gen_women:'Women', gen_men:'Men', gen_kids:'Kids', menu_language:'Language', menu_theme:'Theme', menu_guide:'Guide', search_bar_ph:'Search products, brands…', search_page_ph:'Search products and 150+ brands', sp_remind_t:"Found it on a brand's own site?", sp_remind_d:"Copy the product link and paste it here. We'll order it for you at Pakistani prices.", sp_paste:'Paste a product link', sp_visual:'Visual search', sp_fit:'Fit assistant', sp_soon:'Coming soon', sp_brands:'Browse all 150+ brands ›', bb_back:'‹ Back to products', store_everyday:'Everyday', store_premium:'Premium', order_ways:'Two ways to order: tap + Add on anything in our listing, or send a product link from any of our 140+ brands.',
+      tab_brands:'Browse brands', tab_products:'Browse products', gen_all:'All', gen_women:'Women', gen_men:'Men', gen_kids:'Kids', menu_language:'Language', menu_theme:'Theme', menu_guide:'Guide', search_bar_ph:'Search products, brands…', search_page_ph:'Search products and 150+ brands', sp_remind_t:"Found it on a brand's own site?", sp_remind_d:"Copy the product link and paste it here. We'll order it for you at Pakistani prices.", sp_paste:'Paste a product link', sp_visual:'Visual search', sp_fit:'Fit assistant', sp_soon:'Coming soon', sp_brands:'Browse all 150+ brands ›', bb_back:'‹ Back to products', store_everyday:'Everyday', store_premium:'Premium', colls_hd:'Collections', order_ways:'Two ways to order: tap + Add on anything in our listing, or send a product link from any of our 140+ brands.',
       intro_ios:"On iPhone: on a brand's product page, tap Share, then Add to PakPoshak. (One-time: add the PakPoshak shortcut.) Or copy the link and paste it here.",
       intro_android:"On Android: install PakPoshak, then on a brand's product page tap Share, then PakPoshak. Or copy the link and paste it here.",
       intro_desktop:"On desktop: paste a product link below, or add the Send-cart bookmark to grab a whole cart at once.",
@@ -2518,7 +2518,7 @@
       hiw_confirm_pay:'দাম নিশ্চিত করে পেমেন্ট (বিকাশ/নগদ)',
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
       lbl_browse:'একটি ব্র্যান্ড দেখুন', search_ph:'🔍 ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
-      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', gen_all:'সব', gen_women:'নারী', gen_men:'পুরুষ', gen_kids:'শিশু', menu_language:'ভাষা', menu_theme:'থিম', menu_guide:'গাইড', search_bar_ph:'পণ্য, ব্র্যান্ড খুঁজুন…', search_page_ph:'পণ্য ও ১৫০+ ব্র্যান্ড খুঁজুন', sp_remind_t:'ব্র্যান্ডের নিজস্ব সাইটে পেয়েছেন?', sp_remind_d:'পণ্যের লিংক কপি করে এখানে পেস্ট করুন। আমরা পাকিস্তানি দামে অর্ডার করে দেব।', sp_paste:'পণ্যের লিংক পেস্ট করুন', sp_visual:'ভিজ্যুয়াল সার্চ', sp_fit:'ফিট অ্যাসিস্ট্যান্ট', sp_soon:'শীঘ্রই আসছে', sp_brands:'সব ১৫০+ ব্র্যান্ড দেখুন ›', bb_back:'‹ পণ্যে ফিরে যান', store_everyday:'এভরিডে', store_premium:'প্রিমিয়াম', order_ways:'দুইভাবে অর্ডার: আমাদের লিস্টে যেকোনো পণ্যে + Add চাপুন, অথবা ১৪০+ ব্র্যান্ডের যেকোনো পণ্যের লিংক পাঠান।',
+      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', gen_all:'সব', gen_women:'নারী', gen_men:'পুরুষ', gen_kids:'শিশু', menu_language:'ভাষা', menu_theme:'থিম', menu_guide:'গাইড', search_bar_ph:'পণ্য, ব্র্যান্ড খুঁজুন…', search_page_ph:'পণ্য ও ১৫০+ ব্র্যান্ড খুঁজুন', sp_remind_t:'ব্র্যান্ডের নিজস্ব সাইটে পেয়েছেন?', sp_remind_d:'পণ্যের লিংক কপি করে এখানে পেস্ট করুন। আমরা পাকিস্তানি দামে অর্ডার করে দেব।', sp_paste:'পণ্যের লিংক পেস্ট করুন', sp_visual:'ভিজ্যুয়াল সার্চ', sp_fit:'ফিট অ্যাসিস্ট্যান্ট', sp_soon:'শীঘ্রই আসছে', sp_brands:'সব ১৫০+ ব্র্যান্ড দেখুন ›', bb_back:'‹ পণ্যে ফিরে যান', store_everyday:'এভরিডে', store_premium:'প্রিমিয়াম', colls_hd:'কালেকশন', order_ways:'দুইভাবে অর্ডার: আমাদের লিস্টে যেকোনো পণ্যে + Add চাপুন, অথবা ১৪০+ ব্র্যান্ডের যেকোনো পণ্যের লিংক পাঠান।',
       intro_ios:'আইফোনে: ব্র্যান্ডের পণ্য পেজে Share চেপে Add to PakPoshak বেছে নিন। (একবার: PakPoshak শর্টকাট যোগ করুন।) অথবা লিংক কপি করে এখানে পেস্ট করুন।',
       intro_android:'অ্যান্ড্রয়েডে: PakPoshak ইনস্টল করুন, তারপর ব্র্যান্ডের পণ্য পেজে Share চেপে PakPoshak বেছে নিন। অথবা লিংক কপি করে এখানে পেস্ট করুন।',
       intro_desktop:'ডেস্কটপে: নিচে পণ্যের লিংক পেস্ট করুন, অথবা পুরো কার্ট একসাথে আনতে Send-cart বুকমার্ক যোগ করুন।',
@@ -2626,6 +2626,7 @@
     const lb = document.getElementById('hdrLangBtn');
     if(lb) lb.textContent = (_lang === 'en') ? 'বাংলা' : 'EN';
     try { if(typeof psRenderBanner === 'function') psRenderBanner(); } catch(e){}   // value banner is JS-rendered, refresh its language
+    try { if(typeof psRenderColls === 'function') psRenderColls(); } catch(e){}     // collection tiles are JS-rendered too
   }
   function toggleLang(){ setLang(_lang === 'en' ? 'bn' : 'en'); }
 
@@ -5840,6 +5841,46 @@
     _psBanT = setInterval(function(){ _psBanIdx = (_psBanIdx+1) % PS_BANNERS.length; psRenderBanner(); }, 4800);
   }
   window.psRenderBanner = psRenderBanner;
+  // ── Collection-first home tiles (redesign P1) — wired to EXISTING filters/search ──
+  // New = psNewOnly, Sale = psSaleOnly, price-band = psSel.prices, occasion/season = keyword search.
+  // Plain styling for now; photos + layout come in the carousel-redesign pass.
+  const PS_COLL_TILES = [
+    { en:'New in this week', bn:'এই সপ্তাহের নতুন', se:'Last 7 days', sb:'গত ৭ দিন',   kind:'new' },
+    { en:'Sale',             bn:'সেল',             se:'Reduced',     sb:'ছাড়',        kind:'sale' },
+    { en:'Under 3000',       bn:'৩০০০ এর নিচে',    se:'Budget',      sb:'বাজেট',       kind:'price', val:'0' },
+    { en:'Eid edit',         bn:'ঈদ কালেকশন',      se:'Festive',     sb:'উৎসব',        kind:'cat', val:'heavy_formal_3pc,formal_emb_3pc' },
+    { en:'Summer lawn',      bn:'সামার লন',        se:'Unstitched',  sb:'আনস্টিচড',     kind:'cat', val:'lawn_3pc_unstitch' },
+    { en:'Winter',           bn:'শীত',             se:'Khaddar',     sb:'খদ্দর',       kind:'cat', val:'winter_3pc_stitch,winter_3pc_unstitch,winter_2pc_stitch,winter_2pc_unstitch' },
+    { en:'Wedding',          bn:'ওয়েডিং',          se:'Bridal',      sb:'ব্রাইডাল',    kind:'cat', val:'bridal,lehenga' },
+    { en:'Formal',           bn:'ফরমাল',           se:'Party',       sb:'পার্টি',      kind:'cat', val:'formal_emb_3pc,formal_emb_2pc' }
+  ];
+  function psRenderColls(){
+    var el = document.getElementById('psColls'); if(!el) return;
+    var bn = (typeof _lang !== 'undefined' && _lang === 'bn');
+    el.innerHTML = PS_COLL_TILES.map(function(t){
+      var lbl = bn ? t.bn : t.en, sub = bn ? t.sb : t.se;
+      var arg = (t.val !== undefined) ? (",'" + String(t.val).replace(/'/g,"\\'") + "'") : '';
+      return '<button type="button" class="ps-coll" onclick="psCollGo(\''+t.kind+'\''+arg+')"><span class="ps-coll-lbl">'+esc(lbl)+'</span><span class="ps-coll-sub">'+esc(sub)+'</span></button>';
+    }).join('');
+  }
+  function psCollGo(kind, val){
+    try { psSaleOnly = false; psNewOnly = false; psSort = ''; } catch(e){}
+    try { var a=document.getElementById('psSearchMobile'), b=document.getElementById('psSearchDesktop'); if(a)a.value=''; if(b)b.value=''; } catch(e){}
+    if(kind === 'q'){
+      if(window.psSearchInput) psSearchInput(val);
+    } else if(kind === 'cat'){
+      // Occasion/season tiles → set real category keys (keeps the storefront price band).
+      psSel = { prices:new Set(psSel.prices), cats:new Set(String(val).split(',')), brands:new Set() };
+      try { psBuildCatFilter(); psBuildBrandFilter(); psBuildPriceFilter(); psApply(); } catch(e){}
+    } else {
+      if(kind === 'new') psNewOnly = true;
+      else if(kind === 'sale') psSaleOnly = true;
+      else if(kind === 'price') psSel.prices = new Set([parseInt(val, 10)]);
+      try { psBuildSort(); psBuildPriceFilter(); psApply(); } catch(e){}
+    }
+    try { var g = document.querySelector('.ps-results') || document.getElementById('psGrid'); if(g) g.scrollIntoView({ behavior:'smooth', block:'start' }); } catch(e){}
+  }
+  window.psCollGo = psCollGo; window.psRenderColls = psRenderColls;
   function psShopBrandsMode(){
     if(psShopMode === 'brand'){ psShopMode = 'cat'; }                 // re-tap Brands → back to categories
     else { psShopMode = 'brand'; psShopDept = (psShopGender === 'x') ? 'w' : psShopGender; }   // enter Brands on the same dept (West has no brand pool → Women)
@@ -7064,7 +7105,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28f';
+  const PSB_BUILD = '2026-06-28g';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
@@ -7106,6 +7147,7 @@
       + 'color:var(--txt-muted);opacity:0.55;pointer-events:none;letter-spacing:0.5px';
     document.body.appendChild(tag);
     try { psBannerStart(); } catch(e){}   // start the rotating value banner (redesign P1)
+    try { psRenderColls(); } catch(e){}   // render the collection-first home tiles
   });
 
 

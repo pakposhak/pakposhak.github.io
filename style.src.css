@@ -102,6 +102,14 @@
     .ps-banner-dots{display:flex;gap:5px;flex-shrink:0}
     .ps-bdot{width:6px;height:6px;border-radius:50%;background:var(--bdr-med)}
     .ps-bdot.on{background:var(--accent);width:16px;border-radius:3px}
+    /* Collection-first home tiles (redesign P1) — plain for now, photos come later. */
+    .ps-colls-hd{font-size:0.95rem;font-weight:800;color:var(--txt);margin:0 0 8px}
+    .ps-colls{display:flex;gap:9px;overflow-x:auto;margin:0 0 14px;padding-bottom:2px;scrollbar-width:none}
+    .ps-colls::-webkit-scrollbar{display:none}
+    .ps-coll{flex:0 0 auto;display:flex;flex-direction:column;gap:2px;min-width:122px;background:var(--surface);border:1px solid var(--bdr-med);border-radius:12px;padding:13px 14px;cursor:pointer;text-align:left}
+    .ps-coll-lbl{font-weight:800;font-size:0.88rem;color:var(--accent)}
+    .ps-coll-sub{font-size:0.7rem;color:var(--txt-muted);font-weight:600}
+    .ps-coll:active{border-color:var(--accent)}
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:70px}
     .tl-chip{display:inline-flex;align-items:center;gap:5px;background:var(--surface);
