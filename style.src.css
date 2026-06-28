@@ -561,7 +561,9 @@
          back to 0 on devices without an inset. The #tabProducts prefix outranks the base
          `.ps-sticky-zone{position:sticky}` rule that sits later in source. */
       #tabProducts .ps-sticky-zone{position:static;box-shadow:none;padding:0}
-      #tabProducts .ps-pinhead{position:sticky;top:env(safe-area-inset-top,0px);z-index:16;background:var(--bg);padding:6px 0 5px;box-shadow:0 5px 11px -5px rgba(0,0,0,0.22)}
+      /* #8: on mobile the category photo strip no longer pins — it scrolls away and the names-only
+         bar in the sticky top group takes over (so no cut-off image glimpses behind the search bar). */
+      #tabProducts .ps-pinhead{position:static;background:var(--bg);padding:2px 0 4px;box-shadow:none}
       #tabProducts .ps-pinhead .ps-resbar{margin-bottom:8px}
       #tabProducts .ps-shopcat{margin:0;padding:0;box-shadow:none}
       #tabProducts .ps-grid{scroll-margin-top:232px}
@@ -572,7 +574,13 @@
       body.psb-browse .ps-topstick{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;
         background:var(--bg);padding-bottom:6px;box-shadow:0 7px 12px -10px rgba(0,0,0,0.32)}
       body.psb-browse .ps-topstick .ps-searchbar{margin-bottom:0}
+      /* Names-only category bar (#8) — appears in the sticky top group once the photo strip scrolls past. */
+      body.psb-browse .ps-topstick.is-scrolled .ps-catbar{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:8px 2px 2px;margin-top:5px;border-top:1px solid var(--bdr)}
+      .ps-catbar::-webkit-scrollbar{display:none}
+      .ps-catchip{flex:0 0 auto;padding:8px 16px;border-radius:18px;border:1.5px solid var(--gold-bdr);background:var(--surface);color:var(--txt-sec);font-size:0.84rem;font-weight:700;white-space:nowrap;cursor:pointer;font-family:inherit;scroll-snap-align:start;transition:background .15s,color .15s,border-color .15s}
+      .ps-catchip.on{background:var(--accent,var(--gold));color:#fff;border-color:var(--accent,var(--gold))}
     }
+    .ps-catbar{display:none}
     .show-more-btn{font-size:0.75rem;color:var(--gold);background:none;border:none;cursor:pointer;font-weight:600;padding:4px 0;text-decoration:underline}
 
     /* ── URL input area — most prominent element ── */

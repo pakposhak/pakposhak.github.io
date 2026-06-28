@@ -4357,6 +4357,24 @@
     }
     window.addEventListener('scroll', onScroll, { passive:true });
   })();
+  // Names-only category bar (#8): reveal it in the sticky top group once the photo strip scrolls up
+  // under the search bar (mobile + Products tab only). Time-throttled; ~45px hysteresis avoids flicker.
+  (function(){
+    var last = 0;
+    function onScroll(){
+      var now = Date.now(); if(now - last < 90) return; last = now;
+      var ts = document.querySelector('.ps-topstick'); if(!ts) return;
+      var tp = document.getElementById('tabProducts');
+      var cat = document.getElementById('psShopCat');
+      if(window.innerWidth >= 820 || !tp || getComputedStyle(tp).display === 'none' || !cat || !cat.getClientRects().length){
+        ts.classList.remove('is-scrolled'); return;
+      }
+      var scrolled = cat.getBoundingClientRect().bottom < ts.getBoundingClientRect().bottom + 6;
+      ts.classList.toggle('is-scrolled', scrolled);
+    }
+    window.addEventListener('scroll', onScroll, { passive:true });
+    window.addEventListener('resize', onScroll, { passive:true });
+  })();
   // Help tab → toggle the guide popup (Watch video + How it works). Replaces the old broken
   // "bottomNavGuide" handler (it was never defined → the button did nothing).
   function bottomNavHelp(ev){
@@ -6104,6 +6122,7 @@
     const wrap = document.getElementById('psShopScroll'); if(!wrap) return;
     // ── BRAND MODE: a carousel of the selected department's brand photos ──
     if(brand){
+      var _nbb = document.getElementById('psCatBar'); if(_nbb) _nbb.innerHTML = '';   // names bar is category-mode only (#8)
       // The per-dept brand pool needs the brand→category index (so multi-dept flagships like
       // Khaadi/Sapphire/Gul Ahmed fold into Women/Men/Kids, and brands are strength-ranked). Load it
       // once — same as Browse Brands — then re-render; without it the fallback drops those brands.
@@ -6138,6 +6157,14 @@
         + `<span class="psc-img" data-emoji="${t.e || '🛍️'}">${img}</span>`
         + `<span class="psc-lbl">${esc(lbl)}</span></button>`;
     }).join('');
+    // Names-only chips for the scrolled state (#8): same tiles, name + link only (no images).
+    var _nb = document.getElementById('psCatBar');
+    if(_nb){
+      _nb.innerHTML = psShopTiles().map(function(t){
+        var nl = (_lang === 'bn' && t.bn) ? t.bn : t.en;
+        return '<button type="button" class="ps-catchip'+(t.key === active ? ' on' : '')+'" data-cat="'+esc(t.key)+'" onclick="psShopPick(\''+t.key+'\')">'+esc(nl)+'</button>';
+      }).join('');
+    }
     wrap.scrollLeft = 0;
     _pscSwapAnim(wrap);   // fade/slide the new tiles in (transition, not a hard refresh — req: Danish)
     psLoadShopThumbs();
@@ -6262,10 +6289,15 @@
   // 1- vs 2-line labels and is taller on desktop) so the first product row isn't tucked behind it.
   function psScrollGridUnderCarousel(){
     const grid = document.getElementById('psGrid'); if(!grid) return;
-    // The pinned header (filter row + carousel) is what stays on screen — offset by its LIVE height.
-    const head = document.getElementById('psPinHead');
     let off = 0;
-    try { const pos = head ? getComputedStyle(head).position : ''; if(pos === 'sticky' || pos === 'fixed') off = head.offsetHeight + 8; } catch(e){}
+    if(window.innerWidth < 820){
+      // Mobile (#8): the sticky top group (search + names bar) is what stays on screen — clear it.
+      const ts = document.querySelector('.ps-topstick'); if(ts) off = ts.offsetHeight + 8;
+    } else {
+      // Desktop: the fixed filter/carousel header — offset by its LIVE height.
+      const head = document.getElementById('psPinHead');
+      try { const pos = head ? getComputedStyle(head).position : ''; if(pos === 'sticky' || pos === 'fixed') off = head.offsetHeight + 8; } catch(e){}
+    }
     if(off){
       const y = grid.getBoundingClientRect().top + (window.scrollY || window.pageYOffset || 0) - off;
       window.scrollTo({ top: Math.max(0, y), behavior:'smooth' });
@@ -6283,6 +6315,9 @@
       const c = t.getAttribute('data-cat'), b = t.getAttribute('data-brand');
       t.classList.toggle('on', (!!c && c === activeCat) || (!!b && b === activeBrand));
     });
+    // Keep the scrolled-state name chips (#8) in sync with the active category.
+    const _cb = document.getElementById('psCatBar');
+    if(_cb) _cb.querySelectorAll('.ps-catchip').forEach(c => { const k = c.getAttribute('data-cat'); c.classList.toggle('on', !!k && k === activeCat); });
   }
   // ── Keep the Browse-Products filter/category bar fixed to the top through the WHOLE scroll
   //    (req: "keep it fixed for both iphone and android"). The bar is position:sticky scoped to
@@ -6309,7 +6344,10 @@
     // is null for position:fixed) stays truthy while fixed, and goes empty when the Brands tab hides
     // #tabProducts, so we correctly drop the fix on tab switch.
     const active = head.getClientRects().length > 0;
-    if(!active){
+    // Mobile (#8): the category photo strip no longer pins — it scrolls away and the names-only
+    // bar in the sticky top group takes over. Only DESKTOP keeps the fixed filter/carousel header.
+    const _mob = window.innerWidth < 820;
+    if(!active || _mob){
       if(_psPin.on){ head.style.position=''; head.style.top=''; head.style.left=''; head.style.width=''; head.style.zIndex=''; head.classList.remove('ps-pinned'); sen.style.height='0px'; _psPin.on=false; }
       return;
     }
@@ -7251,7 +7289,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28o';
+  const PSB_BUILD = '2026-06-28p';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
