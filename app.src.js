@@ -6996,13 +6996,16 @@
     const p = psFiltered[idx]; if(!p) return;
     const bdt = (p._bdt != null) ? p._bdt : estLandedBdt(p.pkr, p.cat);
     const sz = (p.sz || []).slice(0,12).map(s => `<span class="ps-sz">${esc(s)}</span>`).join('');
-    // LAAM-style layout (req): the IMAGE gallery on TOP — a HORIZONTAL swipe strip of big full-width
-    // photos (scroll it from the right; no thumbnail picker) — then ALL the product info, sizes,
-    // details + the full brand description BELOW the image. The whole .ps-detail-card scrolls. The
-    // gallery is seeded with the catalog thumb (instant) and upgraded to the brand's full-size gallery.
+    // LAAM-style 3-layer popup (req): (1) the BROWSE grid behind, (2) the IMAGE gallery — a sticky
+    // HORIZONTAL swipe strip of big full-width photos (scroll from the right), (3) a DETAILS SHEET
+    // that slides UP over the image (all info, sizes, details + the full brand description) and slides
+    // back DOWN to reveal the image again. Pure CSS: the gallery is a sticky "stage" and the body is a
+    // rounded sheet that scrolls over it (the whole .ps-detail-card is the scroller). The gallery is
+    // seeded with the catalog thumb (instant) and upgraded to the brand's full-size gallery.
     document.getElementById('psDetailInner').innerHTML =
-        `<div class="ps-d-gallery" id="psDGallery"><img class="ps-d-shot" src="${esc(p.img)}" alt="${esc(p.t)}"></div>`
+        `<div class="ps-d-stage"><div class="ps-d-gallery" id="psDGallery"><img class="ps-d-shot" src="${esc(p.img)}" alt="${esc(p.t)}"></div></div>`
       + `<div class="ps-d-body">`
+      +   `<div class="ps-d-grip" aria-hidden="true"></div>`
       +   `<div class="ps-d-brand">${esc(p.b)}</div>`
       +   `<div class="ps-d-title">${esc(p.t)}</div>`
       +   `<div class="ps-d-price">≈ ৳${bdt.toLocaleString()}</div>`
@@ -7577,7 +7580,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28-bag2';
+  const PSB_BUILD = '2026-06-28-popup3';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
