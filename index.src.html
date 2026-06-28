@@ -120,6 +120,17 @@
     <span class="steps-cart-badge" id="stepsCartBadge" style="display:none">0</span></button>
 </div>
 
+<!-- Mobile checkout progress (Bag · Details · Review · Pay) — shown on steps 2-4 by goToStep(). -->
+<div class="co-prog" id="coProg">
+  <div class="co-prog-step" data-st="1" onclick="showBagView()"><span class="co-prog-dot">🛍️</span><span class="co-prog-lbl" data-i18n="co_bag">Bag</span></div>
+  <div class="co-prog-line" data-ln="1"></div>
+  <div class="co-prog-step" data-st="2" onclick="if(this.classList.contains('done'))goToStep(2)"><span class="co-prog-dot">2</span><span class="co-prog-lbl" data-i18n="co_details">Details</span></div>
+  <div class="co-prog-line" data-ln="2"></div>
+  <div class="co-prog-step" data-st="3" onclick="if(this.classList.contains('done'))goToStep(3)"><span class="co-prog-dot">3</span><span class="co-prog-lbl" data-i18n="co_review">Review</span></div>
+  <div class="co-prog-line" data-ln="3"></div>
+  <div class="co-prog-step" data-st="4"><span class="co-prog-dot">4</span><span class="co-prog-lbl" data-i18n="co_pay">Pay</span></div>
+</div>
+
 <!-- ═══ STEP 1: ADD ITEMS ═══ -->
 <div class="step-section active" id="step1">
 

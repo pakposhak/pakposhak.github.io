@@ -2494,6 +2494,7 @@
       btn_addurl:'+ Add URL', btn_paste:'📋 Paste Link & Auto-Fill', pp_tap:'Tap a product to add it — no copy-paste needed', pp_search:'🔍 Search this brand…', pp_site:'🌐 Open full brand site instead', fab_paste:'Paste link',
       dm_title:'Choose size & confirm price', dm_addbag:'Add to Bag', dm_addbag_n:'Add {n} items to Bag', dc_final:'Final price:',
       bag_proceed:'Proceed to My Details →', bag_empty:'Your bag is empty', bag_empty_sub:'Browse Pakistani brands and tap + Add to drop items here.', bag_browse:'🛍️ Browse products', bag_added:'Added to your bag', bag_view:'View Bag',
+      co_bag:'Bag', co_details:'Details', co_review:'Review', co_pay:'Pay',
       nav_home:'Home', nav_brands:'Brands', nav_cart:'Cart', nav_how:'How To', nav_guide:'Guide', nav_wish:'Wishlist', nav_help:'Help',
       nav_luxe:'Luxe', nav_bag:'Bag', nav_pricecheck:'Price Check',
       tl_help:'New here? Start with these:', tl_faq:'❓ How it works & our promise', tl_track:'📦 Track an order', tl_weights:'⚖️ Shipping weights', tl_wa:'💬 Chat on WhatsApp',
@@ -2567,6 +2568,7 @@
       btn_paste:'📋 লিংক পেস্ট করে অটো-ফিল', pp_tap:'পণ্যে ট্যাপ করেই যোগ করুন — কপি-পেস্ট লাগবে না', pp_search:'🔍 এই ব্র্যান্ডে খুঁজুন…', pp_site:'🌐 বদলে পুরো ব্র্যান্ড সাইট খুলুন', fab_paste:'লিংক পেস্ট',
       dm_title:'সাইজ বেছে নিন ও দাম দেখুন', dm_addbag:'ব্যাগে যোগ করুন', dm_addbag_n:'{n}টি আইটেম ব্যাগে যোগ করুন', dc_final:'চূড়ান্ত দাম:',
       bag_proceed:'আমার তথ্যে এগিয়ে যান →', bag_empty:'আপনার ব্যাগ খালি', bag_empty_sub:'পাকিস্তানি ব্র্যান্ড দেখুন আর + Add চেপে পণ্য এখানে যোগ করুন।', bag_browse:'🛍️ পণ্য ব্রাউজ করুন', bag_added:'ব্যাগে যোগ হয়েছে', bag_view:'ব্যাগ দেখুন',
+      co_bag:'ব্যাগ', co_details:'তথ্য', co_review:'রিভিউ', co_pay:'পেমেন্ট',
       nav_home:'হোম', nav_brands:'ব্র্যান্ড', nav_cart:'কার্ট', nav_how:'গাইড', nav_guide:'গাইড', nav_wish:'পছন্দ', nav_help:'সাহায্য',
       nav_luxe:'লাক্স', nav_bag:'ব্যাগ', nav_pricecheck:'দাম যাচাই',
       tl_help:'নতুন? শুরুটা এখান থেকে করুন:', tl_faq:'❓ কীভাবে কাজ করে ও আমাদের প্রতিশ্রুতি', tl_track:'📦 অর্ডার ট্র্যাক করুন', tl_weights:'⚖️ শিপিং ওজন', tl_wa:'💬 হোয়াটসঅ্যাপে চ্যাট',
@@ -3764,6 +3766,15 @@
       });
     });
     currentStep = n;
+    // Mobile checkout progress (#coProg): show on steps 2-4, mark the active stage + done stages.
+    var _cp = document.getElementById('coProg');
+    if(_cp){
+      if(n >= 2 && n <= 4){
+        _cp.style.display = 'flex';
+        _cp.querySelectorAll('.co-prog-step').forEach(function(s){ var st = +s.getAttribute('data-st'); s.classList.toggle('active', st === n); s.classList.toggle('done', st < n); });
+        _cp.querySelectorAll('.co-prog-line').forEach(function(l){ l.classList.toggle('done', (+l.getAttribute('data-ln')) < n); });
+      } else { _cp.style.display = 'none'; }
+    }
     document.body.classList.toggle('psb-browse', n === 1);
     if(n !== 1) document.body.classList.remove('psb-bag');   // bag view only exists on step 1
     const _bh=document.getElementById('appHeader');if(_bh)_bh.style.position=(n===1&&window.innerWidth<820)?'relative':'';
@@ -3847,10 +3858,15 @@
       const tags = [CAT_LABELS[item.cat] || item.cat];
       if(sizeSummary !== '—') tags.push(sizeSummary);
       tags.push('Total qty: ' + totalQty);
+      const _smono = esc(((item.brand||'?').trim()[0] || '?').toUpperCase());
+      const _sthumb = `<div class="si-thumb-wrap"><div class="si-thumb-mono">${_smono}</div>`
+        + (item.img ? `<img class="si-thumb" src="${esc(item.img)}" alt="" loading="lazy" onload="this.previousElementSibling.style.display='none'" onerror="this.remove()">` : '')
+        + `</div>`;
       siHtml += `<div class="summary-item">
+        ${_sthumb}
         <div class="si-left">
           <div class="si-brand">${esc(item.brand)}</div>
-          <div class="si-url">${esc(item.url)}</div>
+          ${item.title ? `<div class="si-title">${esc(item.title)}</div>` : `<div class="si-url">${esc(item.url)}</div>`}
           <div class="si-tags">${tags.join(' · ')}</div>
         </div>
         <div class="si-price">
@@ -7642,7 +7658,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28-clearinline';
+  const PSB_BUILD = '2026-06-28-bag7';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
