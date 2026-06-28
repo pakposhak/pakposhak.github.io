@@ -4319,24 +4319,45 @@
   }
 
   // ── BOTTOM NAV ───────────────────────────────────────────────────────────
+  // "Luxe" premium room (batch 2): force the Deep-Forest dark look while on the Luxe feed and restore
+  // the buyer's own theme when they leave. Piggybacks on data-theme="dark" so every dark-mode override
+  // applies; body.ps-luxe then re-tints the tokens deep forest + gold.
+  let _psPrevTheme = null;
+  function psLuxeMode(on){
+    var html = document.documentElement, inLuxe = document.body.classList.contains('ps-luxe');
+    if(on && !inLuxe){
+      _psPrevTheme = html.getAttribute('data-theme') || 'light';
+      html.setAttribute('data-theme', 'dark');
+      document.body.classList.add('ps-luxe');
+    } else if(!on && inLuxe){
+      document.body.classList.remove('ps-luxe');
+      html.setAttribute('data-theme', _psPrevTheme || 'light');
+      _psPrevTheme = null;
+    }
+  }
+  window.psLuxeMode = psLuxeMode;
   function bottomNavGo(tab){
     // Bottom nav (redesign batch 2) = Home · Luxe · Bag(cart) · Price Check. Bag uses id bnav-bag.
     var idmap = { home:'bnav-home', luxe:'bnav-luxe', cart:'bnav-bag', pricecheck:'bnav-pricecheck' };
     Object.keys(idmap).forEach(function(t){ var b = document.getElementById(idmap[t]); if(b) b.classList.toggle('active', t === tab); });
     if(tab === 'home'){
+      psLuxeMode(false);
       if(typeof switchBrowse === 'function') switchBrowse('products');
-      try{ psSetStore('everyday'); }catch(e){}   // Home = the everyday feed (under 10k)
+      try{ psSetStore('everyday'); }catch(e){}   // Home = the everyday feed (under 15k)
       if(currentStep !== 1) goToStep(1);
       window.scrollTo({top:0, behavior:'smooth'});
     } else if(tab === 'luxe'){
+      psLuxeMode(true);                          // …the Deep-Forest premium room
       if(typeof switchBrowse === 'function') switchBrowse('products');
       try{ psSetStore('premium'); }catch(e){}    // Luxe = the 10k+ feed (replaces the old toggle)
       if(currentStep !== 1) goToStep(1);
       window.scrollTo({top:0, behavior:'smooth'});
     } else if(tab === 'cart'){
+      psLuxeMode(false);
       gotoCart();   // Bag → jumps back to step 1 if needed, then scrolls to the order list
     } else if(tab === 'pricecheck'){
       // Price Check = the brands / paste-a-link page where we reveal the real PKR price.
+      psLuxeMode(false);
       if(currentStep !== 1) goToStep(1);
       if(typeof switchBrowse === 'function') switchBrowse('brands');
       window.scrollTo({top:0, behavior:'smooth'});
@@ -7307,7 +7328,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28r';
+  const PSB_BUILD = '2026-06-28s';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

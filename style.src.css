@@ -43,6 +43,21 @@
     [data-theme="dark"][data-gender="w"]{ --accent:#E68AA0; }
     [data-theme="dark"][data-gender="m"]{ --accent:#5FB389; }
     [data-theme="dark"][data-gender="k"]{ --accent:#E0922F; }
+    /* ── "Luxe" premium room (batch 2) ── The Premium/Luxe tab gets a Deep-Forest + gold treatment,
+       DARKER than the brand icon's #05210E, so it feels exclusive vs the light everyday Home. JS
+       (psLuxeMode) also forces data-theme="dark" while here, so every dark-mode override applies and
+       this just re-tints the tokens deep forest. Accent is gold throughout (overrides gender accent).
+       Cream #F4ECD6 on #03150A ≈ 15:1 contrast. */
+    body.ps-luxe{
+      --bg:#03150A; --surface:#082011; --raised:#0C2A17; --input-bg:#06190D;
+      --gold:#DBB85E; --gold-dim:rgba(219,184,94,0.16); --gold-bdr:rgba(219,184,94,0.36); --gold-bdr2:rgba(219,184,94,0.58);
+      --txt:#F4ECD6; --txt-sec:#CFC094; --txt-muted:#8FA289;
+      --bdr:rgba(219,184,94,0.16); --bdr-med:rgba(219,184,94,0.30);
+      --accent:#DBB85E;
+      background:var(--bg); color:var(--txt);
+    }
+    /* A thin gold hairline under the sticky top group signals the premium room. */
+    body.ps-luxe .ps-topstick{box-shadow:0 1px 0 0 var(--gold-bdr), 0 8px 14px -10px rgba(0,0,0,0.6)}
     /* Global department rail — one top-level filter for products + brands. */
     .ps-genrail{display:flex;align-items:center;gap:2px;margin:4px 0 8px;padding:6px 2px 0;border-bottom:1px solid var(--bdr);overflow-x:auto;scrollbar-width:none}
     .ps-genrail::-webkit-scrollbar{display:none}
