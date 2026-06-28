@@ -74,6 +74,9 @@
       background: var(--surface); overflow: hidden;
     }
     .rail-item.active .rail-icon { border-color: var(--gold); }
+    .rail-icon-brands { background: #F3EFFA; color: #4A3A8C; }
+    .rail-icon-brands svg { width: 28px; height: 28px; }
+    [data-theme="dark"] .rail-icon-brands { background: #2A2440; color: #B9A9F0; }
     .rail-label {
       font-size: 10.5px; color: var(--text3); text-align: center;
       line-height: 1.3; font-weight: 500;
@@ -94,26 +97,41 @@
       font-size: 10px; font-weight: 600; color: var(--text3);
       padding: 0 14px 6px; text-transform: uppercase; letter-spacing: 0.07em;
     }
-    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 12px 12px; }
-    .chip {
-      display: flex; flex-direction: column; align-items: center; gap: 5px;
-      width: 70px; cursor: pointer;
+    /* Square product-image tiles (Myntra-style) — 2 per row, like the brand grid */
+    .chip-row {
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px; padding: 0 12px 14px;
     }
-    .chip-circle {
-      width: 56px; height: 56px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 600; text-align: center;
-      line-height: 1.25; padding: 6px;
-      border: 1.5px solid transparent;
+    .chip {
+      display: flex; flex-direction: column; cursor: pointer;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
       transition: transform 0.12s, border-color 0.12s;
     }
-    .chip:active .chip-circle { transform: scale(0.92); }
-    .chip-label { font-size: 10px; color: var(--text2); text-align: center; line-height: 1.3; }
-    /* Colour themes per section */
-    .c-eastern  { background: #FDF0DC; color: #7A4800; border-color: #E8C97A; }
-    .c-western  { background: #E4EEF9; color: #1A4B82; border-color: #9BBDE0; }
-    .c-festive  { background: #FAE8F0; color: #7A2040; border-color: #E0A0BC; }
-    .c-access   { background: #E8F5EC; color: #1A5C30; border-color: #90CCA0; }
+    .chip:active { transform: scale(0.97); border-color: var(--gold); }
+    /* Square image box: shows a coloured initials fallback, with the real product
+       photo layered on top once it loads. */
+    .chip-imgbox {
+      position: relative; width: 100%; aspect-ratio: 1 / 1;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; text-align: center;
+      line-height: 1.25; padding: 8px; overflow: hidden;
+    }
+    .chip-img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: center top; display: block;
+      opacity: 0; transition: opacity 0.25s ease;
+    }
+    .chip-imgbox.has-img .chip-img { opacity: 1; }
+    .chip-label {
+      font-size: 11.5px; font-weight: 600; color: var(--text);
+      text-align: center; line-height: 1.3; padding: 8px 6px 10px;
+    }
+    /* Colour themes per section (fallback tint when no product image) */
+    .c-eastern  { background: #FDF0DC; color: #7A4800; }
+    .c-western  { background: #E4EEF9; color: #1A4B82; }
+    .c-festive  { background: #FAE8F0; color: #7A2040; }
+    .c-access   { background: #E8F5EC; color: #1A5C30; }
 
     /* ── Brand grid ── */
     .brand-search-wrap { padding: 10px 12px 4px; }
@@ -205,7 +223,9 @@
     </div>
     <div class="rail-divider"></div>
     <div class="rail-item" data-tab="brands" onclick="switchTab('brands',this)">
-      <div class="rail-icon">🏪</div>
+      <div class="rail-icon rail-icon-brands">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8h12l-.9 11.1a1 1 0 0 1-1 .9H7.9a1 1 0 0 1-1-.9L6 8Z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>
+      </div>
       <span class="rail-label">Browse<br>Brands</span>
     </div>
   </nav>
@@ -398,6 +418,21 @@ const BRANDS = [
 const _seen = new Set();
 const BRANDS_DEDUPED = BRANDS.filter(b => { if(_seen.has(b.n)) return false; _seen.add(b.n); return true; });
 
+// Brands most sought-after in Bangladesh lead every view (multi-department giants
+// first so they also top the Men/Kids filters, then the BD-favourite designers).
+// Stable sort: brands not on this list keep their original order after the famous ones.
+const BD_FAMOUS = [
+  'Khaadi','Sana Safinaz','Maria B','Gul Ahmed','Sapphire','Asim Jofa','Bareeze',
+  'Alkaram Studio','Limelight','Bonanza Satrangi','J. Junaid Jamshed','Nishat Linen',
+  'Edenrobe','Outfitters','Elan','Zara Shahjahan','Beechtree','Generation',
+  'Cross Stitch','Charizma','Baroque','Sania Maskatiya','Mushq','Afrozeh','Maryum N Maria',
+];
+const _fameRank = n => { const i = BD_FAMOUS.indexOf(n); return i === -1 ? 999 : i; };
+const BRANDS_SORTED = BRANDS_DEDUPED
+  .map((b, i) => ({ b, i }))
+  .sort((x, y) => (_fameRank(x.b.n) - _fameRank(y.b.n)) || (x.i - y.i))
+  .map(o => o.b);
+
 // ── Logo colour fallbacks ─────────────────────────────────────────────────────
 const LOGO_COLORS = [
   '#534AB7','#0F6E56','#993C1D','#185FA5','#854F0B',
@@ -412,6 +447,53 @@ let activeTab = 'w';
 let brandGender = 'all';
 let brandQuery  = '';
 
+// ── Product-image thumbnails for category tiles ───────────────────────────────
+// Each category tile shows a real product photo, fetched once from the VPS search
+// API (?cat=<key>) and cached in localStorage so repeat visits are instant.
+const SEARCH_BASE = 'https://103.83.91.34.sslip.io/search';
+const THUMB_CACHE_KEY = 'psb_cat_thumbs_v1';
+let thumbCache = {};
+try { thumbCache = JSON.parse(localStorage.getItem(THUMB_CACHE_KEY) || '{}'); } catch(e) {}
+let _thumbSaveT = null;
+function saveThumbCache() {
+  clearTimeout(_thumbSaveT);
+  _thumbSaveT = setTimeout(() => { try { localStorage.setItem(THUMB_CACHE_KEY, JSON.stringify(thumbCache)); } catch(e) {} }, 400);
+}
+// Ask Shopify's CDN for a small, square-friendly render so tiles load fast.
+function thumbUrl(u) {
+  try {
+    const url = new URL(u);
+    if (/shopify|cdn/i.test(url.hostname) && !url.searchParams.has('width')) url.searchParams.set('width', '400');
+    return url.toString();
+  } catch(e) { return u; }
+}
+function applyThumb(box, url) {
+  const img = new Image();
+  img.className = 'chip-img';
+  img.alt = '';
+  img.onload = () => { box.appendChild(img); box.classList.add('has-img'); };
+  img.src = thumbUrl(url);
+}
+function fetchCatThumb(key, box) {
+  if (!key || box.dataset.loaded) return;
+  box.dataset.loaded = '1';
+  if (thumbCache[key]) { applyThumb(box, thumbCache[key]); return; }
+  fetch(SEARCH_BASE + '?cat=' + encodeURIComponent(key) + '&pageSize=1&page=0', { cache: 'default' })
+    .then(r => r.ok ? r.json() : null)
+    .then(j => {
+      const url = j && j.products && j.products[0] && j.products[0].img;
+      if (url) { thumbCache[key] = url; saveThumbCache(); applyThumb(box, url); }
+    }).catch(() => {});
+}
+function loadCatThumbs() {
+  // Cached categories paint instantly; uncached ones fetch now (browser caps
+  // concurrency at ~6/host). Every result is cached so repeat visits are instant.
+  document.querySelectorAll('.chip-imgbox[data-cat]').forEach(box => {
+    if (box.dataset.loaded) return;
+    fetchCatThumb(box.getAttribute('data-cat'), box);
+  });
+}
+
 // ── Render helpers ────────────────────────────────────────────────────────────
 function renderCats(g) {
   const sections = CAT_DATA[g];
@@ -424,7 +506,7 @@ function renderCats(g) {
       grp.items.forEach(([key, label]) => {
         const ini = label.split(/[\s\/\-–\(]+/).map(w=>w[0]||'').filter(Boolean).join('').slice(0,3).toUpperCase();
         html += `<div class="chip" onclick="goProducts('${key}','${esc(label)}')" role="button" tabindex="0">
-          <div class="chip-circle ${sec.cls}">${ini}</div>
+          <div class="chip-imgbox ${sec.cls}" data-cat="${esc(key)}">${esc(ini)}</div>
           <span class="chip-label">${esc(label)}</span>
         </div>`;
       });
@@ -432,11 +514,12 @@ function renderCats(g) {
     });
   });
   document.getElementById('catPanel').innerHTML = html;
+  loadCatThumbs();
 }
 
 function renderBrands() {
   const q = brandQuery.toLowerCase().trim();
-  const filtered = BRANDS_DEDUPED.filter(b => {
+  const filtered = BRANDS_SORTED.filter(b => {
     const gMatch = brandGender === 'all' || b.g.includes(brandGender);
     const qMatch = !q || b.n.toLowerCase().includes(q);
     return gMatch && qMatch;
