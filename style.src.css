@@ -42,10 +42,10 @@
        dark canvas for every department; only the accent shifts there. Contrast-verified. */
     :root[data-gender="w"]{ --accent:#B14A63; --bg:#FBF3F6; --raised:#F4E7EC; }
     :root[data-gender="m"]{ --accent:#2C6C9E; --bg:#EEF4FB; --raised:#E3ECF7; }
-    :root[data-gender="k"]{ --accent:#A85D10; --bg:#FBF6E9; --raised:#F4ECD6; }
+    :root[data-gender="k"]{ --accent:#3F7D2E; --bg:#EAF4DA; --raised:#DCE9C6; }
     [data-theme="dark"][data-gender="w"]{ --accent:#E68AA0; }
     [data-theme="dark"][data-gender="m"]{ --accent:#6FB0E0; }
-    [data-theme="dark"][data-gender="k"]{ --accent:#E0922F; }
+    [data-theme="dark"][data-gender="k"]{ --accent:#8FC46A; }
     /* ── "Luxe" premium room (batch 2) ── The Premium/Luxe tab gets a Deep-Forest + gold treatment,
        DARKER than the brand icon's #05210E, so it feels exclusive vs the light everyday Home. JS
        (psLuxeMode) also forces data-theme="dark" while here, so every dark-mode override applies and
