@@ -1578,6 +1578,7 @@
     updateSaveAllBtn();
     if(!Object.keys(drafts).length){
       document.getElementById('draftsContainer').style.display = 'none';
+      _addViaTap = false;  // add abandoned → next add starts fresh (default = paste)
       closeDraftModal();  // last card gone → close the popup
       restoreEditStash(); // removing the edit card = cancel → put the item back
       showTopUrlInput(); // show top input again when all cards gone
@@ -3147,6 +3148,7 @@
   function cancelDraftModal(){
     Object.keys(drafts).map(Number).forEach(id => { document.getElementById(`dc_${id}`)?.remove(); delete drafts[id]; });
     const dc = document.getElementById('draftsContainer'); if(dc) dc.style.display = 'none';
+    _addViaTap = false;   // cancelled add → next add starts fresh (default = paste)
     closeDraftModal();
     restoreEditStash();   // cancelling an edit puts the original item back in the bag
     try{ showTopUrlInput(); }catch(e){}
@@ -3473,9 +3475,13 @@
     showTopUrlInput(); // show top input again, clear it — ready for the next product
     checkAddUrlLock();
     renderCart();
-    // Bag is its own page now: confirm the add when the buyer is still browsing (not already on the Bag).
-    if(!document.body.classList.contains('psb-bag')){ try{ psAddedToBagToast(); }catch(e){} }
+    // "Added to your bag" toast: only for PASTE/share adds (req: Danish) — when the buyer taps a
+    // product's "+ Add" they're already on the grid and don't need it. And never while on the Bag.
+    if(!_addViaTap && !document.body.classList.contains('psb-bag')){ try{ psAddedToBagToast(); }catch(e){} }
+    _addViaTap = false;   // reset for the next add (default = paste)
   }
+  // Set true by the TAP add paths (psAdd / pickProduct / psWishAdd) so saveAllDrafts skips the toast.
+  let _addViaTap = false;
 
   // ── CART ─────────────────────────────────────────────────────────────────
   let cart = [];
@@ -4071,6 +4077,10 @@
       const e = document.getElementById(id); if(e) e.value = '';
     });
     const sel = document.getElementById('payMethod'); if(sel) sel.value = '';
+    // reset the custom dropdown's label + selection back to "Choose…"
+    const pml = document.getElementById('payMethodLabel'); if(pml){ pml.textContent = tr('s_method_pick'); pml.setAttribute('data-i18n','s_method_pick'); }
+    document.querySelectorAll('#payMethodPanel .pm-dd-item.sel').forEach(it => it.classList.remove('sel'));
+    const pmp = document.getElementById('payMethodPanel'); if(pmp) pmp.style.display = 'none';
     const p = document.getElementById('payReceiptPreview'); if(p) p.style.display = 'none';
     const s = document.getElementById('payConfirmStatus'); if(s) s.style.display = 'none';
     const b = document.getElementById('payConfirmBtn');
@@ -4078,6 +4088,35 @@
     window.__payOverride = false;
     switchPayTab('receipt');
   }
+
+  // ── PAYMENT-METHOD CUSTOM DROPDOWN ──────────────────────────────────────────
+  // Replaces the native <select id="payMethod"> whose OS-rendered option list ignored the theme
+  // (Danish hard rule: every opened list/grid matches the active theme, light + dark). #payMethod is
+  // now a hidden input; this drives its value so all existing readers (payMethod.value) are unchanged.
+  function pmToggle(ev){
+    if(ev) ev.stopPropagation();
+    const p = document.getElementById('payMethodPanel'); if(!p) return;
+    const open = p.style.display === 'block';
+    p.style.display = open ? 'none' : 'block';
+    const b = document.getElementById('payMethodBtn'); if(b) b.setAttribute('aria-expanded', String(!open));
+  }
+  function pmPick(val, label){
+    const h = document.getElementById('payMethod'); if(h) h.value = val;
+    const l = document.getElementById('payMethodLabel'); if(l){ l.textContent = label; l.removeAttribute('data-i18n'); }
+    const p = document.getElementById('payMethodPanel'); if(p) p.style.display = 'none';
+    const b = document.getElementById('payMethodBtn'); if(b) b.setAttribute('aria-expanded', 'false');
+    document.querySelectorAll('#payMethodPanel .pm-dd-item').forEach(it => it.classList.toggle('sel', it.getAttribute('data-val') === val));
+  }
+  window.pmToggle = pmToggle;
+  window.pmPick = pmPick;
+  // Close on an outside click (select-like behaviour).
+  document.addEventListener('click', function(e){
+    const dd = document.getElementById('payMethodDd');
+    if(dd && !dd.contains(e.target)){
+      const p = document.getElementById('payMethodPanel'); if(p && p.style.display === 'block') p.style.display = 'none';
+      const b = document.getElementById('payMethodBtn'); if(b) b.setAttribute('aria-expanded', 'false');
+    }
+  });
 
   // Called when step 4 opens — stashes the order total so the payment box can
   // match it, and prefills the amount with that total (most buyers pay exactly).
@@ -4165,6 +4204,7 @@
     clearCartStorage();
     drafts = {};
     draftIdCtr = 0;
+    _addViaTap = false;
     document.getElementById('draftCards').innerHTML = '';
     document.getElementById('draftsContainer').style.display = 'none';
     closeDraftModal();
@@ -4340,6 +4380,7 @@
   }
 
   function pickProduct(handle){
+    _addViaTap = true;   // picked from the product list → no "added to bag" toast
     const url = _ppOrigin + '/products/' + handle;
     closeProductPicker();
     document.getElementById('urlInputRow').style.display = 'none';
@@ -6980,6 +7021,7 @@
   // price/stock/category live, then the buyer picks size and saves to the cart).
   function psAdd(idx){
     const p = psFiltered[idx]; if(!p) return;
+    _addViaTap = true;   // tapped "+ Add" → no "added to bag" toast (req: Danish)
     const inp = document.getElementById('urlInput');
     if(inp) inp.value = p.u;
     handleAddUrl();
@@ -7152,7 +7194,7 @@
   }
   function psWishRemove(i){ if(i < 0 || i >= _wish.length) return; _wish.splice(i, 1); _wishSave(); psWishSyncUI(); psWishRender(); }
   // Add a saved item to the order via the proven paste-link pipeline (live price/size/category).
-  function psWishAdd(i){ const p = _wish[i]; if(!p || !p.u) return; const inp = document.getElementById('urlInput'); if(inp) inp.value = p.u; psWishClose(); handleAddUrl(); }
+  function psWishAdd(i){ const p = _wish[i]; if(!p || !p.u) return; _addViaTap = true; const inp = document.getElementById('urlInput'); if(inp) inp.value = p.u; psWishClose(); handleAddUrl(); }
   // Initialise the header badge once the DOM is ready.
   if(document.readyState !== 'loading') psWishSyncUI();
   else document.addEventListener('DOMContentLoaded', psWishSyncUI);
@@ -7581,7 +7623,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28-filtersize';
+  const PSB_BUILD = '2026-06-28-bag4';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

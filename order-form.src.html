@@ -615,14 +615,21 @@
       <div style="display:flex;gap:9px;flex-wrap:wrap">
         <div style="flex:1;min-width:135px">
           <label style="display:block;font-size:0.74rem;color:var(--txt-sec);font-weight:600;margin-bottom:3px" data-i18n="s_method_label">How you paid *</label>
-          <select id="payMethod" style="width:100%;border:1.5px solid var(--bdr-med);border-radius:8px;padding:10px 12px;font-size:0.9rem;background:var(--input-bg);color:var(--txt)">
-            <option value="" data-i18n="s_method_pick">Choose…</option>
-            <option value="bKash">bKash</option>
-            <option value="Nagad">Nagad</option>
-            <option value="Rocket">Rocket</option>
-            <option value="Upay">Upay</option>
-            <option value="Bank">Bank transfer</option>
-          </select>
+          <!-- Custom themed dropdown (NOT a native <select> — its OS option list ignores the theme).
+               #payMethod stays as a hidden input so existing JS (payMethod.value) is unchanged. -->
+          <div class="pm-dd" id="payMethodDd">
+            <input type="hidden" id="payMethod" value=""/>
+            <button type="button" class="pm-dd-btn" id="payMethodBtn" onclick="pmToggle(event)" aria-haspopup="listbox" aria-expanded="false">
+              <span id="payMethodLabel" data-i18n="s_method_pick">Choose…</span><span class="pm-dd-car">▾</span>
+            </button>
+            <div class="pm-dd-panel" id="payMethodPanel" role="listbox" aria-label="How you paid">
+              <div class="pm-dd-item" role="option" data-val="bKash" onclick="pmPick('bKash','bKash')">bKash</div>
+              <div class="pm-dd-item" role="option" data-val="Nagad" onclick="pmPick('Nagad','Nagad')">Nagad</div>
+              <div class="pm-dd-item" role="option" data-val="Rocket" onclick="pmPick('Rocket','Rocket')">Rocket</div>
+              <div class="pm-dd-item" role="option" data-val="Upay" onclick="pmPick('Upay','Upay')">Upay</div>
+              <div class="pm-dd-item" role="option" data-val="Bank" onclick="pmPick('Bank','Bank transfer')">Bank transfer</div>
+            </div>
+          </div>
         </div>
         <div style="flex:1;min-width:135px">
           <label style="display:block;font-size:0.74rem;color:var(--txt-sec);font-weight:600;margin-bottom:3px" data-i18n="s_trx_label">TrxID / sender no.</label>
