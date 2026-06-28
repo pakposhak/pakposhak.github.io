@@ -55,6 +55,40 @@
     @media (prefers-reduced-motion:reduce){.ps-gen{transition:none}}
     /* The top rail is the single gender control now — hide the carousel's own gender tabs. */
     #psShopTabs{display:none}
+    /* Myntra-style search bar (opens the full-screen search page). */
+    .ps-searchbar{display:flex;align-items:center;gap:8px;margin:0 0 10px}
+    .ps-sb-main{flex:1;display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--bdr-med);border-radius:11px;padding:11px 13px;cursor:pointer;text-align:left;min-width:0}
+    .ps-sb-ico{width:18px;height:18px;color:var(--accent);flex-shrink:0}
+    .ps-sb-ph{color:var(--txt-muted);font-size:0.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ps-sb-cam{flex-shrink:0;display:flex;align-items:center;justify-content:center;width:42px;height:42px;background:var(--surface);border:1px solid var(--bdr-med);border-radius:11px;color:var(--accent);cursor:pointer}
+    .ps-sb-cam svg{width:21px;height:21px}
+    /* Full-screen search page (in-app overlay). */
+    .ps-searchpage{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+    .ps-searchpage[hidden]{display:none}
+    .ps-sp-top{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--bdr)}
+    .ps-sp-back{flex-shrink:0;background:none;border:0;color:var(--txt);padding:6px;cursor:pointer;display:flex}
+    .ps-sp-back svg{width:24px;height:24px}
+    .ps-sp-field{flex:1;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--bdr-med);border-radius:11px;padding:0 11px;min-width:0}
+    .ps-sp-ico{width:18px;height:18px;color:var(--accent);flex-shrink:0}
+    .ps-sp-field input{flex:1;border:0;background:none;color:var(--txt);font-size:0.95rem;padding:11px 0;outline:none;min-width:0}
+    .ps-sp-cam{flex-shrink:0;background:none;border:0;color:var(--accent);padding:6px;cursor:pointer;display:flex}
+    .ps-sp-cam svg{width:21px;height:21px}
+    .ps-sp-body{flex:1;overflow-y:auto;padding:12px 14px;-webkit-overflow-scrolling:touch}
+    .ps-sp-sug{list-style:none;margin:0 0 6px;padding:0}
+    .ps-sp-sug li{padding:11px 6px;border-bottom:1px solid var(--bdr);color:var(--txt);cursor:pointer;font-size:0.92rem}
+    .ps-sp-sug li:active{background:var(--raised)}
+    .ps-sp-msg{background:var(--gold-dim);color:var(--accent);border-radius:9px;padding:9px 12px;font-size:0.85rem;font-weight:700;margin-bottom:12px}
+    .ps-sp-msg[hidden]{display:none}
+    .ps-sp-remind{background:var(--raised);border:1px solid var(--bdr);border-radius:12px;padding:14px;margin-bottom:14px}
+    .ps-sp-remind-t{font-weight:800;color:var(--txt);font-size:0.95rem;margin-bottom:4px}
+    .ps-sp-remind-d{color:var(--txt-sec);font-size:0.82rem;line-height:1.5;margin-bottom:11px}
+    .ps-sp-paste{background:var(--accent);color:#fff;border:0;border-radius:9px;padding:10px 16px;font-size:0.88rem;font-weight:700;cursor:pointer}
+    .ps-sp-tools{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+    .ps-sp-tool{display:flex;flex-direction:column;align-items:flex-start;gap:5px;background:var(--surface);border:1px solid var(--bdr-med);border-radius:12px;padding:13px;cursor:pointer;color:var(--txt)}
+    .ps-sp-tool svg{width:24px;height:24px;color:var(--accent)}
+    .ps-sp-tool span{font-weight:700;font-size:0.9rem}
+    .ps-sp-tool small{color:var(--txt-muted);font-size:0.7rem}
+    .ps-sp-brands{width:100%;background:none;border:1px solid var(--bdr-med);border-radius:11px;padding:13px;font-size:0.92rem;font-weight:700;color:var(--accent);cursor:pointer}
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:70px}
     .tl-chip{display:inline-flex;align-items:center;gap:5px;background:var(--surface);

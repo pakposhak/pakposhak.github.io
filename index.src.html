@@ -137,6 +137,49 @@
     </button>
   </nav>
 
+  <!-- Myntra-style search bar — opens the full-screen search page (redesign Phase 1). -->
+  <div class="ps-searchbar">
+    <button type="button" class="ps-sb-main" id="psSearchBar" onclick="psSearchOpen()" aria-label="Search products and brands">
+      <svg class="ps-sb-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <span class="ps-sb-ph" data-i18n="search_bar_ph">Search products, brands…</span>
+    </button>
+    <button type="button" class="ps-sb-cam" onclick="psVisualSearch()" aria-label="Search by photo" title="Search by photo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V8a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.5"/></svg>
+    </button>
+  </div>
+
+  <!-- Full-screen search page (in-app overlay) -->
+  <div id="psSearchPage" class="ps-searchpage" hidden role="dialog" aria-label="Search">
+    <div class="ps-sp-top">
+      <button class="ps-sp-back" onclick="psSearchClose()" aria-label="Close search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="ps-sp-field">
+        <svg class="ps-sp-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input id="psSearchPageInput" type="text" autocomplete="off" oninput="psSearchPageInput(this.value)" onkeydown="if(event.key==='Enter')psSearchPageSubmit()" placeholder="Search products and 150+ brands" data-i18n-ph="search_page_ph"/>
+        <button class="ps-sp-cam" onclick="psVisualSearch()" aria-label="Search by photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V8a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.5"/></svg></button>
+      </div>
+    </div>
+    <div class="ps-sp-body">
+      <ul class="ps-sp-sug" id="psSearchPageSug"></ul>
+      <div class="ps-sp-msg" id="psSpMsg" hidden></div>
+      <div class="ps-sp-remind">
+        <div class="ps-sp-remind-t" data-i18n="sp_remind_t">Found it on a brand's own site?</div>
+        <div class="ps-sp-remind-d" data-i18n="sp_remind_d">Copy the product link and paste it here. We'll order it for you at Pakistani prices.</div>
+        <button type="button" class="ps-sp-paste" onclick="psSearchClose();location.href='order-form.html'" data-i18n="sp_paste">Paste a product link</button>
+      </div>
+      <div class="ps-sp-tools">
+        <button type="button" class="ps-sp-tool" onclick="psVisualSearch()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V8a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.5"/></svg>
+          <span data-i18n="sp_visual">Visual search</span><small data-i18n="sp_soon">Coming soon</small>
+        </button>
+        <button type="button" class="ps-sp-tool" onclick="psFitAssistant()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg>
+          <span data-i18n="sp_fit">Fit assistant</span><small data-i18n="sp_soon">Coming soon</small>
+        </button>
+      </div>
+      <button type="button" class="ps-sp-brands" onclick="psSearchClose();switchBrowse('brands')" data-i18n="sp_brands">Browse all 150+ brands ›</button>
+    </div>
+  </div>
+
   <!-- Browse: switch between the brand directory and the multi-brand product search -->
   <div class="browse-tabs">
     <button type="button" class="browse-tab on" id="bt-products" onclick="switchBrowse('products')"><span aria-hidden="true">🔎</span> <span data-i18n="tab_products">Browse products</span></button>

@@ -2450,7 +2450,7 @@
       hiw_confirm_pay:'Confirm price & pay (bKash/Nagad)',
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search 150+ Pakistani brands…',
-      tab_brands:'Browse brands', tab_products:'Browse products', gen_all:'All', gen_women:'Women', gen_men:'Men', gen_kids:'Kids', menu_language:'Language', menu_theme:'Theme', menu_guide:'Guide', order_ways:'Two ways to order: tap + Add on anything in our listing, or send a product link from any of our 140+ brands.',
+      tab_brands:'Browse brands', tab_products:'Browse products', gen_all:'All', gen_women:'Women', gen_men:'Men', gen_kids:'Kids', menu_language:'Language', menu_theme:'Theme', menu_guide:'Guide', search_bar_ph:'Search products, brands…', search_page_ph:'Search products and 150+ brands', sp_remind_t:"Found it on a brand's own site?", sp_remind_d:"Copy the product link and paste it here. We'll order it for you at Pakistani prices.", sp_paste:'Paste a product link', sp_visual:'Visual search', sp_fit:'Fit assistant', sp_soon:'Coming soon', sp_brands:'Browse all 150+ brands ›', order_ways:'Two ways to order: tap + Add on anything in our listing, or send a product link from any of our 140+ brands.',
       intro_ios:"On iPhone: on a brand's product page, tap Share, then Add to PakPoshak. (One-time: add the PakPoshak shortcut.) Or copy the link and paste it here.",
       intro_android:"On Android: install PakPoshak, then on a brand's product page tap Share, then PakPoshak. Or copy the link and paste it here.",
       intro_desktop:"On desktop: paste a product link below, or add the Send-cart bookmark to grab a whole cart at once.",
@@ -2518,7 +2518,7 @@
       hiw_confirm_pay:'দাম নিশ্চিত করে পেমেন্ট (বিকাশ/নগদ)',
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
       lbl_browse:'একটি ব্র্যান্ড দেখুন', search_ph:'🔍 ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
-      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', gen_all:'সব', gen_women:'নারী', gen_men:'পুরুষ', gen_kids:'শিশু', menu_language:'ভাষা', menu_theme:'থিম', menu_guide:'গাইড', order_ways:'দুইভাবে অর্ডার: আমাদের লিস্টে যেকোনো পণ্যে + Add চাপুন, অথবা ১৪০+ ব্র্যান্ডের যেকোনো পণ্যের লিংক পাঠান।',
+      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', gen_all:'সব', gen_women:'নারী', gen_men:'পুরুষ', gen_kids:'শিশু', menu_language:'ভাষা', menu_theme:'থিম', menu_guide:'গাইড', search_bar_ph:'পণ্য, ব্র্যান্ড খুঁজুন…', search_page_ph:'পণ্য ও ১৫০+ ব্র্যান্ড খুঁজুন', sp_remind_t:'ব্র্যান্ডের নিজস্ব সাইটে পেয়েছেন?', sp_remind_d:'পণ্যের লিংক কপি করে এখানে পেস্ট করুন। আমরা পাকিস্তানি দামে অর্ডার করে দেব।', sp_paste:'পণ্যের লিংক পেস্ট করুন', sp_visual:'ভিজ্যুয়াল সার্চ', sp_fit:'ফিট অ্যাসিস্ট্যান্ট', sp_soon:'শীঘ্রই আসছে', sp_brands:'সব ১৫০+ ব্র্যান্ড দেখুন ›', order_ways:'দুইভাবে অর্ডার: আমাদের লিস্টে যেকোনো পণ্যে + Add চাপুন, অথবা ১৪০+ ব্র্যান্ডের যেকোনো পণ্যের লিংক পাঠান।',
       intro_ios:'আইফোনে: ব্র্যান্ডের পণ্য পেজে Share চেপে Add to PakPoshak বেছে নিন। (একবার: PakPoshak শর্টকাট যোগ করুন।) অথবা লিংক কপি করে এখানে পেস্ট করুন।',
       intro_android:'অ্যান্ড্রয়েডে: PakPoshak ইনস্টল করুন, তারপর ব্র্যান্ডের পণ্য পেজে Share চেপে PakPoshak বেছে নিন। অথবা লিংক কপি করে এখানে পেস্ট করুন।',
       intro_desktop:'ডেস্কটপে: নিচে পণ্যের লিংক পেস্ট করুন, অথবা পুরো কার্ট একসাথে আনতে Send-cart বুকমার্ক যোগ করুন।',
@@ -5191,6 +5191,42 @@
     const matches = PS_SUGGEST.filter(kw => psNorm(kw).startsWith(n)).slice(0, 7);
     psSugShow('psSugM', matches); psSugShow('psSugD', matches);
   }
+  // ── Full-screen search page (in-app overlay) — redesign Phase 1 ──
+  // Reuses the existing search: pick/submit closes the page and psSearchInput runs the
+  // grid search. Visual search + Fit assistant are hooks (built in a separate session).
+  function psSearchOpen(){
+    var ov=document.getElementById('psSearchPage'); if(!ov) return;
+    ov.removeAttribute('hidden');
+    try{ document.body.style.overflow='hidden'; }catch(e){}
+    var inp=document.getElementById('psSearchPageInput');
+    if(inp){ inp.value=''; setTimeout(function(){ try{ inp.focus(); }catch(e){} }, 60); }
+    psSearchPageSug('');
+  }
+  function psSearchClose(){
+    var ov=document.getElementById('psSearchPage'); if(ov) ov.setAttribute('hidden','');
+    try{ document.body.style.overflow=''; }catch(e){}
+  }
+  function psSearchPageSug(val){
+    var list=document.getElementById('psSearchPageSug'); if(!list) return;
+    if(!val || val.length<2){ list.innerHTML=''; return; }
+    var n=psNorm(val);
+    var matches=PS_SUGGEST.filter(function(kw){ return psNorm(kw).startsWith(n); }).slice(0,8);
+    list.innerHTML=matches.map(function(t){ return '<li onmousedown="psSearchPageGo(\''+String(t).replace(/'/g,"\\'")+'\')">'+esc(t)+'</li>'; }).join('');
+  }
+  function psSearchPageInput(val){ psSearchPageSug(val); }
+  function psSearchPageSubmit(){ var inp=document.getElementById('psSearchPageInput'); psSearchPageGo(inp?inp.value:''); }
+  function psSearchPageGo(term){ psSearchClose(); if(term && typeof psSearchInput==='function') psSearchInput(term); }
+  function psSpComingSoon(name){
+    var ov=document.getElementById('psSearchPage');
+    if(ov && ov.hasAttribute('hidden')) psSearchOpen();
+    var m=document.getElementById('psSpMsg');
+    if(m){ m.textContent=name+' is coming soon.'; m.hidden=false; clearTimeout(psSpComingSoon._t); psSpComingSoon._t=setTimeout(function(){ m.hidden=true; },2600); }
+  }
+  function psVisualSearch(){ psSpComingSoon('Visual search'); }
+  function psFitAssistant(){ psSpComingSoon('Fit assistant'); }
+  window.psSearchOpen=psSearchOpen; window.psSearchClose=psSearchClose;
+  window.psSearchPageInput=psSearchPageInput; window.psSearchPageSubmit=psSearchPageSubmit; window.psSearchPageGo=psSearchPageGo;
+  window.psVisualSearch=psVisualSearch; window.psFitAssistant=psFitAssistant;
   // Store-tier words → select every brand of that Browse-Brands directory tier.
   const PS_TIER = { premium:'p', premiums:'p', luxury:'p', luxe:'p', designer:'p', designers:'p', highend:'p', couture:'p' };
   // Generic garment-state words that are CATEGORY cues, never brand names — even though they
@@ -6981,7 +7017,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28c';
+  const PSB_BUILD = '2026-06-28d';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
