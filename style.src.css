@@ -36,12 +36,15 @@
       --bdr:       rgba(201,169,110,0.15);
       --bdr-med:   rgba(201,169,110,0.25);
     }
-    /* Gender accent — shifts per department, contrast-verified on light AND dark (redesign Phase 1). */
-    :root[data-gender="w"]{ --accent:#B14A63; }
-    :root[data-gender="m"]{ --accent:#2E6E4E; }
-    :root[data-gender="k"]{ --accent:#A85D10; }
+    /* Per-department LIGHT theme — a SUBTLE page-background tint + matching accent, shifting
+       per department (redesign Phase 1). Cards stay white (--surface) so products read clean.
+       All = the default Ivory & Gold. Men is Light Blue (was forest green). Dark mode keeps its
+       dark canvas for every department; only the accent shifts there. Contrast-verified. */
+    :root[data-gender="w"]{ --accent:#B14A63; --bg:#FBF3F6; --raised:#F4E7EC; }
+    :root[data-gender="m"]{ --accent:#2C6C9E; --bg:#EEF4FB; --raised:#E3ECF7; }
+    :root[data-gender="k"]{ --accent:#A85D10; --bg:#FBF6E9; --raised:#F4ECD6; }
     [data-theme="dark"][data-gender="w"]{ --accent:#E68AA0; }
-    [data-theme="dark"][data-gender="m"]{ --accent:#5FB389; }
+    [data-theme="dark"][data-gender="m"]{ --accent:#6FB0E0; }
     [data-theme="dark"][data-gender="k"]{ --accent:#E0922F; }
     /* ── "Luxe" premium room (batch 2) ── The Premium/Luxe tab gets a Deep-Forest + gold treatment,
        DARKER than the brand icon's #05210E, so it feels exclusive vs the light everyday Home. JS
@@ -187,7 +190,7 @@
     .ps-fsheet-clear{flex:1;background:none;border:1px solid var(--bdr-med);border-radius:10px;padding:12px;font-weight:700;color:var(--txt-sec);cursor:pointer}
     .ps-fsheet-apply{flex:1;background:var(--accent);border:0;border-radius:10px;padding:12px;font-weight:700;color:#fff;cursor:pointer}
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:70px}
+    body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:70px;transition:background-color .4s ease,color .4s ease}
     .tl-chip{display:inline-flex;align-items:center;gap:5px;background:var(--surface);
       border:1px solid var(--gold-bdr);color:var(--txt-sec);text-decoration:none;
       font-size:0.78rem;font-weight:600;padding:7px 13px;border-radius:20px;transition:border-color .15s,color .15s}
@@ -622,7 +625,7 @@
          browse header is position:relative (scrolls away), so this pins at the safe-area top with
          nothing above it — `top` uses env(safe-area-inset-top) to clear the notch (standing rule). */
       body.psb-browse .ps-topstick{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;
-        background:var(--bg);padding-bottom:6px;box-shadow:0 7px 12px -10px rgba(0,0,0,0.32)}
+        background:var(--bg);padding-bottom:6px;box-shadow:0 7px 12px -10px rgba(0,0,0,0.32);transition:background-color .4s ease}
       body.psb-browse .ps-topstick .ps-searchbar{margin-bottom:0}
       /* Names-only category bar (#8) — appears in the sticky top group once the photo strip scrolls past. */
       body.psb-browse .ps-topstick.is-scrolled .ps-catbar{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:8px 2px 2px;margin-top:5px;border-top:1px solid var(--bdr)}
