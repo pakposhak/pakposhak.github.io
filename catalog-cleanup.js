@@ -162,6 +162,10 @@ function fwdCat(p){
   return winterRe(s) ? 'winter_3pc_unstitch' : (emb(s) ? 'unstitch_3pc_emb' : 'lawn_3pc_unstitch');
 }
 function pieceCat(p){   // for a 1-piece kurti cat that's really 2/3pc
+  // explicit "1 PC" in the TITLE beats a contradicting URL slug — Asim Jofa "…STITCHED 1 PC" whose
+  // /products/…-3-pcs slug otherwise promoted it to 3pc, then the title-1pc rule demoted it back
+  // (kurti_1pc⇄pret_3pc_emb / ⇄shirt_dupatta_2pc oscillation on the live catalog, 2026-06-28). Title wins.
+  if (/\b0?1 ?pcs?\b|\b0?1 ?pieces?\b|\bone[\s-]?piece\b|\bsingle[\s-]?piece\b/i.test(p.t || '') && !/\b[2-9] ?pcs?\b|\b[2-9] ?pieces?\b/i.test(p.t || '')) return null;
   const s = txt(p);
   const shirt = /(shirt|kameez|kurta|kurti|front)/.test(s), trouser = /(trouser|pajama|pajami|bottom|shalwar|\bpants?\b|capri|tulip)/.test(s), dup = /(dupatta|chunri|chunni|stole)/.test(s);
   const three = (shirt && trouser && dup) || /\b3\s*-?\s*(pc|piece|pcs)\b|three[\s-]?piece/.test(s);
