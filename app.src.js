@@ -6927,25 +6927,29 @@
     const p = psFiltered[idx]; if(!p) return;
     const bdt = (p._bdt != null) ? p._bdt : estLandedBdt(p.pkr, p.cat);
     const sz = (p.sz || []).slice(0,12).map(s => `<span class="ps-sz">${esc(s)}</span>`).join('');
+    // LAAM-style layout (req): product INFO + details on TOP, then the bigger images in a VERTICAL
+    // scroll BELOW (no carousel slides). The whole .ps-detail-card scrolls, so you read the details
+    // first then scroll down to the photos. Gallery is seeded with the catalog thumb (instant) and
+    // upgraded to the brand's full-size gallery by psEnrichDetail.
     document.getElementById('psDetailInner').innerHTML =
-        `<img class="ps-d-main" id="psDMain" src="${esc(p.img)}" alt="${esc(p.t)}">`
-      + `<div class="ps-d-thumbs" id="psDThumbs"></div>`
-      + `<div class="ps-d-body">`
+        `<div class="ps-d-body">`
       +   `<div class="ps-d-brand">${esc(p.b)}</div>`
       +   `<div class="ps-d-title">${esc(p.t)}</div>`
       +   `<div class="ps-d-price">≈ ৳${bdt.toLocaleString()}</div>`
       +   `<div class="ps-d-pkr">PKR ${p.pkr.toLocaleString()}</div>`
-      +   `${sz ? `<div class="ps-d-szlabel">${tr('ps_avail_sizes')}</div>` : ''}`
-      +   `<div class="ps-d-szrow">${sz}</div>`
-      +   `<div class="ps-d-loading" id="psDDesc">${tr('ps_d_loading')}</div>`
+      +   `${sz ? `<div class="ps-d-szlabel">${tr('ps_avail_sizes')}</div><div class="ps-d-szrow">${sz}</div>` : ''}`
       +   `<div class="ps-d-actions">`
       +     `<button type="button" class="ps-wish ps-d-wishbtn${psWishHas(p.u)?' on':''}" data-uk="${esc(psUrlKey(p.u))}" onclick="psWishToggle(${idx})" aria-label="${tr('wish_save')}" title="${tr('wish_save')}"><svg class="ps-heart-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></button>`
       +     `<button type="button" class="ps-d-open" onclick="psOpenFull(${idx})">${tr('ps_d_open')} ↗</button>`
       +     `<button type="button" class="ps-d-add" onclick="psCloseDetail();psAdd(${idx})">+ ${tr('ps_add')}</button>`
       +   `</div>`
+      +   `<div class="ps-d-details" id="psDDetails"></div>`
+      +   `<div class="ps-d-loading" id="psDDesc">${tr('ps_d_loading')}</div>`
       +   `<button type="button" class="ps-d-more" onclick="psMoreFromBrand(${idx})">${tr('ps_d_more')} ${esc(p.b)} →</button>`
-      + `</div>`;
+      + `</div>`
+      + `<div class="ps-d-gallery" id="psDGallery"><img class="ps-d-shot" src="${esc(p.img)}" alt="${esc(p.t)}"></div>`;
     document.getElementById('psDetail').style.display = 'flex';
+    const _card = document.querySelector('.ps-detail-card'); if(_card) _card.scrollTop = 0;
     psEnrichDetail(p);
   }
   // "More from this brand" (req): filter Browse Products to the SAME brand + SAME category as
@@ -6959,25 +6963,44 @@
     psApply();
     psCloseDetail(); psScrollToResults();
   }
-  // Pull the product's gallery + description from its own Shopify .js. SFCC /
-  // non-Shopify products keep the single catalog image + the "open page" link.
+  // Build a LAAM-style "Product Details" table from the brand's own data (its Shopify .js): the
+  // structured Fabric_/Design_/Color_ tags + product_type + vendor + a piece-count tag. Many PK
+  // brands tag this way (e.g. Mausummery "Fabric_Lawn, Design_Embroidered, Color_Red, 2 Piece");
+  // brands that don't just get a sparse table or none, and the description below still shows.
+  function psBuildDetailRows(prod){
+    let tags = prod && prod.tags;
+    tags = Array.isArray(tags) ? tags : (typeof tags === 'string' ? tags.split(',').map(s => s.trim()) : []);
+    const rows = [];
+    const grab = re => [...new Set(tags.filter(t => re.test(t)).map(t => t.replace(re, '').replace(/^[\s_:>-]+/, '').trim()).filter(Boolean))];
+    const fab = grab(/^fabric[\s_>:-]*/i); if(fab.length) rows.push(['Fabric', fab.join(', ')]);
+    const wrk = grab(/^design[\s_>:-]*/i); if(wrk.length) rows.push(['Work / Design', wrk.join(', ')]);
+    const col = grab(/^colou?r[\s_>:-]*/i); if(col.length) rows.push(['Colour', col.join(', ')]);
+    const pcs = tags.find(t => /^\s*\d\s?(piece|pcs?)\b/i.test(t)); if(pcs) rows.push(['Pieces', pcs.trim()]);
+    if(prod.type) rows.push(['Type', prod.type]);
+    if(!rows.length) return '';
+    return `<div class="ps-d-details-h">Product Details</div><table class="ps-d-tbl"><tbody>`
+      + rows.map(r => `<tr><td class="ps-d-k">${esc(r[0])}</td><td class="ps-d-v">${esc(r[1])}</td></tr>`).join('')
+      + `</tbody></table>`;
+  }
+  // Pull the product's full-size gallery + structured details + description from its own Shopify .js.
+  // Renders the vertical big-image gallery BELOW the details. SFCC / non-Shopify products keep the
+  // single catalog image + the "open page" link.
   function psEnrichDetail(p){
     let origin, handle;
     try{ const u = new URL(p.u); origin = u.origin; const m = u.pathname.match(/\/products\/([^/?#.]+)/); handle = m && m[1]; }catch(e){}
-    const descEl = document.getElementById('psDDesc');
+    const descEl = document.getElementById('psDDesc'), detEl = document.getElementById('psDDetails'), galEl = document.getElementById('psDGallery');
     if(!handle){ if(descEl) descEl.innerHTML = tr('ps_d_nofetch'); return; }
     fetch(`${origin}/products/${handle}.js`, { cache:'no-store' })
       .then(r => r.ok ? r.json() : Promise.reject())
       .then(prod => {
         if(document.getElementById('psDetail').style.display === 'none') return;
-        const imgs = (prod.images || []).slice(0, 6).map(s => typeof s === 'string' ? s : (s && s.src)).filter(Boolean);
-        if(imgs.length > 1){
-          const th = document.getElementById('psDThumbs');
-          if(th) th.innerHTML = imgs.map((src,i) => `<img class="ps-d-thumb${i===0?' on':''}" loading="lazy" src="${esc(src)}" onclick="psSwapMain(this,'${esc(src)}')">`).join('');
-          const main = document.getElementById('psDMain'); if(main && imgs[0]) main.src = imgs[0];
-        }
+        const imgs = (prod.images || []).map(s => typeof s === 'string' ? s : (s && s.src)).filter(Boolean);
+        if(galEl && imgs.length) galEl.innerHTML = imgs.slice(0, 12).map((src, i) => `<img class="ps-d-shot" loading="${i < 2 ? 'eager' : 'lazy'}" src="${esc(src)}" alt="${esc(p.t)}">`).join('');
+        if(detEl) detEl.innerHTML = psBuildDetailRows(prod);
         const desc = (prod.body_html || '').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/\s+/g,' ').trim();
-        if(descEl) descEl.innerHTML = desc ? esc(desc.slice(0, 700)) : tr('ps_d_nodesc');
+        if(descEl) descEl.innerHTML = desc
+          ? `<div class="ps-d-desc-h">Description</div><div class="ps-d-desc">${esc(desc.slice(0, 1000))}</div><div class="ps-d-disc">Actual colour may vary slightly from the image.</div>`
+          : tr('ps_d_nodesc');
       })
       .catch(() => { if(descEl) descEl.innerHTML = tr('ps_d_nofetch'); });
   }
@@ -7450,7 +7473,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28y';
+  const PSB_BUILD = '2026-06-28-popup';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
