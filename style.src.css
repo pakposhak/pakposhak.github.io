@@ -53,6 +53,8 @@
     .ps-gen-cat{flex:0 0 auto;background:none;border:0;color:var(--accent);padding:8px 10px;cursor:pointer;display:flex;align-items:center}
     .ps-gen-cat svg{width:21px;height:21px;fill:currentColor}
     @media (prefers-reduced-motion:reduce){.ps-gen{transition:none}}
+    /* The top rail is the single gender control now — hide the carousel's own gender tabs. */
+    #psShopTabs{display:none}
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:70px}
     .tl-chip{display:inline-flex;align-items:center;gap:5px;background:var(--surface);

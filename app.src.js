@@ -5744,10 +5744,16 @@
       btns[i].classList.toggle('on', on);
       btns[i].setAttribute('aria-pressed', on ? 'true' : 'false');
     }
-    if(typeof psSel !== 'undefined'){
-      const deptCats = (g === 'all') ? [] : _psDeptCats(g);
-      psSel = { prices:new Set(psSel.prices), cats:new Set(deptCats), brands:new Set(psSel.brands) };
-      try { psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply(); } catch(e){}
+    // The rail is now the ONLY gender control (the carousel's own gender tabs are hidden):
+    // Women/Men/Kids drive BOTH the category carousel and the product grid (via psSetShopGender);
+    // All clears the department filter — full grid, carousel keeps its current gender's shortcuts.
+    if(g === 'all'){
+      if(typeof psSel !== 'undefined'){
+        psSel = { prices:new Set(psSel.prices), cats:new Set(), brands:new Set(psSel.brands) };
+        try { psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply(); } catch(e){}
+      }
+    } else {
+      try { psSetShopGender(g); } catch(e){}
     }
   }
   window.psSetGender = psSetGender;
@@ -6975,7 +6981,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28b';
+  const PSB_BUILD = '2026-06-28c';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
