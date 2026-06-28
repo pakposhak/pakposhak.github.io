@@ -125,6 +125,11 @@
 
 <div class="container">
 
+  <!-- Sticky top group (redesign P1): gender rail + search bar pin to the top of the viewport
+       while scrolling the product feed, so search AND department switching stay reachable (req).
+       On mobile browse the header is position:relative (scrolls away), so this becomes the
+       persistent top bar. -->
+  <div class="ps-topstick">
   <!-- Global department rail — top-level filter for products AND brands (redesign Phase 1). -->
   <nav class="ps-genrail" id="psGenRail" aria-label="Shop by department">
     <button type="button" class="ps-gen on" data-g="all" aria-pressed="true"  onclick="psSetGender('all')" data-i18n="gen_all">All</button>
@@ -147,6 +152,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V8a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.5"/></svg>
     </button>
   </div>
+  </div><!-- /ps-topstick -->
 
   <!-- Full-screen search page (in-app overlay) -->
   <div id="psSearchPage" class="ps-searchpage" hidden role="dialog" aria-label="Search">
@@ -366,6 +372,11 @@
     </aside>
   </div>
 
+  <!-- Add-Products / paste-link box: HIDDEN on the landing/browse view; renderCart() reveals it
+       once the order has an item (req: show only after a product is selected). The paste-a-link
+       entry point on the landing lives on the search page now. On order-form.html this wrapper id
+       is absent, so the box there stays always-visible. -->
+  <div id="addProductsSection" style="display:none">
   <div class="section-label" style="margin-top:28px" data-i18n="lbl_addproducts">Add Products to Your Order</div>
 
   <div class="url-input-box">
@@ -389,6 +400,7 @@
       </div>
     </div>
   </div>
+  </div><!-- /addProductsSection -->
 
   <!-- Order list label -->
   <div class="section-label" id="orderListLabel" style="margin-top:32px;display:none">Your Order List

@@ -3546,11 +3546,13 @@
     const rtBox = document.getElementById('runningTotal');
     const badge = document.getElementById('itemCountBadge');
     const oll   = document.getElementById('orderListLabel');
+    const aps   = document.getElementById('addProductsSection');   // landing only: paste-link box, revealed once cart has an item (req)
     updateAddMoreRow();
 
     if(!cart.length){
       if(empty) empty.style.display = 'none';
       if(oll) oll.style.display = 'none';
+      if(aps) aps.style.display = 'none';
       rtBox.style.display = 'none';
       badge.style.display = 'none';
       list.innerHTML = '';
@@ -3563,6 +3565,7 @@
     }
     if(empty) empty.style.display = 'none';
     if(oll) oll.style.display = '';
+    if(aps) aps.style.display = '';
     badge.style.display = '';
     badge.textContent = cart.length + (cart.length === 1 ? ' item' : ' items');
     updateCartBadges(cart.length);
@@ -7145,7 +7148,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28i';
+  const PSB_BUILD = '2026-06-28j';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

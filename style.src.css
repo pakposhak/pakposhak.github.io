@@ -559,6 +559,13 @@
       #tabProducts .ps-pinhead .ps-resbar{margin-bottom:8px}
       #tabProducts .ps-shopcat{margin:0;padding:0;box-shadow:none}
       #tabProducts .ps-grid{scroll-margin-top:232px}
+      /* Sticky top group (req): the gender rail + search bar pin to the top of the viewport while
+         scrolling the product feed, so search AND department switching stay reachable. The mobile
+         browse header is position:relative (scrolls away), so this pins at the safe-area top with
+         nothing above it — `top` uses env(safe-area-inset-top) to clear the notch (standing rule). */
+      body.psb-browse .ps-topstick{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;
+        background:var(--bg);padding-bottom:6px;box-shadow:0 7px 12px -10px rgba(0,0,0,0.32)}
+      body.psb-browse .ps-topstick .ps-searchbar{margin-bottom:0}
     }
     .show-more-btn{font-size:0.75rem;color:var(--gold);background:none;border:none;cursor:pointer;font-weight:600;padding:4px 0;text-decoration:underline}
 
