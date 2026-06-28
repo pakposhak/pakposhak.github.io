@@ -117,8 +117,12 @@ function _collWest(h){ return !!(h && /\bwest(?:ern)?\b|pajamas?[-_]|loungewear|
 // collection-AUTHORITY gender — takes precedence over the brand-level GIRLS/BOYS_KIDS_BRANDS sets,
 // because the brand's own taxonomy is more reliable than our brand-wide generalisation.
 // Only activates for products that have p.coll from the new harvest path (build 25l+).
-function _collGirls(h){ return !!(h && /(?:^|[-_])girls?(?:[-_]|$)/i.test(h)); }
-function _collBoys(h){  return !!(h && /(?:^|[-_])boys?(?:[-_]|$)/i.test(h)); }
+// Merchandising buckets ("boys-best-seller", "new-arrivals", "sale" …) carry a gender word but are
+// NOT a taxonomy → never let them act as gender authority (One Kids "boys-best-seller" holds girls
+// items by slug, so _collBoys + the slug rule ping-ponged 54 products every pass, 2026-06-28).
+const _collNoise = h => /(?:^|[-_])(?:best[\s_-]?sellers?|bestsellers?|new[\s_-]?(?:arrivals?|in|drop)|sale|featured|trending|shop[\s_-]?all|all[\s_-]?products?|online[\s_-]?exclusives?|clearance|top[\s_-]?picks?|most[\s_-]?loved)(?:[-_]|$)/i.test(h || '');
+function _collGirls(h){ return !!(h && !_collNoise(h) && /(?:^|[-_])girls?(?:[-_]|$)/i.test(h) && !/(?:^|[-_])boys?(?:[-_]|$)/i.test(h)); }   // UNAMBIGUOUS only: a COMBINED "boys-girls" / "girls-boys-eastern" handle names BOTH genders → NOT authoritative (else rules 462/463 ping-pong it forever — fixed a 121-product boys↔girls oscillation across Almirah "boys-girls" + Diners "girls-boys-eastern" collections, 2026-06-28)
+function _collBoys(h){  return !!(h && !_collNoise(h) && /(?:^|[-_])boys?(?:[-_]|$)/i.test(h) && !/(?:^|[-_])girls?(?:[-_]|$)/i.test(h)); }
 // Women-first brands that ALSO carry a men's line which the harvester (no men cat for them) dumps
 // into the women 2-piece cats. Vision-confirmed WHOLE-category (not per image): every "Shalwar
 // Kameez" / "Kurta Shalwar" / "Kurta with Trouser" 2pc listing of these brands is their MENSWEAR.
@@ -354,11 +358,91 @@ const GARMENT_NOUN = /\b(kurti|kurta|kameez|shirt|t-?shirt|sweat ?shirt|sweat ?p
 // Embroidered 3pc", Crimson "Jewel by the Beach") is NEVER dropped — only true jewellery goes.
 const JEWELLERY_DROP = /\bjwl\s?\d|\bsoeurs\b|\bzircon(?:ia|i|a)\b|\bzarconia\b|\bpearl\s+hoops?\b|\bstud\s+earrings?\b|\bjhumk|\bjhoomar\b|\bjhumar\b|maang[\s-]?ti?kka|matha[\s-]?patti|\bpolki\b\s*set|\bkundan\b\s*set|nose[\s-]?pin|\bnath\b\s*set|\bear\s?rings?\b/i;
 
+// ── COLLECTION-MEMBERSHIP AUTHORITY (2026-06-28) ───────────────────────────────────────────────
+// scan-collection-membership.js gives each product the FULL set of (non-noise) brand collections it
+// belongs to: [{h:handle, t:title, dept, sec}]. The brand's OWN taxonomy is strong evidence of a
+// product's DEPARTMENT / KIDS-GENDER / EAST-WEST / STITCHED-ness — exactly what the title-only
+// classifier gets wrong. We VOTE across a product's collections and act only on a CONFIDENT,
+// UNOPPOSED signal (winner>0, runner-up==0) that DISAGREES with the current cat and isn't blocked by
+// an explicit contrary title — then route through the SAME mappers the title pipeline uses, so the
+// move is idempotent. Extends the kids-only single-handle `p.coll` rules above to ALL products.
+// Membership is OPTIONAL: passed null (every existing call site + unit test), mget() returns null and
+// this whole tier is a no-op, so prior behaviour is byte-for-byte unchanged.
+function _collBag(c){ return (((c&&c.h)||'')+' '+((c&&c.t)||'')+' '+((c&&c.sec)||'')).toLowerCase(); }
+function collDeptVote(colls){   // → 'm' | 'w' | 'k' | null  (null = no signal OR conflicting)
+  colls = (colls||[]).filter(c => !_collNoise((c&&c.h)||''));
+  let m=0,w=0,k=0;
+  for(const c of colls){
+    const dept=((c&&c.dept)||'').toLowerCase(), s=_collBag(c);
+    if(dept==='men') m++; else if(dept==='women') w++; else if(dept==='kids') k++;
+    if(/(?:^|[-_ ])(?:boys?|girls?)(?:[-_ ]|$)/.test(s) || /\bkids?\b|\bchildren\b|\binfants?\b|\bnewborn\b|\btoddlers?\b|\bjuniors?\b|\bbaby\b/.test(s)) k++;
+    if(/\bwomen\b|\bwomens\b|\bwoman\b|\bladies\b|\bzanana\b/.test(s)) w++;
+    else if(/\bmen\b|\bmens\b|\bgents?\b|\bmardana\b|\bgentlemen\b/.test(s)) m++;
+  }
+  const a=[['m',m],['w',w],['k',k]].sort((x,y)=>y[1]-x[1]);
+  return (a[0][1]>0 && a[1][1]===0) ? a[0][0] : null;
+}
+function collKidGender(colls){   // → 'b' | 'g' | null
+  colls = (colls||[]).filter(c => !_collNoise((c&&c.h)||''));
+  let b=0,g=0;
+  for(const c of colls){ const s=_collBag(c); if(/(?:^|[-_ ])boys?(?:[-_ ]|$)/.test(s)) b++; if(/(?:^|[-_ ])girls?(?:[-_ ]|$)/.test(s)) g++; }
+  return (b>0&&g===0)?'b':(g>0&&b===0)?'g':null;
+}
+function collEastWest(colls){   // → 'e' | 'w' | null
+  colls = (colls||[]).filter(c => !_collNoise((c&&c.h)||''));
+  let e=0,w=0;
+  for(const c of colls){
+    const s=_collBag(c);
+    if(/\beast(?:ern)?\b|\bethnic\b|\bpret\b|\bkurta\b|kameez|shalwar|\beid\b|festive|traditional|\babaya\b|makhna|\bhijab\b|niqab|sherwani|anarkali|gharara|sharara|lehenga|\bfrock\b|\bdesi\b/.test(s)) e++;
+    if(/\bwest(?:ern)?\b|pajamas?|\blounge\b|\bjeans?\b|\bdenim\b|t[-_ ]?shirts?|track[\s-]?suit|\bsports?\b|athletic|sleepwear|nightwear|hoodies?|joggers?|\bpolo\b|casual[\s-]?wear/.test(s)) w++;
+  }
+  return (e>0&&w===0)?'e':(w>0&&e===0)?'w':null;
+}
+function collStitch(colls){   // → 'u' | 's' | null
+  colls = (colls||[]).filter(c => !_collNoise((c&&c.h)||''));
+  let u=0,s=0;
+  for(const c of colls){
+    const sec=((c&&c.sec)||'').toLowerCase(), str=_collBag(c);
+    if(sec.split('+').indexOf('unstitched')>=0 || /\bunstitch|un-?stitch|unstiched|ready[\s-]?to[\s-]?stitch|\brts\b|\bfabrics?\b|\bgreige\b|by[\s-]?the[\s-]?yard/.test(str)) u++;
+    else if(/\bpret\b|ready[\s-]?to[\s-]?wear|\brtw\b|\bstitched\b/.test(str)) s++;
+  }
+  return (u>0&&s===0)?'u':(s>0&&u===0)?'s':null;
+}
+function kidsCatFromColl(p, colls){   // cross-dept → kids: assemble cat from votes + title
+  const t=p.t||'', tl=t.toLowerCase();
+  if(/\binfant\b|\bnewborn\b|\btoddler\b|\bnb\b/i.test(t) || (/\bbaby\b/i.test(t) && !BABYCOLOR.test(tl))) return 'kids_infant';
+  const kg=collKidGender(colls), boy = kg==='b'?true:kg==='g'?false:null;
+  let cat=kidsCatFor(t, boy);
+  const ew=collEastWest(colls);
+  if(ew==='w' && /_eastern$/.test(cat) && !KEAST_GUARD.test(t) && !MODEST_KIDS_BRANDS.has(p.b)) cat=cat.replace('_eastern','_western');
+  else if(ew==='e' && /_western$/.test(cat) && !KWEST.test(t) && !KWEST_GARMENT.test(t) && !WESTERN_KIDS_BRANDS.has(p.b)) cat=cat.replace('_western','_eastern');
+  return cat;
+}
+function loadMembership(file){   // collection-membership.jsonl → Map(url -> colls[])
+  const map=new Map();
+  try{
+    if(!file || !fs.existsSync(file)) return map;
+    for(const line of fs.readFileSync(file,'utf8').split('\n')){ const ln=line.trim(); if(!ln) continue; try{ const o=JSON.parse(ln); if(o&&o.u&&Array.isArray(o.colls)) map.set(o.u,o.colls); }catch(e){} }
+  }catch(e){}
+  return map;
+}
+// Western kids garments that must NEVER be eastern-ized by a collection vote (broader than KWEST, which
+// omits tights/leggings). Guards the membership east-move so a "Girls Basic Tights" in a brand's
+// "festive" bundle isn't dragged to kids_*_eastern (2026-06-28).
+const KWEST_GARMENT = /\btights?\b|\bleggings?\b|\bjeggings?\b|\bjeans?\b|\bdenim\b|t-?shirts?|\btees?\b|\bpolos?\b|\bhoodies?\b|\bsweat[\s-]?shirts?\b|\btrack[\s-]?suits?\b|\bjoggers?\b|\bshorts?\b|\bskirts?\b|\bjumpsuits?\b|\bplaysuits?\b|\bcardigans?\b|\bsweaters?\b|\bjackets?\b|\bbombers?\b|\btank[\s-]?tops?\b|\bcamis(?:ole)?s?\b|\bcrop[\s-]?tops?\b/i;
+// Garment-TERMINAL women cats whose identity IS the garment, not the dept — a dupatta/shawl/saree/abaya
+// in a brand's "girls"/"men" collection is still that garment, so the membership dept re-route must NOT
+// touch them (else a "girls" coll drags a dupatta into kids and the dupatta rule reclaims it every pass
+// = oscillation; Salitex "1PC Chiffon Dupatta", 2026-06-28).
+const COLL_SKIP_CATS = new Set(['dupatta_only','shawl','saree','abaya','lehenga','footwear']);
+
 // Apply the full multi-tier cleanup to a products array → { products, stats }. Pure &
 // idempotent. MUTATES each kept product's .cat in place and drops accessories / men footwear.
+// `membership` (optional) = Map(url -> colls[]) from loadMembership(); null ⇒ collection tier is a no-op.
 // Call from the harvester (right before it writes catalog.json) or from the CLI below.
-function cleanupProducts(ps) {
-  let del = 0, footDel = 0, footMove = 0, fwdN = 0, revN = 0, pieceN = 0, menUnsN = 0, menPcN = 0, junkN = 0, womenN = 0, girlsKidN = 0, slugN = 0, explicitN = 0;
+function cleanupProducts(ps, membership) {
+  let del = 0, footDel = 0, footMove = 0, fwdN = 0, revN = 0, pieceN = 0, menUnsN = 0, menPcN = 0, junkN = 0, womenN = 0, girlsKidN = 0, slugN = 0, explicitN = 0, collN = 0;
+  const mget = u => membership ? (typeof membership.get === 'function' ? membership.get(u) : membership[u]) : null;
   const out = [];
   // ── URL rewrite: international twin → PK domain ──
   for (const p of ps) { if (p.u) { for (const [intl, pk] of Object.entries(DOMAIN_REWRITE)) { if (p.u.includes('//' + intl)) { p.u = p.u.replace('//' + intl, '//' + pk); break; } } } }
@@ -373,6 +457,7 @@ function cleanupProducts(ps) {
   for (const p of ps) { const cd = _khCode(p.u); if(!cd) continue; (_khPairs[cd] = _khPairs[cd] || {})[_khForm(p.u)] = p; }
   for (const cd of Object.keys(_khPairs)) { const d = _khPairs[cd]; if(!(d.unstitched && d.stitched)) delete _khPairs[cd]; }
   for (const p of ps) {
+    const _mc = mget(p.u), _hasMem = !!_mc;   // membership colls for this product (null if none) ⇒ the richer membership tier is the gender/east-west authority; the single-handle p.coll rules below stand down (prevents p.coll-vs-membership ping-pong)
     { const _t = p.t || ''; if (NONAPPAREL_STRONG.test(_t) || (NONAPPAREL_WEAK.test(_t) && !GARMENT_NOUN.test(_t))) { junkN++; continue; } }   // homeware/cosmetics/headwear/innerwear/gifting -> delete
     { const _tj = (p.t || '') + ' ' + (p.u || ''); if (JEWELLERY_DROP.test(_tj) && !GARMENT_NOUN.test(p.t || '')) { junkN++; continue; } }   // jewellery the harvester missed (Agha Noor JWL/Diamante) -> delete; guarded so jewellery-named SUITS survive
     if (ACC.test(p.t || '') && !GARMENT.test(p.t || '') && p.cat !== 'footwear') { del++; continue; }
@@ -459,8 +544,8 @@ function cleanupProducts(ps) {
     // COLLECTION-AUTHORITY gender (2026-06-25+): if the product was harvested from a collection whose
     // handle UNAMBIGUOUSLY names one gender (e.g. "girls-kurta", "boys-shirts"), trust the brand's own
     // taxonomy — it beats every brand-level set rule below. Only fires for products with p.coll set.
-    if (/^kids_boys_/.test(p.cat) && _collGirls(p.coll)) { p.cat = p.cat.replace('kids_boys_', 'kids_girls_'); girlsKidN++; out.push(p); continue; }
-    if (/^kids_girls_/.test(p.cat) && _collBoys(p.coll))  { p.cat = p.cat.replace('kids_girls_', 'kids_boys_'); girlsKidN++; out.push(p); continue; }
+    if (/^kids_boys_/.test(p.cat) && !_hasMem && _collGirls(p.coll)) { p.cat = p.cat.replace('kids_boys_', 'kids_girls_'); girlsKidN++; out.push(p); continue; }
+    if (/^kids_girls_/.test(p.cat) && !_hasMem && _collBoys(p.coll))  { p.cat = p.cat.replace('kids_girls_', 'kids_boys_'); girlsKidN++; out.push(p); continue; }
     if (/^kids_boys_/.test(p.cat) && GIRLS_KIDS_BRANDS.has(p.b) && !/\bboys?\b/i.test(p.t || '') && !_collBoys(p.coll)) { p.cat = p.cat.replace('kids_boys_', 'kids_girls_'); girlsKidN++; out.push(p); continue; }   // girls-only brand: genderless boys-default → girls. Guard: explicit "boys" title OR boys-collection handle stays boys.
     if (/^kids_girls_/.test(p.cat) && BOYS_KIDS_BRANDS.has(p.b) && !/\bgirls?\b/i.test(p.t || '') && !KGIRL_STRONG.test((p.t || '').toLowerCase()) && !_collGirls(p.coll)) { p.cat = p.cat.replace('kids_girls_', 'kids_boys_'); girlsKidN++; out.push(p); continue; }   // boys-only brand: genderless girls-default → boys. Guard: explicit "girls" title, KGIRL_STRONG garment, OR girls-collection handle stays girls.
     if (/^kids_(boys|girls)_western$/.test(p.cat) && (MODEST_KIDS.test(p.t || '') || MODEST_KIDS_BRANDS.has(p.b))) { p.cat = p.cat.replace('_western', '_eastern'); girlsKidN++; out.push(p); continue; }   // kids modest wear (abaya/makhna/hijab) + hijab-only houses → eastern, never western
@@ -468,10 +553,48 @@ function cleanupProducts(ps) {
     // COLLECTION-AUTHORITATIVE west move (2026-06-25): if this product was harvested from a collection
     // whose handle EXPLICITLY says western (pajamas/lounge/jeans/track/sport…), trust the brand's own
     // taxonomy — even if the title has no obvious western word. Guard: no eastern title word overrides.
-    if (/^kids_(boys|girls)_eastern$/.test(p.cat) && _collWest(p.coll) && !KEAST_GUARD.test(p.t || '')) { p.cat = p.cat.replace('_eastern', '_western'); girlsKidN++; out.push(p); continue; }
+    if (/^kids_(boys|girls)_eastern$/.test(p.cat) && !_hasMem && _collWest(p.coll) && !KEAST_GUARD.test(p.t || '')) { p.cat = p.cat.replace('_eastern', '_western'); girlsKidN++; out.push(p); continue; }
     // KWEST keyword rule: add _collEast guard so a product from an explicitly eastern collection is never
     // moved by a coincidental western-sounding title word (e.g. "Kurta Pajama" from "eastern-wear" coll).
     if (/^kids_(boys|girls)_eastern$/.test(p.cat) && (KWEST.test(p.t || '') || KPAJAMA_WEST(p.t || '')) && !KEAST_GUARD.test(p.t || '') && !_collEast(p.coll)) { p.cat = p.cat.replace('_eastern', '_western'); girlsKidN++; out.push(p); continue; }   // western garment (suiting/loungewear/gilet/jacket/sleepwear-pajama…) with NO eastern word → western, not eastern
+    // ── COLLECTION-MEMBERSHIP AUTHORITY (multi-collection vote; whole tier is a no-op without the map) ──
+    {
+      if (_mc && _mc.length) {
+        // (1) cross-DEPARTMENT re-route: collections confidently name a different department than the
+        // cat, the title doesn't explicitly assert the current one → route via the title pipeline's own
+        // mapper for that department (placement = what downstream expects ⇒ idempotent). Footwear stays.
+        const _dv = collDeptVote(_mc);
+        if (_dv && p.cat !== 'footwear' && !COLL_SKIP_CATS.has(p.cat) && _dv !== catGenderOf(p.cat)) {
+          const _eg = explicitGender(p.t), _tg = _eg ? coarseGender(_eg) : null;
+          if (!_tg || _tg === _dv) {   // title silent, or title agrees with the collections
+            if (_dv === 'm') { p.cat = finalMenCat(p); collN++; out.push(p); continue; }
+            if (_dv === 'w') { p.cat = womenCatFor(p); collN++; out.push(p); continue; }
+            if (_dv === 'k') { p.cat = kidsCatFromColl(p, _mc); collN++; out.push(p); continue; }
+          }
+        }
+        // (2) KIDS gender (boys↔girls) by collection vote — genderless titles only (an explicit title or
+        // a girls-only garment is left to the title rules, so this can never fight them = no oscillation).
+        if (/^kids_(boys|girls)_/.test(p.cat)) {
+          const _kg = collKidGender(_mc), _suf = (p.cat.match(/_(eastern|western|formal)$/) || [, 'eastern'])[1];
+          if (_kg === 'g' && /^kids_boys_/.test(p.cat) && !/\bboys?\b/i.test(p.t || '')) { p.cat = 'kids_girls_' + _suf; collN++; out.push(p); continue; }
+          if (_kg === 'b' && /^kids_girls_/.test(p.cat) && !/\bgirls?\b/i.test(p.t || '') && !KGIRL_STRONG.test((p.t || '').toLowerCase())) { p.cat = 'kids_boys_' + _suf; collN++; out.push(p); continue; }
+        }
+        // (3) KIDS east/west by collection vote — guarded by the title so a clear east/west word wins.
+        if (/^kids_(boys|girls)_(eastern|western)$/.test(p.cat)) {
+          const _ew = collEastWest(_mc);
+          if (_ew === 'w' && /_eastern$/.test(p.cat) && !KEAST_GUARD.test(p.t || '') && !MODEST_KIDS_BRANDS.has(p.b)) { p.cat = p.cat.replace('_eastern', '_western'); collN++; out.push(p); continue; }   // …but a MODEST-only brand is always eastern — never west-move it (defers to rule 541)
+          if (_ew === 'e' && /_western$/.test(p.cat) && !KWEST.test(p.t || '') && !KWEST_GARMENT.test(p.t || '') && !KPAJAMA_WEST(p.t || '') && !WESTERN_KIDS_BRANDS.has(p.b)) { p.cat = p.cat.replace('_western', '_eastern'); collN++; out.push(p); continue; }   // east-move only when NO western title signal (KWEST: nightwear/suiting/hoodie… + KWEST_GARMENT: tights/leggings…) AND not a WESTERN-only brand — a western title or the brand authority beats the collection's generic "eastern" tag (Almirah "…Nightwear" in teen-girls-stitched[eastern]; Engine "Boys Suit" in boys-suit-small[eastern] ⇄ rule 542)
+        }
+        // (4) UNSTITCHED forward: a STITCHED-cat item whose collections say unstitched (and none say
+        // stitched/pret) → its unstitched sibling. Guards: skip real S/M/L sizes (a stronger STITCHED
+        // signal — the REV rule would bounce it back = oscillation), explicit 1-pc/stitched titles, and
+        // Amir Adnan (couture tagged sz=Unstitched). Reuses fwdCat so the placement is the pipeline's own.
+        if (STITCHED.has(p.cat) && collStitch(_mc) === 'u' && !isUnstitched(p) && !szLetter(p)
+            && !/\b1 ?pc\b|\b1 ?piece\b|\bstitched\b/i.test(p.t || '') && p.b !== 'Amir Adnan') {
+          p.cat = fwdCat(p); collN++; out.push(p); continue;
+        }
+      }
+    }
     // One Kids (beoneshopone) encodes kids' gender in the product SLUG: /products/g… = GIRL,
     // /products/b… = BOY. The harvester defaults its code-named kids to BOYS, so trust the slug:
     // vision-confirmed 28/30 g-slug items sitting in kids_boys are girls (incl. title-impossible
@@ -589,7 +712,7 @@ function cleanupProducts(ps) {
       }
       // (b) GIRL-garment titled (kid-sized) → kids_girls. STRONG words move even if title says "boys";
       // SOFT cues move only when title has no explicit boy. GUARD keeps boy dress-shirt/fancy-dress.
-      if (!KGIRL_GUARD.test(_tb) && (KGIRL_STRONG.test(_tb) || (KGIRL_SOFT.test(_tb) && !/\bboys?\b/.test(_tb)))) {
+      if (!KGIRL_GUARD.test(_tb) && (KGIRL_STRONG.test(_tb) || (KGIRL_SOFT.test(_tb) && !/\bboys?\b/.test(_tb) && !(_mc && collKidGender(_mc) === 'b')))) {
         p.cat = KGIRL_EAST.test(_tb) ? 'kids_girls_eastern' : 'kids_girls_western';
         girlsKidN++; out.push(p); continue;
       }
@@ -934,7 +1057,7 @@ function cleanupProducts(ps) {
     // AUDIT FIX: a JUBBAH / THOBE is a men's robe — move it out of women's pret to men's.
     // Guard: keep kids thobes in kids cats (children's Islamic robes are valid kidswear).
     if (/\bjubb?ah?\b|\bthobe\b/i.test(p.t || '') && catGenderOf(p.cat) !== 'm' && !/^kids_/.test(p.cat)) { p.cat = 'mens_kurta'; slugN++; out.push(p); continue; }
-    if (!/^mens_|^kids_/.test(p.cat)) { const wc = womenType(p); if (wc && wc !== p.cat) { p.cat = wc; womenN++; out.push(p); continue; } }   // women: kids/niqab/bottom/tee corrections
+    if (!/^mens_|^kids_/.test(p.cat)) { const wc = womenType(p); if (wc && wc !== p.cat && !(/^mens_/.test(wc) && _mc && collDeptVote(_mc) === 'w')) { p.cat = wc; womenN++; out.push(p); continue; } }   // women: kids/niqab/bottom/tee corrections. Guard: a title→MEN reroute (e.g. "…Sherwani") is blocked when the product's own collections say WOMEN (Edge Republic "WM 21 Sherwani" in womens-wear ⇄ dept-route oscillation)
     if (isUnstitched(p) && STITCHED.has(p.cat) && p.b !== 'Amir Adnan') { p.cat = fwdCat(p); fwdN++; out.push(p); continue; }   // skip Amir Adnan: it tags FINISHED couture sets (jacket+pants/poncho) sz=["Unstitched"], which fwdCat would wrongly forward to a fabric/bottom cat (oscillated coord_western⇄womens_trouser); its slug-rules place those
     if (szLetter(p) && REV[p.cat] && !unsTitle(p)) { p.cat = REV[p.cat]; revN++; out.push(p); continue; }
     // ── MEN: Tier-1 stitched/unstitched, then Tier-2/3 garment-type + piece-count ──
@@ -970,19 +1093,23 @@ function cleanupProducts(ps) {
   // [form]". altpkr/altcat = the SIBLING form's price/cat (build-search-db computes its landed ৳).
   let dualN = 0;
   for (const p of out) { const cd = _khCode(p.u); if(!cd || !_khPairs[cd]) continue; const me = _khForm(p.u); const sib = _khPairs[cd][me === 'unstitched' ? 'stitched' : 'unstitched']; if(sib && sib !== p){ p.dual = 1; p.altform = (me === 'unstitched' ? 'stitched' : 'unstitched'); p.altpkr = sib.pkr; p.altcat = sib.cat; dualN++; } }
-  return { products: out, stats: { junkN, del, footDel, footMove, fwdN, revN, pieceN, menUnsN, menPcN, womenN, girlsKidN, slugN, explicitN, dualN, before: ps.length, after: out.length } };
+  return { products: out, stats: { junkN, del, footDel, footMove, fwdN, revN, pieceN, menUnsN, menPcN, womenN, girlsKidN, slugN, explicitN, collN, dualN, before: ps.length, after: out.length } };
 }
 
-module.exports = { cleanupProducts };
+module.exports = { cleanupProducts, loadMembership };
 
 // ── CLI: node catalog-cleanup.js [apply] ──
 if (require.main === module) {
   const APPLY = process.argv[2] === 'apply';
   const FILE = process.env.PSB_CATALOG || 'catalog.json';
   const cat = JSON.parse(fs.readFileSync(FILE, 'utf8'));
-  const r = cleanupProducts(cat.products || []);
+  const MFILE = process.env.PSB_MEMBERSHIP || 'collection-membership.jsonl';
+  const membership = loadMembership(MFILE);
+  if (membership.size) console.log(`collection membership: ${membership.size} products from ${MFILE}`);
+  else console.log(`(no ${MFILE} — collection-authority tier inactive)`);
+  const r = cleanupProducts(cat.products || [], membership.size ? membership : null);
   const s = r.stats;
-  console.log(`delete-nonapparel=${s.junkN} delete-accessories=${s.del} delete-men-footwear=${s.footDel} move-footwear=${s.footMove} fwd-unstitch=${s.fwdN} rev-stitch=${s.revN} piece-count=${s.pieceN} men-unstitch=${s.menUnsN} men-piece=${s.menPcN} women-type=${s.womenN} girls-kid=${s.girlsKidN} slug-gender=${s.slugN} explicit-gender=${s.explicitN}`);
+  console.log(`delete-nonapparel=${s.junkN} delete-accessories=${s.del} delete-men-footwear=${s.footDel} move-footwear=${s.footMove} fwd-unstitch=${s.fwdN} rev-stitch=${s.revN} piece-count=${s.pieceN} men-unstitch=${s.menUnsN} men-piece=${s.menPcN} women-type=${s.womenN} girls-kid=${s.girlsKidN} slug-gender=${s.slugN} explicit-gender=${s.explicitN} coll-authority=${s.collN}`);
   console.log(`total ${s.before} -> ${s.after}`);
   if (APPLY) { cat.products = r.products; fs.writeFileSync(FILE, JSON.stringify(cat)); console.log('*** WROTE ' + FILE + ' ***'); }
   else console.log('(dry-run — pass "apply" to write)');

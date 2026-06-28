@@ -22,7 +22,7 @@ const Database = require('better-sqlite3');
 // harvest, a manual edit, a daily VPS harvest running an old harvester). Idempotent: a no-op when
 // catalog.json is already clean. This guarantees "every product, checked on the same basis" even if
 // the harvest step ever skips cleanup. Requires catalog-cleanup.js alongside this file on the VPS.
-const { cleanupProducts } = require('./catalog-cleanup');
+const { cleanupProducts, loadMembership } = require('./catalog-cleanup');
 
 const CATALOG_URL = process.env.PSB_CATALOG_URL || 'https://pakposhakonline.com/catalog.json';
 const CONFIG_URL  = process.env.PSB_CONFIG_URL  || 'http://127.0.0.1:8787/config';
@@ -56,8 +56,9 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
   // cleanup is convergent (≤2 passes); a few set/couture rules legitimately need a 2nd pass to settle, so
   // re-apply until a pass changes no category. Guarantees STABLE live categories on every rebuild (without
   // this, ~a couple of products' categories could differ between rebuilds). See _cat_audit/test-idempotent.js.
-  { let _c = cleanupProducts(cat.products || []); cat.products = _c.products; console.log('search-db cleanup:', JSON.stringify(_c.stats));
-    for (let _i = 0; _i < 4; _i++) { const _sig = cat.products.map(p => p.u + '\t' + p.cat).join('\n'); cat.products = cleanupProducts(cat.products).products; if (cat.products.map(p => p.u + '\t' + p.cat).join('\n') === _sig) break; } }
+  { const _mem = loadMembership(process.env.PSB_MEMBERSHIP || 'collection-membership.jsonl'); const _memArg = _mem.size ? _mem : null; if (_mem.size) console.log('search-db collection-membership:', _mem.size, 'products');
+    let _c = cleanupProducts(cat.products || [], _memArg); cat.products = _c.products; console.log('search-db cleanup:', JSON.stringify(_c.stats));
+    for (let _i = 0; _i < 4; _i++) { const _sig = cat.products.map(p => p.u + '\t' + p.cat).join('\n'); cat.products = cleanupProducts(cat.products, _memArg).products; if (cat.products.map(p => p.u + '\t' + p.cat).join('\n') === _sig) break; } }
   const cfg = JSON.parse(cfgRaw) || {};
   const rates = (cfg && cfg.rates) || {};
   const weights = (cfg && cfg.weights) || {};

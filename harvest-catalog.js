@@ -18,7 +18,7 @@
 'use strict';
 const https = require('https');
 const fs    = require('fs');
-const { cleanupProducts } = require('./catalog-cleanup');   // multi-tier auto-correction applied before write
+const { cleanupProducts, loadMembership } = require('./catalog-cleanup');   // multi-tier auto-correction applied before write
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36';
 const PER_BRAND = parseInt(process.env.PER_BRAND || '700', 10);   // deep default (2026-06-19 women expansion → 70k-scale stress test)
 // Per-brand depth. Shopify brands now PAGINATE (/products.json?page=N), so caps
@@ -814,7 +814,14 @@ async function harvestKidsBrand(name, host){
   // Multi-tier auto-correction (Tier-1 stitched/unstitched -> Tier-2 piece-count) + accessory
   // drop BEFORE writing, so the title-based classifier's leaks never reach the live catalogue.
   // Idempotent — identical to running `node catalog-cleanup.js apply`. See catalog-cleanup.js.
-  const _clean = cleanupProducts(deduped);
+  // Collection-membership authority (2026-06-28): if collection-membership.jsonl is present (from
+  // scan-collection-membership.js), pass it so the refile uses each product's OWN brand collections to
+  // correct department / kids-gender / east-west / stitched-ness. Absent ⇒ null ⇒ title-only (unchanged).
+  // The file is gitignored, so run-harvest.sh's `git reset --hard` keeps it across cron runs.
+  const _mem = loadMembership(process.env.PSB_MEMBERSHIP || 'collection-membership.jsonl');
+  const _memArg = _mem.size ? _mem : null;
+  if (_mem.size) console.log('  collection-membership:', _mem.size, 'products');
+  const _clean = cleanupProducts(deduped, _memArg);
   console.log('  catalog-cleanup:', JSON.stringify(_clean.stats));
   deduped = _clean.products;
   // Run cleanup to a FIXED POINT. cleanup is convergent (≤2 passes on the live catalog), but a few
@@ -823,7 +830,7 @@ async function harvestKidsBrand(name, host){
   // category guarantees the WRITTEN catalog is stable, so categories can't shift on the next rebuild.
   for (let _i = 0; _i < 4; _i++) {
     const _sig = deduped.map(p => p.u + '\t' + p.cat).join('\n');
-    deduped = cleanupProducts(deduped).products;
+    deduped = cleanupProducts(deduped, _memArg).products;
     if (deduped.map(p => p.u + '\t' + p.cat).join('\n') === _sig) break;
     console.log(`  catalog-cleanup (settle pass ${_i + 1})`);
   }

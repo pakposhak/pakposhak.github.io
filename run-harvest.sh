@@ -20,19 +20,18 @@ git reset --hard origin/main >/dev/null 2>&1 || true
 # 2) Harvest. harvest-catalog.js runs cleanupProducts() before writing catalog.json (gender rules).
 node harvest-catalog.js
 
-# 3) Sanity gate: never let a throttled/partial run shrink the live catalog.
+# 3) Sanity gate: never let a throttled/partial run shrink OR mass-mis-file the live catalog.
+#    Logic lives in catalog-sanity.js (unit-tested: _cat_audit/test-sanity.js). On failure we revert
+#    catalog.json and exit 0 so the cron keeps the previous good catalogue. PSB_CAT_CHURN_MAX (default
+#    0.08) caps how many products may change category in one run — guards the collection-authority refile.
 node -e '
   const fs=require("fs"), cp=require("child_process");
+  const { checkSanity } = require("./catalog-sanity");
   const cur=JSON.parse(fs.readFileSync("catalog.json","utf8"));
-  const has=(j,b)=>j.products.some(p=>p.b===b);
   let prev=null; try{ prev=JSON.parse(cp.execSync("git show HEAD:catalog.json").toString()); }catch(e){}
-  const bad=[];
-  if((cur.count||0)<800) bad.push("count "+cur.count+" < 800");
-  if(prev){
-    for(const b of ["Khaadi","Sapphire"]) if(has(prev,b)&&!has(cur,b)) bad.push("lost "+b);
-    if((prev.count||0)>=800 && (cur.count||0) < prev.count*0.85) bad.push("dropped >15% ("+cur.count+" vs "+prev.count+")");
-  }
-  if(bad.length){ console.log("Bad harvest ("+bad.join(", ")+") — keeping previous catalog."); cp.execSync("git checkout -- catalog.json"); process.exit(0); }
+  const r=checkSanity(cur, prev, { churnMax: parseFloat(process.env.PSB_CAT_CHURN_MAX||"0.08") });
+  if(r.churn) console.log("category churn: "+(100*r.churn.frac).toFixed(2)+"% ("+r.churn.moved+"/"+r.churn.common+")");
+  if(!r.ok){ console.log("Bad harvest ("+r.reasons.join(", ")+") — keeping previous catalog."); cp.execSync("git checkout -- catalog.json"); process.exit(0); }
   console.log("OK: "+cur.count+" products from "+cur.brands+" brands");
 '
 
