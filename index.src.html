@@ -236,6 +236,12 @@
 
   <!-- BROWSE PRODUCTS — multi-brand search over catalog.json (price / category / brand filters) -->
   <div id="tabProducts">
+    <!-- Everyday / Premium storefront (split at 10k BDT) + rotating value banner (redesign P1). -->
+    <div class="ps-storerow" id="psStoreRow" role="tablist" aria-label="Storefront">
+      <button type="button" class="ps-store on" data-store="everyday" aria-pressed="true" onclick="psSetStore('everyday')" data-i18n="store_everyday">Everyday</button>
+      <button type="button" class="ps-store" data-store="premium" aria-pressed="false" onclick="psSetStore('premium')" data-i18n="store_premium">Premium</button>
+    </div>
+    <div class="ps-banner" id="psBanner"></div>
     <div class="ps-wrap">
       <aside class="ps-rail">
         <!-- One-row filters: Categories + Brands dropdown pills. Scrolls away on mobile — search bar is in the sticky zone below. -->
