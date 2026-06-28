@@ -4512,7 +4512,8 @@
     {lo:4500,  hi:6000,  lbl:'৳4.5–6k'},
     {lo:6000,  hi:8000,  lbl:'৳6–8k'},
     {lo:8000,  hi:10000, lbl:'৳8–10k'},
-    {lo:10000, hi:1e12,  lbl:'৳10k+'}
+    {lo:10000, hi:15000, lbl:'৳10–15k'},
+    {lo:15000, hi:1e12,  lbl:'৳15k+'}
   ];
   const PS_CAT_LABELS = {
     pret_3pc:'Stitched 3-piece', pret_3pc_emb:'Stitched 3pc — embroidered', pret_2pc_emb:'Stitched 2pc — embroidered',
@@ -4551,7 +4552,7 @@
   let _psNavDir = 0;   // +1 = going forward (next page), -1 = back, 0 = no page-turn animation
   let psSaleOnly = false;                          // Sale filter: show only discounted items
   let psNewOnly = false;                           // New filter: newest NON-sale items (⇄ Sale; the ৳ price sort orders within)
-  let psStore = 'everyday';                        // Storefront (redesign P1): 'everyday' = under 10k (price buckets 0-4), 'premium' = 10k+ (bucket 5). Yields to a manual price selection.
+  let psStore = 'everyday';                        // Storefront (batch 2): 'everyday' = under 15k (buckets 0-5), 'premium' = 10k+ (buckets 5-6); 10-15k overlaps. Yields to a manual price selection.
 
   // ── Search-API mode ── Browse Products served by the VPS /search endpoint (returns only
   //    the filtered page) instead of downloading the whole catalog.json — scales to 100k+.
@@ -5495,11 +5496,12 @@
       p.set('cat', Array.from(new Set(ex)).join(','));
     }
     if(psSel.brands.size) p.set('brand', Array.from(psSel.brands).join(','));
-    // Storefront band (redesign P1): Everyday = under 10k (buckets 0-4), Premium = 10k+ (bucket 5).
+    // Storefront band (batch 2): Home/Everyday = UNDER 15k (buckets 0-5, includes 10-15k), Premium/Luxe
+    // = 10k+ (buckets 5-6). The 10-15k band (bucket 5) intentionally OVERLAPS both (req: Danish).
     // A manual price selection takes precedence over the storefront default.
     if(psSel.prices.size) p.set('price', Array.from(psSel.prices).join(','));
-    else if(psStore === 'everyday') p.set('price', '0,1,2,3,4');
-    else if(psStore === 'premium')  p.set('price', '5');
+    else if(psStore === 'everyday') p.set('price', '0,1,2,3,4,5');
+    else if(psStore === 'premium')  p.set('price', '5,6');
     if(psSaleOnly)        p.set('sale', '1');
     if(psNewOnly)         p.set('new', '1');     // New filter: newest non-sale items (stacks with the ৳ price sort)
     if(psSort)            p.set('sort', psSort);
@@ -7305,7 +7307,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28q';
+  const PSB_BUILD = '2026-06-28r';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

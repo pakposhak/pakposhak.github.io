@@ -21,8 +21,9 @@ const Database = require('better-sqlite3');
 const PORT = (process.env.PSB_SEARCH_PORT | 0) || 8788;
 const DB_PATH = process.env.PSB_DB || path.join(__dirname, 'search.db');
 
-// Landed ৳BDT price buckets — MUST match the app's PS_BUCKETS (Under 3k / 3-4.5k / 4.5-6k / 6-8k / 8-10k / 10k+).
-const BUCKETS = [[0, 3000], [3000, 4500], [4500, 6000], [6000, 8000], [8000, 10000], [10000, 1e12]];
+// Landed ৳BDT price buckets — MUST match the app's PS_BUCKETS (Under 3k / 3-4.5k / 4.5-6k / 6-8k / 8-10k / 10-15k / 15k+).
+// batch 2: the old 10k+ bucket is split at 15k so Home/Everyday can show under-15k and Premium/Luxe stays 10k+.
+const BUCKETS = [[0, 3000], [3000, 4500], [4500, 6000], [6000, 8000], [8000, 10000], [10000, 15000], [15000, 1e12]];
 
 let db = null;
 let ORD_N = 0;   // MAX(ord)+1 — rotation modulus base; recomputed on each DB (re)open
