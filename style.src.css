@@ -1119,6 +1119,12 @@
     .ps-pgdd-item:hover{background:var(--raised)}
     .ps-pgdd-item.on{background:var(--gold-dim);color:var(--gold);font-weight:700}
     .ps-pg-btn:disabled{opacity:0.4;cursor:default}
+    /* Infinite-scroll feed footer (redesign P1): auto-loads via IntersectionObserver; the
+       "Load more" button is the manual / no-IO fallback, the end note caps the feed. */
+    .ps-feed-more{display:block;margin:6px auto;padding:11px 26px;border-radius:22px;border:1.5px solid var(--accent,var(--gold));background:var(--surface);color:var(--accent,var(--gold));font-weight:700;font-size:0.9rem;font-family:inherit;cursor:pointer;transition:background .15s}
+    .ps-feed-more:hover{background:var(--gold-dim)}
+    .ps-feed-msg{width:100%;text-align:center;color:var(--txt-muted);font-size:0.82rem;padding:6px 0}
+    .ps-feed-end{letter-spacing:0.2px}
     .ps-empty{text-align:center;color:var(--txt-muted);padding:40px 10px;font-size:0.9rem}
     /* card top-RIGHT cluster: the magnifier (enlarge) icon with the Sale badge beside it (req) */
     .ps-tr{position:absolute;top:6px;right:6px;z-index:2;display:flex;align-items:center;gap:5px}

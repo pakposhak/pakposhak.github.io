@@ -2457,6 +2457,7 @@
       ps_price:'Price (৳ delivered)', ps_price_short:'Price Filters', ps_category:'Product Category', ps_category_short:'Categories', ps_brands:'Brands', ps_clear:'Clear Filters', ps_valueprop:'Any Pakistani brand → delivered to Bangladesh 🇧🇩', ps_morebrands:"Can't find it? Browse all 155 brands →",
       ps_allcats:'All categories', ps_loading:'Loading products…', ps_loadfail:'Could not load products — please try again.',
       ps_results:'products', ps_add:'Add', ps_prev:'Prev', ps_next:'Next', ps_page:'Page',
+      ps_feed_more:'Load more', ps_feed_end:'You have reached the end',
       ps_enlarge:'Enlarge', ps_avail_sizes:'Available sizes', ps_unstitched:'Unstitched · no size needed', ps_also_st:'✂️ Stitched also available', ps_also_uns:'🧵 Unstitched fabric also available', ps_mto:'Made to order', ps_d_loading:'Loading more details…', ps_d_open:'View on brand site, order here', ps_d_more:'More from', ps_d_nofetch:'See all photos &amp; details on the brand page →', ps_d_nodesc:'No extra description provided.', warn_title:'Look there, order here', warn_body:'This page is only for photos and product details. Don\'t add to the brand\'s cart. To order on PakPoshak: tap + Add if it\'s in our listing, or Share the product to PakPoshak (or copy the link and paste it back here).', warn_ok:'Continue to brand site →', warn_cancel:'Stay on PakPoshak',
       ps_empty:'No products match these filters — try widening them.',
       ps_partial:'Not every brand &amp; product is listed here yet —', ps_partial_link:'want more? Browse by brands →', ps_word_products:'products', ps_word_brands:'brands',
@@ -2525,6 +2526,7 @@
       ps_price:'দাম (৳, ডেলিভারিসহ)', ps_price_short:'দাম ফিল্টার', ps_category:'পণ্যের ক্যাটাগরি', ps_category_short:'ক্যাটাগরি', ps_brands:'ব্র্যান্ড', ps_clear:'ফিল্টার মুছুন', ps_valueprop:'যেকোনো পাকিস্তানি ব্র্যান্ড → বাংলাদেশে ডেলিভারি 🇧🇩', ps_morebrands:'খুঁজে পাচ্ছেন না? সব ১৫৫টি ব্র্যান্ড দেখুন →',
       ps_allcats:'সব ক্যাটাগরি', ps_loading:'পণ্য আসছে…', ps_loadfail:'পণ্য আনা গেল না — আবার চেষ্টা করুন।',
       ps_results:'পণ্য', ps_add:'যোগ করুন', ps_prev:'আগের', ps_next:'পরের', ps_page:'পৃষ্ঠা',
+      ps_feed_more:'আরও দেখুন', ps_feed_end:'আপনি শেষ পর্যন্ত দেখে ফেলেছেন',
       ps_enlarge:'ছবি বড় করুন', ps_avail_sizes:'স্টকে থাকা সাইজ', ps_unstitched:'আনস্টিচড · সাইজ লাগে না', ps_also_st:'✂️ সেলাই করাও আছে', ps_also_uns:'🧵 আনস্টিচড কাপড়ও আছে', ps_mto:'অর্ডারে তৈরি হবে', ps_d_loading:'আরও বিবরণ আসছে…', ps_d_open:'ব্র্যান্ড সাইটে দেখুন, অর্ডার এখানে', ps_d_more:'আরও দেখুন —', ps_d_nofetch:'সব ছবি ও বিবরণ ব্র্যান্ডের পেজে দেখুন →', ps_d_nodesc:'বাড়তি কোনো বিবরণ নেই।', warn_title:'দেখুন ওখানে, অর্ডার এখানে', warn_body:'এই পেজটি শুধু ছবি ও পণ্যের বিবরণ দেখার জন্য। ব্র্যান্ডের cart-এ যোগ করবেন না। PakPoshak-এ অর্ডার করতে: লিস্টে থাকলে + Add ট্যাপ করুন, অথবা পণ্যটি PakPoshak-এ Share করুন (বা লিংক copy করে এখানে এসে paste করুন)।', warn_ok:'ব্র্যান্ড সাইটে যান →', warn_cancel:'PakPoshak-এ থাকুন',
       ps_empty:'এই ফিল্টারে কোনো পণ্য নেই — ফিল্টার একটু কমিয়ে দেখুন।',
       ps_partial:'সব ব্র্যান্ড বা পণ্য এখনো এখানে যোগ হয়নি —', ps_partial_link:'আরও চান? “ব্র্যান্ড দেখুন”-এ যান →', ps_word_products:'পণ্য', ps_word_brands:'ব্র্যান্ড',
@@ -4491,6 +4493,13 @@
   let PS_CATALOG = null, psLoaded = false, psLoading = false;
   let psSel = { prices:new Set(), cats:new Set(), brands:new Set() };
   let psFiltered = [], psPage = 0, psSort = '';   // '' | 'asc' | 'desc' — ৳ price sort (combines with the Sale/New filters)
+  // ── Infinite scroll (Myntra-style, redesign P1) ──────────────────────────
+  // The product feed grows by appending the next page as the buyer scrolls (replaces the old
+  // swipe-between-pages + prev/next pager). psFiltered holds EVERY item shown so far in BOTH
+  // modes, so psCard's absolute index keeps psAdd/psDetail correct. The 90s seed is FROZEN per
+  // feed (psFeedSeed) so appended pages stay a consistent slice instead of reshuffling mid-scroll.
+  const PS_INFINITE = true;
+  let psFeedLoading = false, psFeedDone = false, psFeedSeed = 0;
   let _psNavDir = 0;   // +1 = going forward (next page), -1 = back, 0 = no page-turn animation
   let psSaleOnly = false;                          // Sale filter: show only discounted items
   let psNewOnly = false;                           // New filter: newest NON-sale items (⇄ Sale; the ৳ price sort orders within)
@@ -5453,7 +5462,10 @@
     // products keep changing within the selected category/brand). The ONLY view that stays exact is
     // an explicit ৳ price sort. The server seed-shuffles within whatever filter is active.
     if(!psSort){
-      p.set('seed', Math.floor(Date.now() / 90000));
+      // FROZEN per feed (set in psApply / the 90s rotation) so every appended page is a
+      // consistent slice of the SAME shuffle — otherwise infinite scroll would duplicate or
+      // skip products when a page is fetched in a new 90s window.
+      p.set('seed', psFeedSeed || Math.floor(Date.now() / 90000));
     }
     p.set('page', psPage);
     p.set('pageSize', psPageSize());
@@ -5475,20 +5487,24 @@
       .catch(e => { console.warn('search facets failed — using catalog.json:', e.message); psApiFallback(); });
   }
   // Fetch the current filtered page. psFiltered holds JUST this page (the server filtered/sorted/paged).
-  function psApiFetch(){
+  function psApiFetch(append){
     const seq = ++psApiSeq;
     fetch(psSearchBase() + '?' + psApiParams(), { cache:'default' })
       .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
       .then(j => {
-        if(seq !== psApiSeq) return;     // a newer request superseded this one
+        if(seq !== psApiSeq){ if(append) psFeedLoading = false; return; }   // a newer request superseded this one
         if(j.error) throw new Error(j.error);
         psApiTotal = j.total || 0;
         if(psApiTotal > _psCatTotal) _psCatTotal = psApiTotal;   // remember the unfiltered catalogue size for the count note
-        psFiltered = (j.products || []).filter(p => !psIsHidden(p));   // drop locally-known sold-outs
-        psHarvestThumbs(j.products);                                   // fill Shop-by-Category photos from this page
-        psRender();
+        const items = (j.products || []).filter(p => !psIsHidden(p));   // drop locally-known sold-outs
+        psFiltered = append ? psFiltered.concat(items) : items;        // infinite scroll: accumulate loaded pages
+        psHarvestThumbs(j.products);                                    // fill Shop-by-Category photos from this page
+        psFeedLoading = false;
+        if(append && !items.length){ psFeedDone = true; psFeedSetStatus(false); return; }   // server has no more → stop (guards against an over-counted total)
+        psRender(append);
+        if(append) psFeedMaybeMore();
       })
-      .catch(e => { console.warn('search query failed — using catalog.json:', e.message); psApiFallback(); });
+      .catch(e => { if(append) psFeedLoading = false; console.warn('search query failed — using catalog.json:', e.message); psApiFallback(); });
   }
   // Graceful degradation: if the API is unreachable, fall back to the proven catalog.json path.
   function psApiFallback(){
@@ -5508,7 +5524,7 @@
     if((window.scrollY || window.pageYOffset || 0) > 600) return false;
     return !psSel.cats.size && !psSel.brands.size && !psSel.prices.size && !psSaleOnly && !psNewOnly && !psSort && !psQuery && !psSizeQ;
   }
-  setInterval(function(){ if(psLandingIsActive()) psApiFetch(); }, 90000);
+  setInterval(function(){ if(psLandingIsActive()){ psFeedSeed = Math.floor(Date.now() / 90000); psApiFetch(); } }, 90000);
   // Pager HTML — shared by the client-render and API-render paths.
   function psPagerHtml(pages){
     if(pages <= 1) return '';
@@ -6316,6 +6332,8 @@
   // All three filters combine with AND; price buckets OR within themselves.
   function psApply(){
     psPage = 0;
+    psFeedDone = false; psFeedLoading = false;        // infinite scroll: start a fresh feed
+    psFeedSeed = Math.floor(Date.now() / 90000);      // freeze the shuffle for this feed's pages
     psSyncDeptTiles();
     if(psApiMode) return psApiFetch();   // API mode: server filters/sorts/pages; psFiltered = the page
     psFiltered = PS_CATALOG.filter(p => {
@@ -6497,38 +6515,92 @@
     });
   }
 
-  function psRender(){
+  // Render the product feed. Infinite scroll: append=false replaces the grid with the first
+  // page; append=true adds the next page's cards. psFiltered holds every item shown so far in
+  // BOTH modes, so psCard's absolute index keeps psAdd/psDetail correct.
+  function psRender(append){
     const grid = document.getElementById('psGrid');
     const empty = document.getElementById('psEmpty');
+    if(!grid) return;
     psSyncDeptTiles();
     psHarvestThumbs(psFiltered);   // opportunistically fill Shop-by-Category photos (catalog mode too)
     const psCountEl = document.getElementById('psCount');   // count element was removed from the resbar; guard it
-    if(psApiMode){
-      // API mode: psFiltered IS the current page; psApiTotal is the grand total for the pager.
-      const total = psApiTotal;
-      if(psCountEl) psCountEl.textContent = total ? (total.toLocaleString() + ' ' + tr('ps_results')) : '';
-      document.getElementById('psBrandCount').textContent = psSel.brands.size || '';
-      if(!psFiltered.length){ grid.innerHTML = ''; empty.style.display = total ? 'none' : ''; document.getElementById('psPager').innerHTML = ''; return; }
-      empty.style.display = 'none';
-      grid.innerHTML = psFiltered.map((p,i) => psCard(p, i)).join('');   // page-relative idx — psAdd/psDetail index psFiltered
-      _psAnimateIn();
-      document.getElementById('psPager').innerHTML = psPagerHtml(Math.max(1, Math.ceil(total / psPageSize())));
-      psSwipeHintMaybe();
+    const total = psApiMode ? psApiTotal : psFiltered.length;
+    if(psCountEl) psCountEl.textContent = total ? (total.toLocaleString() + ' ' + tr('ps_results')) : '';
+    const bc = document.getElementById('psBrandCount'); if(bc) bc.textContent = psSel.brands.size || '';
+    if(!psFiltered.length){
+      if(!append) grid.innerHTML = '';
+      if(empty) empty.style.display = total ? 'none' : '';
+      psFeedDone = true; psFeedSetStatus(false);
       return;
     }
-    const total = psFiltered.length;
-    if(psCountEl) psCountEl.textContent = total ? (total.toLocaleString() + ' ' + tr('ps_results')) : '';
-    document.getElementById('psBrandCount').textContent = psSel.brands.size || '';
-    if(!total){ grid.innerHTML = ''; empty.style.display = ''; document.getElementById('psPager').innerHTML = ''; return; }
-    empty.style.display = 'none';
-    const ps = psPageSize(), pages = Math.ceil(total / ps);
-    if(psPage >= pages) psPage = pages - 1;
-    const start = psPage * ps;
-    grid.innerHTML = psFiltered.slice(start, start + ps).map((p,i) => psCard(p, start + i)).join('');
-    _psAnimateIn();
-    document.getElementById('psPager').innerHTML = psPagerHtml(pages);
-    psSwipeHintMaybe();
+    if(empty) empty.style.display = 'none';
+    // In API mode psFiltered already IS the accumulated set of loaded pages; in catalog mode it's
+    // the full filtered list, so cap how much of it is shown to (psPage+1) pages.
+    const limit = psApiMode ? psFiltered.length : Math.min(psFiltered.length, (psPage + 1) * psPageSize());
+    if(append){
+      const from = grid.children.length;
+      if(limit > from) grid.insertAdjacentHTML('beforeend', psFiltered.slice(from, limit).map((p,i) => psCard(p, from + i)).join(''));
+    } else {
+      grid.innerHTML = psFiltered.slice(0, limit).map((p,i) => psCard(p, i)).join('');
+      _psAnimateIn();
+    }
+    const shown = grid.children.length;
+    const more  = psApiMode ? (shown < total) : (shown < psFiltered.length);
+    psFeedDone = !more;
+    psFeedSetStatus(more);
+    psFeedObserve();
   }
+  // ── Infinite-scroll plumbing (redesign P1) ───────────────────────────────
+  // #psPager is repurposed as the feed footer: a "Load more" button (manual fallback) while
+  // there are more, a "you've reached the end" note otherwise, and a loading note mid-fetch.
+  function psFeedSetStatus(hasMore){
+    const el = document.getElementById('psPager'); if(!el) return;
+    if(psFeedLoading){ el.innerHTML = '<div class="ps-feed-msg" aria-live="polite">' + esc(tr('ps_loading')) + '</div>'; return; }
+    const grid = document.getElementById('psGrid');
+    if(hasMore){ el.innerHTML = '<button type="button" class="ps-feed-more" onclick="psFeedMore()">' + esc(tr('ps_feed_more')) + '</button>'; }
+    else if(grid && grid.children.length){ el.innerHTML = '<div class="ps-feed-msg ps-feed-end">' + esc(tr('ps_feed_end')) + '</div>'; }
+    else { el.innerHTML = ''; }
+  }
+  function psFeedMore(){
+    if(!PS_INFINITE || psFeedLoading || psFeedDone) return;
+    const grid = document.getElementById('psGrid'); if(!grid || !grid.children.length) return;
+    const total = psApiMode ? psApiTotal : psFiltered.length;
+    if(grid.children.length >= total){ psFeedDone = true; psFeedSetStatus(false); return; }
+    psPage++;
+    if(psApiMode){ psFeedLoading = true; psFeedSetStatus(true); psApiFetch(true); }
+    else { psRender(true); psFeedMaybeMore(); }   // catalog mode is synchronous
+  }
+  // After an append, if the footer is still within a screen of the viewport (tall screen / short
+  // page), keep loading so the feed always fills the screen and the observer can re-arm.
+  function psFeedMaybeMore(){
+    if(psFeedDone || psFeedLoading) return;
+    const el = document.getElementById('psPager'); if(!el) return;
+    const grid = document.getElementById('psGrid'); if(!grid || !grid.children.length) return;   // only once a feed exists
+    const vh = window.innerHeight || 800;
+    if(el.getBoundingClientRect().top < vh + 600) psFeedMore();   // preload ~600px before the footer reaches the fold
+  }
+  let _psFeedIO = null;
+  function psFeedObserve(){
+    if(!PS_INFINITE || _psFeedIO) return;   // one observer on the persistent #psPager footer
+    const el = document.getElementById('psPager'); if(!el) return;
+    try{
+      _psFeedIO = new IntersectionObserver(function(entries){
+        for(const e of entries){ if(e.isIntersecting) psFeedMore(); }
+      }, { rootMargin: '700px 0px' });
+      _psFeedIO.observe(el);
+    }catch(err){ /* no IntersectionObserver → the "Load more" button is the fallback */ }
+  }
+  window.psFeedMore = psFeedMore;
+  // Scroll/resize fallback — some in-app webviews fire IntersectionObserver unreliably, so also
+  // top up the feed whenever the buyer scrolls near the bottom. Time-throttled (no rAF dependency),
+  // and the real work (psFeedMaybeMore → a single getBoundingClientRect, then a guarded fetch) is cheap.
+  (function(){
+    let last = 0;
+    function onScroll(){ const now = Date.now(); if(now - last < 120) return; last = now; if(PS_INFINITE) psFeedMaybeMore(); }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+  })();
   // When the page dropdown opens: scroll the current page into view (365 pages → long
   // list) and close it on an outside click/tap (so it behaves like a native select).
   function psPgDdToggle(d){
@@ -6570,6 +6642,7 @@
   (function(){
     var x0 = null, y0 = null;
     document.addEventListener('touchstart', function(e){
+      if(PS_INFINITE) return;   // infinite scroll replaces swipe-between-pages
       var g = document.getElementById('psGrid');
       if(!g || !g.contains(e.target) || e.touches.length !== 1){ x0 = null; return; }
       x0 = e.touches[0].clientX; y0 = e.touches[0].clientY;
@@ -7148,7 +7221,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28j';
+  const PSB_BUILD = '2026-06-28m';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
