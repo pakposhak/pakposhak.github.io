@@ -2643,9 +2643,22 @@
     btn.textContent = dark ? '☀️' : '🌙';
     btn.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
   }
+  // Smooth theme/Luxe colour flips (#3): add a brief .theming class so colours animate for ~0.4s,
+  // then drop it (no permanent transition cost). Skipped under reduced-motion.
+  var _psThemeFlashT = null;
+  function psThemeFlash(){
+    try{
+      if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var h = document.documentElement; h.classList.add('theming');
+      if(_psThemeFlashT) clearTimeout(_psThemeFlashT);
+      _psThemeFlashT = setTimeout(function(){ h.classList.remove('theming'); }, 400);
+    }catch(e){}
+  }
+  window.psThemeFlash = psThemeFlash;
   function toggleTheme(){
     var dark = document.documentElement.getAttribute('data-theme') === 'dark';
     var next = dark ? 'light' : 'dark';
+    psThemeFlash();
     document.documentElement.setAttribute('data-theme', next);
     try{ localStorage.setItem('psb_theme', next); }catch(e){}
     applyThemeIcon();
@@ -4340,6 +4353,7 @@
   }
   window.psLuxeMode = psLuxeMode;
   function bottomNavGo(tab){
+    try{ psThemeFlash(); }catch(e){}   // smooth any theme/Luxe colour flip this tap triggers (#3)
     // Bottom nav (redesign batch 2) = Home · Luxe · Bag(cart) · Price Check. Bag uses id bnav-bag.
     var idmap = { home:'bnav-home', luxe:'bnav-luxe', cart:'bnav-bag', pricecheck:'bnav-pricecheck' };
     Object.keys(idmap).forEach(function(t){ var b = document.getElementById(idmap[t]); if(b) b.classList.toggle('active', t === tab); });
@@ -5405,6 +5419,8 @@
     const tb = document.getElementById('tabBrands'), tp = document.getElementById('tabProducts');
     if(tb) tb.style.display = brands ? '' : 'none';
     if(tp) tp.style.display = brands ? 'none' : '';
+    var _shown = brands ? tb : tp;   // fade the incoming view in, never a hard cut (#3)
+    if(_shown){ _shown.classList.remove('ps-viewfade'); void _shown.offsetWidth; _shown.classList.add('ps-viewfade'); }
     document.getElementById('bt-brands').classList.toggle('on', brands);
     document.getElementById('bt-products').classList.toggle('on', !brands);
     // Browse Brands is the single unified Product-Category view on EVERY width now
@@ -7379,7 +7395,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28v';
+  const PSB_BUILD = '2026-06-28w';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
