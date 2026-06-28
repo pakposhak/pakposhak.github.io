@@ -156,6 +156,10 @@
        flow); appears INSIDE the sticky top group once the photo strip scrolls past, so while scrolling
        you get tappable category NAME links instead of cut-off image glimpses. Populated by psBuildShopCat. -->
   <div id="psCatBar" class="ps-catbar" aria-label="Shop by category"></div>
+  <!-- Quick sort/price bar (redesign batch 2, #9): hidden on the landing; appears in the sticky top
+       group (under the category names) only once the products start scrolling. Mirrors the sheet's
+       Sort + Price state via psBuildQuickBar (kept in sync from psBuildSort / psBuildPriceFilter). -->
+  <div id="psQuickBar" class="ps-quickbar" aria-label="Sort and price"></div>
   </div><!-- /ps-topstick -->
 
   <!-- Full-screen search page (in-app overlay) -->

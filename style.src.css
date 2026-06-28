@@ -579,8 +579,14 @@
       .ps-catbar::-webkit-scrollbar{display:none}
       .ps-catchip{flex:0 0 auto;padding:8px 16px;border-radius:18px;border:1.5px solid var(--gold-bdr);background:var(--surface);color:var(--txt-sec);font-size:0.84rem;font-weight:700;white-space:nowrap;cursor:pointer;font-family:inherit;scroll-snap-align:start;transition:background .15s,color .15s,border-color .15s}
       .ps-catchip.on{background:var(--accent,var(--gold));color:#fff;border-color:var(--accent,var(--gold))}
+      /* Quick sort/price bar (#9) — appears under the names bar once products start scrolling. */
+      body.psb-browse .ps-topstick.is-scrolled .ps-quickbar{display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:7px 2px 1px;margin-top:5px;border-top:1px solid var(--bdr)}
+      .ps-quickbar::-webkit-scrollbar{display:none}
+      .ps-qlabel{flex:0 0 auto;font-size:0.66rem;font-weight:800;color:var(--txt-muted);text-transform:uppercase;letter-spacing:.5px;padding:0 1px}
+      .ps-qchip{flex:0 0 auto;padding:6px 12px;border-radius:14px;border:1.5px solid var(--bdr-med);background:var(--surface);color:var(--txt-sec);font-size:0.76rem;font-weight:700;white-space:nowrap;cursor:pointer;font-family:inherit;transition:background .15s,color .15s,border-color .15s}
+      .ps-qchip.on{background:var(--accent,var(--gold));color:#fff;border-color:var(--accent,var(--gold))}
     }
-    .ps-catbar{display:none}
+    .ps-catbar,.ps-quickbar{display:none}
     .show-more-btn{font-size:0.75rem;color:var(--gold);background:none;border:none;cursor:pointer;font-weight:600;padding:4px 0;text-decoration:underline}
 
     /* ── URL input area — most prominent element ── */

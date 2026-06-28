@@ -5612,6 +5612,7 @@
     // Reflect the active price-bucket count on the compact "Price ৳" chip in the results bar
     const n = document.getElementById('psPriceN'); if(n) n.textContent = psSel.prices.size ? '('+psSel.prices.size+')' : '';
     const pb = document.getElementById('psPriceBtn'); if(pb) pb.classList.toggle('on', psSel.prices.size > 0);
+    try{ psBuildQuickBar(); }catch(e){}
   }
   function psTogglePrice(i){ if(psSel.prices.has(i)) psSel.prices.delete(i); else psSel.prices.add(i); psBuildPriceFilter(); psApply(); }
   // Compact price filter: the 6 buckets live in a popover under the "Price ৳" chip on
@@ -6444,6 +6445,21 @@
       +   `<button type="button" class="ps-sortbtn ps-salebtn${psSaleOnly?' on':''}" onclick="psToggleSale()">${tr('ps_sale')}</button>`
       +   `<button type="button" class="ps-sortbtn${psNewOnly?' on':''}" onclick="psToggleNew()">${tr('ps_new')}</button>`
       + `</span>`;
+    try{ psBuildQuickBar(); }catch(e){}
+  }
+  // Quick sort/price bar (#9): a compact mirror of the sheet's Sort + Price, shown in the sticky top
+  // group while scrolling products. Uses the SAME global handlers/state, so it stays in sync; this fn
+  // is called from psBuildSort + psBuildPriceFilter so any sort/price change refreshes it.
+  function psBuildQuickBar(){
+    var el = document.getElementById('psQuickBar'); if(!el) return;
+    var sort = '<span class="ps-qlabel">'+esc(tr('sort_hd'))+'</span>'
+      + '<button type="button" class="ps-qchip'+(psSort==='asc'?' on':'')+'" onclick="psSetSortVal(\'asc\')">'+esc(tr('ps_sort_lh'))+'</button>'
+      + '<button type="button" class="ps-qchip'+(psSort==='desc'?' on':'')+'" onclick="psSetSortVal(\'desc\')">'+esc(tr('ps_sort_hl'))+'</button>'
+      + '<button type="button" class="ps-qchip'+(psNewOnly?' on':'')+'" onclick="psToggleNew()">'+esc(tr('ps_new'))+'</button>'
+      + '<button type="button" class="ps-qchip'+(psSaleOnly?' on':'')+'" onclick="psToggleSale()">'+esc(tr('ps_sale'))+'</button>';
+    var price = '<span class="ps-qlabel">'+esc(tr('ps_price_short'))+'</span>'
+      + PS_BUCKETS.map(function(b,i){ return '<button type="button" class="ps-qchip'+(psSel.prices.has(i)?' on':'')+'" onclick="psTogglePrice('+i+')">'+esc(b.lbl)+'</button>'; }).join('');
+    el.innerHTML = sort + price;
   }
   function psToggleSortPop(){
     const pop = document.getElementById('psSortPop'), btn = document.getElementById('psSortBtn');
@@ -7289,7 +7305,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28p';
+  const PSB_BUILD = '2026-06-28q';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
