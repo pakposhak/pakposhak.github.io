@@ -6189,16 +6189,21 @@
   // functions (psBuildSort/psBuildCatFilter/psBuildBrandFilter/psBuildPriceFilter) keep
   // populating them by ID — no change to those functions.
   function psFiltersInit(){
-    [['psSortTabs','psFsSort'],['psCat','psFsCat'],['psBrands','psFsBrand'],['psPrice','psFsPrice'],
-     ['psCatCount','psFsCatN'],['psBrandCount','psFsBrandN'],['psPriceN','psFsPriceN']].forEach(function(m){
+    // Move ONLY the Sort tabs (incl. Sale/New) and the Price bands into the inline
+    // filter bar. Categories and Brands are intentionally excluded — they live on the
+    // categories page now, so the funnel shows just Sort + Sale + New + Price.
+    [['psSortTabs','psFbSort'],['psPrice','psFbPrice']].forEach(function(m){
       var src=document.getElementById(m[0]), dst=document.getElementById(m[1]);
       if(src && dst && src.parentNode!==dst) dst.appendChild(src);
     });
   }
+  // Toggle the inline, pinned filter bar (no separate page/sheet). Called with no
+  // argument from the funnel = toggle; a boolean forces open/closed.
   function psFilters(open){
-    var sh=document.getElementById('psFilterSheet'); if(!sh) return;
-    if(open){ sh.removeAttribute('hidden'); try{ document.body.style.overflow='hidden'; }catch(e){} }
-    else { sh.setAttribute('hidden',''); try{ document.body.style.overflow=''; }catch(e){} }
+    var bar=document.getElementById('psFilterBar'); if(!bar) return;
+    var show = (typeof open === 'boolean') ? open : bar.hasAttribute('hidden');
+    if(show) bar.removeAttribute('hidden'); else bar.setAttribute('hidden','');
+    var btn=document.getElementById('psFiltBtn'); if(btn) btn.setAttribute('aria-expanded', show?'true':'false');
   }
   window.psFilters = psFilters; window.psFiltersInit = psFiltersInit;
   function psShopBrandsMode(){
@@ -7580,7 +7585,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28-popup3';
+  const PSB_BUILD = '2026-06-28-filterbar';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

@@ -142,7 +142,7 @@
     <button type="button" class="ps-gen"    data-g="m"   aria-pressed="false" onclick="psSetGender('m')"   data-i18n="gen_men">Men</button>
     <button type="button" class="ps-gen"    data-g="k"   aria-pressed="false" onclick="psSetGender('k')"   data-i18n="gen_kids">Kids</button>
     <span class="ps-gen-spacer"></span>
-    <button type="button" class="ps-gen-cat" id="psFiltBtn" aria-label="Filters and sort" title="Filters and sort" onclick="psFilters(true)">
+    <button type="button" class="ps-gen-cat" id="psFiltBtn" aria-label="Filters and sort" title="Filters and sort" aria-expanded="false" onclick="psFilters()">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18l-7 8v6l-4-2v-4z"/></svg>
     </button>
     <a class="ps-gen-cat" id="psCatsBtn" href="categories.html" aria-label="All categories" title="All categories">
@@ -150,6 +150,20 @@
     </a>
     <span class="ps-gen-ind" aria-hidden="true"></span>
   </nav>
+
+  <!-- Inline filter bar — toggled by the funnel on the rail. Pinned inside the sticky top
+       group (no separate page). Holds ONLY Sort + Sale + New + Price; categories and brands
+       live on the categories page, so they're intentionally not here. -->
+  <div id="psFilterBar" class="ps-filterbar" hidden>
+    <div class="ps-fb-sec">
+      <span class="ps-fb-h" data-i18n="sort_hd">Sort</span>
+      <div class="ps-fb-slot" id="psFbSort"></div>
+    </div>
+    <div class="ps-fb-sec">
+      <span class="ps-fb-h" data-i18n="ps_price_short">Price</span>
+      <div class="ps-fb-slot" id="psFbPrice"></div>
+    </div>
+  </div>
 
   <!-- Myntra-style search bar — opens the full-screen search page (redesign Phase 1). -->
   <div class="ps-searchbar">
@@ -205,28 +219,8 @@
     </div>
   </div>
 
-  <!-- Filter & sort sheet (opened by the ▦ icon on the gender rail). The real filter containers
-       (#psSortTabs/#psCat/#psBrands/#psPrice + count spans) are MOVED into the slots below by
-       psFiltersInit() so the existing build functions keep populating them (redesign P1). -->
-  <div id="psFilterSheet" class="ps-fsheet" hidden role="dialog" aria-label="Filters and sort">
-    <div class="ps-fsheet-bg" onclick="psFilters(false)"></div>
-    <div class="ps-fsheet-panel">
-      <div class="ps-fsheet-top">
-        <span class="ps-fsheet-title" data-i18n="filters_sort">Filters &amp; sort</span>
-        <button type="button" class="ps-fsheet-x" onclick="psFilters(false)" aria-label="Close">✕</button>
-      </div>
-      <div class="ps-fsheet-body">
-        <div class="ps-fsheet-sec"><div class="ps-fsheet-h"><span data-i18n="sort_hd">Sort</span></div><div id="psFsSort"></div></div>
-        <div class="ps-fsheet-sec"><div class="ps-fsheet-h"><span data-i18n="ps_category_short">Categories</span> <span id="psFsCatN"></span></div><div id="psFsCat"></div></div>
-        <div class="ps-fsheet-sec"><div class="ps-fsheet-h"><span data-i18n="ps_brands">Brands</span> <span id="psFsBrandN"></span></div><div id="psFsBrand"></div></div>
-        <div class="ps-fsheet-sec"><div class="ps-fsheet-h"><span data-i18n="ps_price_short">Price</span> <span id="psFsPriceN"></span></div><div id="psFsPrice"></div></div>
-      </div>
-      <div class="ps-fsheet-foot">
-        <button type="button" class="ps-fsheet-clear" onclick="psClearFilters()" data-i18n="ps_clear">Clear all</button>
-        <button type="button" class="ps-fsheet-apply" onclick="psFilters(false)" data-i18n="filters_done">Done</button>
-      </div>
-    </div>
-  </div>
+  <!-- (Filter & sort sheet removed — filters now show inline in #psFilterBar above,
+       toggled by the funnel; categories & brands live on the categories page.) -->
 
   <!-- Browse: switch between the brand directory and the multi-brand product search -->
   <div class="browse-tabs">
