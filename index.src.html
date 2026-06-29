@@ -205,6 +205,7 @@
       <div class="ps-sp-field">
         <svg class="ps-sp-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
         <input id="psSearchPageInput" type="text" autocomplete="off" oninput="psSearchPageInput(this.value)" onkeydown="if(event.key==='Enter')psSearchPageSubmit()" placeholder="Search products and 150+ brands" data-i18n-ph="search_page_ph"/>
+        <button class="ps-sp-clear" id="psSpClear" onclick="psSearchPageClear()" aria-label="Clear search" title="Clear" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
         <button class="ps-sp-cam" onclick="psVisualSearch()" aria-label="Search by photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V8a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.5"/></svg></button>
       </div>
     </div>
@@ -246,7 +247,21 @@
   </div>
 
   <div id="tabBrands" style="display:none">
-    <button type="button" class="bb-back" onclick="switchBrowse('products')" data-i18n="bb_back">‹ Back to products</button>
+    <button type="button" class="bb-back bb-back-arrow" onclick="switchBrowse('products')" aria-label="Back to products" title="Back to products">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <!-- Price-check claim banners (the purpose of this page): paste any brand link to see the real
+         PKR/BDT price before buying anywhere else. -->
+    <div class="bb-banners">
+      <button type="button" class="bb-banner bb-banner-a" onclick="location.href='order-form.html'">
+        <span class="bb-banner-ic" aria-hidden="true">🧾</span>
+        <span class="bb-banner-tx"><b data-i18n="bb_ban1_t">Check BDT &amp; PKR price by pasting</b><small data-i18n="bb_ban1_d">Paste any product link, see the real price.</small></span>
+      </button>
+      <div class="bb-banner bb-banner-b">
+        <span class="bb-banner-ic" aria-hidden="true">🛡️</span>
+        <span class="bb-banner-tx"><b data-i18n="bb_ban2_t">Don't buy elsewhere, check here first</b><small data-i18n="bb_ban2_d">Confirm the genuine price before ordering.</small></span>
+      </div>
+    </div>
     <!-- Two ways to find a brand: by store type (5 departments) OR by what products they sell -->
     <div class="bb-two-ways" data-i18n="bb_two_ways">Two ways to search brands</div>
     <div class="bb-subtabs">
