@@ -460,26 +460,33 @@ function applyCorrections(products, membership, corrections){
   const moves = (corrections && corrections.moves) || {};
   const removes = (corrections && corrections.removes) || new Set();
   const hasRemoves = typeof removes.has === 'function' ? (k => removes.has(k)) : (() => false);
+  const removeSize = (typeof removes.size === 'number') ? removes.size : 0;
   let moved = 0, removed = 0;
-  if(!membership || (Object.keys(moves).length === 0 && (typeof removes.size === 'number' ? removes.size === 0 : true))){
-    return { products, stats:{ moved:0, removed:0 } };   // no membership or no corrections ⇒ unchanged
+  if(Object.keys(moves).length === 0 && removeSize === 0){
+    return { products, stats:{ moved:0, removed:0 } };   // no corrections at all => unchanged
   }
-  const mget = u => (typeof membership.get === 'function' ? membership.get(u) : membership[u]);
+  const mget = u => (membership ? (typeof membership.get === 'function' ? membership.get(u) : membership[u]) : null);
+  const norm = u => (u || '').split(/[?#]/)[0];   // exact product-URL keys (strip query/hash); collection keys are host||handle
   const out = [];
   for(const p of products){
-    let host = '';
-    try{ host = new URL(p.u).host; }catch(e){ host = ''; }
-    const colls = host ? (mget(p.u) || []) : [];
-    let moveTo = null, drop = false;
-    for(const c of colls){
-      const h = c && c.h; if(!h) continue;
-      const key = host + '||' + h;
-      if(hasRemoves(key)){ drop = true; break; }   // REMOVE wins — stop scanning
-      const m = moves[key];
-      if(typeof m === 'string' && m && moveTo == null) moveTo = m;
+    const pu = p.u || '', puN = norm(pu);
+    const urlRemove = hasRemoves(pu) || hasRemoves(puN);   // PRODUCT-level (most specific, no membership needed)
+    let urlMove = moves[pu]; if(!(typeof urlMove === 'string' && urlMove)) urlMove = moves[puN];
+    urlMove = (typeof urlMove === 'string' && urlMove) ? urlMove : null;
+    let moveTo = urlMove, drop = urlRemove;
+    if(!drop){
+      let host = ''; try{ host = new URL(pu).host; }catch(e){ host = ''; }
+      const colls = (host && membership) ? (mget(pu) || []) : [];   // COLLECTION-level (needs membership)
+      for(const c of colls){
+        const h = c && c.h; if(!h) continue;
+        const key = host + '||' + h;
+        if(hasRemoves(key)){ if(!urlMove){ drop = true; break; } continue; }   // product-URL move overrides a collection remove
+        const m = moves[key];
+        if(typeof m === 'string' && m && moveTo == null) moveTo = m;
+      }
     }
     if(drop){ removed++; continue; }
-    if(moveTo != null && p.cat !== moveTo){ p.cat = moveTo; moved++; }   // count only REAL changes ⇒ stats are stable on a settled catalog
+    if(moveTo != null && p.cat !== moveTo){ p.cat = moveTo; moved++; }
     out.push(p);
   }
   return { products: out, stats:{ moved, removed } };
