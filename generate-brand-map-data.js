@@ -16,6 +16,10 @@ const OUT = path.join(__dirname, 'brand-map-data.json');
 const raw = JSON.parse(fs.readFileSync(SRC, 'utf8'));
 const brands = Object.values(raw.brands);
 
+// Brand's OWN explicit category (their Shopify product_type), keyed "host||handle", built by the
+// VPS join (product-details.jsonl ptype x collection-membership). Authoritative where present.
+const PTYPE = (function(){ try { return JSON.parse(fs.readFileSync(path.join(__dirname, 'collection-ptype.json'), 'utf8')); } catch(e){ console.warn('  (no collection-ptype.json — BC-PT column will be blank)'); return {}; } })();
+
 // ── Normalized path-dimension derivations for the Map review sheet (req: Danish). ───────────
 // Each returns ONE value (or '' when unclear) regardless of WHERE it sits in a brand's menu
 // path. Source = the collection TITLE (+ its sections). Blanks are intentional: they flag
@@ -65,6 +69,13 @@ function deriveOthers(title){
   return out.slice(0, 4).join(' · ');
 }
 
+// Brand's own category as a WORD in the collection title (the garment/category noun the brand uses).
+function deriveBrandTitleCat(title){
+  const s = _lc(title);
+  const m = s.match(/\b(kurtis?|kurtas?|kameez|shalwar suit|shalwar|dupattas?|sarees?|sari|lehengas?|shararas?|ghararas?|abayas?|hijabs?|niqab|shawls?|stole|co-?ords?|dress(?:es)?|gowns?|maxi|trousers?|pants?|jeans|skirts?|tunics?|kaftans?|caftan|anarkali|peshwas|waistcoats?|sherwanis?|shirts?|t-?shirts?|hoodies?|sweaters?|cardigans?|jackets?|coats?|nightwear|loungewear|pyjamas?|pajamas?|footwear|khussas?|chappals?|juttis?|sandals?|heels?|pumps?|flats?)\b/);
+  return m ? m[1].replace(/^\w/, c => c.toUpperCase()) : '';
+}
+
 let totalCols = 0;
 const out = [];
 
@@ -85,6 +96,8 @@ for (const b of brands) {
       const se = deriveSeason(c.title);            if (se) entry.se = se;
       const oc = deriveOccasion(c.title);          if (oc) entry.oc = oc;
       const ot = deriveOthers(c.title);            if (ot) entry.ot = ot;
+      const bc = PTYPE[b.host + '||' + c.handle]; if (bc && !/^configurable$/i.test(bc)) entry.bc = bc;
+      const bw = deriveBrandTitleCat(c.title); if (bw) entry.bw = bw;
       if (c.noise) entry.noise = 1;
       if (c.accessory) entry.acc = 1;
       return entry;

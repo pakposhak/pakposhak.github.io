@@ -153,8 +153,8 @@ button.subf.on{background:#0d1624;border-color:#7ab8ff;color:#7ab8ff}
 
 /* ── MAP (FLAT) VIEW ─────────────────────────── */
 #mapView{overflow:auto;border:1px solid #2a2a40;border-radius:10px;max-height:76vh}
-.map-table{width:100%;border-collapse:collapse;font-size:0.76rem;white-space:nowrap}
-.map-table th{position:sticky;top:0;z-index:2;background:#141428;color:#888;font-size:0.62rem;text-transform:uppercase;letter-spacing:0.4px;padding:6px 9px;border-bottom:2px solid #2a2a40;text-align:left;cursor:pointer;user-select:none;white-space:nowrap}
+.map-table{width:100%;border-collapse:collapse;font-size:0.7rem;white-space:nowrap}
+.map-table th{position:sticky;top:0;z-index:2;background:#141428;color:#888;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.3px;padding:6px 6px;border-bottom:2px solid #2a2a40;text-align:left;cursor:pointer;user-select:none;white-space:nowrap}
 .map-table th:hover{color:#c9a96e}
 .map-table th.sorted{color:#c9a96e}
 .map-table th.sorted::after{content:' ▲';font-size:0.55rem}
@@ -165,19 +165,30 @@ button.subf.on{background:#0d1624;border-color:#7ab8ff;color:#7ab8ff}
 .map-table tr.map-frow input,.map-table tr.map-frow select{width:100%;background:#18182e;border:1px solid #2a2a40;color:#ddd;padding:3px 6px;font-size:0.72rem;border-radius:4px;outline:none}
 .map-table tr.map-frow input:focus,.map-table tr.map-frow select:focus{border-color:#c9a96e}
 .map-table tr.map-frow select option{background:#18182e}
-.map-table td{padding:5px 9px;border-bottom:1px solid #1a1a2e;vertical-align:middle}
+.map-table td{padding:4px 6px;border-bottom:1px solid #1a1a2e;vertical-align:middle}
 .map-table tr:hover td{background:#1a1a30}
-.map-table .col-brand{font-weight:600;color:#ddd;min-width:120px}
-.map-table .col-bdept{min-width:60px}
-.map-table .col-coll{color:#aaa;min-width:160px;max-width:240px;white-space:normal}
-.map-table .col-ourlbl{min-width:120px}
-.map-table .col-dept{min-width:60px}
-.map-table .col-count{text-align:right;font-variant-numeric:tabular-nums;min-width:55px}
+.map-table .col-brand{font-weight:600;color:#ddd;min-width:96px}
+.map-table .col-bdept{min-width:50px}
+.map-table .col-coll{color:#aaa;min-width:120px;max-width:200px;white-space:normal}
+.map-table .col-ourlbl{min-width:96px}
+.map-table .col-dept{min-width:50px}
+.map-table .col-count{text-align:right;font-variant-numeric:tabular-nums;min-width:46px}
 .map-table .col-count a{color:#c9a96e;font-weight:600;text-decoration:none}
 .map-table .col-count a:hover{color:#fff;text-decoration:underline}
 .map-table .col-count span{color:#c9a96e;font-weight:600}
 .map-table .no-label{color:#444;font-style:italic}
-.map-table .col-path{color:#9a9ac0;font-size:0.72rem;min-width:58px;white-space:nowrap}
+.map-table .col-path{color:#9a9ac0;font-size:0.66rem;min-width:50px;white-space:nowrap}
+/* Correction-tool columns */
+.map-table .col-bc{color:#9a9ac0;font-size:0.66rem;min-width:60px;max-width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.map-table .col-mv{min-width:96px}
+.map-table .col-rm{min-width:34px;text-align:center}
+.map-table .mv-sel{width:100%;background:#18182e;border:1px solid #2a2a40;color:#ddd;padding:2px 4px;font-size:0.66rem;border-radius:4px;outline:none}
+.map-table .mv-sel:focus{border-color:#c9a96e}
+.map-table .mv-sel option{background:#18182e}
+.map-table .mv-tag{display:inline-block;margin-left:5px;color:#7ab8ff;font-size:0.64rem;font-weight:700}
+.map-table tr.rm-row td{opacity:.38}
+.map-table .rm-yes{color:#ff8a8a;font-size:0.6rem;font-weight:700;display:block}
+#mapRunBtn{margin-left:10px;padding:4px 12px;font-size:0.74rem}
 .map-count{font-size:0.78rem;color:#666;padding:6px 10px;border-bottom:1px solid #1e1e32;background:#0d0d1e}
 
 /* ── Table view (brand × category cross-tab) ───────────── */
@@ -702,6 +713,80 @@ let noiseOverrides=new Set();
 const openBrands=new Set();
 let RENDERED_BRANDS_ARR=[];
 let mapSortCol='brand', mapSortDesc=false;
+// ── MAP CORRECTION TOOL: staged moves/removes (this phase: stage + download only) ──
+let stagedMoves={}, stagedRemoves={};
+try{ stagedMoves=JSON.parse(localStorage.getItem('psb_map_moves')||'{}')||{}; }catch(e){ stagedMoves={}; }
+try{ stagedRemoves=JSON.parse(localStorage.getItem('psb_map_removes')||'{}')||{}; }catch(e){ stagedRemoves={}; }
+function _persistStaged(){
+  try{ localStorage.setItem('psb_map_moves',JSON.stringify(stagedMoves)); }catch(e){}
+  try{ localStorage.setItem('psb_map_removes',JSON.stringify(stagedRemoves)); }catch(e){}
+}
+function _pendingCount(){ return Object.keys(stagedMoves).length+Object.keys(stagedRemoves).length; }
+function _updateRunBtn(){
+  const btn=document.getElementById('mapRunBtn');
+  if(btn)btn.textContent='Run · '+_pendingCount()+' pending';
+}
+// Lazily fill a Move dropdown with the 46 categories (grouped by dept) on first focus.
+function mvFill(sel){
+  if(sel.dataset.filled)return;
+  sel.dataset.filled='1';
+  const cur=sel.value;
+  const opt=k=>`<option value="${esc(k)}"${k===cur?' selected':''}>${esc(CAT_INFO[k].label)}</option>`;
+  sel.innerHTML='<option value="">—</option>'
+    +'<optgroup label="Kids">'+PIVOT_KEYS.kids.map(opt).join('')+'</optgroup>'
+    +'<optgroup label="Women">'+PIVOT_KEYS.women.map(opt).join('')+'</optgroup>'
+    +'<optgroup label="Men">'+PIVOT_KEYS.men.map(opt).join('')+'</optgroup>';
+  sel.value=cur;
+}
+function mvSet(sel){
+  const key=sel.dataset.key;
+  if(sel.value)stagedMoves[key]=sel.value;
+  else delete stagedMoves[key];
+  _persistStaged();
+  _updateRunBtn();
+}
+function rmSet(cb){
+  const key=cb.dataset.key;
+  if(cb.checked)stagedRemoves[key]=true;
+  else delete stagedRemoves[key];
+  _persistStaged();
+  _updateRunBtn();
+  const tr=cb.closest('tr');
+  if(tr){
+    tr.classList.toggle('rm-row',cb.checked);
+    const cell=cb.parentNode;
+    let yes=cell.querySelector('.rm-yes');
+    if(cb.checked&&!yes){ yes=document.createElement('span'); yes.className='rm-yes'; yes.textContent='Yes'; cell.appendChild(yes); }
+    else if(!cb.checked&&yes){ yes.remove(); }
+  }
+}
+function runMapEdits(){
+  const payload={moves:stagedMoves,removes:Object.keys(stagedRemoves)};
+  _persistStaged();
+  // Download the staged corrections as JSON (anchor-download, mirrors downloadCSV).
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='collection-corrections.json';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  // Reflect in the table without a full re-render.
+  document.querySelectorAll('.map-table .rm-cb').forEach(cb=>{
+    const tr=cb.closest('tr');
+    if(tr)tr.classList.toggle('rm-row',!!stagedRemoves[cb.dataset.key]);
+  });
+  // Show "→ NewCat" tag on moved rows' OurCat cell.
+  document.querySelectorAll('.map-table .ourcat-cell').forEach(cell=>{
+    const tr=cell.closest('tr');
+    const sel=tr&&tr.querySelector('.mv-sel');
+    if(!sel)return;
+    const old=cell.querySelector('.mv-tag'); if(old)old.remove();
+    const mv=stagedMoves[sel.dataset.key];
+    if(mv&&CAT_INFO[mv]){ const tag=document.createElement('span'); tag.className='mv-tag'; tag.textContent='→ '+CAT_INFO[mv].label; cell.appendChild(tag); }
+  });
+  _updateRunBtn();
+  const note=document.getElementById('mapRunNote');
+  if(note)note.textContent=_pendingCount()+' corrections staged + downloaded — live apply comes in the next phase.';
+}
 
 // ── LOAD ───────────────────────────────────────────────────────────────────────
 async function loadData(){
@@ -1114,6 +1199,8 @@ function renderMap(){
   const fSe=(document.getElementById('mf-se')||{}).value||'';
   const fOc=(document.getElementById('mf-oc')||{}).value||'';
   const fOt=(document.getElementById('mf-ot')||{}).value||'';
+  const fBc=(document.getElementById('mf-bc')||{}).value||'';
+  const fBw=(document.getElementById('mf-bw')||{}).value||'';
   const hideNoise=document.getElementById('hideNoiseTog').checked;
   const globalSearch=(document.getElementById('brandSearch').value||'').toLowerCase();
 
@@ -1135,7 +1222,10 @@ function renderMap(){
       if(fSe&&!se.toLowerCase().includes(fSe.toLowerCase()))continue;
       if(fOc&&!oc.toLowerCase().includes(fOc.toLowerCase()))continue;
       if(fOt&&!ot.toLowerCase().includes(fOt.toLowerCase()))continue;
-      allRows.push({brand:b.name,host:b.host||'',handle:c.h,collTitle:c.t,catKey,ourLabel,dept,sw,ew,se,oc,ot,count:c.n});
+      const bc=c.bc||'',bw=c.bw||'';
+      if(fBc&&!bc.toLowerCase().includes(fBc.toLowerCase()))continue;
+      if(fBw&&!bw.toLowerCase().includes(fBw.toLowerCase()))continue;
+      allRows.push({brand:b.name,host:b.host||'',handle:c.h,collTitle:c.t,catKey,ourLabel,dept,sw,ew,se,oc,ot,bc,bw,count:c.n});
     }
   }
 
@@ -1167,8 +1257,16 @@ function renderMap(){
       `<span>${r.count}</span>`;
     const deptCls=r.dept==='kids'?'kids-boys':r.dept==='men'?'men':'women';
     const deptTxt=r.dept.charAt(0).toUpperCase()+r.dept.slice(1);
-    const ourLblCell=`<span class="ourcat-cell" data-brand="${esc(r.brand)}" data-cat="${esc(r.catKey)}" title="View one product to verify">${esc(r.ourLabel)}</span>`;
-    return`<tr>
+    const rowKey=r.host+'||'+r.handle;
+    const staged=stagedMoves[rowKey]||'';
+    const isRm=!!stagedRemoves[rowKey];
+    const mvTag=(staged&&CAT_INFO[staged])?` <span class="mv-tag">→ ${esc(CAT_INFO[staged].label)}</span>`:'';
+    const ourLblCell=`<span class="ourcat-cell" data-brand="${esc(r.brand)}" data-cat="${esc(r.catKey)}" title="View one product to verify">${esc(r.ourLabel)}</span>${mvTag}`;
+    // Move dropdown: options filled lazily on first focus. Pre-fill the staged option so it shows.
+    const mvPre=(staged&&CAT_INFO[staged])?`<option value="${esc(staged)}" selected>${esc(CAT_INFO[staged].label)}</option>`:'';
+    const mvSel=`<select class="mv-sel" data-key="${esc(rowKey)}" onfocus="mvFill(this)" onchange="mvSet(this)"><option value="">—</option>${mvPre}</select>`;
+    const rmCell=`<input type="checkbox" class="rm-cb" data-key="${esc(rowKey)}" onchange="rmSet(this)"${isRm?' checked':''}>${isRm?'<span class="rm-yes">Yes</span>':''}`;
+    return`<tr${isRm?' class="rm-row"':''}>
       <td class="col-brand">${esc(r.brand)}</td>
       <td><span class="dept-pill ${deptCls}" style="font-size:0.58rem">${esc(deptTxt)}</span></td>
       <td class="col-path">${r.sw?esc(r.sw):'<span class="no-label">·</span>'}</td>
@@ -1178,6 +1276,10 @@ function renderMap(){
       <td class="col-path">${r.ot?esc(r.ot):'<span class="no-label">·</span>'}</td>
       <td class="col-coll">${esc(r.collTitle)}</td>
       <td>${ourLblCell}</td>
+      <td class="col-bc">${r.bc?esc(r.bc):'<span class="no-label">·</span>'}</td>
+      <td class="col-bc">${r.bw?esc(r.bw):'<span class="no-label">·</span>'}</td>
+      <td class="col-mv">${mvSel}</td>
+      <td class="col-rm">${rmCell}</td>
       <td class="col-count">${countCell}</td>
     </tr>`;
   }).join('');
@@ -1203,35 +1305,43 @@ function renderMap(){
     ? `<b style="color:#ddd">${esc(selTxt)}</b> &nbsp;—&nbsp; <b style="color:#c9a96e">${totalPcs.toLocaleString()} pcs</b> across ${realColls.toLocaleString()} collections`
     : `${realColls.toLocaleString()} collections · <b style="color:#c9a96e">${totalPcs.toLocaleString()} pcs</b>${isFiltered?' &nbsp;(filtered selection)':' · every collection mapped to one real category'}`;
   mv.innerHTML=`
-    <div class="map-count">${head}</div>
+    <div class="map-count">${head}<button id="mapRunBtn" onclick="runMapEdits()">Run · ${_pendingCount()} pending</button><span id="mapRunNote" style="margin-left:10px;color:#7ab8ff;font-size:0.72rem"></span></div>
     <table class="map-table">
       <thead>
         <tr>
           ${sortHdr('brand','Brand')}
-          ${sortHdr('dept','Dept')}
-          ${sortHdr('sw','Stitch')}
-          ${sortHdr('ew','East/West')}
-          ${sortHdr('se','Season')}
-          ${sortHdr('oc','Occasion')}
-          ${sortHdr('ot','Others')}
-          ${sortHdr('collTitle',"Brand's Collection")}
-          ${sortHdr('ourLabel','Our Category')}
-          ${sortHdr('count','Count')}
+          ${sortHdr('dept','Dpt')}
+          ${sortHdr('sw','St')}
+          ${sortHdr('ew','E/W')}
+          ${sortHdr('se','Sea')}
+          ${sortHdr('oc','Occ')}
+          ${sortHdr('ot','Oth')}
+          ${sortHdr('collTitle','Coll')}
+          ${sortHdr('ourLabel','OurCat')}
+          ${sortHdr('bc','BrandPT')}
+          ${sortHdr('bw','BrandKW')}
+          <th>Move</th>
+          <th>Rmv</th>
+          ${sortHdr('count','Cnt')}
         </tr>
         <tr class="map-frow">
           <th><input type="text" id="mf-brand" oninput="renderMap()" placeholder="Brand…" value="${esc(fBrand)}"></th>
           <th><select id="mf-dept" onchange="renderMap()">${deptOpts}</select></th>
-          <th><input type="text" id="mf-sw" oninput="renderMap()" placeholder="Stitch…" value="${esc(fSw)}"></th>
+          <th><input type="text" id="mf-sw" oninput="renderMap()" placeholder="St…" value="${esc(fSw)}"></th>
           <th><input type="text" id="mf-ew" oninput="renderMap()" placeholder="E/W…" value="${esc(fEw)}"></th>
-          <th><input type="text" id="mf-se" oninput="renderMap()" placeholder="Season…" value="${esc(fSe)}"></th>
-          <th><input type="text" id="mf-oc" oninput="renderMap()" placeholder="Occasion…" value="${esc(fOc)}"></th>
-          <th><input type="text" id="mf-ot" oninput="renderMap()" placeholder="Others…" value="${esc(fOt)}"></th>
-          <th><input type="text" id="mf-coll" oninput="renderMap()" placeholder="Collection…" value="${esc(fColl)}"></th>
+          <th><input type="text" id="mf-se" oninput="renderMap()" placeholder="Sea…" value="${esc(fSe)}"></th>
+          <th><input type="text" id="mf-oc" oninput="renderMap()" placeholder="Occ…" value="${esc(fOc)}"></th>
+          <th><input type="text" id="mf-ot" oninput="renderMap()" placeholder="Oth…" value="${esc(fOt)}"></th>
+          <th><input type="text" id="mf-coll" oninput="renderMap()" placeholder="Coll…" value="${esc(fColl)}"></th>
           <th><select id="mf-label" onchange="renderMap()">${labelOpts}</select></th>
+          <th><input type="text" id="mf-bc" oninput="renderMap()" placeholder="PT…" value="${esc(fBc)}"></th>
+          <th><input type="text" id="mf-bw" oninput="renderMap()" placeholder="KW…" value="${esc(fBw)}"></th>
+          <th></th>
+          <th></th>
           <th></th>
         </tr>
       </thead>
-      <tbody>${tableRows||'<tr><td colspan="10" style="text-align:center;color:#666;padding:24px">No collections match filters.</td></tr>'}</tbody>
+      <tbody>${tableRows||'<tr><td colspan="14" style="text-align:center;color:#666;padding:24px">No collections match filters.</td></tr>'}</tbody>
     </table>`;
 
   // Click a category cell → preview one product of that brand+category (verify the mapping)
