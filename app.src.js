@@ -6271,6 +6271,7 @@
     } else {
       try { psSetShopGender(g); } catch(e){}
     }
+    try { psRenderColls(); } catch(e){}   // per-page collection tiles follow the rail (redesign)
   }
   window.psSetGender = psSetGender;
   // ── Everyday / Premium storefront (redesign P1) ───────────────────────────
@@ -6280,6 +6281,7 @@
     var btns = document.querySelectorAll('#psStoreRow .ps-store');
     for(var i=0;i<btns.length;i++){ var on = btns[i].getAttribute('data-store') === s; btns[i].classList.toggle('on', on); btns[i].setAttribute('aria-pressed', on?'true':'false'); }
     try { psApply(); } catch(e){}
+    try { psRenderColls(); } catch(e){}   // Luxe vs Home shows its own collections
   }
   window.psSetStore = psSetStore;
   // ── Rotating value banner (redesign P1) — static copy, accent-tinted, per-rotation ──
@@ -6344,33 +6346,146 @@
     { en:'Wedding',          bn:'ওয়েডিং',          se:'Bridal',      sb:'ব্রাইডাল',    kind:'cat', val:'bridal,lehenga' },
     { en:'Formal',           bn:'ফরমাল',           se:'Party',       sb:'পার্টি',      kind:'cat', val:'formal_emb_3pc,formal_emb_2pc' }
   ];
+  // Per-collection metadata layered onto PS_COLL_TILES above WITHOUT editing that array
+  // (keyed by English label). g = pages the tile shows on ('all' landing, w/m/k gender
+  // pages, 'luxe' premium store). e = emoji fallback. id = stable key (deep-link ?coll=).
+  const _PS_COLL_META = {
+    'New in this week': { id:'new',     g:['all','w','m','k','luxe'], e:'🆕' },
+    'Sale':             { id:'sale',    g:['all','w','m','k','luxe'], e:'🏷️' },
+    'Under 3000':       { id:'budget',  g:['all','w','m','k'],        e:'💰' },
+    'Eid edit':         { id:'eid',     g:['all','w'],                e:'✨' },
+    'Summer lawn':      { id:'lawn',    g:['all','w'],                e:'🌸' },
+    'Winter':           { id:'winter',  g:['w'],                      e:'🧣' },
+    'Wedding':          { id:'wedding', g:['all','w'],                e:'💍' },
+    'Formal':           { id:'formal',  g:['w'],                      e:'👗' }
+  };
+  // Extra collections for the Men / Kids / Luxe pages + the always-visible Couple tile.
+  // Couple uses a curated his+hers photo and a free-text search ('couple') because its
+  // category isn't indexed yet — its product data lands with the category cleanup.
+  const PS_COLL_EXTRA = [
+    { id:'couple', g:['all','w','m'], en:'Couple', bn:'কাপল', se:'His + Hers', sb:'হিজ ও হার্স', e:'💑', kind:'q', val:'couple', img:'https://cdn.shopify.com/s/files/1/0508/8994/9390/files/111_f72fde77-5748-4b63-a44c-54f24de80244.png?v=1739807967' },
+    { id:'coord',  g:['w'], en:'Co-ord sets', bn:'কো-অর্ড সেট', se:'2-piece', sb:'২ পিস', e:'🧶', kind:'cat', val:'shirt_trouser_2pc,coord_western' },
+    { id:'mens_eastern', g:['m'], en:'Kurta & shalwar', bn:'কুর্তা ও শালওয়ার', se:'Eastern', sb:'ইস্টার্ন', e:'👔', kind:'cat', val:'mens_kurta,mens_shalwar_kameez' },
+    { id:'mens_wedding', g:['m'], en:'Wedding for him', bn:'বরের পোশাক', se:'Sherwani', sb:'শেরওয়ানি', e:'🤵', kind:'cat', val:'mens_sherwani,mens_waistcoat,mens_suit' },
+    { id:'mens_casual', g:['m'], en:'Smart casual', bn:'স্মার্ট ক্যাজুয়াল', se:'Shirts & polos', sb:'শার্ট', e:'👕', kind:'cat', val:'mens_shirt' },
+    { id:'kids_girls', g:['k'], en:'Girls', bn:'মেয়েদের', se:'Frocks & sets', sb:'ফ্রক ও সেট', e:'👧', kind:'cat', val:'kids_girls_eastern' },
+    { id:'kids_boys', g:['k'], en:'Boys', bn:'ছেলেদের', se:'Kurta & sets', sb:'কুর্তা ও সেট', e:'👦', kind:'cat', val:'kids_boys_eastern' },
+    { id:'kids_party', g:['k'], en:'Party & formal', bn:'পার্টি ও ফরমাল', se:'Occasion', sb:'অনুষ্ঠান', e:'🎀', kind:'cat', val:'kids_girls_formal,kids_boys_formal' },
+    { id:'luxe_designer', g:['luxe','all'], en:'Designer picks', bn:'ডিজাইনার পিকস', se:'Luxe', sb:'লাক্স', e:'👑', kind:'price', val:'5' },
+    { id:'luxe_bridal', g:['luxe'], en:'Bridal couture', bn:'ব্রাইডাল', se:'Heavy formal', sb:'ভারী ফরমাল', e:'💎', kind:'cat', val:'bridal,heavy_formal_3pc' },
+    { id:'luxe_handwork', g:['luxe','w'], en:'Hand embroidery', bn:'হ্যান্ড এমব্রয়ডারি', se:'Adda work', sb:'আড্ডা ওয়ার্ক', e:'🪡', kind:'cat', val:'handmade_emb' }
+  ];
+  // Merge meta onto base tiles + append extras → the full per-page collection list.
+  function _psAllColls(){
+    var base = PS_COLL_TILES.map(function(t){ var m = _PS_COLL_META[t.en] || {}; var o = {}; for(var k in t) o[k]=t[k]; for(var k2 in m) o[k2]=m[k2]; return o; });
+    return base.concat(PS_COLL_EXTRA);
+  }
+  let _psActiveColl = '';
+  let _psCollImg = {};
+  try { _psCollImg = JSON.parse(localStorage.getItem('psb_coll_thumbs_v1') || '{}') || {}; } catch(e){ _psCollImg = {}; }
+  function _psCollPage(){
+    try{
+      if(typeof psStore !== 'undefined' && psStore === 'premium') return 'luxe';
+      var dg = document.documentElement.getAttribute('data-gender');
+      return dg || 'all';
+    }catch(e){ return 'all'; }
+  }
+  function _psCollQS(t){
+    if(t.kind === 'cat')   return 'cat=' + encodeURIComponent(t.val);
+    if(t.kind === 'price') return 'price=' + encodeURIComponent(t.val);
+    if(t.kind === 'sale')  return 'sale=1';
+    if(t.kind === 'new')   return 'new=1';
+    if(t.kind === 'q')     return 'q=' + encodeURIComponent(t.val);
+    return '';
+  }
+  // Render the per-page collection strip. Each tile = a saved multi-brand filter; tapping it
+  // opens the collection VIEW (psOpenColl). Photos pull from the live API + cache (curated for couple).
   function psRenderColls(){
     var el = document.getElementById('psColls'); if(!el) return;
     var bn = (typeof _lang !== 'undefined' && _lang === 'bn');
-    el.innerHTML = PS_COLL_TILES.map(function(t){
+    var page = _psCollPage();
+    var tiles = _psAllColls().filter(function(t){ return t.g && t.g.indexOf(page) !== -1; });
+    var hd = document.querySelector('.ps-colls-hd'); if(hd) hd.style.display = tiles.length ? '' : 'none';
+    el.innerHTML = tiles.map(function(t){
       var lbl = bn ? t.bn : t.en, sub = bn ? t.sb : t.se;
-      var arg = (t.val !== undefined) ? (",'" + String(t.val).replace(/'/g,"\\'") + "'") : '';
-      return '<button type="button" class="ps-coll" onclick="psCollGo(\''+t.kind+'\''+arg+')"><span class="ps-coll-lbl">'+esc(lbl)+'</span><span class="ps-coll-sub">'+esc(sub)+'</span></button>';
+      var src = t.img || (_psCollImg[t.id] && _psCollImg[t.id].u);
+      var img = src ? '<img loading="lazy" src="'+esc(thumbUrl(src))+'" alt="'+esc(lbl)+'" onerror="this.remove()">' : '';
+      return '<button type="button" class="ps-coll'+(t.id===_psActiveColl?' on':'')+'" data-coll="'+esc(t.id)+'" onclick="psOpenColl(this.getAttribute(\'data-coll\'))">'
+        + '<span class="ps-coll-img" data-emoji="'+esc(t.e||'🛍️')+'">'+img+'</span>'
+        + '<span class="ps-coll-txt"><span class="ps-coll-lbl">'+esc(lbl)+'</span><span class="ps-coll-sub">'+esc(sub)+'</span></span></button>';
     }).join('');
+    psCollLoadThumbs(tiles);
   }
-  function psCollGo(kind, val){
+  function psCollPaint(id, url){
+    var tile = document.querySelector('#psColls .ps-coll[data-coll="'+id+'"]'); if(!tile) return;
+    var box = tile.querySelector('.ps-coll-img'); if(!box || box.querySelector('img')) return;
+    var im = new Image(); im.loading='lazy'; im.alt=id; im.onerror=function(){ this.remove(); }; im.src = thumbUrl(url); box.appendChild(im);
+  }
+  function psCollLoadThumbs(tiles){
+    if(typeof psApiMode === 'undefined' || !psApiMode) return;   // catalog.json mode: emoji fallback
+    tiles.forEach(function(t){
+      if(t.img) return;   // curated photo already shown
+      var cc = _psCollImg[t.id];
+      if(cc && cc.u && (Date.now() - cc.t < 14*24*3600*1000)){ psCollPaint(t.id, cc.u); return; }
+      var qs = _psCollQS(t); if(!qs) return;
+      fetch(psSearchBase() + '?' + qs + '&pageSize=6&page=0', { cache:'default' })
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .then(function(j){ var arr=(j&&j.products)||[]; var pick = arr.find(function(p){ return p&&p.img; }); if(pick&&pick.img){ _psCollImg[t.id]={u:pick.img,t:Date.now()}; try{ localStorage.setItem('psb_coll_thumbs_v1', JSON.stringify(_psCollImg)); }catch(e){} psCollPaint(t.id, pick.img); } })
+        .catch(function(){});
+    });
+  }
+  // Apply a collection's filter to the grid (no nav).
+  function _psCollApply(t){
     try { psSaleOnly = false; psNewOnly = false; psSort = ''; } catch(e){}
-    try { var a=document.getElementById('psSearchMobile'), b=document.getElementById('psSearchDesktop'); if(a)a.value=''; if(b)b.value=''; } catch(e){}
-    if(kind === 'q'){
-      if(window.psSearchInput) psSearchInput(val);
-    } else if(kind === 'cat'){
-      // Occasion/season tiles → set real category keys (keeps the storefront price band).
-      psSel = { prices:new Set(psSel.prices), cats:new Set(String(val).split(',')), brands:new Set() };
-      try { psBuildCatFilter(); psBuildBrandFilter(); psBuildPriceFilter(); psApply(); } catch(e){}
-    } else {
-      if(kind === 'new') psNewOnly = true;
-      else if(kind === 'sale') psSaleOnly = true;
-      else if(kind === 'price') psSel.prices = new Set([parseInt(val, 10)]);
-      try { psBuildSort(); psBuildPriceFilter(); psApply(); } catch(e){}
+    try { psQuery=''; psSizeQ=''; var a=document.getElementById('psSearchMobile'), b=document.getElementById('psSearchDesktop'); if(a)a.value=''; if(b)b.value=''; } catch(e){}
+    if(t.kind === 'q'){
+      psSel = { prices:new Set(), cats:new Set(), brands:new Set() };
+      if(window.psSearchInput) psSearchInput(t.val); else { try { psApply(); } catch(e){} }
+      return;
     }
-    try { var g = document.querySelector('.ps-results') || document.getElementById('psGrid'); if(g) g.scrollIntoView({ behavior:'smooth', block:'start' }); } catch(e){}
+    if(t.kind === 'cat'){
+      psSel = { prices:new Set(psSel.prices), cats:new Set(String(t.val).split(',')), brands:new Set() };
+    } else {
+      psSel = { prices:new Set(), cats:new Set(), brands:new Set() };
+      if(t.kind === 'new') psNewOnly = true;
+      else if(t.kind === 'sale') psSaleOnly = true;
+      else if(t.kind === 'price') psSel.prices = new Set([parseInt(t.val, 10)]);
+    }
+    try { psBuildCatFilter(); psBuildBrandFilter(); psBuildPriceFilter(); psBuildSort(); psApply(); } catch(e){}
   }
-  window.psCollGo = psCollGo; window.psRenderColls = psRenderColls;
+  function psShowCollHdr(t){
+    var el = document.getElementById('psCollHdr'); if(!el) return;
+    var bn = (typeof _lang !== 'undefined' && _lang === 'bn');
+    var lbl = bn ? t.bn : t.en;
+    el.innerHTML = '<span class="ps-collhdr-l"><span class="ps-collhdr-e">'+esc(t.e||'🛍️')+'</span><span class="ps-collhdr-t">'+esc(lbl)+'</span></span>'
+      + '<button type="button" class="ps-collhdr-x" onclick="psClearColl()" aria-label="Clear">✕</button>';
+    el.style.display = 'flex';
+  }
+  // Open a collection as a dedicated VIEW: products browse + filter + title banner + transition + deep-link.
+  function psOpenColl(id){
+    var t = _psAllColls().find(function(x){ return x.id === id; }); if(!t) return;
+    _psActiveColl = id;
+    try{ showBrowseView(); }catch(e){}
+    try{ switchBrowse('products'); }catch(e){}
+    _psCollApply(t);
+    psShowCollHdr(t);
+    try{ psRenderColls(); }catch(e){}
+    try{ var r = document.querySelector('.ps-results'); if(r){ r.classList.remove('ps-coll-enter'); void r.offsetWidth; r.classList.add('ps-coll-enter'); } }catch(e){}
+    try{ var u = new URL(location.href); u.searchParams.set('coll', id); history.replaceState(null,'',u.toString()); }catch(e){}
+    try{ if(typeof psScrollToResults==='function') psScrollToResults(); else if(typeof psScrollGridUnderCarousel==='function') psScrollGridUnderCarousel(); }catch(e){}
+  }
+  function psClearColl(){
+    _psActiveColl = '';
+    var el = document.getElementById('psCollHdr'); if(el) el.style.display = 'none';
+    try { psSaleOnly=false; psNewOnly=false; psSort=''; psQuery=''; psSizeQ=''; } catch(e){}
+    psSel = { prices:new Set(), cats:new Set(), brands:new Set() };
+    try { psBuildCatFilter(); psBuildBrandFilter(); psBuildPriceFilter(); psBuildSort(); psApply(); } catch(e){}
+    try{ var u = new URL(location.href); u.searchParams.delete('coll'); history.replaceState(null,'',u.toString()); }catch(e){}
+    try{ psRenderColls(); }catch(e){}
+  }
+  // Legacy shim (any older inline onclicks): apply a kind/val filter directly.
+  function psCollGo(kind, val){ _psCollApply({ kind:kind, val:val }); }
+  window.psOpenColl = psOpenColl; window.psClearColl = psClearColl; window.psCollGo = psCollGo; window.psRenderColls = psRenderColls;
   // ── Reusable promise / trust strip (redesign P1) — drop a <div class="ps-promises" id="..">
   // anywhere and call psRenderPromises(el). Promotes PakPoshak's promises; used on the search page. ──
   const PS_PROMISES = [
@@ -7887,7 +8002,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-29-icons';
+  const PSB_BUILD = '2026-06-29-colls';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
@@ -7930,6 +8045,7 @@
     document.body.appendChild(tag);
     try { psBannerStart(); } catch(e){}   // start the rotating value banner (redesign P1)
     try { psRenderColls(); } catch(e){}   // render the collection-first home tiles
+    try { var _cq = new URLSearchParams(location.search).get('coll'); if(_cq && window.psOpenColl) psOpenColl(_cq); } catch(e){}   // deep-link ?coll=<id> (posters/links)
     try { psRenderPromises(); } catch(e){}   // render the promise/trust strip (search page)
     try { psFiltersInit(); } catch(e){}      // move the filter containers into the ▦ sheet
     try { psMoveGenInd(); } catch(e){}                                  // place the sliding gender underline (#2)

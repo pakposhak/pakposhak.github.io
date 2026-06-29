@@ -195,10 +195,22 @@
     .ps-colls-hd{font-size:0.95rem;font-weight:800;color:var(--txt);margin:0 0 8px}
     .ps-colls{display:flex;gap:9px;overflow-x:auto;margin:0 0 14px;padding-bottom:2px;scrollbar-width:none}
     .ps-colls::-webkit-scrollbar{display:none}
-    .ps-coll{flex:0 0 auto;display:flex;flex-direction:column;gap:2px;min-width:122px;background:var(--surface);border:1px solid var(--bdr-med);border-radius:12px;padding:13px 14px;cursor:pointer;text-align:left}
-    .ps-coll-lbl{font-weight:800;font-size:0.88rem;color:var(--accent)}
-    .ps-coll-sub{font-size:0.7rem;color:var(--txt-muted);font-weight:600}
-    .ps-coll:active{border-color:var(--accent)}
+    .ps-coll{flex:0 0 auto;display:flex;flex-direction:column;width:148px;background:var(--surface);border:1px solid var(--bdr-med);border-radius:12px;overflow:hidden;padding:0;cursor:pointer;text-align:left;font-family:inherit;transition:transform .12s,border-color .12s}
+    .ps-coll:active{transform:scale(.98);border-color:var(--accent)}
+    .ps-coll.on{border-color:var(--accent);box-shadow:0 0 0 1.5px var(--accent)}
+    .ps-coll-img{position:relative;width:100%;aspect-ratio:1.5/1;background:var(--raised);overflow:hidden}
+    .ps-coll-img::before{content:attr(data-emoji);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.7rem;opacity:.5}
+    .ps-coll-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top}
+    .ps-coll-txt{display:flex;flex-direction:column;gap:1px;padding:8px 11px 10px}
+    .ps-coll-lbl{font-weight:800;font-size:0.84rem;color:var(--accent);line-height:1.2}
+    .ps-coll-sub{font-size:0.68rem;color:var(--txt-muted);font-weight:600}
+    .ps-collhdr{display:none;align-items:center;justify-content:space-between;gap:10px;margin:2px 0 10px;padding:9px 13px;background:var(--surface);border:1px solid var(--accent);border-radius:11px}
+    .ps-collhdr-l{display:flex;align-items:center;gap:8px;min-width:0}
+    .ps-collhdr-e{font-size:1.05rem;flex:0 0 auto}
+    .ps-collhdr-t{font-weight:800;font-size:0.95rem;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ps-collhdr-x{flex:0 0 auto;width:26px;height:26px;border-radius:50%;border:1px solid var(--bdr-med);background:var(--raised);color:var(--txt);font-size:0.78rem;cursor:pointer;line-height:1}
+    @keyframes psCollEnter{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+    .ps-results.ps-coll-enter{animation:psCollEnter .3s ease-out}
     /* Reusable promise / trust strip (redesign P1). */
     .ps-promises{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:0 0 14px}
     .ps-promise{display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--bdr);border-radius:11px;padding:11px}
