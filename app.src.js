@@ -2480,7 +2480,7 @@
       hiw_confirm_pay:'Confirm price & pay (bKash/Nagad)',
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search 150+ Pakistani brands…',
-      tab_brands:'Browse brands', tab_products:'Browse products', gen_all:'All', gen_women:'Women', gen_men:'Men', gen_kids:'Kids', menu_language:'Language', menu_theme:'Theme', menu_guide:'Guide', search_bar_ph:'Search products, brands…', search_page_ph:'Search products and 150+ brands', sp_remind_t:"Check any product's price in PKR", sp_remind_d:"Found it on a brand's own site? Paste the link to see the real price of any listed brand in PKR.", sp_paste:'Paste a product link', sp_visual:'Visual search', sp_fit:'Fit assistant', sp_soon:'Coming soon', sp_brands:'Browse all 150+ brands ›', sp_colls_hd:'Curated collections', sp_checkprice:'check price ›', bb_back:'‹ Back to products', store_everyday:'Everyday', store_premium:'Premium', colls_hd:'Collections', filters_sort:'Filters & sort', filters_done:'Done', sort_hd:'Sort', order_ways:'Two ways to order: tap + Add on anything in our listing, or send a product link from any of our 140+ brands.',
+      tab_brands:'Browse brands', tab_products:'Browse products', gen_all:'All', gen_women:'Women', gen_men:'Men', gen_kids:'Kids', menu_language:'Language', menu_theme:'Theme', menu_guide:'Guide', search_bar_ph:'Search products, brands…', search_page_ph:'Search products and 150+ brands', sp_remind_t:"Check any product's price in PKR", sp_remind_d:"Found it on a brand's own site? Paste the link to see the real price of any listed brand in PKR.", sp_paste:'Paste a product link', sp_visual:'Visual search', sp_fit:'Fit assistant', sp_soon:'Coming soon', sp_brands:'Browse all 150+ brands ›', sp_colls_hd:'Curated collections', sp_checkprice:'check price ›', bb_back:'‹ Back to products', store_everyday:'Everyday', store_premium:'Premium', colls_hd:'Collections',prodcat_hd:'Product category', filters_sort:'Filters & sort', filters_done:'Done', sort_hd:'Sort', order_ways:'Two ways to order: tap + Add on anything in our listing, or send a product link from any of our 140+ brands.',
       intro_ios:"On iPhone: on a brand's product page, tap Share, then Add to PakPoshak. (One-time: add the PakPoshak shortcut.) Or copy the link and paste it here.",
       intro_android:"On Android: install PakPoshak, then on a brand's product page tap Share, then PakPoshak. Or copy the link and paste it here.",
       intro_desktop:"On desktop: paste a product link below, or add the Send-cart bookmark to grab a whole cart at once.",
@@ -2554,7 +2554,7 @@
       hiw_confirm_pay:'দাম নিশ্চিত করে পেমেন্ট (বিকাশ/নগদ)',
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
       lbl_browse:'একটি ব্র্যান্ড দেখুন', search_ph:'🔍 ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
-      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', gen_all:'সব', gen_women:'নারী', gen_men:'পুরুষ', gen_kids:'শিশু', menu_language:'ভাষা', menu_theme:'থিম', menu_guide:'গাইড', search_bar_ph:'পণ্য, ব্র্যান্ড খুঁজুন…', search_page_ph:'পণ্য ও ১৫০+ ব্র্যান্ড খুঁজুন', sp_remind_t:'যেকোনো পণ্যের দাম PKR-তে যাচাই করুন', sp_remind_d:'ব্র্যান্ডের নিজস্ব সাইটে পেয়েছেন? লিংক পেস্ট করে যেকোনো লিস্টেড ব্র্যান্ডের আসল দাম PKR-তে দেখুন।', sp_colls_hd:'কিউরেটেড কালেকশন', sp_paste:'পণ্যের লিংক পেস্ট করুন', sp_visual:'ভিজ্যুয়াল সার্চ', sp_fit:'ফিট অ্যাসিস্ট্যান্ট', sp_soon:'শীঘ্রই আসছে', sp_brands:'সব ১৫০+ ব্র্যান্ড দেখুন ›', sp_checkprice:'দাম দেখুন ›', bb_back:'‹ পণ্যে ফিরে যান', store_everyday:'এভরিডে', store_premium:'প্রিমিয়াম', colls_hd:'কালেকশন', filters_sort:'ফিল্টার ও সর্ট', filters_done:'সম্পন্ন', sort_hd:'সর্ট', order_ways:'দুইভাবে অর্ডার: আমাদের লিস্টে যেকোনো পণ্যে + Add চাপুন, অথবা ১৪০+ ব্র্যান্ডের যেকোনো পণ্যের লিংক পাঠান।',
+      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', gen_all:'সব', gen_women:'নারী', gen_men:'পুরুষ', gen_kids:'শিশু', menu_language:'ভাষা', menu_theme:'থিম', menu_guide:'গাইড', search_bar_ph:'পণ্য, ব্র্যান্ড খুঁজুন…', search_page_ph:'পণ্য ও ১৫০+ ব্র্যান্ড খুঁজুন', sp_remind_t:'যেকোনো পণ্যের দাম PKR-তে যাচাই করুন', sp_remind_d:'ব্র্যান্ডের নিজস্ব সাইটে পেয়েছেন? লিংক পেস্ট করে যেকোনো লিস্টেড ব্র্যান্ডের আসল দাম PKR-তে দেখুন।', sp_colls_hd:'কিউরেটেড কালেকশন', sp_paste:'পণ্যের লিংক পেস্ট করুন', sp_visual:'ভিজ্যুয়াল সার্চ', sp_fit:'ফিট অ্যাসিস্ট্যান্ট', sp_soon:'শীঘ্রই আসছে', sp_brands:'সব ১৫০+ ব্র্যান্ড দেখুন ›', sp_checkprice:'দাম দেখুন ›', bb_back:'‹ পণ্যে ফিরে যান', store_everyday:'এভরিডে', store_premium:'প্রিমিয়াম', colls_hd:'কালেকশন',prodcat_hd:'প্রোডাক্ট ক্যাটাগরি', filters_sort:'ফিল্টার ও সর্ট', filters_done:'সম্পন্ন', sort_hd:'সর্ট', order_ways:'দুইভাবে অর্ডার: আমাদের লিস্টে যেকোনো পণ্যে + Add চাপুন, অথবা ১৪০+ ব্র্যান্ডের যেকোনো পণ্যের লিংক পাঠান।',
       intro_ios:'আইফোনে: ব্র্যান্ডের পণ্য পেজে Share চেপে Add to PakPoshak বেছে নিন। (একবার: PakPoshak শর্টকাট যোগ করুন।) অথবা লিংক কপি করে এখানে পেস্ট করুন।',
       intro_android:'অ্যান্ড্রয়েডে: PakPoshak ইনস্টল করুন, তারপর ব্র্যান্ডের পণ্য পেজে Share চেপে PakPoshak বেছে নিন। অথবা লিংক কপি করে এখানে পেস্ট করুন।',
       intro_desktop:'ডেস্কটপে: নিচে পণ্যের লিংক পেস্ট করুন, অথবা পুরো কার্ট একসাথে আনতে Send-cart বুকমার্ক যোগ করুন।',
@@ -6173,21 +6173,21 @@
     // ── MEN ──
     { g:'m', key:'mens_kurta',           en:'Kurta',           bn:'কুর্তা',           e:'👔' },
     { g:'m', key:'mens_shalwar_kameez',  en:'Shalwar Kameez',  bn:'শালওয়ার কামিজ',   e:'🧥' },
-    { g:'m', key:'mens_shirt',           en:'Men Tops',        bn:'মেনস টপস',         e:'👔' },
+    { g:'m', key:'mens_shirt', img:'https://cdn.shopify.com/s/files/1/0752/0442/8072/files/NAPB111-StoneGrey-02.webp?v=1782303529',           en:'Men Tops',        bn:'মেনস টপস',         e:'👔' },
     { g:'m', key:'mens_trouser', cats:['mens_trouser','mens_jeans'], en:'Men Bottoms', bn:'মেনস বটমস', e:'👖' },
     { g:'m', key:'mens_waistcoat',       en:'Waistcoat',       bn:'ওয়েস্টকোট',        e:'🦺' },
     { g:'m', key:'mens_sherwani',        en:'Sherwani',        bn:'শেরওয়ানি',         e:'🤵' },
     { g:'m', key:'mens_suit',            en:'Suit',            bn:'স্যুট',            e:'🤵' },
-    { g:'m', key:'mens_unstitched',      en:'Unstitched',      bn:'আনস্টিচড',         e:'🧵' },
+    { g:'m', key:'mens_unstitched', img:'https://cdn.shopify.com/s/files/1/0872/1278/5848/files/MU2PBW25A9O4-052A9509.jpg?v=1780385727',      en:'Unstitched',      bn:'আনস্টিচড',         e:'🧵' },
     { g:'m', key:'couple_collection', img:'https://cdn.shopify.com/s/files/1/0508/8994/9390/files/111_f72fde77-5748-4b63-a44c-54f24de80244.png?v=1739807967', en:'Couple Collection', bn:'কাপল কালেকশন',    e:'💑' },
     // ── KIDS ──
-    { g:'k', key:'kids_girls_eastern',   en:'Girls Eastern',   bn:'মেয়েদের ইস্টার্ন',  e:'👧' },
+    { g:'k', key:'kids_girls_eastern', img:'https://cdn.shopify.com/s/files/1/0488/9201/8848/files/BK12604GEWS29668_1.jpg?v=1782194593',   en:'Girls Eastern',   bn:'মেয়েদের ইস্টার্ন',  e:'👧' },
     { g:'k', key:'kids_boys_eastern',    en:'Boys Eastern',    bn:'ছেলেদের ইস্টার্ন',   e:'👦' },
-    { g:'k', key:'kids_girls_western',   en:'Girls Western',   bn:'মেয়েদের ওয়েস্টার্ন', e:'👧' },
-    { g:'k', key:'kids_boys_western',    en:'Boys Western',    bn:'ছেলেদের ওয়েস্টার্ন',  e:'👦' },
+    { g:'k', key:'kids_girls_western', img:'https://cdn.shopify.com/s/files/1/0488/9201/8848/files/BK12602LGWD7591_1.jpg?v=1782194142',   en:'Girls Western',   bn:'মেয়েদের ওয়েস্টার্ন', e:'👧' },
+    { g:'k', key:'kids_boys_western', img:'https://cdn.shopify.com/s/files/1/0581/7234/2437/files/DSC02072.jpg?v=1770813392',    en:'Boys Western',    bn:'ছেলেদের ওয়েস্টার্ন',  e:'👦' },
     { g:'k', key:'kids_girls_formal',    en:'Girls Formal',    bn:'মেয়েদের ফরমাল',     e:'🎀' },
     { g:'k', key:'kids_boys_formal',     en:'Boys Formal',     bn:'ছেলেদের ফরমাল',     e:'🎩' },
-    { g:'k', key:'kids_infant',          en:'Infant',          bn:'শিশু (০–২ বছর)',    e:'👶' }
+    { g:'k', key:'kids_infant', img:'https://cdn.shopify.com/s/files/1/0589/9770/2842/files/1_9d47a9fb-9335-4f64-844c-df79ba56ed9d.jpg?v=1776414421',          en:'Infant',          bn:'শিশু (০–২ বছর)',    e:'👶' }
   ];
   // Women/Men/Kids/West classifier tabs for the strip. Default = women (the app's lead department).
   // 'x' = West: a cross-gender WESTERN-wear tab gathering women's + men's western categories (req).
@@ -8076,7 +8076,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-29-srchpost';
+  const PSB_BUILD = '2026-06-29-iconsui';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
