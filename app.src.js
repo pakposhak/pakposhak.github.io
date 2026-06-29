@@ -6272,6 +6272,7 @@
       try { psSetShopGender(g); } catch(e){}
     }
     try { psRenderColls(); } catch(e){}   // per-page collection tiles follow the rail (redesign)
+    try { _psBanImgs=[]; _psBanIdx=0; psRenderBanner(); } catch(e){}   // page-aware hero posters refresh per page
   }
   window.psSetGender = psSetGender;
   // ── Everyday / Premium storefront (redesign P1) ───────────────────────────
@@ -6282,6 +6283,7 @@
     for(var i=0;i<btns.length;i++){ var on = btns[i].getAttribute('data-store') === s; btns[i].classList.toggle('on', on); btns[i].setAttribute('aria-pressed', on?'true':'false'); }
     try { psApply(); } catch(e){}
     try { psRenderColls(); } catch(e){}   // Luxe vs Home shows its own collections
+    try { _psBanImgs=[]; _psBanIdx=0; psRenderBanner(); } catch(e){}   // page-aware hero posters refresh per store
   }
   window.psSetStore = psSetStore;
   // ── Rotating value banner (redesign P1) — static copy, accent-tinted, per-rotation ──
@@ -6293,6 +6295,49 @@
     { en_t:'No minimum order', en_s:'One piece or ten, we bring it for you. Delivered across Bangladesh.',
       bn_t:'কোনো ন্যূনতম অর্ডার নেই', bn_s:'এক পিস হোক বা দশ, আমরা এনে দিই। সারা বাংলাদেশে ডেলিভারি।' }
   ];
+  // ── Page-aware HERO posters (req: posters change per page) ─────────────────
+  // 8 product pages = {Home, Luxe} x {All, Women, Men, Kids}. Each shows its own
+  // hero set; home-all falls back to PS_BANNERS above. Images come from the page's
+  // own feed (psFillBannerImgs) so Women shows women, Men shows men, etc. Starting
+  // content — relocate/extend freely; the 3 search + 1 brand poster slots come next.
+  const PS_POSTERS = {
+    'home-w': [
+      { en_t:'Lawn season is here', en_s:'Fresh unstitched and ready-to-wear from 150+ Pakistani brands, real PKR prices.', bn_t:'লন সিজন এসে গেছে', bn_s:'১৫০+ পাকিস্তানি ব্র্যান্ডের নতুন আনস্টিচড ও রেডি-টু-ওয়্যার, আসল পিকেআর দামে।' },
+      { en_t:'Eid and festive, sorted', en_s:'Embroidered 3-piece, formals and party wear, delivered door to door.', bn_t:'ঈদ ও উৎসব, সব এক জায়গায়', bn_s:'এমব্রয়ডারি ৩ পিস, ফরমাল ও পার্টি ওয়্যার, ডোর টু ডোর ডেলিভারি।' }
+    ],
+    'home-m': [
+      { en_t:'Menswear, finally here', en_s:'Kurta, shalwar kameez, sherwani and smart casuals from top Pakistani labels.', bn_t:'মেনস ওয়্যার, অবশেষে', bn_s:'শীর্ষ পাকিস্তানি ব্র্যান্ডের কুর্তা, শালওয়ার কামিজ, শেরওয়ানি ও ক্যাজুয়াল।' },
+      { en_t:'From kurta to sherwani', en_s:'Everyday to wedding, genuine pieces at real Pakistani prices.', bn_t:'কুর্তা থেকে শেরওয়ানি', bn_s:'প্রতিদিন থেকে বিয়ে, আসল পণ্য আসল পাকিস্তানি দামে।' }
+    ],
+    'home-k': [
+      { en_t:'Dress up the little ones', en_s:'Boys and girls, eastern and western, infant to teen, Pakistan to your door.', bn_t:'ছোট্টদের সাজান', bn_s:'ছেলে ও মেয়ে, ইস্টার্ন ও ওয়েস্টার্ন, শিশু থেকে কিশোর, পাকিস্তান থেকে আপনার দরজায়।' },
+      { en_t:'Party-ready kids', en_s:'Festive frocks and formal sets for every occasion.', bn_t:'পার্টি-রেডি কিডস', bn_s:'প্রতিটি অনুষ্ঠানের জন্য উৎসবের ফ্রক ও ফরমাল সেট।' }
+    ],
+    'luxe-all': [
+      { en_t:'The Luxe Edit', en_s:'Pakistan\'s designer houses, curated. Genuine luxury at real PKR prices.', bn_t:'দ্য লাক্স এডিট', bn_s:'পাকিস্তানের ডিজাইনার হাউস, কিউরেটেড। আসল লাক্সারি আসল পিকেআর দামে।' },
+      { en_t:'Designer, delivered', en_s:'Elan, Sana Safinaz, Asim Jofa and more, door to door across Bangladesh.', bn_t:'ডিজাইনার, ডেলিভারড', bn_s:'এলান, সানা সাফিনাজ, আসিম জোফা ও আরও, সারা বাংলাদেশে।' }
+    ],
+    'luxe-w': [
+      { en_t:'Bridal and couture', en_s:'Heavy formals, bridal and velvet from Pakistan\'s finest ateliers.', bn_t:'ব্রাইডাল ও কুতুর', bn_s:'পাকিস্তানের সেরা অ্যাটেলিয়ারের ভারী ফরমাল, ব্রাইডাল ও ভেলভেট।' },
+      { en_t:'Hand-embroidered masterpieces', en_s:'Adda and chikankari artistry, with the real PKR price shown.', bn_t:'হাতে এমব্রয়ডারি মাস্টারপিস', bn_s:'আড্ডা ও চিকনকারি শিল্প, আসল পিকেআর দাম সহ।' }
+    ],
+    'luxe-m': [
+      { en_t:'Groom and formal', en_s:'Sherwani, prince coats and designer suits for the big day.', bn_t:'বর ও ফরমাল', bn_s:'বিশেষ দিনের জন্য শেরওয়ানি, প্রিন্স কোট ও ডিজাইনার স্যুট।' },
+      { en_t:'Luxe menswear', en_s:'Premium Pakistani labels, genuine and delivered.', bn_t:'লাক্স মেনস ওয়্যার', bn_s:'প্রিমিয়াম পাকিস্তানি ব্র্যান্ড, আসল ও ডেলিভারড।' }
+    ],
+    'luxe-k': [
+      { en_t:'Little VIPs', en_s:'Premium party and formal wear for kids, from Pakistan\'s best.', bn_t:'লিটল ভিআইপি', bn_s:'পাকিস্তানের সেরা থেকে বাচ্চাদের প্রিমিয়াম পার্টি ও ফরমাল ওয়্যার।' },
+      { en_t:'Dressed for the occasion', en_s:'Festive sets that match the grown-ups.', bn_t:'অনুষ্ঠানের সাজ', bn_s:'বড়দের সাথে মানানসই উৎসবের সেট।' }
+    ]
+  };
+  function _psPosterPage(){
+    try{
+      var store = (typeof psStore !== 'undefined' && psStore === 'premium') ? 'luxe' : 'home';
+      var dg = document.documentElement.getAttribute('data-gender') || 'all';
+      return store + '-' + dg;
+    }catch(e){ return 'home-all'; }
+  }
+  function _psPosterSet(){ return PS_POSTERS[_psPosterPage()] || PS_BANNERS; }
   let _psBanIdx = 0, _psBanT = null, _psBanImgs = [];
   // Fill the two hero images from the loaded catalogue (once). Picks photos a little down the feed so
   // they differ from the first grid rows. Re-renders the banner when ready.
@@ -6309,18 +6354,19 @@
   function psRenderBanner(){
     var el = document.getElementById('psBanner'); if(!el) return;
     var bn = (typeof _lang !== 'undefined' && _lang === 'bn');
-    el.innerHTML = PS_BANNERS.map(function(b,i){
+    var SET = _psPosterSet();
+    el.innerHTML = SET.map(function(b,i){
       var t = bn ? b.bn_t : b.en_t, s = bn ? b.bn_s : b.en_s;
       var bg = _psBanImgs[i] ? ' style="background-image:url(\'' + esc(_psBanImgs[i]) + '\')"' : '';
       return '<div class="ps-hero-slide' + (i===_psBanIdx ? ' on' : '') + '"' + bg + '>'
         + '<span class="ps-hero-ov"></span>'
         + '<span class="ps-hero-tx"><b class="ps-hero-t">' + esc(t) + '</b><span class="ps-hero-s">' + esc(s) + '</span></span></div>';
     }).join('') + '<div class="ps-hero-dots">'
-      + PS_BANNERS.map(function(_,i){ return '<span class="ps-bdot' + (i===_psBanIdx ? ' on' : '') + '"></span>'; }).join('')
+      + SET.map(function(_,i){ return '<span class="ps-bdot' + (i===_psBanIdx ? ' on' : '') + '"></span>'; }).join('')
       + '</div>';
   }
   function psBannerTick(){
-    _psBanIdx = (_psBanIdx + 1) % PS_BANNERS.length;
+    _psBanIdx = (_psBanIdx + 1) % _psPosterSet().length;
     var el = document.getElementById('psBanner'); if(!el) return;
     el.querySelectorAll('.ps-hero-slide').forEach(function(sl,i){ sl.classList.toggle('on', i===_psBanIdx); });
     el.querySelectorAll('.ps-bdot').forEach(function(d,i){ d.classList.toggle('on', i===_psBanIdx); });
@@ -6350,30 +6396,30 @@
   // (keyed by English label). g = pages the tile shows on ('all' landing, w/m/k gender
   // pages, 'luxe' premium store). e = emoji fallback. id = stable key (deep-link ?coll=).
   const _PS_COLL_META = {
-    'New in this week': { id:'new',     g:['all','w','m','k','luxe'], e:'🆕' },
-    'Sale':             { id:'sale',    g:['all','w','m','k','luxe'], e:'🏷️' },
-    'Under 3000':       { id:'budget',  g:['all','w','m','k'],        e:'💰' },
-    'Eid edit':         { id:'eid',     g:['all','w'],                e:'✨' },
-    'Summer lawn':      { id:'lawn',    g:['all','w'],                e:'🌸' },
-    'Winter':           { id:'winter',  g:['w'],                      e:'🧣' },
-    'Wedding':          { id:'wedding', g:['all','w'],                e:'💍' },
-    'Formal':           { id:'formal',  g:['w'],                      e:'👗' }
+    'New in this week': { id:'new',     g:['home-all','home-w','home-m','home-k','luxe-all','luxe-w','luxe-m','luxe-k'], e:'🆕' },
+    'Sale':             { id:'sale',    g:['home-all','home-w','home-m','home-k','luxe-all','luxe-w','luxe-m','luxe-k'], e:'🏷️' },
+    'Under 3000':       { id:'budget',  g:['home-all','home-w','home-m','home-k'], e:'💰' },
+    'Eid edit':         { id:'eid',     g:['home-all','home-w','luxe-all','luxe-w'], e:'✨' },
+    'Summer lawn':      { id:'lawn',    g:['home-all','home-w'], e:'🌸' },
+    'Winter':           { id:'winter',  g:['home-all','home-w'], e:'🧣' },
+    'Wedding':          { id:'wedding', g:['home-all','home-w','luxe-all','luxe-w'], e:'💍' },
+    'Formal':           { id:'formal',  g:['home-w','luxe-w'], e:'👗' }
   };
   // Extra collections for the Men / Kids / Luxe pages + the always-visible Couple tile.
   // Couple uses a curated his+hers photo and a free-text search ('couple') because its
   // category isn't indexed yet — its product data lands with the category cleanup.
   const PS_COLL_EXTRA = [
-    { id:'couple', g:['all','w','m'], en:'Couple', bn:'কাপল', se:'His + Hers', sb:'হিজ ও হার্স', e:'💑', kind:'q', val:'couple', img:'https://cdn.shopify.com/s/files/1/0508/8994/9390/files/111_f72fde77-5748-4b63-a44c-54f24de80244.png?v=1739807967' },
-    { id:'coord',  g:['w'], en:'Co-ord sets', bn:'কো-অর্ড সেট', se:'2-piece', sb:'২ পিস', e:'🧶', kind:'cat', val:'shirt_trouser_2pc,coord_western' },
-    { id:'mens_eastern', g:['m'], en:'Kurta & shalwar', bn:'কুর্তা ও শালওয়ার', se:'Eastern', sb:'ইস্টার্ন', e:'👔', kind:'cat', val:'mens_kurta,mens_shalwar_kameez' },
-    { id:'mens_wedding', g:['m'], en:'Wedding for him', bn:'বরের পোশাক', se:'Sherwani', sb:'শেরওয়ানি', e:'🤵', kind:'cat', val:'mens_sherwani,mens_waistcoat,mens_suit' },
-    { id:'mens_casual', g:['m'], en:'Smart casual', bn:'স্মার্ট ক্যাজুয়াল', se:'Shirts & polos', sb:'শার্ট', e:'👕', kind:'cat', val:'mens_shirt' },
-    { id:'kids_girls', g:['k'], en:'Girls', bn:'মেয়েদের', se:'Frocks & sets', sb:'ফ্রক ও সেট', e:'👧', kind:'cat', val:'kids_girls_eastern' },
-    { id:'kids_boys', g:['k'], en:'Boys', bn:'ছেলেদের', se:'Kurta & sets', sb:'কুর্তা ও সেট', e:'👦', kind:'cat', val:'kids_boys_eastern' },
-    { id:'kids_party', g:['k'], en:'Party & formal', bn:'পার্টি ও ফরমাল', se:'Occasion', sb:'অনুষ্ঠান', e:'🎀', kind:'cat', val:'kids_girls_formal,kids_boys_formal' },
-    { id:'luxe_designer', g:['luxe','all'], en:'Designer picks', bn:'ডিজাইনার পিকস', se:'Luxe', sb:'লাক্স', e:'👑', kind:'price', val:'5' },
-    { id:'luxe_bridal', g:['luxe'], en:'Bridal couture', bn:'ব্রাইডাল', se:'Heavy formal', sb:'ভারী ফরমাল', e:'💎', kind:'cat', val:'bridal,heavy_formal_3pc' },
-    { id:'luxe_handwork', g:['luxe','w'], en:'Hand embroidery', bn:'হ্যান্ড এমব্রয়ডারি', se:'Adda work', sb:'আড্ডা ওয়ার্ক', e:'🪡', kind:'cat', val:'handmade_emb' }
+    { id:'couple', g:['home-all','home-w','home-m','luxe-all','luxe-w','luxe-m'], en:'Couple', bn:'কাপল', se:'His + Hers', sb:'হিজ ও হার্স', e:'💑', kind:'q', val:'couple', img:'https://cdn.shopify.com/s/files/1/0508/8994/9390/files/111_f72fde77-5748-4b63-a44c-54f24de80244.png?v=1739807967' },
+    { id:'coord',  g:['home-w'], en:'Co-ord sets', bn:'কো-অর্ড সেট', se:'2-piece', sb:'২ পিস', e:'🧶', kind:'cat', val:'shirt_trouser_2pc,coord_western' },
+    { id:'mens_eastern', g:['home-m'], en:'Kurta & shalwar', bn:'কুর্তা ও শালওয়ার', se:'Eastern', sb:'ইস্টার্ন', e:'👔', kind:'cat', val:'mens_kurta,mens_shalwar_kameez' },
+    { id:'mens_wedding', g:['home-m','luxe-m'], en:'Wedding for him', bn:'বরের পোশাক', se:'Sherwani', sb:'শেরওয়ানি', e:'🤵', kind:'cat', val:'mens_sherwani,mens_waistcoat,mens_suit' },
+    { id:'mens_casual', g:['home-m'], en:'Smart casual', bn:'স্মার্ট ক্যাজুয়াল', se:'Shirts & polos', sb:'শার্ট', e:'👕', kind:'cat', val:'mens_shirt' },
+    { id:'kids_girls', g:['home-k'], en:'Girls', bn:'মেয়েদের', se:'Frocks & sets', sb:'ফ্রক ও সেট', e:'👧', kind:'cat', val:'kids_girls_eastern' },
+    { id:'kids_boys', g:['home-k'], en:'Boys', bn:'ছেলেদের', se:'Kurta & sets', sb:'কুর্তা ও সেট', e:'👦', kind:'cat', val:'kids_boys_eastern' },
+    { id:'kids_party', g:['home-k','luxe-k'], en:'Party & formal', bn:'পার্টি ও ফরমাল', se:'Occasion', sb:'অনুষ্ঠান', e:'🎀', kind:'cat', val:'kids_girls_formal,kids_boys_formal' },
+    { id:'luxe_designer', g:['luxe-all','luxe-w','luxe-m','luxe-k','home-all'], en:'Designer picks', bn:'ডিজাইনার পিকস', se:'Luxe', sb:'লাক্স', e:'👑', kind:'price', val:'5' },
+    { id:'luxe_bridal', g:['luxe-all','luxe-w'], en:'Bridal couture', bn:'ব্রাইডাল', se:'Heavy formal', sb:'ভারী ফরমাল', e:'💎', kind:'cat', val:'bridal,heavy_formal_3pc' },
+    { id:'luxe_handwork', g:['luxe-w','home-w'], en:'Hand embroidery', bn:'হ্যান্ড এমব্রয়ডারি', se:'Adda work', sb:'আড্ডা ওয়ার্ক', e:'🪡', kind:'cat', val:'handmade_emb' }
   ];
   // Merge meta onto base tiles + append extras → the full per-page collection list.
   function _psAllColls(){
@@ -6385,10 +6431,10 @@
   try { _psCollImg = JSON.parse(localStorage.getItem('psb_coll_thumbs_v1') || '{}') || {}; } catch(e){ _psCollImg = {}; }
   function _psCollPage(){
     try{
-      if(typeof psStore !== 'undefined' && psStore === 'premium') return 'luxe';
-      var dg = document.documentElement.getAttribute('data-gender');
-      return dg || 'all';
-    }catch(e){ return 'all'; }
+      var store = (typeof psStore !== 'undefined' && psStore === 'premium') ? 'luxe' : 'home';
+      var dg = document.documentElement.getAttribute('data-gender') || 'all';
+      return store + '-' + dg;   // 8 pages: home-all|home-w|home-m|home-k|luxe-all|luxe-w|luxe-m|luxe-k
+    }catch(e){ return 'home-all'; }
   }
   function _psCollQS(t){
     if(t.kind === 'cat')   return 'cat=' + encodeURIComponent(t.val);
@@ -8002,7 +8048,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-29-colls';
+  const PSB_BUILD = '2026-06-29-pages';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
