@@ -6167,7 +6167,7 @@
     { g:'w', key:'kaftan',               en:'Kaftan',          bn:'কাফতান',           e:'🧥' },
     { g:'w', key:'winter_3pc_stitch', cats:['winter_3pc_stitch','winter_3pc_unstitch','winter_2pc_stitch','winter_2pc_unstitch'], en:'Winter', bn:'শীতের পোশাক', e:'🧣' },
     { g:'w', key:'shawl', cats:['shawl','dupatta_only'], en:'Shawl & Dupatta', bn:'শাল ও ওড়না', e:'🧣' },
-    { g:'w', key:'footwear',             en:'Footwear / Khussa', bn:'জুতা / খুসা',     e:'👡' },
+    { g:'w', key:'footwear', img:'https://cdn.shopify.com/s/files/1/2290/7917/files/E1226-109-131_1.jpg?v=1781778895',             en:'Footwear / Khussa', bn:'জুতা / খুসা',     e:'👡' },
     { g:'w', key:'loungewear',           en:'Loungewear',      bn:'লাউঞ্জওয়্যার',      e:'🛋️' },
     { g:'w', key:'couple_collection', img:'https://cdn.shopify.com/s/files/1/0508/8994/9390/files/111_f72fde77-5748-4b63-a44c-54f24de80244.png?v=1739807967', en:'Couple Collection', bn:'কাপল কালেকশন',    e:'💑' },
     // ── MEN ──
@@ -8076,7 +8076,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-29-bigtiles';
+  const PSB_BUILD = '2026-06-29-iconfix2';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

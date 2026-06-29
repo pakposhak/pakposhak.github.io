@@ -885,7 +885,8 @@
     .ps-shopcat-scroll::-webkit-scrollbar{display:none}
     .psc-tile{flex:0 0 auto;width:144px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:none;padding:0;cursor:pointer;font-family:inherit}
     .psc-img{width:144px;height:174px;border-radius:18px;overflow:hidden;background:linear-gradient(150deg,var(--gold-dim),var(--raised));border:1.5px solid var(--gold-bdr);display:flex;align-items:center;justify-content:center;position:relative;transition:transform .12s,border-color .12s,box-shadow .12s}
-    .psc-img img{width:100%;height:100%;object-fit:cover;display:block}
+    .psc-img img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
+    .psc-tile[data-cat="footwear"] .psc-img img{object-position:center center}
     .psc-tile.psc-noimg .psc-img::after{content:attr(data-emoji);font-size:1.9rem;opacity:0.85}
     .psc-tile:hover .psc-img{border-color:var(--gold)}
     .psc-tile:active .psc-img{transform:scale(0.95)}
