@@ -2308,7 +2308,7 @@
     {n:'Jazmin',u:'https://jazmin.pk',p:true,c:'w'},
     {n:'Kayseria',u:'https://kayseria.com.pk',p:true,c:'w'},
     {n:'Kross Kulture',u:'https://krosskulture.com',p:false,c:'w'},
-    {n:'LAAM (multi-brand)',u:'https://laam.pk',p:true,c:'w'},
+    {n:'LAAM (multi-brand)',u:'https://laam.pk',p:true,c:'w',agg:true},   // aggregator: kept for pasting (BRAND_MAP), hidden from the brand icon listings
     {n:'Lulusar',u:'https://lulusar.com',p:true,c:'w'},
     {n:'Maria B',u:'https://mariab.pk',p:true,c:'w'},
     {n:'Mausummery',u:'https://mausummery.com',p:true,c:'w'},
@@ -2720,11 +2720,22 @@
   // category's first view; everyone else follows in array order behind them.
   const FEATURED = new Set([
     'Khaadi','Sapphire','Gul Ahmed','Alkaram Studio','Limelight','J. Junaid Jamshed','Edenrobe','Outfitters','Zellbury','Bonanza Satrangi','Nishat Linen','Eminent',
-    'Maria B','Agha Noor','Generation','Warda','Zeen (by Cambridge)','LAAM (multi-brand)','Dhanak','Qalamkar','Coco by Zara Shahjahan','Iznik Fashions','Firdous',
+    'Maria B','Agha Noor','Generation','Warda','Zeen (by Cambridge)','Dhanak','Qalamkar','Coco by Zara Shahjahan','Iznik Fashions','Firdous',
     'Sana Safinaz','Asim Jofa','Elan','Zara Shahjahan','Afrozeh','Baroque','Bareeze','Faiza Saqlain','Mushq','Sobia Nazir','Zainab Chottani','Asifa & Nabeel','Maria Osama Khan',
     'Amir Adnan','Bareeze Man',"Narkin's",'Lawrencepur',
     'Minnie Minors','Rollover Kids'
   ]);
+  // Brands most sought-after in Bangladesh — surfaced FIRST in every brand listing (price-check
+  // grid, home brand carousel, search suggestions). Multi-department giants lead so they also top
+  // the Men/Kids views. bdRank() = position here (lower = more famous), 999 if not listed.
+  const BD_FAMOUS = [
+    'Khaadi','Sana Safinaz','Maria B','Gul Ahmed','Sapphire','Asim Jofa','Bareeze','Alkaram Studio',
+    'Limelight','Bonanza Satrangi','J. Junaid Jamshed','Nishat Linen','Edenrobe','Outfitters','Elan',
+    'Zara Shahjahan','Sobia Nazir','Beechtree','Generation','Cross Stitch','Charizma','Baroque',
+    'Sania Maskatiya','Mushq','Afrozeh','Faiza Saqlain','Zainab Chottani','Maryum N Maria'
+  ];
+  const _bdRankMap = {}; BD_FAMOUS.forEach((n,i) => { _bdRankMap[n] = i; });
+  function bdRank(n){ return (n in _bdRankMap) ? _bdRankMap[n] : 999; }
   // Stable sort: ⭐ featured first (keeping array order), then the rest in array order.
   function sortFeatured(list){ return list.sort((a,b) => (FEATURED.has(b.n)?1:0) - (FEATURED.has(a.n)?1:0)); }
 
@@ -5504,7 +5515,9 @@
     var clr=document.getElementById('psSpClear'); if(clr) clr.hidden = !val;   // ✕ eraser shows whenever there's text
     if(!val || val.length<2){ list.innerHTML=''; return; }
     var n=psNorm(val);
-    var ALL=(typeof BRANDS!=='undefined'?BRANDS:[]);
+    // Exclude aggregators (LAAM) from the icon/suggestion listing; order BD-famous first.
+    var ALL=(typeof BRANDS!=='undefined'?BRANDS:[]).filter(function(b){ return !b.agg; })
+      .slice().sort(function(a,b){ return bdRank(a.n)-bdRank(b.n); });
     if(_psSearchMode==='brands'){
       // PRICE-CHECK mode (opened from Browse Brands): suggest BRANDS → tapping opens the brand's
       // OWN website to check the price (not a product grid). That's the claim of this page.
@@ -7725,7 +7738,8 @@
   function bbRankPool(pool, key, cats){
     const str = b => cats ? bbStrength(b.n, cats) : ((_bbCnt && _bbCnt[b.n]) || 0);
     const tier = b => (str(b) > 0 ? 0 : 2) + (b.c === key ? 0 : 1);   // 0 stock-spec ▸ 1 stock-gen ▸ 2 dead-spec ▸ 3 dead-gen
-    return pool.slice().sort((a, b) => {
+    return pool.slice().filter(b => !b.agg).sort((a, b) => {          // drop aggregators (LAAM) from the icon listing
+      const da = bdRank(a.n), db = bdRank(b.n); if(da !== db) return da - db;   // 🇧🇩 famous-in-Bangladesh first
       const ta = tier(a), tb = tier(b); if(ta !== tb) return ta - tb;
       const sa = str(a), sb = str(b); if(sb !== sa) return sb - sa;   // strongest first
       const fa = FEATURED.has(a.n) ? 0 : 1, fb = FEATURED.has(b.n) ? 0 : 1;
@@ -7854,7 +7868,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-29-pdp';
+  const PSB_BUILD = '2026-06-29-bdfamous';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
