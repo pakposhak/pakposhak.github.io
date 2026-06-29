@@ -3,140 +3,127 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'"/>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'"/>
   <meta name="google" content="notranslate"/>
   <title>PakPoshak — Hero Posters</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#EFE9DC;color:#1A1208;padding:22px 14px 60px}
-    h1{font-family:Georgia,serif;font-size:22px;font-weight:700;text-align:center;margin-bottom:4px}
-    .sub{text-align:center;color:#6B5A3E;font-size:13px;margin-bottom:24px}
-    .poster{max-width:860px;margin:0 auto 30px}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#EFE9DC;color:#1A1208;padding:20px 12px 70px}
+    h1{font-family:Georgia,serif;font-size:22px;font-weight:700;text-align:center}
+    .sub{text-align:center;color:#6B5A3E;font-size:13px;margin:4px 0 22px}
+    .sec{max-width:880px;margin:0 auto}
+    .sec-h{font-family:Georgia,serif;font-size:18px;font-weight:700;color:#0B261C;margin:26px 6px 12px;padding-bottom:6px;border-bottom:2px solid #C9A96E}
+    .poster{margin:0 0 26px}
     .poster .tag{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:0 4px 7px;font-size:12.5px}
     .poster .tag b{font-weight:700;color:#1A1208}
     .poster .tag span{color:#8A7A5C}
     .poster svg{width:100%;height:auto;display:block;border-radius:14px;box-shadow:0 6px 22px -8px rgba(0,0,0,.3)}
-    .note{max-width:860px;margin:30px auto 0;padding:14px 16px;background:#FAF6EE;border:1px solid #E3D9C0;border-radius:12px;font-size:13px;color:#5F5238;line-height:1.6}
+    .note{max-width:880px;margin:26px auto 0;padding:14px 16px;background:#FAF6EE;border:1px solid #E3D9C0;border-radius:12px;font-size:13px;color:#5F5238;line-height:1.6}
   </style>
 </head>
 <body>
   <h1>PakPoshak — Hero Posters</h1>
-  <div class="sub">2.1 : 1 hero size, same as the landing banner. Each block below is a self-contained SVG you can drop on any page.</div>
+  <div class="sub">2.1 : 1 hero size. Grouped by page. Each is a self-contained SVG you can drop anywhere.</div>
+  <div id="gallery"></div>
+  <div class="note"><b>How to use:</b> open on your phone to see the photos. Each poster renders below as an SVG, view source or save any one as <code>.svg</code>. Swap the <code>&lt;image&gt;</code> for a different picture anytime, the branded design holds on its own. Posters marked <b>→ collection</b> are meant to deep-link into that curated tile once we wire the collections.</div>
 
-  <!-- ============ POSTER 1 — Price Check (ivory) ============ -->
-  <div class="poster">
-    <div class="tag"><b>1 · Price Check</b><span>landing hero / Browse Brands</span></div>
-    <svg viewBox="0 0 840 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PakPoshak: see the real PKR price">
-      <defs>
-        <linearGradient id="f1" x1="0" y1="0" x2="1" y2="0"><stop offset=".4" stop-color="#FAF6EE"/><stop offset=".95" stop-color="#FAF6EE" stop-opacity="0"/></linearGradient>
-        <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0B261C"/><stop offset="1" stop-color="#0A5230"/></linearGradient>
-      </defs>
-      <rect width="840" height="400" fill="#FAF6EE"/>
-      <rect x="470" width="370" height="400" fill="url(#g1)"/>
-      <image href="https://cdn.shopify.com/s/files/1/0262/9058/5672/files/AL-LS-625_4_-Copy.jpg?v=1778675077" x="470" width="370" height="400" preserveAspectRatio="xMidYMid slice"/>
-      <rect x="330" width="300" height="400" fill="url(#f1)"/>
-      <g transform="translate(46,40)"><rect width="40" height="40" rx="11" fill="#0B261C"/><polyline points="9,29 18,16 24,23 32,11" fill="none" stroke="#C9A96E" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><text x="52" y="19" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#1A1208">PakPoshak</text><text x="52.5" y="35" font-family="Arial,sans-serif" font-size="10" letter-spacing="1.4" fill="#7A6A4A">PAKISTANI FASHION · BD DELIVERY</text></g>
-      <text x="48" y="178" font-family="Georgia,serif" font-size="44" font-weight="700" fill="#1A1208">See the real</text>
-      <text x="48" y="226" font-family="Georgia,serif" font-size="44" font-weight="700" fill="#A8842B">PKR price.</text>
-      <text x="48" y="270" font-family="Arial,sans-serif" font-size="17" fill="#5F5238">Paste any product link, get the honest BDT total.</text>
-      <g transform="translate(48,300)"><rect width="208" height="46" rx="23" fill="#A8842B"/><text x="104" y="29" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="700" fill="#1A1208">Check a price  →</text></g>
-    </svg>
-  </div>
-
-  <!-- ============ POSTER 2 — Real PKR (luxe dark) ============ -->
-  <div class="poster">
-    <div class="tag"><b>2 · Real PKR, not a guess</b><span>price-check explainer / ads</span></div>
-    <svg viewBox="0 0 840 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PakPoshak: real Pakistan prices, not a dollar guess">
-      <defs>
-        <linearGradient id="f2" x1="0" y1="0" x2="1" y2="0"><stop offset=".4" stop-color="#03150A"/><stop offset=".95" stop-color="#03150A" stop-opacity="0"/></linearGradient>
-      </defs>
-      <rect width="840" height="400" fill="#03150A"/>
-      <rect x="470" width="370" height="400" fill="#0A3A22"/>
-      <image href="https://cdn.shopify.com/s/files/1/0587/2913/6326/files/DSC03349_copy.jpg?v=1777231664" x="470" width="370" height="400" preserveAspectRatio="xMidYMid slice"/>
-      <rect x="330" width="300" height="400" fill="url(#f2)"/>
-      <g transform="translate(46,40)"><rect width="40" height="40" rx="11" fill="#DBB85E"/><polyline points="9,29 18,16 24,23 32,11" fill="none" stroke="#03150A" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><text x="52" y="19" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#F4ECD6">PakPoshak</text><text x="52.5" y="35" font-family="Arial,sans-serif" font-size="10" letter-spacing="1.4" fill="#A9BBA0">PAKISTANI FASHION · BD DELIVERY</text></g>
-      <text x="48" y="172" font-family="Georgia,serif" font-size="40" font-weight="700" fill="#F4ECD6">Real Pakistan prices,</text>
-      <text x="48" y="216" font-family="Georgia,serif" font-size="40" font-weight="700" fill="#DBB85E">not a dollar guess.</text>
-      <text x="48" y="258" font-family="Arial,sans-serif" font-size="16.5" fill="#CFC094">We fetch the actual PKR from the brand, then</text>
-      <text x="48" y="282" font-family="Arial,sans-serif" font-size="16.5" fill="#CFC094">show your all-in total in BDT.</text>
-      <g transform="translate(48,312)"><rect width="226" height="46" rx="23" fill="#DBB85E"/><text x="113" y="29" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="700" fill="#03150A">Check the real price  →</text></g>
-    </svg>
-  </div>
-
-  <!-- ============ POSTER 3 — Paste Any Link (ivory) ============ -->
-  <div class="poster">
-    <div class="tag"><b>3 · Paste any link</b><span>Browse Brands / how-it-works</span></div>
-    <svg viewBox="0 0 840 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PakPoshak: any brand, any link, one honest price">
-      <defs><linearGradient id="f3" x1="0" y1="0" x2="1" y2="0"><stop offset=".4" stop-color="#FAF6EE"/><stop offset=".95" stop-color="#FAF6EE" stop-opacity="0"/></linearGradient>
-      <linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7A2040"/><stop offset="1" stop-color="#B14A63"/></linearGradient></defs>
-      <rect width="840" height="400" fill="#FAF6EE"/>
-      <rect x="470" width="370" height="400" fill="url(#g3)"/>
-      <image href="https://cdn.shopify.com/s/files/1/0587/2913/6326/products/19_325c13ef-6645-485d-939d-8910230dc544.jpg?v=1748186560" x="470" width="370" height="400" preserveAspectRatio="xMidYMid slice"/>
-      <rect x="330" width="300" height="400" fill="url(#f3)"/>
-      <g transform="translate(46,40)"><rect width="40" height="40" rx="11" fill="#0B261C"/><polyline points="9,29 18,16 24,23 32,11" fill="none" stroke="#C9A96E" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><text x="52" y="19" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#1A1208">PakPoshak</text><text x="52.5" y="35" font-family="Arial,sans-serif" font-size="10" letter-spacing="1.4" fill="#7A6A4A">PAKISTANI FASHION · BD DELIVERY</text></g>
-      <text x="48" y="174" font-family="Georgia,serif" font-size="43" font-weight="700" fill="#1A1208">Any brand.</text>
-      <text x="48" y="221" font-family="Georgia,serif" font-size="43" font-weight="700" fill="#A8842B">Any link.</text>
-      <text x="48" y="264" font-family="Arial,sans-serif" font-size="17" fill="#5F5238">Paste a product link from anywhere, we price</text>
-      <text x="48" y="288" font-family="Arial,sans-serif" font-size="17" fill="#5F5238">it in PKR and BDT.</text>
-      <g transform="translate(48,318)"><rect width="180" height="46" rx="23" fill="#A8842B"/><text x="90" y="29" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="700" fill="#1A1208">Paste a link  →</text></g>
-    </svg>
-  </div>
-
-  <!-- ============ POSTER 4 — Check First (luxe dark) ============ -->
-  <div class="poster">
-    <div class="tag"><b>4 · Don't buy elsewhere</b><span>retention / repeat banner</span></div>
-    <svg viewBox="0 0 840 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PakPoshak: check here before you buy">
-      <defs><linearGradient id="f4" x1="0" y1="0" x2="1" y2="0"><stop offset=".4" stop-color="#03150A"/><stop offset=".95" stop-color="#03150A" stop-opacity="0"/></linearGradient></defs>
-      <rect width="840" height="400" fill="#03150A"/>
-      <rect x="470" width="370" height="400" fill="#3A1020"/>
-      <image href="https://cdn.shopify.com/s/files/1/2402/3147/files/12copy.webp?v=1768562510" x="470" width="370" height="400" preserveAspectRatio="xMidYMid slice"/>
-      <rect x="330" width="300" height="400" fill="url(#f4)"/>
-      <g transform="translate(46,40)"><rect width="40" height="40" rx="11" fill="#DBB85E"/><polyline points="9,29 18,16 24,23 32,11" fill="none" stroke="#03150A" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><text x="52" y="19" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#F4ECD6">PakPoshak</text><text x="52.5" y="35" font-family="Arial,sans-serif" font-size="10" letter-spacing="1.4" fill="#A9BBA0">PAKISTANI FASHION · BD DELIVERY</text></g>
-      <text x="48" y="176" font-family="Georgia,serif" font-size="42" font-weight="700" fill="#F4ECD6">Don't buy elsewhere.</text>
-      <text x="48" y="222" font-family="Georgia,serif" font-size="42" font-weight="700" fill="#DBB85E">Check here first.</text>
-      <text x="48" y="266" font-family="Arial,sans-serif" font-size="16.5" fill="#CFC094">Same outfit, the honest price, delivered to your</text>
-      <text x="48" y="290" font-family="Arial,sans-serif" font-size="16.5" fill="#CFC094">door in Bangladesh.</text>
-      <g transform="translate(48,320)"><rect width="200" height="46" rx="23" fill="#DBB85E"/><text x="100" y="29" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="700" fill="#03150A">Compare now  →</text></g>
-    </svg>
-  </div>
-
-  <!-- ============ POSTER 5 — Compare & Save (ivory) ============ -->
-  <div class="poster">
-    <div class="tag"><b>5 · Compare and save</b><span>value / competitive message</span></div>
-    <svg viewBox="0 0 840 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PakPoshak: compare here, then buy here">
-      <defs><linearGradient id="f5" x1="0" y1="0" x2="1" y2="0"><stop offset=".4" stop-color="#FAF6EE"/><stop offset=".95" stop-color="#FAF6EE" stop-opacity="0"/></linearGradient>
-      <linearGradient id="g5" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7A4800"/><stop offset="1" stop-color="#B98A2E"/></linearGradient></defs>
-      <rect width="840" height="400" fill="#FAF6EE"/>
-      <rect x="470" width="370" height="400" fill="url(#g5)"/>
-      <image href="https://cdn.shopify.com/s/files/1/0609/3475/0449/products/1_09787fba-6a27-46e7-9e5a-9d269fd788ba.jpg?v=1757135551" x="470" width="370" height="400" preserveAspectRatio="xMidYMid slice"/>
-      <rect x="330" width="300" height="400" fill="url(#f5)"/>
-      <g transform="translate(46,40)"><rect width="40" height="40" rx="11" fill="#0B261C"/><polyline points="9,29 18,16 24,23 32,11" fill="none" stroke="#C9A96E" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><text x="52" y="19" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#1A1208">PakPoshak</text><text x="52.5" y="35" font-family="Arial,sans-serif" font-size="10" letter-spacing="1.4" fill="#7A6A4A">PAKISTANI FASHION · BD DELIVERY</text></g>
-      <text x="48" y="176" font-family="Georgia,serif" font-size="44" font-weight="700" fill="#1A1208">Compare here,</text>
-      <text x="48" y="224" font-family="Georgia,serif" font-size="44" font-weight="700" fill="#A8842B">then buy here.</text>
-      <text x="48" y="268" font-family="Arial,sans-serif" font-size="17" fill="#5F5238">Cheaper than ordering it yourself. No hidden</text>
-      <text x="48" y="292" font-family="Arial,sans-serif" font-size="17" fill="#5F5238">markup, one honest rate.</text>
-      <g transform="translate(48,322)"><rect width="184" height="46" rx="23" fill="#A8842B"/><text x="92" y="29" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="700" fill="#1A1208">Start saving  →</text></g>
-    </svg>
-  </div>
-
-  <!-- ============ POSTER 6 — Every Brand (ivory gold) ============ -->
-  <div class="poster">
-    <div class="tag"><b>6 · Every brand</b><span>landing / category intro</span></div>
-    <svg viewBox="0 0 840 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PakPoshak: 150+ Pakistani brands, Women Men Kids">
-      <defs><linearGradient id="f6" x1="0" y1="0" x2="1" y2="0"><stop offset=".4" stop-color="#0B261C"/><stop offset=".95" stop-color="#0B261C" stop-opacity="0"/></linearGradient></defs>
-      <rect width="840" height="400" fill="#0B261C"/>
-      <rect x="470" width="370" height="400" fill="#0A3A22"/>
-      <image href="https://cdn.shopify.com/s/files/1/0262/9058/5672/files/AL-K-1311-D_3.jpg?v=1782207840" x="470" width="370" height="400" preserveAspectRatio="xMidYMid slice"/>
-      <rect x="330" width="300" height="400" fill="url(#f6)"/>
-      <g transform="translate(46,40)"><rect width="40" height="40" rx="11" fill="#DBB85E"/><polyline points="9,29 18,16 24,23 32,11" fill="none" stroke="#0B261C" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><text x="52" y="19" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#F4ECD6">PakPoshak</text><text x="52.5" y="35" font-family="Arial,sans-serif" font-size="10" letter-spacing="1.4" fill="#A9BBA0">PAKISTANI FASHION · BD DELIVERY</text></g>
-      <text x="48" y="172" font-family="Georgia,serif" font-size="40" font-weight="700" fill="#F4ECD6">150+ Pakistani brands.</text>
-      <text x="48" y="216" font-family="Georgia,serif" font-size="40" font-weight="700" fill="#DBB85E">Women · Men · Kids.</text>
-      <text x="48" y="258" font-family="Arial,sans-serif" font-size="16.5" fill="#CFC094">Real prices in PKR and BDT, delivered to your</text>
-      <text x="48" y="282" font-family="Arial,sans-serif" font-size="16.5" fill="#CFC094">door in 2 to 3 weeks.</text>
-      <g transform="translate(48,312)"><rect width="186" height="46" rx="23" fill="#DBB85E"/><text x="93" y="29" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="700" fill="#0B261C">Browse now  →</text></g>
-    </svg>
-  </div>
-
-  <div class="note"><b>How to use:</b> open this page on your phone to see them with photos. Each poster is one self-contained <code>&lt;svg&gt;</code> block, copy it into any page, or save it as an <code>.svg</code> file. The model photo is one layer, so if you ever want a different picture just swap the <code>&lt;image href&gt;</code> URL; the branded design stays intact even without a photo.</div>
+<script>
+const PH = {
+  formal:'https://cdn.shopify.com/s/files/1/0262/9058/5672/files/AL-LS-625_4_-Copy.jpg?v=1778675077',
+  pret:'https://cdn.shopify.com/s/files/1/0587/2913/6326/files/DSC03349_copy.jpg?v=1777231664',
+  maxi:'https://cdn.shopify.com/s/files/1/0587/2913/6326/products/19_325c13ef-6645-485d-939d-8910230dc544.jpg?v=1748186560',
+  saree:'https://cdn.shopify.com/s/files/1/2402/3147/files/12copy.webp?v=1768562510',
+  lehenga:'https://cdn.shopify.com/s/files/1/2402/3147/files/19.webp?v=1768560938',
+  bridal:'https://cdn.shopify.com/s/files/1/0730/0972/5664/files/EH5A1334.png?v=1758020713',
+  handmade:'https://cdn.shopify.com/s/files/1/0660/4164/3225/files/35A9250.jpg?v=1779280845',
+  lawn:'https://cdn.shopify.com/s/files/1/0730/0972/5664/files/1_228021bf-6f71-4e0e-a633-cfa377a3e695.jpg?v=1755502218',
+  abaya:'https://cdn.shopify.com/s/files/1/0635/5913/9506/files/EMBELLISHED_ICE_SERENITY.webp?v=1776474912',
+  western:'https://cdn.shopify.com/s/files/1/0611/8585/1568/files/W.SS26.522.T-1.jpg?v=1781849335',
+  coord:'https://cdn.shopify.com/s/files/1/0633/0715/3565/files/268A8378.jpg?v=1746871549',
+  menskurta:'https://cdn.shopify.com/s/files/1/0508/8994/9390/files/Olive_green_kurta_set_for_father_and_son_matching_outfit.png?v=1777726593',
+  menssuit:'https://cdn.shopify.com/s/files/1/0841/3796/7889/files/ECMTCPT5-1016_5.jpg?v=1782302340',
+  kidsgirl:'https://cdn.shopify.com/s/files/1/0488/9201/8848/files/BK12604GEWS29668_1.jpg?v=1782194593',
+  kidsboy:'https://cdn.shopify.com/s/files/1/0488/9201/8848/files/BK12601BEWS29007_1.jpg?v=1782193509',
+  infant:'https://cdn.shopify.com/s/files/1/0514/8298/4611/files/IPF-182_1.jpg?v=1781847847',
+  winter:'https://cdn.shopify.com/s/files/1/0730/0972/5664/files/TYP00721.jpg?v=1762516781',
+  shirt:'https://cdn.shopify.com/s/files/1/0633/0715/3565/files/268A4666.jpg?v=1755514145'
+};
+const TH = {
+  ivory:{bg:'#FAF6EE',head:'#1A1208',acc:'#A8842B',sub:'#5F5238',cta:'#A8842B',ctaT:'#1A1208',fade:'#FAF6EE',fb1:'#0B261C',fb2:'#0A5230',mk:'#0B261C',ml:'#C9A96E',br:'#1A1208',tg:'#7A6A4A'},
+  luxe:{bg:'#03150A',head:'#F4ECD6',acc:'#DBB85E',sub:'#CFC094',cta:'#DBB85E',ctaT:'#03150A',fade:'#03150A',fb1:'#0A3A22',fb2:'#06210F',mk:'#DBB85E',ml:'#03150A',br:'#F4ECD6',tg:'#A9BBA0'},
+  forest:{bg:'#0B261C',head:'#F4ECD6',acc:'#DBB85E',sub:'#CFC094',cta:'#DBB85E',ctaT:'#0B261C',fade:'#0B261C',fb1:'#0A3A22',fb2:'#06210F',mk:'#DBB85E',ml:'#0B261C',br:'#F4ECD6',tg:'#A9BBA0'},
+  rose:{bg:'#FBF3F6',head:'#1A1208',acc:'#B14A63',sub:'#6B4150',cta:'#B14A63',ctaT:'#FFFFFF',fade:'#FBF3F6',fb1:'#7A2040',fb2:'#B14A63',mk:'#0B261C',ml:'#C9A96E',br:'#1A1208',tg:'#8A5A68'},
+  amber:{bg:'#FBF6E9',head:'#1A1208',acc:'#A85D10',sub:'#6B5226',cta:'#A85D10',ctaT:'#FFFFFF',fade:'#FBF6E9',fb1:'#7A4800',fb2:'#B98A2E',mk:'#0B261C',ml:'#C9A96E',br:'#1A1208',tg:'#8A6A3A'},
+  blue:{bg:'#EFF4FB',head:'#1A1208',acc:'#2C6C9E',sub:'#3A5266',cta:'#2C6C9E',ctaT:'#FFFFFF',fade:'#EFF4FB',fb1:'#0C3556',fb2:'#2C6C9E',mk:'#0B261C',ml:'#C9A96E',br:'#1A1208',tg:'#5A6E84'}
+};
+const P = [
+ {s:'Landing',t:'ivory',a:'See the real',b:'PKR price.',d:['Paste any product link, get the honest BDT total.'],c:'Check a price',ph:'formal'},
+ {s:'Landing',t:'forest',a:'150+ Pakistani brands.',b:'Women · Men · Kids.',d:['Real prices, delivered to your door in 2-3 weeks.'],c:'Browse now',ph:'pret'},
+ {s:'Landing',t:'ivory',a:'New, every single day.',b:'Latest collections.',d:['Fresh Pakistani arrivals added daily.'],c:"See what's new",ph:'maxi',coll:'Daily New'},
+ {s:'Landing',t:'amber',a:'Most competitive',b:'prices in BD.',d:['Confirmed Pakistan price, full BDT total, no hidden charges.'],c:'Compare now',ph:'shirt'},
+ {s:'Landing',t:'ivory',a:'Door to door.',b:'Genuine products.',d:['Straight from Pakistan to your door in Bangladesh.'],c:'How it works',ph:'saree'},
+ {s:'Landing',t:'rose',a:'Everyday to niche.',b:'Every Pakistani brand.',d:['From daily wear to the labels you love.'],c:'Explore',ph:'coord'},
+ {s:'Luxury',t:'luxe',a:'The Luxe Edit.',b:'Designer couture.',d:["Pakistan's finest designers, real prices."],c:'Enter Luxe',ph:'bridal',coll:'Designer Picks'},
+ {s:'Luxury',t:'luxe',a:'Hand embroidery,',b:'adda by adda.',d:['Real handwork, the honest Pakistan price.'],c:'Shop hand work',ph:'handmade',coll:'Hand Embroidery'},
+ {s:'Luxury',t:'luxe',a:'Bridal & velvet.',b:'For the big day.',d:['Make your moment unforgettable.'],c:'Shop bridal',ph:'bridal',coll:'Bridal & Velvet'},
+ {s:'Luxury',t:'luxe',a:'Fine fabrics.',b:'Pure & premium.',d:['Lawn, silk, organza, chiffon.'],c:'Shop fabrics',ph:'lawn',coll:'Fine Fabric'},
+ {s:'Luxury',t:'luxe',a:'Eid & festive.',b:'Dressed to celebrate.',d:['Make the occasion yours.'],c:'Shop festive',ph:'formal',coll:'Eid & Festive'},
+ {s:'Luxury',t:'forest',a:'Designers, together.',b:'One luxe room.',d:['Sana Safinaz, Maria B, Elan and more.'],c:'Shop designers',ph:'formal'},
+ {s:'Filter',t:'ivory',a:'Not sure of the size?',b:"We'll find it.",d:['Fit Assistant matches you to the right brand size.'],c:'Try Fit Assistant',ph:'pret'},
+ {s:'Filter',t:'ivory',a:'Search by photo.',b:'Snap or upload.',d:['See a look you love? Find it by picture.'],c:'Visual Search',ph:'western'},
+ {s:'Filter',t:'amber',a:'Set your budget.',b:'Everyday to designer.',d:['Filter by price, find your perfect fit.'],c:'Filter by price',ph:'lawn',coll:'Budget Finds'},
+ {s:'Filter',t:'rose',a:'Modest wear.',b:'Covered, confident.',d:['Abayas, hijabs, full-cover styles.'],c:'Shop modest',ph:'abaya',coll:'Modest Wear'},
+ {s:'Filter',t:'blue',a:'Modern & western.',b:'Co-ords, dresses, tops.',d:['Pakistani brands, contemporary cuts.'],c:'Shop modern',ph:'coord',coll:'Modern Wear'},
+ {s:'Filter',t:'ivory',a:'Always transparent.',b:'No hidden charges.',d:['Confirmed PKR plus your full BDT total, upfront.'],c:'See the breakdown',ph:'maxi'},
+ {s:'Brand',t:'ivory',a:'Any brand. Any link.',b:'One honest price.',d:['Paste a product link from anywhere, priced in PKR + BDT.'],c:'Paste a link',ph:'maxi'},
+ {s:'Brand',t:'forest',a:"Don't buy elsewhere.",b:'Check here first.',d:['Same outfit, the real price, delivered to BD.'],c:'Compare',ph:'saree'},
+ {s:'Brand',t:'ivory',a:'Confirmed PK prices.',b:'In BDT, before you buy.',d:['No dollar guesswork, the genuine local price.'],c:'Check a brand',ph:'formal'},
+ {s:'Brand',t:'blue',a:'Menswear, sorted.',b:'Eastern & western.',d:['Kurtas to suits, real prices, BD delivery.'],c:'Shop men',ph:'menssuit',coll:'Menswear'},
+ {s:'Audiences',t:'rose',a:'Going to a wedding?',b:'Let us prepare you.',d:['Guest looks, bridal, the whole edit.'],c:'Shop the wedding edit',ph:'lehenga',coll:'Wedding Guest'},
+ {s:'Audiences',t:'amber',a:'Gen Z, this is you.',b:'Trend-first fits.',d:['Bold, fresh, Pakistani, your vibe.'],c:'Shop Gen Z',ph:'western',coll:'Gen Z'},
+ {s:'Audiences',t:'rose',a:'Couple goals.',b:'His & hers, matched.',d:['Dress together for every occasion.'],c:'Shop couple',ph:'menskurta',coll:'Couple'},
+ {s:'Audiences',t:'blue',a:'Teen styles.',b:'Cool, comfy, easy.',d:['Trendy looks for ages 10 to 16.'],c:'Shop teens',ph:'kidsboy',coll:'Teen'},
+ {s:'Audiences',t:'rose',a:'Baby girl.',b:'Tiny & precious.',d:['Newborn to 2 years, soft and sweet.'],c:'Shop baby girl',ph:'infant',coll:'Baby Girl'},
+ {s:'Audiences',t:'blue',a:'Baby boy.',b:'Little gentleman.',d:['Newborn to 2 years, comfy and cute.'],c:'Shop baby boy',ph:'kidsboy',coll:'Baby Boy'}
+];
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function svgFor(p,i){
+  var T=TH[p.t]||TH.ivory, photo=PH[p.ph]||'', gid='g'+i, fid='f'+i;
+  var sub=(p.d||[]).slice(0,2);
+  var subLines=sub.map(function(l,k){return '<text x="48" y="'+(252+k*23)+'" font-family="Arial,sans-serif" font-size="16.5" fill="'+T.sub+'">'+esc(l)+'</text>';}).join('');
+  var ctaY=sub.length>1?312:300, cw=Math.round(p.c.length*8.4+58);
+  return '<svg viewBox="0 0 840 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+esc(p.a+' '+p.b)+'">'
+   +'<defs><linearGradient id="'+fid+'" x1="0" y1="0" x2="1" y2="0"><stop offset=".4" stop-color="'+T.fade+'"/><stop offset=".95" stop-color="'+T.fade+'" stop-opacity="0"/></linearGradient>'
+   +'<linearGradient id="'+gid+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+T.fb1+'"/><stop offset="1" stop-color="'+T.fb2+'"/></linearGradient></defs>'
+   +'<rect width="840" height="400" fill="'+T.bg+'"/>'
+   +'<rect x="470" width="370" height="400" fill="url(#'+gid+')"/>'
+   +(photo?'<image href="'+photo+'" x="470" width="370" height="400" preserveAspectRatio="xMidYMid slice"/>':'')
+   +'<rect x="330" width="300" height="400" fill="url(#'+fid+')"/>'
+   +'<g transform="translate(46,40)"><rect width="40" height="40" rx="11" fill="'+T.mk+'"/><polyline points="9,29 18,16 24,23 32,11" fill="none" stroke="'+T.ml+'" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>'
+   +'<text x="52" y="19" font-family="Georgia,serif" font-size="23" font-weight="700" fill="'+T.br+'">PakPoshak</text>'
+   +'<text x="52.5" y="35" font-family="Arial,sans-serif" font-size="10" letter-spacing="1.4" fill="'+T.tg+'">PAKISTANI FASHION · BD DELIVERY</text></g>'
+   +'<text x="48" y="176" font-family="Georgia,serif" font-size="42" font-weight="700" fill="'+T.head+'">'+esc(p.a)+'</text>'
+   +'<text x="48" y="222" font-family="Georgia,serif" font-size="42" font-weight="700" fill="'+T.acc+'">'+esc(p.b)+'</text>'
+   +subLines
+   +'<g transform="translate(48,'+ctaY+')"><rect width="'+cw+'" height="46" rx="23" fill="'+T.cta+'"/><text x="'+(cw/2)+'" y="29" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="700" fill="'+T.ctaT+'">'+esc(p.c)+'  →</text></g>'
+   +'</svg>';
+}
+(function(){
+  var secs=['Landing','Luxury','Filter','Brand','Audiences'];
+  var labels={Landing:'Landing page',Luxury:'Luxury / Luxe pages',Filter:'Filter page & features',Brand:'Brand / price-check page',Audiences:'Audiences & collections'};
+  var out='';
+  secs.forEach(function(sec){
+    var items=P.map(function(p,i){return {p:p,i:i};}).filter(function(x){return x.p.s===sec;});
+    if(!items.length) return;
+    out+='<div class="sec"><div class="sec-h">'+labels[sec]+'</div>';
+    items.forEach(function(x){
+      var coll=x.p.coll?'<span>→ '+esc(x.p.coll)+' collection</span>':'<span>'+labels[sec]+'</span>';
+      out+='<div class="poster"><div class="tag"><b>'+esc(x.p.a+' '+x.p.b)+'</b>'+coll+'</div>'+svgFor(x.p,x.i)+'</div>';
+    });
+    out+='</div>';
+  });
+  document.getElementById('gallery').innerHTML=out;
+})();
+</script>
 </body>
 </html>
