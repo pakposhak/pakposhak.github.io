@@ -6169,7 +6169,7 @@
     { g:'w', key:'shawl', cats:['shawl','dupatta_only'], en:'Shawl & Dupatta', bn:'শাল ও ওড়না', e:'🧣' },
     { g:'w', key:'footwear', img:'https://cdn.shopify.com/s/files/1/2290/7917/files/E1226-109-131_1.jpg?v=1781778895',             en:'Footwear / Khussa', bn:'জুতা / খুসা',     e:'👡' },
     { g:'w', key:'loungewear',           en:'Loungewear',      bn:'লাউঞ্জওয়্যার',      e:'🛋️' },
-    { g:'w', key:'couple_collection', img:'https://cdn.shopify.com/s/files/1/0508/8994/9390/files/111_f72fde77-5748-4b63-a44c-54f24de80244.png?v=1739807967', en:'Couple Collection', bn:'কাপল কালেকশন',    e:'💑' },
+    { g:'w', key:'couple_collection', img:'https://cdn.shopify.com/s/files/1/0740/1753/8280/files/SS26ESE434P3_1.jpg?v=1781679426', en:'Couple Collection', bn:'কাপল কালেকশন',    e:'💑' },
     // ── MEN ──
     { g:'m', key:'mens_kurta',           en:'Kurta',           bn:'কুর্তা',           e:'👔' },
     { g:'m', key:'mens_shalwar_kameez',  en:'Shalwar Kameez',  bn:'শালওয়ার কামিজ',   e:'🧥' },
@@ -6179,7 +6179,7 @@
     { g:'m', key:'mens_sherwani',        en:'Sherwani',        bn:'শেরওয়ানি',         e:'🤵' },
     { g:'m', key:'mens_suit',            en:'Suit',            bn:'স্যুট',            e:'🤵' },
     { g:'m', key:'mens_unstitched', img:'https://cdn.shopify.com/s/files/1/0872/1278/5848/files/MU2PBW25A9O4-052A9509.jpg?v=1780385727',      en:'Unstitched',      bn:'আনস্টিচড',         e:'🧵' },
-    { g:'m', key:'couple_collection', img:'https://cdn.shopify.com/s/files/1/0508/8994/9390/files/111_f72fde77-5748-4b63-a44c-54f24de80244.png?v=1739807967', en:'Couple Collection', bn:'কাপল কালেকশন',    e:'💑' },
+    { g:'m', key:'couple_collection', img:'https://cdn.shopify.com/s/files/1/0555/3799/1852/files/C76A6818_result.jpg?v=1777910598', en:'Couple Collection', bn:'কাপল কালেকশন',    e:'💑' },
     // ── KIDS ──
     { g:'k', key:'kids_girls_eastern', img:'https://cdn.shopify.com/s/files/1/0488/9201/8848/files/BK12604GEWS29668_1.jpg?v=1782194593',   en:'Girls Eastern',   bn:'মেয়েদের ইস্টার্ন',  e:'👧' },
     { g:'k', key:'kids_boys_eastern',    en:'Boys Eastern',    bn:'ছেলেদের ইস্টার্ন',   e:'👦' },
@@ -6465,6 +6465,39 @@
     var base = PS_COLL_TILES.map(function(t){ var m = _PS_COLL_META[t.en] || {}; var o = {}; for(var k in t) o[k]=t[k]; for(var k2 in m) o[k2]=m[k2]; return o; });
     return base.concat(PS_COLL_EXTRA);
   }
+  // ── Curated, gender-keyed collection photos (req: Danish 2026-06-30) ──────────
+  // HARD RULE: every collection tile shows a real human MODEL, gender-correct for the
+  // page it's on, and NO image is reused anywhere (each of the 39 slots below is a unique
+  // URL, none overlapping the category-icon photos). A collection that appears on several
+  // pages keeps its name but SWAPS the photo to the page's gender: PS_COLL_IMG[id][gender]
+  // where gender = all|w|m|k (the page). 'all' (the landing) uses a women hero; couple's
+  // 'all' is the his+hers shot. Falls through all→w→m→k if a gender variant is absent.
+  const PS_COLL_IMG = {
+    new: { all:'https://cdn.shopify.com/s/files/1/0587/2913/6326/files/DSC03349_copy.jpg?v=1777231664', w:'https://cdn.shopify.com/s/files/1/0841/3796/7889/files/86276-_7_-thumbnail.jpg?v=1781787354', m:'https://cdn.shopify.com/s/files/1/0508/8994/9390/files/Olive_green_kurta_set_for_father_and_son_matching_outfit.png?v=1777726593', k:'https://cdn.shopify.com/s/files/1/0752/0442/8072/files/KGKK1436-2PC_1.webp?v=1780481599' },
+    sale: { all:'https://cdn.shopify.com/s/files/1/0623/6481/1444/files/BP181-9-2P25_1.jpg?v=1782730607', w:'https://cdn.shopify.com/s/files/1/0740/1753/8280/files/SS26SGE469P2T_1.jpg?v=1782709509', m:'https://cdn.shopify.com/s/files/1/0872/1278/5848/files/MP2PBBW25ADJ16_2.jpg?v=1778840041', k:'https://cdn.shopify.com/s/files/1/0488/9201/8848/files/BK12601BEWS29007_1.jpg?v=1782193509' },
+    budget: { all:'https://cdn.shopify.com/s/files/1/0730/0972/5664/files/TYP00721.jpg?v=1762516781', w:'https://cdn.shopify.com/s/files/1/0660/4164/3225/files/DSC05376.jpg?v=1782555714', m:'https://cdn.shopify.com/s/files/1/0551/9763/0638/files/6F5A8695.jpg?v=1781533053', k:'https://cdn.shopify.com/s/files/1/0568/3308/1529/files/DSC00243copy2.jpg?v=1777128149' },
+    eid: { all:'https://cdn.shopify.com/s/files/1/0262/9058/5672/files/AL-LS-625_4_-Copy.jpg?v=1778675077', w:'https://cdn.shopify.com/s/files/1/0813/1179/3453/files/0000354_black-peplum.jpg?v=1694011257' },
+    lawn: { all:'https://cdn.shopify.com/s/files/1/0730/0972/5664/files/1_228021bf-6f71-4e0e-a633-cfa377a3e695.jpg?v=1755502218', w:'https://cdn.shopify.com/s/files/1/0650/8249/1105/files/S26B4299_Bronze_cover.jpg?v=1775739374' },
+    winter: { all:'https://cdn.shopify.com/s/files/1/0650/8249/1105/files/S26C5111_JetBlack_Cover.jpg?v=1781891269', w:'https://cdn.shopify.com/s/files/1/0410/6702/0447/files/5_256d03a3-b9a2-4e0f-9e11-e021a33087df.jpg?v=1781349886' },
+    wedding: { all:'https://cdn.shopify.com/s/files/1/0730/0972/5664/files/EH5A1334.png?v=1758020713', w:'https://cdn.shopify.com/s/files/1/0660/4164/3225/products/2T9A5191_78f6abcd-14e2-4192-9554-d67325a5faa0.jpg?v=1749713727' },
+    formal: { w:'https://cdn.shopify.com/s/files/1/0016/9476/1035/products/73_88050d03-c10d-4825-a233-ad26f2838582.jpg?v=1660810144' },
+    couple: { all:'https://cdn.shopify.com/s/files/1/0508/8994/9390/files/111_f72fde77-5748-4b63-a44c-54f24de80244.png?v=1739807967', w:'https://cdn.shopify.com/s/files/1/0872/1278/5848/files/WP3PSFW25F9O3_5.jpg?v=1778494530', m:'https://cdn.shopify.com/s/files/1/0262/9058/5672/files/AL-K-1311-D_3.jpg?v=1782207840' },
+    coord: { w:'https://cdn.shopify.com/s/files/1/0650/8249/1105/files/S26F7018_MintGreen_Cover.jpg?v=1778255730' },
+    mens_eastern: { m:'https://cdn.shopify.com/s/files/1/0872/1278/5848/files/MP1PBS26BM3A15_2.jpg?v=1779178985' },
+    mens_wedding: { m:'https://cdn.shopify.com/s/files/1/0555/3799/1852/files/arsalan-iqbal-jet-black-hand-embroidered-prince-jacket-kurta-pyjama-1.jpg?v=1779204948' },
+    mens_casual: { m:'https://cdn.shopify.com/s/files/1/0283/5510/0758/files/DSC00802copy_de4091ee-ced4-4563-be10-9999bcbd43ef.jpg?v=1782716814' },
+    kids_girls: { k:'https://cdn.shopify.com/s/files/1/0789/3588/4095/files/Kids-Danedar-Chiffon-3PC-_-1178-Sha-Posh-Textile-238089468.jpg?v=1779196268' },
+    kids_boys: { k:'https://cdn.shopify.com/s/files/1/0841/3796/7889/files/ECBTWCS5-064-_4_-thumbnail.jpg?v=1779726888' },
+    kids_party: { k:'https://cdn.shopify.com/s/files/1/0587/2913/6326/files/GulabiKids_close.jpg?v=1748186268' },
+    luxe_designer: { all:'https://cdn.shopify.com/s/files/1/0524/3112/6721/files/10_9cfe7aed-1677-4419-a9d6-729355fda611.jpg?v=1764840701', w:'https://cdn.shopify.com/s/files/1/2277/5269/files/110_edacbdbb-240c-447d-a54f-b850c3397501.jpg?v=1752064548', m:'https://cdn.shopify.com/s/files/1/0841/3796/7889/files/ECMTCPT5-1016_5.jpg?v=1782302340', k:'https://cdn.shopify.com/s/files/1/0841/3796/7889/files/ECBTSS6-011_7_thumbnail.webp?v=1776757382' },
+    luxe_bridal: { all:'https://cdn.shopify.com/s/files/1/2402/3147/files/D-01.jpg?v=1744196264', w:'https://cdn.shopify.com/s/files/1/0650/8249/1105/files/S26C5198_Ecru_Cover.jpg?v=1780498829' },
+    luxe_handwork: { w:'https://cdn.shopify.com/s/files/1/0660/4164/3225/files/35A9250.jpg?v=1779280845' },
+  };
+  function _psCollImgFor(id, page){
+    var byg = PS_COLL_IMG[id]; if(!byg) return '';
+    var g = (String(page||'').split('-')[1]) || 'all';
+    return byg[g] || byg.all || byg.w || byg.m || byg.k || '';
+  }
   let _psActiveColl = '';
   let _psCollImg = {};
   try { _psCollImg = JSON.parse(localStorage.getItem('psb_coll_thumbs_v1') || '{}') || {}; } catch(e){ _psCollImg = {}; }
@@ -6493,7 +6526,7 @@
     var hd = document.querySelector('.ps-colls-hd'); if(hd) hd.style.display = tiles.length ? '' : 'none';
     el.innerHTML = tiles.map(function(t){
       var lbl = bn ? t.bn : t.en, sub = bn ? t.sb : t.se;
-      var src = t.img || (_psCollImg[t.id] && _psCollImg[t.id].u);
+      var src = _psCollImgFor(t.id, page) || t.img || (_psCollImg[t.id] && _psCollImg[t.id].u);
       var img = src ? '<img loading="lazy" src="'+esc(thumbUrl(src))+'" alt="'+esc(lbl)+'" onerror="this.remove()">' : '';
       return '<button type="button" class="ps-coll'+(t.id===_psActiveColl?' on':'')+'" data-coll="'+esc(t.id)+'" onclick="psOpenColl(this.getAttribute(\'data-coll\'))">'
         + '<span class="ps-coll-img" data-emoji="'+esc(t.e||'🛍️')+'">'+img+'</span>'
@@ -6509,7 +6542,7 @@
   function psCollLoadThumbs(tiles){
     if(typeof psApiMode === 'undefined' || !psApiMode) return;   // catalog.json mode: emoji fallback
     tiles.forEach(function(t){
-      if(t.img) return;   // curated photo already shown
+      if(t.img || PS_COLL_IMG[t.id]) return;   // curated photo already shown (per-gender map wins)
       var cc = _psCollImg[t.id];
       if(cc && cc.u && (Date.now() - cc.t < 14*24*3600*1000)){ psCollPaint(t.id, cc.u); return; }
       var qs = _psCollQS(t); if(!qs) return;
@@ -8087,7 +8120,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-30-swr';
+  const PSB_BUILD = '2026-06-30-coll-imgs';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

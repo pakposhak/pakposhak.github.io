@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'"/>
+  <meta name="google" content="notranslate"/>
+  <title>PakPoshak — Collections (rename)</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#EFE9DC;color:#1A1208;padding:18px 12px 96px}
+    h1{font-family:Georgia,serif;font-size:21px;font-weight:700;text-align:center}
+    .sub{text-align:center;color:#6B5A3E;font-size:13px;margin:5px auto 16px;max-width:780px;line-height:1.55}
+    .wrap{max-width:960px;margin:0 auto}
+    .row{display:flex;gap:13px;align-items:flex-start;background:#FAF6EE;border:1px solid #E3D9C0;border-radius:13px;padding:12px;margin:0 0 12px}
+    .row .num{flex:0 0 24px;font-weight:800;color:#A8842B;font-size:13px;padding-top:3px}
+    .pv{flex:0 0 250px}
+    .pv .emoji{font-size:17px;margin:0 0 6px}
+    .gimgs{display:flex;gap:5px;flex-wrap:wrap}
+    .gimg{width:56px}
+    .gimg img{width:56px;height:72px;object-fit:cover;object-position:center top;border-radius:7px;box-shadow:0 2px 7px -3px rgba(0,0,0,.4);background:#EAE2CF}
+    .gimg span{display:block;text-align:center;font-size:9.5px;color:#8A7A5C;margin-top:2px;text-transform:uppercase;letter-spacing:.04em}
+    .meta{flex:1;min-width:0}
+    .idtag{font-family:ui-monospace,Consolas,monospace;font-size:11px;color:#0B261C;background:#E7EFCB;border-radius:20px;padding:2px 9px;display:inline-block}
+    .where{font-size:11px;color:#8A7A5C;margin:6px 0 9px;line-height:1.5}
+    .where b{color:#5F5238}
+    label{display:block;font-size:10.5px;font-weight:700;color:#5F5238;margin:9px 0 3px;text-transform:uppercase;letter-spacing:.04em}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+    input.t{width:100%;padding:9px 11px;font-size:14px;border:1.5px solid #D8CCAE;border-radius:9px;background:#fff;color:#1A1208;font-family:inherit}
+    input.t.bn{font-size:15px}
+    input.t.changed{border-color:#0A5230;background:#F3F9EE}
+    .bar{position:fixed;left:0;right:0;bottom:0;background:#0B261C;color:#F4ECD6;padding:11px 14px;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;box-shadow:0 -4px 16px rgba(0,0,0,.25);z-index:10}
+    .bar button{font-family:inherit;font-size:14px;font-weight:700;border:none;border-radius:9px;padding:10px 18px;cursor:pointer}
+    .btn-c{background:#C9A96E;color:#1A1208}
+    .btn-r{background:transparent;color:#C9A96E;border:1.5px solid #6E5B33}
+    .bar .count{font-size:12.5px;color:#A9BBA0}
+    .out{max-width:960px;margin:14px auto 0}
+    .out textarea{width:100%;height:170px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;padding:12px;border:1px solid #D8CCAE;border-radius:11px;background:#FBF8F1;color:#1A1208;line-height:1.5}
+    .note{max-width:780px;margin:0 auto 16px;font-size:12px;color:#6B5A3E;background:#F6EFDF;border:1px solid #E3D9C0;border-radius:10px;padding:10px 13px;line-height:1.55}
+    @media(max-width:620px){ .row{flex-wrap:wrap} .pv{flex:1 1 100%} .grid2{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+  <h1>PakPoshak — Collections</h1>
+  <div class="sub">Every collection, the photo it shows, and where it appears. To rename one, just type the new name in its boxes. Your edits save on this device. When done, tap <b>Copy the changes</b> at the bottom and paste it back to me — I'll update the app.</div>
+  <div class="note"><b>Photos:</b> each small picture is the model shot that collection shows on that gender's page (All / Women / Men / Kids). A collection that appears on several pages keeps one name but swaps the photo to match the page's gender. Every photo is unique — none is used twice.</div>
+  <div class="wrap" id="rows"></div>
+  <div class="out"><textarea id="out" readonly placeholder="Your changes will appear here when you tap Copy the changes."></textarea></div>
+  <div class="bar"><span class="count" id="count"></span><button class="btn-c" onclick="copyPlan()">Copy the changes</button><button class="btn-r" onclick="resetAll()">Reset</button></div>
+
+<script>
+const COLLS = [
+  {id:'new', en:'New in this week', bn:'এই সপ্তাহের নতুন', se:'Last 7 days', sb:'গত ৭ দিন', e:'🆕', where:'Home + Luxe · All · Women · Men · Kids', imgs:{all:'https://cdn.shopify.com/s/files/1/0587/2913/6326/files/DSC03349_copy.jpg?v=1777231664',w:'https://cdn.shopify.com/s/files/1/0841/3796/7889/files/86276-_7_-thumbnail.jpg?v=1781787354',m:'https://cdn.shopify.com/s/files/1/0508/8994/9390/files/Olive_green_kurta_set_for_father_and_son_matching_outfit.png?v=1777726593',k:'https://cdn.shopify.com/s/files/1/0752/0442/8072/files/KGKK1436-2PC_1.webp?v=1780481599'}},
+  {id:'sale', en:'Sale', bn:'সেল', se:'Reduced', sb:'ছাড়', e:'🏷️', where:'Home + Luxe · All · Women · Men · Kids', imgs:{all:'https://cdn.shopify.com/s/files/1/0623/6481/1444/files/BP181-9-2P25_1.jpg?v=1782730607',w:'https://cdn.shopify.com/s/files/1/0740/1753/8280/files/SS26SGE469P2T_1.jpg?v=1782709509',m:'https://cdn.shopify.com/s/files/1/0872/1278/5848/files/MP2PBBW25ADJ16_2.jpg?v=1778840041',k:'https://cdn.shopify.com/s/files/1/0488/9201/8848/files/BK12601BEWS29007_1.jpg?v=1782193509'}},
+  {id:'budget', en:'Under 3000', bn:'৩০০০ এর নিচে', se:'Budget', sb:'বাজেট', e:'💰', where:'Home · All · Women · Men · Kids', imgs:{all:'https://cdn.shopify.com/s/files/1/0730/0972/5664/files/TYP00721.jpg?v=1762516781',w:'https://cdn.shopify.com/s/files/1/0660/4164/3225/files/DSC05376.jpg?v=1782555714',m:'https://cdn.shopify.com/s/files/1/0551/9763/0638/files/6F5A8695.jpg?v=1781533053',k:'https://cdn.shopify.com/s/files/1/0568/3308/1529/files/DSC00243copy2.jpg?v=1777128149'}},
+  {id:'eid', en:'Eid edit', bn:'ঈদ কালেকশন', se:'Festive', sb:'উৎসব', e:'✨', where:'Home + Luxe · All · Women', imgs:{all:'https://cdn.shopify.com/s/files/1/0262/9058/5672/files/AL-LS-625_4_-Copy.jpg?v=1778675077',w:'https://cdn.shopify.com/s/files/1/0813/1179/3453/files/0000354_black-peplum.jpg?v=1694011257'}},
+  {id:'lawn', en:'Summer lawn', bn:'সামার লন', se:'Unstitched', sb:'আনস্টিচড', e:'🌸', where:'Home · All · Women', imgs:{all:'https://cdn.shopify.com/s/files/1/0730/0972/5664/files/1_228021bf-6f71-4e0e-a633-cfa377a3e695.jpg?v=1755502218',w:'https://cdn.shopify.com/s/files/1/0650/8249/1105/files/S26B4299_Bronze_cover.jpg?v=1775739374'}},
+  {id:'winter', en:'Winter', bn:'শীত', se:'Khaddar', sb:'খদ্দর', e:'🧣', where:'Home · All · Women', imgs:{all:'https://cdn.shopify.com/s/files/1/0650/8249/1105/files/S26C5111_JetBlack_Cover.jpg?v=1781891269',w:'https://cdn.shopify.com/s/files/1/0410/6702/0447/files/5_256d03a3-b9a2-4e0f-9e11-e021a33087df.jpg?v=1781349886'}},
+  {id:'wedding', en:'Wedding', bn:'ওয়েডিং', se:'Bridal', sb:'ব্রাইডাল', e:'💍', where:'Home + Luxe · All · Women', imgs:{all:'https://cdn.shopify.com/s/files/1/0730/0972/5664/files/EH5A1334.png?v=1758020713',w:'https://cdn.shopify.com/s/files/1/0660/4164/3225/products/2T9A5191_78f6abcd-14e2-4192-9554-d67325a5faa0.jpg?v=1749713727'}},
+  {id:'formal', en:'Formal', bn:'ফরমাল', se:'Party', sb:'পার্টি', e:'👗', where:'Home + Luxe · Women', imgs:{w:'https://cdn.shopify.com/s/files/1/0016/9476/1035/products/73_88050d03-c10d-4825-a233-ad26f2838582.jpg?v=1660810144'}},
+  {id:'couple', en:'Couple', bn:'কাপল', se:'His + Hers', sb:'হিজ ও হার্স', e:'💑', where:'Home + Luxe · All · Women · Men', imgs:{all:'https://cdn.shopify.com/s/files/1/0508/8994/9390/files/111_f72fde77-5748-4b63-a44c-54f24de80244.png?v=1739807967',w:'https://cdn.shopify.com/s/files/1/0872/1278/5848/files/WP3PSFW25F9O3_5.jpg?v=1778494530',m:'https://cdn.shopify.com/s/files/1/0262/9058/5672/files/AL-K-1311-D_3.jpg?v=1782207840'}},
+  {id:'coord', en:'Co-ord sets', bn:'কো-অর্ড সেট', se:'2-piece', sb:'২ পিস', e:'🧶', where:'Home · Women', imgs:{w:'https://cdn.shopify.com/s/files/1/0650/8249/1105/files/S26F7018_MintGreen_Cover.jpg?v=1778255730'}},
+  {id:'mens_eastern', en:'Kurta & shalwar', bn:'কুর্তা ও শালওয়ার', se:'Eastern', sb:'ইস্টার্ন', e:'👔', where:'Home · Men', imgs:{m:'https://cdn.shopify.com/s/files/1/0872/1278/5848/files/MP1PBS26BM3A15_2.jpg?v=1779178985'}},
+  {id:'mens_wedding', en:'Wedding for him', bn:'বরের পোশাক', se:'Sherwani', sb:'শেরওয়ানি', e:'🤵', where:'Home + Luxe · Men', imgs:{m:'https://cdn.shopify.com/s/files/1/0555/3799/1852/files/arsalan-iqbal-jet-black-hand-embroidered-prince-jacket-kurta-pyjama-1.jpg?v=1779204948'}},
+  {id:'mens_casual', en:'Smart casual', bn:'স্মার্ট ক্যাজুয়াল', se:'Shirts & polos', sb:'শার্ট', e:'👕', where:'Home · Men', imgs:{m:'https://cdn.shopify.com/s/files/1/0283/5510/0758/files/DSC00802copy_de4091ee-ced4-4563-be10-9999bcbd43ef.jpg?v=1782716814'}},
+  {id:'kids_girls', en:'Girls', bn:'মেয়েদের', se:'Frocks & sets', sb:'ফ্রক ও সেট', e:'👧', where:'Home · Kids', imgs:{k:'https://cdn.shopify.com/s/files/1/0789/3588/4095/files/Kids-Danedar-Chiffon-3PC-_-1178-Sha-Posh-Textile-238089468.jpg?v=1779196268'}},
+  {id:'kids_boys', en:'Boys', bn:'ছেলেদের', se:'Kurta & sets', sb:'কুর্তা ও সেট', e:'👦', where:'Home · Kids', imgs:{k:'https://cdn.shopify.com/s/files/1/0841/3796/7889/files/ECBTWCS5-064-_4_-thumbnail.jpg?v=1779726888'}},
+  {id:'kids_party', en:'Party & formal', bn:'পার্টি ও ফরমাল', se:'Occasion', sb:'অনুষ্ঠান', e:'🎀', where:'Home + Luxe · Kids', imgs:{k:'https://cdn.shopify.com/s/files/1/0587/2913/6326/files/GulabiKids_close.jpg?v=1748186268'}},
+  {id:'luxe_designer', en:'Designer picks', bn:'ডিজাইনার পিকস', se:'Luxe', sb:'লাক্স', e:'👑', where:'Luxe · All · Women · Men · Kids  (+ Home · All)', imgs:{all:'https://cdn.shopify.com/s/files/1/0524/3112/6721/files/10_9cfe7aed-1677-4419-a9d6-729355fda611.jpg?v=1764840701',w:'https://cdn.shopify.com/s/files/1/2277/5269/files/110_edacbdbb-240c-447d-a54f-b850c3397501.jpg?v=1752064548',m:'https://cdn.shopify.com/s/files/1/0841/3796/7889/files/ECMTCPT5-1016_5.jpg?v=1782302340',k:'https://cdn.shopify.com/s/files/1/0841/3796/7889/files/ECBTSS6-011_7_thumbnail.webp?v=1776757382'}},
+  {id:'luxe_bridal', en:'Bridal couture', bn:'ব্রাইডাল', se:'Heavy formal', sb:'ভারী ফরমাল', e:'💎', where:'Luxe · All · Women', imgs:{all:'https://cdn.shopify.com/s/files/1/2402/3147/files/D-01.jpg?v=1744196264',w:'https://cdn.shopify.com/s/files/1/0650/8249/1105/files/S26C5198_Ecru_Cover.jpg?v=1780498829'}},
+  {id:'luxe_handwork', en:'Hand embroidery', bn:'হ্যান্ড এমব্রয়ডারি', se:'Adda work', sb:'আড্ডা ওয়ার্ক', e:'🪡', where:'Luxe + Home · Women', imgs:{w:'https://cdn.shopify.com/s/files/1/0660/4164/3225/files/35A9250.jpg?v=1779280845'}}
+];
+const GORDER = ['all','w','m','k'];
+const GLBL = {all:'All', w:'Women', m:'Men', k:'Kids'};
+const esc = s => String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const LS = id => 'cp_' + id;
+
+function thumb(u){
+  // Shopify CDN supports a width param via &width= (works on /s/files/ assets); keeps the
+  // tile light without the _WxH path-suffix variant (which 404s when not pre-generated).
+  if(!u) return u;
+  try{ if(u.indexOf('cdn.shopify.com')>-1) return u + (u.indexOf('?')>-1?'&':'?') + 'width=220'; }catch(e){}
+  return u;
+}
+function render(){
+  const root = document.getElementById('rows');
+  root.innerHTML = COLLS.map((c,i)=>{
+    const saved = JSON.parse(localStorage.getItem(LS(c.id))||'{}');
+    const v = k => saved[k]!==undefined ? saved[k] : c[k];
+    const ch = k => saved[k]!==undefined && saved[k]!==c[k] ? ' changed' : '';
+    const imgs = GORDER.filter(g=>c.imgs[g]).map(g=>
+      '<div class="gimg"><img loading="lazy" src="'+esc(thumb(c.imgs[g]))+'" alt="'+esc(GLBL[g])+'"><span>'+GLBL[g]+'</span></div>'
+    ).join('');
+    return '<div class="row">'
+      + '<div class="num">'+(i+1)+'</div>'
+      + '<div class="pv"><div class="emoji">'+c.e+'</div><div class="gimgs">'+imgs+'</div></div>'
+      + '<div class="meta">'
+        + '<span class="idtag">'+esc(c.id)+'</span>'
+        + '<div class="where"><b>Shows on:</b> '+esc(c.where)+'</div>'
+        + '<div class="grid2">'
+          + '<div><label>Name (English)</label><input class="t'+ch('en')+'" data-id="'+c.id+'" data-k="en" value="'+esc(v('en'))+'"></div>'
+          + '<div><label>নাম (Bangla)</label><input class="t bn'+ch('bn')+'" data-id="'+c.id+'" data-k="bn" value="'+esc(v('bn'))+'"></div>'
+          + '<div><label>Sub-label (English)</label><input class="t'+ch('se')+'" data-id="'+c.id+'" data-k="se" value="'+esc(v('se'))+'"></div>'
+          + '<div><label>সাব-লেবেল (Bangla)</label><input class="t bn'+ch('sb')+'" data-id="'+c.id+'" data-k="sb" value="'+esc(v('sb'))+'"></div>'
+        + '</div>'
+      + '</div></div>';
+  }).join('');
+  root.querySelectorAll('input.t').forEach(inp=>{
+    inp.addEventListener('input', ()=>{
+      const id = inp.getAttribute('data-id'), k = inp.getAttribute('data-k');
+      const c = COLLS.find(x=>x.id===id);
+      const saved = JSON.parse(localStorage.getItem(LS(id))||'{}');
+      saved[k] = inp.value;
+      localStorage.setItem(LS(id), JSON.stringify(saved));
+      inp.classList.toggle('changed', inp.value !== c[k]);
+      updateCount();
+    });
+  });
+  updateCount();
+}
+function changedColls(){
+  const out = [];
+  COLLS.forEach(c=>{
+    const saved = JSON.parse(localStorage.getItem(LS(c.id))||'{}');
+    const diff = {};
+    ['en','bn','se','sb'].forEach(k=>{ if(saved[k]!==undefined && saved[k]!==c[k]) diff[k]=saved[k]; });
+    if(Object.keys(diff).length){ diff.id=c.id; out.push(diff); }
+  });
+  return out;
+}
+function updateCount(){
+  const n = changedColls().length;
+  document.getElementById('count').textContent = n ? (n+' collection'+(n>1?'s':'')+' renamed') : 'No changes yet';
+}
+function copyPlan(){
+  const ch = changedColls();
+  const txt = ch.length ? JSON.stringify(ch, null, 2) : 'No changes — type a new name in any box first.';
+  const ta = document.getElementById('out'); ta.value = txt;
+  ta.select();
+  try{ navigator.clipboard.writeText(txt); }catch(e){}
+  try{ document.execCommand('copy'); }catch(e){}
+}
+function resetAll(){
+  if(!confirm('Clear all your name changes?')) return;
+  COLLS.forEach(c=>localStorage.removeItem(LS(c.id)));
+  document.getElementById('out').value='';
+  render();
+}
+render();
+</script>
+</body>
+</html>
