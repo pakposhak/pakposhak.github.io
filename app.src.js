@@ -2471,7 +2471,7 @@
       hiw_confirm_pay:'Confirm price & pay (bKash/Nagad)',
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search 150+ Pakistani brands…',
-      tab_brands:'Browse brands', tab_products:'Browse products', gen_all:'All', gen_women:'Women', gen_men:'Men', gen_kids:'Kids', menu_language:'Language', menu_theme:'Theme', menu_guide:'Guide', search_bar_ph:'Search products, brands…', search_page_ph:'Search products and 150+ brands', sp_remind_t:"Check any product's price in PKR", sp_remind_d:"Found it on a brand's own site? Paste the link to see the real price of any listed brand in PKR.", sp_paste:'Paste a product link', sp_visual:'Visual search', sp_fit:'Fit assistant', sp_soon:'Coming soon', sp_brands:'Browse all 150+ brands ›', sp_colls_hd:'Curated collections', bb_back:'‹ Back to products', store_everyday:'Everyday', store_premium:'Premium', colls_hd:'Collections', filters_sort:'Filters & sort', filters_done:'Done', sort_hd:'Sort', order_ways:'Two ways to order: tap + Add on anything in our listing, or send a product link from any of our 140+ brands.',
+      tab_brands:'Browse brands', tab_products:'Browse products', gen_all:'All', gen_women:'Women', gen_men:'Men', gen_kids:'Kids', menu_language:'Language', menu_theme:'Theme', menu_guide:'Guide', search_bar_ph:'Search products, brands…', search_page_ph:'Search products and 150+ brands', sp_remind_t:"Check any product's price in PKR", sp_remind_d:"Found it on a brand's own site? Paste the link to see the real price of any listed brand in PKR.", sp_paste:'Paste a product link', sp_visual:'Visual search', sp_fit:'Fit assistant', sp_soon:'Coming soon', sp_brands:'Browse all 150+ brands ›', sp_colls_hd:'Curated collections', sp_checkprice:'check price ›', bb_back:'‹ Back to products', store_everyday:'Everyday', store_premium:'Premium', colls_hd:'Collections', filters_sort:'Filters & sort', filters_done:'Done', sort_hd:'Sort', order_ways:'Two ways to order: tap + Add on anything in our listing, or send a product link from any of our 140+ brands.',
       intro_ios:"On iPhone: on a brand's product page, tap Share, then Add to PakPoshak. (One-time: add the PakPoshak shortcut.) Or copy the link and paste it here.",
       intro_android:"On Android: install PakPoshak, then on a brand's product page tap Share, then PakPoshak. Or copy the link and paste it here.",
       intro_desktop:"On desktop: paste a product link below, or add the Send-cart bookmark to grab a whole cart at once.",
@@ -2545,7 +2545,7 @@
       hiw_confirm_pay:'দাম নিশ্চিত করে পেমেন্ট (বিকাশ/নগদ)',
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
       lbl_browse:'একটি ব্র্যান্ড দেখুন', search_ph:'🔍 ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
-      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', gen_all:'সব', gen_women:'নারী', gen_men:'পুরুষ', gen_kids:'শিশু', menu_language:'ভাষা', menu_theme:'থিম', menu_guide:'গাইড', search_bar_ph:'পণ্য, ব্র্যান্ড খুঁজুন…', search_page_ph:'পণ্য ও ১৫০+ ব্র্যান্ড খুঁজুন', sp_remind_t:'যেকোনো পণ্যের দাম PKR-তে যাচাই করুন', sp_remind_d:'ব্র্যান্ডের নিজস্ব সাইটে পেয়েছেন? লিংক পেস্ট করে যেকোনো লিস্টেড ব্র্যান্ডের আসল দাম PKR-তে দেখুন।', sp_colls_hd:'কিউরেটেড কালেকশন', sp_paste:'পণ্যের লিংক পেস্ট করুন', sp_visual:'ভিজ্যুয়াল সার্চ', sp_fit:'ফিট অ্যাসিস্ট্যান্ট', sp_soon:'শীঘ্রই আসছে', sp_brands:'সব ১৫০+ ব্র্যান্ড দেখুন ›', bb_back:'‹ পণ্যে ফিরে যান', store_everyday:'এভরিডে', store_premium:'প্রিমিয়াম', colls_hd:'কালেকশন', filters_sort:'ফিল্টার ও সর্ট', filters_done:'সম্পন্ন', sort_hd:'সর্ট', order_ways:'দুইভাবে অর্ডার: আমাদের লিস্টে যেকোনো পণ্যে + Add চাপুন, অথবা ১৪০+ ব্র্যান্ডের যেকোনো পণ্যের লিংক পাঠান।',
+      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', gen_all:'সব', gen_women:'নারী', gen_men:'পুরুষ', gen_kids:'শিশু', menu_language:'ভাষা', menu_theme:'থিম', menu_guide:'গাইড', search_bar_ph:'পণ্য, ব্র্যান্ড খুঁজুন…', search_page_ph:'পণ্য ও ১৫০+ ব্র্যান্ড খুঁজুন', sp_remind_t:'যেকোনো পণ্যের দাম PKR-তে যাচাই করুন', sp_remind_d:'ব্র্যান্ডের নিজস্ব সাইটে পেয়েছেন? লিংক পেস্ট করে যেকোনো লিস্টেড ব্র্যান্ডের আসল দাম PKR-তে দেখুন।', sp_colls_hd:'কিউরেটেড কালেকশন', sp_paste:'পণ্যের লিংক পেস্ট করুন', sp_visual:'ভিজ্যুয়াল সার্চ', sp_fit:'ফিট অ্যাসিস্ট্যান্ট', sp_soon:'শীঘ্রই আসছে', sp_brands:'সব ১৫০+ ব্র্যান্ড দেখুন ›', sp_checkprice:'দাম দেখুন ›', bb_back:'‹ পণ্যে ফিরে যান', store_everyday:'এভরিডে', store_premium:'প্রিমিয়াম', colls_hd:'কালেকশন', filters_sort:'ফিল্টার ও সর্ট', filters_done:'সম্পন্ন', sort_hd:'সর্ট', order_ways:'দুইভাবে অর্ডার: আমাদের লিস্টে যেকোনো পণ্যে + Add চাপুন, অথবা ১৪০+ ব্র্যান্ডের যেকোনো পণ্যের লিংক পাঠান।',
       intro_ios:'আইফোনে: ব্র্যান্ডের পণ্য পেজে Share চেপে Add to PakPoshak বেছে নিন। (একবার: PakPoshak শর্টকাট যোগ করুন।) অথবা লিংক কপি করে এখানে পেস্ট করুন।',
       intro_android:'অ্যান্ড্রয়েডে: PakPoshak ইনস্টল করুন, তারপর ব্র্যান্ডের পণ্য পেজে Share চেপে PakPoshak বেছে নিন। অথবা লিংক কপি করে এখানে পেস্ট করুন।',
       intro_desktop:'ডেস্কটপে: নিচে পণ্যের লিংক পেস্ট করুন, অথবা পুরো কার্ট একসাথে আনতে Send-cart বুকমার্ক যোগ করুন।',
@@ -5481,12 +5481,16 @@
   // ── Full-screen search page (in-app overlay) — redesign Phase 1 ──
   // Reuses the existing search: pick/submit closes the page and psSearchInput runs the
   // grid search. Visual search + Fit assistant are hooks (built in a separate session).
+  // 'brands' when the search was opened from the Browse Brands (price-check) page → results are
+  // brand sites for checking prices. 'products' (Home/Luxe) → results are the product listing.
+  var _psSearchMode='products';
   function psSearchOpen(){
     var ov=document.getElementById('psSearchPage'); if(!ov) return;
+    _psSearchMode = (typeof psOnProductsTab==='function' && !psOnProductsTab()) ? 'brands' : 'products';
     ov.removeAttribute('hidden');
     try{ document.body.style.overflow='hidden'; }catch(e){}
     var inp=document.getElementById('psSearchPageInput');
-    if(inp){ inp.value=''; setTimeout(function(){ try{ inp.focus(); }catch(e){} }, 60); }
+    if(inp){ inp.value=''; inp.placeholder = _psSearchMode==='brands' ? 'Search a brand to check its price' : 'Search products and 150+ brands'; setTimeout(function(){ try{ inp.focus(); }catch(e){} }, 60); }
     var clr=document.getElementById('psSpClear'); if(clr) clr.hidden=true;
     psSearchPageSug('');
     try{ psSpFillTiles(); }catch(e){}
@@ -5500,10 +5504,21 @@
     var clr=document.getElementById('psSpClear'); if(clr) clr.hidden = !val;   // ✕ eraser shows whenever there's text
     if(!val || val.length<2){ list.innerHTML=''; return; }
     var n=psNorm(val);
-    // BRAND names first (a brand match is the strongest signal — fixes "Khaadi gives no suggestion"),
-    // then product keywords. Tapping either runs the product search for that term.
+    var ALL=(typeof BRANDS!=='undefined'?BRANDS:[]);
+    if(_psSearchMode==='brands'){
+      // PRICE-CHECK mode (opened from Browse Brands): suggest BRANDS → tapping opens the brand's
+      // OWN website to check the price (not a product grid). That's the claim of this page.
+      var bs=ALL.filter(function(b){ return psNorm(b.n).indexOf(n)>=0; }).slice(0,10);
+      list.innerHTML = bs.length ? bs.map(function(b){
+        var logo=psBrandLogo(b.u);
+        var ic=logo?'<img class="sp-sug-logo" src="'+esc(logo)+'" alt="" onerror="this.style.visibility=\'hidden\'">':'<span class="sp-sug-logo sp-sug-logo-x" aria-hidden="true">🏷️</span>';
+        return '<li class="sp-sug-brand" data-url="'+esc(b.u)+'" data-name="'+esc(b.n)+'" onmousedown="psBrandSugGo(this)">'+ic+'<span class="sp-sug-bn">'+esc(b.n)+'</span><span class="sp-sug-go" data-i18n="sp_checkprice">check price ›</span></li>';
+      }).join('') : '<li class="sp-sug-none">No brand matches</li>';
+      return;
+    }
+    // PRODUCTS mode (Home/Luxe): brand names first, then product keywords — both run a product search.
     var seen={};
-    var brands=(typeof BRANDS!=='undefined'?BRANDS:[]).filter(function(b){ return psNorm(b.n).indexOf(n)>=0; })
+    var brands=ALL.filter(function(b){ return psNorm(b.n).indexOf(n)>=0; })
       .slice(0,5).map(function(b){ seen[psNorm(b.n)]=1; return {t:b.n, brand:true}; });
     var kw=PS_SUGGEST.filter(function(k){ return psNorm(k).startsWith(n) && !seen[psNorm(k)]; })
       .slice(0, Math.max(0, 8-brands.length)).map(function(k){ return {t:k, brand:false}; });
@@ -5513,8 +5528,20 @@
     }).join('');
   }
   function psSearchPageInput(val){ psSearchPageSug(val); }
-  function psSearchPageSubmit(){ var inp=document.getElementById('psSearchPageInput'); psSearchPageGo(inp?inp.value:''); }
+  function psSearchPageSubmit(){
+    var inp=document.getElementById('psSearchPageInput'); var v=inp?inp.value:'';
+    if(_psSearchMode==='brands'){   // Enter → open the top matching brand's site
+      var n=psNorm(v); var b=(typeof BRANDS!=='undefined'?BRANDS:[]).find(function(x){ return psNorm(x.n).indexOf(n)>=0; });
+      if(b) psBrandSugGo({ dataset:{ url:b.u, name:b.n } });
+      return;
+    }
+    psSearchPageGo(v);
+  }
   function psSearchPageGo(term){ psSearchClose(); if(term && typeof psSearchInput==='function') psSearchInput(term); }
+  // Brands/price-check: close the search page, then open the brand's own site (with the
+  // "look there, order here" notice) so the buyer can check the real price.
+  function psBrandSugGo(el){ psSearchClose(); try{ openBrandInApp(el); }catch(e){} }
+  window.psBrandSugGo=psBrandSugGo;
   // ✕ eraser: wipe the typed text + suggestions, keep the search page open on its landing.
   function psSearchPageClear(){
     var inp=document.getElementById('psSearchPageInput'); if(inp){ inp.value=''; try{ inp.focus(); }catch(e){} }
@@ -6562,6 +6589,18 @@
   try { _psBrandThumbs = JSON.parse(localStorage.getItem('psb_brand_thumbs_v3') || '{}') || {}; } catch(e){ _psBrandThumbs = {}; }
   function _psBrandKey(n, dept){ return n + '|' + (dept || 'w'); }
   function psBrandThumbGet(n, dept){ const t = _psBrandThumbs[_psBrandKey(n, dept)]; return (t && t.u && (Date.now() - t.t < PS_THUMB_TTL)) ? t.u : ''; }
+  // ── Brand LOGOS (harvested from each brand site: apple-touch-icon > icon > og:image) ──
+  // Higher quality than favicons; keyed by hostname (no www). Loaded from brand-logos.json,
+  // cached, and used on the brand tiles + search suggestions. Falls back to initials when missing.
+  let _psBrandLogos = {};
+  try { _psBrandLogos = JSON.parse(localStorage.getItem('psb_brand_logos') || '{}') || {}; } catch(e){ _psBrandLogos = {}; }
+  (function(){
+    fetch('brand-logos.json', { cache:'default' })
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(j){ if(j && typeof j==='object'){ _psBrandLogos = j; try{ localStorage.setItem('psb_brand_logos', JSON.stringify(j)); }catch(e){} try{ if(typeof bbActive==='function' && bbActive()) bbRenderProduct(); }catch(e){} } })
+      .catch(function(){});
+  })();
+  function psBrandLogo(u){ try{ var h=new URL(u).hostname.replace(/^www\./,''); return _psBrandLogos[h] || ''; }catch(e){ return ''; } }
   function psBrandThumbSet(n, dept, url){ if(!n || !url) return; _psBrandThumbs[_psBrandKey(n, dept)] = { u:url, t:Date.now() }; try{ localStorage.setItem('psb_brand_thumbs_v3', JSON.stringify(_psBrandThumbs)); }catch(e){} }
   function psPaintBrandTile(n, url){
     if(!url) return;
@@ -7450,10 +7489,11 @@
     if(!brands.length) return `<div class="bb-prod-empty">${tr('bb_prod_none')}</div>`;
     const tile = b => {
       const fl = FEATURED.has(b.n), dept = bbBrandDept(b);
-      const url = psBrandThumbGet(b.n, dept);
-      const img = url ? `<img loading="lazy" src="${esc(thumbUrl(url))}" alt="${esc(b.n)}" onerror="this.closest('.bb-btile').classList.add('bb-btile-noimg');this.remove();">` : '';
-      return `<button type="button" class="bb-btile${fl ? ' bb-btile-feat' : ''}${url ? '' : ' bb-btile-noimg'}" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}" data-dept="${dept}" title="${esc(b.n)}">`
-        + `<span class="bb-btile-img" data-emoji="🏷️">${img}</span>`
+      const url = psBrandLogo(b.u);   // the brand's OWN logo (harvested), not a product photo
+      const img = url ? `<img loading="lazy" src="${esc(url)}" alt="${esc(b.n)}" onerror="this.closest('.bb-btile').classList.add('bb-btile-noimg');this.remove();">` : '';
+      const ini = b.n.replace(/[^A-Za-z ]/g,'').split(/\s+/).map(w=>w[0]||'').join('').slice(0,2).toUpperCase();
+      return `<button type="button" class="bb-btile bb-btile-logo${fl ? ' bb-btile-feat' : ''}${url ? '' : ' bb-btile-noimg'}" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}" data-dept="${dept}" data-ini="${esc(ini)}" title="${esc(b.n)}">`
+        + `<span class="bb-btile-img" data-emoji="🏷️" data-ini="${esc(ini)}">${img}</span>`
         + `<span class="bb-btile-name">${fl ? '<span class="cb-star" aria-hidden="true">★</span>' : ''}${esc(b.n)}</span></button>`;
     };
     return `<div class="bb-btgrid" id="bbBtGrid">${brands.map(tile).join('')}</div>`;
@@ -7704,7 +7744,8 @@
     if(!_bbGender && (_bbQuery || '').trim().length < 2){ bbSetHint('', null, null); }
     const brands = bbBrandsForView();
     body.innerHTML = `<div id="bbGridWrap">` + bbBrandGrid(brands) + `</div>`;
-    bbLoadBrandTilePhotos();
+    // Tiles now show the brand's own LOGO (sync, from the harvested map) — no async product-photo
+    // load, so we don't call bbLoadBrandTilePhotos() here anymore.
   }
 
   // Browse PRODUCTS is the default landing tab. We still honour a saved choice so
@@ -7751,7 +7792,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28-pricecheck';
+  const PSB_BUILD = '2026-06-28-brandsearch';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

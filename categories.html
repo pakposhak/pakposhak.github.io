@@ -517,6 +517,13 @@ function renderCats(g) {
   loadCatThumbs();
 }
 
+// Harvested brand logos (better quality than favicons); keyed by hostname (no www).
+let BRAND_LOGOS = {};
+try { BRAND_LOGOS = JSON.parse(localStorage.getItem('psb_brand_logos') || '{}') || {}; } catch(e){}
+fetch('brand-logos.json', { cache:'default' }).then(r => r.ok ? r.json() : null)
+  .then(j => { if (j && typeof j==='object') { BRAND_LOGOS = j; try{ localStorage.setItem('psb_brand_logos', JSON.stringify(j)); }catch(e){} if (activeTab === 'brands') renderBrands(); } }).catch(()=>{});
+function brandLogo(u){ const h = String(u||'').replace(/^https?:\/\//,'').replace(/^www\./,'').split('/')[0]; return BRAND_LOGOS[h] || ''; }
+
 function renderBrands() {
   const q = brandQuery.toLowerCase().trim();
   const filtered = BRANDS_SORTED.filter(b => {
@@ -536,8 +543,8 @@ function renderBrands() {
     filtered.forEach((b, i) => {
       const col = brandColor(i);
       const ini = initials(b.n);
-      // Google favicon service — reliable for most brand Shopify stores
-      const logoUrl = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(b.u)}&sz=128`;
+      // Harvested brand logo (sharp); fall back to Google favicon if we don't have one.
+      const logoUrl = brandLogo(b.u) || `https://www.google.com/s2/favicons?domain=${encodeURIComponent(b.u)}&sz=128`;
       cards += `<a class="brand-card" href="index.html?brand=${encodeURIComponent(b.n)}" aria-label="${esc(b.n)}">
         <div class="brand-logo" style="background:${col};" data-domain="${esc(b.u)}">
           <img src="${esc(logoUrl)}" alt="${esc(b.n)}" loading="lazy"
