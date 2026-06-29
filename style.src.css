@@ -314,7 +314,10 @@
     /* ── Sticky header ── */
     #appHeader{position:sticky;top:0;z-index:200;background:var(--surface);border-bottom:1px solid var(--bdr-med);padding-top:env(safe-area-inset-top,0px)}
     .hdr-inner{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 14px;max-width:700px;margin:0 auto}
-    .hdr-logo{display:flex;align-items:center;gap:8px;min-width:0}
+    .hdr-back{background:none;border:0;color:var(--gold);padding:6px 8px 6px 0;margin-right:-2px;cursor:pointer;display:flex;align-items:center;flex-shrink:0}
+    .hdr-back[hidden]{display:none}
+    .hdr-back svg{width:24px;height:24px}
+    .hdr-logo{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
     .hdr-logo-img{width:30px;height:30px;border-radius:8px;object-fit:cover;flex-shrink:0;border:1px solid var(--gold-bdr)}
     .hdr-brand{font-size:1.05rem;font-weight:800;color:#000;letter-spacing:0.2px}
     [data-theme="dark"] .hdr-brand{color:var(--txt)}

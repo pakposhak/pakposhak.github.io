@@ -56,6 +56,8 @@
 
 <header id="appHeader">
   <div class="hdr-inner">
+    <!-- Back arrow (shown only on Browse Brands) sits at the very start, before the logo. -->
+    <button class="hdr-back" id="hdrBack" onclick="switchBrowse('products')" aria-label="Back to products" title="Back to products" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
     <div class="hdr-logo">
       <img class="hdr-logo-img" src="pakposhak-icon-192.png" alt="PakPoshak" width="30" height="30"/>
       <div class="hdr-brand">PakPoshak</div>
@@ -247,9 +249,7 @@
   </div>
 
   <div id="tabBrands" style="display:none">
-    <button type="button" class="bb-back bb-back-arrow" onclick="switchBrowse('products')" aria-label="Back to products" title="Back to products">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
-    </button>
+    <!-- (Back arrow lives in the top header now — see #hdrBack.) -->
     <!-- Price-check claim banners (the purpose of this page): paste any brand link to see the real
          PKR/BDT price before buying anywhere else. -->
     <div class="bb-banners">
@@ -284,9 +284,8 @@
     <!-- SUB-TAB 2: Product Category — which brands make what (Women/Men/Kids → subcategory → brands) -->
     <div id="bbProduct" style="display:none">
       <div class="brand-section">
-        <!-- (Second search bar removed — the top search bar handles brand search; from this
-             price-check page it returns the brand's own site to check prices.) -->
-        <div class="bb-prod-sub" data-i18n="bb_prod_sub">🔎 Search 150+ brands to order directly from their page:</div>
+        <!-- (Second search bar + the "choose your brand…" line removed — the top search bar
+             handles brand search; from this price-check page it returns the brand's own site.) -->
         <div class="bb-gtabs" id="bbGtabs"></div>
         <div id="bbProdBody"></div>
       </div>
