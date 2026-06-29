@@ -194,6 +194,7 @@
     /* Collection-first home tiles (redesign P1) — plain for now, photos come later. */
     .ps-colls-hd{font-size:0.95rem;font-weight:800;color:var(--txt);margin:0 0 8px}
     .ps-shopcat-hd{margin:8px 0 6px}
+    .ps-products-hd{margin-top:6px}
     .ps-colls{display:flex;gap:9px;overflow-x:auto;margin:0 0 14px;padding-bottom:2px;scrollbar-width:none}
     .ps-colls::-webkit-scrollbar{display:none}
     .ps-coll{flex:0 0 auto;display:flex;flex-direction:column;width:162px;background:var(--surface);border:1px solid var(--bdr-med);border-radius:12px;overflow:hidden;padding:0;cursor:pointer;text-align:left;font-family:inherit;transition:transform .12s,border-color .12s}
