@@ -1184,16 +1184,26 @@ function renderMap(){
 
   // Real piece count = the live brand-index catalog count, deduped per brand×category.
   // (Summing collection counts overcounts massively — products belong to many collections.)
-  const _seenBC=new Set(); let totalPcs=0;
+  const _seenBC=new Set(); let totalPcs=0, realColls=0;
   for(const r of allRows){
+    if(!r.catKey||!r.count)continue;
+    realColls++;
     const bk=r.brand+''+r.catKey;
     if(_seenBC.has(bk))continue; _seenBC.add(bk);
     const bi=brandIndex&&brandIndex[r.brand];
     totalPcs+=(bi&&bi[r.catKey])||0;
   }
-  const isFiltered=!!(fBrand||fColl||fLabel||fDept||globalSearch);
+  const isFiltered=!!(fBrand||fColl||fLabel||fDept||fSw||fEw||fSe||fOc||fOt||globalSearch);
+  const selBits=[];
+  if(fLabel&&CAT_INFO[fLabel])selBits.push(CAT_INFO[fLabel].label);
+  if(fBrand)selBits.push(fBrand);
+  if(fDept)selBits.push(fDept.charAt(0).toUpperCase()+fDept.slice(1));
+  const selTxt=selBits.join(' · ');
+  const head=selTxt
+    ? `<b style="color:#ddd">${esc(selTxt)}</b> &nbsp;—&nbsp; <b style="color:#c9a96e">${totalPcs.toLocaleString()} pcs</b> across ${realColls.toLocaleString()} collections`
+    : `${realColls.toLocaleString()} collections · <b style="color:#c9a96e">${totalPcs.toLocaleString()} pcs</b>${isFiltered?' &nbsp;(filtered selection)':' · every collection mapped to one real category'}`;
   mv.innerHTML=`
-    <div class="map-count">${allRows.length.toLocaleString()} collections · <b style="color:#c9a96e">${totalPcs.toLocaleString()} pcs</b>${isFiltered?' &nbsp;(filtered selection)':' · every collection mapped to one real category'}</div>
+    <div class="map-count">${head}</div>
     <table class="map-table">
       <thead>
         <tr>
