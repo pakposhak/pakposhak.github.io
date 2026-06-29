@@ -450,7 +450,14 @@ let brandQuery  = '';
 // Each category tile shows a real product photo, fetched once from the VPS search
 // API (?cat=<key>) and cached in localStorage so repeat visits are instant.
 const SEARCH_BASE = 'https://103.83.91.34.sslip.io/search';
-const THUMB_CACHE_KEY = 'psb_cat_thumbs_v1';
+// Curated MODEL photos that override the live "first product" guess for tiles the
+// auto-pick gets wrong (saree-looking unstitched, odd maxi, flat-lay western top).
+const CAT_IMG_OVERRIDE = {
+  lawn_3pc_unstitch: 'https://cdn.shopify.com/s/files/1/2044/1461/files/052A3725.jpg?v=1782200510',
+  maxi_dress: 'https://cdn.shopify.com/s/files/1/0581/7234/2437/files/DSC06392.jpg?v=1770377155',
+  western_top: 'https://pk.sapphireonline.pk/dw/image/v2/BKSB_PRD/on/demandware.static/-/Sites-sapphire-master-catalog/default/dw55e0ccc5/images/June26/10thJune26/WTOP26V50018_999_2.jpg?sw=500'
+};
+const THUMB_CACHE_KEY = 'psb_cat_thumbs_v2';
 let thumbCache = {};
 try { thumbCache = JSON.parse(localStorage.getItem(THUMB_CACHE_KEY) || '{}'); } catch(e) {}
 let _thumbSaveT = null;
@@ -476,6 +483,7 @@ function applyThumb(box, url) {
 function fetchCatThumb(key, box) {
   if (!key || box.dataset.loaded) return;
   box.dataset.loaded = '1';
+  if (CAT_IMG_OVERRIDE[key]) { applyThumb(box, CAT_IMG_OVERRIDE[key]); return; }
   if (thumbCache[key]) { applyThumb(box, thumbCache[key]); return; }
   fetch(SEARCH_BASE + '?cat=' + encodeURIComponent(key) + '&pageSize=1&page=0', { cache: 'default' })
     .then(r => r.ok ? r.json() : null)

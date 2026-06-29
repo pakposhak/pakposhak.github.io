@@ -6150,14 +6150,14 @@
   const PS_SHOP_TILES = [
     // ── WOMEN ──
     { g:'w', key:'pret_3pc', cats:['pret_3pc','pret_3pc_emb'], en:'Stitched 3 pc', bn:'সেলাই করা ৩ পিস', e:'👗' },
-    { g:'w', key:'lawn_3pc_unstitch', cats:['lawn_3pc_unstitch','unstitch_3pc_emb'], en:'Unstitched', bn:'আনস্টিচড', e:'🧵' },
+    { g:'w', key:'lawn_3pc_unstitch', img:'https://cdn.shopify.com/s/files/1/2044/1461/files/052A3725.jpg?v=1782200510', cats:['lawn_3pc_unstitch','unstitch_3pc_emb'], en:'Unstitched', bn:'আনস্টিচড', e:'🧵' },
     { g:'w', key:'kurti_1pc_unstitch',   en:'Unstitched 1pc',  bn:'আনস্টিচড ১ পিস',    e:'🧵' },
     { g:'w', key:'shirt_dupatta_2pc', cats:['shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','pret_2pc_emb'], en:'Stitched 2 pc', bn:'সেলাই করা ২ পিস', e:'👚' },
     { g:'w', key:'shirt_trouser_2pc', cats:['shirt_trouser_2pc','coord_western','shirt_trouser_2pc_unstitch'], en:'Co-ord Set', bn:'কো-অর্ড সেট', e:'🧶' },
     { g:'w', key:'kurti_1pc',            en:'Kurti / 1pc',     bn:'কুর্তি / ১ পিস',    e:'👕' },
-    { g:'w', key:'western_top',          en:'Western Top',     bn:'ওয়েস্টার্ন টপ',     e:'👚' },
+    { g:'w', key:'western_top', img:'https://pk.sapphireonline.pk/dw/image/v2/BKSB_PRD/on/demandware.static/-/Sites-sapphire-master-catalog/default/dw55e0ccc5/images/June26/10thJune26/WTOP26V50018_999_2.jpg?sw=500', en:'Western Top',     bn:'ওয়েস্টার্ন টপ',     e:'👚' },
     { g:'w', key:'womens_trouser',       en:'Trousers',        bn:'ট্রাউজার',         e:'👖' },
-    { g:'w', key:'maxi_dress',           en:'Maxi / Dress',    bn:'ম্যাক্সি / ড্রেস',   e:'👗' },
+    { g:'w', key:'maxi_dress', img:'https://cdn.shopify.com/s/files/1/0581/7234/2437/files/DSC06392.jpg?v=1770377155', en:'Maxi / Dress',    bn:'ম্যাক্সি / ড্রেস',   e:'👗' },
     { g:'w', key:'formal_emb_3pc', cats:['formal_emb_3pc','formal_emb_2pc','heavy_formal_3pc','handmade_emb'], en:'Formal Wear', bn:'ফরমাল ওয়্যার', e:'✨' },
     { g:'w', key:'bridal',               en:'Bridal',          bn:'ব্রাইডাল',         e:'👰' },
     { g:'w', key:'lehenga',              en:'Lehenga',         bn:'লেহেঙ্গা',          e:'💃' },
@@ -6168,7 +6168,7 @@
     { g:'w', key:'shawl', cats:['shawl','dupatta_only'], en:'Shawl & Dupatta', bn:'শাল ও ওড়না', e:'🧣' },
     { g:'w', key:'footwear',             en:'Footwear / Khussa', bn:'জুতা / খুসা',     e:'👡' },
     { g:'w', key:'loungewear',           en:'Loungewear',      bn:'লাউঞ্জওয়্যার',      e:'🛋️' },
-    { g:'w', key:'couple_collection',    en:'Couple Collection', bn:'কাপল কালেকশন',    e:'💑' },
+    { g:'w', key:'couple_collection', img:'https://cdn.shopify.com/s/files/1/0508/8994/9390/files/111_f72fde77-5748-4b63-a44c-54f24de80244.png?v=1739807967', en:'Couple Collection', bn:'কাপল কালেকশন',    e:'💑' },
     // ── MEN ──
     { g:'m', key:'mens_kurta',           en:'Kurta',           bn:'কুর্তা',           e:'👔' },
     { g:'m', key:'mens_shalwar_kameez',  en:'Shalwar Kameez',  bn:'শালওয়ার কামিজ',   e:'🧥' },
@@ -6178,7 +6178,7 @@
     { g:'m', key:'mens_sherwani',        en:'Sherwani',        bn:'শেরওয়ানি',         e:'🤵' },
     { g:'m', key:'mens_suit',            en:'Suit',            bn:'স্যুট',            e:'🤵' },
     { g:'m', key:'mens_unstitched',      en:'Unstitched',      bn:'আনস্টিচড',         e:'🧵' },
-    { g:'m', key:'couple_collection',    en:'Couple Collection', bn:'কাপল কালেকশন',    e:'💑' },
+    { g:'m', key:'couple_collection', img:'https://cdn.shopify.com/s/files/1/0508/8994/9390/files/111_f72fde77-5748-4b63-a44c-54f24de80244.png?v=1739807967', en:'Couple Collection', bn:'কাপল কালেকশন',    e:'💑' },
     // ── KIDS ──
     { g:'k', key:'kids_girls_eastern',   en:'Girls Eastern',   bn:'মেয়েদের ইস্টার্ন',  e:'👧' },
     { g:'k', key:'kids_boys_eastern',    en:'Boys Eastern',    bn:'ছেলেদের ইস্টার্ন',   e:'👦' },
@@ -6507,8 +6507,8 @@
   // page the grid loads (psHarvestThumbs), and by a throttled gap-fill fetch (psLoadShopThumbs).
   const PS_THUMB_TTL = 14 * 24 * 3600 * 1000;
   let _psThumbs = {};
-  try { _psThumbs = JSON.parse(localStorage.getItem('psb_cat_thumbs_v6') || '{}') || {}; } catch(e){ _psThumbs = {}; }   // _v4: re-fetch after the kids eastern/western fix so "Boys Eastern" shows a kurta, not a western suit
-  function _psThumbsSave(){ try{ localStorage.setItem('psb_cat_thumbs_v6', JSON.stringify(_psThumbs)); }catch(e){} }
+  try { _psThumbs = JSON.parse(localStorage.getItem('psb_cat_thumbs_v7') || '{}') || {}; } catch(e){ _psThumbs = {}; }   // _v4: re-fetch after the kids eastern/western fix so "Boys Eastern" shows a kurta, not a western suit
+  function _psThumbsSave(){ try{ localStorage.setItem('psb_cat_thumbs_v7', JSON.stringify(_psThumbs)); }catch(e){} }
   function psThumbGet(key){ const t = _psThumbs[key]; return (t && t.u && (Date.now() - t.t < PS_THUMB_TTL)) ? t.u : ''; }
   function psThumbSet(key, url){ if(!key || !url) return; _psThumbs[key] = { u:url, t:Date.now() }; _psThumbsSave(); }
   // Record the first GENDER-APPROPRIATE image seen for any category from a freshly-loaded product page.
@@ -6597,7 +6597,7 @@
     const active = _psActiveCatKey();
     wrap.innerHTML = psShopTiles().map(t => {
       const lbl = (_lang === 'bn' && t.bn) ? t.bn : t.en;
-      const url = psThumbGet(t.key);
+      const url = t.img || psThumbGet(t.key);
       const img = url ? `<img loading="lazy" src="${esc(thumbUrl(url))}" alt="${esc(lbl)}" onerror="this.closest('.psc-tile').classList.add('psc-noimg');this.remove();">` : '';
       return `<button type="button" class="psc-tile${t.key === active ? ' on' : ''}${url ? '' : ' psc-noimg'}" data-cat="${esc(t.key)}" onclick="psShopPick('${t.key}')" title="${esc(lbl)}">`
         + `<span class="psc-img" data-emoji="${t.e || '🛍️'}">${img}</span>`
@@ -6709,7 +6709,7 @@
   function psLoadShopThumbs(){
     psPaintShopThumbs();
     if(!psApiMode) return;   // catalog.json mode: harvesting from the grid covers it
-    const missing = psShopTiles().map(t => t.key).filter(k => !psThumbGet(k));
+    const missing = psShopTiles().filter(t => !t.img && !psThumbGet(t.key)).map(t => t.key);
     if(!missing.length) return;
     let i = 0; const CONC = 4;
     function next(){
@@ -7887,7 +7887,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-29-couple';
+  const PSB_BUILD = '2026-06-29-icons';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
