@@ -10,7 +10,7 @@
  *  - NEVER touch cross-origin requests (Shopify product fetches, Apps Script order
  *    submission, Formspree). Those must always hit the network untouched.
  */
-const CACHE_VERSION = 'psb-v129';
+const CACHE_VERSION = 'psb-v130';
 const APP_SHELL = [
   './',
   './index.html',
@@ -101,6 +101,30 @@ self.addEventListener('fetch', (event) => {
         cache.match('./catalog.json').then((hit) => {
           const net = fetch(req.url, { cache: 'reload' })
             .then((res) => { cache.put('./catalog.json', res.clone()); return res; })
+            .catch(() => hit);
+          return hit || net;
+        })
+      )
+    );
+    return;
+  }
+
+  // app.js / style.css: STALE-WHILE-REVALIDATE. These minified artifacts change on
+  // EVERY deploy, but were previously cache-first — so their content only refreshed when
+  // the service worker ITSELF reinstalled (a CACHE_VERSION bump), which is unreliable on
+  // iOS and left users stuck on an OLD app.js: network-first HTML gave them the fresh page,
+  // but the cache-first app.js stayed stale, so newly-added pages/posters silently fell
+  // back and looked "missing". SWR serves the cached copy INSTANTLY (fast open) but ALWAYS
+  // revalidates in the background ({cache:'reload'} bypasses GitHub Pages' 10-min HTTP
+  // cache), so the NEXT load is fresh regardless of SW-version timing. Offline still works
+  // (falls back to the cached copy). The in-app updater's app.js?_v= probe is unaffected —
+  // it carries _v and is skipped above.
+  if (url.pathname.endsWith('app.js') || url.pathname.endsWith('style.css')) {
+    event.respondWith(
+      caches.open(CACHE_VERSION).then((cache) =>
+        cache.match(req).then((hit) => {
+          const net = fetch(req.url, { cache: 'reload' })
+            .then((res) => { if (res && res.ok) cache.put(req, res.clone()); return res; })
             .catch(() => hit);
           return hit || net;
         })
