@@ -220,7 +220,7 @@
       <div class="ps-sp-remind">
         <div class="ps-sp-remind-t" data-i18n="sp_remind_t">Check any product's price in PKR</div>
         <div class="ps-sp-remind-d" data-i18n="sp_remind_d">Found it on a brand's own site? Paste the link to see the real price of any listed brand in PKR.</div>
-        <button type="button" class="ps-sp-paste" onclick="psSearchClose();location.href='order-form.html'" data-i18n="sp_paste">Paste a product link</button>
+        <button type="button" class="ps-sp-paste" onclick="psSearchClose();try{pasteAndAdd('urlInput', handleAddUrl)}catch(e){}" data-i18n="sp_paste">Paste a product link</button>
       </div>
 
       <!-- Curated collections — editorial edits, each mapped to a real filter (filled by psSpFillTiles) -->

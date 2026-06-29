@@ -6423,19 +6423,14 @@
       var t = bn ? b.bn_t : b.en_t, s = bn ? b.bn_s : b.en_s;
       var img = PS_BRAND_POSTER_IMGS[i % PS_BRAND_POSTER_IMGS.length];
       var bg = img ? ' style="background-image:url(\'' + esc(thumbUrl(img)) + '\')"' : '';
-      var cta = bn ? 'লিংক পেস্ট করে দাম দেখুন' : 'Tap to paste a link & check the price';
       return '<div class="ps-hero-slide' + (i===cur ? ' on' : '') + '"' + bg + '>'
         + '<span class="ps-hero-ov"></span>'
-        + '<span class="ps-hero-tx"><b class="ps-hero-t">' + esc(t) + '</b><span class="ps-hero-s">' + esc(s) + '</span>'
-        + '<span class="ps-hero-cta">' + esc(cta) + ' ›</span></span></div>';
+        + '<span class="ps-hero-tx"><b class="ps-hero-t">' + esc(t) + '</b><span class="ps-hero-s">' + esc(s) + '</span></span></div>';
     }).join('') + '<div class="ps-hero-dots">'
       + SET.map(function(_,i){ return '<span class="ps-bdot' + (i===cur ? ' on' : '') + '"></span>'; }).join('')
       + '</div>';
-    // The Brand / Price-Check hero is tappable → the paste-a-link price check (replaces the removed claim card).
-    el.style.cursor = 'pointer';
-    el.setAttribute('role', 'button');
-    el.setAttribute('aria-label', bn ? 'লিংক পেস্ট করে দাম দেখুন' : 'Paste a link to check the price');
-    el.onclick = function(){ location.href = 'order-form.html'; };
+    // NOT tappable — it must never navigate to the old-look order-form.html (req: Danish 2026-06-30).
+    el.style.cursor = ''; el.onclick = null; el.removeAttribute('role'); el.removeAttribute('aria-label');
   }
   window.psRenderBrandBanner = psRenderBrandBanner;
   function _psBannerSync(elId, len){
@@ -8213,7 +8208,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-30-sizecharts';
+  const PSB_BUILD = '2026-06-30-logos-block';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

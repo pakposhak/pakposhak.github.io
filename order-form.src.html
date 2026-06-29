@@ -1,6 +1,18 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- ── Old order-form view RETIRED (req: Danish 2026-06-30) ────────────────────
+       The redesigned index.html now handles browsing, the paste-a-link capture
+       (?add=/?cart=), the Bag and checkout. This old-look page must never be shown:
+       bounce EVERY visit straight to index.html, forwarding any capture deep-link
+       query/hash so externally-shared links still work in the new app. Runs first,
+       before any of the old markup paints. -->
+  <script>
+    (function(){
+      try{ location.replace('index.html' + (location.search || '') + (location.hash || '')); }
+      catch(e){ try{ location.href = 'index.html'; }catch(_){} }
+    })();
+  </script>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <!-- Open the TLS connection to the search/relay API early so the first /config,
