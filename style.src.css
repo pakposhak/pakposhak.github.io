@@ -190,7 +190,8 @@
     .ps-hero-dots{position:absolute;bottom:10px;right:13px;display:flex;gap:5px;z-index:2}
     .ps-hero-dots .ps-bdot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.5);transition:width .25s,background .25s}
     .ps-hero-dots .ps-bdot.on{background:#fff;width:16px;border-radius:3px}
-    body.ps-luxe .ps-banner{display:none}   /* banner is landing-only (hidden in the Luxe room) */
+    /* Luxe room now shows its OWN page-aware hero posters too (was display:none here when
+       the banner was landing-only; the per-page poster plan needs it visible in Luxe). */
     /* Collection-first home tiles (redesign P1) — plain for now, photos come later. */
     .ps-colls-hd{font-size:0.95rem;font-weight:800;color:var(--txt);margin:0 0 8px}
     .ps-shopcat-hd{margin:8px 0 6px}

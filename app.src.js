@@ -2668,6 +2668,7 @@
     const lb = document.getElementById('hdrLangBtn');
     if(lb) lb.textContent = (_lang === 'en') ? 'বাংলা' : 'EN';
     try { if(typeof psRenderBanner === 'function') psRenderBanner(); } catch(e){}   // value banner is JS-rendered, refresh its language
+    try { if(typeof psRenderBrandBanner === 'function') psRenderBrandBanner(); } catch(e){}   // brand-page hero too
     try { if(typeof psRenderColls === 'function') psRenderColls(); } catch(e){}     // collection tiles are JS-rendered too
     try { if(typeof psRenderPromises === 'function') psRenderPromises(); } catch(e){}  // promise strip too
     try { if(typeof psMoveGenInd === 'function') psMoveGenInd(); } catch(e){}        // re-place the sliding underline (tab widths change with BN)
@@ -5762,6 +5763,7 @@
       // gender from the rail so it isn't empty when the rail is on All.
       if(!_bbGender){ var _rg = document.documentElement.getAttribute('data-gender'); _bbGender = (_rg === 'w' || _rg === 'm' || _rg === 'k') ? _rg : 'w'; }
       bbSwitch('product');
+      try{ psRenderBrandBanner(); }catch(e){}   // page-aware hero poster for the Brand / Price-Check page
     }
     if(!brands) psEnsureLoaded();
     updatePasteFab();
@@ -6394,25 +6396,57 @@
     var el = document.getElementById('psBanner'); if(!el) return;
     var bn = (typeof _lang !== 'undefined' && _lang === 'bn');
     var SET = _psPosterSet();
+    var cur = _psBanIdx % SET.length;
     el.innerHTML = SET.map(function(b,i){
       var t = bn ? b.bn_t : b.en_t, s = bn ? b.bn_s : b.en_s;
       var bg = _psBanImgs[i] ? ' style="background-image:url(\'' + esc(_psBanImgs[i]) + '\')"' : '';
-      return '<div class="ps-hero-slide' + (i===_psBanIdx ? ' on' : '') + '"' + bg + '>'
+      return '<div class="ps-hero-slide' + (i===cur ? ' on' : '') + '"' + bg + '>'
         + '<span class="ps-hero-ov"></span>'
         + '<span class="ps-hero-tx"><b class="ps-hero-t">' + esc(t) + '</b><span class="ps-hero-s">' + esc(s) + '</span></span></div>';
     }).join('') + '<div class="ps-hero-dots">'
-      + SET.map(function(_,i){ return '<span class="ps-bdot' + (i===_psBanIdx ? ' on' : '') + '"></span>'; }).join('')
+      + SET.map(function(_,i){ return '<span class="ps-bdot' + (i===cur ? ' on' : '') + '"></span>'; }).join('')
       + '</div>';
   }
+  // Brand / Price-Check page hero (req 2026-06-30: posters on EVERY page, incl. the brand page).
+  // Its own poster set (the brand copy) over two curated model backdrops; rotates on the same tick.
+  const PS_BRAND_POSTER_IMGS = [
+    'https://cdn.shopify.com/s/files/1/0515/4802/9092/files/2C5A0656.jpg?v=1758976297',
+    'https://cdn.shopify.com/s/files/1/0555/3799/1852/files/arsalan-iqbal-black-textured-3pc-suit-mens-designer-formalwear.jpg?v=1764869126'
+  ];
+  function _psBrandSet(){ return PS_POSTERS['search-brand'] || []; }
+  function psRenderBrandBanner(){
+    var el = document.getElementById('psBrandBanner'); if(!el) return;
+    var SET = _psBrandSet(); if(!SET.length){ el.innerHTML=''; return; }
+    var bn = (typeof _lang !== 'undefined' && _lang === 'bn');
+    var cur = _psBanIdx % SET.length;
+    el.innerHTML = SET.map(function(b,i){
+      var t = bn ? b.bn_t : b.en_t, s = bn ? b.bn_s : b.en_s;
+      var img = PS_BRAND_POSTER_IMGS[i % PS_BRAND_POSTER_IMGS.length];
+      var bg = img ? ' style="background-image:url(\'' + esc(thumbUrl(img)) + '\')"' : '';
+      return '<div class="ps-hero-slide' + (i===cur ? ' on' : '') + '"' + bg + '>'
+        + '<span class="ps-hero-ov"></span>'
+        + '<span class="ps-hero-tx"><b class="ps-hero-t">' + esc(t) + '</b><span class="ps-hero-s">' + esc(s) + '</span></span></div>';
+    }).join('') + '<div class="ps-hero-dots">'
+      + SET.map(function(_,i){ return '<span class="ps-bdot' + (i===cur ? ' on' : '') + '"></span>'; }).join('')
+      + '</div>';
+  }
+  window.psRenderBrandBanner = psRenderBrandBanner;
+  function _psBannerSync(elId, len){
+    var el = document.getElementById(elId); if(!el || !len) return;
+    var idx = _psBanIdx % len;
+    el.querySelectorAll('.ps-hero-slide').forEach(function(sl,i){ sl.classList.toggle('on', i===idx); });
+    el.querySelectorAll('.ps-bdot').forEach(function(d,i){ d.classList.toggle('on', i===idx); });
+  }
   function psBannerTick(){
-    _psBanIdx = (_psBanIdx + 1) % _psPosterSet().length;
-    var el = document.getElementById('psBanner'); if(!el) return;
-    el.querySelectorAll('.ps-hero-slide').forEach(function(sl,i){ sl.classList.toggle('on', i===_psBanIdx); });
-    el.querySelectorAll('.ps-bdot').forEach(function(d,i){ d.classList.toggle('on', i===_psBanIdx); });
+    _psBanIdx = _psBanIdx + 1;   // grows; each banner takes its own modulo (sets differ in length)
+    _psBannerSync('psBanner', _psPosterSet().length);
+    _psBannerSync('psBrandBanner', _psBrandSet().length);
   }
   function psBannerStart(){
-    if(!document.getElementById('psBanner')) return;
+    if(!document.getElementById('psBanner') && !document.getElementById('psBrandBanner')) return;
+    _psBanIdx = 0;
     psRenderBanner();
+    try{ psRenderBrandBanner(); }catch(e){}
     if(_psBanT) clearInterval(_psBanT);
     try { if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return; } catch(e){}
     _psBanT = setInterval(psBannerTick, 5200);
@@ -6422,21 +6456,21 @@
   // New = psNewOnly, Sale = psSaleOnly, price-band = psSel.prices, occasion/season = keyword search.
   // Plain styling for now; photos + layout come in the carousel-redesign pass.
   const PS_COLL_TILES = [
-    { en:'New in this week', bn:'এই সপ্তাহের নতুন', se:'Last 7 days', sb:'গত ৭ দিন',   kind:'new' },
-    { en:'Sale',             bn:'সেল',             se:'Reduced',     sb:'ছাড়',        kind:'sale' },
-    { en:'Under 3000',       bn:'৩০০০ এর নিচে',    se:'Budget',      sb:'বাজেট',       kind:'price', val:'0' },
+    { en:'New IN.',          bn:'এই সপ্তাহের নতুন', se:'Daily Updates', sb:'গত ৭ দিন',   kind:'new' },
+    { en:'On Sale',          bn:'সেল',             se:'Hurry-',      sb:'ছাড়',        kind:'sale' },
+    { en:'Under 3000',       bn:'৩০০০ এর নিচে',    se:'Still Stylish', sb:'বাজেট',       kind:'price', val:'0' },
     { en:'Eid edit',         bn:'ঈদ কালেকশন',      se:'Festive',     sb:'উৎসব',        kind:'cat', val:'heavy_formal_3pc,formal_emb_3pc' },
     { en:'Summer lawn',      bn:'সামার লন',        se:'Unstitched',  sb:'আনস্টিচড',     kind:'cat', val:'lawn_3pc_unstitch' },
-    { en:'Winter',           bn:'শীত',             se:'Khaddar',     sb:'খদ্দর',       kind:'cat', val:'winter_3pc_stitch,winter_3pc_unstitch,winter_2pc_stitch,winter_2pc_unstitch' },
-    { en:'Wedding',          bn:'ওয়েডিং',          se:'Bridal',      sb:'ব্রাইডাল',    kind:'cat', val:'bridal,lehenga' },
-    { en:'Formal',           bn:'ফরমাল',           se:'Party',       sb:'পার্টি',      kind:'cat', val:'formal_emb_3pc,formal_emb_2pc' }
+    { en:'Winter',           bn:'শীত',             se:'Khaddar & More', sb:'খদ্দর',       kind:'cat', val:'winter_3pc_stitch,winter_3pc_unstitch,winter_2pc_stitch,winter_2pc_unstitch' },
+    { en:'Wedding',          bn:'ওয়েডিং',          se:'Bridal - Big Day', sb:'ব্রাইডাল',    kind:'cat', val:'bridal,lehenga' },
+    { en:'Formal',           bn:'ফরমাল',           se:'Party Wear',  sb:'পার্টি',      kind:'cat', val:'formal_emb_3pc,formal_emb_2pc' }
   ];
   // Per-collection metadata layered onto PS_COLL_TILES above WITHOUT editing that array
   // (keyed by English label). g = pages the tile shows on ('all' landing, w/m/k gender
   // pages, 'luxe' premium store). e = emoji fallback. id = stable key (deep-link ?coll=).
   const _PS_COLL_META = {
-    'New in this week': { id:'new',     g:['home-all','home-w','home-m','home-k','luxe-all','luxe-w','luxe-m','luxe-k'], e:'🆕' },
-    'Sale':             { id:'sale',    g:['home-all','home-w','home-m','home-k','luxe-all','luxe-w','luxe-m','luxe-k'], e:'🏷️' },
+    'New IN.':          { id:'new',     g:['home-all','home-w','home-m','home-k','luxe-all','luxe-w','luxe-m','luxe-k'], e:'🆕' },
+    'On Sale':          { id:'sale',    g:['home-all','home-w','home-m','home-k','luxe-all','luxe-w','luxe-m','luxe-k'], e:'🏷️' },
     'Under 3000':       { id:'budget',  g:['home-all','home-w','home-m','home-k'], e:'💰' },
     'Eid edit':         { id:'eid',     g:['home-all','home-w','luxe-all','luxe-w'], e:'✨' },
     'Summer lawn':      { id:'lawn',    g:['home-all','home-w'], e:'🌸' },
@@ -6449,13 +6483,13 @@
   // category isn't indexed yet — its product data lands with the category cleanup.
   const PS_COLL_EXTRA = [
     { id:'couple', g:['home-all','home-w','home-m','luxe-all','luxe-w','luxe-m'], en:'Couple', bn:'কাপল', se:'His + Hers', sb:'হিজ ও হার্স', e:'💑', kind:'q', val:'couple', img:'https://cdn.shopify.com/s/files/1/0508/8994/9390/files/111_f72fde77-5748-4b63-a44c-54f24de80244.png?v=1739807967' },
-    { id:'coord',  g:['home-w'], en:'Co-ord sets', bn:'কো-অর্ড সেট', se:'2-piece', sb:'২ পিস', e:'🧶', kind:'cat', val:'shirt_trouser_2pc,coord_western' },
-    { id:'mens_eastern', g:['home-m'], en:'Kurta & shalwar', bn:'কুর্তা ও শালওয়ার', se:'Eastern', sb:'ইস্টার্ন', e:'👔', kind:'cat', val:'mens_kurta,mens_shalwar_kameez' },
+    { id:'coord',  g:['home-w'], en:'Co-ord sets', bn:'কো-অর্ড সেট', se:'Trendy', sb:'২ পিস', e:'🧶', kind:'cat', val:'shirt_trouser_2pc,coord_western' },
+    { id:'mens_eastern', g:['home-m'], en:'Kurta & shalwar', bn:'কুর্তা ও শালওয়ার', se:'Eastern Vibes', sb:'ইস্টার্ন', e:'👔', kind:'cat', val:'mens_kurta,mens_shalwar_kameez' },
     { id:'mens_wedding', g:['home-m','luxe-m'], en:'Wedding for him', bn:'বরের পোশাক', se:'Sherwani', sb:'শেরওয়ানি', e:'🤵', kind:'cat', val:'mens_sherwani,mens_waistcoat,mens_suit' },
     { id:'mens_casual', g:['home-m'], en:'Smart casual', bn:'স্মার্ট ক্যাজুয়াল', se:'Shirts & polos', sb:'শার্ট', e:'👕', kind:'cat', val:'mens_shirt' },
-    { id:'kids_girls', g:['home-k'], en:'Girls', bn:'মেয়েদের', se:'Frocks & sets', sb:'ফ্রক ও সেট', e:'👧', kind:'cat', val:'kids_girls_eastern' },
+    { id:'kids_girls', g:['home-k'], en:'Girls', bn:'মেয়েদের', se:'Frocks, sets & Others', sb:'ফ্রক ও সেট', e:'👧', kind:'cat', val:'kids_girls_eastern' },
     { id:'kids_boys', g:['home-k'], en:'Boys', bn:'ছেলেদের', se:'Kurta & sets', sb:'কুর্তা ও সেট', e:'👦', kind:'cat', val:'kids_boys_eastern' },
-    { id:'kids_party', g:['home-k','luxe-k'], en:'Party & formal', bn:'পার্টি ও ফরমাল', se:'Occasion', sb:'অনুষ্ঠান', e:'🎀', kind:'cat', val:'kids_girls_formal,kids_boys_formal' },
+    { id:'kids_party', g:['home-k','luxe-k'], en:'Party & formal', bn:'পার্টি ও ফরমাল', se:'Occasion- Feel Happy', sb:'অনুষ্ঠান', e:'🎀', kind:'cat', val:'kids_girls_formal,kids_boys_formal' },
     { id:'luxe_designer', g:['luxe-all','luxe-w','luxe-m','luxe-k','home-all'], en:'Designer picks', bn:'ডিজাইনার পিকস', se:'Luxe', sb:'লাক্স', e:'👑', kind:'price', val:'5' },
     { id:'luxe_bridal', g:['luxe-all','luxe-w'], en:'Bridal couture', bn:'ব্রাইডাল', se:'Heavy formal', sb:'ভারী ফরমাল', e:'💎', kind:'cat', val:'bridal,heavy_formal_3pc' },
     { id:'luxe_handwork', g:['luxe-w','home-w'], en:'Hand embroidery', bn:'হ্যান্ড এমব্রয়ডারি', se:'Adda work', sb:'আড্ডা ওয়ার্ক', e:'🪡', kind:'cat', val:'handmade_emb' }
@@ -8120,7 +8154,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-30-coll-imgs';
+  const PSB_BUILD = '2026-06-30-pcposter';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

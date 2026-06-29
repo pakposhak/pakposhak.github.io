@@ -252,18 +252,10 @@
 
   <div id="tabBrands" style="display:none">
     <!-- (Back arrow lives in the top header now — see #hdrBack.) -->
-    <!-- Price-check claim banners (the purpose of this page): paste any brand link to see the real
-         PKR/BDT price before buying anywhere else. -->
-    <div class="bb-banners">
-      <button type="button" class="bb-banner bb-banner-a" onclick="location.href='order-form.html'">
-        <span class="bb-banner-ic" aria-hidden="true">🧾</span>
-        <span class="bb-banner-tx"><b data-i18n="bb_ban1_t">Check BDT &amp; PKR price by pasting</b><small data-i18n="bb_ban1_d">Paste any product link, see the real price.</small></span>
-      </button>
-      <div class="bb-banner bb-banner-b">
-        <span class="bb-banner-ic" aria-hidden="true">🛡️</span>
-        <span class="bb-banner-tx"><b data-i18n="bb_ban2_t">Don't buy, check here first</b><small data-i18n="bb_ban2_d">Confirm the genuine price before ordering.</small></span>
-      </div>
-    </div>
+    <!-- Page-aware hero poster for the Brand / Price-Check page (rendered by psRenderBrandBanner). -->
+    <div class="ps-banner" id="psBrandBanner"></div>
+    <!-- (The two static claim cards were removed per Danish 2026-06-30 — the hero poster above + the
+         search bar + the Paste-link button carry the price-check message now.) -->
     <!-- Two ways to find a brand: by store type (5 departments) OR by what products they sell -->
     <div class="bb-two-ways" data-i18n="bb_two_ways">Two ways to search brands</div>
     <div class="bb-subtabs">
