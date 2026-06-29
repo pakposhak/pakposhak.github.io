@@ -2488,7 +2488,7 @@
       ps_allcats:'All categories', ps_loading:'Loading products…', ps_loadfail:'Could not load products — please try again.',
       ps_results:'products', ps_add:'Add', ps_prev:'Prev', ps_next:'Next', ps_page:'Page',
       ps_feed_more:'Load more', ps_feed_end:'You have reached the end',
-      ps_enlarge:'Enlarge', ps_avail_sizes:'Available sizes', ps_unstitched:'Unstitched · no size needed', ps_also_st:'✂️ Stitched also available', ps_also_uns:'🧵 Unstitched fabric also available', ps_mto:'Made to order', ps_d_loading:'Loading more details…', ps_d_open:'View on brand site, order here', ps_d_more:'More from', ps_d_nofetch:'See all photos &amp; details on the brand page →', ps_d_nodesc:'No extra description provided.', warn_title:'Look there, order here', warn_body:'This page is only for photos and product details. Don\'t add to the brand\'s cart. To order on PakPoshak: tap + Add if it\'s in our listing, or Share the product to PakPoshak (or copy the link and paste it back here).', warn_ok:'Continue to brand site →', warn_cancel:'Stay on PakPoshak',
+      ps_enlarge:'Enlarge', ps_avail_sizes:'Available sizes', ps_unstitched:'Unstitched · no size needed', ps_also_st:'✂️ Stitched also available', ps_also_uns:'🧵 Unstitched fabric also available', ps_mto:'Made to order', ps_d_loading:'Loading more details…', ps_d_sizechart:'Size Chart', ps_d_open:'View on brand site, order here', ps_d_more:'More from', ps_d_nofetch:'See all photos &amp; details on the brand page →', ps_d_nodesc:'No extra description provided.', warn_title:'Look there, order here', warn_body:'This page is only for photos and product details. Don\'t add to the brand\'s cart. To order on PakPoshak: tap + Add if it\'s in our listing, or Share the product to PakPoshak (or copy the link and paste it back here).', warn_ok:'Continue to brand site →', warn_cancel:'Stay on PakPoshak',
       ps_empty:'No products match these filters — try widening them.',
       ps_partial:'Not every brand &amp; product is listed here yet —', ps_partial_link:'want more? Browse by brands →', ps_word_products:'products', ps_word_brands:'brands',
       ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products', ps_sort_lh:'৳ Low→High', ps_sort_hl:'৳ High→Low', ps_sort_price:'Sort: Price', ps_shop_cat:'Shop by category', wish_save:'Save to wishlist', wish_title:'Wishlist', wish_empty:'No saved items yet. Tap ♥ on any product to save it here.', wish_remove:'Remove', ps_also_uns_short:'Unstitched available', ps_also_st_short:'Stitched available', ps_sale:'Sale', ps_new:'New', ps_lbl_sort:'Sort', ps_lbl_filter:'Filter', ps_search_ph:'Search 50,000+ products, 140+ Pakistani brands', ps_search_nomatch:'No brand or category matched', share_added:'Item added. Save it below before adding another.', share_review:'Save',
@@ -2562,7 +2562,7 @@
       ps_allcats:'সব ক্যাটাগরি', ps_loading:'পণ্য আসছে…', ps_loadfail:'পণ্য আনা গেল না — আবার চেষ্টা করুন।',
       ps_results:'পণ্য', ps_add:'যোগ করুন', ps_prev:'আগের', ps_next:'পরের', ps_page:'পৃষ্ঠা',
       ps_feed_more:'আরও দেখুন', ps_feed_end:'আপনি শেষ পর্যন্ত দেখে ফেলেছেন',
-      ps_enlarge:'ছবি বড় করুন', ps_avail_sizes:'স্টকে থাকা সাইজ', ps_unstitched:'আনস্টিচড · সাইজ লাগে না', ps_also_st:'✂️ সেলাই করাও আছে', ps_also_uns:'🧵 আনস্টিচড কাপড়ও আছে', ps_mto:'অর্ডারে তৈরি হবে', ps_d_loading:'আরও বিবরণ আসছে…', ps_d_open:'ব্র্যান্ড সাইটে দেখুন, অর্ডার এখানে', ps_d_more:'আরও দেখুন —', ps_d_nofetch:'সব ছবি ও বিবরণ ব্র্যান্ডের পেজে দেখুন →', ps_d_nodesc:'বাড়তি কোনো বিবরণ নেই।', warn_title:'দেখুন ওখানে, অর্ডার এখানে', warn_body:'এই পেজটি শুধু ছবি ও পণ্যের বিবরণ দেখার জন্য। ব্র্যান্ডের cart-এ যোগ করবেন না। PakPoshak-এ অর্ডার করতে: লিস্টে থাকলে + Add ট্যাপ করুন, অথবা পণ্যটি PakPoshak-এ Share করুন (বা লিংক copy করে এখানে এসে paste করুন)।', warn_ok:'ব্র্যান্ড সাইটে যান →', warn_cancel:'PakPoshak-এ থাকুন',
+      ps_enlarge:'ছবি বড় করুন', ps_avail_sizes:'স্টকে থাকা সাইজ', ps_unstitched:'আনস্টিচড · সাইজ লাগে না', ps_also_st:'✂️ সেলাই করাও আছে', ps_also_uns:'🧵 আনস্টিচড কাপড়ও আছে', ps_mto:'অর্ডারে তৈরি হবে', ps_d_loading:'আরও বিবরণ আসছে…', ps_d_sizechart:'সাইজ চার্ট', ps_d_open:'ব্র্যান্ড সাইটে দেখুন, অর্ডার এখানে', ps_d_more:'আরও দেখুন —', ps_d_nofetch:'সব ছবি ও বিবরণ ব্র্যান্ডের পেজে দেখুন →', ps_d_nodesc:'বাড়তি কোনো বিবরণ নেই।', warn_title:'দেখুন ওখানে, অর্ডার এখানে', warn_body:'এই পেজটি শুধু ছবি ও পণ্যের বিবরণ দেখার জন্য। ব্র্যান্ডের cart-এ যোগ করবেন না। PakPoshak-এ অর্ডার করতে: লিস্টে থাকলে + Add ট্যাপ করুন, অথবা পণ্যটি PakPoshak-এ Share করুন (বা লিংক copy করে এখানে এসে paste করুন)।', warn_ok:'ব্র্যান্ড সাইটে যান →', warn_cancel:'PakPoshak-এ থাকুন',
       ps_empty:'এই ফিল্টারে কোনো পণ্য নেই — ফিল্টার একটু কমিয়ে দেখুন।',
       ps_partial:'সব ব্র্যান্ড বা পণ্য এখনো এখানে যোগ হয়নি —', ps_partial_link:'আরও চান? “ব্র্যান্ড দেখুন”-এ যান →', ps_word_products:'পণ্য', ps_word_brands:'ব্র্যান্ড',
       ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়', ps_sort_lh:'৳ কম→বেশি', ps_sort_hl:'৳ বেশি→কম', ps_sort_price:'দাম অনুসারে', ps_shop_cat:'ক্যাটাগরি অনুযায়ী দেখুন', wish_save:'পছন্দে সেভ করুন', wish_title:'পছন্দের তালিকা', wish_empty:'এখনো কিছু সেভ করা হয়নি। যেকোনো পণ্যে ♥ চাপ দিয়ে এখানে সেভ করুন।', wish_remove:'সরান', ps_also_uns_short:'আনস্টিচডও আছে', ps_also_st_short:'সেলাইও আছে', ps_sale:'সেল', ps_new:'নতুন', ps_lbl_sort:'সাজান', ps_lbl_filter:'ফিল্টার', ps_search_ph:'খুঁজুন: ৫০,০০০+ পণ্য, ১৪০+ পাকিস্তানি ব্র্যান্ড', ps_search_nomatch:'কোনো ব্র্যান্ড বা ক্যাটাগরি মেলেনি', share_added:'পণ্যটি যোগ হয়েছে। আরেকটি যোগ করার আগে নিচে সেভ করুন।', share_review:'সেভ করুন',
@@ -7529,6 +7529,7 @@
       +   `<div class="ps-d-price">≈ ৳${bdt.toLocaleString()}</div>`
       +   `<div class="ps-d-pkr">PKR ${p.pkr.toLocaleString()}</div>`
       +   `${sz ? `<div class="ps-d-szlabel">${tr('ps_avail_sizes')}</div><div class="ps-d-szrow">${sz}</div>` : ''}`
+      +   `<div id="psDSizeChart" class="ps-d-szchart-wrap"></div>`
       +   `<div class="ps-d-actions">`
       +     `<button type="button" class="ps-wish ps-d-wishbtn${psWishHas(p.u)?' on':''}" data-uk="${esc(psUrlKey(p.u))}" onclick="psWishToggle(${idx})" aria-label="${tr('wish_save')}" title="${tr('wish_save')}"><svg class="ps-heart-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></button>`
       +     `<button type="button" class="ps-d-open" onclick="psOpenFull(${idx})">${tr('ps_d_open')} ↗</button>`
@@ -7611,12 +7612,55 @@
       if(st.desc) descEl.innerHTML = `<div class="ps-d-desc-h">Description</div><div class="ps-d-desc">${esc(st.desc)}</div><div class="ps-d-disc">Actual colour may vary slightly from the image.</div>`;
       else if(st.done) descEl.innerHTML = (st.rows.length || st.imgs.length) ? '' : (st.any ? tr('ps_d_nodesc') : tr('ps_d_nofetch'));
     }
+    // Size Chart button (only when this product/brand has a chart image) → opens the simple image
+    // lightbox (openImgZoom) layered over the popup, with its own close. Built once when sc lands.
+    const scEl = document.getElementById('psDSizeChart');
+    if(scEl){
+      const hasSC = (st.sc && st.sc.length) || (st.scTable && st.scTable.length);
+      if(hasSC){
+        if(!scEl.querySelector('button')){
+          scEl.innerHTML = `<button type="button" class="ps-d-szchart">📏 ${esc(tr('ps_d_sizechart'))}</button>`;
+          const b = scEl.querySelector('button'); if(b) b.onclick = () => { try{ psOpenSizeChart(st); }catch(e){} };
+        }
+      } else if(scEl.firstChild){ scEl.innerHTML = ''; }
+    }
+  }
+  // Size-chart modal: renders the measurement TABLE(s) natively (responsive, theme-styled) and/or the
+  // chart IMAGE(s), layered over the product popup with its own close. Built lazily, reused per open.
+  function psScCell(c, head){ const tag = head ? 'th' : 'td'; return '<' + tag + '>' + esc(c) + '</' + tag + '>'; }
+  function psSizeChartHTML(st){
+    let h = '';
+    for(const item of (st.scTable || [])){
+      // each entry is {t:title, rows:[[...]]} (per-product SHIRT/TROUSER) or a plain rows array (brand chart)
+      const isObj = item && !Array.isArray(item);
+      const rows = isObj ? item.rows : item;
+      const title = isObj ? (item.t || '') : '';
+      if(!rows || !rows.length) continue;
+      if(title) h += '<div class="ps-sc-cap">' + esc(title) + '</div>';
+      h += '<div class="ps-sc-scroll"><table class="ps-sc-tbl"><tbody>'
+        + rows.map((row, ri) => '<tr>' + row.map(c => psScCell(c, ri === 0)).join('') + '</tr>').join('')
+        + '</tbody></table></div>';
+    }
+    for(const img of (st.sc || [])) h += '<img class="ps-sc-img" src="' + esc(img) + '" alt="Size chart" loading="lazy">';
+    return h || ('<div class="ps-sc-empty">' + esc(tr('ps_d_nodesc')) + '</div>');
+  }
+  function psOpenSizeChart(st){
+    let ov = document.getElementById('psScOv');
+    if(!ov){
+      ov = document.createElement('div'); ov.id = 'psScOv'; ov.className = 'ps-sc-ov';
+      ov.innerHTML = '<div class="ps-sc-card"><button type="button" class="ps-sc-x" aria-label="Close">×</button><div class="ps-sc-hd">📏 ' + esc(tr('ps_d_sizechart')) + '</div><div class="ps-sc-body" id="psScBody"></div></div>';
+      document.body.appendChild(ov);
+      ov.addEventListener('click', e => { if(e.target === ov || e.target.classList.contains('ps-sc-x')) ov.classList.remove('open'); });
+      document.addEventListener('keydown', e => { if(e.key === 'Escape') ov.classList.remove('open'); });
+    }
+    document.getElementById('psScBody').innerHTML = psSizeChartHTML(st || _psDetState || {});
+    ov.classList.add('open');
   }
   // Kick off both sources; each updates the accumulator and repaints. A stale-guard (the global
   // _psDetState is reassigned per open) makes an in-flight fetch from a previously-opened product a
   // no-op, so it can't paint over a different product opened right after.
   function psEnrichDetail(p){
-    const st = _psDetState = { desc:'', rows:[], imgs:[], pending:0, done:false, any:false };
+    const st = _psDetState = { desc:'', rows:[], imgs:[], sc:[], scTable:[], pending:0, done:false, any:false };
     const stale = () => _psDetState !== st;
     const closed = () => { const m = document.getElementById('psDetail'); return !m || m.style.display === 'none'; };
     const finish = () => { if(stale()) return; st.pending--; if(st.pending <= 0){ st.done = true; if(!closed()) psPaintDetail(p); } };
@@ -7630,6 +7674,8 @@
         if(d.desc && d.desc.length > st.desc.length) st.desc = d.desc;
         for(const s of (d.sections || [])) _psDetAddRow(st, s[0], s[1]);
         if(d.imgs && d.imgs.length && !st.imgs.length) st.imgs = d.imgs.slice();
+        if(d.sc && d.sc.length) st.sc = d.sc.slice();
+        if(d.scTable && d.scTable.length) st.scTable = d.scTable.slice();
         psPaintDetail(p);
       })
       .catch(() => {})
@@ -7647,7 +7693,11 @@
           const imgs = (prod.images || []).map(s => typeof s === 'string' ? s : (s && s.src)).filter(Boolean);
           if(imgs.length) st.imgs = imgs.slice();   // brand's full live gallery is the richest — prefer it
           for(const r of psBuildDetailRowsArr(prod)) _psDetAddRow(st, r[0], r[1]);
-          const desc = (prod.body_html || '').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/\s+/g,' ').trim();
+          const desc = (prod.body_html || '')
+            .replace(/<br\s*\/?>/gi,'\n').replace(/<li\b[^>]*>/gi,'\n').replace(/<\/(p|div|li|tr|h[1-6])>/gi,'\n')
+            .replace(/<[^>]+>/g,' ')
+            .replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&#39;/g,"'").replace(/&quot;/g,'"')
+            .replace(/[ \t\f\v]+/g,' ').replace(/ *\n */g,'\n').replace(/\n{2,}/g,'\n').trim();
           if(desc && desc.length > st.desc.length) st.desc = desc;
           psPaintDetail(p);
         })
@@ -8163,7 +8213,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-30-ui2';
+  const PSB_BUILD = '2026-06-30-sizecharts';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

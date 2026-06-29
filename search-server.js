@@ -148,7 +148,7 @@ function handleDetails(u, res){
     let pick = cand[0];
     if (host && cand.length > 1) { const h = cand.find(r => (r.host || '').includes(host) || (r.u || '').toLowerCase().includes(host)); if (h) pick = h; }
     let j; try { j = JSON.parse(pick.j || '{}'); } catch (e) { j = {}; }
-    send(res, 200, { found: true, desc: j.desc || '', sections: j.sections || [], imgs: j.imgs || [] });
+    send(res, 200, { found: true, desc: j.desc || '', sections: j.sections || [], imgs: j.imgs || [], sc: j.sc || [], scTable: j.scTable || [] });
   } catch (e) { send(res, 500, { error: e.message }); }
 }
 
