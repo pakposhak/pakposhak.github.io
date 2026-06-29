@@ -211,6 +211,9 @@
     .ps-collhdr-x{flex:0 0 auto;width:26px;height:26px;border-radius:50%;border:1px solid var(--bdr-med);background:var(--raised);color:var(--txt);font-size:0.78rem;cursor:pointer;line-height:1}
     @keyframes psCollEnter{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
     .ps-results.ps-coll-enter{animation:psCollEnter .3s ease-out}
+    .ps-sp-poster{display:flex;flex-direction:column;gap:3px;margin:0 0 12px;padding:14px 16px;border-radius:14px;background:var(--accent);color:#fff}
+    .ps-sp-poster-t{font-weight:800;font-size:1rem;line-height:1.22}
+    .ps-sp-poster-s{font-size:0.78rem;line-height:1.32;opacity:.93}
     /* Reusable promise / trust strip (redesign P1). */
     .ps-promises{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:0 0 14px}
     .ps-promise{display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--bdr);border-radius:11px;padding:11px}

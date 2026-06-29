@@ -2493,7 +2493,7 @@
       ps_partial:'Not every brand &amp; product is listed here yet —', ps_partial_link:'want more? Browse by brands →', ps_word_products:'products', ps_word_brands:'brands',
       ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products', ps_sort_lh:'৳ Low→High', ps_sort_hl:'৳ High→Low', ps_sort_price:'Sort: Price', ps_shop_cat:'Shop by category', wish_save:'Save to wishlist', wish_title:'Wishlist', wish_empty:'No saved items yet. Tap ♥ on any product to save it here.', wish_remove:'Remove', ps_also_uns_short:'Unstitched available', ps_also_st_short:'Stitched available', ps_sale:'Sale', ps_new:'New', ps_lbl_sort:'Sort', ps_lbl_filter:'Filter', ps_search_ph:'Search 50,000+ products, 140+ Pakistani brands', ps_search_nomatch:'No brand or category matched', share_added:'Item added. Save it below before adding another.', share_review:'Save',
       bb_store:'Store Types', bb_product:'Product Category', bb_women:'👗 Women', bb_men:'👔 Men', bb_kids:'🧸 Kids', bb_md:'🏬 Multi-Dept', bb_premium:'💎 Premium',
-      bb_ban1_t:'Check BDT & PKR price by pasting', bb_ban1_d:'Paste any product link, see the real price.', bb_ban2_t:"Don't buy elsewhere, check here first", bb_ban2_d:'Just paste any product link, from any brand, to check its price.',
+      bb_ban1_t:'Check BDT & PKR price by pasting', bb_ban1_d:'Paste any product link, see the real price.', bb_ban2_t:"Don't buy, check here first", bb_ban2_d:'Just paste any product link, from any brand, to check its price.',
       bb_more:'more', bb_less:'less', bb_all:'All', bb_two_ways:'Two ways to search brands', bb_pick_gender:'Pick women, men, or others above — or just type any brand name.', bb_pick_cat:'Pick a category above to see its brands.', bb_prod_sub:'Choose your brand by clicking a tab or typing its name, go to the product you like, and just share it back to us.', bb_loading:'Loading brands…', bb_prod_none:'No catalogued brands here yet.',
       bb_smart_ph:'🔍 Search brands, e.g. Khaadi, lawn, casual', bb_search_lead:'🔎 Know the brand? Just type its name:',
       js_soldout_lead:'Some items appear SOLD OUT and can’t be saved — please remove them or pick another article:',
@@ -2567,7 +2567,7 @@
       ps_partial:'সব ব্র্যান্ড বা পণ্য এখনো এখানে যোগ হয়নি —', ps_partial_link:'আরও চান? “ব্র্যান্ড দেখুন”-এ যান →', ps_word_products:'পণ্য', ps_word_brands:'ব্র্যান্ড',
       ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়', ps_sort_lh:'৳ কম→বেশি', ps_sort_hl:'৳ বেশি→কম', ps_sort_price:'দাম অনুসারে', ps_shop_cat:'ক্যাটাগরি অনুযায়ী দেখুন', wish_save:'পছন্দে সেভ করুন', wish_title:'পছন্দের তালিকা', wish_empty:'এখনো কিছু সেভ করা হয়নি। যেকোনো পণ্যে ♥ চাপ দিয়ে এখানে সেভ করুন।', wish_remove:'সরান', ps_also_uns_short:'আনস্টিচডও আছে', ps_also_st_short:'সেলাইও আছে', ps_sale:'সেল', ps_new:'নতুন', ps_lbl_sort:'সাজান', ps_lbl_filter:'ফিল্টার', ps_search_ph:'খুঁজুন: ৫০,০০০+ পণ্য, ১৪০+ পাকিস্তানি ব্র্যান্ড', ps_search_nomatch:'কোনো ব্র্যান্ড বা ক্যাটাগরি মেলেনি', share_added:'পণ্যটি যোগ হয়েছে। আরেকটি যোগ করার আগে নিচে সেভ করুন।', share_review:'সেভ করুন',
       bb_store:'স্টোরের ধরন', bb_product:'পণ্যের ক্যাটাগরি', bb_women:'👗 মেয়েদের', bb_men:'👔 ছেলেদের', bb_kids:'🧸 বাচ্চাদের', bb_md:'🏬 মাল্টি-ডিপ', bb_premium:'💎 প্রিমিয়াম',
-      bb_ban1_t:'পেস্ট করে BDT ও PKR দাম যাচাই', bb_ban1_d:'যেকোনো পণ্যের লিংক পেস্ট করুন, আসল দাম দেখুন।', bb_ban2_t:'অন্য কোথাও কেনার আগে, এখানে যাচাই করুন', bb_ban2_d:'যেকোনো ব্র্যান্ডের যেকোনো পণ্যের লিংক পেস্ট করে দাম দেখুন।',
+      bb_ban1_t:'পেস্ট করে BDT ও PKR দাম যাচাই', bb_ban1_d:'যেকোনো পণ্যের লিংক পেস্ট করুন, আসল দাম দেখুন।', bb_ban2_t:'কেনার আগে এখানে যাচাই করুন', bb_ban2_d:'যেকোনো ব্র্যান্ডের যেকোনো পণ্যের লিংক পেস্ট করে দাম দেখুন।',
       bb_more:'আরও', bb_less:'কম', bb_all:'সব', bb_two_ways:'ব্র্যান্ড খোঁজার দুটি উপায়', bb_pick_gender:'উপরে মেয়ে, ছেলে বা অন্যান্য বেছে নিন — অথবা যেকোনো ব্র্যান্ডের নাম লিখুন।', bb_pick_cat:'ব্র্যান্ড দেখতে উপরের একটি ক্যাটাগরিতে ট্যাপ করুন।', bb_prod_sub:'একটি ট্যাবে ক্লিক করে বা নাম টাইপ করে আপনার ব্র্যান্ড বেছে নিন, পছন্দের পণ্যে যান, আর সেটি আমাদের শেয়ার করুন।', bb_loading:'ব্র্যান্ড আসছে…', bb_prod_none:'এখানে এখনো কোনো ব্র্যান্ড নেই।',
       bb_smart_ph:'🔍 ব্র্যান্ড খুঁজুন, যেমন Khaadi, lawn, casual', bb_search_lead:'🔎 ব্র্যান্ড জানা আছে? নাম দিয়ে খুঁজুন:',
       js_soldout_lead:'কিছু পণ্য স্টকে নেই, তাই সেভ করা যাচ্ছে না — সেগুলো সরিয়ে দিন বা অন্য পণ্য বেছে নিন:',
@@ -5520,6 +5520,7 @@
     if(inp){ inp.value=''; inp.placeholder = _psSearchMode==='brands' ? 'Search a brand to check its price' : 'Search products and 150+ brands'; setTimeout(function(){ try{ inp.focus(); }catch(e){} }, 60); }
     var clr=document.getElementById('psSpClear'); if(clr) clr.hidden=true;
     psSearchPageSug('');
+    try{ psSpRenderPoster(); }catch(e){}
     try{ psSpFillTiles(); }catch(e){}
   }
   function psSearchClose(){
@@ -6328,6 +6329,18 @@
     'luxe-k': [
       { en_t:'Little VIPs', en_s:'Premium party and formal wear for kids, from Pakistan\'s best.', bn_t:'লিটল ভিআইপি', bn_s:'পাকিস্তানের সেরা থেকে বাচ্চাদের প্রিমিয়াম পার্টি ও ফরমাল ওয়্যার।' },
       { en_t:'Dressed for the occasion', en_s:'Festive sets that match the grown-ups.', bn_t:'অনুষ্ঠানের সাজ', bn_s:'বড়দের সাথে মানানসই উৎসবের সেট।' }
+    ],
+    'search-home': [
+      { en_t:'Know your size in every brand', en_s:'Save your measurements once, we match the right size for each Pakistani brand.', bn_t:'প্রতিটি ব্র্যান্ডে আপনার সঠিক সাইজ', bn_s:'একবার মাপ দিন, প্রতিটি পাকিস্তানি ব্র্যান্ডের সঠিক সাইজ আমরা মিলিয়ে দেব।' },
+      { en_t:'Snap it. Find it. Order it.', en_s:'Search by photo and find the closest pieces across 150+ brands.', bn_t:'ছবি তুলুন, খুঁজুন, অর্ডার করুন', bn_s:'ছবি দিয়ে খুঁজুন, ১৫০+ ব্র্যান্ডের সবচেয়ে কাছের পণ্য পান।' }
+    ],
+    'search-luxe': [
+      { en_t:'Search the designer houses', en_s:'Elan, Sana Safinaz, Asim Jofa and more, with the real PKR price.', bn_t:'ডিজাইনার হাউস খুঁজুন', bn_s:'এলান, সানা সাফিনাজ, আসিম জোফা ও আরও, আসল পিকেআর দামে।' },
+      { en_t:'Snap it. Find it. Order it.', en_s:'Search by photo across Pakistan\'s premium labels.', bn_t:'ছবি তুলুন, খুঁজুন, অর্ডার করুন', bn_s:'ছবি দিয়ে পাকিস্তানের প্রিমিয়াম ব্র্যান্ডে খুঁজুন।' }
+    ],
+    'search-brand': [
+      { en_t:'Type a brand, see its real PKR price', en_s:'Pick any of 150+ Pakistani brands and check the genuine local price.', bn_t:'ব্র্যান্ড লিখুন, আসল পিকেআর দাম দেখুন', bn_s:'১৫০+ পাকিস্তানি ব্র্যান্ডের যেকোনোটি বেছে নিন, আসল লোকাল দাম যাচাই করুন।' },
+      { en_t:'Compare, then buy smart', en_s:'We are the most competitive, check here before you buy.', bn_t:'তুলনা করুন, এরপর কিনুন', bn_s:'আমরা সবচেয়ে সাশ্রয়ী, কেনার আগে এখানে যাচাই করুন।' }
     ]
   };
   function _psPosterPage(){
@@ -6338,6 +6351,21 @@
     }catch(e){ return 'home-all'; }
   }
   function _psPosterSet(){ return PS_POSTERS[_psPosterPage()] || PS_BANNERS; }
+  // Search-overlay poster: 3 contexts — opened from Brand (price-check), Luxe, or Home.
+  function _psSearchPosterCtx(){
+    if(typeof _psSearchMode !== 'undefined' && _psSearchMode === 'brands') return 'search-brand';
+    return (typeof psStore !== 'undefined' && psStore === 'premium') ? 'search-luxe' : 'search-home';
+  }
+  function psSpRenderPoster(){
+    var el = document.getElementById('psSpBanner'); if(!el) return;
+    var set = PS_POSTERS[_psSearchPosterCtx()];
+    if(!set || !set.length){ el.innerHTML=''; el.hidden=true; return; }
+    var bn = (typeof _lang !== 'undefined' && _lang === 'bn');
+    var b = set[0];   // lead poster for this search context (relocatable)
+    el.innerHTML = '<b class="ps-sp-poster-t">'+esc(bn?b.bn_t:b.en_t)+'</b><span class="ps-sp-poster-s">'+esc(bn?b.bn_s:b.en_s)+'</span>';
+    el.hidden = false;
+  }
+  window.psSpRenderPoster = psSpRenderPoster;
   let _psBanIdx = 0, _psBanT = null, _psBanImgs = [];
   // Fill the two hero images from the loaded catalogue (once). Picks photos a little down the feed so
   // they differ from the first grid rows. Re-renders the banner when ready.
@@ -8048,7 +8076,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-29-pages';
+  const PSB_BUILD = '2026-06-29-srchpost';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
