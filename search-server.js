@@ -20,12 +20,14 @@ const Database = require('better-sqlite3');
 
 const PORT = (process.env.PSB_SEARCH_PORT | 0) || 8788;
 const DB_PATH = process.env.PSB_DB || path.join(__dirname, 'search.db');
+const DETAILS_DB = process.env.PSB_DETAILS_DB || path.join(__dirname, 'details.db');
 
 // Landed ৳BDT price buckets — MUST match the app's PS_BUCKETS (Under 3k / 3-4.5k / 4.5-6k / 6-8k / 8-10k / 10-15k / 15k+).
 // batch 2: the old 10k+ bucket is split at 15k so Home/Everyday can show under-15k and Premium/Luxe stays 10k+.
 const BUCKETS = [[0, 3000], [3000, 4500], [4500, 6000], [6000, 8000], [8000, 10000], [10000, 15000], [15000, 1e12]];
 
 let db = null;
+let ddb = null;  // product-detail DB (build-details-db.js); optional — absent ⇒ /search/details reports found:false
 let ORD_N = 0;   // MAX(ord)+1 — rotation modulus base; recomputed on each DB (re)open
 function openDb(){
   try {
@@ -40,6 +42,20 @@ function openDb(){
 openDb();
 // Reopen when build-search-db.js swaps in a new DB file (atomic rename).
 try { fs.watchFile(DB_PATH, { interval: 5000 }, (cur, prev) => { if (cur.mtimeMs !== prev.mtimeMs) { console.log('db changed — reopening'); openDb(); } }); } catch (e) {}
+
+// Optional product-detail DB (built by build-details-db.js). Read-only; if absent the
+// /search/details endpoint returns {found:false} and the popup falls back to the brand .js.
+function openDetails(){
+  try {
+    const ndb = new Database(DETAILS_DB, { readonly: true, fileMustExist: true });
+    ndb.pragma('query_only = true');
+    const old = ddb; ddb = ndb;
+    if (old) { try { old.close(); } catch (e) {} }
+    console.log('opened', DETAILS_DB, '—', ddb.prepare('SELECT count(*) c FROM details').get().c, 'detail rows');
+  } catch (e) { ddb = null; console.log('details db not loaded (' + e.message + ') — /search/details will report found:false'); }
+}
+openDetails();
+try { fs.watchFile(DETAILS_DB, { interval: 5000 }, (cur, prev) => { if (cur.mtimeMs !== prev.mtimeMs) { console.log('details db changed — reopening'); openDetails(); } }); } catch (e) {}
 
 // Turn free-text keywords into a safe FTS5 prefix-AND query. Tokens are alphanumeric only
 // (so safe as barewords — no injection); FTS5 reserved words are dropped so they can't be
@@ -111,6 +127,28 @@ function handleByUrl(u, res){
     let pick = exact[0];
     if (host && exact.length > 1) { const h = exact.find(r => (r.u || '').toLowerCase().includes(host)); if (h) pick = h; }
     send(res, 200, { found: true, cat: pick.cat, bdt: pick.bdt, b: pick.b, sz: JSON.parse(pick.sz || '[]') });
+  } catch (e) { send(res, 500, { error: e.message }); }
+}
+
+// Product DETAILS by URL — the rendered-page scrape (description + Fabric/Care/etc. sections +
+// gallery images) for the Browse popup, so the buyer gets the full product info (INCLUDING SFCC
+// brands like Khaadi/Sapphire that have no .js feed) without leaving for the brand site. Mirrors
+// handleByUrl's last-segment + host match; the payload is pre-cleaned by build-details-db.js, so
+// this just returns it. Absent details db ⇒ {found:false} and the popup falls back to the .js.
+function handleDetails(u, res){
+  if (!ddb) return send(res, 200, { found: false });
+  const raw = u.searchParams.get('u') || '';
+  let seg = '', host = '';
+  try { const x = new URL(raw); host = x.hostname.replace(/^www\./, '').toLowerCase(); seg = lastSeg(x.pathname); }
+  catch (e) { seg = lastSeg(String(raw).replace(/[?#].*$/, '')); }
+  if (!/^[a-z0-9._%+-]{2,160}$/.test(seg)) return send(res, 200, { found: false });
+  try {
+    const cand = ddb.prepare('SELECT host,u,j FROM details WHERE seg = ? COLLATE NOCASE').all(seg);
+    if (!cand.length) return send(res, 200, { found: false });
+    let pick = cand[0];
+    if (host && cand.length > 1) { const h = cand.find(r => (r.host || '').includes(host) || (r.u || '').toLowerCase().includes(host)); if (h) pick = h; }
+    let j; try { j = JSON.parse(pick.j || '{}'); } catch (e) { j = {}; }
+    send(res, 200, { found: true, desc: j.desc || '', sections: j.sections || [], imgs: j.imgs || [] });
   } catch (e) { send(res, 500, { error: e.message }); }
 }
 
@@ -197,6 +235,7 @@ http.createServer((req, res) => {
   if (u.pathname === '/search/facets') return handleFacets(res);
   if (u.pathname === '/search/brand-index') return handleBrandIndex(res);
   if (u.pathname === '/search/by-url') return handleByUrl(u, res);
-  if (u.pathname === '/search/health') return send(res, 200, { ok: true, products: db ? db.prepare('SELECT count(*) c FROM products').get().c : 0 });
+  if (u.pathname === '/search/details') return handleDetails(u, res);
+  if (u.pathname === '/search/health') return send(res, 200, { ok: true, products: db ? db.prepare('SELECT count(*) c FROM products').get().c : 0, details: ddb ? ddb.prepare('SELECT count(*) c FROM details').get().c : 0 });
   send(res, 404, { error: 'not found' });
 }).listen(PORT, '127.0.0.1', () => console.log('psb-search listening on 127.0.0.1:' + PORT));

@@ -7245,11 +7245,21 @@
     psApply();
     psCloseDetail(); psScrollToResults();
   }
-  // Build a LAAM-style "Product Details" table from the brand's own data (its Shopify .js): the
-  // structured Fabric_/Design_/Color_ tags + product_type + vendor + a piece-count tag. Many PK
-  // brands tag this way (e.g. Mausummery "Fabric_Lawn, Design_Embroidered, Color_Red, 2 Piece");
-  // brands that don't just get a sparse table or none, and the description below still shows.
-  function psBuildDetailRows(prod){
+  // ── PRODUCT DETAILS (popup, below the gallery) ───────────────────────────
+  // Goal: show the FULL product info (description + Fabric / Care / etc. + the image gallery) right in
+  // the popup so the buyer never has to leave for the brand site. Two sources merge into one
+  // accumulator and paint progressively, in the SAME table/description format for every product (the
+  // rows themselves vary with whatever data exists):
+  //   A) OUR pre-scraped details API (/search/details) — desc + cleaned sections + gallery for ~99% of
+  //      the catalogue INCLUDING SFCC brands (Khaadi/Sapphire) that have no .js feed. Fast, served via
+  //      the relay (no per-brand CORS). Primary source.
+  //   B) the brand's OWN Shopify .js (Shopify hosts only) — full LIVE gallery + atomic
+  //      Fabric_/Design_/Color_ tags + body_html. Upgrades the gallery and adds atomic rows.
+  // A brand-new product not yet scraped → A returns found:false and B alone drives it (old behaviour).
+  // Neither yields anything → the "couldn't load" note shows.
+
+  // Atomic Fabric/Design/Colour/Pieces/Type rows from a Shopify product's tags+type → [[label,text]].
+  function psBuildDetailRowsArr(prod){
     let tags = prod && prod.tags;
     tags = Array.isArray(tags) ? tags : (typeof tags === 'string' ? tags.split(',').map(s => s.trim()) : []);
     const rows = [];
@@ -7259,32 +7269,84 @@
     const col = grab(/^colou?r[\s_>:-]*/i); if(col.length) rows.push(['Colour', col.join(', ')]);
     const pcs = tags.find(t => /^\s*\d\s?(piece|pcs?)\b/i.test(t)); if(pcs) rows.push(['Pieces', pcs.trim()]);
     if(prod.type) rows.push(['Type', prod.type]);
-    if(!rows.length) return '';
-    return `<div class="ps-d-details-h">Product Details</div><table class="ps-d-tbl"><tbody>`
-      + rows.map(r => `<tr><td class="ps-d-k">${esc(r[0])}</td><td class="ps-d-v">${esc(r[1])}</td></tr>`).join('')
-      + `</tbody></table>`;
+    return rows;
   }
-  // Pull the product's full-size gallery + structured details + description from its own Shopify .js.
-  // Renders the vertical big-image gallery BELOW the details. SFCC / non-Shopify products keep the
-  // single catalog image + the "open page" link.
+  // Display priority so the table reads sensibly no matter which source landed first; unknown labels
+  // keep their arrival order after the known ones.
+  const PS_DET_ORDER = ['fabric','fabric details','composition','fabric composition','material','work / design','design','colour','color','pieces','fit','type','details','product details','product information','specification','features','care instructions','care instruction','wash & care','wash care','materials and care'];
+  let _psDetState = null;
+  // Add/merge one [label,text] row into the accumulator (case-insensitive; keep the richer text).
+  function _psDetAddRow(st, label, text){
+    label = String(label || '').trim(); text = String(text || '').trim();
+    if(!label || text.length < 2) return;
+    const lk = label.toLowerCase();
+    const i = st.rows.findIndex(r => r[0].toLowerCase() === lk);
+    if(i >= 0){ if(text.length > st.rows[i][1].length) st.rows[i][1] = text; return; }
+    st.rows.push([label, text]);
+  }
+  // Paint the gallery + details table + description from the accumulator (idempotent; called on every
+  // source update). Reuses the existing .ps-d-* markup so the format is unchanged.
+  function psPaintDetail(p){
+    const st = _psDetState; if(!st) return;
+    const m = document.getElementById('psDetail'); if(!m || m.style.display === 'none') return;
+    const galEl = document.getElementById('psDGallery'), detEl = document.getElementById('psDDetails'), descEl = document.getElementById('psDDesc');
+    if(galEl && st.imgs.length) galEl.innerHTML = st.imgs.slice(0, 12).map((src, i) => `<img class="ps-d-shot" loading="${i < 2 ? 'eager' : 'lazy'}" src="${esc(src)}" alt="${esc(p.t)}">`).join('');
+    if(detEl){
+      const rows = st.rows.slice().sort((a, b) => { const ia = PS_DET_ORDER.indexOf(a[0].toLowerCase()), ib = PS_DET_ORDER.indexOf(b[0].toLowerCase()); return (ia < 0 ? 50 : ia) - (ib < 0 ? 50 : ib); });
+      detEl.innerHTML = rows.length
+        ? `<div class="ps-d-details-h">Product Details</div><table class="ps-d-tbl"><tbody>`
+          + rows.map(r => `<tr><td class="ps-d-k">${esc(r[0])}</td><td class="ps-d-v">${esc(r[1])}</td></tr>`).join('')
+          + `</tbody></table>`
+        : '';
+    }
+    if(descEl){
+      if(st.desc) descEl.innerHTML = `<div class="ps-d-desc-h">Description</div><div class="ps-d-desc">${esc(st.desc)}</div><div class="ps-d-disc">Actual colour may vary slightly from the image.</div>`;
+      else if(st.done) descEl.innerHTML = (st.rows.length || st.imgs.length) ? '' : (st.any ? tr('ps_d_nodesc') : tr('ps_d_nofetch'));
+    }
+  }
+  // Kick off both sources; each updates the accumulator and repaints. A stale-guard (the global
+  // _psDetState is reassigned per open) makes an in-flight fetch from a previously-opened product a
+  // no-op, so it can't paint over a different product opened right after.
   function psEnrichDetail(p){
-    let origin, handle;
-    try{ const u = new URL(p.u); origin = u.origin; const m = u.pathname.match(/\/products\/([^/?#.]+)/); handle = m && m[1]; }catch(e){}
-    const descEl = document.getElementById('psDDesc'), detEl = document.getElementById('psDDetails'), galEl = document.getElementById('psDGallery');
-    if(!handle){ if(descEl) descEl.innerHTML = tr('ps_d_nofetch'); return; }
-    fetch(`${origin}/products/${handle}.js`, { cache:'no-store' })
-      .then(r => r.ok ? r.json() : Promise.reject())
-      .then(prod => {
-        if(document.getElementById('psDetail').style.display === 'none') return;
-        const imgs = (prod.images || []).map(s => typeof s === 'string' ? s : (s && s.src)).filter(Boolean);
-        if(galEl && imgs.length) galEl.innerHTML = imgs.slice(0, 12).map((src, i) => `<img class="ps-d-shot" loading="${i < 2 ? 'eager' : 'lazy'}" src="${esc(src)}" alt="${esc(p.t)}">`).join('');
-        if(detEl) detEl.innerHTML = psBuildDetailRows(prod);
-        const desc = (prod.body_html || '').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/\s+/g,' ').trim();
-        if(descEl) descEl.innerHTML = desc
-          ? `<div class="ps-d-desc-h">Description</div><div class="ps-d-desc">${esc(desc)}</div><div class="ps-d-disc">Actual colour may vary slightly from the image.</div>`
-          : tr('ps_d_nodesc');
+    const st = _psDetState = { desc:'', rows:[], imgs:[], pending:0, done:false, any:false };
+    const stale = () => _psDetState !== st;
+    const closed = () => { const m = document.getElementById('psDetail'); return !m || m.style.display === 'none'; };
+    const finish = () => { if(stale()) return; st.pending--; if(st.pending <= 0){ st.done = true; if(!closed()) psPaintDetail(p); } };
+    // A) our pre-scraped details (all brands, incl. SFCC) via the relay/search API
+    st.pending++;
+    fetch(psSearchBase() + '/details?u=' + encodeURIComponent(p.u), { cache:'default' })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if(stale() || closed() || !d || !d.found) return;
+        st.any = true;
+        if(d.desc && d.desc.length > st.desc.length) st.desc = d.desc;
+        for(const s of (d.sections || [])) _psDetAddRow(st, s[0], s[1]);
+        if(d.imgs && d.imgs.length && !st.imgs.length) st.imgs = d.imgs.slice();
+        psPaintDetail(p);
       })
-      .catch(() => { if(descEl) descEl.innerHTML = tr('ps_d_nofetch'); });
+      .catch(() => {})
+      .finally(finish);
+    // B) the brand's own Shopify .js — full live gallery + atomic tags + body_html (Shopify hosts only)
+    let origin, handle;
+    try{ const u = new URL(p.u); origin = u.origin; const mm = u.pathname.match(/\/products\/([^/?#.]+)/); handle = mm && mm[1]; }catch(e){}
+    if(handle){
+      st.pending++;
+      fetch(`${origin}/products/${handle}.js`, { cache:'no-store' })
+        .then(r => r.ok ? r.json() : Promise.reject())
+        .then(prod => {
+          if(stale() || closed()) return;
+          st.any = true;
+          const imgs = (prod.images || []).map(s => typeof s === 'string' ? s : (s && s.src)).filter(Boolean);
+          if(imgs.length) st.imgs = imgs.slice();   // brand's full live gallery is the richest — prefer it
+          for(const r of psBuildDetailRowsArr(prod)) _psDetAddRow(st, r[0], r[1]);
+          const desc = (prod.body_html || '').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/\s+/g,' ').trim();
+          if(desc && desc.length > st.desc.length) st.desc = desc;
+          psPaintDetail(p);
+        })
+        .catch(() => {})
+        .finally(finish);
+    }
+    if(!st.pending){ st.done = true; const el = document.getElementById('psDDesc'); if(el) el.innerHTML = tr('ps_d_nofetch'); }
   }
 
   // ── WISHLIST (E) ─────────────────────────────────────────────────────────
@@ -7792,7 +7854,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-28-brandsearch';
+  const PSB_BUILD = '2026-06-29-pdp';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
