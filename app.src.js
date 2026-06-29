@@ -314,6 +314,7 @@
     dupatta_only      : 0.46,
     shawl             : 0.87,
     footwear          : 1.10,   // unchanged — boxed, consistent
+    couple_collection : 2.43,   // His+Hers SET: women 3pc emb (1.25) + men 2pc kurta-shalwar (1.18)
     // ── Men — Western / Casual ──
     mens_shirt        : 0.63,
     mens_trouser      : 0.85,
@@ -363,6 +364,7 @@
     lehenga           : 'Lehenga / Gharara / Sharara',
     coord_western     : 'Co-ord / Western 2pc',
     loungewear        : 'Loungewear / Nightwear',
+    couple_collection : 'Couple Collection (His + Hers)',
     abaya             : 'Abaya',
     dupatta_only      : 'Dupatta / Stole only',
     shawl             : 'Shawl (winter)',
@@ -484,6 +486,10 @@
   // catalogues later. Each gender → ordered groups → [key, label] items.
   const CAT_TREE = {
     w: { label:"👗 Women's category", groups:[
+      // ════ COUPLE (His + Hers — sold as a pair; shown under Women AND Men) ════
+      { h:'Couple', items:[
+        ['couple_collection','Couple Collection (His + Hers)'],
+      ]},
       // ════ STITCHED (Ready-to-wear) ════
       { section:'Stitched · Ready-to-wear', h:'1-Piece', items:[
         ['kurti_1pc','Kurti / Shirt (1pc)'],
@@ -538,6 +544,9 @@
       ]},
     ]},
     m: { label:"👔 Men's category", groups:[
+      { h:'Couple', items:[
+        ['couple_collection','Couple Collection (His + Hers)'],
+      ]},
       { h:'Western / Casual', items:[
         ['mens_shirt','Shirt / Polo / T-Shirt (1pc)'],
         ['mens_trouser','Trouser / Chinos / Cargo (1pc)'],
@@ -2984,6 +2993,8 @@
     catch(e){ p = String(url).replace(/^https?:\/\/[^/]+/i, ''); }
     let dec = p; try{ dec = decodeURIComponent(p); }catch(e){}
     const s = (p + ' ' + dec).toLowerCase();
+    // ── Couple sets win over gender (sold as His+Hers, single price, single weight) ──
+    if(/\bcouples?\b|\bhis\s*(?:&|and|\+)\s*her|\bher\s*(?:&|and|\+)\s*his/.test(s)) return 'couple_collection';
     // ── Men's first (so a men's shalwar kameez isn't read as women's 3pc) ──
     if(detectGender(url, null) === 'men'){
       if(/sherwani|prince.?coat/.test(s))           return 'mens_sherwani';
@@ -4837,6 +4848,8 @@
   const PS_GENDER_WORD = { w:'ps_allw', m:'ps_allm', k:'ps_allk' };
   // Jewellery/accessories are not orderable here → keep them out of Browse Products.
   const PS_HIDE_CATS = new Set(['accessories']);
+  // couple_collection is a His+Hers set (single price) → shown under BOTH women and men.
+  const PS_DUAL_CATS = new Set(['couple_collection']);
 
   // ── UNIFIED SMART SEARCH — one bar marks matching BRANDS + CATEGORIES ────────
   // Buyers search by concept ("casual", "1pc", "co-ord", "winter", "khaadi casual"),
@@ -5347,6 +5360,7 @@
   // Fine gender code (w / m / k / boys / girls / infant) → does category c belong to it?
   // boys/girls/infant narrow WITHIN kids so "boys" never pulls girls' cats, etc.
   function psCatInGender(c, g){
+    if(PS_DUAL_CATS.has(c)) return g === 'w' || g === 'm';   // couple set shows under BOTH women and men
     if(g === 'w') return PS_CAT_GENDER[c] === 'w';
     if(g === 'm') return PS_CAT_GENDER[c] === 'm';
     if(g === 'k') return PS_CAT_GENDER[c] === 'k';
@@ -6154,6 +6168,7 @@
     { g:'w', key:'shawl', cats:['shawl','dupatta_only'], en:'Shawl & Dupatta', bn:'শাল ও ওড়না', e:'🧣' },
     { g:'w', key:'footwear',             en:'Footwear / Khussa', bn:'জুতা / খুসা',     e:'👡' },
     { g:'w', key:'loungewear',           en:'Loungewear',      bn:'লাউঞ্জওয়্যার',      e:'🛋️' },
+    { g:'w', key:'couple_collection',    en:'Couple Collection', bn:'কাপল কালেকশন',    e:'💑' },
     // ── MEN ──
     { g:'m', key:'mens_kurta',           en:'Kurta',           bn:'কুর্তা',           e:'👔' },
     { g:'m', key:'mens_shalwar_kameez',  en:'Shalwar Kameez',  bn:'শালওয়ার কামিজ',   e:'🧥' },
@@ -6163,6 +6178,7 @@
     { g:'m', key:'mens_sherwani',        en:'Sherwani',        bn:'শেরওয়ানি',         e:'🤵' },
     { g:'m', key:'mens_suit',            en:'Suit',            bn:'স্যুট',            e:'🤵' },
     { g:'m', key:'mens_unstitched',      en:'Unstitched',      bn:'আনস্টিচড',         e:'🧵' },
+    { g:'m', key:'couple_collection',    en:'Couple Collection', bn:'কাপল কালেকশন',    e:'💑' },
     // ── KIDS ──
     { g:'k', key:'kids_girls_eastern',   en:'Girls Eastern',   bn:'মেয়েদের ইস্টার্ন',  e:'👧' },
     { g:'k', key:'kids_boys_eastern',    en:'Boys Eastern',    bn:'ছেলেদের ইস্টার্ন',   e:'👦' },
@@ -7871,7 +7887,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-29-pcpolish';
+  const PSB_BUILD = '2026-06-29-couple';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

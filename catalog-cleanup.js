@@ -520,6 +520,10 @@ function cleanupProducts(ps, membership) {
     { const _tj = (p.t || '') + ' ' + (p.u || ''); if (JEWELLERY_DROP.test(_tj) && !GARMENT_NOUN.test(p.t || '')) { junkN++; continue; } }   // jewellery the harvester missed (Agha Noor JWL/Diamante) -> delete; guarded so jewellery-named SUITS survive
     if (ACC.test(p.t || '') && !GARMENT.test(p.t || '') && p.cat !== 'footwear') { del++; continue; }
     if (/\bunder[\s-]?vests?\b/i.test(p.t || '')) { junkN++; continue; }   // "Under Vest(s) (Pack Of 2)" = innerwear (Minnie Minors) — not listed (we don't sell undergarments)
+    // ── COUPLE COLLECTION (His + Hers sold as ONE set, single price, single weight) → its own
+    // category; brand-agnostic and HIGH priority so it wins over the gender/men/women rules below.
+    // Catches Edge Republic "CP … Couple/Couples" + any future his-&-her listing. Idempotent.
+    if (/\bcouples?\b|\bhis\s*(?:&|and|\+)\s*her\b|\bher\s*(?:&|and|\+)\s*his\b/i.test(p.t || '')) { if (p.cat !== 'couple_collection') explicitN++; p.cat = 'couple_collection'; out.push(p); continue; }
     // PESHAWARI footwear → DELETED for EVERY gender (Danish's call — it's men's-style). The GARMENT_NOUN
     // guard keeps a "Peshawari Kurta"/suit (clothing). Kolhapuri / chappal / khussa are kept (women's).
     if (/\bpeshawari\b/i.test(p.t || '') && !GARMENT_NOUN.test(p.t || '')) { footDel++; continue; }
