@@ -6423,12 +6423,19 @@
       var t = bn ? b.bn_t : b.en_t, s = bn ? b.bn_s : b.en_s;
       var img = PS_BRAND_POSTER_IMGS[i % PS_BRAND_POSTER_IMGS.length];
       var bg = img ? ' style="background-image:url(\'' + esc(thumbUrl(img)) + '\')"' : '';
+      var cta = bn ? 'লিংক পেস্ট করে দাম দেখুন' : 'Tap to paste a link & check the price';
       return '<div class="ps-hero-slide' + (i===cur ? ' on' : '') + '"' + bg + '>'
         + '<span class="ps-hero-ov"></span>'
-        + '<span class="ps-hero-tx"><b class="ps-hero-t">' + esc(t) + '</b><span class="ps-hero-s">' + esc(s) + '</span></span></div>';
+        + '<span class="ps-hero-tx"><b class="ps-hero-t">' + esc(t) + '</b><span class="ps-hero-s">' + esc(s) + '</span>'
+        + '<span class="ps-hero-cta">' + esc(cta) + ' ›</span></span></div>';
     }).join('') + '<div class="ps-hero-dots">'
       + SET.map(function(_,i){ return '<span class="ps-bdot' + (i===cur ? ' on' : '') + '"></span>'; }).join('')
       + '</div>';
+    // The Brand / Price-Check hero is tappable → the paste-a-link price check (replaces the removed claim card).
+    el.style.cursor = 'pointer';
+    el.setAttribute('role', 'button');
+    el.setAttribute('aria-label', bn ? 'লিংক পেস্ট করে দাম দেখুন' : 'Paste a link to check the price');
+    el.onclick = function(){ location.href = 'order-form.html'; };
   }
   window.psRenderBrandBanner = psRenderBrandBanner;
   function _psBannerSync(elId, len){
@@ -6616,6 +6623,8 @@
   // Open a collection as a dedicated VIEW: products browse + filter + title banner + transition + deep-link.
   function psOpenColl(id){
     var t = _psAllColls().find(function(x){ return x.id === id; }); if(!t) return;
+    // Re-tap the collection that's already open = toggle the filter OFF (back to the full grid).
+    if(_psActiveColl === id){ try{ psClearColl(); }catch(e){} return; }
     _psActiveColl = id;
     try{ showBrowseView(); }catch(e){}
     try{ switchBrowse('products'); }catch(e){}
@@ -8154,7 +8163,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-30-pcposter';
+  const PSB_BUILD = '2026-06-30-ui2';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

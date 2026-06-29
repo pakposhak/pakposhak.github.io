@@ -187,6 +187,8 @@
     .ps-hero-tx{position:relative;padding:15px 17px;max-width:78%}
     .ps-hero-t{display:block;color:#fff;font-size:1.16rem;font-weight:800;line-height:1.2;letter-spacing:0.2px;text-shadow:0 1px 5px rgba(0,0,0,0.55)}
     .ps-hero-s{display:block;color:#F1E8CF;font-size:0.8rem;font-weight:600;line-height:1.35;margin-top:5px;text-shadow:0 1px 4px rgba(0,0,0,0.55)}
+    /* Tap-to-paste CTA pill on the Brand / Price-Check hero (it's the only paste affordance there now). */
+    .ps-hero-cta{display:inline-block;margin-top:9px;padding:5px 11px;font-size:0.72rem;font-weight:800;letter-spacing:0.2px;color:#1A1208;background:linear-gradient(135deg,#E7CE97,#C9A96E);border-radius:20px;box-shadow:0 2px 8px -2px rgba(0,0,0,0.5)}
     .ps-hero-dots{position:absolute;bottom:10px;right:13px;display:flex;gap:5px;z-index:2}
     .ps-hero-dots .ps-bdot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.5);transition:width .25s,background .25s}
     .ps-hero-dots .ps-bdot.on{background:#fff;width:16px;border-radius:3px}
