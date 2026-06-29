@@ -36,7 +36,10 @@ node -e '
 '
 
 # 4) Commit + push (rebase-retry so a rule push landing mid-harvest does not reject us).
+#    Also stage collection-corrections.json (admin Map-tool overrides applied during harvest) so the
+#    durable correction file is committed each run — keeps it across cron's `git reset --hard`.
 git add catalog.json
+[ -f collection-corrections.json ] && git add collection-corrections.json
 if git diff --cached --quiet; then echo "no catalog change"; exit 0; fi
 COUNT=$(node -e "console.log(require('./catalog.json').count||0)")
 git commit -m "Auto-refresh catalog (VPS): ${COUNT} products [skip ci]"

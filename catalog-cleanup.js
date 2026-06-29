@@ -430,6 +430,60 @@ function loadMembership(file){   // collection-membership.jsonl → Map(url -> c
   }catch(e){}
   return map;
 }
+// ── ADMIN CORRECTIONS (Phase 4, 2026-06-29) ───────────────────────────────────────────────────
+// The PakPoshak Map review tool lets an admin OVERRIDE a brand collection's category, or REMOVE a
+// brand collection from the catalog, by writing collection-corrections.json:
+//   { "moves": { "host||handle": "category_key", ... }, "removes": ["host||handle", ...] }
+// host = a brand host (e.g. "mausummery.com"); handle = a Shopify collection handle; category_key =
+// a catalog category key (the same keys that appear in p.cat, e.g. "kurti_1pc", "mens_kurta").
+// These are MANUAL corrections = the TOP authority: applyCorrections runs AFTER cleanup settles, so a
+// move overrides whatever the rules assigned, and a remove drops every product in that collection.
+// A product is matched to a "host||handle" via the SAME collection-membership map cleanup uses
+// (membership.get(p.u) → its colls[], each {h:handle,...}). The file is OPTIONAL — absent/unparseable
+// ⇒ empty ⇒ total no-op.
+function loadCorrections(file = 'collection-corrections.json'){
+  try{
+    if(!file || !fs.existsSync(file)) return { moves:{}, removes:new Set() };
+    const o = JSON.parse(fs.readFileSync(file,'utf8'));
+    const moves = (o && o.moves && typeof o.moves === 'object') ? o.moves : {};
+    const removes = new Set(Array.isArray(o && o.removes) ? o.removes : []);
+    return { moves, removes };
+  }catch(e){ return { moves:{}, removes:new Set() }; }
+}
+// Apply admin corrections to a settled products array → { products, stats:{moved,removed} }.
+// For each product: host = new URL(p.u).host; for each membership collection handle h, key=host+'||'+h.
+//   - if any key is in corrections.removes → DROP the product (REMOVE wins over a move).
+//   - else if corrections.moves[key] is a non-empty string → set p.cat = that (TOP authority).
+// MUTATES kept products' .cat in place (matching cleanupProducts' style). Empty corrections ⇒ no-op.
+// Idempotent: a move sets .cat to a fixed key; a removed product is gone so it can't be re-evaluated.
+function applyCorrections(products, membership, corrections){
+  const moves = (corrections && corrections.moves) || {};
+  const removes = (corrections && corrections.removes) || new Set();
+  const hasRemoves = typeof removes.has === 'function' ? (k => removes.has(k)) : (() => false);
+  let moved = 0, removed = 0;
+  if(!membership || (Object.keys(moves).length === 0 && (typeof removes.size === 'number' ? removes.size === 0 : true))){
+    return { products, stats:{ moved:0, removed:0 } };   // no membership or no corrections ⇒ unchanged
+  }
+  const mget = u => (typeof membership.get === 'function' ? membership.get(u) : membership[u]);
+  const out = [];
+  for(const p of products){
+    let host = '';
+    try{ host = new URL(p.u).host; }catch(e){ host = ''; }
+    const colls = host ? (mget(p.u) || []) : [];
+    let moveTo = null, drop = false;
+    for(const c of colls){
+      const h = c && c.h; if(!h) continue;
+      const key = host + '||' + h;
+      if(hasRemoves(key)){ drop = true; break; }   // REMOVE wins — stop scanning
+      const m = moves[key];
+      if(typeof m === 'string' && m && moveTo == null) moveTo = m;
+    }
+    if(drop){ removed++; continue; }
+    if(moveTo != null && p.cat !== moveTo){ p.cat = moveTo; moved++; }   // count only REAL changes ⇒ stats are stable on a settled catalog
+    out.push(p);
+  }
+  return { products: out, stats:{ moved, removed } };
+}
 // Western kids garments that must NEVER be eastern-ized by a collection vote (broader than KWEST, which
 // omits tights/leggings). Guards the membership east-move so a "Girls Basic Tights" in a brand's
 // "festive" bundle isn't dragged to kids_*_eastern (2026-06-28).
@@ -1100,7 +1154,7 @@ function cleanupProducts(ps, membership) {
   return { products: out, stats: { junkN, del, footDel, footMove, fwdN, revN, pieceN, menUnsN, menPcN, womenN, girlsKidN, slugN, explicitN, collN, dualN, before: ps.length, after: out.length } };
 }
 
-module.exports = { cleanupProducts, loadMembership };
+module.exports = { cleanupProducts, loadMembership, loadCorrections, applyCorrections };
 
 // ── CLI: node catalog-cleanup.js [apply] ──
 if (require.main === module) {

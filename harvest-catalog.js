@@ -18,7 +18,7 @@
 'use strict';
 const https = require('https');
 const fs    = require('fs');
-const { cleanupProducts, loadMembership } = require('./catalog-cleanup');   // multi-tier auto-correction applied before write
+const { cleanupProducts, loadMembership, loadCorrections, applyCorrections } = require('./catalog-cleanup');   // multi-tier auto-correction + admin corrections applied before write
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36';
 const PER_BRAND = parseInt(process.env.PER_BRAND || '700', 10);   // deep default (2026-06-19 women expansion → 70k-scale stress test)
 // Per-brand depth. Shopify brands now PAGINATE (/products.json?page=N), so caps
@@ -846,6 +846,13 @@ async function harvestKidsBrand(name, host){
     if (deduped.map(p => p.u + '\t' + p.cat).join('\n') === _sig) break;
     console.log(`  catalog-cleanup (settle pass ${_i + 1})`);
   }
+  // ADMIN CORRECTIONS (Phase 4): after cleanup settles, apply the admin's manual collection
+  // category-overrides / removals as the TOP authority. collection-corrections.json absent ⇒ no-op.
+  // Uses the SAME membership map (host||handle → category/remove). See catalog-cleanup.js.
+  const _corr = loadCorrections();
+  const _ac = applyCorrections(deduped, _mem, _corr);
+  deduped = _ac.products;
+  if (_ac.stats.moved || _ac.stats.removed) console.log('  corrections:', _ac.stats.moved, 'moved,', _ac.stats.removed, 'removed');
   const brands = [...new Set(deduped.map(p => p.b))];
   const out = { updated: new Date().toISOString(), count: deduped.length, brands: brands.length, products: deduped };
   const file = KIDS_ONLY ? 'catalog-kids-sample.json' : 'catalog.json';
