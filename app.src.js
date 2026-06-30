@@ -5703,7 +5703,7 @@
     m:["Amir Adnan","Diners","CRUSH Menswear","Monark","Royal Tag","Shahzeb Saeed","Charcoal","Engine","Furor","Lawrencepur","Al-Deebaj","One Kids"]
   };
   var psFitG='w', psFitFitPref='regular', psFitMeasOpen=false;
-  function psFitAssistant(){ psFitLoadProfile(); psFitSheet(true); }
+  function psFitAssistant(){ psSpComingSoon(tr('sp_fit')); }   /* TEMP-DISABLED while stale-cache propagation is confirmed; restore: psFitLoadProfile(); psFitSheet(true); */
   function psFitSheet(show){ var s=document.getElementById('psFitSheet'); if(s){ s.hidden=!show; document.body.style.overflow=show?'hidden':''; if(show) psFitFillBrands(); } }
   function psFitGender(g){ psFitG=g; var seg=document.getElementById('psFitGenderSeg'); if(seg) [].forEach.call(seg.children,function(b){ b.classList.toggle('on', b.getAttribute('data-g')===g); }); psFitFillBrands(); }
   function psFitFitSet(f){ psFitFitPref=f; var seg=document.getElementById('psFitFitSeg'); if(seg) [].forEach.call(seg.children,function(b){ b.classList.toggle('on', b.getAttribute('data-f')===f); }); }
@@ -8498,7 +8498,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-30-nohang';
+  const PSB_BUILD = '2026-06-30-nobom';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

@@ -72,7 +72,11 @@ foreach ($p in $pairs) {
   $bKB = [math]::Round((Get-Item $srcPath).Length / 1KB, 1)
   & html-minifier-terser --config-file $rc --output $outPath $srcPath
   # Substitute the build tag into the versioned asset URLs.
-  (Get-Content $outPath -Raw).Replace('__PSB_BUILD__', $buildTag) | Set-Content $outPath -NoNewline -Encoding utf8
+  # IMPORTANT: write UTF-8 WITHOUT a BOM. PowerShell 5.1's `Set-Content -Encoding utf8`
+  # prepends a BOM (EF BB BF) before <!doctype html>, which throws some mobile browsers
+  # into quirks mode / fails to render. Use .NET WriteAllText with a no-BOM encoding.
+  $html = (Get-Content $outPath -Raw).Replace('__PSB_BUILD__', $buildTag)
+  [System.IO.File]::WriteAllText($outPath, $html, (New-Object System.Text.UTF8Encoding $false))
   $aKB = [math]::Round((Get-Item $outPath).Length / 1KB, 1)
   Write-Host ("  [ok] {0,-30}  {1,7} KB  →  {2,7} KB  ({3}% saved)" -f $p.out, $bKB, $aKB, [math]::Round(100*(1-$aKB/$bKB),1)) -ForegroundColor Green
 }
