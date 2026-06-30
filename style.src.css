@@ -1,4 +1,14 @@
 ﻿
+    /* ── HARD GUARD: the `hidden` attribute must ALWAYS win ─────────────────
+       A class with `display:` set (e.g. .ps-vis-load{display:flex}) silently
+       OVERRIDES the HTML `hidden` attribute — so an element marked hidden still
+       renders. That bug left the visual/fit loading overlay + sheets PERMANENTLY
+       on screen on every load ("stuck on Finding your size"). This one rule makes
+       `[hidden]` beat any author `display` rule for every current/future element.
+       Safe: elements toggled via inline style.display carry no `hidden` attribute,
+       and sheets that are shown REMOVE the attribute (so this no longer matches). */
+    [hidden]{display:none!important}
+
     /* ── THEME TOKENS ──────────────────────────────────────────────────────
        Light "Ivory & Gold" is the DEFAULT (:root). The original "Midnight Gold"
        dark theme is preserved verbatim under [data-theme="dark"]. A tiny script
