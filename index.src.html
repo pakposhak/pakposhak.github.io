@@ -275,9 +275,14 @@
         <button type="button" class="on" data-g="w" onclick="psFitGender('w')" data-i18n="gen_women">Women</button>
         <button type="button" data-g="m" onclick="psFitGender('m')" data-i18n="gen_men">Men</button>
       </div>
+      <div class="ps-fit-seg ps-fit-seg-sm" id="psFitTypeSeg" role="tablist">
+        <button type="button" class="on" data-t="top" onclick="psFitTypeSet('top')" data-i18n="fit_type_top">Tops &amp; Suits</button>
+        <button type="button" id="psFitShirtBtn" data-t="shirt" onclick="psFitTypeSet('shirt')" hidden data-i18n="fit_type_shirt">Shirts</button>
+        <button type="button" data-t="bottom" onclick="psFitTypeSet('bottom')" data-i18n="fit_type_bottom">Bottoms</button>
+      </div>
       <div class="ps-fit-block">
         <label class="ps-fit-lbl" data-i18n="fit_wear">I usually wear</label>
-        <div class="ps-fit-pair">
+        <div id="psFitBrandRow" class="ps-fit-pair">
           <div class="ps-dd ps-fit-dd" data-dd="psFitBrand" aria-label="Brand I know my size in"></div>
           <select id="psFitBrand" hidden></select>
           <span class="ps-fit-mid" data-i18n="fit_size_in">size</span>
