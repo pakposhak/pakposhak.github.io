@@ -396,7 +396,9 @@
       </div>
       <div class="field">
         <label data-i18n="d_wa">WhatsApp Number *</label>
-        <input type="tel" id="buyerWA" placeholder="+880 17XXXXXXXX"/>
+        <div class="ps-phone" data-phone="buyerWA" data-default="BD" data-required="1"></div>
+        <input type="hidden" id="buyerWA"/>
+        <div class="ps-phone-err" id="buyerWA_err" hidden></div>
       </div>
     </div>
     <div class="row-2">

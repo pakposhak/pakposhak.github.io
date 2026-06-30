@@ -294,7 +294,10 @@
         <select id="psFitScope" class="ps-fit-sel ps-fit-sel-full" aria-label="Where to shop"></select>
       </div>
       <button type="button" class="ps-fit-go" onclick="psFitRun()" data-i18n="fit_go">Show what fits me</button>
-      <label class="ps-fit-wa"><span data-i18n="fit_wa">Save to my WhatsApp number (optional)</span><input id="psFitWa" type="tel" inputmode="tel" autocomplete="off" placeholder="01XXXXXXXXX"></label>
+      <label class="ps-fit-wa"><span data-i18n="fit_wa">Save to my WhatsApp number (optional)</span>
+        <div class="ps-phone" data-phone="psFitWa" data-default="BD"></div></label>
+      <input type="hidden" id="psFitWa"/>
+      <div class="ps-phone-err" id="psFitWa_err" hidden></div>
     </div>
   </div>
 

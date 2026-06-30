@@ -108,6 +108,7 @@
       if(saved && saved.name){
         document.getElementById('buyerName').value    = saved.name    || '';
         document.getElementById('buyerWA').value      = saved.wa      || '';
+        if(window.psPhoneSetFromFull) psPhoneSetFromFull('buyerWA', saved.wa || '');
         document.getElementById('buyerEmail').value   = saved.email   || '';
         document.getElementById('buyerAddress').value = saved.address || '';
         document.getElementById('rememberMe').checked = true;
@@ -130,6 +131,7 @@
     localStorage.removeItem('psb_buyer');
     document.getElementById('buyerName').value    = '';
     document.getElementById('buyerWA').value      = '';
+    if(window.psPhoneReset) psPhoneReset('buyerWA');
     document.getElementById('buyerEmail').value   = '';
     document.getElementById('buyerAddress').value = '';
     document.getElementById('rememberMe').checked = false;
@@ -2480,7 +2482,7 @@
       hiw_confirm_pay:'Confirm price & pay (bKash/Nagad)',
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search 150+ Pakistani brands…',
-      tab_brands:'Browse brands', tab_products:'Browse products', gen_all:'All', gen_women:'Women', gen_men:'Men', gen_kids:'Kids', menu_language:'Language', menu_theme:'Theme', menu_guide:'Guide', search_bar_ph:'Search products, brands…', search_page_ph:'Search products and 150+ brands', sp_remind_t:"Check any product's price in PKR", sp_remind_d:"Found it on a brand's own site? Paste the link to see the real price of any listed brand in PKR.", sp_paste:'Paste a product link', sp_visual:'Visual search', sp_fit:'Fit assistant', sp_soon:'Coming soon', vis_title:'Search by photo', vis_sub:'Find pieces that look like your photo', vis_cam:'Take a photo', vis_up:'Upload a photo', vis_cancel:'Cancel', vis_loading:'Finding similar styles', vis_chip:'Items like your photo', vis_clear:'Clear photo search', vis_none:'No close matches. Try another photo.', vis_notapparel:'Please use a clothing photo.', vis_err:'Could not search just now. Please try again.', vis_badfile:'Please choose a photo.', fit_title:'Fit Assistant', fit_sub:'Find your size in any brand', fit_wear:'I usually wear', fit_in:'in', fit_measlink:"Don't know? Enter measurements", fit_meashide:'Use my usual size instead', fit_chest:'Chest', fit_waist:'Waist', fit_hip:'Hip', fit_regular:'Regular', fit_slim:'Slim', fit_relaxed:'Relaxed', fit_scope:'Show fits in', fit_allbrands:'All brands', fit_go:'Show what fits me', fit_wa:'Save to my WhatsApp number (optional)', fit_chip:'Your size', fit_yoursize:'your size', fit_needchest:'Enter at least your chest measurement.', fit_needref:'Choose your size and a brand.', fit_none:'Nothing in your size right now. Try another size or brand.', fit_err:'Could not check sizes just now. Please try again.', sp_brands:'Browse all 150+ brands ›', sp_colls_hd:'Curated collections', sp_checkprice:'check price ›', bb_back:'‹ Back to products', store_everyday:'Everyday', store_premium:'Premium', colls_hd:'Collections',prodcat_hd:'Product category',products_hd:'Products', filters_sort:'Filters & sort', filters_done:'Done', sort_hd:'Sort', order_ways:'Two ways to order: tap + Add on anything in our listing, or send a product link from any of our 140+ brands.',
+      tab_brands:'Browse brands', tab_products:'Browse products', gen_all:'All', gen_women:'Women', gen_men:'Men', gen_kids:'Kids', menu_language:'Language', menu_theme:'Theme', menu_guide:'Guide', search_bar_ph:'Search products, brands…', search_page_ph:'Search products and 150+ brands', sp_remind_t:"Check any product's price in PKR", sp_remind_d:"Found it on a brand's own site? Paste the link to see the real price of any listed brand in PKR.", sp_paste:'Paste a product link', sp_visual:'Visual search', sp_fit:'Fit assistant', sp_soon:'Coming soon', vis_title:'Search by photo', vis_sub:'Find pieces that look like your photo', vis_cam:'Take a photo', vis_up:'Upload a photo', vis_cancel:'Cancel', vis_loading:'Finding similar styles', vis_chip:'Items like your photo', vis_clear:'Clear photo search', vis_none:'No close matches. Try another photo.', vis_notapparel:'Please use a clothing photo.', vis_err:'Could not search just now. Please try again.', vis_badfile:'Please choose a photo.', fit_title:'Fit Assistant', fit_sub:'Find your size in any brand', fit_wear:'I usually wear', fit_in:'in', fit_measlink:"Don't know? Enter measurements", fit_meashide:'Use my usual size instead', fit_chest:'Chest', fit_waist:'Waist', fit_hip:'Hip', fit_regular:'Regular', fit_slim:'Slim', fit_relaxed:'Relaxed', fit_scope:'Show fits in', fit_allbrands:'All brands', fit_go:'Show what fits me', fit_wa:'Save to my WhatsApp number (optional)', fit_chip:'Your size', fit_yoursize:'your size', fit_needchest:'Enter at least your chest measurement.', fit_needref:'Choose your size and a brand.', fit_none:'Nothing in your size right now. Try another size or brand.', fit_err:'Could not check sizes just now. Please try again.', wa_err_empty:'Please enter your WhatsApp number', wa_err_short:'WhatsApp number looks incomplete', wa_err_long:'WhatsApp number is too long', wa_err_prefix:'Please check your WhatsApp number', sp_brands:'Browse all 150+ brands ›', sp_colls_hd:'Curated collections', sp_checkprice:'check price ›', bb_back:'‹ Back to products', store_everyday:'Everyday', store_premium:'Premium', colls_hd:'Collections',prodcat_hd:'Product category',products_hd:'Products', filters_sort:'Filters & sort', filters_done:'Done', sort_hd:'Sort', order_ways:'Two ways to order: tap + Add on anything in our listing, or send a product link from any of our 140+ brands.',
       intro_ios:"On iPhone: on a brand's product page, tap Share, then Add to PakPoshak. (One-time: add the PakPoshak shortcut.) Or copy the link and paste it here.",
       intro_android:"On Android: install PakPoshak, then on a brand's product page tap Share, then PakPoshak. Or copy the link and paste it here.",
       intro_desktop:"On desktop: paste a product link below, or add the Send-cart bookmark to grab a whole cart at once.",
@@ -2554,7 +2556,7 @@
       hiw_confirm_pay:'দাম নিশ্চিত করে পেমেন্ট (বিকাশ/নগদ)',
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
       lbl_browse:'একটি ব্র্যান্ড দেখুন', search_ph:'🔍 ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
-      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', gen_all:'সব', gen_women:'নারী', gen_men:'পুরুষ', gen_kids:'শিশু', menu_language:'ভাষা', menu_theme:'থিম', menu_guide:'গাইড', search_bar_ph:'পণ্য, ব্র্যান্ড খুঁজুন…', search_page_ph:'পণ্য ও ১৫০+ ব্র্যান্ড খুঁজুন', sp_remind_t:'যেকোনো পণ্যের দাম PKR-তে যাচাই করুন', sp_remind_d:'ব্র্যান্ডের নিজস্ব সাইটে পেয়েছেন? লিংক পেস্ট করে যেকোনো লিস্টেড ব্র্যান্ডের আসল দাম PKR-তে দেখুন।', sp_colls_hd:'কিউরেটেড কালেকশন', sp_paste:'পণ্যের লিংক পেস্ট করুন', sp_visual:'ভিজ্যুয়াল সার্চ', sp_fit:'ফিট অ্যাসিস্ট্যান্ট', sp_soon:'শীঘ্রই আসছে', vis_title:'ছবি দিয়ে খুঁজুন', vis_sub:'আপনার ছবির মতো পণ্য খুঁজুন', vis_cam:'ছবি তুলুন', vis_up:'ছবি আপলোড করুন', vis_cancel:'বাতিল', vis_loading:'মিল খুঁজছি', vis_chip:'আপনার ছবির মতো পণ্য', vis_clear:'ছবি সার্চ মুছুন', vis_none:'কাছাকাছি মিল নেই। অন্য ছবি দিন।', vis_notapparel:'অনুগ্রহ করে পোশাকের ছবি দিন।', vis_err:'এখন খোঁজা গেল না। আবার চেষ্টা করুন।', vis_badfile:'একটি ছবি নির্বাচন করুন।', fit_title:'ফিট অ্যাসিস্ট্যান্ট', fit_sub:'যেকোনো ব্র্যান্ডে আপনার সাইজ খুঁজুন', fit_wear:'আমি সাধারণত পরি', fit_in:'এই ব্র্যান্ডে', fit_measlink:'জানেন না? মাপ লিখুন', fit_meashide:'আমার সাধারণ সাইজ ব্যবহার করুন', fit_chest:'বুক', fit_waist:'কোমর', fit_hip:'হিপ', fit_regular:'রেগুলার', fit_slim:'স্লিম', fit_relaxed:'রিল্যাক্সড', fit_scope:'যেখানে দেখাবে', fit_allbrands:'সব ব্র্যান্ড', fit_go:'আমার মাপের পণ্য দেখান', fit_wa:'আমার WhatsApp নম্বরে সেভ করুন (ঐচ্ছিক)', fit_chip:'আপনার সাইজ', fit_yoursize:'আপনার সাইজ', fit_needchest:'অন্তত আপনার বুকের মাপ লিখুন।', fit_needref:'আপনার সাইজ ও একটি ব্র্যান্ড বাছুন।', fit_none:'এখন আপনার সাইজে কিছু নেই। অন্য সাইজ বা ব্র্যান্ড দিন।', fit_err:'এখন সাইজ যাচাই করা গেল না। আবার চেষ্টা করুন।', sp_brands:'সব ১৫০+ ব্র্যান্ড দেখুন ›', sp_checkprice:'দাম দেখুন ›', bb_back:'‹ পণ্যে ফিরে যান', store_everyday:'এভরিডে', store_premium:'প্রিমিয়াম', colls_hd:'কালেকশন',prodcat_hd:'প্রোডাক্ট ক্যাটাগরি',products_hd:'পণ্য', filters_sort:'ফিল্টার ও সর্ট', filters_done:'সম্পন্ন', sort_hd:'সর্ট', order_ways:'দুইভাবে অর্ডার: আমাদের লিস্টে যেকোনো পণ্যে + Add চাপুন, অথবা ১৪০+ ব্র্যান্ডের যেকোনো পণ্যের লিংক পাঠান।',
+      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', gen_all:'সব', gen_women:'নারী', gen_men:'পুরুষ', gen_kids:'শিশু', menu_language:'ভাষা', menu_theme:'থিম', menu_guide:'গাইড', search_bar_ph:'পণ্য, ব্র্যান্ড খুঁজুন…', search_page_ph:'পণ্য ও ১৫০+ ব্র্যান্ড খুঁজুন', sp_remind_t:'যেকোনো পণ্যের দাম PKR-তে যাচাই করুন', sp_remind_d:'ব্র্যান্ডের নিজস্ব সাইটে পেয়েছেন? লিংক পেস্ট করে যেকোনো লিস্টেড ব্র্যান্ডের আসল দাম PKR-তে দেখুন।', sp_colls_hd:'কিউরেটেড কালেকশন', sp_paste:'পণ্যের লিংক পেস্ট করুন', sp_visual:'ভিজ্যুয়াল সার্চ', sp_fit:'ফিট অ্যাসিস্ট্যান্ট', sp_soon:'শীঘ্রই আসছে', vis_title:'ছবি দিয়ে খুঁজুন', vis_sub:'আপনার ছবির মতো পণ্য খুঁজুন', vis_cam:'ছবি তুলুন', vis_up:'ছবি আপলোড করুন', vis_cancel:'বাতিল', vis_loading:'মিল খুঁজছি', vis_chip:'আপনার ছবির মতো পণ্য', vis_clear:'ছবি সার্চ মুছুন', vis_none:'কাছাকাছি মিল নেই। অন্য ছবি দিন।', vis_notapparel:'অনুগ্রহ করে পোশাকের ছবি দিন।', vis_err:'এখন খোঁজা গেল না। আবার চেষ্টা করুন।', vis_badfile:'একটি ছবি নির্বাচন করুন।', fit_title:'ফিট অ্যাসিস্ট্যান্ট', fit_sub:'যেকোনো ব্র্যান্ডে আপনার সাইজ খুঁজুন', fit_wear:'আমি সাধারণত পরি', fit_in:'এই ব্র্যান্ডে', fit_measlink:'জানেন না? মাপ লিখুন', fit_meashide:'আমার সাধারণ সাইজ ব্যবহার করুন', fit_chest:'বুক', fit_waist:'কোমর', fit_hip:'হিপ', fit_regular:'রেগুলার', fit_slim:'স্লিম', fit_relaxed:'রিল্যাক্সড', fit_scope:'যেখানে দেখাবে', fit_allbrands:'সব ব্র্যান্ড', fit_go:'আমার মাপের পণ্য দেখান', fit_wa:'আমার WhatsApp নম্বরে সেভ করুন (ঐচ্ছিক)', fit_chip:'আপনার সাইজ', fit_yoursize:'আপনার সাইজ', fit_needchest:'অন্তত আপনার বুকের মাপ লিখুন।', fit_needref:'আপনার সাইজ ও একটি ব্র্যান্ড বাছুন।', fit_none:'এখন আপনার সাইজে কিছু নেই। অন্য সাইজ বা ব্র্যান্ড দিন।', fit_err:'এখন সাইজ যাচাই করা গেল না। আবার চেষ্টা করুন।', wa_err_empty:'আপনার হোয়াটসঅ্যাপ নম্বর লিখুন', wa_err_short:'হোয়াটসঅ্যাপ নম্বরটি অসম্পূর্ণ মনে হচ্ছে', wa_err_long:'হোয়াটসঅ্যাপ নম্বরটি অনেক বড়', wa_err_prefix:'আপনার হোয়াটসঅ্যাপ নম্বর যাচাই করুন', sp_brands:'সব ১৫০+ ব্র্যান্ড দেখুন ›', sp_checkprice:'দাম দেখুন ›', bb_back:'‹ পণ্যে ফিরে যান', store_everyday:'এভরিডে', store_premium:'প্রিমিয়াম', colls_hd:'কালেকশন',prodcat_hd:'প্রোডাক্ট ক্যাটাগরি',products_hd:'পণ্য', filters_sort:'ফিল্টার ও সর্ট', filters_done:'সম্পন্ন', sort_hd:'সর্ট', order_ways:'দুইভাবে অর্ডার: আমাদের লিস্টে যেকোনো পণ্যে + Add চাপুন, অথবা ১৪০+ ব্র্যান্ডের যেকোনো পণ্যের লিংক পাঠান।',
       intro_ios:'আইফোনে: ব্র্যান্ডের পণ্য পেজে Share চেপে Add to PakPoshak বেছে নিন। (একবার: PakPoshak শর্টকাট যোগ করুন।) অথবা লিংক কপি করে এখানে পেস্ট করুন।',
       intro_android:'অ্যান্ড্রয়েডে: PakPoshak ইনস্টল করুন, তারপর ব্র্যান্ডের পণ্য পেজে Share চেপে PakPoshak বেছে নিন। অথবা লিংক কপি করে এখানে পেস্ট করুন।',
       intro_desktop:'ডেস্কটপে: নিচে পণ্যের লিংক পেস্ট করুন, অথবা পুরো কার্ট একসাথে আনতে Send-cart বুকমার্ক যোগ করুন।',
@@ -3849,8 +3851,7 @@
     let valid = true;
     if(!name){    document.getElementById('buyerName').style.borderColor='#c0392b';    valid=false; }
     else          document.getElementById('buyerName').style.borderColor='';
-    if(!wa){      document.getElementById('buyerWA').style.borderColor='#c0392b';      valid=false; }
-    else          document.getElementById('buyerWA').style.borderColor='';
+    if(!psPhoneOk('buyerWA')){ valid=false; }   // completeness-checked (country code + length)
     // Email is optional — only validate format if something was entered
     if(email && !emailOk){ document.getElementById('buyerEmail').style.borderColor='#c0392b'; valid=false; }
     else                   document.getElementById('buyerEmail').style.borderColor='';
@@ -5749,6 +5750,7 @@
       psFitGender(psFitG); psFitFitSet(psFitFitPref);
       var set=function(id,v){ var el=document.getElementById(id); if(el&&v!=null&&v!=='') el.value=v; };
       set('psFitSize',p.size); set('psFitBrand',p.brand); set('psFitChest',p.chest); set('psFitWaist',p.waist); set('psFitHip',p.hip); set('psFitScope',p.scope); set('psFitWa',p.wa);
+      if(window.psPhoneSetFromFull) psPhoneSetFromFull('psFitWa', p.wa||'');
       var m=document.getElementById('psFitMeas'); if(m) m.hidden=!psFitMeasOpen; var l=document.getElementById('psFitMeasLink'); if(l) l.textContent=tr(psFitMeasOpen?'fit_meashide':'fit_measlink');
     }, 0);
   }
@@ -5757,6 +5759,79 @@
   window.psVisualSearch=psVisualSearch; window.psFitAssistant=psFitAssistant;
   window.psVisualSheet=psVisualSheet; window.psVisualPick=psVisualPick; window.psVisualFile=psVisualFile; window.psVisualClear=psVisualClear;
   window.psFitSheet=psFitSheet; window.psFitGender=psFitGender; window.psFitFitSet=psFitFitSet; window.psFitToggleMeas=psFitToggleMeas; window.psFitRun=psFitRun;
+
+  // ── WhatsApp / phone input: themed country picker + completeness check ─────────────
+  // Used by the order-form contact details (#buyerWA) and the Fit Assistant (#psFitWa).
+  // The widget keeps a hidden input (id = data-phone) in sync with the full +<dial><number>,
+  // so existing save/submit code reading that field's .value is unchanged. The country list is
+  // a CUSTOM themed dropdown (never a native select). Completeness is checked per country.
+  var PS_PHONE_COUNTRIES=[
+    {c:'BD',f:'🇧🇩',n:'Bangladesh',d:'880',len:10,pfx:'1'},
+    {c:'PK',f:'🇵🇰',n:'Pakistan',d:'92',len:10,pfx:'3'},
+    {c:'IN',f:'🇮🇳',n:'India',d:'91',len:10},
+    {c:'AE',f:'🇦🇪',n:'UAE',d:'971',len:9},
+    {c:'SA',f:'🇸🇦',n:'Saudi Arabia',d:'966',len:9},
+    {c:'QA',f:'🇶🇦',n:'Qatar',d:'974',len:8},
+    {c:'KW',f:'🇰🇼',n:'Kuwait',d:'965',len:8},
+    {c:'OM',f:'🇴🇲',n:'Oman',d:'968',len:8},
+    {c:'MY',f:'🇲🇾',n:'Malaysia',d:'60',len:[9,10]},
+    {c:'SG',f:'🇸🇬',n:'Singapore',d:'65',len:8},
+    {c:'GB',f:'🇬🇧',n:'United Kingdom',d:'44',len:10},
+    {c:'US',f:'🇺🇸',n:'United States',d:'1',len:10},
+    {c:'IT',f:'🇮🇹',n:'Italy',d:'39',len:[9,11]},
+    {c:'AU',f:'🇦🇺',n:'Australia',d:'61',len:9}
+  ];
+  var _psPhones={};
+  function psPhoneCountry(c){ for(var i=0;i<PS_PHONE_COUNTRIES.length;i++) if(PS_PHONE_COUNTRIES[i].c===c) return PS_PHONE_COUNTRIES[i]; return null; }
+  function psPhoneInit(root){
+    var key=root.getAttribute('data-phone'); if(!key||_psPhones[key]) return;
+    var st={ root:root, key:key, country:psPhoneCountry(root.getAttribute('data-default')||'BD')||PS_PHONE_COUNTRIES[0], required:root.getAttribute('data-required')==='1', touched:false };
+    _psPhones[key]=st;
+    root.innerHTML='<button type="button" class="ps-phone-cc" aria-haspopup="listbox" aria-expanded="false" onclick="psPhoneToggle(\''+key+'\')"></button>'
+      +'<input type="tel" inputmode="numeric" autocomplete="tel-national" class="ps-phone-num" oninput="psPhoneOnNum(\''+key+'\')" onblur="psPhoneBlur(\''+key+'\')"/>'
+      +'<ul class="ps-phone-list" role="listbox" hidden>'+PS_PHONE_COUNTRIES.map(function(x){ return '<li role="option" tabindex="-1" onclick="psPhonePick(\''+key+'\',\''+x.c+'\')"><span class="ps-phone-flag">'+x.f+'</span><span class="ps-phone-cn">'+esc(x.n)+'</span><b>+'+x.d+'</b></li>'; }).join('')+'</ul>';
+    st.cc=root.querySelector('.ps-phone-cc'); st.num=root.querySelector('.ps-phone-num'); st.list=root.querySelector('.ps-phone-list');
+    psPhoneRenderCc(st);
+    var hid=document.getElementById(key); if(hid&&hid.value) psPhoneSetFromFull(key, hid.value);
+  }
+  function psPhoneRenderCc(st){
+    var minlen=Array.isArray(st.country.len)?st.country.len[0]:st.country.len, pl=st.country.pfx?st.country.pfx.length:0;
+    st.cc.innerHTML='<span class="ps-phone-flag">'+st.country.f+'</span><span class="ps-phone-dial">+'+st.country.d+'</span><span class="ps-phone-car">▾</span>';
+    st.num.placeholder=(st.country.pfx||'')+new Array(Math.max(1,minlen-pl)+1).join('X');
+  }
+  function psPhoneToggle(key){ var st=_psPhones[key]; if(!st)return; var willOpen=st.list.hidden; var l=document.querySelectorAll('.ps-phone-list'); for(var i=0;i<l.length;i++) l[i].hidden=true; st.list.hidden=!willOpen; st.cc.setAttribute('aria-expanded', willOpen?'true':'false'); }
+  function psPhonePick(key,c){ var st=_psPhones[key]; if(!st)return; st.country=psPhoneCountry(c)||st.country; st.list.hidden=true; st.cc.setAttribute('aria-expanded','false'); psPhoneRenderCc(st); psPhoneSync(key); if(st.touched) psPhoneValidateShow(key); try{st.num.focus();}catch(e){} }
+  function psPhoneOnNum(key){ var st=_psPhones[key]; if(!st)return; var v=st.num.value.replace(/[^0-9]/g,''); if(v!==st.num.value) st.num.value=v; psPhoneSync(key); if(st.touched) psPhoneValidateShow(key); }
+  function psPhoneBlur(key){ var st=_psPhones[key]; if(!st)return; st.touched=true; psPhoneValidateShow(key); }
+  function psPhoneNat(st){ var d=st.num.value.replace(/[^0-9]/g,''); if(d.charAt(0)==='0') d=d.slice(1); return d; }
+  function psPhoneSync(key){ var st=_psPhones[key]; if(!st)return; var d=psPhoneNat(st); var hid=document.getElementById(key); if(hid) hid.value=d?('+'+st.country.d+d):''; }
+  function psPhoneCheck(st){
+    var d=psPhoneNat(st);
+    if(!d) return st.required?{ok:false,reason:'empty'}:{ok:true,empty:true};
+    var len=st.country.len, lo=Array.isArray(len)?len[0]:len, hi=Array.isArray(len)?len[1]:len;
+    if(d.length<lo) return {ok:false,reason:'short'};
+    if(d.length>hi) return {ok:false,reason:'long'};
+    if(st.country.pfx && d.charAt(0)!==st.country.pfx.charAt(0)) return {ok:false,reason:'prefix'};
+    return {ok:true};
+  }
+  function psPhoneValidateShow(key){
+    var st=_psPhones[key]; if(!st) return true; var r=psPhoneCheck(st); var err=document.getElementById(key+'_err');
+    var bad=!r.ok && st.touched; st.root.classList.toggle('bad', bad);
+    if(err){ if(bad){ err.textContent=tr('wa_err_'+r.reason); err.hidden=false; } else err.hidden=true; }
+    return r.ok;
+  }
+  function psPhoneOk(key){ var st=_psPhones[key]; if(!st) return true; st.touched=true; return psPhoneValidateShow(key); }
+  function psPhoneSetFromFull(key,full){
+    var st=_psPhones[key]; if(!st||full==null||full==='') return; var s=String(full).replace(/[^0-9+]/g,''); if(s.charAt(0)==='+') s=s.slice(1);
+    var best=null; for(var i=0;i<PS_PHONE_COUNTRIES.length;i++){ var x=PS_PHONE_COUNTRIES[i]; if(s.indexOf(x.d)===0 && (!best||x.d.length>best.d.length)) best=x; }
+    if(best){ st.country=best; st.num.value=s.slice(best.d.length); } else st.num.value=s;
+    psPhoneRenderCc(st); psPhoneSync(key);
+  }
+  function psPhoneReset(key){ var st=_psPhones[key]; if(!st)return; st.num.value=''; st.touched=false; psPhoneSync(key); psPhoneValidateShow(key); }
+  function psPhoneInitAll(){ var ps=document.querySelectorAll('.ps-phone[data-phone]'); for(var i=0;i<ps.length;i++) psPhoneInit(ps[i]); }
+  document.addEventListener('click', function(e){ if(!(e.target.closest&&e.target.closest('.ps-phone'))){ var l=document.querySelectorAll('.ps-phone-list'); for(var i=0;i<l.length;i++) l[i].hidden=true; } });
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', psPhoneInitAll); else setTimeout(psPhoneInitAll,0);
+  window.psPhoneToggle=psPhoneToggle; window.psPhonePick=psPhonePick; window.psPhoneOnNum=psPhoneOnNum; window.psPhoneBlur=psPhoneBlur; window.psPhoneOk=psPhoneOk; window.psPhoneSetFromFull=psPhoneSetFromFull; window.psPhoneReset=psPhoneReset; window.psPhoneInitAll=psPhoneInitAll;
 
   // ── SEARCH PAGE: CURATED COLLECTIONS (editorial edits, NOT the raw category/brand taxonomy) ──
   // Req (Danish): curate themed collections instead of mirroring the gender rail + brand list. Each
@@ -8393,7 +8468,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-30-visualfit';
+  const PSB_BUILD = '2026-06-30-waphone';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

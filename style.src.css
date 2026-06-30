@@ -209,6 +209,21 @@
     .ps-fit-wa input:focus{outline:none;border-color:var(--gold)}
     .ps-fit-chip{background:var(--gold-dim);border-color:var(--gold-bdr)}
     .ps-fit-chip svg{color:var(--gold)}
+    /* WhatsApp / phone input: country picker (custom themed dropdown) + number + error */
+    .ps-phone{display:flex;gap:8px;align-items:stretch;position:relative}
+    .ps-phone-cc{display:flex;align-items:center;gap:6px;flex:0 0 auto;height:44px;padding:0 11px;border:1.5px solid var(--gold-bdr);border-radius:11px;background:var(--input-bg);color:var(--txt);font-size:.95rem;font-family:inherit;cursor:pointer}
+    .ps-phone-flag{font-size:1.15rem;line-height:1}
+    .ps-phone-dial{font-weight:700}
+    .ps-phone-car{color:var(--txt-muted);font-size:.62rem}
+    .ps-phone-num{flex:1;min-width:0;height:44px;border:1.5px solid var(--gold-bdr);border-radius:11px;background:var(--input-bg);color:var(--txt);font-size:1rem;font-family:inherit;padding:0 12px;letter-spacing:.5px}
+    .ps-phone-num:focus,.ps-phone-cc:focus{outline:none;border-color:var(--gold)}
+    .ps-phone.bad .ps-phone-num,.ps-phone.bad .ps-phone-cc{border-color:#d9534f}
+    .ps-phone-list{position:absolute;top:48px;left:0;z-index:50;width:min(280px,92vw);max-height:232px;overflow-y:auto;margin:0;padding:5px;list-style:none;background:var(--surface);border:1px solid var(--gold-bdr);border-radius:12px;box-shadow:0 8px 26px rgba(0,0,0,.18)}
+    .ps-phone-list li{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;cursor:pointer;font-size:.9rem;color:var(--txt)}
+    .ps-phone-list li:hover{background:var(--raised)}
+    .ps-phone-list .ps-phone-cn{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ps-phone-list b{color:var(--gold);font-weight:700}
+    .ps-phone-err{margin-top:5px;color:#d9534f;font-size:.78rem;font-weight:600}
     /* Brands' own gender tabs retired — the top rail drives the brand directory now. */
     #bbGtabs{display:none}
     .bb-back{background:none;border:0;color:var(--accent);font-size:0.9rem;font-weight:700;padding:8px 2px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;margin-bottom:4px}
