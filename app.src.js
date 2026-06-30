@@ -5811,7 +5811,15 @@
   var psFitG='w', psFitType='top', psFitFitPref='regular', psFitMeasOpen=false;
   function psFitAssistant(){ psFitLoadProfile(); psFitSheet(true); }
   function psFitSheet(show){ var s=document.getElementById('psFitSheet'); if(s){ s.hidden=!show; document.body.style.overflow=show?'hidden':''; if(show) psFitFillBrands(); } }
-  function psFitGender(g){ psFitG=g; var seg=document.getElementById('psFitGenderSeg'); if(seg) [].forEach.call(seg.children,function(b){ b.classList.toggle('on', b.getAttribute('data-g')===g); }); var sb=document.getElementById('psFitShirtBtn'); if(sb) sb.hidden=(g==='w'); if(g==='w'&&psFitType==='shirt'){ psFitType='top'; psFitTypeSet('top'); } else psFitFillBrands(); }
+  function psFitGender(g){
+    psFitG=g;
+    var seg=document.getElementById('psFitGenderSeg'); if(seg) [].forEach.call(seg.children,function(b){ b.classList.toggle('on', b.getAttribute('data-g')===g); });
+    var sb=document.getElementById('psFitShirtBtn'); if(sb) sb.hidden=(g==='w');
+    psFitFillBrands();   // ALWAYS repopulate brand + scope for this gender (was the source of "men brands stuck on women")
+    var wa=psFitWaFull(), prof=null;
+    if(wa){ var s=psFitStoreGet(); prof=(s.byWa[wa]&&s.byWa[wa][g])||null; }
+    psFitApplyProfile(prof);   // restore this gender's saved size (only if a number is set), else fresh defaults
+  }
   function psFitFitSet(f){ psFitFitPref=f; var seg=document.getElementById('psFitFitSeg'); if(seg) [].forEach.call(seg.children,function(b){ b.classList.toggle('on', b.getAttribute('data-f')===f); }); }
   function psFitToggleMeas(){ psFitMeasOpen=!psFitMeasOpen; var m=document.getElementById('psFitMeas'); if(m) m.hidden=!psFitMeasOpen; var l=document.getElementById('psFitMeasLink'); if(l) l.textContent=tr(psFitMeasOpen?'fit_meashide':'fit_measlink'); }
   function psFitTypeSet(t){
@@ -5941,34 +5949,60 @@
     // buyer sees their fitted products immediately instead of the hero/collections.
     try{ var _fc=document.getElementById('psVisChip')||document.getElementById('psGrid'); if(_fc){ window.scrollTo({top:Math.max(0, _fc.getBoundingClientRect().top+window.pageYOffset-70), behavior:'smooth'}); } }catch(e){}
   }
-  function psFitProfileKey(){ return 'psb_fit_profile'; }
+  // ── Fit profile storage ──────────────────────────────────────────────────────
+  // Keyed by WhatsApp number, with SEPARATE profiles per gender, so one number can hold
+  // both a women's size and a men's size. Persistence is GATED on a WhatsApp number being
+  // present: with no number nothing is saved or restored (each open/gender starts fresh),
+  // so a previous men's search never bleeds into a fresh women's view.
+  function psFitStoreKey(){ return 'psb_fit_v2'; }
+  function psFitStoreGet(){ try{ var o=JSON.parse(localStorage.getItem(psFitStoreKey())||'null'); return (o&&o.byWa)?o:{lastWa:'',lastG:'w',byWa:{}}; }catch(e){ return {lastWa:'',lastG:'w',byWa:{}}; } }
+  function psFitStorePut(s){ try{ localStorage.setItem(psFitStoreKey(), JSON.stringify(s)); }catch(e){} }
+  function psFitWaFull(){ return (document.getElementById('psFitWa')||{}).value || ''; }
+  function psFitFormToProfile(){ return {
+    type:psFitType, brand:(document.getElementById('psFitBrand')||{}).value, size:(document.getElementById('psFitSize')||{}).value,
+    chestS:(document.getElementById('psFitShirtChest')||{}).value, meas:psFitMeasOpen,
+    length:(document.getElementById('psFitLength')||{}).value, chest:(document.getElementById('psFitChest')||{}).value, waist:(document.getElementById('psFitWaist')||{}).value, hip:(document.getElementById('psFitHip')||{}).value,
+    fit:psFitFitPref, scope:(document.getElementById('psFitScope')||{}).value }; }
+  // apply a saved per-gender profile to the form, or (prof==null) reset the optional fields to fresh
+  // defaults for the current gender (keeping the gender-default brand/size that psFitFillBrands set).
+  function psFitApplyProfile(prof){
+    psFitMeasOpen=!!(prof&&prof.meas);
+    psFitFitPref=(prof&&prof.fit)||'regular'; psFitFitSet(psFitFitPref);
+    var t=(prof&&['top','shirt','bottom'].indexOf(prof.type)>=0)?prof.type:'top';
+    if(psFitG==='w'&&t==='shirt') t='top';
+    psFitTypeSet(t);
+    var set=function(id,v){ var el=document.getElementById(id); if(el) el.value=v; };
+    if(prof){
+      if(prof.brand){ set('psFitBrand',prof.brand); psDDBuild('psFitBrand'); psFitFillSizes(); }
+      if(prof.size){ set('psFitSize',prof.size); psDDBuild('psFitSize'); }
+      set('psFitScope',prof.scope||''); psDDBuild('psFitScope');
+      set('psFitShirtChest',prof.chestS||''); if(psFitType==='shirt') psFitSeedChest();
+      set('psFitLength',prof.length||''); set('psFitChest',prof.chest||''); set('psFitWaist',prof.waist||''); set('psFitHip',prof.hip||'');
+    } else {
+      set('psFitScope',''); psDDBuild('psFitScope');
+      set('psFitShirtChest',''); if(psFitType==='shirt') psFitSeedChest();
+      set('psFitLength',''); set('psFitChest',''); set('psFitWaist',''); set('psFitHip','');
+    }
+    var m=document.getElementById('psFitMeas'); if(m) m.hidden=!psFitMeasOpen; var l=document.getElementById('psFitMeasLink'); if(l) l.textContent=tr(psFitMeasOpen?'fit_meashide':'fit_measlink');
+  }
   function psFitSaveProfile(){
-    try{
-      var p={ g:psFitG, type:psFitType, meas:psFitMeasOpen, size:(document.getElementById('psFitSize')||{}).value, brand:(document.getElementById('psFitBrand')||{}).value,
-        chestS:(document.getElementById('psFitShirtChest')||{}).value,
-        length:(document.getElementById('psFitLength')||{}).value, chest:(document.getElementById('psFitChest')||{}).value, waist:(document.getElementById('psFitWaist')||{}).value, hip:(document.getElementById('psFitHip')||{}).value,
-        fit:psFitFitPref, scope:(document.getElementById('psFitScope')||{}).value, wa:(document.getElementById('psFitWa')||{}).value };
-      localStorage.setItem(psFitProfileKey(), JSON.stringify(p));
-    }catch(e){}
+    var wa=psFitWaFull(); if(!wa) return;   // memory only persists once a WhatsApp number is provided
+    var s=psFitStoreGet(); s.byWa[wa]=s.byWa[wa]||{}; s.byWa[wa][psFitG]=psFitFormToProfile();
+    s.lastWa=wa; s.lastG=psFitG; psFitStorePut(s);
   }
   function psFitLoadProfile(){
-    var p; try{ p=JSON.parse(localStorage.getItem(psFitProfileKey())||'null'); }catch(e){}
-    if(!p) return;
-    psFitG=p.g==='m'?'m':'w'; psFitFitPref=p.fit||'regular'; psFitMeasOpen=!!p.meas;
-    psFitType=(['top','shirt','bottom'].indexOf(p.type)>=0)?p.type:'top';
-    if(psFitG==='w'&&psFitType==='shirt') psFitType='top';
+    var s=psFitStoreGet(); var g=(s.lastG==='m')?'m':'w';
     setTimeout(function(){
-      psFitGender(psFitG); psFitFitSet(psFitFitPref);
-      psFitTypeSet(psFitType);
-      var set=function(id,v){ var el=document.getElementById(id); if(el&&v!=null&&v!=='') el.value=v; };
-      set('psFitBrand',p.brand); psDDBuild('psFitBrand'); psFitFillSizes();
-      set('psFitSize',p.size); psDDBuild('psFitSize');
-      set('psFitScope',p.scope); psDDBuild('psFitScope');
-      set('psFitShirtChest',p.chestS); if(psFitType==='shirt') psFitSeedChest();
-      set('psFitLength',p.length); set('psFitChest',p.chest); set('psFitWaist',p.waist); set('psFitHip',p.hip);
-      if(window.psPhoneSetFromFull) psPhoneSetFromFull('psFitWa', p.wa||'');
-      var m=document.getElementById('psFitMeas'); if(m) m.hidden=!psFitMeasOpen; var l=document.getElementById('psFitMeasLink'); if(l) l.textContent=tr(psFitMeasOpen?'fit_meashide':'fit_measlink');
-    }, 0);
+      if(s.lastWa && window.psPhoneSetFromFull) psPhoneSetFromFull('psFitWa', s.lastWa);
+      psFitGender(g);
+    },0);
+  }
+  // when the WhatsApp number is committed (blur), load THAT number's saved size for the current gender
+  // if one exists; never clobber in-progress entries for a brand-new number.
+  function psFitOnWaCommit(){
+    var wa=psFitWaFull(); if(!wa) return;
+    var s=psFitStoreGet(); var prof=s.byWa[wa]&&s.byWa[wa][psFitG];
+    if(prof) psFitApplyProfile(prof);
   }
   window.psSearchOpen=psSearchOpen; window.psSearchClose=psSearchClose;
   window.psSearchPageInput=psSearchPageInput; window.psSearchPageSubmit=psSearchPageSubmit; window.psSearchPageGo=psSearchPageGo;
@@ -6018,7 +6052,7 @@
   function psPhoneToggle(key){ var st=_psPhones[key]; if(!st)return; var willOpen=st.list.hidden; var l=document.querySelectorAll('.ps-phone-list'); for(var i=0;i<l.length;i++) l[i].hidden=true; st.list.hidden=!willOpen; st.cc.setAttribute('aria-expanded', willOpen?'true':'false'); }
   function psPhonePick(key,c){ var st=_psPhones[key]; if(!st)return; st.country=psPhoneCountry(c)||st.country; st.list.hidden=true; st.cc.setAttribute('aria-expanded','false'); psPhoneRenderCc(st); psPhoneSync(key); if(st.touched) psPhoneValidateShow(key); try{st.num.focus();}catch(e){} }
   function psPhoneOnNum(key){ var st=_psPhones[key]; if(!st)return; var v=st.num.value.replace(/[^0-9]/g,''); if(v!==st.num.value) st.num.value=v; psPhoneSync(key); if(st.touched) psPhoneValidateShow(key); }
-  function psPhoneBlur(key){ var st=_psPhones[key]; if(!st)return; st.touched=true; psPhoneValidateShow(key); }
+  function psPhoneBlur(key){ var st=_psPhones[key]; if(!st)return; st.touched=true; psPhoneValidateShow(key); if(key==='psFitWa' && typeof psFitOnWaCommit==='function') psFitOnWaCommit(); }
   function psPhoneNat(st){ var d=st.num.value.replace(/[^0-9]/g,''); if(d.charAt(0)==='0') d=d.slice(1); return d; }
   function psPhoneSync(key){ var st=_psPhones[key]; if(!st)return; var d=psPhoneNat(st); var hid=document.getElementById(key); if(hid) hid.value=d?('+'+st.country.d+d):''; }
   function psPhoneCheck(st){
@@ -8716,6 +8750,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
+  const PSB_BUILD = '2026-06-30-fitmem';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

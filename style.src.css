@@ -180,8 +180,8 @@
     /* Visual search — photo chooser sheet, loading overlay, result chip, toast */
     .ps-vis-sheet{position:fixed;inset:0;z-index:1300;display:flex;align-items:flex-end;justify-content:center}
     .ps-vis-back{position:absolute;inset:0;background:rgba(0,0,0,.45)}
-    .ps-vis-card{position:relative;width:100%;max-width:440px;background:var(--surface);border:1px solid var(--gold-bdr);border-bottom:none;border-radius:18px 18px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));box-shadow:0 -8px 30px rgba(0,0,0,.16)}
-    .ps-vis-hd{text-align:center;margin-bottom:14px}
+    .ps-vis-card{position:relative;width:100%;max-width:440px;background:var(--surface);border:1px solid var(--gold-bdr);border-bottom:none;border-radius:18px 18px 0 0;padding:20px 16px calc(24px + env(safe-area-inset-bottom,0px));box-shadow:0 -8px 30px rgba(0,0,0,.16)}
+    .ps-vis-hd{text-align:center;margin-bottom:18px}
     .ps-vis-hd span{display:block;font-size:1.05rem;font-weight:700;color:var(--txt)}
     .ps-vis-hd small{display:block;font-size:.8rem;color:var(--txt-muted);margin-top:3px}
     .ps-vis-pick-row{display:flex;gap:10px;margin-bottom:14px}
@@ -214,9 +214,9 @@
     .ps-fit-seg{display:flex;gap:6px;background:var(--raised);border:1px solid var(--gold-bdr);border-radius:12px;padding:4px;margin-bottom:14px}
     .ps-fit-seg button{flex:1;height:38px;border:none;background:none;color:var(--txt-muted);font-size:.9rem;font-weight:700;font-family:inherit;border-radius:9px;cursor:pointer}
     .ps-fit-seg button.on{background:var(--gold);color:#fff}
-    .ps-fit-seg-sm{margin:10px 0 0}
+    .ps-fit-seg-sm{margin:12px 0 16px}
     .ps-fit-seg-sm button{height:34px;font-size:.82rem}
-    .ps-fit-block{margin-bottom:13px}
+    .ps-fit-block{margin-bottom:15px}
     .ps-fit-lbl{display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--txt-muted);margin-bottom:6px}
     .ps-fit-pair{display:flex;align-items:center;gap:9px}
     .ps-fit-mid{color:var(--txt-muted);font-size:.9rem;flex:0 0 auto}
