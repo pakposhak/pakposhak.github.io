@@ -7567,13 +7567,26 @@
     let tags = prod && prod.tags;
     tags = Array.isArray(tags) ? tags : (typeof tags === 'string' ? tags.split(',').map(s => s.trim()) : []);
     const rows = [];
-    const grab = re => [...new Set(tags.filter(t => re.test(t)).map(t => t.replace(re, '').replace(/^[\s_:>-]+/, '').trim()).filter(Boolean))];
-    const fab = grab(/^fabric[\s_>:-]*/i); if(fab.length) rows.push(['Fabric', fab.join(', ')]);
-    const wrk = grab(/^design[\s_>:-]*/i); if(wrk.length) rows.push(['Work / Design', wrk.join(', ')]);
-    const col = grab(/^colou?r[\s_>:-]*/i); if(col.length) rows.push(['Colour', col.join(', ')]);
+    // Separators now include "=" (Sana Safinaz uses fabric=Lawn / season=Spring Summer, not "fabric: ").
+    const grab = re => [...new Set(tags.filter(t => re.test(t)).map(t => t.replace(re, '').replace(/^[\s_:=>-]+/, '').trim()).filter(Boolean))];
+    const fab = grab(/^fabric[\s_>:=-]*/i); if(fab.length) rows.push(['Fabric', fab.join(', ')]);
+    const wrk = grab(/^design[\s_>:=-]*/i); if(wrk.length) rows.push(['Work / Design', wrk.join(', ')]);
+    const col = grab(/^colou?r[\s_>:=-]*/i); if(col.length) rows.push(['Colour', col.join(', ')]);
+    const sea = grab(/^season[\s_>:=-]*/i); if(sea.length) rows.push(['Season', sea.join(', ')]);
     const pcs = tags.find(t => /^\s*\d\s?(piece|pcs?)\b/i.test(t)); if(pcs) rows.push(['Pieces', pcs.trim()]);
     if(prod.type) rows.push(['Type', prod.type]);
     return rows;
+  }
+  // Some brands leave body_html EMPTY and stash the product description in a tag under a
+  // different key (e.g. Maria B "dhldes:Women stitched Embroidered shirt …"). Pull it out.
+  function psDescFromTags(tags){
+    tags = Array.isArray(tags) ? tags : (typeof tags === 'string' ? tags.split(',') : []);
+    for(const raw of tags){
+      const t = String(raw || '').trim();
+      const m = t.match(/^(?:dhldes|des|description|product[\s_]*description|prod[\s_]*desc|detail)[\s_>:=-]+(.+)$/i);
+      if(m && m[1] && m[1].trim().length >= 12) return m[1].trim();
+    }
+    return '';
   }
   // Display priority so the table reads sensibly no matter which source landed first; unknown labels
   // keep their arrival order after the known ones.
@@ -7694,6 +7707,9 @@
             .replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&#39;/g,"'").replace(/&quot;/g,'"')
             .replace(/[ \t\f\v]+/g,' ').replace(/ *\n */g,'\n').replace(/\n{2,}/g,'\n').trim();
           if(desc && desc.length > st.desc.length) st.desc = desc;
+          // body_html is EMPTY for several big brands (Maria B, Sana Safinaz, …) — their description
+          // lives in a tag under a different key. Use it when we still have little/no description.
+          if(st.desc.length < 40){ const td = psDescFromTags(prod.tags); if(td && td.length > st.desc.length) st.desc = td; }
           psPaintDetail(p);
         })
         .catch(() => {})
@@ -8208,7 +8224,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-30-logos-block';
+  const PSB_BUILD = '2026-06-30-tagdesc';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
