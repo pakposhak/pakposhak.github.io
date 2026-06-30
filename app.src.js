@@ -2482,7 +2482,7 @@
       hiw_confirm_pay:'Confirm price & pay (bKash/Nagad)',
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search 150+ Pakistani brands…',
-
+      tab_brands:'Browse brands', tab_products:'Browse products', gen_all:'All', gen_women:'Women', gen_men:'Men', gen_kids:'Kids', menu_language:'Language', menu_theme:'Theme', menu_guide:'Guide', search_bar_ph:'Search products, brands…', search_page_ph:'Search products and 150+ brands', sp_remind_t:"Check any product's price in PKR", sp_remind_d:"Found it on a brand's own site? Paste the link to see the real price of any listed brand in PKR.", sp_paste:'Paste a product link', sp_visual:'Visual search', sp_fit:'Fit assistant', sp_soon:'Coming soon', vis_title:'Search by photo', vis_sub:'Find pieces that look like your photo', vis_cam:'Camera', vis_up:'Gallery', vis_cancel:'Cancel', vis_loading:'Finding similar styles', vis_chip:'Items like your photo', vis_clear:'Clear photo search', vis_none:'No close matches. Try another photo.', vis_notapparel:'Please use a clothing photo.', vis_notcarried:"This type of item is not in our listing. Try a clothing photo.", vis_err:'Could not search just now. Please try again.', vis_slow:'Visual search is warming up. Please try again in a moment.', vis_badfile:'Please choose a photo.', vis_filter_brand:'Brands', vis_filter_type:'Type', vis_pret:'Pret', vis_unstitch:'Unstitched', vis_type_all:'All', vis_allbrands:'All brands', vis_brands_n:'brands', dd_search:'Type a brand…', dd_none:'No match', fit_title:'Fit Assistant', fit_sub:'Find your size in any brand', fit_wear:'I usually wear', fit_in:'in', fit_size_in:'size', fit_inches:'All measurements in inches', fit_length:'Length (most important)', fit_measlink:"Don't know? Enter measurements", fit_meashide:'Use my usual size instead', fit_chest:'Chest', fit_waist:'Waist', fit_hip:'Hip', fit_regular:'Regular', fit_slim:'Slim', fit_relaxed:'Relaxed', fit_scope:'Show fits in', fit_allbrands:'All brands', fit_go:'Show what fits me', fit_wa:'Save to my WhatsApp number (optional)', fit_chip:'Your size', fit_chip_collar:'Collar', fit_chip_waist:'Waist', fit_yoursize:'your size', fit_type_top:'Tops & Suits', fit_type_shirt:'Shirts', fit_type_bottom:'Bottoms', fit_needchest:'Enter at least your chest measurement.', fit_needref:'Choose your size and a brand.', fit_none:'Nothing in your size right now. Try another size or brand.', fit_err:'Could not check sizes just now. Please try again.', fit_loading:'Finding your size', fit_hdr:'Your size, every brand', fit_pieces:'pieces', fit_b_your:'✓ Your size', fit_b_likely:'≈ Likely fit', fit_b_closest:'≈ Closest size', fit_wear_collar:'My shirt collar', fit_wear_waist:'My waist (inches)', fit_chest_approx:'≈ your chest', wa_err_empty:'Please enter your WhatsApp number', wa_err_short:'WhatsApp number looks incomplete', wa_err_long:'WhatsApp number is too long', wa_err_prefix:'Please check your WhatsApp number', sp_brands:'Browse all 150+ brands ›', sp_colls_hd:'Curated collections', sp_checkprice:'check price ›', bb_back:'‹ Back to products', store_everyday:'Everyday', store_premium:'Premium', colls_hd:'Collections',prodcat_hd:'Product category',products_hd:'Products', filters_sort:'Filters & sort', filters_done:'Done', sort_hd:'Sort', order_ways:'Two ways to order: tap + Add on anything in our listing, or send a product link from any of our 140+ brands.',
       intro_ios:"On iPhone: on a brand's product page, tap Share, then Add to PakPoshak. (One-time: add the PakPoshak shortcut.) Or copy the link and paste it here.",
       intro_android:"On Android: install PakPoshak, then on a brand's product page tap Share, then PakPoshak. Or copy the link and paste it here.",
       intro_desktop:"On desktop: paste a product link below, or add the Send-cart bookmark to grab a whole cart at once.",
@@ -2556,7 +2556,7 @@
       hiw_confirm_pay:'দাম নিশ্চিত করে পেমেন্ট (বিকাশ/নগদ)',
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
       lbl_browse:'একটি ব্র্যান্ড দেখুন', search_ph:'🔍 ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
-
+      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', gen_all:'সব', gen_women:'নারী', gen_men:'পুরুষ', gen_kids:'শিশু', menu_language:'ভাষা', menu_theme:'থিম', menu_guide:'গাইড', search_bar_ph:'পণ্য, ব্র্যান্ড খুঁজুন…', search_page_ph:'পণ্য ও ১৫০+ ব্র্যান্ড খুঁজুন', sp_remind_t:'যেকোনো পণ্যের দাম PKR-তে যাচাই করুন', sp_remind_d:'ব্র্যান্ডের নিজস্ব সাইটে পেয়েছেন? লিংক পেস্ট করে যেকোনো লিস্টেড ব্র্যান্ডের আসল দাম PKR-তে দেখুন।', sp_colls_hd:'কিউরেটেড কালেকশন', sp_paste:'পণ্যের লিংক পেস্ট করুন', sp_visual:'ভিজ্যুয়াল সার্চ', sp_fit:'ফিট অ্যাসিস্ট্যান্ট', sp_soon:'শীঘ্রই আসছে', vis_title:'ছবি দিয়ে খুঁজুন', vis_sub:'আপনার ছবির মতো পণ্য খুঁজুন', vis_cam:'ক্যামেরা', vis_up:'গ্যালারি', vis_cancel:'বাতিল', vis_loading:'মিল খুঁজছি', vis_chip:'আপনার ছবির মতো পণ্য', vis_clear:'ছবি সার্চ মুছুন', vis_none:'কাছাকাছি মিল নেই। অন্য ছবি দিন।', vis_notapparel:'অনুগ্রহ করে পোশাকের ছবি দিন।', vis_notcarried:'এই ধরনের পণ্য আমাদের লিস্টে নেই। পোশাকের ছবি দিয়ে খুঁজুন।', vis_err:'এখন খোঁজা গেল না। আবার চেষ্টা করুন।', vis_slow:'ভিজ্যুয়াল সার্চ প্রস্তুত হচ্ছে। একটু পরে আবার চেষ্টা করুন।', vis_badfile:'একটি ছবি নির্বাচন করুন।', vis_filter_brand:'ব্র্যান্ড', vis_filter_type:'ধরন', vis_pret:'প্রেট', vis_unstitch:'আনস্টিচড', vis_type_all:'সব', vis_allbrands:'সব ব্র্যান্ড', vis_brands_n:'ব্র্যান্ড', dd_search:'ব্র্যান্ড লিখুন…', dd_none:'মিল নেই', fit_title:'ফিট অ্যাসিস্ট্যান্ট', fit_sub:'যেকোনো ব্র্যান্ডে আপনার সাইজ খুঁজুন', fit_wear:'আমি সাধারণত পরি', fit_in:'এই ব্র্যান্ডে', fit_size_in:'সাইজ', fit_inches:'সব মাপ ইঞ্চিতে', fit_length:'লম্বা (সবচেয়ে জরুরি)', fit_measlink:'জানেন না? মাপ লিখুন', fit_meashide:'আমার সাধারণ সাইজ ব্যবহার করুন', fit_chest:'বুক', fit_waist:'কোমর', fit_hip:'হিপ', fit_regular:'রেগুলার', fit_slim:'স্লিম', fit_relaxed:'রিল্যাক্সড', fit_scope:'যেখানে দেখাবে', fit_allbrands:'সব ব্র্যান্ড', fit_go:'আমার মাপের পণ্য দেখান', fit_wa:'আমার WhatsApp নম্বরে সেভ করুন (ঐচ্ছিক)', fit_chip:'আপনার সাইজ', fit_chip_collar:'কলার', fit_chip_waist:'কোমর', fit_yoursize:'আপনার সাইজ', fit_type_top:'টপস ও স্যুট', fit_type_shirt:'শার্ট', fit_type_bottom:'বটমস', fit_needchest:'অন্তত আপনার বুকের মাপ লিখুন।', fit_needref:'আপনার সাইজ ও একটি ব্র্যান্ড বাছুন।', fit_none:'এখন আপনার সাইজে কিছু নেই। অন্য সাইজ বা ব্র্যান্ড দিন।', fit_err:'এখন সাইজ যাচাই করা গেল না। আবার চেষ্টা করুন।', fit_loading:'আপনার সাইজ খুঁজছি', fit_hdr:'আপনার মাপ, সব ব্র্যান্ডে', fit_pieces:'পিস', fit_b_your:'✓ আপনার মাপ', fit_b_likely:'≈ সম্ভাব্য মাপ', fit_b_closest:'≈ নিকটতম মাপ', fit_wear_collar:'আমার শার্টের কলার', fit_wear_waist:'আমার কোমর (ইঞ্চি)', fit_chest_approx:'≈ আপনার চেস্ট', wa_err_empty:'আপনার হোয়াটসঅ্যাপ নম্বর লিখুন', wa_err_short:'হোয়াটসঅ্যাপ নম্বরটি অসম্পূর্ণ মনে হচ্ছে', wa_err_long:'হোয়াটসঅ্যাপ নম্বরটি অনেক বড়', wa_err_prefix:'আপনার হোয়াটসঅ্যাপ নম্বর যাচাই করুন', sp_brands:'সব ১৫০+ ব্র্যান্ড দেখুন ›', sp_checkprice:'দাম দেখুন ›', bb_back:'‹ পণ্যে ফিরে যান', store_everyday:'এভরিডে', store_premium:'প্রিমিয়াম', colls_hd:'কালেকশন',prodcat_hd:'প্রোডাক্ট ক্যাটাগরি',products_hd:'পণ্য', filters_sort:'ফিল্টার ও সর্ট', filters_done:'সম্পন্ন', sort_hd:'সর্ট', order_ways:'দুইভাবে অর্ডার: আমাদের লিস্টে যেকোনো পণ্যে + Add চাপুন, অথবা ১৪০+ ব্র্যান্ডের যেকোনো পণ্যের লিংক পাঠান।',
       intro_ios:'আইফোনে: ব্র্যান্ডের পণ্য পেজে Share চেপে Add to PakPoshak বেছে নিন। (একবার: PakPoshak শর্টকাট যোগ করুন।) অথবা লিংক কপি করে এখানে পেস্ট করুন।',
       intro_android:'অ্যান্ড্রয়েডে: PakPoshak ইনস্টল করুন, তারপর ব্র্যান্ডের পণ্য পেজে Share চেপে PakPoshak বেছে নিন। অথবা লিংক কপি করে এখানে পেস্ট করুন।',
       intro_desktop:'ডেস্কটপে: নিচে পণ্যের লিংক পেস্ট করুন, অথবা পুরো কার্ট একসাথে আনতে Send-cart বুকমার্ক যোগ করুন।',
@@ -5657,25 +5657,39 @@
   var _psVimgWatchdog = null;  // safety timer for visual search overlay (#psVimgLoad)
   var _psVisBrands = new Set();   // empty = all brands
   var _psVisStitch = 'pret';      // 'pret' | 'unstitch' | 'all'
-  var _psVisBrandList = [
-    'Khaadi','Sapphire','Zara Shahjahan','Maria B','Gul Ahmed','Sana Safinaz',
-    'Cross Stitch','Baroque','Nishat Linen','Alkaram Studio','Elan','Asim Jofa',
-    'Generation','Limelight','Bonanza Satrangi','Rang Rasiya','Charizma',
-    'Zaha by Elan','J. Junaid Jamshed','Beechtree','So Kamal','Charcoal'
-  ];
-  function psVisBuildPills(){
-    var box=document.getElementById('psVisBrandPills'); if(!box) return;
-    var html='<button type="button" class="ps-vis-bpill'+(_psVisBrands.size===0?' on':'')+'" onclick="psVisToggleBrand(-1)">'+esc(tr('gen_all'))+'</button>';
-    for(var i=0;i<_psVisBrandList.length;i++){
-      var b=_psVisBrandList[i];
-      html+='<button type="button" class="ps-vis-bpill'+(_psVisBrands.has(b)?' on':'')+'" onclick="psVisToggleBrand('+i+')">'+esc(b)+'</button>';
-    }
-    box.innerHTML=html;
+  // Visual-search brand filter: a themed multi-select dropdown with typeahead. Master list is the
+  // full brand directory (BRANDS) so the buyer can type any brand and get live suggestions; an
+  // empty selection means "All brands" (no brand filter). Shares the .ps-dd look with Fit Assistant.
+  function _psVisBrandsAll(){
+    try{ if(typeof BRANDS!=='undefined' && BRANDS.length) return BRANDS.map(function(b){return b.n;}).sort(function(a,b){return a.localeCompare(b);}); }catch(e){}
+    return ['Khaadi','Sapphire','Zara Shahjahan','Maria B','Gul Ahmed','Sana Safinaz','Cross Stitch','Baroque','Nishat Linen','Alkaram Studio','Elan','Asim Jofa','Generation','Limelight','Bonanza Satrangi'];
   }
-  function psVisToggleBrand(idx){
-    if(idx===-1){ _psVisBrands.clear(); }
-    else{ var b=_psVisBrandList[idx]; if(!b) return; if(_psVisBrands.has(b)) _psVisBrands.delete(b); else _psVisBrands.add(b); }
-    psVisBuildPills();
+  function _psVisBrandLabel(){
+    if(_psVisBrands.size===0) return tr('vis_allbrands');
+    if(_psVisBrands.size===1) return Array.from(_psVisBrands)[0];
+    return _psVisBrands.size+' '+tr('vis_brands_n');
+  }
+  function psVisBrandDDBuild(){
+    var wrap=document.getElementById('psVisBrandDD'); if(!wrap) return;
+    var all=_psVisBrandsAll();
+    var lis='<li data-v="__all" role="option"'+(_psVisBrands.size===0?' class="sel"':'')+'>'+esc(tr('vis_allbrands'))+'</li>'
+      + all.map(function(b){ return '<li data-v="'+esc(b)+'" role="option"'+(_psVisBrands.has(b)?' class="sel"':'')+'>'+esc(b)+'</li>'; }).join('');
+    wrap.innerHTML='<button type="button" class="ps-dd-btn"><span>'+esc(_psVisBrandLabel())+'</span></button>'
+      +'<div class="ps-dd-list" hidden role="listbox"><input type="text" class="ps-dd-search" placeholder="'+esc(tr('dd_search'))+'" aria-label="'+esc(tr('dd_search'))+'"><ul class="ps-dd-ul">'+lis+'</ul></div>';
+    if(!wrap._wired){ wrap._wired=true;
+      wrap.addEventListener('click',function(e){
+        var li=e.target.closest('li[data-v]');
+        if(li){ var v=li.getAttribute('data-v'); if(v==='__all'){ _psVisBrands.clear(); } else if(_psVisBrands.has(v)){ _psVisBrands.delete(v); } else { _psVisBrands.add(v); } psVisBrandDDSync(); return; }
+        if(e.target.closest('.ps-dd-search')) return;            // typing in search must not toggle the dropdown
+        if(e.target.closest('.ps-dd-btn')) psDDToggle('psVisBrand');
+      });
+      wrap.addEventListener('input',function(e){ if(e.target.classList.contains('ps-dd-search')) psDDFilter(wrap, e.target.value); });
+    }
+  }
+  function psVisBrandDDSync(){           // multi-select: refresh button label + ticks, keep the list OPEN
+    var wrap=document.getElementById('psVisBrandDD'); if(!wrap) return;
+    var span=wrap.querySelector('.ps-dd-btn>span'); if(span) span.textContent=_psVisBrandLabel();
+    [].forEach.call(wrap.querySelectorAll('li[data-v]'),function(li){ var v=li.getAttribute('data-v'); li.classList.toggle('sel', v==='__all'?_psVisBrands.size===0:_psVisBrands.has(v)); });
   }
   function psVisSetStitch(btn,val){
     _psVisStitch=val;
@@ -5683,7 +5697,7 @@
     seg.querySelectorAll('button').forEach(function(b){ b.classList.toggle('on', b.dataset.s===val); });
   }
   function psVisualSearch(){ psVisualSheet(true); }
-  function psVisualSheet(show){ var s=document.getElementById('psVisSheet'); if(s){ s.hidden=!show; document.body.style.overflow = show ? 'hidden' : ''; if(show) psVisBuildPills(); } }
+  function psVisualSheet(show){ var s=document.getElementById('psVisSheet'); if(s){ s.hidden=!show; document.body.style.overflow = show ? 'hidden' : ''; if(show) psVisBrandDDBuild(); } }
   function psVisualPick(mode){ psVisualSheet(false); var inp=document.getElementById(mode==='cam'?'psVisCam':'psVisUp'); if(inp){ inp.value=''; inp.click(); } }
   function psVisualLoad(on){
     var o=document.getElementById('psVisLoad'); if(!o) return;
@@ -5853,17 +5867,42 @@
     if(!sel||!wrap) return;
     var cur=sel.value, curOpt=sel.options[sel.selectedIndex];
     var lis=[].map.call(sel.options,function(o){ return '<li role="option" data-v="'+esc(o.value)+'"'+(o.value===cur?' class="sel"':'')+'>'+esc(o.textContent)+'</li>'; }).join('');
-    wrap.innerHTML='<button type="button" class="ps-dd-btn"><span>'+esc(curOpt?curOpt.textContent:'')+'</span></button><ul class="ps-dd-list" hidden role="listbox">'+lis+'</ul>';
-    if(!wrap._wired){ wrap._wired=true; wrap.addEventListener('click',function(e){
-      var li=e.target.closest('li[data-v]');
-      if(li){ psDDChoose(key, li.getAttribute('data-v')); return; }
-      if(e.target.closest('.ps-dd-btn')) psDDToggle(key);
-    }); }
+    // Long lists (e.g. the 45-brand Fit reference) get a typeahead search box; short ones don't need it.
+    var srch = sel.options.length>8 ? '<input type="text" class="ps-dd-search" placeholder="'+esc(tr('dd_search'))+'" aria-label="'+esc(tr('dd_search'))+'">' : '';
+    wrap.innerHTML='<button type="button" class="ps-dd-btn"><span>'+esc(curOpt?curOpt.textContent:'')+'</span></button><div class="ps-dd-list" hidden role="listbox">'+srch+'<ul class="ps-dd-ul">'+lis+'</ul></div>';
+    if(!wrap._wired){ wrap._wired=true;
+      wrap.addEventListener('click',function(e){
+        var li=e.target.closest('li[data-v]');
+        if(li){ psDDChoose(key, li.getAttribute('data-v')); return; }
+        if(e.target.closest('.ps-dd-search')) return;            // typing in search must not toggle the dropdown
+        if(e.target.closest('.ps-dd-btn')) psDDToggle(key);
+      });
+      wrap.addEventListener('input',function(e){ if(e.target.classList.contains('ps-dd-search')) psDDFilter(wrap, e.target.value); });
+    }
+  }
+  // Typeahead: hide option <li>s that don't match the typed query; show a "no match" row if none do.
+  function psDDFilter(wrap, q){
+    q=(q||'').trim().toLowerCase();
+    var ul=wrap.querySelector('.ps-dd-ul'); if(!ul) return;
+    var any=false;
+    [].forEach.call(ul.querySelectorAll('li[data-v]'),function(li){
+      if(li.getAttribute('data-v')==='__all'){ li.style.display=q?'none':''; return; }   // hide "All" while searching
+      var hit=!q||li.textContent.toLowerCase().indexOf(q)>=0; li.style.display=hit?'':'none'; if(hit) any=true;
+    });
+    var empty=ul.querySelector('.ps-dd-empty');
+    if(!any){ if(!empty){ empty=document.createElement('li'); empty.className='ps-dd-empty'; ul.appendChild(empty); } empty.textContent=tr('dd_none'); empty.style.display=''; }
+    else if(empty){ empty.style.display='none'; }
   }
   function psDDToggle(key){
     var wrap=document.querySelector('.ps-dd[data-dd="'+key+'"]'); if(!wrap) return;
     var willOpen=!wrap.classList.contains('open'); psDDCloseAll();
-    if(willOpen){ wrap.classList.add('open'); var l=wrap.querySelector('.ps-dd-list'); if(l){ l.hidden=false; var s=l.querySelector('li.sel'); if(s) s.scrollIntoView({block:'nearest'}); } }
+    if(willOpen){ wrap.classList.add('open'); wrap.classList.remove('up'); var l=wrap.querySelector('.ps-dd-list'); if(l){ l.hidden=false;
+      var srch=l.querySelector('.ps-dd-search'); if(srch){ srch.value=''; psDDFilter(wrap,''); setTimeout(function(){ try{ srch.focus(); }catch(e){} },30); }
+      var s=l.querySelector('li.sel'); if(s) s.scrollIntoView({block:'nearest'});
+      // In a bottom-sheet the trigger sits low, so a long list would spill below the fold. If it
+      // overflows the viewport bottom and there is more room above the button, flip it open upward.
+      try{ var lr=l.getBoundingClientRect(), br=wrap.querySelector('.ps-dd-btn').getBoundingClientRect();
+        if(lr.bottom > window.innerHeight-8 && br.top > (window.innerHeight - br.bottom)) wrap.classList.add('up'); }catch(e){} } }
   }
   function psDDCloseAll(){ [].forEach.call(document.querySelectorAll('.ps-dd.open'),function(w){ w.classList.remove('open'); var l=w.querySelector('.ps-dd-list'); if(l) l.hidden=true; }); }
   function psDDChoose(key,val){
@@ -6007,7 +6046,7 @@
   window.psSearchOpen=psSearchOpen; window.psSearchClose=psSearchClose;
   window.psSearchPageInput=psSearchPageInput; window.psSearchPageSubmit=psSearchPageSubmit; window.psSearchPageGo=psSearchPageGo;
   window.psVisualSearch=psVisualSearch; window.psFitAssistant=psFitAssistant;
-  window.psVisualSheet=psVisualSheet; window.psVisualPick=psVisualPick; window.psVisualFile=psVisualFile; window.psVisualClear=psVisualClear; window.psVisToggleBrand=psVisToggleBrand; window.psVisSetStitch=psVisSetStitch;
+  window.psVisualSheet=psVisualSheet; window.psVisualPick=psVisualPick; window.psVisualFile=psVisualFile; window.psVisualClear=psVisualClear; window.psVisSetStitch=psVisSetStitch;
   window.psFitSheet=psFitSheet; window.psFitGender=psFitGender; window.psFitFitSet=psFitFitSet; window.psFitToggleMeas=psFitToggleMeas; window.psFitTypeSet=psFitTypeSet; window.psFitRun=psFitRun; window.psLoadCancel=psLoadCancel; window.psVimgCancel=psVimgCancel;
 
   // ── WhatsApp / phone input: themed country picker + completeness check ─────────────
@@ -8750,7 +8789,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-30-fitmem';
+  const PSB_BUILD = '2026-06-30-vsdrop';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
