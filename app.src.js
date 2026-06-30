@@ -5908,7 +5908,9 @@
     psRender(false);
     var sub=(basis?basis+' · ':'')+total+' '+tr('fit_pieces');
     psVisualChip(true, tr('fit_hdr'), 'fit', sub);
-    try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(e){}
+    // land on the RESULTS LISTING (the header chip just above the grid), not the page top, so the
+    // buyer sees their fitted products immediately instead of the hero/collections.
+    try{ var _fc=document.getElementById('psVisChip')||document.getElementById('psGrid'); if(_fc){ window.scrollTo({top:Math.max(0, _fc.getBoundingClientRect().top+window.pageYOffset-70), behavior:'smooth'}); } }catch(e){}
   }
   function psFitProfileKey(){ return 'psb_fit_profile'; }
   function psFitSaveProfile(){
@@ -8685,7 +8687,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-30-fitchip';
+  const PSB_BUILD = '2026-06-30-fitland';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
