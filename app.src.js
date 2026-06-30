@@ -4832,7 +4832,7 @@
   }
   var _psTitleBlockRe = /\b(bra|bralette|bra set|lingerie|panty|panties|underwear|innerwear|g-string|thong)\b/i;
   function psIsHidden(p){
-    if(p && p.n && _psTitleBlockRe.test(p.n)) return true;
+    if(p && p.t && _psTitleBlockRe.test(p.t)) return true;   // products carry .t (title); .n never existed — this filter was dead until fixed
     const ts = _psSoldOut[psUrlKey(p.u)]; return !!ts && (Date.now() - ts < PS_SOLDOUT_TTL);
   }
   function psPruneSoldOut(){
@@ -5755,7 +5755,7 @@
         psVimgLoad(false);
         if(j.ok===false || j.apparel===false){ psVisualToast(tr('vis_notapparel')); return; }
         var all=j.products||[];
-        var notCarried=all.filter(function(p){ return (p.n&&_psTitleBlockRe.test(p.n))||(PS_HIDE_CATS&&PS_HIDE_CATS.has(p.cat)); }).length;
+        var notCarried=all.filter(function(p){ return (p.t&&_psTitleBlockRe.test(p.t))||(PS_HIDE_CATS&&PS_HIDE_CATS.has(p.cat)); }).length;
         var items=all.filter(function(p){ return !psIsHidden(p)&&!(PS_HIDE_CATS&&PS_HIDE_CATS.has(p.cat)); });
         if(_psVisBrands.size>0) items=items.filter(function(p){ return _psVisBrands.has(p.b); });
         if(_psVisStitch!=='all') items=items.filter(function(p){ var u=p.cat&&p.cat.indexOf('unstitch')>=0; return _psVisStitch==='unstitch'?u:!u; });
@@ -8789,7 +8789,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-30-vsdrop';
+  const PSB_BUILD = '2026-07-01-brafix';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

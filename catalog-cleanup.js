@@ -527,6 +527,11 @@ function cleanupProducts(ps, membership) {
     { const _tj = (p.t || '') + ' ' + (p.u || ''); if (JEWELLERY_DROP.test(_tj) && !GARMENT_NOUN.test(p.t || '')) { junkN++; continue; } }   // jewellery the harvester missed (Agha Noor JWL/Diamante) -> delete; guarded so jewellery-named SUITS survive
     if (ACC.test(p.t || '') && !GARMENT.test(p.t || '') && p.cat !== 'footwear') { del++; continue; }
     if (/\bunder[\s-]?vests?\b/i.test(p.t || '')) { junkN++; continue; }   // "Under Vest(s) (Pack Of 2)" = innerwear (Minnie Minors) — not listed (we don't sell undergarments)
+    // BRAS / lingerie / panties = innerwear, never listed (Danish: "remove all bras"). Word-boundaried so
+    // it can NEVER hit a garment: \bbra\b matches "Sports Bra"/"Women's Bra" but NOT bralette/bra-cup/brand/
+    // bracelet, and bralette/bustier/corset stay as western_top via the rules below. Cougar + Eminent
+    // sell standalone bras that defaulted into pret_3pc. Verified 0 false-positives on the live catalog.
+    if (/\bbra\b|\bbras\b|\bbrassiere\b|sports\s*bra|\blingerie\b|\bpant(?:y|ies)\b|\bg-?string\b|\bthong\b|\bjock\s*strap\b/i.test(p.t || '')) { junkN++; continue; }
     // ── COUPLE COLLECTION (His + Hers sold as ONE set, single price, single weight) → its own
     // category; brand-agnostic and HIGH priority so it wins over the gender/men/women rules below.
     // Catches Edge Republic "CP … Couple/Couples" + any future his-&-her listing. Idempotent.
