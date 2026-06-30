@@ -5474,6 +5474,41 @@
     clearTimeout(_psSearchT);
     psSmartSearch('');
   }
+  // Active-search chip on the landing-page search bar. Shows query/brand when a search is active;
+  // hides the placeholder. The ✕ clears the search (text + brand, keeps price filters).
+  function psRefreshSearchTag(){
+    var tag=document.getElementById('psSearchTag');
+    var ph=document.querySelector('#psSearchBar .ps-sb-ph');
+    if(!tag) return;
+    var parts=[];
+    if(typeof psSel!=='undefined'&&psSel.brands&&psSel.brands.size){
+      var bn=[...psSel.brands];
+      parts.push(bn.length===1?bn[0]:bn.length+' brands');
+    }
+    if(typeof psQuery==='string'&&psQuery) parts.push(psQuery);
+    if(!parts.length){
+      var inp=document.getElementById('psSearchMobile')||document.getElementById('psSearchDesktop');
+      var v=inp?inp.value.trim():'';
+      if(v) parts.push(v);
+    }
+    var label=parts.join(' \xB7 ');
+    var active=!!label;
+    tag.hidden=!active;
+    if(ph) ph.hidden=active;
+    if(active){var t=tag.querySelector('.ps-search-tag-txt');if(t)t.textContent=label;}
+  }
+  function psClearSearchTag(e){
+    if(e&&e.stopPropagation)e.stopPropagation();
+    if(typeof psQuery!=='undefined')psQuery='';
+    if(typeof psSizeQ!=='undefined')psSizeQ='';
+    if(typeof psSel!=='undefined')psSel={prices:new Set(psSel.prices),cats:new Set(),brands:new Set()};
+    ['psSearchMobile','psSearchDesktop'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+    if(typeof psUpdateSearchClearBtn==='function')psUpdateSearchClearBtn('');
+    if(typeof psSearchHint==='function')psSearchHint('',new Set(),new Set());
+    try{psBuildCatFilter();psBuildBrandFilter();psApply();}catch(e2){}
+    psRefreshSearchTag();
+  }
+  window.psClearSearchTag=psClearSearchTag;
   function psSearchInput(val){
     const a = document.getElementById('psSearchMobile'), b = document.getElementById('psSearchDesktop');
     if(a && a.value !== val) a.value = val;
@@ -7458,6 +7493,7 @@
   }
   // All three filters combine with AND; price buckets OR within themselves.
   function psApply(){
+    try{psRefreshSearchTag();}catch(e){}
     psPage = 0;
     psFeedDone = false; psFeedLoading = false;        // infinite scroll: start a fresh feed
     psFeedSeed = Math.floor(Date.now() / 90000);      // freeze the shuffle for this feed's pages
@@ -8554,7 +8590,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-30-fitform';
+  const PSB_BUILD = '2026-06-30-searchtag';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

@@ -118,6 +118,9 @@
     .ps-sb-ph{color:var(--txt-muted);font-size:0.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .ps-sb-cam{flex-shrink:0;display:flex;align-items:center;justify-content:center;width:42px;height:42px;background:var(--surface);border:1px solid var(--bdr-med);border-radius:11px;color:var(--accent);cursor:pointer}
     .ps-sb-cam svg{width:21px;height:21px}
+    .ps-search-tag{display:inline-flex;align-items:center;gap:5px;background:var(--accent);color:#fff;border-radius:20px;padding:3px 8px 3px 9px;font-size:0.78rem;font-weight:600;max-width:170px;overflow:hidden;min-width:0;flex-shrink:1}
+    .ps-search-tag-txt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+    .ps-search-tag-clr{display:flex;align-items:center;justify-content:center;min-width:16px;height:16px;border-radius:50%;background:rgba(0,0,0,.22);font-size:0.7rem;cursor:pointer;flex-shrink:0;font-weight:700;line-height:1}
     /* Full-screen search page (in-app overlay). */
     .ps-searchpage{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
     .ps-searchpage[hidden]{display:none}
