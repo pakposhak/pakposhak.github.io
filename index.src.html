@@ -230,14 +230,71 @@
       <div class="ps-sp-tools">
         <button type="button" class="ps-sp-tool" onclick="psVisualSearch()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V8a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.5"/></svg>
-          <span data-i18n="sp_visual">Visual search</span><small data-i18n="sp_soon">Coming soon</small>
+          <span data-i18n="sp_visual">Visual search</span><small data-i18n="vis_sub">Find pieces that look like your photo</small>
         </button>
         <button type="button" class="ps-sp-tool" onclick="psFitAssistant()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg>
-          <span data-i18n="sp_fit">Fit assistant</span><small data-i18n="sp_soon">Coming soon</small>
+          <span data-i18n="sp_fit">Fit assistant</span><small data-i18n="fit_sub">Find your size in any brand</small>
         </button>
       </div>
       <button type="button" class="ps-sp-brands" onclick="psSearchClose();switchBrowse('brands')" data-i18n="sp_brands">Browse all 150+ brands ›</button>
+    </div>
+  </div>
+
+  <!-- Visual search: photo chooser (take / upload), hidden file inputs, full-screen loading state -->
+  <input type="file" id="psVisCam" accept="image/*" capture="environment" hidden onchange="psVisualFile(this)">
+  <input type="file" id="psVisUp" accept="image/*" hidden onchange="psVisualFile(this)">
+  <div id="psVisSheet" class="ps-vis-sheet" hidden role="dialog" aria-label="Search by photo">
+    <div class="ps-vis-back" onclick="psVisualSheet(false)"></div>
+    <div class="ps-vis-card">
+      <div class="ps-vis-hd"><span data-i18n="vis_title">Search by photo</span><small data-i18n="vis_sub">Find pieces that look like your photo</small></div>
+      <button type="button" class="ps-vis-opt" onclick="psVisualPick('cam')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V8a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.5"/></svg>
+        <span data-i18n="vis_cam">Take a photo</span></button>
+      <button type="button" class="ps-vis-opt" onclick="psVisualPick('up')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15l-5-5L5 21"/><path d="M3 16V5a2 2 0 012-2h11"/><circle cx="9" cy="9" r="2"/><path d="M21 5v6m3-3h-6"/></svg>
+        <span data-i18n="vis_up">Upload a photo</span></button>
+      <button type="button" class="ps-vis-cancel" onclick="psVisualSheet(false)" data-i18n="vis_cancel">Cancel</button>
+    </div>
+  </div>
+  <div id="psVisLoad" class="ps-vis-load" hidden aria-live="polite"><div class="ps-vis-spin" aria-hidden="true"></div><div data-i18n="vis_loading">Finding similar styles</div></div>
+
+  <!-- Fit Assistant: set a profile (usual size in a brand, or measurements) → shop your size -->
+  <div id="psFitSheet" class="ps-vis-sheet" hidden role="dialog" aria-label="Fit Assistant">
+    <div class="ps-vis-back" onclick="psFitSheet(false)"></div>
+    <div class="ps-vis-card ps-fit-card">
+      <div class="ps-vis-hd"><span data-i18n="fit_title">Fit Assistant</span><small data-i18n="fit_sub">Find your size in any brand</small></div>
+      <div class="ps-fit-seg" id="psFitGenderSeg" role="tablist">
+        <button type="button" class="on" data-g="w" onclick="psFitGender('w')" data-i18n="gen_women">Women</button>
+        <button type="button" data-g="m" onclick="psFitGender('m')" data-i18n="gen_men">Men</button>
+      </div>
+      <div class="ps-fit-block">
+        <label class="ps-fit-lbl" data-i18n="fit_wear">I usually wear</label>
+        <div class="ps-fit-pair">
+          <select id="psFitSize" class="ps-fit-sel" aria-label="My usual size"><option>XS</option><option selected>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select>
+          <span class="ps-fit-mid" data-i18n="fit_in">in</span>
+          <select id="psFitBrand" class="ps-fit-sel" aria-label="Brand I know my size in"></select>
+        </div>
+      </div>
+      <button type="button" class="ps-fit-measlink" id="psFitMeasLink" onclick="psFitToggleMeas()" data-i18n="fit_measlink">Don't know? Enter measurements</button>
+      <div class="ps-fit-meas" id="psFitMeas" hidden>
+        <div class="ps-fit-m3">
+          <label><span data-i18n="fit_chest">Chest</span><input id="psFitChest" type="number" inputmode="decimal" min="20" max="70" placeholder="38"></label>
+          <label><span data-i18n="fit_waist">Waist</span><input id="psFitWaist" type="number" inputmode="decimal" min="18" max="60" placeholder="32"></label>
+          <label><span data-i18n="fit_hip">Hip</span><input id="psFitHip" type="number" inputmode="decimal" min="20" max="70" placeholder="40"></label>
+        </div>
+        <div class="ps-fit-seg ps-fit-seg-sm" id="psFitFitSeg">
+          <button type="button" class="on" data-f="regular" onclick="psFitFitSet('regular')" data-i18n="fit_regular">Regular</button>
+          <button type="button" data-f="slim" onclick="psFitFitSet('slim')" data-i18n="fit_slim">Slim</button>
+          <button type="button" data-f="relaxed" onclick="psFitFitSet('relaxed')" data-i18n="fit_relaxed">Relaxed</button>
+        </div>
+      </div>
+      <div class="ps-fit-block">
+        <label class="ps-fit-lbl" data-i18n="fit_scope">Show fits in</label>
+        <select id="psFitScope" class="ps-fit-sel ps-fit-sel-full" aria-label="Where to shop"></select>
+      </div>
+      <button type="button" class="ps-fit-go" onclick="psFitRun()" data-i18n="fit_go">Show what fits me</button>
+      <label class="ps-fit-wa"><span data-i18n="fit_wa">Save to my WhatsApp number (optional)</span><input id="psFitWa" type="tel" inputmode="tel" autocomplete="off" placeholder="01XXXXXXXXX"></label>
     </div>
   </div>
 

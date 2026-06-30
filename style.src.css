@@ -160,6 +160,55 @@
     .ps-sp-tool span{font-weight:700;font-size:0.9rem}
     .ps-sp-tool small{color:var(--txt-muted);font-size:0.7rem}
     .ps-sp-brands{width:100%;background:none;border:1px solid var(--bdr-med);border-radius:11px;padding:13px;font-size:0.92rem;font-weight:700;color:var(--accent);cursor:pointer}
+    /* Visual search — photo chooser sheet, loading overlay, result chip, toast */
+    .ps-vis-sheet{position:fixed;inset:0;z-index:1300;display:flex;align-items:flex-end;justify-content:center}
+    .ps-vis-back{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+    .ps-vis-card{position:relative;width:100%;max-width:440px;background:var(--surface);border:1px solid var(--gold-bdr);border-bottom:none;border-radius:18px 18px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));box-shadow:0 -8px 30px rgba(0,0,0,.16)}
+    .ps-vis-hd{text-align:center;margin-bottom:14px}
+    .ps-vis-hd span{display:block;font-size:1.05rem;font-weight:700;color:var(--txt)}
+    .ps-vis-hd small{display:block;font-size:.8rem;color:var(--txt-muted);margin-top:3px}
+    .ps-vis-opt{display:flex;align-items:center;gap:12px;width:100%;height:54px;padding:0 16px;margin-bottom:10px;border:1.5px solid var(--gold-bdr);border-radius:13px;background:var(--raised);color:var(--txt);font-size:1rem;font-weight:600;font-family:inherit;cursor:pointer;text-align:left}
+    .ps-vis-opt svg{width:24px;height:24px;color:var(--gold);flex:0 0 auto}
+    .ps-vis-opt:active{transform:scale(.99)}
+    .ps-vis-cancel{width:100%;height:46px;border:none;background:none;color:var(--txt-muted);font-size:.95rem;font-weight:600;font-family:inherit;cursor:pointer;margin-top:2px}
+    .ps-vis-load{position:fixed;inset:0;z-index:1350;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:rgba(0,0,0,.5);color:#fff;font-size:.95rem;font-weight:600}
+    .ps-vis-spin{width:38px;height:38px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:psVisSpin .8s linear infinite}
+    @keyframes psVisSpin{to{transform:rotate(360deg)}}
+    .ps-vis-chip{display:flex;align-items:center;gap:8px;margin:0 0 12px;padding:9px 12px;background:var(--gold-dim);border:1px solid var(--gold-bdr);border-radius:12px;font-size:.86rem;font-weight:600;color:var(--txt)}
+    .ps-vis-chip svg{width:18px;height:18px;color:var(--gold);flex:0 0 auto}
+    .ps-vis-chip span{flex:1;min-width:0}
+    .ps-vis-chip button{border:none;background:var(--surface);color:var(--txt);width:26px;height:26px;border-radius:50%;font-size:.85rem;cursor:pointer;line-height:1;flex:0 0 auto}
+    .ps-vis-toast{position:fixed;left:50%;bottom:calc(82px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(10px);z-index:1400;max-width:90vw;background:var(--txt);color:var(--bg);padding:11px 18px;border-radius:24px;font-size:.88rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;text-align:center}
+    .ps-vis-toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+    /* Fit Assistant sheet */
+    .ps-fit-card{max-height:90vh;overflow-y:auto}
+    .ps-fit-seg{display:flex;gap:6px;background:var(--raised);border:1px solid var(--gold-bdr);border-radius:12px;padding:4px;margin-bottom:14px}
+    .ps-fit-seg button{flex:1;height:38px;border:none;background:none;color:var(--txt-muted);font-size:.9rem;font-weight:700;font-family:inherit;border-radius:9px;cursor:pointer}
+    .ps-fit-seg button.on{background:var(--gold);color:#fff}
+    .ps-fit-seg-sm{margin:10px 0 0}
+    .ps-fit-seg-sm button{height:34px;font-size:.82rem}
+    .ps-fit-block{margin-bottom:13px}
+    .ps-fit-lbl{display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--txt-muted);margin-bottom:6px}
+    .ps-fit-pair{display:flex;align-items:center;gap:9px}
+    .ps-fit-mid{color:var(--txt-muted);font-size:.9rem;flex:0 0 auto}
+    .ps-fit-sel{height:44px;border:1.5px solid var(--gold-bdr);border-radius:11px;background:var(--input-bg);color:var(--txt);font-size:.95rem;font-family:inherit;padding:0 10px;min-width:0}
+    .ps-fit-sel:focus{outline:none;border-color:var(--gold)}
+    .ps-fit-pair .ps-fit-sel:first-child{flex:0 0 84px}
+    .ps-fit-pair .ps-fit-sel:last-child{flex:1}
+    .ps-fit-sel-full{width:100%}
+    .ps-fit-measlink{display:block;width:100%;text-align:center;background:none;border:none;color:var(--gold);font-size:.85rem;font-weight:600;text-decoration:underline;font-family:inherit;cursor:pointer;margin:2px 0 12px}
+    .ps-fit-meas{margin:0 0 13px;padding:12px;border:1px dashed var(--gold-bdr);border-radius:12px;background:var(--raised)}
+    .ps-fit-m3{display:flex;gap:8px}
+    .ps-fit-m3 label{flex:1;display:flex;flex-direction:column;gap:4px;font-size:.7rem;font-weight:700;color:var(--txt-muted)}
+    .ps-fit-m3 input{height:42px;border:1.5px solid var(--gold-bdr);border-radius:10px;background:var(--input-bg);color:var(--txt);font-size:1rem;font-family:inherit;text-align:center;width:100%}
+    .ps-fit-m3 input:focus{outline:none;border-color:var(--gold)}
+    .ps-fit-go{width:100%;height:50px;border:none;border-radius:13px;background:var(--gold);color:#fff;font-size:1rem;font-weight:700;font-family:inherit;cursor:pointer;letter-spacing:.3px}
+    .ps-fit-go:active{transform:scale(.99)}
+    .ps-fit-wa{display:block;margin-top:12px;font-size:.7rem;font-weight:600;color:var(--txt-muted)}
+    .ps-fit-wa input{display:block;width:100%;height:42px;margin-top:5px;border:1.5px solid var(--gold-bdr);border-radius:10px;background:var(--input-bg);color:var(--txt);font-size:.95rem;font-family:inherit;padding:0 11px}
+    .ps-fit-wa input:focus{outline:none;border-color:var(--gold)}
+    .ps-fit-chip{background:var(--gold-dim);border-color:var(--gold-bdr)}
+    .ps-fit-chip svg{color:var(--gold)}
     /* Brands' own gender tabs retired — the top rail drives the brand directory now. */
     #bbGtabs{display:none}
     .bb-back{background:none;border:0;color:var(--accent);font-size:0.9rem;font-weight:700;padding:8px 2px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;margin-bottom:4px}

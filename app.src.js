@@ -2480,7 +2480,7 @@
       hiw_confirm_pay:'Confirm price & pay (bKash/Nagad)',
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search 150+ Pakistani brands…',
-      tab_brands:'Browse brands', tab_products:'Browse products', gen_all:'All', gen_women:'Women', gen_men:'Men', gen_kids:'Kids', menu_language:'Language', menu_theme:'Theme', menu_guide:'Guide', search_bar_ph:'Search products, brands…', search_page_ph:'Search products and 150+ brands', sp_remind_t:"Check any product's price in PKR", sp_remind_d:"Found it on a brand's own site? Paste the link to see the real price of any listed brand in PKR.", sp_paste:'Paste a product link', sp_visual:'Visual search', sp_fit:'Fit assistant', sp_soon:'Coming soon', sp_brands:'Browse all 150+ brands ›', sp_colls_hd:'Curated collections', sp_checkprice:'check price ›', bb_back:'‹ Back to products', store_everyday:'Everyday', store_premium:'Premium', colls_hd:'Collections',prodcat_hd:'Product category',products_hd:'Products', filters_sort:'Filters & sort', filters_done:'Done', sort_hd:'Sort', order_ways:'Two ways to order: tap + Add on anything in our listing, or send a product link from any of our 140+ brands.',
+      tab_brands:'Browse brands', tab_products:'Browse products', gen_all:'All', gen_women:'Women', gen_men:'Men', gen_kids:'Kids', menu_language:'Language', menu_theme:'Theme', menu_guide:'Guide', search_bar_ph:'Search products, brands…', search_page_ph:'Search products and 150+ brands', sp_remind_t:"Check any product's price in PKR", sp_remind_d:"Found it on a brand's own site? Paste the link to see the real price of any listed brand in PKR.", sp_paste:'Paste a product link', sp_visual:'Visual search', sp_fit:'Fit assistant', sp_soon:'Coming soon', vis_title:'Search by photo', vis_sub:'Find pieces that look like your photo', vis_cam:'Take a photo', vis_up:'Upload a photo', vis_cancel:'Cancel', vis_loading:'Finding similar styles', vis_chip:'Items like your photo', vis_clear:'Clear photo search', vis_none:'No close matches. Try another photo.', vis_notapparel:'Please use a clothing photo.', vis_err:'Could not search just now. Please try again.', vis_badfile:'Please choose a photo.', fit_title:'Fit Assistant', fit_sub:'Find your size in any brand', fit_wear:'I usually wear', fit_in:'in', fit_measlink:"Don't know? Enter measurements", fit_meashide:'Use my usual size instead', fit_chest:'Chest', fit_waist:'Waist', fit_hip:'Hip', fit_regular:'Regular', fit_slim:'Slim', fit_relaxed:'Relaxed', fit_scope:'Show fits in', fit_allbrands:'All brands', fit_go:'Show what fits me', fit_wa:'Save to my WhatsApp number (optional)', fit_chip:'Your size', fit_yoursize:'your size', fit_needchest:'Enter at least your chest measurement.', fit_needref:'Choose your size and a brand.', fit_none:'Nothing in your size right now. Try another size or brand.', fit_err:'Could not check sizes just now. Please try again.', sp_brands:'Browse all 150+ brands ›', sp_colls_hd:'Curated collections', sp_checkprice:'check price ›', bb_back:'‹ Back to products', store_everyday:'Everyday', store_premium:'Premium', colls_hd:'Collections',prodcat_hd:'Product category',products_hd:'Products', filters_sort:'Filters & sort', filters_done:'Done', sort_hd:'Sort', order_ways:'Two ways to order: tap + Add on anything in our listing, or send a product link from any of our 140+ brands.',
       intro_ios:"On iPhone: on a brand's product page, tap Share, then Add to PakPoshak. (One-time: add the PakPoshak shortcut.) Or copy the link and paste it here.",
       intro_android:"On Android: install PakPoshak, then on a brand's product page tap Share, then PakPoshak. Or copy the link and paste it here.",
       intro_desktop:"On desktop: paste a product link below, or add the Send-cart bookmark to grab a whole cart at once.",
@@ -2554,7 +2554,7 @@
       hiw_confirm_pay:'দাম নিশ্চিত করে পেমেন্ট (বিকাশ/নগদ)',
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
       lbl_browse:'একটি ব্র্যান্ড দেখুন', search_ph:'🔍 ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
-      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', gen_all:'সব', gen_women:'নারী', gen_men:'পুরুষ', gen_kids:'শিশু', menu_language:'ভাষা', menu_theme:'থিম', menu_guide:'গাইড', search_bar_ph:'পণ্য, ব্র্যান্ড খুঁজুন…', search_page_ph:'পণ্য ও ১৫০+ ব্র্যান্ড খুঁজুন', sp_remind_t:'যেকোনো পণ্যের দাম PKR-তে যাচাই করুন', sp_remind_d:'ব্র্যান্ডের নিজস্ব সাইটে পেয়েছেন? লিংক পেস্ট করে যেকোনো লিস্টেড ব্র্যান্ডের আসল দাম PKR-তে দেখুন।', sp_colls_hd:'কিউরেটেড কালেকশন', sp_paste:'পণ্যের লিংক পেস্ট করুন', sp_visual:'ভিজ্যুয়াল সার্চ', sp_fit:'ফিট অ্যাসিস্ট্যান্ট', sp_soon:'শীঘ্রই আসছে', sp_brands:'সব ১৫০+ ব্র্যান্ড দেখুন ›', sp_checkprice:'দাম দেখুন ›', bb_back:'‹ পণ্যে ফিরে যান', store_everyday:'এভরিডে', store_premium:'প্রিমিয়াম', colls_hd:'কালেকশন',prodcat_hd:'প্রোডাক্ট ক্যাটাগরি',products_hd:'পণ্য', filters_sort:'ফিল্টার ও সর্ট', filters_done:'সম্পন্ন', sort_hd:'সর্ট', order_ways:'দুইভাবে অর্ডার: আমাদের লিস্টে যেকোনো পণ্যে + Add চাপুন, অথবা ১৪০+ ব্র্যান্ডের যেকোনো পণ্যের লিংক পাঠান।',
+      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', gen_all:'সব', gen_women:'নারী', gen_men:'পুরুষ', gen_kids:'শিশু', menu_language:'ভাষা', menu_theme:'থিম', menu_guide:'গাইড', search_bar_ph:'পণ্য, ব্র্যান্ড খুঁজুন…', search_page_ph:'পণ্য ও ১৫০+ ব্র্যান্ড খুঁজুন', sp_remind_t:'যেকোনো পণ্যের দাম PKR-তে যাচাই করুন', sp_remind_d:'ব্র্যান্ডের নিজস্ব সাইটে পেয়েছেন? লিংক পেস্ট করে যেকোনো লিস্টেড ব্র্যান্ডের আসল দাম PKR-তে দেখুন।', sp_colls_hd:'কিউরেটেড কালেকশন', sp_paste:'পণ্যের লিংক পেস্ট করুন', sp_visual:'ভিজ্যুয়াল সার্চ', sp_fit:'ফিট অ্যাসিস্ট্যান্ট', sp_soon:'শীঘ্রই আসছে', vis_title:'ছবি দিয়ে খুঁজুন', vis_sub:'আপনার ছবির মতো পণ্য খুঁজুন', vis_cam:'ছবি তুলুন', vis_up:'ছবি আপলোড করুন', vis_cancel:'বাতিল', vis_loading:'মিল খুঁজছি', vis_chip:'আপনার ছবির মতো পণ্য', vis_clear:'ছবি সার্চ মুছুন', vis_none:'কাছাকাছি মিল নেই। অন্য ছবি দিন।', vis_notapparel:'অনুগ্রহ করে পোশাকের ছবি দিন।', vis_err:'এখন খোঁজা গেল না। আবার চেষ্টা করুন।', vis_badfile:'একটি ছবি নির্বাচন করুন।', fit_title:'ফিট অ্যাসিস্ট্যান্ট', fit_sub:'যেকোনো ব্র্যান্ডে আপনার সাইজ খুঁজুন', fit_wear:'আমি সাধারণত পরি', fit_in:'এই ব্র্যান্ডে', fit_measlink:'জানেন না? মাপ লিখুন', fit_meashide:'আমার সাধারণ সাইজ ব্যবহার করুন', fit_chest:'বুক', fit_waist:'কোমর', fit_hip:'হিপ', fit_regular:'রেগুলার', fit_slim:'স্লিম', fit_relaxed:'রিল্যাক্সড', fit_scope:'যেখানে দেখাবে', fit_allbrands:'সব ব্র্যান্ড', fit_go:'আমার মাপের পণ্য দেখান', fit_wa:'আমার WhatsApp নম্বরে সেভ করুন (ঐচ্ছিক)', fit_chip:'আপনার সাইজ', fit_yoursize:'আপনার সাইজ', fit_needchest:'অন্তত আপনার বুকের মাপ লিখুন।', fit_needref:'আপনার সাইজ ও একটি ব্র্যান্ড বাছুন।', fit_none:'এখন আপনার সাইজে কিছু নেই। অন্য সাইজ বা ব্র্যান্ড দিন।', fit_err:'এখন সাইজ যাচাই করা গেল না। আবার চেষ্টা করুন।', sp_brands:'সব ১৫০+ ব্র্যান্ড দেখুন ›', sp_checkprice:'দাম দেখুন ›', bb_back:'‹ পণ্যে ফিরে যান', store_everyday:'এভরিডে', store_premium:'প্রিমিয়াম', colls_hd:'কালেকশন',prodcat_hd:'প্রোডাক্ট ক্যাটাগরি',products_hd:'পণ্য', filters_sort:'ফিল্টার ও সর্ট', filters_done:'সম্পন্ন', sort_hd:'সর্ট', order_ways:'দুইভাবে অর্ডার: আমাদের লিস্টে যেকোনো পণ্যে + Add চাপুন, অথবা ১৪০+ ব্র্যান্ডের যেকোনো পণ্যের লিংক পাঠান।',
       intro_ios:'আইফোনে: ব্র্যান্ডের পণ্য পেজে Share চেপে Add to PakPoshak বেছে নিন। (একবার: PakPoshak শর্টকাট যোগ করুন।) অথবা লিংক কপি করে এখানে পেস্ট করুন।',
       intro_android:'অ্যান্ড্রয়েডে: PakPoshak ইনস্টল করুন, তারপর ব্র্যান্ডের পণ্য পেজে Share চেপে PakPoshak বেছে নিন। অথবা লিংক কপি করে এখানে পেস্ট করুন।',
       intro_desktop:'ডেস্কটপে: নিচে পণ্যের লিংক পেস্ট করুন, অথবা পুরো কার্ট একসাথে আনতে Send-cart বুকমার্ক যোগ করুন।',
@@ -5603,11 +5603,160 @@
     var m=document.getElementById('psSpMsg');
     if(m){ m.textContent=name+' is coming soon.'; m.hidden=false; clearTimeout(psSpComingSoon._t); psSpComingSoon._t=setTimeout(function(){ m.hidden=true; },2600); }
   }
-  function psVisualSearch(){ psSpComingSoon('Visual search'); }
-  function psFitAssistant(){ psSpComingSoon('Fit assistant'); }
+  // ── VISUAL SEARCH ("search by photo") ──────────────────────────────────────────
+  // Tap a camera button → choose Take photo / Upload → shrink to 512px → POST to the
+  // /search/visual encoder → render the visually-similar products in the Browse grid with
+  // a clear chip. psVisualActive freezes infinite-scroll (the result set is fixed).
+  var psVisualActive = false;
+  function psVisualSearch(){ psVisualSheet(true); }
+  function psVisualSheet(show){ var s=document.getElementById('psVisSheet'); if(s){ s.hidden=!show; document.body.style.overflow = show ? 'hidden' : ''; } }
+  function psVisualPick(mode){ psVisualSheet(false); var inp=document.getElementById(mode==='cam'?'psVisCam':'psVisUp'); if(inp){ inp.value=''; inp.click(); } }
+  function psVisualLoad(on){ var o=document.getElementById('psVisLoad'); if(o) o.hidden=!on; }
+  function psVisualFile(input){
+    var f=input&&input.files&&input.files[0]; if(!f) return;
+    if(!/^image\//.test(f.type)){ psVisualToast(tr('vis_badfile')); return; }
+    var reader=new FileReader();
+    reader.onload=function(e){
+      var img=new Image();
+      img.onload=function(){
+        var max=512, scale=Math.min(1, max/Math.max(img.width,img.height));
+        var cw=Math.max(1,Math.round(img.width*scale)), ch=Math.max(1,Math.round(img.height*scale));
+        var cv=document.createElement('canvas'); cv.width=cw; cv.height=ch;
+        try{ cv.getContext('2d').drawImage(img,0,0,cw,ch); psVisualRun(cv.toDataURL('image/jpeg',0.85)); }
+        catch(err){ psVisualToast(tr('vis_badfile')); }
+      };
+      img.onerror=function(){ psVisualToast(tr('vis_badfile')); };
+      img.src=e.target.result;
+    };
+    reader.onerror=function(){ psVisualToast(tr('vis_badfile')); };
+    reader.readAsDataURL(f);
+  }
+  function psVisualRun(dataUrl){
+    psVisualLoad(true);
+    fetch(psSearchBase()+'/visual',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({image:dataUrl,k:48}) })
+      .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+      .then(function(j){
+        psVisualLoad(false);
+        if(j.ok===false || j.apparel===false){ psVisualToast(tr('vis_notapparel')); return; }
+        var items=(j.products||[]).filter(function(p){ return !psIsHidden(p); });
+        if(!items.length){ psVisualToast(tr('vis_none')); return; }
+        psVisualShow(items);
+      })
+      .catch(function(e){ psVisualLoad(false); console.warn('visual search failed:', e.message); psVisualToast(tr('vis_err')); });
+  }
+  function psVisualShow(items){
+    psSearchClose(); psVisualSheet(false);
+    if(typeof switchBrowse==='function' && !psOnProductsTab()) switchBrowse('products');
+    psVisualActive=true; psApiMode=true;
+    psFiltered=items; psApiTotal=items.length; psPage=0; psFeedDone=true; psFeedLoading=false;
+    psRender(false);
+    psVisualChip(true, tr('vis_chip')+' ('+items.length+')', 'photo');
+    try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(e){}
+  }
+  // shared "frozen results" chip — used by BOTH photo search and Fit Assistant (kind sets icon/colour)
+  function psVisualChip(show, text, kind){
+    var grid=document.getElementById('psGrid'); if(!grid) return;
+    var chip=document.getElementById('psVisChip');
+    if(show){
+      if(!chip){ chip=document.createElement('div'); chip.id='psVisChip'; grid.parentNode.insertBefore(chip, grid); }
+      chip.className='ps-vis-chip'+(kind==='fit'?' ps-fit-chip':'');
+      var icon = kind==='fit'
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7l4-4 14 14-4 4z"/><path d="M9 7l2 2M13 11l2 2M7 13l2 2"/></svg>'
+        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V8a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.5"/></svg>';
+      chip.innerHTML=icon+'<span>'+esc(text)+'</span><button type="button" onclick="psVisualClear()" aria-label="'+esc(tr('vis_clear'))+'">✕</button>';
+      chip.hidden=false;
+    } else if(chip){ chip.hidden=true; }
+  }
+  function psVisualClear(){ psVisualActive=false; psVisualChip(false); psPage=0; if(typeof psApply==='function') psApply(); }
+  // brief auto-dismiss toast for visual-search states (no search page needed)
+  function psVisualToast(msg){
+    var t=document.getElementById('psVisToast');
+    if(!t){ t=document.createElement('div'); t.id='psVisToast'; t.className='ps-vis-toast'; document.body.appendChild(t); }
+    t.textContent=msg; t.hidden=false; t.classList.add('on');
+    clearTimeout(psVisualToast._t); psVisualToast._t=setTimeout(function(){ t.classList.remove('on'); t.hidden=true; }, 3000);
+  }
+  // ── FIT ASSISTANT ("shop my size") ─────────────────────────────────────────────
+  // Set a profile once (reference size in a brand you know, or body measurements + gender),
+  // saved to localStorage (by WhatsApp # if given). "Show what fits me" calls /search/fit and
+  // renders the products available in your size, scoped to a brand or overall.
+  // Covered reference brands per gender (brands whose chart can translate "I wear M in X").
+  var PS_FIT_BRANDS = {
+    w:["Khaadi","Sapphire","Sana Safinaz","Generation","Cross Stitch","Sania Maskatiya","Bonanza Satrangi","Chinyere","Nishat Linen","Zellbury","Zara Shahjahan","Coco by Zara Shahjahan","Mina Hasan","Lulusar","Ego","Kross Kulture","Rang Rasiya","Republic Womenswear","Imrozia Premium","Iznik Fashions","Threads & Motifs","Edge Republic","Mausummery","Emaan Adeel","Khas Stores","Wear Ochre","Roheenaz","Armas","Sha Posh","Tassels","Akbar Aslam","Al-Deebaj","Black Camels","Dynasty Fabrics","ECS","Jeem","Kashee's Boutique","Lawrencepur","Silayi Pret","Sitara Studio","Stylo","Tawakkal Fabrics","The Hijab Company","Zuruj","One Kids"],
+    m:["Amir Adnan","Diners","CRUSH Menswear","Monark","Royal Tag","Shahzeb Saeed","Charcoal","Engine","Furor","Lawrencepur","Al-Deebaj","One Kids"]
+  };
+  var psFitG='w', psFitFitPref='regular', psFitMeasOpen=false;
+  function psFitAssistant(){ psFitLoadProfile(); psFitSheet(true); }
+  function psFitSheet(show){ var s=document.getElementById('psFitSheet'); if(s){ s.hidden=!show; document.body.style.overflow=show?'hidden':''; if(show) psFitFillBrands(); } }
+  function psFitGender(g){ psFitG=g; var seg=document.getElementById('psFitGenderSeg'); if(seg) [].forEach.call(seg.children,function(b){ b.classList.toggle('on', b.getAttribute('data-g')===g); }); psFitFillBrands(); }
+  function psFitFitSet(f){ psFitFitPref=f; var seg=document.getElementById('psFitFitSeg'); if(seg) [].forEach.call(seg.children,function(b){ b.classList.toggle('on', b.getAttribute('data-f')===f); }); }
+  function psFitToggleMeas(){ psFitMeasOpen=!psFitMeasOpen; var m=document.getElementById('psFitMeas'); if(m) m.hidden=!psFitMeasOpen; var l=document.getElementById('psFitMeasLink'); if(l) l.textContent=tr(psFitMeasOpen?'fit_meashide':'fit_measlink'); }
+  function psFitFillBrands(){
+    var list=PS_FIT_BRANDS[psFitG]||[];
+    var rb=document.getElementById('psFitBrand'); if(rb){ var cur=rb.value; rb.innerHTML=list.map(function(b){return '<option>'+esc(b)+'</option>';}).join(''); if(list.indexOf(cur)>=0) rb.value=cur; }
+    var sc=document.getElementById('psFitScope'); if(sc){ var cs=sc.value; sc.innerHTML='<option value="">'+esc(tr('fit_allbrands'))+'</option>'+list.map(function(b){return '<option>'+esc(b)+'</option>';}).join(''); sc.value=cs; }
+  }
+  function psFitRun(){
+    var g=psFitG, params='fgender='+g, basis;
+    if(psFitMeasOpen){
+      var ch=parseFloat((document.getElementById('psFitChest')||{}).value), wa=parseFloat((document.getElementById('psFitWaist')||{}).value), hi=parseFloat((document.getElementById('psFitHip')||{}).value);
+      if(!(ch>0)){ psVisualToast(tr('fit_needchest')); return; }
+      params+='&fchest='+ch+(wa>0?'&fwaist='+wa:'')+(hi>0?'&fhip='+hi:'')+'&ffit='+psFitFitPref;
+      basis='';
+    } else {
+      var sz=(document.getElementById('psFitSize')||{}).value, br=(document.getElementById('psFitBrand')||{}).value;
+      if(!sz||!br){ psVisualToast(tr('fit_needref')); return; }
+      params+='&fref='+encodeURIComponent(br)+'&fsize='+encodeURIComponent(sz);
+      basis=sz;
+    }
+    var scope=(document.getElementById('psFitScope')||{}).value; if(scope) params+='&brand='+encodeURIComponent(scope);
+    psFitSaveProfile();
+    psVisualLoad(true);
+    fetch(psSearchBase()+'/fit?'+params+'&pageSize=60', { cache:'default' })
+      .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+      .then(function(j){
+        psVisualLoad(false);
+        if(j.error){ psVisualToast(tr('fit_err')); return; }
+        var items=(j.products||[]).filter(function(p){ return !psIsHidden(p); });
+        if(!items.length){ psVisualToast(tr('fit_none')); return; }
+        psFitShow(items, basis, j.total||items.length);
+      })
+      .catch(function(e){ psVisualLoad(false); console.warn('fit search failed:', e.message); psVisualToast(tr('fit_err')); });
+  }
+  function psFitShow(items, basis, total){
+    psSearchClose(); psFitSheet(false);
+    if(typeof switchBrowse==='function' && !psOnProductsTab()) switchBrowse('products');
+    psVisualActive=true; psApiMode=true;
+    psFiltered=items; psApiTotal=items.length; psPage=0; psFeedDone=true; psFeedLoading=false;
+    psRender(false);
+    var label = basis ? (tr('fit_chip')+' '+basis) : tr('fit_chip');
+    psVisualChip(true, label+' ('+total+')', 'fit');
+    try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(e){}
+  }
+  function psFitProfileKey(){ return 'psb_fit_profile'; }
+  function psFitSaveProfile(){
+    try{
+      var p={ g:psFitG, meas:psFitMeasOpen, size:(document.getElementById('psFitSize')||{}).value, brand:(document.getElementById('psFitBrand')||{}).value,
+        chest:(document.getElementById('psFitChest')||{}).value, waist:(document.getElementById('psFitWaist')||{}).value, hip:(document.getElementById('psFitHip')||{}).value,
+        fit:psFitFitPref, scope:(document.getElementById('psFitScope')||{}).value, wa:(document.getElementById('psFitWa')||{}).value };
+      localStorage.setItem(psFitProfileKey(), JSON.stringify(p));
+    }catch(e){}
+  }
+  function psFitLoadProfile(){
+    var p; try{ p=JSON.parse(localStorage.getItem(psFitProfileKey())||'null'); }catch(e){}
+    if(!p) return;
+    psFitG=p.g==='m'?'m':'w'; psFitFitPref=p.fit||'regular'; psFitMeasOpen=!!p.meas;
+    setTimeout(function(){
+      psFitGender(psFitG); psFitFitSet(psFitFitPref);
+      var set=function(id,v){ var el=document.getElementById(id); if(el&&v!=null&&v!=='') el.value=v; };
+      set('psFitSize',p.size); set('psFitBrand',p.brand); set('psFitChest',p.chest); set('psFitWaist',p.waist); set('psFitHip',p.hip); set('psFitScope',p.scope); set('psFitWa',p.wa);
+      var m=document.getElementById('psFitMeas'); if(m) m.hidden=!psFitMeasOpen; var l=document.getElementById('psFitMeasLink'); if(l) l.textContent=tr(psFitMeasOpen?'fit_meashide':'fit_measlink');
+    }, 0);
+  }
   window.psSearchOpen=psSearchOpen; window.psSearchClose=psSearchClose;
   window.psSearchPageInput=psSearchPageInput; window.psSearchPageSubmit=psSearchPageSubmit; window.psSearchPageGo=psSearchPageGo;
   window.psVisualSearch=psVisualSearch; window.psFitAssistant=psFitAssistant;
+  window.psVisualSheet=psVisualSheet; window.psVisualPick=psVisualPick; window.psVisualFile=psVisualFile; window.psVisualClear=psVisualClear;
+  window.psFitSheet=psFitSheet; window.psFitGender=psFitGender; window.psFitFitSet=psFitFitSet; window.psFitToggleMeas=psFitToggleMeas; window.psFitRun=psFitRun;
 
   // ── SEARCH PAGE: CURATED COLLECTIONS (editorial edits, NOT the raw category/brand taxonomy) ──
   // Req (Danish): curate themed collections instead of mirroring the gender rail + brand list. Each
@@ -5932,6 +6081,7 @@
   }
   // Fetch the current filtered page. psFiltered holds JUST this page (the server filtered/sorted/paged).
   function psApiFetch(append){
+    if(psVisualActive && !append){ psVisualActive=false; psVisualChip(false); }   // a normal filter/search exits photo-search mode
     const seq = ++psApiSeq;
     fetch(psSearchBase() + '?' + psApiParams(), { cache:'default' })
       .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
@@ -8243,7 +8393,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-30-srchclr';
+  const PSB_BUILD = '2026-06-30-visualfit';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
