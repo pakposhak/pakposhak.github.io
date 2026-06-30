@@ -5458,10 +5458,26 @@
   // resolve+filter (~3 catalog passes + psApply) so a fast typer triggers it once, not
   // once per character — the difference between snappy and laggy typing at 20k products.
   let _psSearchT = null;
+  function psUpdateSearchClearBtn(val){
+    const show = !!(val && val.length > 0);
+    ['psSearchClearM','psSearchClearD'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.style.display = show ? 'flex' : 'none';
+    });
+  }
+  function psClearSearch(){
+    ['psSearchMobile','psSearchDesktop'].forEach(id => { const e = document.getElementById(id); if(e) e.value = ''; });
+    psSugHide();
+    psUpdateSearchClearBtn('');
+    psSearchHint('', new Set(), new Set());
+    clearTimeout(_psSearchT);
+    psSmartSearch('');
+  }
   function psSearchInput(val){
     const a = document.getElementById('psSearchMobile'), b = document.getElementById('psSearchDesktop');
     if(a && a.value !== val) a.value = val;
     if(b && b.value !== val) b.value = val;
+    psUpdateSearchClearBtn(val);
     psSugUpdate(val);
     clearTimeout(_psSearchT);
     _psSearchT = setTimeout(() => psSmartSearch(val), 180);
@@ -5488,6 +5504,7 @@
   function psSugDo(term){
     const a = document.getElementById('psSearchMobile'), b = document.getElementById('psSearchDesktop');
     if(a) a.value = term; if(b) b.value = term;
+    psUpdateSearchClearBtn(term);
     psSugHide();
     clearTimeout(_psSearchT);
     _psSearchT = setTimeout(() => psSmartSearch(term), 10);
@@ -5673,6 +5690,7 @@
     const a = document.getElementById('psSearchMobile'), b = document.getElementById('psSearchDesktop');
     if(a && a.value !== val) a.value = val;
     if(b && b.value !== val) b.value = val;
+    psUpdateSearchClearBtn(val);
     // Categories/brands present — from the full catalog (client mode) or the facets (API mode).
     const present = psApiMode ? (psFacetCats || new Set()) : (PS_CATALOG ? new Set(PS_CATALOG.map(p => p.cat)) : null);
     if(!present) return;                          // client mode: catalog not loaded yet
@@ -6138,6 +6156,7 @@
     psQuery = '';
     psSizeQ = '';
     ['psSearchMobile','psSearchDesktop'].forEach(idd => { const e = document.getElementById(idd); if(e) e.value = ''; });
+    psUpdateSearchClearBtn('');
     psSearchHint('', new Set(), new Set());
     psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply();
   }
@@ -8224,7 +8243,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-30-tagdesc';
+  const PSB_BUILD = '2026-06-30-srchclr';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

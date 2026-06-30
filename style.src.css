@@ -1144,7 +1144,9 @@
     .ps-sug li{padding:9px 15px;font-size:0.88rem;color:var(--txt);cursor:pointer;user-select:none}
     .ps-sug li:hover{background:var(--gold-dim);color:var(--gold);font-weight:700}
     /* Highlighted, easy-to-see smart search (req): heavy gold border + soft glow, bigger type. */
-    .ps-smartsearch{width:100%;box-sizing:border-box;padding:14px 16px;border:2.5px solid var(--gold);border-radius:12px;background:var(--input-bg);color:var(--txt);font-size:0.95rem;font-weight:600;font-family:inherit;box-shadow:0 0 0 4px rgba(201,169,110,0.10)}
+    .ps-smartsearch{width:100%;box-sizing:border-box;padding:14px 38px 14px 16px;border:2.5px solid var(--gold);border-radius:12px;background:var(--input-bg);color:var(--txt);font-size:0.95rem;font-weight:600;font-family:inherit;box-shadow:0 0 0 4px rgba(201,169,110,0.10)}
+    .ps-search-clr{display:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(201,169,110,0.14);border:none;color:var(--txt-muted);font-size:0.75rem;cursor:pointer;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;padding:0;line-height:1;font-family:inherit;z-index:5}
+    .ps-search-clr:hover{background:rgba(201,169,110,0.32);color:var(--gold)}
     /* Bold, gold placeholder so the example searches read clearly (req: bold + different colour). */
     .ps-smartsearch::placeholder{color:var(--gold);font-weight:800;font-size:0.8rem;opacity:1}
     .ps-smartsearch:focus{outline:none;box-shadow:0 0 0 4px rgba(201,169,110,0.22)}

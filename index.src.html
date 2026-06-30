@@ -321,6 +321,7 @@
         <div class="ps-sticky-zone">
         <div class="ps-searchblock ps-search-mobile">
           <input id="psSearchMobile" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSearchInput(this.value)" onblur="psSugDeferred()" onclick="psSugToggleClose()" data-i18n-ph="ps_search_ph" placeholder="Search 50,000+ products, 140+ Pakistani brands"/>
+          <button type="button" class="ps-search-clr" id="psSearchClearM" onclick="psClearSearch()" title="Clear search" aria-label="Clear search">✕</button>
           <div class="ps-search-hint" id="psSearchHintM"></div>
           <ul class="ps-sug" id="psSugM"></ul>
         </div>
@@ -337,6 +338,7 @@
           </span>
           <span class="ps-search-desktop" style="flex-direction:column;align-items:flex-end;min-width:0;position:relative">
             <input id="psSearchDesktop" class="ps-smartsearch" type="text" autocomplete="off" oninput="psSearchInput(this.value)" onblur="psSugDeferred()" onclick="psSugToggleClose()" data-i18n-ph="ps_search_ph" placeholder="Search 50,000+ products, 140+ Pakistani brands"/>
+            <button type="button" class="ps-search-clr" id="psSearchClearD" onclick="psClearSearch()" title="Clear search" aria-label="Clear search">✕</button>
             <span class="ps-search-hint" id="psSearchHintD"></span>
             <ul class="ps-sug" id="psSugD"></ul>
           </span>
