@@ -13,6 +13,26 @@ Naming scheme going forward: `<short-name>-stable-YYYYMMDD` (tag) + a "Stage N" 
 
 ---
 
+## Stage 10 — Overlay-Fixed Stable  ·  tag `app-stable-overlay-fixed-20260630`  ·  2026-06-30
+**The app loads clean after the stuck "Finding your size" overlay was fixed at the root.**
+- **Root cause** (the real one, after several symptom-layer attempts): a class with `display:flex`
+  (`.ps-vis-load`, `.ps-vis-sheet`) silently **overrides the HTML `hidden` attribute**, so the
+  full-screen loading overlay rendered on **every** page load — fresh, incognito, any device —
+  with the home page scrolling behind it. Earlier checks read the `.hidden` *attribute* (true)
+  instead of `getComputedStyle().display` (`flex`), so it went undiagnosed.
+- **Fix**: one global guard `[hidden]{display:none!important}` so the attribute always wins.
+- **Also hardened this saga**: UTF-8 BOM removed from built HTML (`build.ps1` writes no-BOM);
+  versioned asset URLs `app.js?b=<build>` so updates land in ONE reopen; overlay watchdog +
+  Cancel + bfcache guard as defence-in-depth.
+- **New regression guard**: `verify-build.js` runs at the end of `build.ps1` and FAILS the build
+  if the `[hidden]` rule, no-BOM, versioned URLs, or build/cache stamps regress (12 checks).
+- **Feature state at this stage**: Visual search OFF (will return decoupled from Fit); Fit
+  Assistant OFF for this tag (re-enabled in the next deploy). Core (browse/brands/order/WhatsApp
+  phone widget/posters) fully intact.
+- Live HTML build stamp: `2026-06-30-hiddenfix` / `psb-v149`.
+
+---
+
 ## Stage 1 restore points — per-subsystem rollback (set 2026-06-23)
 
 Independent "go back to stage 1" anchors for the LAAM/Aarong-inspired UX redesign. Each is a

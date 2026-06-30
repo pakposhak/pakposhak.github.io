@@ -81,5 +81,18 @@ foreach ($p in $pairs) {
   Write-Host ("  [ok] {0,-30}  {1,7} KB  →  {2,7} KB  ({3}% saved)" -f $p.out, $bKB, $aKB, [math]::Round(100*(1-$aKB/$bKB),1)) -ForegroundColor Green
 }
 
+# ── POST-BUILD INTEGRITY CHECKS ───────────────────────────────────────────────
+# Fails the build if a known-incident invariant regresses ([hidden] guard, BOM,
+# versioned asset URLs, build/cache stamps). See verify-build.js.
+$verify = Join-Path $base 'verify-build.js'
+if (Test-Path $verify) {
+  Write-Host ""
+  & node $verify
+  if ($LASTEXITCODE -ne 0) {
+    Write-Host "BUILD VERIFY FAILED: artifacts are NOT safe to deploy." -ForegroundColor Red
+    exit 1
+  }
+}
+
 Write-Host ""
-Write-Host "Done. git add *.src.html *.src.css *.src.js *.html style.css app.js sw.js" -ForegroundColor Cyan
+Write-Host "Done. git add *.src.html *.src.css *.src.js *.html style.css app.js sw.js verify-build.js" -ForegroundColor Cyan
