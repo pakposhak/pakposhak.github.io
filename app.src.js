@@ -5609,7 +5609,7 @@
   // /search/visual encoder → render the visually-similar products in the Browse grid with
   // a clear chip. psVisualActive freezes infinite-scroll (the result set is fixed).
   var psVisualActive = false;
-  function psVisualSearch(){ psVisualSheet(true); }
+  function psVisualSearch(){ psSpComingSoon(tr('sp_visual')); }
   function psVisualSheet(show){ var s=document.getElementById('psVisSheet'); if(s){ s.hidden=!show; document.body.style.overflow = show ? 'hidden' : ''; } }
   function psVisualPick(mode){ psVisualSheet(false); var inp=document.getElementById(mode==='cam'?'psVisCam':'psVisUp'); if(inp){ inp.value=''; inp.click(); } }
   function psVisualLoad(on){ var o=document.getElementById('psVisLoad'); if(o) o.hidden=!on; }
@@ -8477,7 +8477,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-30-posters';
+  const PSB_BUILD = '2026-06-30-vis-off';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
