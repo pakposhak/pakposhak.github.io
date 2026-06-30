@@ -281,13 +281,17 @@
         <button type="button" data-t="bottom" onclick="psFitTypeSet('bottom')" data-i18n="fit_type_bottom">Bottoms</button>
       </div>
       <div class="ps-fit-block">
-        <label class="ps-fit-lbl" data-i18n="fit_wear">I usually wear</label>
+        <label class="ps-fit-lbl" id="psFitBlockLbl" data-i18n="fit_wear">I usually wear</label>
         <div id="psFitBrandRow" class="ps-fit-pair">
           <div class="ps-dd ps-fit-dd" data-dd="psFitBrand" aria-label="Brand I know my size in"></div>
           <select id="psFitBrand" hidden></select>
           <span class="ps-fit-mid" data-i18n="fit_size_in">size</span>
           <div class="ps-dd ps-fit-dd ps-fit-dd-sz" data-dd="psFitSize" aria-label="My usual size"></div>
           <select id="psFitSize" hidden></select>
+        </div>
+        <div id="psFitShirtRow" class="ps-fit-pair ps-fit-chestrow" hidden>
+          <span class="ps-fit-mid" data-i18n="fit_chest_approx">&#8776; your chest</span>
+          <label class="ps-fit-chestin"><input id="psFitShirtChest" type="number" inputmode="decimal" min="30" max="60" placeholder="40" oninput="this.dataset.touched='1'"><span data-i18n="fit_in">in</span></label>
         </div>
       </div>
       <button type="button" class="ps-fit-measlink" id="psFitMeasLink" onclick="psFitToggleMeas()" data-i18n="fit_measlink">Don't know? Enter measurements</button>

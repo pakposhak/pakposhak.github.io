@@ -2482,7 +2482,7 @@
       hiw_confirm_pay:'Confirm price & pay (bKash/Nagad)',
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search 150+ Pakistani brands…',
-      tab_brands:'Browse brands', tab_products:'Browse products', gen_all:'All', gen_women:'Women', gen_men:'Men', gen_kids:'Kids', menu_language:'Language', menu_theme:'Theme', menu_guide:'Guide', search_bar_ph:'Search products, brands…', search_page_ph:'Search products and 150+ brands', sp_remind_t:"Check any product's price in PKR", sp_remind_d:"Found it on a brand's own site? Paste the link to see the real price of any listed brand in PKR.", sp_paste:'Paste a product link', sp_visual:'Visual search', sp_fit:'Fit assistant', sp_soon:'Coming soon', vis_title:'Search by photo', vis_sub:'Find pieces that look like your photo', vis_cam:'Take a photo', vis_up:'Upload a photo', vis_cancel:'Cancel', vis_loading:'Finding similar styles', vis_chip:'Items like your photo', vis_clear:'Clear photo search', vis_none:'No close matches. Try another photo.', vis_notapparel:'Please use a clothing photo.', vis_notcarried:"This type of item is not in our listing. Try a clothing photo.", vis_err:'Could not search just now. Please try again.', vis_slow:'Visual search is warming up. Please try again in a moment.', vis_badfile:'Please choose a photo.', fit_title:'Fit Assistant', fit_sub:'Find your size in any brand', fit_wear:'I usually wear', fit_in:'in', fit_size_in:'size', fit_inches:'All measurements in inches', fit_length:'Length (most important)', fit_measlink:"Don't know? Enter measurements", fit_meashide:'Use my usual size instead', fit_chest:'Chest', fit_waist:'Waist', fit_hip:'Hip', fit_regular:'Regular', fit_slim:'Slim', fit_relaxed:'Relaxed', fit_scope:'Show fits in', fit_allbrands:'All brands', fit_go:'Show what fits me', fit_wa:'Save to my WhatsApp number (optional)', fit_chip:'Your size', fit_chip_collar:'Collar', fit_chip_waist:'Waist', fit_yoursize:'your size', fit_type_top:'Tops & Suits', fit_type_shirt:'Shirts', fit_type_bottom:'Bottoms', fit_needchest:'Enter at least your chest measurement.', fit_needref:'Choose your size and a brand.', fit_none:'Nothing in your size right now. Try another size or brand.', fit_err:'Could not check sizes just now. Please try again.', fit_loading:'Finding your size', wa_err_empty:'Please enter your WhatsApp number', wa_err_short:'WhatsApp number looks incomplete', wa_err_long:'WhatsApp number is too long', wa_err_prefix:'Please check your WhatsApp number', sp_brands:'Browse all 150+ brands ›', sp_colls_hd:'Curated collections', sp_checkprice:'check price ›', bb_back:'‹ Back to products', store_everyday:'Everyday', store_premium:'Premium', colls_hd:'Collections',prodcat_hd:'Product category',products_hd:'Products', filters_sort:'Filters & sort', filters_done:'Done', sort_hd:'Sort', order_ways:'Two ways to order: tap + Add on anything in our listing, or send a product link from any of our 140+ brands.',
+      tab_brands:'Browse brands', tab_products:'Browse products', gen_all:'All', gen_women:'Women', gen_men:'Men', gen_kids:'Kids', menu_language:'Language', menu_theme:'Theme', menu_guide:'Guide', search_bar_ph:'Search products, brands…', search_page_ph:'Search products and 150+ brands', sp_remind_t:"Check any product's price in PKR", sp_remind_d:"Found it on a brand's own site? Paste the link to see the real price of any listed brand in PKR.", sp_paste:'Paste a product link', sp_visual:'Visual search', sp_fit:'Fit assistant', sp_soon:'Coming soon', vis_title:'Search by photo', vis_sub:'Find pieces that look like your photo', vis_cam:'Take a photo', vis_up:'Upload a photo', vis_cancel:'Cancel', vis_loading:'Finding similar styles', vis_chip:'Items like your photo', vis_clear:'Clear photo search', vis_none:'No close matches. Try another photo.', vis_notapparel:'Please use a clothing photo.', vis_notcarried:"This type of item is not in our listing. Try a clothing photo.", vis_err:'Could not search just now. Please try again.', vis_slow:'Visual search is warming up. Please try again in a moment.', vis_badfile:'Please choose a photo.', fit_title:'Fit Assistant', fit_sub:'Find your size in any brand', fit_wear:'I usually wear', fit_in:'in', fit_size_in:'size', fit_inches:'All measurements in inches', fit_length:'Length (most important)', fit_measlink:"Don't know? Enter measurements", fit_meashide:'Use my usual size instead', fit_chest:'Chest', fit_waist:'Waist', fit_hip:'Hip', fit_regular:'Regular', fit_slim:'Slim', fit_relaxed:'Relaxed', fit_scope:'Show fits in', fit_allbrands:'All brands', fit_go:'Show what fits me', fit_wa:'Save to my WhatsApp number (optional)', fit_chip:'Your size', fit_chip_collar:'Collar', fit_chip_waist:'Waist', fit_yoursize:'your size', fit_type_top:'Tops & Suits', fit_type_shirt:'Shirts', fit_type_bottom:'Bottoms', fit_needchest:'Enter at least your chest measurement.', fit_needref:'Choose your size and a brand.', fit_none:'Nothing in your size right now. Try another size or brand.', fit_err:'Could not check sizes just now. Please try again.', fit_loading:'Finding your size', fit_hdr:'Your size, every brand', fit_pieces:'pieces', fit_b_your:'✓ Your size:', fit_b_likely:'≈ Likely:', fit_b_closest:'≈ Closest:', fit_wear_collar:'My shirt collar', fit_wear_waist:'My waist (inches)', fit_chest_approx:'≈ your chest', wa_err_empty:'Please enter your WhatsApp number', wa_err_short:'WhatsApp number looks incomplete', wa_err_long:'WhatsApp number is too long', wa_err_prefix:'Please check your WhatsApp number', sp_brands:'Browse all 150+ brands ›', sp_colls_hd:'Curated collections', sp_checkprice:'check price ›', bb_back:'‹ Back to products', store_everyday:'Everyday', store_premium:'Premium', colls_hd:'Collections',prodcat_hd:'Product category',products_hd:'Products', filters_sort:'Filters & sort', filters_done:'Done', sort_hd:'Sort', order_ways:'Two ways to order: tap + Add on anything in our listing, or send a product link from any of our 140+ brands.',
       intro_ios:"On iPhone: on a brand's product page, tap Share, then Add to PakPoshak. (One-time: add the PakPoshak shortcut.) Or copy the link and paste it here.",
       intro_android:"On Android: install PakPoshak, then on a brand's product page tap Share, then PakPoshak. Or copy the link and paste it here.",
       intro_desktop:"On desktop: paste a product link below, or add the Send-cart bookmark to grab a whole cart at once.",
@@ -2556,7 +2556,7 @@
       hiw_confirm_pay:'দাম নিশ্চিত করে পেমেন্ট (বিকাশ/নগদ)',
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
       lbl_browse:'একটি ব্র্যান্ড দেখুন', search_ph:'🔍 ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
-      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', gen_all:'সব', gen_women:'নারী', gen_men:'পুরুষ', gen_kids:'শিশু', menu_language:'ভাষা', menu_theme:'থিম', menu_guide:'গাইড', search_bar_ph:'পণ্য, ব্র্যান্ড খুঁজুন…', search_page_ph:'পণ্য ও ১৫০+ ব্র্যান্ড খুঁজুন', sp_remind_t:'যেকোনো পণ্যের দাম PKR-তে যাচাই করুন', sp_remind_d:'ব্র্যান্ডের নিজস্ব সাইটে পেয়েছেন? লিংক পেস্ট করে যেকোনো লিস্টেড ব্র্যান্ডের আসল দাম PKR-তে দেখুন।', sp_colls_hd:'কিউরেটেড কালেকশন', sp_paste:'পণ্যের লিংক পেস্ট করুন', sp_visual:'ভিজ্যুয়াল সার্চ', sp_fit:'ফিট অ্যাসিস্ট্যান্ট', sp_soon:'শীঘ্রই আসছে', vis_title:'ছবি দিয়ে খুঁজুন', vis_sub:'আপনার ছবির মতো পণ্য খুঁজুন', vis_cam:'ছবি তুলুন', vis_up:'ছবি আপলোড করুন', vis_cancel:'বাতিল', vis_loading:'মিল খুঁজছি', vis_chip:'আপনার ছবির মতো পণ্য', vis_clear:'ছবি সার্চ মুছুন', vis_none:'কাছাকাছি মিল নেই। অন্য ছবি দিন।', vis_notapparel:'অনুগ্রহ করে পোশাকের ছবি দিন।', vis_notcarried:'এই ধরনের পণ্য আমাদের লিস্টে নেই। পোশাকের ছবি দিয়ে খুঁজুন।', vis_err:'এখন খোঁজা গেল না। আবার চেষ্টা করুন।', vis_slow:'ভিজ্যুয়াল সার্চ প্রস্তুত হচ্ছে। একটু পরে আবার চেষ্টা করুন।', vis_badfile:'একটি ছবি নির্বাচন করুন।', fit_title:'ফিট অ্যাসিস্ট্যান্ট', fit_sub:'যেকোনো ব্র্যান্ডে আপনার সাইজ খুঁজুন', fit_wear:'আমি সাধারণত পরি', fit_in:'এই ব্র্যান্ডে', fit_size_in:'সাইজ', fit_inches:'সব মাপ ইঞ্চিতে', fit_length:'লম্বা (সবচেয়ে জরুরি)', fit_measlink:'জানেন না? মাপ লিখুন', fit_meashide:'আমার সাধারণ সাইজ ব্যবহার করুন', fit_chest:'বুক', fit_waist:'কোমর', fit_hip:'হিপ', fit_regular:'রেগুলার', fit_slim:'স্লিম', fit_relaxed:'রিল্যাক্সড', fit_scope:'যেখানে দেখাবে', fit_allbrands:'সব ব্র্যান্ড', fit_go:'আমার মাপের পণ্য দেখান', fit_wa:'আমার WhatsApp নম্বরে সেভ করুন (ঐচ্ছিক)', fit_chip:'আপনার সাইজ', fit_chip_collar:'কলার', fit_chip_waist:'কোমর', fit_yoursize:'আপনার সাইজ', fit_type_top:'টপস ও স্যুট', fit_type_shirt:'শার্ট', fit_type_bottom:'বটমস', fit_needchest:'অন্তত আপনার বুকের মাপ লিখুন।', fit_needref:'আপনার সাইজ ও একটি ব্র্যান্ড বাছুন।', fit_none:'এখন আপনার সাইজে কিছু নেই। অন্য সাইজ বা ব্র্যান্ড দিন।', fit_err:'এখন সাইজ যাচাই করা গেল না। আবার চেষ্টা করুন।', fit_loading:'আপনার সাইজ খুঁজছি', wa_err_empty:'আপনার হোয়াটসঅ্যাপ নম্বর লিখুন', wa_err_short:'হোয়াটসঅ্যাপ নম্বরটি অসম্পূর্ণ মনে হচ্ছে', wa_err_long:'হোয়াটসঅ্যাপ নম্বরটি অনেক বড়', wa_err_prefix:'আপনার হোয়াটসঅ্যাপ নম্বর যাচাই করুন', sp_brands:'সব ১৫০+ ব্র্যান্ড দেখুন ›', sp_checkprice:'দাম দেখুন ›', bb_back:'‹ পণ্যে ফিরে যান', store_everyday:'এভরিডে', store_premium:'প্রিমিয়াম', colls_hd:'কালেকশন',prodcat_hd:'প্রোডাক্ট ক্যাটাগরি',products_hd:'পণ্য', filters_sort:'ফিল্টার ও সর্ট', filters_done:'সম্পন্ন', sort_hd:'সর্ট', order_ways:'দুইভাবে অর্ডার: আমাদের লিস্টে যেকোনো পণ্যে + Add চাপুন, অথবা ১৪০+ ব্র্যান্ডের যেকোনো পণ্যের লিংক পাঠান।',
+      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', gen_all:'সব', gen_women:'নারী', gen_men:'পুরুষ', gen_kids:'শিশু', menu_language:'ভাষা', menu_theme:'থিম', menu_guide:'গাইড', search_bar_ph:'পণ্য, ব্র্যান্ড খুঁজুন…', search_page_ph:'পণ্য ও ১৫০+ ব্র্যান্ড খুঁজুন', sp_remind_t:'যেকোনো পণ্যের দাম PKR-তে যাচাই করুন', sp_remind_d:'ব্র্যান্ডের নিজস্ব সাইটে পেয়েছেন? লিংক পেস্ট করে যেকোনো লিস্টেড ব্র্যান্ডের আসল দাম PKR-তে দেখুন।', sp_colls_hd:'কিউরেটেড কালেকশন', sp_paste:'পণ্যের লিংক পেস্ট করুন', sp_visual:'ভিজ্যুয়াল সার্চ', sp_fit:'ফিট অ্যাসিস্ট্যান্ট', sp_soon:'শীঘ্রই আসছে', vis_title:'ছবি দিয়ে খুঁজুন', vis_sub:'আপনার ছবির মতো পণ্য খুঁজুন', vis_cam:'ছবি তুলুন', vis_up:'ছবি আপলোড করুন', vis_cancel:'বাতিল', vis_loading:'মিল খুঁজছি', vis_chip:'আপনার ছবির মতো পণ্য', vis_clear:'ছবি সার্চ মুছুন', vis_none:'কাছাকাছি মিল নেই। অন্য ছবি দিন।', vis_notapparel:'অনুগ্রহ করে পোশাকের ছবি দিন।', vis_notcarried:'এই ধরনের পণ্য আমাদের লিস্টে নেই। পোশাকের ছবি দিয়ে খুঁজুন।', vis_err:'এখন খোঁজা গেল না। আবার চেষ্টা করুন।', vis_slow:'ভিজ্যুয়াল সার্চ প্রস্তুত হচ্ছে। একটু পরে আবার চেষ্টা করুন।', vis_badfile:'একটি ছবি নির্বাচন করুন।', fit_title:'ফিট অ্যাসিস্ট্যান্ট', fit_sub:'যেকোনো ব্র্যান্ডে আপনার সাইজ খুঁজুন', fit_wear:'আমি সাধারণত পরি', fit_in:'এই ব্র্যান্ডে', fit_size_in:'সাইজ', fit_inches:'সব মাপ ইঞ্চিতে', fit_length:'লম্বা (সবচেয়ে জরুরি)', fit_measlink:'জানেন না? মাপ লিখুন', fit_meashide:'আমার সাধারণ সাইজ ব্যবহার করুন', fit_chest:'বুক', fit_waist:'কোমর', fit_hip:'হিপ', fit_regular:'রেগুলার', fit_slim:'স্লিম', fit_relaxed:'রিল্যাক্সড', fit_scope:'যেখানে দেখাবে', fit_allbrands:'সব ব্র্যান্ড', fit_go:'আমার মাপের পণ্য দেখান', fit_wa:'আমার WhatsApp নম্বরে সেভ করুন (ঐচ্ছিক)', fit_chip:'আপনার সাইজ', fit_chip_collar:'কলার', fit_chip_waist:'কোমর', fit_yoursize:'আপনার সাইজ', fit_type_top:'টপস ও স্যুট', fit_type_shirt:'শার্ট', fit_type_bottom:'বটমস', fit_needchest:'অন্তত আপনার বুকের মাপ লিখুন।', fit_needref:'আপনার সাইজ ও একটি ব্র্যান্ড বাছুন।', fit_none:'এখন আপনার সাইজে কিছু নেই। অন্য সাইজ বা ব্র্যান্ড দিন।', fit_err:'এখন সাইজ যাচাই করা গেল না। আবার চেষ্টা করুন।', fit_loading:'আপনার সাইজ খুঁজছি', fit_hdr:'আপনার মাপ, সব ব্র্যান্ডে', fit_pieces:'পিস', fit_b_your:'✓ আপনার মাপ:', fit_b_likely:'≈ সম্ভাব্য:', fit_b_closest:'≈ নিকটতম:', fit_wear_collar:'আমার শার্টের কলার', fit_wear_waist:'আমার কোমর (ইঞ্চি)', fit_chest_approx:'≈ আপনার চেস্ট', wa_err_empty:'আপনার হোয়াটসঅ্যাপ নম্বর লিখুন', wa_err_short:'হোয়াটসঅ্যাপ নম্বরটি অসম্পূর্ণ মনে হচ্ছে', wa_err_long:'হোয়াটসঅ্যাপ নম্বরটি অনেক বড়', wa_err_prefix:'আপনার হোয়াটসঅ্যাপ নম্বর যাচাই করুন', sp_brands:'সব ১৫০+ ব্র্যান্ড দেখুন ›', sp_checkprice:'দাম দেখুন ›', bb_back:'‹ পণ্যে ফিরে যান', store_everyday:'এভরিডে', store_premium:'প্রিমিয়াম', colls_hd:'কালেকশন',prodcat_hd:'প্রোডাক্ট ক্যাটাগরি',products_hd:'পণ্য', filters_sort:'ফিল্টার ও সর্ট', filters_done:'সম্পন্ন', sort_hd:'সর্ট', order_ways:'দুইভাবে অর্ডার: আমাদের লিস্টে যেকোনো পণ্যে + Add চাপুন, অথবা ১৪০+ ব্র্যান্ডের যেকোনো পণ্যের লিংক পাঠান।',
       intro_ios:'আইফোনে: ব্র্যান্ডের পণ্য পেজে Share চেপে Add to PakPoshak বেছে নিন। (একবার: PakPoshak শর্টকাট যোগ করুন।) অথবা লিংক কপি করে এখানে পেস্ট করুন।',
       intro_android:'অ্যান্ড্রয়েডে: PakPoshak ইনস্টল করুন, তারপর ব্র্যান্ডের পণ্য পেজে Share চেপে PakPoshak বেছে নিন। অথবা লিংক কপি করে এখানে পেস্ট করুন।',
       intro_desktop:'ডেস্কটপে: নিচে পণ্যের লিংক পেস্ট করুন, অথবা পুরো কার্ট একসাথে আনতে Send-cart বুকমার্ক যোগ করুন।',
@@ -5734,7 +5734,7 @@
     }catch(e){}
   }
   // shared "frozen results" chip — used by BOTH photo search and Fit Assistant (kind sets icon/colour)
-  function psVisualChip(show, text, kind){
+  function psVisualChip(show, text, kind, sub){
     var grid=document.getElementById('psGrid'); if(!grid) return;
     var chip=document.getElementById('psVisChip');
     if(show){
@@ -5743,7 +5743,8 @@
       var icon = kind==='fit'
         ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7l4-4 14 14-4 4z"/><path d="M9 7l2 2M13 11l2 2M7 13l2 2"/></svg>'
         : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V8a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.5"/></svg>';
-      chip.innerHTML=icon+'<span>'+esc(text)+'</span><button type="button" onclick="psVisualClear()" aria-label="'+esc(tr('vis_clear'))+'">✕</button>';
+      var body = sub ? '<span><strong>'+esc(text)+'</strong><small>'+esc(sub)+'</small></span>' : '<span>'+esc(text)+'</span>';
+      chip.innerHTML=icon+body+'<button type="button" onclick="psVisualClear()" aria-label="'+esc(tr('vis_clear'))+'">✕</button>';
       chip.hidden=false;
     } else if(chip){ chip.hidden=true; }
   }
@@ -5773,6 +5774,11 @@
   var PS_FIT_SIZES_SHIRT=["14","14.5","15","15.5","16","16.5","17","17.5"];
   var PS_FIT_SIZES_BOTTOM_W=["24","26","28","30","32","34","36","38","40","42"];
   var PS_FIT_SIZES_BOTTOM_M=["28","30","32","34","36","38","40","42","44","46"];
+  // Men's dress-shirt collar (neck, inches) -> approximate CHEST (inches). Collar/neck is not a
+  // dimension the fit engine models, so the Shirts tab matches on CHEST instead; the collar pick
+  // just seeds an EDITABLE chest estimate the buyer can correct. chest = (collar-15)*4 + 38.
+  var PS_COLLAR_CHEST={"14":34,"14.5":36,"15":38,"15.5":40,"16":42,"16.5":44,"17":46,"17.5":48};
+  function psCollarToChest(c){ if(PS_COLLAR_CHEST[c]!=null) return PS_COLLAR_CHEST[c]; var n=parseFloat(c); return n>0?Math.round((n-15)*4+38):''; }
   var psFitG='w', psFitType='top', psFitFitPref='regular', psFitMeasOpen=false;
   function psFitAssistant(){ psFitLoadProfile(); psFitSheet(true); }
   function psFitSheet(show){ var s=document.getElementById('psFitSheet'); if(s){ s.hidden=!show; document.body.style.overflow=show?'hidden':''; if(show) psFitFillBrands(); } }
@@ -5790,7 +5796,17 @@
     if(bd) bd.hidden=!isBrand;
     if(bm) bm.hidden=!isBrand;
     if(sd){ sd.classList.toggle('ps-fit-dd-full',!isBrand); }
+    var sr=document.getElementById('psFitShirtRow'); if(sr) sr.hidden=(t!=='shirt');
+    var lbl=document.getElementById('psFitBlockLbl'); if(lbl) lbl.textContent=tr(t==='shirt'?'fit_wear_collar':t==='bottom'?'fit_wear_waist':'fit_wear');
     psFitFillSizes();
+    if(t==='shirt') psFitSeedChest();
+  }
+  // seed the editable chest field on the Shirts tab from the chosen collar. force=true overwrites
+  // (collar changed); force=false only fills when empty (first open) so a typed chest isn't lost.
+  function psFitSeedChest(force){
+    var ci=document.getElementById('psFitShirtChest'); if(!ci) return;
+    if(!force && ci.value) return;
+    var est=psCollarToChest((document.getElementById('psFitSize')||{}).value); if(est) ci.value=est;
   }
   // ── themed dropdown (.ps-dd) — custom, theme-matched replacement for native <select> ──
   // Each .ps-dd[data-dd="<id>"] mirrors a hidden <select id="<id>">; the select holds the
@@ -5817,6 +5833,7 @@
     var sel=document.getElementById(key); if(sel) sel.value=val;
     psDDBuild(key); psDDCloseAll();
     if(key==='psFitBrand') psFitFillSizes();   // picking a brand refreshes its real sizes
+    if(key==='psFitSize' && psFitType==='shirt') psFitSeedChest(true);   // collar -> seed chest
   }
   document.addEventListener('click',function(e){ if(!e.target.closest('.ps-dd')) psDDCloseAll(); });
   function psFitFillBrands(){
@@ -5843,7 +5860,7 @@
       var ln=parseFloat((document.getElementById('psFitLength')||{}).value), ch=parseFloat((document.getElementById('psFitChest')||{}).value), wa=parseFloat((document.getElementById('psFitWaist')||{}).value), hi=parseFloat((document.getElementById('psFitHip')||{}).value);
       if(!(ch>0)&&!(ln>0)){ psVisualToast(tr('fit_needchest')); return; }
       params+=(ln>0?'&flength='+ln:'')+(ch>0?'&fchest='+ch:'')+(wa>0?'&fwaist='+wa:'')+(hi>0?'&fhip='+hi:'')+'&ffit='+psFitFitPref;
-      basis='';
+      basis=(ch>0?tr('fit_chest')+' '+ch+'"':'')+(ln>0?(ch>0?' · ':'')+tr('fit_length').replace(/\s*\(.*\)/,'')+' '+ln+'"':'');
     } else {
       var sz=(document.getElementById('psFitSize')||{}).value;
       if(!sz){ psVisualToast(tr('fit_needref')); return; }
@@ -5851,10 +5868,17 @@
         var br=(document.getElementById('psFitBrand')||{}).value;
         if(!br){ psVisualToast(tr('fit_needref')); return; }
         params+='&fref='+encodeURIComponent(br)+'&fsize='+encodeURIComponent(sz);
-      } else {
-        params+='&fsize='+encodeURIComponent(sz);
+        basis=br+' · '+sz;
+      } else if(psFitType==='bottom'){
+        // waist (inches) IS a body measurement the engine accepts — route through the measurement path
+        params+='&fwaist='+encodeURIComponent(sz)+'&ffit='+psFitFitPref;
+        basis=tr('fit_chip_waist')+' '+sz+'"';
+      } else {   // shirt: match on CHEST (collar can't be translated); chest seeded from collar, editable
+        var chest=parseFloat((document.getElementById('psFitShirtChest')||{}).value)||psCollarToChest(sz);
+        if(!(chest>0)){ psVisualToast(tr('fit_needchest')); return; }
+        params+='&fchest='+encodeURIComponent(chest)+'&ffit='+psFitFitPref;
+        basis=tr('fit_chip_collar')+' '+sz+'" · '+tr('fit_chest')+' '+chest+'"';
       }
-      basis=sz;
     }
     var scope=(document.getElementById('psFitScope')||{}).value; if(scope) params+='&brand='+encodeURIComponent(scope);
     psFitSaveProfile();
@@ -5882,15 +5906,15 @@
     psVisualActive=true; psApiMode=true;
     psFiltered=items; psApiTotal=items.length; psPage=0; psFeedDone=true; psFeedLoading=false;
     psRender(false);
-    var typePrefix = psFitType==='shirt' ? tr('fit_chip_collar') : psFitType==='bottom' ? tr('fit_chip_waist') : tr('fit_chip');
-    var label = basis ? typePrefix+' '+basis : typePrefix;
-    psVisualChip(true, label+' ('+total+')', 'fit');
+    var sub=(basis?basis+' · ':'')+total+' '+tr('fit_pieces');
+    psVisualChip(true, tr('fit_hdr'), 'fit', sub);
     try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(e){}
   }
   function psFitProfileKey(){ return 'psb_fit_profile'; }
   function psFitSaveProfile(){
     try{
       var p={ g:psFitG, type:psFitType, meas:psFitMeasOpen, size:(document.getElementById('psFitSize')||{}).value, brand:(document.getElementById('psFitBrand')||{}).value,
+        chestS:(document.getElementById('psFitShirtChest')||{}).value,
         length:(document.getElementById('psFitLength')||{}).value, chest:(document.getElementById('psFitChest')||{}).value, waist:(document.getElementById('psFitWaist')||{}).value, hip:(document.getElementById('psFitHip')||{}).value,
         fit:psFitFitPref, scope:(document.getElementById('psFitScope')||{}).value, wa:(document.getElementById('psFitWa')||{}).value };
       localStorage.setItem(psFitProfileKey(), JSON.stringify(p));
@@ -5909,6 +5933,7 @@
       set('psFitBrand',p.brand); psDDBuild('psFitBrand'); psFitFillSizes();
       set('psFitSize',p.size); psDDBuild('psFitSize');
       set('psFitScope',p.scope); psDDBuild('psFitScope');
+      set('psFitShirtChest',p.chestS); if(psFitType==='shirt') psFitSeedChest();
       set('psFitLength',p.length); set('psFitChest',p.chest); set('psFitWaist',p.waist); set('psFitHip',p.hip);
       if(window.psPhoneSetFromFull) psPhoneSetFromFull('psFitWa', p.wa||'');
       var m=document.getElementById('psFitMeas'); if(m) m.hidden=!psFitMeasOpen; var l=document.getElementById('psFitMeasLink'); if(l) l.textContent=tr(psFitMeasOpen?'fit_meashide':'fit_measlink');
@@ -7702,11 +7727,23 @@
     const dualTag = (p.dual && p.altform)
       ? `<span class="ps-img-dual">${tr(p.altform === 'stitched' ? 'ps_also_st_short' : 'ps_also_uns_short')}</span>`
       : '';
+    // Fit-search results carry the buyer's matched size per product (fitSzLabel + fitConf). When
+    // present, the size overlay flips its header to "Your size: XL" and highlights the matching
+    // size in the available list — so a fit result is unmistakable, not just another browse card.
+    const _fitLbl = p.fitSzLabel || '';
+    const _norm = (s) => String(s).toLowerCase().replace(/[\s\/]/g, '');
+    const _hits = _fitLbl ? [_norm(p.fitSize || ''), _norm(_fitLbl)] : [];
+    const szList = _fitLbl
+      ? list.slice(0, 7).map((s) => _hits.indexOf(_norm(s)) >= 0 ? `<u class="ps-sz-hit">${esc(s)}</u>` : esc(s)).join(' · ')
+      : list.slice(0, 7).map(esc).join(' · ');
+    const _fitPre = (p.fitConf === 'high') ? tr('fit_b_your') : (p.fitConf === 'low') ? tr('fit_b_closest') : tr('fit_b_likely');
     const szOverlay = isMto
       ? `<div class="ps-img-sizes">${dualTag}<b>${tr('ps_mto')}</b></div>`
       : isUns
         ? `<div class="ps-img-sizes">${dualTag}<b>${tr('ps_unstitched')}</b></div>`
-        : `<div class="ps-img-sizes">${dualTag}<b>${tr('ps_avail_sizes')}</b>${list.slice(0,7).map(esc).join(' · ')}</div>`;
+        : _fitLbl
+          ? `<div class="ps-img-sizes ps-img-sizes-fit">${dualTag}<b class="ps-sz-your">${_fitPre} ${esc(_fitLbl)}</b>${szList}</div>`
+          : `<div class="ps-img-sizes">${dualTag}<b>${tr('ps_avail_sizes')}</b>${szList}</div>`;
     const _uk = psUrlKey(p.u), _wsaved = psWishHas(p.u);
     return `<div class="ps-card">
       <div class="ps-img" onclick="psDetail(${idx})" role="button" tabindex="0" aria-label="${esc(p.t)} — enlarge"><button type="button" class="ps-wish${_wsaved?' on':''}" data-uk="${esc(_uk)}" onclick="event.stopPropagation();psWishToggle(${idx},event)" aria-label="${tr('wish_save')}" title="${tr('wish_save')}"><svg class="ps-heart-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></button><div class="ps-tr">${p.sale?`<span class="ps-sale">${tr('ps_sale')}</span>`:''}<button type="button" class="ps-info" onclick="event.stopPropagation();psDetail(${idx})" aria-label="${tr('ps_enlarge')}" title="${tr('ps_enlarge')}">🔍</button></div><img loading="lazy" src="${esc(thumbUrl(p.img))}" data-full="${esc(p.img)}" alt="${esc(p.t)}" onerror="if(!this.dataset.f){this.dataset.f=1;this.src=this.dataset.full;}else{this.parentElement.classList.add('ps-img-fail');}">${szOverlay}</div>
@@ -8644,7 +8681,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-30-vissmart';
+  const PSB_BUILD = '2026-06-30-fitclar';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
