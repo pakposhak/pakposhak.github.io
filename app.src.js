@@ -5644,9 +5644,11 @@
   // /search/visual encoder → render the visually-similar products in the Browse grid with
   // a clear chip. psVisualActive freezes infinite-scroll (the result set is fixed).
   var psVisualActive = false;
-  var psActiveAbort = null;     // in-flight fit/visual request, so Cancel can abort it
-  var _psLoadWatchdog = null;   // safety timer: the full-screen overlay can NEVER stay up forever
-  function psVisualSearch(){ psSpComingSoon(tr('sp_visual')); }
+  var psActiveAbort = null;     // in-flight FIT request; psLoadCancel aborts it
+  var _psLoadWatchdog = null;   // safety timer for Fit overlay (#psVisLoad)
+  var _psVimgAbort = null;     // in-flight VISUAL SEARCH request (fully separate from Fit)
+  var _psVimgWatchdog = null;  // safety timer for visual search overlay (#psVimgLoad)
+  function psVisualSearch(){ psVisualSheet(true); }
   function psVisualSheet(show){ var s=document.getElementById('psVisSheet'); if(s){ s.hidden=!show; document.body.style.overflow = show ? 'hidden' : ''; } }
   function psVisualPick(mode){ psVisualSheet(false); var inp=document.getElementById(mode==='cam'?'psVisCam':'psVisUp'); if(inp){ inp.value=''; inp.click(); } }
   function psVisualLoad(on){
@@ -5659,10 +5661,23 @@
       _psLoadWatchdog=setTimeout(function(){ var x=document.getElementById('psVisLoad'); if(x) x.hidden=true; },18000);
     } else { psActiveAbort=null; }
   }
-  // user tapped the overlay / Cancel — abort the request and dismiss immediately
+  // Fit Assistant overlay cancel (Fit only — does NOT touch visual search)
   function psLoadCancel(){
     if(psActiveAbort){ try{ psActiveAbort.userCancelled=true; psActiveAbort.abort(); }catch(e){} }
     psVisualLoad(false);
+  }
+  // Visual search overlay: own load/cancel/watchdog, fully separate from Fit
+  function psVimgLoad(on){
+    var o=document.getElementById('psVimgLoad'); if(!o) return;
+    o.hidden=!on;
+    clearTimeout(_psVimgWatchdog);
+    if(on){
+      _psVimgWatchdog=setTimeout(function(){ var x=document.getElementById('psVimgLoad'); if(x) x.hidden=true; },20000);
+    } else { _psVimgAbort=null; }
+  }
+  function psVimgCancel(){
+    if(_psVimgAbort){ try{ _psVimgAbort.userCancelled=true; _psVimgAbort.abort(); }catch(e){} }
+    psVimgLoad(false);
   }
   function psVisualFile(input){
     var f=input&&input.files&&input.files[0]; if(!f) return;
@@ -5684,18 +5699,18 @@
     reader.readAsDataURL(f);
   }
   function psVisualRun(dataUrl){
-    psVisualLoad(true);
-    var _vac=new AbortController(); var _vtid=setTimeout(function(){ _vac.abort(); },22000);
+    psVimgLoad(true);
+    var _vac=new AbortController(); _psVimgAbort=_vac; var _vtid=setTimeout(function(){ _vac.abort(); },22000);
     fetch(psSearchBase()+'/visual',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({image:dataUrl,k:48}), signal:_vac.signal })
       .then(function(r){ clearTimeout(_vtid); if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
       .then(function(j){
-        psVisualLoad(false);
+        psVimgLoad(false);
         if(j.ok===false || j.apparel===false){ psVisualToast(tr('vis_notapparel')); return; }
         var items=(j.products||[]).filter(function(p){ return !psIsHidden(p); });
         if(!items.length){ psVisualToast(tr('vis_none')); return; }
         psVisualShow(items);
       })
-      .catch(function(e){ clearTimeout(_vtid); psVisualLoad(false); console.warn('visual search failed:', e.message); psVisualToast(e.name==='AbortError'?tr('vis_slow'):tr('vis_err')); });
+      .catch(function(e){ clearTimeout(_vtid); psVimgLoad(false); console.warn('visual search failed:', e.message); if(!(_psVimgAbort&&_psVimgAbort.userCancelled)) psVisualToast(e.name==='AbortError'?tr('vis_slow'):tr('vis_err')); });
   }
   function psVisualShow(items){
     psSearchClose(); psVisualSheet(false);
@@ -5864,7 +5879,7 @@
   window.psSearchPageInput=psSearchPageInput; window.psSearchPageSubmit=psSearchPageSubmit; window.psSearchPageGo=psSearchPageGo;
   window.psVisualSearch=psVisualSearch; window.psFitAssistant=psFitAssistant;
   window.psVisualSheet=psVisualSheet; window.psVisualPick=psVisualPick; window.psVisualFile=psVisualFile; window.psVisualClear=psVisualClear;
-  window.psFitSheet=psFitSheet; window.psFitGender=psFitGender; window.psFitFitSet=psFitFitSet; window.psFitToggleMeas=psFitToggleMeas; window.psFitRun=psFitRun; window.psLoadCancel=psLoadCancel;
+  window.psFitSheet=psFitSheet; window.psFitGender=psFitGender; window.psFitFitSet=psFitFitSet; window.psFitToggleMeas=psFitToggleMeas; window.psFitRun=psFitRun; window.psLoadCancel=psLoadCancel; window.psVimgCancel=psVimgCancel;
 
   // ── WhatsApp / phone input: themed country picker + completeness check ─────────────
   // Used by the order-form contact details (#buyerWA) and the Fit Assistant (#psFitWa).
@@ -8590,7 +8605,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-30-searchtag';
+  const PSB_BUILD = '2026-06-30-visfix';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

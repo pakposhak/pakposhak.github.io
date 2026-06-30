@@ -20,7 +20,7 @@
   <!-- Stuck-overlay guard (lives in the network-FIRST HTML so it reaches even a stale-cached
        app.js): if the app is resumed from the back-forward cache, never come back to a frozen
        full-screen loading overlay — force it hidden and unlock scroll. -->
-  <script>window.addEventListener('pageshow',function(){var o=document.getElementById('psVisLoad');if(o)o.hidden=true;try{document.body.style.overflow='';}catch(e){}});</script>
+  <script>window.addEventListener('pageshow',function(){var o=document.getElementById('psVisLoad');if(o)o.hidden=true;var v=document.getElementById('psVimgLoad');if(v)v.hidden=true;try{document.body.style.overflow='';}catch(e){}});</script>
   <!-- Always load the freshest version — this file changes often and GitHub
        Pages otherwise lets browsers cache the HTML for ~10 min, so operators
        were seeing stale builds after a deploy. -->
@@ -262,6 +262,9 @@
       <button type="button" class="ps-vis-cancel" onclick="psVisualSheet(false)" data-i18n="vis_cancel">Cancel</button>
     </div>
   </div>
+  <!-- Visual search loading overlay: own element, separate from Fit Assistant (#psVisLoad) -->
+  <div id="psVimgLoad" class="ps-vis-load" hidden aria-live="polite" onclick="if(event.target===this)psVimgCancel()"><div class="ps-vis-spin" aria-hidden="true"></div><div data-i18n="vis_loading">Finding similar styles</div><button type="button" class="ps-vis-loadcancel" onclick="psVimgCancel()" data-i18n="vis_cancel">Cancel</button></div>
+  <!-- Fit Assistant loading overlay: own element, separate from visual search (#psVimgLoad) -->
   <div id="psVisLoad" class="ps-vis-load" hidden aria-live="polite" onclick="if(event.target===this)psLoadCancel()"><div class="ps-vis-spin" aria-hidden="true"></div><div data-i18n="fit_loading">Finding your size</div><button type="button" class="ps-vis-loadcancel" onclick="psLoadCancel()" data-i18n="vis_cancel">Cancel</button></div>
 
   <!-- Fit Assistant: set a profile (usual size in a brand, or measurements) → shop your size -->
