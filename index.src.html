@@ -252,12 +252,26 @@
     <div class="ps-vis-back" onclick="psVisualSheet(false)"></div>
     <div class="ps-vis-card">
       <div class="ps-vis-hd"><span data-i18n="vis_title">Search by photo</span><small data-i18n="vis_sub">Find pieces that look like your photo</small></div>
-      <button type="button" class="ps-vis-opt" onclick="psVisualPick('cam')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V8a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.5"/></svg>
-        <span data-i18n="vis_cam">Take a photo</span></button>
-      <button type="button" class="ps-vis-opt" onclick="psVisualPick('up')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15l-5-5L5 21"/><path d="M3 16V5a2 2 0 012-2h11"/><circle cx="9" cy="9" r="2"/><path d="M21 5v6m3-3h-6"/></svg>
-        <span data-i18n="vis_up">Upload a photo</span></button>
+      <div class="ps-vis-pick-row">
+        <button type="button" class="ps-vis-pick" onclick="psVisualPick('cam')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V8a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.5"/></svg>
+          <span data-i18n="vis_cam">Camera</span>
+        </button>
+        <button type="button" class="ps-vis-pick" onclick="psVisualPick('up')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15l-5-5L5 21"/><path d="M3 16V5a2 2 0 012-2h11"/><circle cx="9" cy="9" r="2"/><path d="M21 5v6m3-3h-6"/></svg>
+          <span data-i18n="vis_up">Gallery</span>
+        </button>
+      </div>
+      <div class="ps-vis-filters">
+        <div class="ps-vis-flabel" data-i18n="vis_filter_brand">Brands</div>
+        <div class="ps-vis-bpills" id="psVisBrandPills"></div>
+        <div class="ps-vis-flabel" data-i18n="vis_filter_type">Type</div>
+        <div class="ps-vis-seg" id="psVisStitchSeg">
+          <button type="button" class="on" data-s="pret" onclick="psVisSetStitch(this,'pret')" data-i18n="vis_pret">Pret</button>
+          <button type="button" data-s="unstitch" onclick="psVisSetStitch(this,'unstitch')" data-i18n="vis_unstitch">Unstitched</button>
+          <button type="button" data-s="all" onclick="psVisSetStitch(this,'all')" data-i18n="vis_type_all">All</button>
+        </div>
+      </div>
       <button type="button" class="ps-vis-cancel" onclick="psVisualSheet(false)" data-i18n="vis_cancel">Cancel</button>
     </div>
   </div>

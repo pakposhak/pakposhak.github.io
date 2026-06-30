@@ -184,10 +184,20 @@
     .ps-vis-hd{text-align:center;margin-bottom:14px}
     .ps-vis-hd span{display:block;font-size:1.05rem;font-weight:700;color:var(--txt)}
     .ps-vis-hd small{display:block;font-size:.8rem;color:var(--txt-muted);margin-top:3px}
-    .ps-vis-opt{display:flex;align-items:center;gap:12px;width:100%;height:54px;padding:0 16px;margin-bottom:10px;border:1.5px solid var(--gold-bdr);border-radius:13px;background:var(--raised);color:var(--txt);font-size:1rem;font-weight:600;font-family:inherit;cursor:pointer;text-align:left}
-    .ps-vis-opt svg{width:24px;height:24px;color:var(--gold);flex:0 0 auto}
-    .ps-vis-opt:active{transform:scale(.99)}
-    .ps-vis-cancel{width:100%;height:46px;border:none;background:none;color:var(--txt-muted);font-size:.95rem;font-weight:600;font-family:inherit;cursor:pointer;margin-top:2px}
+    .ps-vis-pick-row{display:flex;gap:10px;margin-bottom:14px}
+    .ps-vis-pick{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:20px 8px;border:1.5px solid var(--gold-bdr);border-radius:16px;background:var(--raised);color:var(--txt);font-size:0.88rem;font-weight:700;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .ps-vis-pick svg{width:34px;height:34px;color:var(--gold)}
+    .ps-vis-pick:active{transform:scale(.96);background:var(--surface)}
+    .ps-vis-filters{margin-bottom:4px}
+    .ps-vis-flabel{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--txt-muted);margin:12px 0 7px}
+    .ps-vis-bpills{display:flex;gap:7px;overflow-x:auto;padding-bottom:3px;scrollbar-width:none;-ms-overflow-style:none}
+    .ps-vis-bpills::-webkit-scrollbar{display:none}
+    .ps-vis-bpill{flex:0 0 auto;padding:6px 14px;border-radius:20px;border:1.5px solid var(--gold-bdr);background:var(--raised);color:var(--txt);font-size:0.82rem;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;transition:background .12s,color .12s,border-color .12s}
+    .ps-vis-bpill.on{background:var(--gold);border-color:var(--gold);color:#fff}
+    .ps-vis-seg{display:flex;background:var(--raised);border:1.5px solid var(--gold-bdr);border-radius:12px;padding:3px;gap:3px}
+    .ps-vis-seg button{flex:1;height:36px;border:none;background:none;color:var(--txt-muted);font-size:.85rem;font-weight:700;font-family:inherit;border-radius:9px;cursor:pointer;transition:background .12s,color .12s}
+    .ps-vis-seg button.on{background:var(--gold);color:#fff}
+    .ps-vis-cancel{width:100%;height:46px;border:none;background:none;color:var(--txt-muted);font-size:.95rem;font-weight:600;font-family:inherit;cursor:pointer;margin-top:6px}
     .ps-vis-load{position:fixed;inset:0;z-index:1350;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:rgba(0,0,0,.5);color:#fff;font-size:.95rem;font-weight:600}
     .ps-vis-spin{width:38px;height:38px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:psVisSpin .8s linear infinite}
     @keyframes psVisSpin{to{transform:rotate(360deg)}}
