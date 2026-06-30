@@ -48,6 +48,12 @@ for (const f of ['index.html', 'order-form.html']) {
 
 // 4) Build/version stamps must be present and consistent.
 const appjs = readText('app.js');
+
+// 3b) The fit-size data must have been injected (placeholder string replaced with the object).
+check('fit sizes injected (no placeholder left)', !appjs.includes('FITSIZES_PLACEHOLDER'),
+  'build.ps1 did not replace "FITSIZES_PLACEHOLDER" from fit-sizes.json');
+check('fit sizes object present', /PS_FIT_SIZES\s*=\s*\{/.test(appjs));
+
 const mBuild = appjs.match(/PSB_BUILD\s*=\s*["']([^"']+)["']/);
 check('app.js has PSB_BUILD', !!mBuild);
 const sw = readText('sw.js');

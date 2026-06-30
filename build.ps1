@@ -44,6 +44,15 @@ if (Test-Path $jsSrc) {
   # no-compress + no-mangle: strips whitespace/comments only; string patterns stay intact
   # for future Edit-tool patches on the .src file.
   & terser $jsSrc --no-mangle --no-compress --comments false --output $jsOut
+  # Inject the real per-brand size data: replace the "FITSIZES_PLACEHOLDER" string with the
+  # fit-sizes.json object literal (regenerate it with: node psb-clean/_extract_fit_sizes.js).
+  $fitSizesPath = Join-Path $base 'fit-sizes.json'
+  if (Test-Path $fitSizesPath) {
+    $fitJson = ([System.IO.File]::ReadAllText($fitSizesPath)).Trim()
+    $app = [System.IO.File]::ReadAllText($jsOut)
+    $app = $app.Replace('"FITSIZES_PLACEHOLDER"', $fitJson).Replace("'FITSIZES_PLACEHOLDER'", $fitJson)
+    [System.IO.File]::WriteAllText($jsOut, $app, (New-Object System.Text.UTF8Encoding $false))
+  } else { Write-Host "  WARN fit-sizes.json missing: sizes fall back to generic" -ForegroundColor Yellow }
   $aKB = [math]::Round((Get-Item $jsOut).Length / 1KB, 1)
   Write-Host ("  [ok] {0,-30}  {1,7} KB  →  {2,7} KB  ({3}% saved)" -f 'app.js', $bKB, $aKB, [math]::Round(100*(1-$aKB/$bKB),1)) -ForegroundColor Green
 }

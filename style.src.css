@@ -203,13 +203,29 @@
     .ps-fit-lbl{display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--txt-muted);margin-bottom:6px}
     .ps-fit-pair{display:flex;align-items:center;gap:9px}
     .ps-fit-mid{color:var(--txt-muted);font-size:.9rem;flex:0 0 auto}
-    .ps-fit-sel{height:44px;border:1.5px solid var(--gold-bdr);border-radius:11px;background:var(--input-bg);color:var(--txt);font-size:.95rem;font-family:inherit;padding:0 10px;min-width:0}
-    .ps-fit-sel:focus{outline:none;border-color:var(--gold)}
-    .ps-fit-pair .ps-fit-sel:first-child{flex:0 0 84px}
-    .ps-fit-pair .ps-fit-sel:last-child{flex:1}
-    .ps-fit-sel-full{width:100%}
+    /* ── themed dropdown (.ps-dd) — replaces native black/white <select> on the fit form.
+       The native option list can't be themed; this custom one uses theme tokens so it
+       matches light + dark. Hidden <select> siblings still hold the value. ── */
+    .ps-dd{position:relative;min-width:0}
+    .ps-dd-btn{width:100%;height:44px;display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--input-bg);color:var(--txt);border:1.5px solid var(--gold-bdr);border-radius:11px;padding:0 12px;font-family:inherit;font-size:.95rem;font-weight:600;cursor:pointer;text-align:left;min-width:0}
+    .ps-dd-btn>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .ps-dd-btn:after{content:"";width:7px;height:7px;border-right:2px solid var(--txt-muted);border-bottom:2px solid var(--txt-muted);transform:rotate(45deg);margin-top:-3px;flex:0 0 auto;transition:transform .15s}
+    .ps-dd.open .ps-dd-btn{border-color:var(--gold)}
+    .ps-dd.open .ps-dd-btn:after{transform:rotate(225deg);margin-top:2px}
+    .ps-dd-list{position:absolute;z-index:30;left:0;right:0;top:calc(100% + 5px);max-height:244px;overflow:auto;-webkit-overflow-scrolling:touch;background:var(--surface);border:1.5px solid var(--gold-bdr);border-radius:12px;box-shadow:0 10px 28px rgba(0,0,0,.20);padding:5px;margin:0;list-style:none}
+    .ps-dd-list li{padding:10px 12px;border-radius:8px;color:var(--txt);font-size:.92rem;font-weight:600;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ps-dd-list li.sel,.ps-dd-list li:hover{background:var(--gold-dim);color:var(--txt)}
+    .ps-dd-list li.sel{position:relative}
+    .ps-dd-list li.sel:after{content:"\2713";float:right;color:var(--gold);font-weight:800}
+    .ps-fit-pair .ps-dd[data-dd="psFitBrand"]{flex:1 1 auto}
+    .ps-fit-pair .ps-dd-sz{flex:0 0 96px}
+    .ps-fit-dd-full{width:100%}
     .ps-fit-measlink{display:block;width:100%;text-align:center;background:none;border:none;color:var(--gold);font-size:.85rem;font-weight:600;text-decoration:underline;font-family:inherit;cursor:pointer;margin:2px 0 12px}
     .ps-fit-meas{margin:0 0 13px;padding:12px;border:1px dashed var(--gold-bdr);border-radius:12px;background:var(--raised)}
+    .ps-fit-munit{font-size:.68rem;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--gold);text-align:center;margin:0 0 9px}
+    .ps-fit-mlen{display:flex;flex-direction:column;gap:4px;font-size:.72rem;font-weight:700;color:var(--txt);margin:0 0 9px}
+    .ps-fit-mlen input{height:46px;border:1.5px solid var(--gold);border-radius:10px;background:var(--input-bg);color:var(--txt);font-size:1.05rem;font-family:inherit;text-align:center;width:100%}
+    .ps-fit-mlen input:focus{outline:none;box-shadow:0 0 0 3px var(--gold-dim)}
     .ps-fit-m3{display:flex;gap:8px}
     .ps-fit-m3 label{flex:1;display:flex;flex-direction:column;gap:4px;font-size:.7rem;font-weight:700;color:var(--txt-muted)}
     .ps-fit-m3 input{height:42px;border:1.5px solid var(--gold-bdr);border-radius:10px;background:var(--input-bg);color:var(--txt);font-size:1rem;font-family:inherit;text-align:center;width:100%}
