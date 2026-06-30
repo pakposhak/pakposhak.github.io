@@ -4830,7 +4830,11 @@
       return (x.host.replace(/^www\./,'') + x.pathname.replace(/\/+$/,'')).toLowerCase(); }
     catch(e){ return String(u || '').toLowerCase(); }
   }
-  function psIsHidden(p){ const ts = _psSoldOut[psUrlKey(p.u)]; return !!ts && (Date.now() - ts < PS_SOLDOUT_TTL); }
+  var _psTitleBlockRe = /\b(bra|bralette|bra set|lingerie|panty|panties|underwear|innerwear|g-string|thong)\b/i;
+  function psIsHidden(p){
+    if(p && p.n && _psTitleBlockRe.test(p.n)) return true;
+    const ts = _psSoldOut[psUrlKey(p.u)]; return !!ts && (Date.now() - ts < PS_SOLDOUT_TTL);
+  }
   function psPruneSoldOut(){
     const now = Date.now(); let changed = false;
     for(const k in _psSoldOut){ if(now - _psSoldOut[k] > PS_SOLDOUT_TTL){ delete _psSoldOut[k]; changed = true; } }
@@ -8608,7 +8612,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-30-uifix';
+  const PSB_BUILD = '2026-06-30-nolingerie';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
