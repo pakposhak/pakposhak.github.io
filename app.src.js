@@ -6551,16 +6551,25 @@
   // content — relocate/extend freely; the 3 search + 1 brand poster slots come next.
   const PS_POSTERS = {
     'home-all': [
-      { en_t:'150+ Pakistani brands. Women · Men · Kids.', en_s:'Real prices, delivered to your door in 2-3 weeks.', bn_t:'১৫০+ পাকিস্তানি ব্র্যান্ড। মেয়ে · ছেলে · বাচ্চা।', bn_s:'আসল দাম, ২-৩ সপ্তাহে আপনার দরজায় ডেলিভারি।' },
+      { en_t:'150+ Pakistani brands. Women \xB7 Men \xB7 Kids.', en_s:'Real prices, delivered to your door in 2-3 weeks.', bn_t:'১৫০+ পাকিস্তানি ব্র্যান্ড। মেয়ে \xB7 ছেলে \xB7 বাচ্চা।', bn_s:'আসল দাম, ২-৩ সপ্তাহে আপনার দরজায় ডেলিভারি।' },
       { en_t:'New, every single day. Latest collections.', en_s:'Fresh Pakistani arrivals added daily.', bn_t:'প্রতিদিন নতুন। সর্বশেষ কালেকশন।', bn_s:'প্রতিদিন নতুন পাকিস্তানি পণ্য যোগ হয়।' },
+      { en_t:'Door to door. Genuine products.', en_s:'Straight from Pakistan to your door in Bangladesh.', bn_t:'ডোর টু ডোর। আসল পণ্য।', bn_s:'পাকিস্তান থেকে সরাসরি বাংলাদেশে আপনার দরজায়।' },
+      { en_t:'Exclusively for Bangladesh. Pakistani brands, your way.', en_s:'PakPoshak, bridging your love for Pakistani fashion.', bn_t:'শুধুমাত্র বাংলাদেশের জন্য। পাকিস্তানি ব্র্যান্ড, আপনার মতো।', bn_s:'পাকপোশাক, পাকিস্তানি ফ্যাশনের সাথে আপনার ভালোবাসার সেতু।' },
       { en_t:'Couple goals. His & hers, matched.', en_s:'Dress together for every occasion.', bn_t:'কাপল গোলস। হিজ ও হার্স, ম্যাচিং।', bn_s:'প্রতিটি অনুষ্ঠানে একসাথে সাজুন।' }
     ],
     'home-w': [
+      { en_t:'Most competitive prices in BD.', en_s:'Confirmed Pakistan price, full BDT total, no hidden charges.', bn_t:'বিডিতে সবচেয়ে সাশ্রয়ী দাম।', bn_s:'নিশ্চিত পাকিস্তানি দাম, পূর্ণ বিডিটি টোটাল, কোনো লুকানো চার্জ নেই।' },
+      { en_t:'Everyday to niche. Every Pakistani brand.', en_s:'From daily wear to the labels you love.', bn_t:'প্রতিদিন থেকে নিশ। প্রতিটি পাকিস্তানি ব্র্যান্ড।', bn_s:'প্রতিদিনের পোশাক থেকে প্রিয় ব্র্যান্ড।' },
+      { en_t:'Lawn season. Just arrived.', en_s:'Pakistan\'s best lawn, delivered fresh to Bangladesh.', bn_t:'লন সিজন। এইমাত্র এসেছে।', bn_s:'পাকিস্তানের সেরা লন, বাংলাদেশে তাজা ডেলিভারি।' },
+      { en_t:'Not sure of the size? We\'ll find it.', en_s:'Fit Assistant matches you to the right brand size.', bn_t:'সাইজ নিয়ে দ্বিধা? আমরা খুঁজে দেব।', bn_s:'ফিট অ্যাসিস্ট্যান্ট প্রতিটি ব্র্যান্ডের সঠিক সাইজ মেলায়।' },
+      { en_t:'Snap. Search. Order.', en_s:'See a style you love? Find it instantly with visual search.', bn_t:'ছবি তুলুন। খুঁজুন। অর্ডার করুন।', bn_s:'পছন্দের স্টাইল দেখেছেন? ভিজ্যুয়াল সার্চে তাৎক্ষণিক খুঁজুন।' },
+      { en_t:'Modern & western. Co-ords, dresses, tops.', en_s:'Pakistani brands, contemporary cuts.', bn_t:'মডার্ন ও ওয়েস্টার্ন। কো-অর্ড, ড্রেস, টপ।', bn_s:'পাকিস্তানি ব্র্যান্ড, সমকালীন কাট।' },
       { en_t:'Going to a wedding? Let us prepare you.', en_s:'Guest looks, bridal, the whole edit.', bn_t:'বিয়েতে যাচ্ছেন? আমরা প্রস্তুত করি।', bn_s:'গেস্ট লুক, ব্রাইডাল, পুরো এডিট।' },
       { en_t:'Gen Z, this is you. Trend-first fits.', en_s:'Bold, fresh, Pakistani, your vibe.', bn_t:'জেন জি, এটা আপনারই। ট্রেন্ড-ফার্স্ট ফিট।', bn_s:'বোল্ড, ফ্রেশ, পাকিস্তানি, আপনার ভাইব।' }
     ],
     'home-m': [
-      { en_t:'Menswear, sorted. Eastern & western.', en_s:'Kurtas to suits, real prices, BD delivery.', bn_t:'মেনসওয়্যার, সব এক জায়গায়।', bn_s:'কুর্তা থেকে স্যুট, আসল দাম, বিডি ডেলিভারি।' }
+      { en_t:'Menswear, sorted. Eastern & western.', en_s:'Kurtas to suits, real prices, BD delivery.', bn_t:'মেনসওয়্যার, সব এক জায়গায়।', bn_s:'কুর্তা থেকে স্যুট, আসল দাম, বিডি ডেলিভারি।' },
+      { en_t:'Pret & kurta. Men\'s everyday staples.', en_s:'Real prices from Pakistan, delivered to Bangladesh.', bn_t:'প্রেট ও কুর্তা। পুরুষের প্রতিদিনের পোশাক।', bn_s:'পাকিস্তান থেকে আসল দামে, বাংলাদেশে ডেলিভারি।' }
     ],
     'home-k': [
       { en_t:'Teen styles. Cool, comfy, easy.', en_s:'Trendy looks for ages 10 to 16.', bn_t:'টিন স্টাইল। কুল, আরামদায়ক, সহজ।', bn_s:'১০ থেকে ১৬ বছরের ট্রেন্ডি লুক।' },
@@ -6568,38 +6577,36 @@
       { en_t:'Baby boy. Little gentleman.', en_s:'Newborn to 2 years, comfy and cute.', bn_t:'বেবি বয়। ছোট্ট জেন্টলম্যান।', bn_s:'নবজাতক থেকে ২ বছর, আরামদায়ক ও কিউট।' }
     ],
     'luxe-all': [
-      { en_t:'The Luxe Edit. Designer couture.', en_s:'Pakistan\'s finest designers, real prices.', bn_t:'দ্য লাক্স এডিট। ডিজাইনার কুতুর।', bn_s:'পাকিস্তানের সেরা ডিজাইনার, আসল দামে।' },
       { en_t:'Hand embroidery, adda by adda.', en_s:'Real handwork, the honest Pakistan price.', bn_t:'হাতের এমব্রয়ডারি, আড্ডা বাই আড্ডা।', bn_s:'আসল হাতের কাজ, সৎ পাকিস্তানি দাম।' },
-      { en_t:'Eid & festive. Dressed to celebrate.', en_s:'Make the occasion yours.', bn_t:'ঈদ ও উৎসব। উদযাপনের সাজ।', bn_s:'অনুষ্ঠানটি আপনার করে নিন।' },
       { en_t:'Designers, together. One luxe room.', en_s:'Sana Safinaz, Maria B, Elan and more.', bn_t:'ডিজাইনাররা, একসাথে। এক লাক্স রুম।', bn_s:'সানা সাফিনাজ, মারিয়া বি, এলান ও আরও।' }
     ],
     'luxe-w': [
-      { en_t:'Everyday to niche. Every Pakistani brand.', en_s:'From daily wear to the labels you love.', bn_t:'প্রতিদিন থেকে নিশ। প্রতিটি পাকিস্তানি ব্র্যান্ড।', bn_s:'প্রতিদিনের পোশাক থেকে প্রিয় ব্র্যান্ড।' },
       { en_t:'Bridal & velvet. For the big day.', en_s:'Make your moment unforgettable.', bn_t:'ব্রাইডাল ও ভেলভেট। বিশেষ দিনের জন্য।', bn_s:'আপনার মুহূর্তকে অবিস্মরণীয় করুন।' },
       { en_t:'Fine fabrics. Pure & premium.', en_s:'Lawn, silk, organza, chiffon.', bn_t:'ফাইন ফেব্রিক। বিশুদ্ধ ও প্রিমিয়াম।', bn_s:'লন, সিল্ক, অর্গানজা, শিফন।' }
     ],
     'luxe-m': [
-      { en_t:'Groom and formal', en_s:'Sherwani, prince coats and designer suits for the big day.', bn_t:'বর ও ফরমাল', bn_s:'বিশেষ দিনের জন্য শেরওয়ানি, প্রিন্স কোট ও ডিজাইনার স্যুট।' },
-      { en_t:'Luxe menswear', en_s:'Premium Pakistani labels, genuine and delivered.', bn_t:'লাক্স মেনস ওয়্যার', bn_s:'প্রিমিয়াম পাকিস্তানি ব্র্যান্ড, আসল ও ডেলিভারড।' }
+      { en_t:'Groom season. Your big day, perfectly dressed.', en_s:'Sherwani to prince coat, real PK prices.', bn_t:'বর সিজন। আপনার বিশেষ দিন, নিখুঁত সাজে।', bn_s:'শেরওয়ানি থেকে প্রিন্স কোট, আসল পিকে দামে।' },
+      { en_t:'Pakistani tailoring. Timeless precision.', en_s:'Premium cuts for men who know quality.', bn_t:'পাকিস্তানি টেইলারিং। চিরন্তন নিখুঁততা।', bn_s:'মানসম্পন্ন পুরুষের জন্য প্রিমিয়াম কাট।' },
+      { en_t:'Formal to festive. Every occasion sorted.', en_s:'Sherwani, suits and kurtas. Pakistan\'s finest.', bn_t:'ফর্মাল থেকে উৎসব। প্রতিটি অনুষ্ঠান সাজানো।', bn_s:'শেরওয়ানি, স্যুট ও কুর্তা। পাকিস্তানের সেরা।' }
     ],
     'luxe-k': [
-      { en_t:'Little VIPs', en_s:'Premium party and formal wear for kids, from Pakistan\'s best.', bn_t:'লিটল ভিআইপি', bn_s:'পাকিস্তানের সেরা থেকে বাচ্চাদের প্রিমিয়াম পার্টি ও ফরমাল ওয়্যার।' },
-      { en_t:'Dressed for the occasion', en_s:'Festive sets that match the grown-ups.', bn_t:'অনুষ্ঠানের সাজ', bn_s:'বড়দের সাথে মানানসই উৎসবের সেট।' }
+      { en_t:'Little VIPs. Dressed to impress.', en_s:'Premium party and formal wear for kids, from Pakistan\'s finest.', bn_t:'লিটল ভিআইপি। মুগ্ধ করার সাজ।', bn_s:'পাকিস্তানের সেরা থেকে বাচ্চাদের প্রিমিয়াম পার্টি ও ফরমাল ওয়্যার।' },
+      { en_t:'Dressed for the occasion. Little ones too.', en_s:'Festive sets that match the grown-ups, perfectly.', bn_t:'অনুষ্ঠানের সাজ। ছোটদের জন্যও।', bn_s:'বড়দের সাথে মানানসই উৎসবের সেট, নিখুঁতভাবে।' },
+      { en_t:'Tiny royals. Pakistan\'s finest, for the little ones.', en_s:'Because the best occasions deserve the best looks.', bn_t:'ছোট্ট রাজকীয়। ছোটদের জন্য পাকিস্তানের সেরা।', bn_s:'কারণ সেরা অনুষ্ঠান সেরা লুক দাবি করে।' }
     ],
     'search-home': [
-      { en_t:'Door to door. Genuine products.', en_s:'Straight from Pakistan to your door in Bangladesh.', bn_t:'ডোর টু ডোর। আসল পণ্য।', bn_s:'পাকিস্তান থেকে সরাসরি বাংলাদেশে আপনার দরজায়।' },
-      { en_t:'Not sure of the size? We\'ll find it.', en_s:'Fit Assistant matches you to the right brand size.', bn_t:'সাইজ নিয়ে দ্বিধা? আমরা খুঁজে দেব।', bn_s:'ফিট অ্যাসিস্ট্যান্ট প্রতিটি ব্র্যান্ডের সঠিক সাইজ মেলায়।' },
       { en_t:'Search by photo. Snap or upload.', en_s:'See a look you love? Find it by picture.', bn_t:'ছবি দিয়ে খুঁজুন। তুলুন বা আপলোড করুন।', bn_s:'পছন্দের লুক দেখেছেন? ছবি দিয়ে খুঁজুন।' },
-      { en_t:'Modest wear. Covered, confident.', en_s:'Abayas, hijabs, full-cover styles.', bn_t:'মডেস্ট ওয়্যার। কভারড, কনফিডেন্ট।', bn_s:'আবায়া, হিজাব, ফুল-কভার স্টাইল।' },
-      { en_t:'Modern & western. Co-ords, dresses, tops.', en_s:'Pakistani brands, contemporary cuts.', bn_t:'মডার্ন ও ওয়েস্টার্ন। কো-অর্ড, ড্রেস, টপ।', bn_s:'পাকিস্তানি ব্র্যান্ড, সমকালীন কাট।' }
+      { en_t:'Set your budget. Everyday to designer.', en_s:'Filter by price, find your perfect fit.', bn_t:'আপনার বাজেট সেট করুন। প্রতিদিন থেকে ডিজাইনার।', bn_s:'দাম অনুযায়ী ফিল্টার করুন, পারফেক্ট ফিট খুঁজুন।' },
+      { en_t:'Modest wear. Covered, confident.', en_s:'Abayas, hijabs, full-cover styles.', bn_t:'মডেস্ট ওয়্যার। কভারড, কনফিডেন্ট।', bn_s:'আবায়া, হিজাব, ফুল-কভার স্টাইল।' }
     ],
     'search-luxe': [
       { en_t:'Search the designer houses', en_s:'Elan, Sana Safinaz, Asim Jofa and more, with the real PKR price.', bn_t:'ডিজাইনার হাউস খুঁজুন', bn_s:'এলান, সানা সাফিনাজ, আসিম জোফা ও আরও, আসল পিকেআর দামে।' },
       { en_t:'Snap it. Find it. Order it.', en_s:'Search by photo across Pakistan\'s premium labels.', bn_t:'ছবি তুলুন, খুঁজুন, অর্ডার করুন', bn_s:'ছবি দিয়ে পাকিস্তানের প্রিমিয়াম ব্র্যান্ডে খুঁজুন।' }
     ],
     'search-brand': [
-      { en_t:'Most competitive prices in BD.', en_s:'Confirmed Pakistan price, full BDT total, no hidden charges.', bn_t:'বিডিতে সবচেয়ে সাশ্রয়ী দাম।', bn_s:'নিশ্চিত পাকিস্তানি দাম, পূর্ণ বিডিটি টোটাল, কোনো লুকানো চার্জ নেই।' },
-      { en_t:'Set your budget. Everyday to designer.', en_s:'Filter by price, find your perfect fit.', bn_t:'আপনার বাজেট সেট করুন। প্রতিদিন থেকে ডিজাইনার।', bn_s:'দাম অনুযায়ী ফিল্টার করুন, পারফেক্ট ফিট খুঁজুন।' }
+      { en_t:'See the real Original PKR price.', en_s:'Paste any product link, get the honest BDT total.', bn_t:'আসল মূল পিকেআর দাম দেখুন।', bn_s:'যেকোনো প্রোডাক্ট লিংক পেস্ট করুন, সৎ বিডিটি টোটাল পান।' },
+      { en_t:'True Price. Paste, check, compare.', en_s:'Paste any brand\'s product page, get the real PKR and full BDT total.', bn_t:'সত্যিকারের দাম। পেস্ট, চেক, তুলনা।', bn_s:'যেকোনো ব্র্যান্ডের প্রোডাক্ট পেজ পেস্ট করুন, আসল PKR ও পূর্ণ BDT পান।' },
+      { en_t:'Don\'t buy. Check here first.', en_s:'Same outfit, the real price, delivered to BD.', bn_t:'কিনবেন না। আগে এখানে চেক করুন।', bn_s:'একই পোশাক, আসল দামে, বিডিতে ডেলিভারি।' }
     ]
   };
   function _psPosterPage(){
@@ -8470,7 +8477,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-30-vstimeout';
+  const PSB_BUILD = '2026-06-30-posters';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
