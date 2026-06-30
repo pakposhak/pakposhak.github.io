@@ -158,7 +158,10 @@ function main(){
     if (desc.length > DESC_CAP) desc = desc.slice(0, DESC_CAP).replace(/\s+\S*$/, '') + '…';
     const rows = buildRows(o.sections);
     const imgs = Array.isArray(o.imgs) ? o.imgs.filter(x => typeof x === 'string' && /^https?:/i.test(x)).slice(0, 12) : [];
-    const perSc = Array.isArray(o.sc) ? o.sc.filter(x => typeof x === 'string' && /^https?:/i.test(x)) : [];
+    // Filter sc[] from PDP scrape: reject Shopify CDN thumbnail variants (< 200px suffix like _40x40.)
+    // which are color swatches, not size charts. 200px+ and non-suffixed images are kept.
+    const scRaw = Array.isArray(o.sc) ? o.sc.filter(x => typeof x === 'string' && /^https?:/i.test(x)) : [];
+    const perSc = scRaw.filter(u => { const m = u.match(/_(\d+)x(\d+)\./); return !m || (parseInt(m[1]) >= 200 && parseInt(m[2]) >= 200); });
     const { sc, scTable } = resolveSC(o.b, o.u, perSc);
     if (!desc && !rows.length && !imgs.length && !sc.length && !scTable.length){ empty++; continue; }
     const j = JSON.stringify({ desc, sections: rows, imgs, sc, scTable });
