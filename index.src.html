@@ -17,6 +17,10 @@
   <meta name="referrer" content="strict-origin-when-cross-origin"/>
   <!-- Clickjacking guard: GitHub Pages can't send X-Frame-Options, so refuse to run inside a frame. -->
   <script>if(self!==top){try{top.location=self.location;}catch(e){document.documentElement.style.visibility='hidden';}}</script>
+  <!-- Stuck-overlay guard (lives in the network-FIRST HTML so it reaches even a stale-cached
+       app.js): if the app is resumed from the back-forward cache, never come back to a frozen
+       full-screen loading overlay — force it hidden and unlock scroll. -->
+  <script>window.addEventListener('pageshow',function(){var o=document.getElementById('psVisLoad');if(o)o.hidden=true;try{document.body.style.overflow='';}catch(e){}});</script>
   <!-- Always load the freshest version — this file changes often and GitHub
        Pages otherwise lets browsers cache the HTML for ~10 min, so operators
        were seeing stale builds after a deploy. -->
@@ -257,7 +261,7 @@
       <button type="button" class="ps-vis-cancel" onclick="psVisualSheet(false)" data-i18n="vis_cancel">Cancel</button>
     </div>
   </div>
-  <div id="psVisLoad" class="ps-vis-load" hidden aria-live="polite"><div class="ps-vis-spin" aria-hidden="true"></div><div data-i18n="vis_loading">Finding similar styles</div></div>
+  <div id="psVisLoad" class="ps-vis-load" hidden aria-live="polite" onclick="if(event.target===this)psLoadCancel()"><div class="ps-vis-spin" aria-hidden="true"></div><div data-i18n="fit_loading">Finding your size</div><button type="button" class="ps-vis-loadcancel" onclick="psLoadCancel()" data-i18n="vis_cancel">Cancel</button></div>
 
   <!-- Fit Assistant: set a profile (usual size in a brand, or measurements) → shop your size -->
   <div id="psFitSheet" class="ps-vis-sheet" hidden role="dialog" aria-label="Fit Assistant">
