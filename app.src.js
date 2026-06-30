@@ -3540,7 +3540,8 @@
   function psbHasUnsaved(){ return Object.keys(drafts).length > 0 || (typeof cart !== 'undefined' && cart.length > 0); }
   // Tab close / refresh / desktop nav: the browser's own generic "Leave site?" prompt.
   window.addEventListener('beforeunload', function(e){
-    if(psbHasUnsaved()){ e.preventDefault(); e.returnValue = ''; }
+    if(psbHasUnsaved() && !window._psCatNav){ e.preventDefault(); e.returnValue = ''; }
+    window._psCatNav = false;
   });
   // Mobile BACK button / gesture: beforeunload is unreliable for it, so trap it with
   // the History API — keep one spare history entry; when Back pops it, confirm if
@@ -5576,6 +5577,8 @@
     psSearchPageSug('');
     try{ psSpRenderPoster(); }catch(e){}
     try{ psSpFillTiles(); }catch(e){}
+    try{ var _rd=document.getElementById('psSpRemind'); if(_rd) _rd.hidden=(_psSearchMode!=='brands'); }catch(e){}
+    setTimeout(function(){ try{ psSpRenderPoster(); }catch(e){}; }, 150);
   }
   function psSearchClose(){
     var ov=document.getElementById('psSearchPage'); if(ov) ov.setAttribute('hidden','');
@@ -5755,7 +5758,7 @@
   // Real per-brand, per-gender size labels (Khaadi "12 / M", Bonanza 8/10/12, Furor 30/32/40, …),
   // built from fit-data.json and INJECTED by build.ps1 (replaces the "FITSIZES_PLACEHOLDER" string
   // with the fit-sizes.json object literal). Falls back to generic if a brand has no chart.
-  var PS_FIT_SIZES = "FITSIZES_PLACEHOLDER";
+  var PS_FIT_SIZES = {"w":{"Sapphire":["XS","S","M","L","XL"],"Diners":["XS","S","M","L","XL"],"Engine":["XS","S","M","L","XL"],"Khaadi":["6 / XXS","8 / XS","10 / S","12 / M","14 / L","16 / XL"],"Sana Safinaz":["XS","S","M","L","XL"],"Bonanza Satrangi":["8","10","12","14","16"],"Sania Maskatiya":["XS","S","M","L","XL","ML"],"Sitara Studio":["XS","S","M","L","XL"],"Khas Stores":["6 / XS","8 / S","10 / M","12 / L","14 / XL"],"Zellbury":["S","M","L","XL"],"Wear Ochre":["S","M","L","XL"],"Tawakkal Fabrics":["S","M","L","XL"],"Generation":["6","8","10","12","14","16"],"Lulusar":["XS","S","M","L","XL","XXL"],"Rang Rasiya":["XS","S","M","L","XL"],"Chinyere":["S","M","L"],"Republic Womenswear":["S","M","L","XL"],"Ego":["XS","S","M","L","XL"],"Lawrencepur":["XS","S","M","L","XL","XXL","14.5","15","15.5","16","16.5","17","17.5","18","29","29.5a","29.5b","29.75","30","30.25","30.5a","30.5b","32","34","36","38","40","42","44"],"Shahzeb Saeed":["32","34","36","38","40","42"],"Coco by Zara Shahjahan":["S","M","L"],"Emaan Adeel":["S","M","L"],"Al-Deebaj":["S","M","L","XL","XXL"],"The Hijab Company":["S","M","L","52","54","56","58","60"],"Kross Kulture":["XS","S","M","L","XL"],"Nishat Linen":["XS","S","M","L","XL"],"Iznik Fashions":["XS","S","M","L","XL"],"Mina Hasan":["XS","S","XL","M / L","S / M"],"Zara Shahjahan":["XS","S","M","L","XL"],"Akbar Aslam":["XS","S","M","L","XL"],"Black Camels":["XS","S","M","L","XL","XXL"],"One Kids":["S","M","L","XL","24","26","28","30","32","34","36"],"Cross Stitch":["XXS","XS","S","M","L"],"Sha Posh":["XS","S","M","L","XL"],"Dynasty Fabrics":["XS","S","M","L","XL"],"Armas":["XS","S","M","L","XL"],"Tassels":["XS","S","M","L","XL"],"Threads & Motifs":["XS","S","M","L","XL"],"Imrozia Premium":["XS","S","M","L","XL"],"Silayi Pret":["S","M","L","XL"],"Kashee's Boutique":["XS","S","M","L","XL","1-large","1X","2X"],"Jeem":["S","M","L"],"Zuruj":["S","M","L","XL"],"Roheenaz":["XS","S","M","L","XL"],"ECS":["S","M","L"],"Mausummery":["S","M","L"],"Stylo":["XS / 8","S / 10","M / 12","L / 14","XL / 16","26","28","30","32","34","35","36","37","38","39","40","41","42","43","44"]},"m":{"Sapphire":["XS","S","M","L","XL"],"Diners":["XS","S","M","L","XL","XXL","XXXL","4XL","5XL","30","32","34","36","38","40","42"],"Engine":["S","M","L","XL","XXL","30","32","34","36","38"],"Khaadi":["6 / XXS","8 / XS","10 / S","12 / M","14 / L","16 / XL"],"Sana Safinaz":["XS","S","M","L","XL"],"Furor":["30","32","34","36","38","40"],"Sania Maskatiya":["XS","S","M","L","XL","ML"],"Royal Tag":["32","34","36","38","40"],"Khas Stores":["6 / XS","8 / S","10 / M","12 / L","14 / XL"],"Zellbury":["S","M","L","XL"],"Wear Ochre":["S","M","L","XL"],"Charcoal":["S","M","L","XL","XXL"],"CRUSH Menswear":["XS","S","M","L","XL","XXL","XXXL"],"Chinyere":["S","M","L"],"Republic Womenswear":["S","M","L","XL"],"Monark":["S","M","L","XL","XXL","15","15.5","16","16.5","17","30","32","34","36","38","40","42"],"Ego":["XS","S","M","L","XL"],"Lawrencepur":["XS","XXL","14.5","15","15.5","16","16.5","17","17.5","18","29","29.5a","29.5b","29.75","30","30.25","30.5a","30.5b","32","34","36","38","40","42","44","46 / S","48 / M","50 / L","52 / XL","54 / 2XL","56 / 3XL","58 / 4XL"],"Shahzeb Saeed":["S","M","L","XL","XXL","30","32","34","36","38","40"],"Coco by Zara Shahjahan":["S","M","L"],"Emaan Adeel":["S","M","L"],"Al-Deebaj":["XS","S","M","L","XL"],"The Hijab Company":["S","M","L"],"Kross Kulture":["XS","S","M","L","XL"],"Iznik Fashions":["XS","S","M","L","XL"],"Amir Adnan":["S","M","L","XL","XXL"],"Zara Shahjahan":["XS","S","M","L","XL"],"Akbar Aslam":["XS","S","M","L","XL"],"Black Camels":["XS","S","M","L","XL"],"One Kids":["S","M","L","XL","XXL"],"Cross Stitch":["XXS","XS","S","M","L"],"Dynasty Fabrics":["XS","S","M","L","XL"],"Armas":["XS","S","M","L","XL"],"Threads & Motifs":["XS","S","M","L","XL"],"Imrozia Premium":["XS","S","M","L","XL"],"Silayi Pret":["S","M","L","XL"],"Jeem":["S","M","L"],"Zuruj":["S","M","L","XL"],"Roheenaz":["XS","S","M","L","XL"],"ECS":["S","M","L"],"Mausummery":["S","M","L"]}};
   if(typeof PS_FIT_SIZES!=='object'||!PS_FIT_SIZES) PS_FIT_SIZES={w:{},m:{}};
   var PS_FIT_SIZES_GENERIC=["XS","S","M","L","XL","XXL"];
   var psFitG='w', psFitFitPref='regular', psFitMeasOpen=false;
@@ -8605,7 +8608,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-30-visfix';
+  const PSB_BUILD = '2026-06-30-uifix';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

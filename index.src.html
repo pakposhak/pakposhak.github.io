@@ -162,7 +162,7 @@
     <button type="button" class="ps-gen-cat" id="psFiltBtn" aria-label="Filters and sort" title="Filters and sort" aria-expanded="false" onclick="psFilters()">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18l-7 8v6l-4-2v-4z"/></svg>
     </button>
-    <a class="ps-gen-cat" id="psCatsBtn" href="categories.html" aria-label="All categories" title="All categories">
+    <a class="ps-gen-cat" id="psCatsBtn" href="categories.html" onclick="window._psCatNav=true" aria-label="All categories" title="All categories">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zm10 0h6v6h-6zM4 14h6v6H4zm10 0h6v6h-6z"/></svg>
     </a>
     <span class="ps-gen-ind" aria-hidden="true"></span>
@@ -222,26 +222,25 @@
       <!-- Page-aware search poster (Home = Fit Assistant, Luxe = designer search, Brand = price check) -->
       <div class="ps-sp-poster" id="psSpBanner" hidden></div>
       <!-- Price-check banner (our USP): paste any listed-brand link → see its real price in PKR -->
-      <div class="ps-sp-remind">
+      <div class="ps-sp-remind" id="psSpRemind" hidden>
         <div class="ps-sp-remind-t" data-i18n="sp_remind_t">Check any product's price in PKR</div>
         <div class="ps-sp-remind-d" data-i18n="sp_remind_d">Found it on a brand's own site? Paste the link to see the real price of any listed brand in PKR.</div>
         <button type="button" class="ps-sp-paste" onclick="psSearchClose();try{pasteAndAdd('urlInput', handleAddUrl)}catch(e){}" data-i18n="sp_paste">Paste a product link</button>
       </div>
 
-      <!-- Curated collections — editorial edits, each mapped to a real filter (filled by psSpFillTiles) -->
-      <div class="ps-sp-hd" data-i18n="sp_colls_hd">Curated collections</div>
-      <div class="ps-sp-grid" id="psSpColls"></div>
-
       <div class="ps-sp-tools">
         <button type="button" class="ps-sp-tool" onclick="psVisualSearch()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V8a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.5"/></svg>
+          <div class="ps-sp-tool-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V8a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.5"/></svg></div>
           <span data-i18n="sp_visual">Visual search</span><small data-i18n="vis_sub">Find pieces that look like your photo</small>
         </button>
         <button type="button" class="ps-sp-tool" onclick="psFitAssistant()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg>
+          <div class="ps-sp-tool-ico ps-sp-tool-ico-fit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg></div>
           <span data-i18n="sp_fit">Fit assistant</span><small data-i18n="fit_sub">Find your size in any brand</small>
         </button>
       </div>
+      <!-- Curated collections — editorial edits, each mapped to a real filter (filled by psSpFillTiles) -->
+      <div class="ps-sp-hd" data-i18n="sp_colls_hd">Curated collections</div>
+      <div class="ps-sp-grid" id="psSpColls"></div>
       <button type="button" class="ps-sp-brands" onclick="psSearchClose();switchBrowse('brands')" data-i18n="sp_brands">Browse all 150+ brands ›</button>
     </div>
   </div>
@@ -271,7 +270,7 @@
   <div id="psFitSheet" class="ps-vis-sheet" hidden role="dialog" aria-label="Fit Assistant">
     <div class="ps-vis-back" onclick="psFitSheet(false)"></div>
     <div class="ps-vis-card ps-fit-card">
-      <div class="ps-vis-hd"><span data-i18n="fit_title">Fit Assistant</span><small data-i18n="fit_sub">Find your size in any brand</small></div>
+      <div class="ps-vis-hd"><button type="button" class="ps-vis-close" onclick="psFitSheet(false)" aria-label="Close">&#x2715;</button><span data-i18n="fit_title">Fit Assistant</span><small data-i18n="fit_sub">Find your size in any brand</small></div>
       <div class="ps-fit-seg" id="psFitGenderSeg" role="tablist">
         <button type="button" class="on" data-g="w" onclick="psFitGender('w')" data-i18n="gen_women">Women</button>
         <button type="button" data-g="m" onclick="psFitGender('m')" data-i18n="gen_men">Men</button>
