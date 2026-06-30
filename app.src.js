@@ -6026,11 +6026,11 @@
   const PS_SP_COLLECTIONS = [
     { id:'trends',   en:'Bangladeshi Trends', bn:'বাংলাদেশি ট্রেন্ড',  e:'🔥', new:true },
     { id:'festive',  en:'Eid & Festive',      bn:'ঈদ ও উৎসব',         e:'✨', cats:['formal_emb_3pc','formal_emb_2pc','heavy_formal_3pc','handmade_emb'] },
-    { id:'lawn',     en:'Summer Lawn',        bn:'সামার লন',          e:'🌸', cats:['lawn_3pc_unstitch','pret_3pc','unstitch_3pc_emb'] },
+    { id:'lawn',     en:'Summer Lawn',        bn:'সামার লন',          e:'🌸', img:'https://cdn.shopify.com/s/files/1/0740/1753/8280/files/LH261-016-AG.jpg?v=1778051058', cats:['lawn_3pc_unstitch','pret_3pc','unstitch_3pc_emb'] },
     { id:'wedding',  en:'Wedding Guest',      bn:'ওয়েডিং গেস্ট',       e:'💍', cats:['saree','lehenga','formal_emb_3pc','bridal'] },
     { id:'coord',    en:'Co-ord Sets',        bn:'কো-অর্ড সেট',        e:'🧶', cats:['shirt_trouser_2pc','coord_western'] },
     { id:'budget',   en:'Budget Finds',       bn:'বাজেট ফাইন্ডস',      e:'🏷️', prices:[0,1] },
-    { id:'designer', en:'Designer Picks',     bn:'ডিজাইনার পিকস',      e:'👑', prices:[5,6] },
+    { id:'designer', en:'Designer Picks',     bn:'ডিজাইনার পিকস',      e:'👑', img:'https://cdn.shopify.com/s/files/1/0690/7320/7593/files/AJULFI-08F.webp?v=1769249152', prices:[5,6] },
     { id:'brands',   en:'Famous Brands',      bn:'নামকরা ব্র্যান্ড',    e:'🛍️', goBrands:true, imgBrands:['Khaadi','Sapphire'] }
   ];
   let _psSpCollImg = {};
@@ -6048,8 +6048,8 @@
     const cw = document.getElementById('psSpColls'); if(!cw) return;
     cw.innerHTML = PS_SP_COLLECTIONS.map(function(c){
       const lbl = (_lang==='bn' && c.bn) ? c.bn : c.en;
-      const cached = _psSpCollImg[c.id] && _psSpCollImg[c.id].u;
-      const img = cached ? '<img loading="lazy" src="'+esc(thumbUrl(cached))+'" alt="'+esc(lbl)+'" onerror="this.remove()">' : '';
+      const cached = c.img || (_psSpCollImg[c.id] && _psSpCollImg[c.id].u);
+      const img = cached ? '<img loading="lazy" src="'+esc(c.img||thumbUrl(cached))+'" alt="'+esc(lbl)+'" onerror="this.remove()">' : '';
       return '<button type="button" class="ps-sp-tile" data-coll="'+esc(c.id)+'" onclick="psSpPickColl(this.getAttribute(\'data-coll\'))" title="'+esc(lbl)+'">'
         + '<span class="ps-sp-tile-img" data-emoji="'+esc(c.e||'🛍️')+'">'+img+'</span>'
         + '<span class="ps-sp-tile-lbl">'+esc(lbl)+'</span></button>';
@@ -6586,7 +6586,7 @@
     { g:'w', key:'kurti_1pc_unstitch',   en:'Unstitched 1pc',  bn:'আনস্টিচড ১ পিস',    e:'🧵' },
     { g:'w', key:'shirt_dupatta_2pc', cats:['shirt_dupatta_2pc','shirt_dupatta_2pc_unstitch','pret_2pc_emb'], en:'Stitched 2 pc', bn:'সেলাই করা ২ পিস', e:'👚' },
     { g:'w', key:'shirt_trouser_2pc', cats:['shirt_trouser_2pc','coord_western','shirt_trouser_2pc_unstitch'], en:'Co-ord Set', bn:'কো-অর্ড সেট', e:'🧶' },
-    { g:'w', key:'kurti_1pc',            en:'Kurti / 1pc',     bn:'কুর্তি / ১ পিস',    e:'👕' },
+    { g:'w', key:'kurti_1pc', img:'https://cdn.shopify.com/s/files/1/0650/8249/1105/files/S26B4562_HoneyPeach_Cover.jpg?v=1782213834', en:'Kurti / 1pc',     bn:'কুর্তি / ১ পিস',    e:'👕' },
     { g:'w', key:'western_top', img:'https://pk.sapphireonline.pk/dw/image/v2/BKSB_PRD/on/demandware.static/-/Sites-sapphire-master-catalog/default/dw55e0ccc5/images/June26/10thJune26/WTOP26V50018_999_2.jpg?sw=500', en:'Western Top',     bn:'ওয়েস্টার্ন টপ',     e:'👚' },
     { g:'w', key:'womens_trouser',       en:'Trousers',        bn:'ট্রাউজার',         e:'👖' },
     { g:'w', key:'maxi_dress', img:'https://cdn.shopify.com/s/files/1/0581/7234/2437/files/DSC06392.jpg?v=1770377155', en:'Maxi / Dress',    bn:'ম্যাক্সি / ড্রেস',   e:'👗' },
@@ -6612,7 +6612,7 @@
     { g:'m', key:'mens_unstitched', img:'https://cdn.shopify.com/s/files/1/0872/1278/5848/files/MU2PBW25A9O4-052A9509.jpg?v=1780385727',      en:'Unstitched',      bn:'আনস্টিচড',         e:'🧵' },
     { g:'m', key:'couple_collection', img:'https://cdn.shopify.com/s/files/1/0555/3799/1852/files/C76A6818_result.jpg?v=1777910598', en:'Couple Collection', bn:'কাপল কালেকশন',    e:'💑' },
     // ── KIDS ──
-    { g:'k', key:'kids_girls_eastern', img:'https://cdn.shopify.com/s/files/1/0488/9201/8848/files/BK12604GEWS29668_1.jpg?v=1782194593',   en:'Girls Eastern',   bn:'মেয়েদের ইস্টার্ন',  e:'👧' },
+    { g:'k', key:'kids_girls_eastern', img:'https://cdn.shopify.com/s/files/1/0841/3796/7889/files/50109_1.webp?v=1781678305',   en:'Girls Eastern',   bn:'মেয়েদের ইস্টার্ন',  e:'👧' },
     { g:'k', key:'kids_boys_eastern',    en:'Boys Eastern',    bn:'ছেলেদের ইস্টার্ন',   e:'👦' },
     { g:'k', key:'kids_girls_western', img:'https://cdn.shopify.com/s/files/1/0488/9201/8848/files/BK12602LGWD7591_1.jpg?v=1782194142',   en:'Girls Western',   bn:'মেয়েদের ওয়েস্টার্ন', e:'👧' },
     { g:'k', key:'kids_boys_western', img:'https://cdn.shopify.com/s/files/1/0581/7234/2437/files/DSC02072.jpg?v=1770813392',    en:'Boys Western',    bn:'ছেলেদের ওয়েস্টার্ন',  e:'👦' },
@@ -6957,8 +6957,8 @@
     sale: { all:'https://cdn.shopify.com/s/files/1/0623/6481/1444/files/BP181-9-2P25_1.jpg?v=1782730607', w:'https://cdn.shopify.com/s/files/1/0740/1753/8280/files/SS26SGE469P2T_1.jpg?v=1782709509', m:'https://cdn.shopify.com/s/files/1/0872/1278/5848/files/MP2PBBW25ADJ16_2.jpg?v=1778840041', k:'https://cdn.shopify.com/s/files/1/0488/9201/8848/files/BK12601BEWS29007_1.jpg?v=1782193509' },
     budget: { all:'https://cdn.shopify.com/s/files/1/0730/0972/5664/files/TYP00721.jpg?v=1762516781', w:'https://cdn.shopify.com/s/files/1/0660/4164/3225/files/DSC05376.jpg?v=1782555714', m:'https://cdn.shopify.com/s/files/1/0551/9763/0638/files/6F5A8695.jpg?v=1781533053', k:'https://cdn.shopify.com/s/files/1/0568/3308/1529/files/DSC00243copy2.jpg?v=1777128149' },
     eid: { all:'https://cdn.shopify.com/s/files/1/0262/9058/5672/files/AL-LS-625_4_-Copy.jpg?v=1778675077', w:'https://cdn.shopify.com/s/files/1/0813/1179/3453/files/0000354_black-peplum.jpg?v=1694011257' },
-    lawn: { all:'https://cdn.shopify.com/s/files/1/0730/0972/5664/files/1_228021bf-6f71-4e0e-a633-cfa377a3e695.jpg?v=1755502218', w:'https://cdn.shopify.com/s/files/1/0650/8249/1105/files/S26B4299_Bronze_cover.jpg?v=1775739374' },
-    winter: { all:'https://cdn.shopify.com/s/files/1/0650/8249/1105/files/S26C5111_JetBlack_Cover.jpg?v=1781891269', w:'https://cdn.shopify.com/s/files/1/0410/6702/0447/files/5_256d03a3-b9a2-4e0f-9e11-e021a33087df.jpg?v=1781349886' },
+    lawn: { all:'https://cdn.shopify.com/s/files/1/0740/1753/8280/files/LH261-016-AG.jpg?v=1778051058', w:'https://cdn.shopify.com/s/files/1/0740/1753/8280/files/LH261-015-AG.jpg?v=1778050917' },
+    winter: { all:'https://cdn.shopify.com/s/files/1/0620/8788/9062/files/MBK-2PW25-21UmberBrownFront_A.jpg?v=1764758027', w:'https://cdn.shopify.com/s/files/1/0620/8788/9062/files/MKDW2504Front_B.jpg?v=1757766130' },
     wedding: { all:'https://cdn.shopify.com/s/files/1/0730/0972/5664/files/EH5A1334.png?v=1758020713', w:'https://cdn.shopify.com/s/files/1/0660/4164/3225/products/2T9A5191_78f6abcd-14e2-4192-9554-d67325a5faa0.jpg?v=1749713727' },
     formal: { w:'https://cdn.shopify.com/s/files/1/0016/9476/1035/products/73_88050d03-c10d-4825-a233-ad26f2838582.jpg?v=1660810144' },
     couple: { all:'https://cdn.shopify.com/s/files/1/0508/8994/9390/files/111_f72fde77-5748-4b63-a44c-54f24de80244.png?v=1739807967', w:'https://cdn.shopify.com/s/files/1/0872/1278/5848/files/WP3PSFW25F9O3_5.jpg?v=1778494530', m:'https://cdn.shopify.com/s/files/1/0262/9058/5672/files/AL-K-1311-D_3.jpg?v=1782207840' },
@@ -6969,7 +6969,7 @@
     kids_girls: { k:'https://cdn.shopify.com/s/files/1/0789/3588/4095/files/Kids-Danedar-Chiffon-3PC-_-1178-Sha-Posh-Textile-238089468.jpg?v=1779196268' },
     kids_boys: { k:'https://cdn.shopify.com/s/files/1/0841/3796/7889/files/ECBTWCS5-064-_4_-thumbnail.jpg?v=1779726888' },
     kids_party: { k:'https://cdn.shopify.com/s/files/1/0587/2913/6326/files/GulabiKids_close.jpg?v=1748186268' },
-    luxe_designer: { all:'https://cdn.shopify.com/s/files/1/0524/3112/6721/files/10_9cfe7aed-1677-4419-a9d6-729355fda611.jpg?v=1764840701', w:'https://cdn.shopify.com/s/files/1/2277/5269/files/110_edacbdbb-240c-447d-a54f-b850c3397501.jpg?v=1752064548', m:'https://cdn.shopify.com/s/files/1/0841/3796/7889/files/ECMTCPT5-1016_5.jpg?v=1782302340', k:'https://cdn.shopify.com/s/files/1/0841/3796/7889/files/ECBTSS6-011_7_thumbnail.webp?v=1776757382' },
+    luxe_designer: { all:'https://cdn.shopify.com/s/files/1/0690/7320/7593/files/AJULFI-08F.webp?v=1769249152', w:'https://cdn.shopify.com/s/files/1/0740/1753/8280/files/SS25EXE141_1.jpg?v=1756728728', m:'https://cdn.shopify.com/s/files/1/0841/3796/7889/files/ECMTCPT5-1016_5.jpg?v=1782302340', k:'https://cdn.shopify.com/s/files/1/0841/3796/7889/files/ECBTSS6-011_7_thumbnail.webp?v=1776757382' },
     luxe_bridal: { all:'https://cdn.shopify.com/s/files/1/2402/3147/files/D-01.jpg?v=1744196264', w:'https://cdn.shopify.com/s/files/1/0650/8249/1105/files/S26C5198_Ecru_Cover.jpg?v=1780498829' },
     luxe_handwork: { w:'https://cdn.shopify.com/s/files/1/0660/4164/3225/files/35A9250.jpg?v=1779280845' },
   };
@@ -8681,7 +8681,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-30-fitclar';
+  const PSB_BUILD = '2026-06-30-imgfix';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
