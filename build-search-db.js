@@ -101,19 +101,13 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
   // Studio feed. Mirrors BD_FAMOUS in app.src.js (keep both lists in sync); a small quota of
   // OTHER brands is still interleaved (OTHER_PER_PAGE below) so the feed isn't a wall of just
   // these names. This file has no "store" concept — Luxe filtering happens client-side via
-  // price bucket — but the effect is naturally scoped anyway: PRICE_LO–PRICE_HI below never
-  // overlaps Luxe-range products, so that tier is a no-op there.
+  // price bucket, so this tier applies there too (no price-band exclusion — Danish 2026-07-02).
   const BD_FAMOUS = new Set([
     'Khaadi', 'Sana Safinaz', 'Maria B', 'Gul Ahmed', 'Sapphire', 'ETHNC', 'Asim Jofa', 'Bareeze', 'Alkaram Studio',
     'Limelight', 'Bonanza Satrangi', 'J. Junaid Jamshed', 'Nishat Linen', 'Edenrobe', 'Outfitters', 'Elan',
     'Zara Shahjahan', 'Sobia Nazir', 'Beechtree', 'Generation', 'Cross Stitch', 'Charizma', 'Baroque',
     'Sania Maskatiya', 'Mushq', 'Afrozeh', 'Faiza Saqlain', 'Zainab Chottani', 'Maryum N Maria',
   ]);
-  // "First view" price sweet spot (req 2026-07-02): most Studio demand + stock sits in this
-  // band, so prefer it in the default order. Products outside it aren't excluded, just ranked
-  // after.
-  const PRICE_LO = 2600, PRICE_HI = 6000;
-  const priceRank = bdt => (bdt >= PRICE_LO && bdt <= PRICE_HI) ? 0 : 1;
 
   // brand round-robin index, SCOPED PER CATEGORY (nth item of this brand WITHIN this category,
   // in source order). Category-scoped (not global) so any category filter OR keyword search
@@ -124,7 +118,7 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
   products.forEach(p => {
     const k = (p.b || '') + '|' + (p.cat || '');
     p._bi = (seen[k] = (seen[k] || 0) + 1) - 1;
-    p._bdt = landed(p.pkr, p.cat);   // precomputed once — reused by priceRank below AND the DB insert
+    p._bdt = landed(p.pkr, p.cat);   // precomputed once — reused by the DB insert below
   });
   // ── Default landing order (req 2026-06-20): NO new-first. A WOMEN-PRET hero feed with a
   // light, EVERY-PAGE accent of a couple sale + one-two girls items; everything else trails.
@@ -149,7 +143,6 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
     (heroRank(a.cat) - heroRank(b.cat))          // apparel before footwear/accessories
     || (genderRank(a.cat) - genderRank(b.cat))   // women first
     || (womenPretRank(a.cat) - womenPretRank(b.cat)) // within women: PRET first
-    || (priceRank(a._bdt) - priceRank(b._bdt))   // ৳2.6k-6k sweet spot first (no-op at Luxe prices)
     || (eastRank(a.cat) - eastRank(b.cat))       // EASTERN wear before western (every gender)
     || (a._bi - b._bi)                           // BRAND round-robin → varied suppliers (high priority)
     || (sizeOf(b) - sizeOf(a))                   // then best-stocked
