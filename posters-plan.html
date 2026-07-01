@@ -23,7 +23,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
 .btn-copy{background:#C9A96E;color:#1A1208;border:none;border-radius:9px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
 .btn-copy:hover{opacity:.9}
 
-.wrap{max-width:860px;margin:0 auto;padding:18px 14px 0}
+.wrap{max-width:1080px;margin:0 auto;padding:14px 14px 0;display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}
+.leftcol{flex:1 1 440px;min-width:300px;max-width:520px}
+.rightcol{flex:1 1 360px;min-width:300px}
 
 /* ── Big hero preview ── */
 .pageband{display:flex;align-items:center;gap:10px;margin:0 2px 10px}
@@ -32,25 +34,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
 .pageband .rt{font-size:11px;font-family:ui-monospace,Consolas,monospace;background:#E1D7BF;color:#4A3F22;border-radius:5px;padding:2px 8px}
 .pageband .pd{font-size:11.5px;color:#6B5A3E}
 
-.hero{position:relative;width:100%;aspect-ratio:2.1/1;border-radius:16px;overflow:hidden;background:linear-gradient(135deg,#0b3a22,#0a5230);box-shadow:0 10px 34px -10px rgba(0,0,0,.45)}
+.hero{position:relative;width:100%;aspect-ratio:2.1/1;border-radius:14px;overflow:hidden;background:linear-gradient(135deg,#0b3a22,#0a5230);box-shadow:0 8px 26px -10px rgba(0,0,0,.45);container-type:inline-size}
 .hero-img{position:absolute;inset:0;background-size:cover;background-position:center 22%}
 .hero-ov{position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,18,10,.86) 0%,rgba(4,18,10,.56) 44%,rgba(4,18,10,.12) 100%)}
 .hero-tx{position:absolute;left:0;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;padding:0 6% ;max-width:80%}
-.hero-t{color:#fff;font-size:2.1rem;font-weight:800;line-height:1.16;letter-spacing:.2px;text-shadow:0 2px 10px rgba(0,0,0,.55)}
-.hero-s{color:#F1E8CF;font-size:1.02rem;font-weight:600;line-height:1.4;margin-top:10px;text-shadow:0 1px 6px rgba(0,0,0,.55);max-width:92%}
+.hero-t{color:#fff;font-size:6cqw;font-weight:800;line-height:1.14;letter-spacing:.2px;text-shadow:0 2px 10px rgba(0,0,0,.55)}
+.hero-s{color:#F1E8CF;font-size:2.9cqw;font-weight:600;line-height:1.38;margin-top:1.6cqw;text-shadow:0 1px 6px rgba(0,0,0,.55);max-width:92%}
 .hero-badge{position:absolute;top:12px;left:14px;z-index:3;background:rgba(0,0,0,.5);color:#F4ECD6;font-size:11.5px;font-weight:700;border-radius:20px;padding:4px 12px;backdrop-filter:blur(4px)}
 .hero-dots{position:absolute;bottom:12px;right:16px;display:flex;gap:6px;z-index:3}
 .hdot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.45)}
 .hdot.on{background:#E7CE97;width:22px;border-radius:5px}
 
-.posnav{display:flex;align-items:center;justify-content:center;gap:14px;margin:12px 0 4px}
+.posnav{display:flex;align-items:center;justify-content:center;gap:14px;margin:9px 0 0}
 .posnav .arr{width:40px;height:40px;border-radius:10px;border:1.5px solid #C4AE80;background:#fff;color:#0B261C;font-size:20px;cursor:pointer}
 .posnav .arr:hover{background:#F5EEDD}
 .posnav .lab{font-size:13px;color:#6B5A3E;min-width:150px;text-align:center}
 
 /* ── Editable panel ── */
-.panel{background:#FBF7EE;border:1.5px solid #E3D9C0;border-radius:16px;padding:16px;margin-top:14px}
-.prow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #EBE1CB}
+.panel{background:#FBF7EE;border:1.5px solid #E3D9C0;border-radius:14px;padding:14px}
+.prow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #EBE1CB}
 .prow .grp{display:flex;align-items:center;gap:6px}
 .prow label{font-size:11px;font-weight:700;color:#5F5238;text-transform:uppercase;letter-spacing:.04em}
 .prow select{background:#fff;border:1.5px solid #D8CCAE;border-radius:8px;padding:7px 9px;font-size:12.5px;font-family:inherit;color:#1A1208;cursor:pointer}
@@ -59,11 +61,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
 .ord button:disabled{opacity:.3;cursor:default}
 .ord button:not(:disabled):hover{background:#F5EEDD}
 
-.f2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:560px){.f2{grid-template-columns:1fr}}
-.fg{margin-bottom:12px;display:flex;flex-direction:column;gap:5px}
-.fg label{font-size:11px;font-weight:700;color:#5F5238;text-transform:uppercase;letter-spacing:.04em}
-.fg textarea{width:100%;background:#fff;border:1.5px solid #D8CCAE;border-radius:9px;color:#1A1208;font-family:inherit;font-size:13.5px;padding:9px 11px;line-height:1.4;resize:vertical;min-height:44px}
+.fg{margin-bottom:9px;display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:10.5px;font-weight:700;color:#5F5238;text-transform:uppercase;letter-spacing:.04em}
+.fg textarea{width:100%;background:#fff;border:1.5px solid #D8CCAE;border-radius:9px;color:#1A1208;font-family:inherit;font-size:13px;padding:7px 10px;line-height:1.35;resize:vertical;min-height:36px}
 .fg textarea:focus{outline:none;border-color:#A8842B;background:#fffdf7}
 .fg textarea.bn{font-size:14px}
 .fg textarea.remarks{background:#FFFCE6;border-color:#E8D888;font-style:italic;color:#5F5238}
@@ -92,7 +94,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
 .filters .fbtn{background:#F3ECDB;border:1.5px solid #D8CCAE;border-radius:20px;padding:7px 14px;font-size:12.5px;font-weight:700;color:#5F5238;cursor:pointer;font-family:inherit}
 .filters .fbtn.on{background:#0B261C;color:#E7CE97;border-color:#0B261C}
 .filters .fbtn b{font-weight:800}
-.chips{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px}
+.chips{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:10px}
 .chip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1.5px solid #D8CCAE;border-radius:20px;padding:9px 15px;font-size:12.5px;font-weight:700;color:#6B5A3E;cursor:pointer;font-family:inherit}
 .chip.on.social{background:#E7F0FB;border-color:#2C6C9E;color:#1B4E77}
 .chip.on.later{background:#FBF0E0;border-color:#C9A96E;color:#8A6A1E}
@@ -126,15 +128,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
 </div>
 
 <div class="wrap">
-  <div class="pageband" id="pageband"></div>
-  <div class="hero" id="hero"></div>
-
-  <div class="posnav">
-    <button class="arr" onclick="go(-1)">&lsaquo;</button>
-    <div class="lab" id="posLab"></div>
-    <button class="arr" onclick="go(1)">&rsaquo;</button>
+  <div class="leftcol">
+    <div class="pageband" id="pageband"></div>
+    <div class="hero" id="hero"></div>
+    <div class="posnav">
+      <button class="arr" onclick="go(-1)">&lsaquo;</button>
+      <div class="lab" id="posLab"></div>
+      <button class="arr" onclick="go(1)">&rsaquo;</button>
+    </div>
   </div>
-
+  <div class="rightcol">
   <div class="panel">
     <div class="prow">
       <div class="grp">
@@ -146,8 +149,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
         <span style="font-size:12px;color:#6B5A3E" id="ordLab"></span>
       </div>
       <div class="grp" style="margin-left:auto">
-        <label>Move to page</label>
-        <select id="moveSel" onchange="if(this.value)moveToPage(this.value)"></select>
+        <label>Move / add to</label>
+        <select id="moveSel" onchange="onMoveSel(this.value)"></select>
       </div>
     </div>
 
@@ -168,6 +171,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
       <button class="b-add" onclick="addHere()">+ Add poster to this page</button>
       <button class="b-del" onclick="delPoster()">✕ Delete this poster</button>
     </div>
+  </div>
   </div>
 </div>
 
@@ -347,9 +351,15 @@ function render(){
   document.getElementById('upBtn').disabled = ref.i===0;
   document.getElementById('dnBtn').disabled = ref.i===onPage-1;
 
-  // move-to-page options
-  document.getElementById('moveSel').innerHTML='<option value="">Move to another page…</option>'
-    +PAGE_META.filter(function(m){return m.id!==ref.pid;}).map(function(m){return '<option value="'+m.id+'">'+m.emoji+' '+m.label+'</option>';}).join('');
+  // move / add-to options (pages + collections)
+  var pageOpts = PAGE_META.filter(function(m){return m.id!==ref.pid;}).map(function(m){return '<option value="page:'+m.id+'">'+m.emoji+' '+m.label+'</option>';}).join('');
+  document.getElementById('moveSel').innerHTML =
+    '<option value="">Move / add to…</option>'
+    +'<optgroup label="Move to another page">'+pageOpts+'</optgroup>'
+    +'<optgroup label="Add to collection">'
+      +'<option value="tag:social"'+(p.social?' disabled':'')+'>📱 Social media'+(p.social?'  ✓ added':'')+'</option>'
+      +'<option value="tag:later"'+(p.later?' disabled':'')+'>🔖 Use later'+(p.later?'  ✓ added':'')+'</option>'
+    +'</optgroup>';
 }
 
 function renderHero(meta, p, arr, idx){
@@ -400,6 +410,15 @@ function reorder(dir){
   var tmp=arr[i]; arr[i]=arr[j]; arr[j]=tmp; saveState();
   // follow the poster to its new flat index
   flat += dir; render();
+}
+function onMoveSel(v){
+  if(!v) return;
+  if(v.indexOf('page:')===0){ moveToPage(v.slice(5)); return; }
+  if(v.indexOf('tag:')===0){
+    var fl=v.slice(4), ref=curRef(); if(!ref)return;
+    pages[ref.pid][ref.i][fl]=true; saveState(); render();
+    toast(fl==='social'?'📱 Added to Social media — use the “Show” filter above to view the collection.':'🔖 Saved for later — use the “Show” filter above to view the collection.');
+  }
 }
 function moveToPage(toPid){
   var ref=curRef(); if(!ref)return;
