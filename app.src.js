@@ -2507,7 +2507,7 @@
       dm_title:'Choose size & confirm price', dm_addbag:'Add to Bag', dm_addbag_n:'Add {n} items to Bag', dc_final:'Final price:',
       bag_proceed:'Proceed to My Details →', bag_empty:'Your bag is empty', bag_empty_sub:'Browse Pakistani brands and tap + Add to drop items here.', bag_browse:'🛍️ Browse products', bag_added:'Added to your bag', bag_view:'View Bag',
       co_bag:'Bag', co_details:'Details', co_review:'Review', co_pay:'Pay',
-      nav_home:'Home', nav_brands:'Brands', nav_cart:'Cart', nav_how:'How To', nav_guide:'Guide', nav_wish:'Wishlist', nav_help:'Help',
+      nav_home:'Studio', nav_brands:'Brands', nav_cart:'Cart', nav_how:'How To', nav_guide:'Guide', nav_wish:'Wishlist', nav_help:'Help',
       nav_luxe:'Luxe', nav_bag:'Bag', nav_pricecheck:'Price Check',
       tl_help:'New here? Start with these:', tl_faq:'❓ How it works & our promise', tl_track:'📦 Track an order', tl_weights:'⚖️ Shipping weights', tl_wa:'💬 Chat on WhatsApp',
       addmore_hint:'✓ Item saved! Add another product, or continue to your details.', addmore_btn:'➕ Add Another Product',
@@ -4877,6 +4877,7 @@
   let psFacetBrands = null;      // brand names present (from /search/facets)
   let psFacetCats = null;        // Set of categories present (from /search/facets)
   let psFacetColours = null;     // [{color, n}] present in catalog (from /search/facets)
+  let psFacetCatsFiltered = null; // cats from last API response when a collection is active; null = unfiltered
 
   // ── Sold-out auto-hide ──────────────────────────────────────────────────
   // When the LIVE add pipeline finds a product fully sold out (it sold out AFTER
@@ -6250,9 +6251,9 @@
     try{ psQuery=''; psSizeQ=''; }catch(e){}
     var _sm=document.getElementById('psSearchMobile'), _sd=document.getElementById('psSearchDesktop');
     if(_sm) _sm.value=''; if(_sd) _sd.value='';
-    psSel = { prices:new Set(c.prices||[]), cats:new Set(c.cats||[]), brands:new Set() };
+    psSel = { prices:new Set(c.prices||[]), cats:new Set(c.cats||[]), brands:new Set(), colors:new Set(psSel.colors||[]) };
     try{ psSaleOnly = !!c.sale; psNewOnly = !!c.new; psSort = c.sort || ''; }catch(e){}
-    try{ psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); }catch(e){}
+    try{ psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildColourFilter(); psBuildSort(); }catch(e){}
     try{ psApply(); }catch(e){}
     try{ psScrollGridUnderCarousel(); }catch(e){}
   }
