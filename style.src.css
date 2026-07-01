@@ -1052,7 +1052,7 @@
     .ps-wish:active{transform:scale(0.86)}
     .ps-wish.on{color:#ff5a7a;background:rgba(10,22,40,0.7)}
     /* heart in the detail popup actions row */
-    .ps-d-wishbtn{flex:0 0 auto;position:static;width:46px;height:auto;min-width:46px;border-radius:9px;background:var(--gold-dim);border:1.5px solid var(--gold-bdr);color:var(--gold);font-size:1.15rem;padding:11px 0}
+    .ps-d-wishbtn{flex:0 0 auto;position:static;width:38px;height:38px;min-width:38px;border-radius:9px;background:var(--gold-dim);border:1.5px solid var(--gold-bdr);color:var(--gold);font-size:1rem;padding:0;display:flex;align-items:center;justify-content:center}
     .ps-d-wishbtn.on{color:#e24b4a;border-color:#e24b4a;background:rgba(226,75,74,0.1)}
     /* saved-items drawer (reuses .more-drawer-wrap / .more-drawer / .md-head shell) */
     .wish-empty{text-align:center;color:var(--txt-muted);padding:42px 18px;font-size:0.92rem;line-height:1.5}
@@ -1428,6 +1428,7 @@
     #tabProducts .ps-results{overflow-x:clip}
     @keyframes psSwipeNudge{0%,100%{transform:translateX(0)}15%{transform:translateX(-22px)}30%{transform:translateX(0)}45%{transform:translateX(-13px)}60%{transform:translateX(0)}}
     .ps-grid.ps-swipenudge{animation:psSwipeNudge 1.5s ease-in-out}
+    .ps-d-gallery.ps-swipenudge{animation:psSwipeNudge 1.5s ease-in-out}
     /* Nudged to the bottom-RIGHT and lifted just above the share-added toast so the
        👈 "Swipe for more" hand never sits under the centred ".ps-share-toast" message
        (which wraps ~105px tall). The toast owns the bottom-centre; the cue owns the right. */
@@ -1526,12 +1527,16 @@
     .ps-d-grip{width:42px;height:5px;border-radius:3px;background:var(--bdr-med);margin:8px auto 10px}
     .ps-d-brand{font-size:0.72rem;color:var(--txt-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.4px}
     .ps-d-title{font-size:1rem;font-weight:700;color:var(--txt);margin:2px 0 6px;line-height:1.3}
+    .ps-d-pricerow{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
     .ps-d-price{font-size:1.15rem;font-weight:800;color:var(--txt)}
     .ps-d-pkr{font-size:0.78rem;color:var(--txt-muted);margin-bottom:6px}
+    .ps-d-iconrow{display:flex;gap:6px;flex-shrink:0;margin-top:1px}
     .ps-d-szrow{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}
     .ps-d-szchart-wrap:empty{display:none}
-    .ps-d-szchart{display:inline-flex;align-items:center;gap:5px;font-size:0.74rem;font-weight:700;color:var(--gold);background:var(--gold-dim);border:1px solid var(--gold-bdr);border-radius:999px;padding:5px 12px;margin:2px 0 4px;cursor:pointer}
+    .ps-d-szchart{width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--gold);background:var(--gold-dim);border:1.5px solid var(--gold-bdr);border-radius:9px;padding:0;cursor:pointer}
     .ps-d-szchart:active{transform:scale(0.97)}
+    .ps-d-sharebtn{width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--gold);background:var(--gold-dim);border:1.5px solid var(--gold-bdr);border-radius:9px;padding:0;cursor:pointer;font-family:inherit}
+    .ps-d-sharebtn:active{transform:scale(0.97)}
     .ps-sc-ov{position:fixed;inset:0;z-index:1200;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.62);padding:18px}
     .ps-sc-ov.open{display:flex}
     .ps-sc-card{position:relative;background:var(--surface);color:var(--txt);border:1px solid var(--bdr-med);border-radius:16px;max-width:560px;width:100%;max-height:84vh;overflow:auto;box-shadow:0 18px 50px rgba(0,0,0,0.4);padding:16px}
@@ -1547,10 +1552,10 @@
     .ps-d-desc{font-size:0.82rem;color:var(--txt-sec);line-height:1.55;margin:4px 0 0;white-space:pre-line}
     .ps-d-loading{font-size:0.76rem;color:var(--txt-muted);padding:4px 0}
     .ps-d-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-    .ps-d-open{flex:1;min-width:130px;text-align:center;padding:11px;background:var(--gold-dim);border:1.5px solid var(--gold-bdr);color:var(--gold);border-radius:9px;font-weight:700;font-size:0.84rem;text-decoration:none;cursor:pointer;font-family:inherit;line-height:1.25}
+    .ps-d-open{display:block;width:100%;box-sizing:border-box;margin-top:8px;text-align:center;padding:11px;background:var(--gold-dim);border:1.5px solid var(--gold-bdr);color:var(--gold);border-radius:9px;font-weight:700;font-size:0.84rem;text-decoration:none;cursor:pointer;font-family:inherit;line-height:1.25}
     .ps-d-add{flex:1;min-width:130px;padding:11px;background:var(--gold);color:#12122a;border:none;border-radius:9px;font-weight:700;font-size:0.84rem;cursor:pointer;font-family:inherit}
     .ps-d-szlabel{font-size:0.62rem;font-weight:800;letter-spacing:0.6px;text-transform:uppercase;color:var(--gold);margin-top:8px}
-    .ps-d-more{width:100%;margin-top:8px;padding:10px;background:var(--surface);border:1.5px solid var(--gold-bdr2);color:var(--gold);border-radius:9px;font-weight:800;font-size:0.82rem;cursor:pointer;font-family:inherit}
+    .ps-d-more{flex:1;min-width:130px;padding:11px;background:var(--surface);border:1.5px solid var(--gold-bdr2);color:var(--gold);border-radius:9px;font-weight:800;font-size:0.82rem;cursor:pointer;font-family:inherit}
     .ps-d-more:hover{background:var(--gold-dim)}
     @media (min-width:820px){
       .ps-wrap{display:flex;gap:18px;align-items:flex-start}

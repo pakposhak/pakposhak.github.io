@@ -2482,12 +2482,12 @@
       hiw_confirm_pay:'Confirm price & pay (bKash/Nagad)',
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search 150+ Pakistani brands…',
-      tab_brands:'Browse brands', tab_products:'Browse products', gen_all:'All', gen_women:'Women', gen_men:'Men', gen_kids:'Kids', menu_language:'Language', menu_theme:'Theme', menu_guide:'Guide', search_bar_ph:'Search products, brands…', search_page_ph:'Search products and 150+ brands', sp_remind_t:"Check any product's price in PKR", sp_remind_d:"Found it on a brand's own site? Paste the link to see the real price of any listed brand in PKR.", sp_paste:'Paste a product link', sp_visual:'Visual search', sp_fit:'Fit assistant', sp_soon:'Coming soon', vis_title:'Search by photo', vis_sub:'Find pieces that look like your photo', vis_cam:'Camera', vis_up:'Gallery', vis_cancel:'Cancel', vis_loading:'Finding similar styles', vis_chip:'Items like your photo', vis_clear:'Clear photo search', vis_none:'No close matches. Try another photo.', vis_notapparel:'Please use a clothing photo.', vis_notcarried:"This type of item is not in our listing. Try a clothing photo.", vis_err:'Could not search just now. Please try again.', vis_slow:'Visual search is warming up. Please try again in a moment.', vis_badfile:'Please choose a photo.', vis_filter_brand:'Brands', vis_filter_type:'Type', vis_pret:'Pret', vis_unstitch:'Unstitched', vis_type_all:'All', vis_allbrands:'All brands', vis_brands_n:'brands', dd_search:'Type a brand…', dd_none:'No match', fit_title:'Fit Assistant', fit_sub:'Find your size in any brand', fit_wear:'I usually wear', fit_in:'in', fit_size_in:'size', fit_inches:'All measurements in inches', fit_length:'Length (most important)', fit_measlink:"Don't know? Enter measurements", fit_meashide:'Use my usual size instead', fit_chest:'Chest', fit_waist:'Waist', fit_hip:'Hip', fit_regular:'Regular', fit_slim:'Slim', fit_relaxed:'Relaxed', fit_scope:'Show fits in', fit_allbrands:'All brands', fit_go:'Show what fits me', fit_wa:'Save to my WhatsApp number (optional)', fit_chip:'Your size', fit_chip_collar:'Collar', fit_chip_waist:'Waist', fit_yoursize:'your size', fit_type_top:'Tops & Suits', fit_type_shirt:'Shirts', fit_type_bottom:'Bottoms', fit_needchest:'Enter at least your chest measurement.', fit_needref:'Choose your size and a brand.', fit_none:'Nothing in your size right now. Try another size or brand.', fit_err:'Could not check sizes just now. Please try again.', fit_loading:'Finding your size', fit_hdr:'Your size, every brand', fit_pieces:'pieces', fit_b_your:'✓ Your size', fit_b_likely:'≈ Likely fit', fit_b_closest:'≈ Closest size', fit_wear_collar:'My shirt collar', fit_wear_waist:'My waist (inches)', fit_chest_approx:'≈ your chest', wa_err_empty:'Please enter your WhatsApp number', wa_err_short:'WhatsApp number looks incomplete', wa_err_long:'WhatsApp number is too long', wa_err_prefix:'Please check your WhatsApp number', sp_brands:'Browse all 150+ brands ›', sp_colls_hd:'Curated collections', sp_checkprice:'check price ›', bb_back:'‹ Back to products', store_everyday:'Everyday', store_premium:'Premium', colls_hd:'Collections',prodcat_hd:'Product category',products_hd:'Products', filters_sort:'Filters & sort', filters_done:'Done', sort_hd:'Sort',
+      tab_brands:'Browse brands', tab_products:'Browse products', gen_all:'All', gen_women:'Women', gen_men:'Men', gen_kids:'Kids', menu_language:'Language', menu_theme:'Theme', menu_guide:'Guide', menu_share:'Share PakPoshak', search_bar_ph:'Search products, brands…', search_page_ph:'Search products and 150+ brands', sp_remind_t:"Check any product's price in PKR", sp_remind_d:"Found it on a brand's own site? Paste the link to see the real price of any listed brand in PKR.", sp_paste:'Paste a product link', sp_visual:'Visual search', sp_fit:'Fit assistant', sp_soon:'Coming soon', vis_title:'Search by photo', vis_sub:'Find pieces that look like your photo', vis_cam:'Camera', vis_up:'Gallery', vis_cancel:'Cancel', vis_loading:'Finding similar styles', vis_chip:'Items like your photo', vis_clear:'Clear photo search', vis_none:'No close matches. Try another photo.', vis_notapparel:'Please use a clothing photo.', vis_notcarried:"This type of item is not in our listing. Try a clothing photo.", vis_err:'Could not search just now. Please try again.', vis_slow:'Visual search is warming up. Please try again in a moment.', vis_badfile:'Please choose a photo.', vis_filter_brand:'Brands', vis_filter_type:'Type', vis_pret:'Pret', vis_unstitch:'Unstitched', vis_type_all:'All', vis_allbrands:'All brands', vis_brands_n:'brands', dd_search:'Type a brand…', dd_none:'No match', fit_title:'Fit Assistant', fit_sub:'Find your size in any brand', fit_wear:'I usually wear', fit_in:'in', fit_size_in:'size', fit_inches:'All measurements in inches', fit_length:'Length (most important)', fit_measlink:"Don't know? Enter measurements", fit_meashide:'Use my usual size instead', fit_chest:'Chest', fit_waist:'Waist', fit_hip:'Hip', fit_regular:'Regular', fit_slim:'Slim', fit_relaxed:'Relaxed', fit_scope:'Show fits in', fit_allbrands:'All brands', fit_go:'Show what fits me', fit_wa:'Save to my WhatsApp number (optional)', fit_chip:'Your size', fit_chip_collar:'Collar', fit_chip_waist:'Waist', fit_yoursize:'your size', fit_type_top:'Tops & Suits', fit_type_shirt:'Shirts', fit_type_bottom:'Bottoms', fit_needchest:'Enter at least your chest measurement.', fit_needref:'Choose your size and a brand.', fit_none:'Nothing in your size right now. Try another size or brand.', fit_err:'Could not check sizes just now. Please try again.', fit_loading:'Finding your size', fit_hdr:'Your size, every brand', fit_pieces:'pieces', fit_b_your:'✓ Your size', fit_b_likely:'≈ Likely fit', fit_b_closest:'≈ Closest size', fit_wear_collar:'My shirt collar', fit_wear_waist:'My waist (inches)', fit_chest_approx:'≈ your chest', wa_err_empty:'Please enter your WhatsApp number', wa_err_short:'WhatsApp number looks incomplete', wa_err_long:'WhatsApp number is too long', wa_err_prefix:'Please check your WhatsApp number', sp_brands:'Browse all 150+ brands ›', sp_colls_hd:'Curated collections', sp_checkprice:'check price ›', bb_back:'‹ Back to products', store_everyday:'Everyday', store_premium:'Premium', colls_hd:'Collections',prodcat_hd:'Product category',products_hd:'Products', filters_sort:'Filters & sort', filters_done:'Done', sort_hd:'Sort',
       ps_price:'Price (৳ delivered)', ps_price_short:'Price Filters', ps_category:'Product Category', ps_category_short:'Categories', ps_brands:'Brands', ps_colour:'Colour', ps_clear:'Clear Filters', ps_valueprop:'Any Pakistani brand → delivered to Bangladesh 🇧🇩', ps_morebrands:"Can't find it? Browse all 155 brands →",
       ps_allcats:'All categories', ps_loading:'Loading products…', ps_loadfail:'Could not load products — please try again.',
       ps_results:'products', ps_add:'Add', ps_prev:'Prev', ps_next:'Next', ps_page:'Page',
       ps_feed_more:'Load more', ps_feed_end:'You have reached the end',
-      ps_enlarge:'Enlarge', ps_avail_sizes:'Available sizes', ps_unstitched:'Unstitched · no size needed', ps_also_st:'✂️ Stitched also available', ps_also_uns:'🧵 Unstitched fabric also available', ps_mto:'Made to order', ps_d_loading:'Loading more details…', ps_d_sizechart:'Size Chart', ps_d_open:'View on brand site, order here', ps_d_more:'More from', ps_d_nofetch:'See all photos &amp; details on the brand page →', ps_d_nodesc:'No extra description provided.', warn_title:'Look there, order here', warn_body:'This page is only for photos and product details. Don\'t add to the brand\'s cart. To order on PakPoshak: tap + Add if it\'s in our listing, or Share the product to PakPoshak (or copy the link and paste it back here).', warn_ok:'Continue to brand site →', warn_cancel:'Stay on PakPoshak',
+      ps_enlarge:'Enlarge', ps_share:'Share this product', ps_avail_sizes:'Available sizes', ps_unstitched:'Unstitched · no size needed', ps_also_st:'✂️ Stitched also available', ps_also_uns:'🧵 Unstitched fabric also available', ps_mto:'Made to order', ps_d_loading:'Loading more details…', ps_d_sizechart:'Size Chart', ps_d_open:'View on brand site, order here', ps_d_more:'More from', ps_d_nofetch:'See all photos &amp; details on the brand page →', ps_d_nodesc:'No extra description provided.', warn_title:'Look there, order here', warn_body:'This page is only for photos and product details. Don\'t add to the brand\'s cart. To order on PakPoshak: tap + Add if it\'s in our listing, or Share the product to PakPoshak (or copy the link and paste it back here).', warn_ok:'Continue to brand site →', warn_cancel:'Stay on PakPoshak',
       ps_empty:'No products match these filters — try widening them.',
       ps_partial:'Not every brand &amp; product is listed here yet —', ps_partial_link:'want more? Browse by brands →', ps_word_products:'products', ps_word_brands:'brands',
       ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products', ps_sort_lh:'৳ Low→High', ps_sort_hl:'৳ High→Low', ps_sort_price:'Sort: Price', ps_shop_cat:'Shop by category', wish_save:'Save to wishlist', wish_title:'Wishlist', wish_empty:'No saved items yet. Tap ♥ on any product to save it here.', wish_remove:'Remove', ps_also_uns_short:'Unstitched available', ps_also_st_short:'Stitched available', ps_sale:'Sale', ps_new:'New', ps_lbl_sort:'Sort', ps_lbl_filter:'Filter', ps_search_ph:'Search 50,000+ products, 140+ Pakistani brands', ps_search_nomatch:'No brand or category matched', share_added:'Item added. Save it below before adding another.', share_review:'Save',
@@ -2553,12 +2553,12 @@
       hiw_confirm_pay:'দাম নিশ্চিত করে পেমেন্ট (বিকাশ/নগদ)',
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
       lbl_browse:'একটি ব্র্যান্ড দেখুন', search_ph:'🔍 ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
-      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', gen_all:'সব', gen_women:'নারী', gen_men:'পুরুষ', gen_kids:'শিশু', menu_language:'ভাষা', menu_theme:'থিম', menu_guide:'গাইড', search_bar_ph:'পণ্য, ব্র্যান্ড খুঁজুন…', search_page_ph:'পণ্য ও ১৫০+ ব্র্যান্ড খুঁজুন', sp_remind_t:'যেকোনো পণ্যের দাম PKR-তে যাচাই করুন', sp_remind_d:'ব্র্যান্ডের নিজস্ব সাইটে পেয়েছেন? লিংক পেস্ট করে যেকোনো লিস্টেড ব্র্যান্ডের আসল দাম PKR-তে দেখুন।', sp_colls_hd:'কিউরেটেড কালেকশন', sp_paste:'পণ্যের লিংক পেস্ট করুন', sp_visual:'ভিজ্যুয়াল সার্চ', sp_fit:'ফিট অ্যাসিস্ট্যান্ট', sp_soon:'শীঘ্রই আসছে', vis_title:'ছবি দিয়ে খুঁজুন', vis_sub:'আপনার ছবির মতো পণ্য খুঁজুন', vis_cam:'ক্যামেরা', vis_up:'গ্যালারি', vis_cancel:'বাতিল', vis_loading:'মিল খুঁজছি', vis_chip:'আপনার ছবির মতো পণ্য', vis_clear:'ছবি সার্চ মুছুন', vis_none:'কাছাকাছি মিল নেই। অন্য ছবি দিন।', vis_notapparel:'অনুগ্রহ করে পোশাকের ছবি দিন।', vis_notcarried:'এই ধরনের পণ্য আমাদের লিস্টে নেই। পোশাকের ছবি দিয়ে খুঁজুন।', vis_err:'এখন খোঁজা গেল না। আবার চেষ্টা করুন।', vis_slow:'ভিজ্যুয়াল সার্চ প্রস্তুত হচ্ছে। একটু পরে আবার চেষ্টা করুন।', vis_badfile:'একটি ছবি নির্বাচন করুন।', vis_filter_brand:'ব্র্যান্ড', vis_filter_type:'ধরন', vis_pret:'প্রেট', vis_unstitch:'আনস্টিচড', vis_type_all:'সব', vis_allbrands:'সব ব্র্যান্ড', vis_brands_n:'ব্র্যান্ড', dd_search:'ব্র্যান্ড লিখুন…', dd_none:'মিল নেই', fit_title:'ফিট অ্যাসিস্ট্যান্ট', fit_sub:'যেকোনো ব্র্যান্ডে আপনার সাইজ খুঁজুন', fit_wear:'আমি সাধারণত পরি', fit_in:'এই ব্র্যান্ডে', fit_size_in:'সাইজ', fit_inches:'সব মাপ ইঞ্চিতে', fit_length:'লম্বা (সবচেয়ে জরুরি)', fit_measlink:'জানেন না? মাপ লিখুন', fit_meashide:'আমার সাধারণ সাইজ ব্যবহার করুন', fit_chest:'বুক', fit_waist:'কোমর', fit_hip:'হিপ', fit_regular:'রেগুলার', fit_slim:'স্লিম', fit_relaxed:'রিল্যাক্সড', fit_scope:'যেখানে দেখাবে', fit_allbrands:'সব ব্র্যান্ড', fit_go:'আমার মাপের পণ্য দেখান', fit_wa:'আমার WhatsApp নম্বরে সেভ করুন (ঐচ্ছিক)', fit_chip:'আপনার সাইজ', fit_chip_collar:'কলার', fit_chip_waist:'কোমর', fit_yoursize:'আপনার সাইজ', fit_type_top:'টপস ও স্যুট', fit_type_shirt:'শার্ট', fit_type_bottom:'বটমস', fit_needchest:'অন্তত আপনার বুকের মাপ লিখুন।', fit_needref:'আপনার সাইজ ও একটি ব্র্যান্ড বাছুন।', fit_none:'এখন আপনার সাইজে কিছু নেই। অন্য সাইজ বা ব্র্যান্ড দিন।', fit_err:'এখন সাইজ যাচাই করা গেল না। আবার চেষ্টা করুন।', fit_loading:'আপনার সাইজ খুঁজছি', fit_hdr:'আপনার মাপ, সব ব্র্যান্ডে', fit_pieces:'পিস', fit_b_your:'✓ আপনার মাপ', fit_b_likely:'≈ সম্ভাব্য মাপ', fit_b_closest:'≈ নিকটতম মাপ', fit_wear_collar:'আমার শার্টের কলার', fit_wear_waist:'আমার কোমর (ইঞ্চি)', fit_chest_approx:'≈ আপনার চেস্ট', wa_err_empty:'আপনার হোয়াটসঅ্যাপ নম্বর লিখুন', wa_err_short:'হোয়াটসঅ্যাপ নম্বরটি অসম্পূর্ণ মনে হচ্ছে', wa_err_long:'হোয়াটসঅ্যাপ নম্বরটি অনেক বড়', wa_err_prefix:'আপনার হোয়াটসঅ্যাপ নম্বর যাচাই করুন', sp_brands:'সব ১৫০+ ব্র্যান্ড দেখুন ›', sp_checkprice:'দাম দেখুন ›', bb_back:'‹ পণ্যে ফিরে যান', store_everyday:'এভরিডে', store_premium:'প্রিমিয়াম', colls_hd:'কালেকশন',prodcat_hd:'প্রোডাক্ট ক্যাটাগরি',products_hd:'পণ্য', filters_sort:'ফিল্টার ও সর্ট', filters_done:'সম্পন্ন', sort_hd:'সর্ট',
+      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', gen_all:'সব', gen_women:'নারী', gen_men:'পুরুষ', gen_kids:'শিশু', menu_language:'ভাষা', menu_theme:'থিম', menu_guide:'গাইড', menu_share:'PakPoshak শেয়ার করুন', search_bar_ph:'পণ্য, ব্র্যান্ড খুঁজুন…', search_page_ph:'পণ্য ও ১৫০+ ব্র্যান্ড খুঁজুন', sp_remind_t:'যেকোনো পণ্যের দাম PKR-তে যাচাই করুন', sp_remind_d:'ব্র্যান্ডের নিজস্ব সাইটে পেয়েছেন? লিংক পেস্ট করে যেকোনো লিস্টেড ব্র্যান্ডের আসল দাম PKR-তে দেখুন।', sp_colls_hd:'কিউরেটেড কালেকশন', sp_paste:'পণ্যের লিংক পেস্ট করুন', sp_visual:'ভিজ্যুয়াল সার্চ', sp_fit:'ফিট অ্যাসিস্ট্যান্ট', sp_soon:'শীঘ্রই আসছে', vis_title:'ছবি দিয়ে খুঁজুন', vis_sub:'আপনার ছবির মতো পণ্য খুঁজুন', vis_cam:'ক্যামেরা', vis_up:'গ্যালারি', vis_cancel:'বাতিল', vis_loading:'মিল খুঁজছি', vis_chip:'আপনার ছবির মতো পণ্য', vis_clear:'ছবি সার্চ মুছুন', vis_none:'কাছাকাছি মিল নেই। অন্য ছবি দিন।', vis_notapparel:'অনুগ্রহ করে পোশাকের ছবি দিন।', vis_notcarried:'এই ধরনের পণ্য আমাদের লিস্টে নেই। পোশাকের ছবি দিয়ে খুঁজুন।', vis_err:'এখন খোঁজা গেল না। আবার চেষ্টা করুন।', vis_slow:'ভিজ্যুয়াল সার্চ প্রস্তুত হচ্ছে। একটু পরে আবার চেষ্টা করুন।', vis_badfile:'একটি ছবি নির্বাচন করুন।', vis_filter_brand:'ব্র্যান্ড', vis_filter_type:'ধরন', vis_pret:'প্রেট', vis_unstitch:'আনস্টিচড', vis_type_all:'সব', vis_allbrands:'সব ব্র্যান্ড', vis_brands_n:'ব্র্যান্ড', dd_search:'ব্র্যান্ড লিখুন…', dd_none:'মিল নেই', fit_title:'ফিট অ্যাসিস্ট্যান্ট', fit_sub:'যেকোনো ব্র্যান্ডে আপনার সাইজ খুঁজুন', fit_wear:'আমি সাধারণত পরি', fit_in:'এই ব্র্যান্ডে', fit_size_in:'সাইজ', fit_inches:'সব মাপ ইঞ্চিতে', fit_length:'লম্বা (সবচেয়ে জরুরি)', fit_measlink:'জানেন না? মাপ লিখুন', fit_meashide:'আমার সাধারণ সাইজ ব্যবহার করুন', fit_chest:'বুক', fit_waist:'কোমর', fit_hip:'হিপ', fit_regular:'রেগুলার', fit_slim:'স্লিম', fit_relaxed:'রিল্যাক্সড', fit_scope:'যেখানে দেখাবে', fit_allbrands:'সব ব্র্যান্ড', fit_go:'আমার মাপের পণ্য দেখান', fit_wa:'আমার WhatsApp নম্বরে সেভ করুন (ঐচ্ছিক)', fit_chip:'আপনার সাইজ', fit_chip_collar:'কলার', fit_chip_waist:'কোমর', fit_yoursize:'আপনার সাইজ', fit_type_top:'টপস ও স্যুট', fit_type_shirt:'শার্ট', fit_type_bottom:'বটমস', fit_needchest:'অন্তত আপনার বুকের মাপ লিখুন।', fit_needref:'আপনার সাইজ ও একটি ব্র্যান্ড বাছুন।', fit_none:'এখন আপনার সাইজে কিছু নেই। অন্য সাইজ বা ব্র্যান্ড দিন।', fit_err:'এখন সাইজ যাচাই করা গেল না। আবার চেষ্টা করুন।', fit_loading:'আপনার সাইজ খুঁজছি', fit_hdr:'আপনার মাপ, সব ব্র্যান্ডে', fit_pieces:'পিস', fit_b_your:'✓ আপনার মাপ', fit_b_likely:'≈ সম্ভাব্য মাপ', fit_b_closest:'≈ নিকটতম মাপ', fit_wear_collar:'আমার শার্টের কলার', fit_wear_waist:'আমার কোমর (ইঞ্চি)', fit_chest_approx:'≈ আপনার চেস্ট', wa_err_empty:'আপনার হোয়াটসঅ্যাপ নম্বর লিখুন', wa_err_short:'হোয়াটসঅ্যাপ নম্বরটি অসম্পূর্ণ মনে হচ্ছে', wa_err_long:'হোয়াটসঅ্যাপ নম্বরটি অনেক বড়', wa_err_prefix:'আপনার হোয়াটসঅ্যাপ নম্বর যাচাই করুন', sp_brands:'সব ১৫০+ ব্র্যান্ড দেখুন ›', sp_checkprice:'দাম দেখুন ›', bb_back:'‹ পণ্যে ফিরে যান', store_everyday:'এভরিডে', store_premium:'প্রিমিয়াম', colls_hd:'কালেকশন',prodcat_hd:'প্রোডাক্ট ক্যাটাগরি',products_hd:'পণ্য', filters_sort:'ফিল্টার ও সর্ট', filters_done:'সম্পন্ন', sort_hd:'সর্ট',
       ps_price:'দাম (৳, ডেলিভারিসহ)', ps_price_short:'দাম ফিল্টার', ps_category:'পণ্যের ক্যাটাগরি', ps_category_short:'ক্যাটাগরি', ps_brands:'ব্র্যান্ড', ps_colour:'রঙ', ps_clear:'ফিল্টার মুছুন', ps_valueprop:'যেকোনো পাকিস্তানি ব্র্যান্ড → বাংলাদেশে ডেলিভারি 🇧🇩', ps_morebrands:'খুঁজে পাচ্ছেন না? সব ১৫৫টি ব্র্যান্ড দেখুন →',
       ps_allcats:'সব ক্যাটাগরি', ps_loading:'পণ্য আসছে…', ps_loadfail:'পণ্য আনা গেল না — আবার চেষ্টা করুন।',
       ps_results:'পণ্য', ps_add:'যোগ করুন', ps_prev:'আগের', ps_next:'পরের', ps_page:'পৃষ্ঠা',
       ps_feed_more:'আরও দেখুন', ps_feed_end:'আপনি শেষ পর্যন্ত দেখে ফেলেছেন',
-      ps_enlarge:'ছবি বড় করুন', ps_avail_sizes:'স্টকে থাকা সাইজ', ps_unstitched:'আনস্টিচড · সাইজ লাগে না', ps_also_st:'✂️ সেলাই করাও আছে', ps_also_uns:'🧵 আনস্টিচড কাপড়ও আছে', ps_mto:'অর্ডারে তৈরি হবে', ps_d_loading:'আরও বিবরণ আসছে…', ps_d_sizechart:'সাইজ চার্ট', ps_d_open:'ব্র্যান্ড সাইটে দেখুন, অর্ডার এখানে', ps_d_more:'আরও দেখুন —', ps_d_nofetch:'সব ছবি ও বিবরণ ব্র্যান্ডের পেজে দেখুন →', ps_d_nodesc:'বাড়তি কোনো বিবরণ নেই।', warn_title:'দেখুন ওখানে, অর্ডার এখানে', warn_body:'এই পেজটি শুধু ছবি ও পণ্যের বিবরণ দেখার জন্য। ব্র্যান্ডের cart-এ যোগ করবেন না। PakPoshak-এ অর্ডার করতে: লিস্টে থাকলে + Add ট্যাপ করুন, অথবা পণ্যটি PakPoshak-এ Share করুন (বা লিংক copy করে এখানে এসে paste করুন)।', warn_ok:'ব্র্যান্ড সাইটে যান →', warn_cancel:'PakPoshak-এ থাকুন',
+      ps_enlarge:'ছবি বড় করুন', ps_share:'পণ্যটি শেয়ার করুন', ps_avail_sizes:'স্টকে থাকা সাইজ', ps_unstitched:'আনস্টিচড · সাইজ লাগে না', ps_also_st:'✂️ সেলাই করাও আছে', ps_also_uns:'🧵 আনস্টিচড কাপড়ও আছে', ps_mto:'অর্ডারে তৈরি হবে', ps_d_loading:'আরও বিবরণ আসছে…', ps_d_sizechart:'সাইজ চার্ট', ps_d_open:'ব্র্যান্ড সাইটে দেখুন, অর্ডার এখানে', ps_d_more:'আরও দেখুন —', ps_d_nofetch:'সব ছবি ও বিবরণ ব্র্যান্ডের পেজে দেখুন →', ps_d_nodesc:'বাড়তি কোনো বিবরণ নেই।', warn_title:'দেখুন ওখানে, অর্ডার এখানে', warn_body:'এই পেজটি শুধু ছবি ও পণ্যের বিবরণ দেখার জন্য। ব্র্যান্ডের cart-এ যোগ করবেন না। PakPoshak-এ অর্ডার করতে: লিস্টে থাকলে + Add ট্যাপ করুন, অথবা পণ্যটি PakPoshak-এ Share করুন (বা লিংক copy করে এখানে এসে paste করুন)।', warn_ok:'ব্র্যান্ড সাইটে যান →', warn_cancel:'PakPoshak-এ থাকুন',
       ps_empty:'এই ফিল্টারে কোনো পণ্য নেই — ফিল্টার একটু কমিয়ে দেখুন।',
       ps_partial:'সব ব্র্যান্ড বা পণ্য এখনো এখানে যোগ হয়নি —', ps_partial_link:'আরও চান? “ব্র্যান্ড দেখুন”-এ যান →', ps_word_products:'পণ্য', ps_word_brands:'ব্র্যান্ড',
       ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়', ps_sort_lh:'৳ কম→বেশি', ps_sort_hl:'৳ বেশি→কম', ps_sort_price:'দাম অনুসারে', ps_shop_cat:'ক্যাটাগরি অনুযায়ী দেখুন', wish_save:'পছন্দে সেভ করুন', wish_title:'পছন্দের তালিকা', wish_empty:'এখনো কিছু সেভ করা হয়নি। যেকোনো পণ্যে ♥ চাপ দিয়ে এখানে সেভ করুন।', wish_remove:'সরান', ps_also_uns_short:'আনস্টিচডও আছে', ps_also_st_short:'সেলাইও আছে', ps_sale:'সেল', ps_new:'নতুন', ps_lbl_sort:'সাজান', ps_lbl_filter:'ফিল্টার', ps_search_ph:'খুঁজুন: ৫০,০০০+ পণ্য, ১৪০+ পাকিস্তানি ব্র্যান্ড', ps_search_nomatch:'কোনো ব্র্যান্ড বা ক্যাটাগরি মেলেনি', share_added:'পণ্যটি যোগ হয়েছে। আরেকটি যোগ করার আগে নিচে সেভ করুন।', share_review:'সেভ করুন',
@@ -8198,6 +8198,37 @@
   function psCloseDetail(){ const m = document.getElementById('psDetail'); if(m) m.style.display = 'none'; }
   // Product popup → brand site: warn first (look there, order HERE), then open in a new tab.
   function psOpenFull(idx){ const p = psFiltered[idx]; if(!p) return; const url = p.u; psWarnOpen({ onOk: function(){ window.open(url, '_blank', 'noopener'); } }); }
+  // Share THIS product back into PakPoshak (not the brand's raw link): the recipient's tap
+  // opens our own site straight to this popup, still inside our ecosystem. The product's own
+  // fields ride along in the URL itself (no server lookup needed) — see psOpenSharedProduct.
+  function psShareProduct(idx){
+    const p = psFiltered[idx]; if(!p) return;
+    const url = new URL(location.origin + location.pathname);
+    url.searchParams.set('product', JSON.stringify({ u:p.u, t:p.t, b:p.b, img:p.img, pkr:p.pkr, cat:p.cat, sz:p.sz }));
+    const text = p.b + ' — ' + p.t;
+    if(navigator.share){
+      navigator.share({ title: p.t, text: text, url: url.toString() }).catch(function(){});
+      return;
+    }
+    window.open('https://wa.me/?text=' + encodeURIComponent(text + '\n' + url.toString()), '_blank', 'noopener');
+  }
+  // Land straight on a shared product's popup. The product data rides in the URL itself, so
+  // this needs no catalog search: wait for the FIRST page of results (psOnReady, works in both
+  // classic and search-API mode), then use it as-is if already showing, otherwise pin it to the
+  // front of psFiltered so the existing psDetail(idx)/psAdd/psWishToggle machinery just works.
+  function psOpenSharedProduct(raw){
+    let p; try{ p = JSON.parse(raw); }catch(e){ return; }
+    if(!p || !p.u || !p.t) return;
+    psOnReady(function(){
+      try{
+        const key = psUrlKey(p.u);
+        let i = psFiltered.findIndex(function(x){ return psUrlKey(x.u) === key; });
+        if(i < 0){ psFiltered.unshift(p); i = 0; }
+        psDetail(i);
+        const clean = new URL(location.href); clean.searchParams.delete('product'); history.replaceState(null, '', clean.toString());
+      }catch(e){}
+    });
+  }
   function psSwapMain(thumb, src){ const m = document.getElementById('psDMain'); if(m) m.src = src; document.querySelectorAll('.ps-d-thumb').forEach(t => t.classList.toggle('on', t === thumb)); }
   function psDetail(idx){
     const p = psFiltered[idx]; if(!p) return;
@@ -8215,18 +8246,22 @@
       +   `<div class="ps-d-grip" aria-hidden="true"></div>`
       +   `<div class="ps-d-brand">${esc(p.b)}</div>`
       +   `<div class="ps-d-title">${esc(p.t)}</div>`
-      +   `<div class="ps-d-price">≈ ৳${bdt.toLocaleString()}</div>`
-      +   `<div class="ps-d-pkr">PKR ${p.pkr.toLocaleString()}</div>`
+      +   `<div class="ps-d-pricerow">`
+      +     `<div><div class="ps-d-price">≈ ৳${bdt.toLocaleString()}</div><div class="ps-d-pkr">PKR ${p.pkr.toLocaleString()}</div></div>`
+      +     `<div class="ps-d-iconrow">`
+      +       `<div id="psDSizeChart" class="ps-d-szchart-wrap"></div>`
+      +       `<button type="button" class="ps-d-sharebtn" onclick="psShareProduct(${idx})" aria-label="${tr('ps_share')}" title="${tr('ps_share')}">🔗</button>`
+      +       `<button type="button" class="ps-wish ps-d-wishbtn${psWishHas(p.u)?' on':''}" data-uk="${esc(psUrlKey(p.u))}" onclick="psWishToggle(${idx})" aria-label="${tr('wish_save')}" title="${tr('wish_save')}"><svg class="ps-heart-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></button>`
+      +     `</div>`
+      +   `</div>`
       +   `${sz ? `<div class="ps-d-szlabel">${tr('ps_avail_sizes')}</div><div class="ps-d-szrow">${sz}</div>` : ''}`
-      +   `<div id="psDSizeChart" class="ps-d-szchart-wrap"></div>`
       +   `<div class="ps-d-actions">`
-      +     `<button type="button" class="ps-wish ps-d-wishbtn${psWishHas(p.u)?' on':''}" data-uk="${esc(psUrlKey(p.u))}" onclick="psWishToggle(${idx})" aria-label="${tr('wish_save')}" title="${tr('wish_save')}"><svg class="ps-heart-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></button>`
-      +     `<button type="button" class="ps-d-open" onclick="psOpenFull(${idx})">${tr('ps_d_open')} ↗</button>`
       +     `<button type="button" class="ps-d-add" onclick="psCloseDetail();psAdd(${idx})">+ ${tr('ps_add')}</button>`
+      +     `<button type="button" class="ps-d-more" onclick="psMoreFromBrand(${idx})">${tr('ps_d_more')} ${esc(p.b)} →</button>`
       +   `</div>`
       +   `<div class="ps-d-details" id="psDDetails"></div>`
       +   `<div class="ps-d-loading" id="psDDesc">${tr('ps_d_loading')}</div>`
-      +   `<button type="button" class="ps-d-more" onclick="psMoreFromBrand(${idx})">${tr('ps_d_more')} ${esc(p.b)} →</button>`
+      +   `<button type="button" class="ps-d-open" onclick="psOpenFull(${idx})">${tr('ps_d_open')} ↗</button>`
       + `</div>`;
     document.getElementById('psDetail').style.display = 'flex';
     const _card = document.querySelector('.ps-detail-card'); if(_card) _card.scrollTop = 0;
@@ -8301,7 +8336,10 @@
     const st = _psDetState; if(!st) return;
     const m = document.getElementById('psDetail'); if(!m || m.style.display === 'none') return;
     const galEl = document.getElementById('psDGallery'), detEl = document.getElementById('psDDetails'), descEl = document.getElementById('psDDesc');
-    if(galEl && st.imgs.length) galEl.innerHTML = st.imgs.slice(0, 12).map((src, i) => `<img class="ps-d-shot" loading="${i < 2 ? 'eager' : 'lazy'}" src="${esc(src)}" alt="${esc(p.t)}">`).join('');
+    if(galEl && st.imgs.length){
+      galEl.innerHTML = st.imgs.slice(0, 12).map((src, i) => `<img class="ps-d-shot" loading="${i < 2 ? 'eager' : 'lazy'}" src="${esc(src)}" alt="${esc(p.t)}">`).join('');
+      if(st.imgs.length > 1) psDetailSwipeHintMaybe(galEl);
+    }
     if(detEl){
       const rows = st.rows.slice().sort((a, b) => { const ia = PS_DET_ORDER.indexOf(a[0].toLowerCase()), ib = PS_DET_ORDER.indexOf(b[0].toLowerCase()); return (ia < 0 ? 50 : ia) - (ib < 0 ? 50 : ib); });
       detEl.innerHTML = rows.length
@@ -8321,11 +8359,23 @@
       const hasSC = (st.sc && st.sc.length) || (st.scTable && st.scTable.length);
       if(hasSC){
         if(!scEl.querySelector('button')){
-          scEl.innerHTML = `<button type="button" class="ps-d-szchart">📏 ${esc(tr('ps_d_sizechart'))}</button>`;
+          scEl.innerHTML = `<button type="button" class="ps-d-szchart" aria-label="${esc(tr('ps_d_sizechart'))}" title="${esc(tr('ps_d_sizechart'))}">📏</button>`;
           const b = scEl.querySelector('button'); if(b) b.onclick = () => { try{ psOpenSizeChart(st); }catch(e){} };
         }
       } else if(scEl.firstChild){ scEl.innerHTML = ''; }
     }
+  }
+  // First-ever popup gallery with more than one photo: nudge it sideways once so buyers
+  // learn they can swipe (same cue already used on the product grid, ≤1× ever here since
+  // a popup gallery is only seen a handful of times, unlike the grid).
+  function psDetailSwipeHintMaybe(el){
+    try{
+      if(!(navigator.maxTouchPoints > 0 || 'ontouchstart' in window)) return;
+      if(localStorage.getItem('psb_popup_swipe_seen')) return;
+      localStorage.setItem('psb_popup_swipe_seen', '1');
+      el.classList.remove('ps-swipenudge'); void el.offsetWidth; el.classList.add('ps-swipenudge');
+      setTimeout(function(){ if(el) el.classList.remove('ps-swipenudge'); }, 1700);
+    }catch(e){}
   }
   // Size-chart modal: renders the measurement TABLE(s) natively (responsive, theme-styled) and/or the
   // chart IMAGE(s), layered over the product popup with its own close. Built lazily, reused per open.
@@ -8918,7 +8968,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-01-bnfix';
+  const PSB_BUILD = '2026-07-01-pdp2';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
@@ -8962,6 +9012,7 @@
     try { psBannerStart(); } catch(e){}   // start the rotating value banner (redesign P1)
     try { psRenderColls(); } catch(e){}   // render the collection-first home tiles
     try { var _cq = new URLSearchParams(location.search).get('coll'); if(_cq && window.psOpenColl) psOpenColl(_cq); } catch(e){}   // deep-link ?coll=<id> (posters/links)
+    try { var _pq = new URLSearchParams(location.search).get('product'); if(_pq) psOpenSharedProduct(_pq); } catch(e){}   // deep-link ?product=<data> (shared product)
     try { psRenderPromises(); } catch(e){}   // render the promise/trust strip (search page)
     try { psFiltersInit(); } catch(e){}      // move the filter containers into the ▦ sheet
     try { psMoveGenInd(); } catch(e){}                                  // place the sliding gender underline (#2)
