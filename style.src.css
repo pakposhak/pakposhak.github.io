@@ -298,10 +298,10 @@
     @media (prefers-reduced-motion:reduce){.ps-store{transition:none}}
     /* Hero banners (#6): two rotating slides, a catalogue photo under a left-dark gradient + claim. */
     .ps-banner{position:relative;width:100%;aspect-ratio:2.1/1;max-height:210px;border-radius:14px;overflow:hidden;margin:0 0 14px;background:linear-gradient(135deg,#0b3a22,#0a5230)}
-    .ps-hero-slide{position:absolute;inset:0;background-size:cover;background-position:center 20%;opacity:0;transition:opacity .7s ease;display:flex;align-items:flex-end}
+    .ps-hero-slide{position:absolute;inset:0;background-size:cover;background-position:right 18%;opacity:0;transition:opacity .7s ease;display:flex;align-items:flex-end}
     .ps-hero-slide.on{opacity:1}
-    .ps-hero-ov{position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,18,10,0.85) 0%,rgba(4,18,10,0.55) 42%,rgba(4,18,10,0.12) 100%)}
-    .ps-hero-tx{position:relative;padding:15px 17px;max-width:78%}
+    .ps-hero-ov{position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,18,10,0.88) 0%,rgba(4,18,10,0.78) 32%,rgba(4,18,10,0.42) 54%,rgba(4,18,10,0) 68%)}
+    .ps-hero-tx{position:relative;padding:15px 17px;max-width:56%}
     .ps-hero-t{display:block;color:#fff;font-size:1.16rem;font-weight:800;line-height:1.2;letter-spacing:0.2px;text-shadow:0 1px 5px rgba(0,0,0,0.55)}
     .ps-hero-s{display:block;color:#F1E8CF;font-size:0.8rem;font-weight:600;line-height:1.35;margin-top:5px;text-shadow:0 1px 4px rgba(0,0,0,0.55)}
     /* Tap-to-paste CTA pill on the Brand / Price-Check hero (it's the only paste affordance there now). */
