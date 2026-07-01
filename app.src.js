@@ -5553,7 +5553,11 @@
     if(typeof psSel!=='undefined'){
       if(!qVal){
         (psSel.brands||new Set()).forEach(function(b){ chips.push({kind:'brand',val:b,lbl:b}); });
-        (psSel.cats||new Set()).forEach(function(c){
+        // A department tab (Women/Men/Kids) fills psSel.cats with EVERY category in that
+        // department — that's just "browsing the department," not a specific pick, so it must
+        // NOT explode into chips. Only a real narrowing (some subset) should show as chips.
+        var wholeDept = (typeof _psIsWholeDeptCats==='function') && _psIsWholeDeptCats(psSel.cats||new Set());
+        if(!wholeDept) (psSel.cats||new Set()).forEach(function(c){
           var lbl = c.indexOf('all:')===0 ? tr(PS_GENDER_WORD[c.slice(4)]) : (PS_CAT_LABELS[c]||c);
           chips.push({kind:'cat',val:c,lbl:lbl});
         });
@@ -6785,7 +6789,15 @@
   }
   function psPickCat(v){
     if(v === '') psSel.cats.clear();                              // "All categories" → clear filter
-    else if(psSel.cats.has(v)) psSel.cats.delete(v);             // re-tap clears just this one
+    else if(psSel.cats.has(v)){
+      // Tapping a category that's part of a WHOLE-DEPARTMENT set (Women/Men/Kids tab — no
+      // specific pick made yet) means "narrow to exactly this one", not "remove it from the
+      // 32-odd categories the buyer never consciously chose in the first place". Once there's
+      // a real (non-whole-department) selection, re-tapping an already-picked one clears just
+      // that one, same as before.
+      if(_psIsWholeDeptCats(psSel.cats)) psSel.cats = new Set([v]);
+      else psSel.cats.delete(v);             // re-tap clears just this one
+    }
     else psSel.cats.add(v);
     psBuildCatFilter(); psApply(); psScrollToResults();
   }
@@ -9049,7 +9061,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-02-desktop3';
+  const PSB_BUILD = '2026-07-02-desktop4';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
