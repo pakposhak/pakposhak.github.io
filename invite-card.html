@@ -141,10 +141,10 @@ function buildSVG(){
   el += '<line x1="'+(cx-70)+'" y1="'+y+'" x2="'+(cx+70)+'" y2="'+y+'" stroke="'+t.accent+'" stroke-width="2.5"/>';
 
   // sentence
-  y += 60;
-  var sLines = wrap(card.sent, 40);
-  sLines.forEach(function(ln,i){ el += '<text x="'+cx+'" y="'+(y+i*48)+'" text-anchor="middle" font-family="Georgia,serif" font-size="35" fill="'+t.ink+'">'+esc(ln)+'</text>'; });
-  y += sLines.length*48;
+  y += 62;
+  var sLines = wrap(card.sent, 37);
+  sLines.forEach(function(ln,i){ el += '<text x="'+cx+'" y="'+(y+i*54)+'" text-anchor="middle" font-family="Georgia,serif" font-size="41" fill="'+t.ink+'">'+esc(ln)+'</text>'; });
+  y += sLines.length*54;
 
   // ── QR + link panel ──
   var pX=80, pW=W-160, pTop=(story? H-720 : y+40), pH= story? 560 : (H-40-(y+40));
