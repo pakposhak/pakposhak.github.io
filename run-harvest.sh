@@ -40,6 +40,7 @@ node -e '
 #    durable correction file is committed each run — keeps it across cron's `git reset --hard`.
 git add catalog.json
 [ -f collection-corrections.json ] && git add collection-corrections.json
+[ -f removed-products-log.jsonl ] && git add removed-products-log.jsonl
 if git diff --cached --quiet; then echo "no catalog change"; exit 0; fi
 COUNT=$(node -e "console.log(require('./catalog.json').count||0)")
 git commit -m "Auto-refresh catalog (VPS): ${COUNT} products [skip ci]"

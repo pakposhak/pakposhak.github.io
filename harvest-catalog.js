@@ -241,7 +241,13 @@ function isSizeToken(s){
 // sized product is sold out (caller drops those — only available items are listed).
 function availSizes(p){
   const idx = (p.options||[]).findIndex(o => /size|age/i.test((o && o.name) || o));
-  if(idx < 0) return ['Unstitched'];
+  if(idx < 0){
+    // No Size/Age option = a single-SKU item (unstitched fabric bolt, one-size piece). It still
+    // has a real variant with a real `available` flag — a sold-out one must drop just like a
+    // sized product with every size gone, or single-SKU stock-outs never leave the catalog.
+    const anyAvail = (p.variants||[]).some(v => v && v.available !== false);
+    return anyAvail ? ['Unstitched'] : [];
+  }
   const seen = new Set(), out = [];
   (p.variants||[]).forEach(v => {
     if(!v || v.available === false) return;          // skip sold-out variants
@@ -604,9 +610,17 @@ function buildProduct(p, name, host, group, force, kidsHint){
 // ── Shopify whole-store harvest — PAGINATED (?page=N) so deep caps pull multiple
 // pages. One retry per page so a transient timeout doesn't drop the brand. Stops at
 // the cap, at a short (<250) page, or when a page returns empty. ──
+// Returns {items, raw, healthy, complete}. `raw` = every product URL the brand's feed
+// actually listed this run (whether or not buildProduct kept it) — the ground truth for
+// "is this still on the brand's site". `healthy` = the fetch didn't hard-fail partway
+// (a network/parse error means we DON'T know what's past that point — never trust silence
+// as delisting). `complete` = we hit a natural end (short/empty page), not our own cap —
+// a cap-truncated run is a real but PARTIAL view, so absence from it must not be read as
+// delisting (pagination order can shift page N+1 into page N between runs).
 async function harvestShopify(name, host, group){
   const cap = capFor(name);
-  const out = [], seenH = new Set();
+  const out = [], seenH = new Set(), rawSet = new Set();
+  let hardFail = false;
   const maxPages = Math.min(10, Math.ceil(cap / 200) + 1);
   for(let page = 1; page <= maxPages && out.length < cap; page++){
     let raw = null;
@@ -614,12 +628,13 @@ async function harvestShopify(name, host, group){
       try{ raw = await get(`https://${host}/products.json?limit=250&page=${page}`); break; }
       catch(e){ if(attempt < 2){ await sleep(1300); continue; } if(page === 1) console.error(`  ✗ ${name} (${host}): ${e.message}`); }
     }
-    if(raw == null) break;
-    let j; try{ j = JSON.parse(raw); }catch(e){ break; }
+    if(raw == null){ hardFail = true; break; }
+    let j; try{ j = JSON.parse(raw); }catch(e){ hardFail = true; break; }
     const prods = (j.products||[]).filter(p => p.variants && p.variants.length && p.handle);
-    if(!prods.length) break;                 // no more pages
+    if(!prods.length) break;                 // no more pages (clean end, not a failure)
     for(const p of prods){
-      if(out.length >= cap) break;
+      rawSet.add(`https://${host}/products/${p.handle}`);
+      if(out.length >= cap) continue;        // keep recording `raw` past the cap; just stop keeping items
       if(seenH.has(p.handle)) continue; seenH.add(p.handle);
       const o = buildProduct(p, name, host, group, null);
       if(o) out.push(o);
@@ -627,7 +642,7 @@ async function harvestShopify(name, host, group){
     if(prods.length < 250) break;            // last page reached
     await sleep(450);
   }
-  return out;
+  return { items: out, raw: rawSet, healthy: !hardFail, complete: out.length < cap };
 }
 
 // ── SFCC harvest (parse product tiles) ──
@@ -667,23 +682,27 @@ function sfccUrl(host, pg, start){
 // Paginate each SFCC category (&start=0..max step sz) until it repeats / empties or
 // the brand cap is hit. Per-page group lets Sapphire's `man` grid map to men's cats.
 async function harvestSfcc(brand){
-  const all = [], seen = new Set();
+  const all = [], seen = new Set(), rawSet = new Set();
   const cap = capFor(brand.name);
+  let hardFail = false;
   for(const pg of brand.pages){
     for(let start = 0; start <= pg.max && all.length < cap; start += pg.sz){
       let html;
       try{ html = await get(sfccUrl(brand.host, pg, start)); }
-      catch(e){ console.error(`  ✗ ${brand.name} ${pg.cgid||pg.path}@${start}: ${e.message}`); break; }
+      catch(e){ console.error(`  ✗ ${brand.name} ${pg.cgid||pg.path}@${start}: ${e.message}`); hardFail = true; break; }
       const items = parseSfccPage(html, brand.host, pg.group, brand.priceRe);
       if(!items.length) break;                 // end of this category
       let added = 0;
-      for(const p of items){ if(seen.has(p.u)) continue; seen.add(p.u); p.b = brand.name; all.push(p); added++; }
+      for(const p of items){
+        rawSet.add(p.u);
+        if(seen.has(p.u)) continue; seen.add(p.u); p.b = brand.name; all.push(p); added++;
+      }
       await sleep(650);
       if(!added) break;                         // only repeats → category exhausted
     }
     if(all.length >= cap) break;
   }
-  return all.slice(0, cap);
+  return { items: all.slice(0, cap), raw: rawSet, healthy: !hardFail, complete: all.length < cap };
 }
 
 // ── Collection harvest (Shopify /collections/<handle>/products.json) ──
@@ -691,21 +710,28 @@ async function harvestCollectionUrl(name, host, group, force, handle){
   const url = handle === 'ALL'
     ? `https://${host}/products.json?limit=250`
     : `https://${host}/collections/${handle}/products.json?limit=250`;
-  let raw; try{ raw = await get(url); }catch(e){ return []; }
-  let j; try{ j = JSON.parse(raw); }catch(e){ return []; }
-  return (j.products||[]).filter(p => p.variants && p.variants.length && p.handle)
-    .map(p => buildProduct(p, name, host, group, force)).filter(Boolean);
+  let raw; try{ raw = await get(url); }catch(e){ return { items: [], raw: new Set(), ok: false }; }
+  let j; try{ j = JSON.parse(raw); }catch(e){ return { items: [], raw: new Set(), ok: false }; }
+  const prods = (j.products||[]).filter(p => p.variants && p.variants.length && p.handle);
+  return {
+    items: prods.map(p => buildProduct(p, name, host, group, force)).filter(Boolean),
+    raw: new Set(prods.map(p => `https://${host}/products/${p.handle}`)),
+    ok: true,
+  };
 }
 async function harvestCollections(entry){
   const [name, host, group, cap, handles] = entry;
-  const out = [], seen = new Set();
+  const out = [], seen = new Set(), rawSet = new Set();
+  let hardFail = false;
   for(const [handle, force] of handles){
-    const items = await harvestCollectionUrl(name, host, group, force, handle);
-    for(const it of items){ if(seen.has(it.u)) continue; seen.add(it.u); out.push(it); }
+    const r = await harvestCollectionUrl(name, host, group, force, handle);
+    if(!r.ok) hardFail = true;
+    for(const u of r.raw) rawSet.add(u);
+    for(const it of r.items){ if(seen.has(it.u)) continue; seen.add(it.u); out.push(it); }
     await sleep(600);
     if(out.length >= cap) break;
   }
-  return out.slice(0, cap);
+  return { items: out.slice(0, cap), raw: rawSet, healthy: !hardFail, complete: out.length < cap };
 }
 
 // ── KIDS harvest — auto-discover each brand's kids collections, classify per product
@@ -732,13 +758,15 @@ const KIDS_BRANDS = [
   // Salitex DROPPED — its "girls" collection is a WOMEN'S line + fragrances (adult XS/S/M/L), not kids.
 ];
 async function harvestKidsCollection(name, host, handle, hint, need){
-  const out = [];
+  const out = [], rawSet = new Set();
+  let hardFail = false;
   for(let page = 1; page <= 4 && out.length < need; page++){
-    let raw; try{ raw = await get(`https://${host}/collections/${handle}/products.json?limit=250&page=${page}`); }catch(e){ break; }
-    let prods; try{ prods = (JSON.parse(raw).products) || []; }catch(e){ break; }
+    let raw; try{ raw = await get(`https://${host}/collections/${handle}/products.json?limit=250&page=${page}`); }catch(e){ hardFail = true; break; }
+    let prods; try{ prods = (JSON.parse(raw).products) || []; }catch(e){ hardFail = true; break; }
     if(!prods.length) break;
     for(const p of prods){
       if(!(p.variants && p.variants.length && p.handle)) continue;
+      rawSet.add(`https://${host}/products/${p.handle}`);
       const o = buildProduct(p, name, host, 'k', null, hint);
       // Preserve the brand's own collection handle so catalog-cleanup.js can use it as
       // ground truth (east/west) — without it, cleanup only sees title+slug and may override
@@ -748,20 +776,24 @@ async function harvestKidsCollection(name, host, handle, hint, need){
     if(prods.length < 250) break;
     await sleep(350);
   }
-  return out;
+  return { items: out, raw: rawSet, healthy: !hardFail, complete: out.length < need };
 }
 async function harvestKidsBrand(name, host){
-  let raw; try{ raw = await get(`https://${host}/collections.json?limit=250`); }catch(e){ return []; }
-  let cols; try{ cols = (JSON.parse(raw).collections) || []; }catch(e){ return []; }
+  let raw; try{ raw = await get(`https://${host}/collections.json?limit=250`); }catch(e){ return { items: [], raw: new Set(), healthy: false, complete: false }; }
+  let cols; try{ cols = (JSON.parse(raw).collections) || []; }catch(e){ return { items: [], raw: new Set(), healthy: false, complete: false }; }
   const kc = cols.map(c => ({ handle:c.handle, n:c.products_count || 0, hint:classifyKidsCollection(c.handle, c.title) }))
     .filter(c => c.hint && c.n > 0);
   // eastern / formal / infant collections first, western last → eastern-first within the cap
   kc.sort((a,b) => ((a.hint.t === 'western' ? 1 : 0) - (b.hint.t === 'western' ? 1 : 0)) || b.n - a.n);
-  const out = [], seen = new Set(); let west = 0;
+  const out = [], seen = new Set(), rawSet = new Set(); let west = 0;
+  let hardFail = false, allComplete = true;
   for(const c of kc){
-    if(out.length >= KIDS_CAP) break;
-    const items = await harvestKidsCollection(name, host, c.handle, c.hint, 400);
-    for(const it of items){
+    if(out.length >= KIDS_CAP){ allComplete = false; break; }
+    const r = await harvestKidsCollection(name, host, c.handle, c.hint, 400);
+    if(!r.healthy) hardFail = true;
+    if(!r.complete) allComplete = false;
+    for(const u of r.raw) rawSet.add(u);
+    for(const it of r.items){
       if(seen.has(it.u)) continue; seen.add(it.u);
       if(/_western$/.test(it.cat)){ if(west >= KIDS_WEST_CAP) continue; west++; }   // eastern-first cap
       out.push(it);
@@ -769,19 +801,32 @@ async function harvestKidsBrand(name, host){
     }
     await sleep(300);
   }
-  return out;
+  return { items: out, raw: rawSet, healthy: !hardFail, complete: allComplete };
 }
 
 (async () => {
   const KIDS_ONLY = process.env.KIDS_ONLY === '1';   // dry-run: kids brands only, report 7-cat split, no catalog.json write
+  const REPORT_ONLY = process.env.PSB_REPORT_ONLY === '1';   // dry-run: full pipeline, writes catalog-dryrun.json instead of catalog.json
   const all = [];
+  // Per-brand fetch-health tracking (see the harvestX return-shape comments above harvestShopify)
+  // — AND-combines healthy/complete and UNIONs raw URLs across every harvest call for a brand name
+  // (a brand can be sourced from more than one of KIDS_BRANDS/COLLECTIONS/SHOPIFY/SFCC in one run).
+  const brandMeta = new Map();
+  function noteBrand(name, r){
+    const m = brandMeta.get(name) || { healthy: true, complete: true, raw: new Set() };
+    m.healthy = m.healthy && r.healthy;
+    m.complete = m.complete && r.complete;
+    for(const u of r.raw) m.raw.add(u);
+    brandMeta.set(name, m);
+  }
   // KIDS first so the hint-based classification wins URL-dedup over any kids items that
   // leak into a family brand's whole-store (adult) harvest.
   for(const [name, host] of KIDS_BRANDS){
     process.stdout.write(`• ${name} (kids) … `);
-    const items = await harvestKidsBrand(name, host);
-    console.log(`${items.length}`);
-    all.push(...items);
+    const r = await harvestKidsBrand(name, host);
+    noteBrand(name, r);
+    console.log(`${r.items.length}`);
+    all.push(...r.items);
     await sleep(500);
   }
   if(!KIDS_ONLY){
@@ -789,23 +834,86 @@ async function harvestKidsBrand(name, host){
     // win the URL-dedup over the whole-store generic mapCat result. (KIDS still leads.)
     for(const entry of COLLECTIONS){
       process.stdout.write(`• ${entry[0]} (collection) … `);
-      const items = await harvestCollections(entry);
-      console.log(`${items.length}`);
-      all.push(...items);
+      const r = await harvestCollections(entry);
+      noteBrand(entry[0], r);
+      console.log(`${r.items.length}`);
+      all.push(...r.items);
       await sleep(500);
     }
     for(const [name, host, group] of SHOPIFY){
       process.stdout.write(`• ${name} … `);
-      const items = await harvestShopify(name, host, group);
-      console.log(`${items.length}`);
-      all.push(...items);
+      const r = await harvestShopify(name, host, group);
+      noteBrand(name, r);
+      console.log(`${r.items.length}`);
+      all.push(...r.items);
       await sleep(700);
     }
     for(const brand of SFCC){
       process.stdout.write(`• ${brand.name} (SFCC) … `);
-      const items = await harvestSfcc(brand);
-      console.log(`${items.length}`);
-      all.push(...items);
+      const r = await harvestSfcc(brand);
+      noteBrand(brand.name, r);
+      console.log(`${r.items.length}`);
+      all.push(...r.items);
+    }
+  }
+  // ── Stock promise: always-in-stock enforcement ────────────────────────────────────
+  // "Always in stock" means a product that's sold out everywhere or that the brand has
+  // pulled from their site must not linger in the catalog. The harvest already rebuilds
+  // from scratch every run, so a healthy, fully-enumerated brand fetch is BY ITSELF proof
+  // that anything missing is gone — the risk is treating an unhealthy/partial fetch (one
+  // bad brand this run) the same way and wrongly deleting products that are still live.
+  // So the trust decision is made PER BRAND, using the health/completeness tracked above:
+  //   • seen in this run's raw feed but buildProduct rejected it → 'out_of_stock' (trusted
+  //     regardless of pagination depth elsewhere — we directly observed it this run)
+  //   • never seen at all, AND the brand was healthy+fully enumerated → 'delisted'
+  //   • never seen, but the brand's fetch was unhealthy or capped/truncated → uncertain,
+  //     PRESERVE the previous entry rather than guess it's gone (union-merge fallback,
+  //     replacing the old all-or-nothing "one bad brand reverts the whole catalog" gate)
+  let prevCatalog = null;
+  try{ prevCatalog = JSON.parse(fs.readFileSync('catalog.json', 'utf8')); }catch(e){}
+  const removedLog = [];
+  if(!KIDS_ONLY && prevCatalog && Array.isArray(prevCatalog.products)){
+    const thisRunUrls = new Set(all.map(p => p.u));
+    const prevByBrand = new Map();
+    for(const p of prevCatalog.products){
+      if(!prevByBrand.has(p.b)) prevByBrand.set(p.b, []);
+      prevByBrand.get(p.b).push(p);
+    }
+    let preserved = 0, delisted = 0, outOfStock = 0;
+    for(const [name, prevItems] of prevByBrand){
+      const meta = brandMeta.get(name);
+      if(!meta) continue;   // brand not attempted this run (e.g. deliberately removed from the config) — unchanged existing behaviour
+      for(const p of prevItems){
+        if(thisRunUrls.has(p.u)) continue;   // still present this run — nothing to do
+        const ts = new Date().toISOString();
+        if(meta.raw.has(p.u)){
+          removedLog.push({ ts, b:name, u:p.u, t:p.t, reason:'out_of_stock' });
+          outOfStock++;
+        } else if(meta.healthy && meta.complete){
+          removedLog.push({ ts, b:name, u:p.u, t:p.t, reason:'delisted' });
+          delisted++;
+        } else {
+          all.push(p);
+          preserved++;
+        }
+      }
+    }
+    if(delisted || outOfStock) console.log(`  stock-removal: ${outOfStock} out-of-stock, ${delisted} delisted`);
+    if(preserved) console.log(`  preserved ${preserved} previous entries (brand fetch unhealthy/incomplete this run)`);
+    if(removedLog.length){
+      if(REPORT_ONLY){
+        console.log('  (report-only — sample of what would be removed):');
+        removedLog.slice(0, 30).forEach(r => console.log(`    [${r.reason}] ${r.b}: ${r.t}  ${r.u}`));
+      } else {
+        const LOGF = 'removed-products-log.jsonl';
+        fs.appendFileSync(LOGF, removedLog.map(r => JSON.stringify(r)).join('\n') + '\n');
+        // Cap the audit trail so it doesn't grow forever across years of 4x/day runs —
+        // keep the most recent ~20k lines (roughly 3-6 months at typical daily volume).
+        try{
+          const lines = fs.readFileSync(LOGF, 'utf8').split('\n').filter(Boolean);
+          if(lines.length > 20000) fs.writeFileSync(LOGF, lines.slice(-20000).join('\n') + '\n');
+        }catch(e){}
+      }
     }
   }
   // de-dupe by product URL (a brand's bridal collection overlaps its main feed)
@@ -855,7 +963,7 @@ async function harvestKidsBrand(name, host){
   if (_ac.stats.moved || _ac.stats.removed) console.log('  corrections:', _ac.stats.moved, 'moved,', _ac.stats.removed, 'removed');
   const brands = [...new Set(deduped.map(p => p.b))];
   const out = { updated: new Date().toISOString(), count: deduped.length, brands: brands.length, products: deduped };
-  const file = KIDS_ONLY ? 'catalog-kids-sample.json' : 'catalog.json';
+  const file = KIDS_ONLY ? 'catalog-kids-sample.json' : (REPORT_ONLY ? 'catalog-dryrun.json' : 'catalog.json');
   fs.writeFileSync(file, JSON.stringify(out));
   console.log(`\n✓ ${file} — ${deduped.length} products from ${brands.length} brands`);
   // gender mix (cat → gender): mens_* = men, kids_* = kids, else women.

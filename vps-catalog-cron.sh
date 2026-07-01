@@ -60,39 +60,18 @@ git config user.name  "pakiposhak-vps"
 git config user.email "vps@pakiposhak.local"
 git pull --rebase --autostash origin main || true
 
-# 3) Drop the harvest+push runner (same sanity gate as the Actions workflow) ---
-cat > "$RUNNER" <<'RUN'
+# 3) Drop a THIN wrapper that execs the repo's run-harvest.sh — the harvest logic (sanity
+#    gate, stock-promise/delisting enforcement, rebase-retry push) lives in ONE place,
+#    version-controlled in the repo, instead of being duplicated here where a heredoc'd
+#    copy would silently drift from the tracked source (this is exactly what happened
+#    before: this file's inline gate didn't know about catalog-sanity.js at all). ---
+cat > "$RUNNER" <<RUN
 #!/usr/bin/env bash
 set -euo pipefail
-REPO_DIR="${REPO_DIR:-/opt/pakiposhak}"
-cd "$REPO_DIR"
-echo "==== $(date) : harvest start ===="
-git pull --rebase --autostash origin main >/dev/null 2>&1 || true
-node harvest-catalog.js
-# Sanity gate: never let a throttled/partial run shrink the live catalog.
-node -e '
-  const fs=require("fs"), cp=require("child_process");
-  const cur=JSON.parse(fs.readFileSync("catalog.json","utf8"));
-  const has=(j,b)=>j.products.some(p=>p.b===b);
-  let prev=null; try{ prev=JSON.parse(cp.execSync("git show HEAD:catalog.json").toString()); }catch(e){}
-  const bad=[];
-  if((cur.count||0)<800) bad.push("count "+cur.count+" < 800");
-  if(prev){
-    for(const b of ["Khaadi","Sapphire"]) if(has(prev,b)&&!has(cur,b)) bad.push("lost "+b);
-    if((prev.count||0)>=800 && (cur.count||0) < prev.count*0.85) bad.push("dropped >15% ("+cur.count+" vs "+prev.count+")");
-  }
-  if(bad.length){ console.log("Bad harvest ("+bad.join(", ")+") — keeping previous catalog."); cp.execSync("git checkout -- catalog.json"); process.exit(0); }
-  console.log("OK: "+cur.count+" products from "+cur.brands+" brands");
-'
-git add catalog.json
-if git diff --cached --quiet; then echo "no catalog change"; exit 0; fi
-COUNT=$(node -e "console.log(require('./catalog.json').count||0)")
-git commit -m "Auto-refresh catalog (VPS): ${COUNT} products [skip ci]"
-git push origin main
-echo "==== pushed ${COUNT} products ===="
+exec bash "$REPO_DIR/run-harvest.sh"
 RUN
 chmod +x "$RUNNER"
-echo "▸ Installed runner: $RUNNER"
+echo "▸ Installed runner: $RUNNER (wraps $REPO_DIR/run-harvest.sh)"
 
 # 4) Cron 4x/day at 10:00 / 12:00 / 17:00 / 21:00 (VPS LOCAL time) -------------
 CRON_LINE="0 10,12,17,21 * * * REPO_DIR=$REPO_DIR $RUNNER >> $LOG 2>&1"
