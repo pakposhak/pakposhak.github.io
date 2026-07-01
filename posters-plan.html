@@ -168,7 +168,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
     <div class="fg"><label>📝 Remarks (notes to Claude)</label><textarea id="f_remarks" rows="2" class="remarks" placeholder="e.g. 'move to home-w', 'new title: X', 'use a brighter photo'…" oninput="setField('remarks',this.value)"></textarea></div>
 
     <div class="actions">
-      <button class="b-add" onclick="addHere()">+ Add poster to this page</button>
+      <button class="b-add" onclick="duplicateHere()">⧉ Duplicate this poster</button>
       <button class="b-del" onclick="delPoster()">✕ Delete this poster</button>
     </div>
   </div>
@@ -355,8 +355,8 @@ function render(){
   var pageOpts = PAGE_META.filter(function(m){return m.id!==ref.pid;}).map(function(m){return '<option value="page:'+m.id+'">'+m.emoji+' '+m.label+'</option>';}).join('');
   document.getElementById('moveSel').innerHTML =
     '<option value="">Move / add to…</option>'
-    +'<optgroup label="Move to another page">'+pageOpts+'</optgroup>'
-    +'<optgroup label="Add to collection">'
+    +'<optgroup label="Move to another page (removes it from here)">'+pageOpts+'</optgroup>'
+    +'<optgroup label="Add to collection (keeps it here)">'
       +'<option value="tag:social"'+(p.social?' disabled':'')+'>📱 Social media'+(p.social?'  ✓ added':'')+'</option>'
       +'<option value="tag:later"'+(p.later?' disabled':'')+'>🔖 Use later'+(p.later?'  ✓ added':'')+'</option>'
     +'</optgroup>';
@@ -430,13 +430,18 @@ function moveToPage(toPid){
   var f=flatten(); for(var k=0;k<f.length;k++){ if(f[k].pid===toPid && pages[toPid][f[k].i]===p){ flat=k; break; } }
   render();
 }
-function addHere(){
-  var ref=curRef(); var pid = ref? ref.pid : PAGE_META[0].id;
-  pages[pid].push({en_t:'',en_s:'',bn_t:'',bn_s:'',remarks:'NEW — fill in EN + BN text'});
-  saveState();
-  jumpPage(pid); // go to that page; then move to last
-  var f=flatten(); for(var k=f.length-1;k>=0;k--){ if(f[k].pid===pid){ flat=k; break; } }
+function duplicateHere(){
+  filter='all';                                   // ensure the new poster is visible (not hidden by a filter)
+  var ref=curRef();
+  var src = ref ? pages[ref.pid][ref.i] : null;
+  var pid = ref ? ref.pid : PAGE_META[0].id;
+  var np = src
+    ? { en_t:src.en_t, en_s:src.en_s, bn_t:src.bn_t, bn_s:src.bn_s, remarks:(src.remarks ? '(copy) '+src.remarks : '(copy)') }
+    : { en_t:'', en_s:'', bn_t:'', bn_s:'', remarks:'NEW — fill in EN + BN text' };
+  pages[pid].push(np); saveState();
+  var f=flatten(); for(var k=f.length-1;k>=0;k--){ if(f[k].pid===pid){ flat=k; break; } }   // land on the new copy
   render();
+  toast(src ? '⧉ Copied — a duplicate was added to “'+metaOf(pid).label+'”. Your original poster is untouched.' : '➕ New blank poster added to “'+metaOf(pid).label+'”.');
 }
 function delPoster(){
   var ref=curRef(); if(!ref)return; var arr=pages[ref.pid];
