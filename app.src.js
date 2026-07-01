@@ -2529,10 +2529,10 @@
       s_orderid:'Your Order ID', s_track:'📦 Track My Order', s_howpay:'💳 How to Pay',
       s_payafter:'Pay the total shown above using any method below.',
       s_paid_title:'✅ Already Paid? Confirm Your Payment', s_paid_sub:"Enter your payment details below so we can match it to Order",
-      s_amt_label:'Amount you paid (৳) *', s_method_label:'How you paid *', s_method_pick:'Choose…', s_trx_label:'Transaction ID *', s_trx_hint:'Shown on your bKash / Nagad screen right after payment', s_pay_wa:'Confirm on WhatsApp', s_receipt_opt:'Attach receipt instead (optional)',
-      s_upload_main:'Tap to choose your payment screenshot', s_upload_sub:'bKash / Nagad / bank slip — JPG or PNG',
+      s_amt_label:'Amount you paid (৳) *', s_method_label:'How you paid *', s_method_pick:'Choose…', s_trx_label:'Transaction ID *', s_trx_hint:'Shown on your bKash / Nagad screen right after payment', s_pay_wa:'Send screenshot on WhatsApp', s_receipt_opt:'Attach receipt instead (optional)',
+      s_upload_title:'📷 Upload payment screenshot (optional)', s_upload_main:'Tap to choose your payment screenshot', s_upload_sub:'bKash / Nagad / bank slip, JPG or PNG',
       s_confirmpay:'✅ Confirm Payment',
-      s_footer1:"Submit your payment slip above — it's saved directly to your order, no need to message separately.",
+      s_footer1:"Submit your payment slip above. It's saved directly to your order, no need to message separately.",
       s_footer2:'Save your Order ID above to track your order status anytime.', s_another:'← Place Another Order',
       js_paste_first:'Please paste a product URL first.',
       js_invalid_url:"That doesn't look like a valid URL — please copy the full link from the brand's website.",
@@ -2603,10 +2603,10 @@
       s_orderid:'আপনার অর্ডার আইডি', s_track:'📦 অর্ডার ট্র্যাক করুন', s_howpay:'💳 যেভাবে পেমেন্ট করবেন',
       s_payafter:'উপরে দেখানো মোট টাকা নিচের যেকোনো মাধ্যমে দিন।',
       s_paid_title:'✅ পেমেন্ট করেছেন? সেটি নিশ্চিত করুন', s_paid_sub:'আপনার পেমেন্টের তথ্য দিন, যাতে আমরা সেটি আপনার অর্ডারের সাথে মিলিয়ে নিতে পারি — অর্ডার',
-      s_amt_label:'আপনি কত টাকা দিয়েছেন (৳) *', s_method_label:'কীভাবে দিয়েছেন *', s_method_pick:'বেছে নিন…', s_trx_label:'ট্রান্সঅ্যাকশন আইডি *', s_trx_hint:'আপনার bKash / Nagad রসিদে পাবেন', s_pay_wa:'WhatsApp-এ নিশ্চিত করুন', s_receipt_opt:'রসিদ যোগ করুন (ঐচ্ছিক)',
-      s_upload_main:'পেমেন্টের স্ক্রিনশট বেছে নিতে ট্যাপ করুন', s_upload_sub:'বিকাশ / নগদ / ব্যাংক স্লিপ — JPG বা PNG',
+      s_amt_label:'আপনি কত টাকা দিয়েছেন (৳) *', s_method_label:'কীভাবে দিয়েছেন *', s_method_pick:'বেছে নিন…', s_trx_label:'ট্রান্সঅ্যাকশন আইডি *', s_trx_hint:'আপনার bKash / Nagad রসিদে পাবেন', s_pay_wa:'স্ক্রিনশট WhatsApp-এ পাঠান', s_receipt_opt:'রসিদ যোগ করুন (ঐচ্ছিক)',
+      s_upload_title:'📷 পেমেন্টের স্ক্রিনশট আপলোড করুন (ঐচ্ছিক)', s_upload_main:'পেমেন্টের স্ক্রিনশট বেছে নিতে ট্যাপ করুন', s_upload_sub:'বিকাশ / নগদ / ব্যাংক স্লিপ, JPG বা PNG',
       s_confirmpay:'✅ পেমেন্ট নিশ্চিত করুন',
-      s_footer1:'উপরে পেমেন্ট স্লিপটি জমা দিন — এটি সরাসরি আপনার অর্ডারে যুক্ত হয়, আলাদা করে মেসেজ করতে হবে না।',
+      s_footer1:'উপরে পেমেন্ট স্লিপটি জমা দিন। এটি সরাসরি আপনার অর্ডারে যুক্ত হয়, আলাদা করে মেসেজ করতে হবে না।',
       s_footer2:'অর্ডারের অবস্থা যেকোনো সময় দেখতে উপরের অর্ডার আইডিটি সেভ করে রাখুন।', s_another:'← আরেকটি অর্ডার করুন',
       js_paste_first:'আগে একটি পণ্যের লিংক পেস্ট করুন।',
       js_invalid_url:'এটি ঠিক লিংক মনে হচ্ছে না — ব্র্যান্ডের ওয়েবসাইট থেকে পুরো লিংকটি কপি করুন।',
@@ -3968,7 +3968,7 @@
       return parts.join(' | ');
     }).join('\n');
 
-    const paymentInfo = 'bKash Payment: 01352018131 | bKash/Nagad/Upay/Rocket Send Money: 01851948690 | City Bank – Moors Attire A/C: 1324897775001 | UCBL – Moors Attire A/C: 7862141003465221';
+    const paymentInfo = 'bKash Payment: 01352018131 | Nagad Send Money: 01851948690 | City Bank – Moors Attire A/C: 1324897775001 | UCBL – Moors Attire A/C: 7862141003465221';
 
     // Shared order payload (used by every endpoint)
     const payload = {
@@ -4169,6 +4169,7 @@
     if(amount) msg += '\nAmount: ৳' + Number(amount).toLocaleString();
     if(method) msg += '\nMethod: ' + method;
     if(trxId)  msg += '\nTrxID: ' + trxId;
+    msg += '\n\nI am attaching my payment screenshot.';
     window.open('https://wa.me/' + SUPPORT_WA + '?text=' + encodeURIComponent(msg), '_blank');
   }
   window.openPayWa = openPayWa;
@@ -8822,7 +8823,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-01-icon4';
+  const PSB_BUILD = '2026-07-01-paymethods';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
