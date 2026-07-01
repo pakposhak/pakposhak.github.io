@@ -7253,7 +7253,7 @@
     // Move ONLY the Sort tabs (incl. Sale/New) and the Price bands into the inline
     // filter bar. Categories and Brands are intentionally excluded — they live on the
     // categories page now, so the funnel shows just Sort + Sale + New + Price.
-    [['psSortTabs','psFbSort'],['psPrice','psFbPrice']].forEach(function(m){
+    [['psSortTabs','psFbSort'],['psPrice','psFbPrice'],['psColours','psFbColour']].forEach(function(m){
       var src=document.getElementById(m[0]), dst=document.getElementById(m[1]);
       if(src && dst && src.parentNode!==dst) dst.appendChild(src);
     });
@@ -7264,7 +7264,7 @@
     if(bar && !bar._psAcWired){
       bar._psAcWired = true;
       bar.addEventListener('click', function(e){
-        if(e.target.closest('.ps-sortbtn, .ps-bucket, .ps-fb-clear')) psFilterBarAutoClose();
+        if(e.target.closest('.ps-sortbtn, .ps-bucket, .ps-clr-chip, .ps-fb-clear')) psFilterBarAutoClose();
       });
     }
   }
@@ -8822,7 +8822,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-01-colour';
+  const PSB_BUILD = '2026-07-01-colour2';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
