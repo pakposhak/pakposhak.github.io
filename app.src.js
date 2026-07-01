@@ -3548,28 +3548,86 @@
   // there's unsaved work and re-arm the trap if the buyer chooses to stay.
   // Back button while a popup/overlay is open should CLOSE it (not pop the exit
   // confirm — that left buyers stuck behind the enlarge popup). Topmost-likely first.
+  // Close the topmost OPEN overlay/popup (any of them). Handles both toggle
+  // conventions in this codebase: style.display and the `hidden` attribute.
+  // Ordered most-recently-on-top first. Returns true if one was closed.
   function psbCloseTopModal(){
+    var iz = document.getElementById('imgZoomOv');
+    if(iz && iz.style.display && iz.style.display !== 'none'){ iz.style.display='none'; iz.innerHTML=''; return true; }
     var dt = document.getElementById('psDetail');
     if(dt && dt.style.display && dt.style.display !== 'none'){ try{ psCloseDetail(); }catch(e){ dt.style.display='none'; } return true; }
+    var sp = document.getElementById('psSearchPage');
+    if(sp && !sp.hidden){ try{ psSearchClose(); }catch(e){ sp.hidden=true; } return true; }
+    var vs = document.getElementById('psVisSheet');
+    if(vs && !vs.hidden){ try{ psVisualSheet(false); }catch(e){ vs.hidden=true; document.body.style.overflow=''; } return true; }
+    var fs = document.getElementById('psFitSheet');
+    if(fs && !fs.hidden){ try{ psFitSheet(false); }catch(e){ fs.hidden=true; document.body.style.overflow=''; } return true; }
     var ios = document.getElementById('iosInstallSheet');
     if(ios && ios.style.display && ios.style.display !== 'none'){ try{ psbCloseIos(); }catch(e){ ios.style.display='none'; } return true; }
     var pp = document.getElementById('productPicker');
     if(pp && pp.style.display && pp.style.display !== 'none'){ try{ closeProductPicker(); }catch(e){ pp.style.display='none'; } return true; }
     var bs = document.getElementById('brandSheet');
     if(bs && bs.style.display && bs.style.display !== 'none'){ try{ closeBrandSheet(); }catch(e){ bs.style.display='none'; } return true; }
+    var wd = document.getElementById('wishDrawer');
+    if(wd && wd.classList.contains('open')){ try{ psWishClose(); }catch(e){ wd.classList.remove('open'); document.body.style.overflow=''; } return true; }
+    var pw = document.getElementById('psWarn');
+    if(pw && pw.style.display && pw.style.display !== 'none'){ try{ psWarnClose(); }catch(e){ pw.style.display='none'; } return true; }
     var md = document.getElementById('moreDrawer');
     if(md && md.classList.contains('open')){ try{ closeMoreDrawer(); }catch(e){ md.classList.remove('open'); } return true; }
+    var hm = document.getElementById('hdrMenu');
+    if(hm && !hm.hidden){ try{ psHdrMenuClose(); }catch(e){ hm.hidden=true; } return true; }
+    var fb = document.getElementById('psFilterBar');
+    if(fb && !fb.hidden){ try{ psFilters(false); }catch(e){ fb.hidden=true; } return true; }
+    var gp = document.getElementById('guidePop');
+    if(gp && gp.style.display === 'block'){ gp.style.display='none'; var gb=document.getElementById('bnav-help'); if(gb) gb.classList.remove('active'); return true; }
     return false;
   }
+
+  // ── UNIVERSAL BACK ───────────────────────────────────────────────────────────
+  // One deterministic step back through the app, in fixed precedence:
+  //   open overlay → checkout step → bag→browse → photo/fit results →
+  //   collection filter → brands→products → luxe→home.
+  // Returns false ONLY at the true home (Products / Home store / step 1, nothing
+  // open) — that's when Back really means "leave the app". Drives both the header
+  // #hdrBack button and the phone Back button, so the two always agree.
+  function psCanGoBackView(){
+    try{ if(currentStep > 1) return true; }catch(e){}
+    if(document.body.classList.contains('psb-bag')) return true;
+    try{ if(psVisualActive) return true; }catch(e){}
+    try{ if(_psActiveColl) return true; }catch(e){}
+    var tb = document.getElementById('tabBrands'); if(tb && tb.style.display !== 'none') return true;
+    if(document.body.classList.contains('ps-luxe')) return true;
+    return false;
+  }
+  function psUpdateBack(){
+    var hb = document.getElementById('hdrBack'); if(!hb) return;
+    hb.hidden = !psCanGoBackView();
+  }
+  window.psUpdateBack = psUpdateBack;
+  function psGoBackStep(){
+    if(psbCloseTopModal()) return true;                                                     // 1) an open overlay/popup
+    try{ if(currentStep > 1){ if(currentStep === 2){ showBagView(); } else { goToStep(currentStep - 1); } return true; } }catch(e){}  // 2) checkout step (2→bag)
+    if(document.body.classList.contains('psb-bag')){ try{ showBrowseView(); }catch(e){} return true; }                                // 3) bag → storefront
+    try{ if(psVisualActive){ psVisualClear(); return true; } }catch(e){}                     // 4) photo/fit results → normal grid
+    try{ if(_psActiveColl){ psClearColl(); return true; } }catch(e){}                        // 5) collection filter → all products
+    var tb = document.getElementById('tabBrands'); if(tb && tb.style.display !== 'none'){ try{ switchBrowse('products'); }catch(e){} return true; }   // 6) brands → products
+    if(document.body.classList.contains('ps-luxe')){ try{ bottomNavGo('home'); }catch(e){} return true; }                             // 7) luxe → home
+    return false;
+  }
+  function psGoBack(){ var did = psGoBackStep(); try{ psUpdateBack(); }catch(e){} return did; }
+  window.psGoBack = psGoBack;
   (function(){
     var armed = false;
     function arm(){ if(armed) return; try{ history.pushState({psbBack:1}, ''); armed = true; }catch(e){} }
     arm();
-    // Back button: if a popup is open, just close it. Otherwise confirm exit (always,
-    // even with an empty cart — Danish's choice). Cart-specific copy when unsaved.
+    // Back button: step ONE level back through the app (close a popup, or unwind a
+    // view/step/tab/filter). Only when there is nowhere left to go back to do we
+    // confirm exit (always, even with an empty cart — Danish's choice). Each Back
+    // press pops the spare entry; we handle one level and re-arm, so repeated Back
+    // walks all the way home before the exit prompt appears.
     window.addEventListener('popstate', function(){
       armed = false;
-      if(psbCloseTopModal()){ arm(); return; }   // Back closed an open popup → stay in the app
+      if(psGoBack()){ arm(); return; }   // Back stepped one level back → stay in the app
       var msg = psbHasUnsaved() ? tr('js_leave_confirm') : tr('js_exit_confirm');
       if(confirm(msg)){ history.back(); }   // OK → leave for real
       else { arm(); }                       // Cancel → stay, re-trap
@@ -3794,7 +3852,6 @@
       });
     });
     currentStep = n;
-    var _hb = document.getElementById('hdrBack'); if(_hb && n !== 1) _hb.hidden = true;   // back arrow is Browse-Brands only
     // Mobile checkout progress (#coProg): show on steps 2-4, mark the active stage + done stages.
     var _cp = document.getElementById('coProg');
     if(_cp){
@@ -3813,6 +3870,7 @@
     if(bnSteps) bnSteps.setAttribute('aria-label', 'Order progress: step ' + n + ' of 4');
     window.scrollTo({ top: 0, behavior: 'smooth' });
     updatePasteFab();
+    try{ psUpdateBack(); }catch(e){}
   }
 
   // Floating Paste button: the brand-link paste fallback. Shown on step 1 ONLY on the
@@ -4518,6 +4576,7 @@
       html.setAttribute('data-theme', _psPrevTheme || 'light');
       _psPrevTheme = null;
     }
+    try{ psUpdateBack(); }catch(e){}
   }
   window.psLuxeMode = psLuxeMode;
 
@@ -4531,7 +4590,6 @@
     var bv = document.getElementById('browseView');
     var gv = document.getElementById('bagView');
     if(!bv && !gv) return;                       // order-form.html — nothing to toggle
-    if(bag){ var _hb = document.getElementById('hdrBack'); if(_hb) _hb.hidden = true; }   // back arrow is Browse-Brands only
     if(bv) bv.style.display = bag ? 'none' : '';
     if(gv){
       gv.style.display = bag ? '' : 'none';
@@ -4542,6 +4600,7 @@
     var h = document.getElementById('appHeader');
     if(h) h.style.position = (!bag && window.innerWidth < 820) ? 'relative' : '';   // bag keeps the sticky header; browse hands off to .ps-topstick
     try{ updatePasteFab(); }catch(e){}
+    try{ psUpdateBack(); }catch(e){}
   }
   function showBrowseView(){ setOrderView('browse'); }
   function showBagView(){
@@ -5794,7 +5853,7 @@
       chip.hidden=false;
     } else if(chip){ chip.hidden=true; }
   }
-  function psVisualClear(){ psVisualActive=false; psVisualChip(false); psPage=0; if(typeof psApply==='function') psApply(); }
+  function psVisualClear(){ psVisualActive=false; psVisualChip(false); psPage=0; if(typeof psApply==='function') psApply(); try{ psUpdateBack(); }catch(e){} }
   // brief auto-dismiss toast for visual-search states (no search page needed)
   function psVisualToast(msg){
     var t=document.getElementById('psVisToast');
@@ -6291,7 +6350,6 @@
     if(_shown){ _shown.classList.remove('ps-viewfade'); void _shown.offsetWidth; _shown.classList.add('ps-viewfade'); }
     document.getElementById('bt-brands').classList.toggle('on', brands);
     document.getElementById('bt-products').classList.toggle('on', !brands);
-    var _hb = document.getElementById('hdrBack'); if(_hb) _hb.hidden = !brands;   // header back arrow shows only on Browse Brands
     // Browse Brands is the single unified Product-Category view on EVERY width now
     // (Store Types retired from the page; its source is kept + git-tagged for restore).
     if(brands){
@@ -6306,6 +6364,7 @@
     try{ localStorage.setItem('psb_browse', which); }catch(e){}   // remember tab so we return to it (req #7)
     document.body.classList.add('psb-browse');
     const _bh=document.getElementById('appHeader');if(_bh&&window.innerWidth<820)_bh.style.position='relative';
+    try{ psUpdateBack(); }catch(e){}
   }
   // True while the Browse-Products grid is the visible tab.
   function psOnProductsTab(){ const tp = document.getElementById('tabProducts'); return !!tp && tp.style.display !== 'none'; }
@@ -6452,7 +6511,7 @@
   }
   // Fetch the current filtered page. psFiltered holds JUST this page (the server filtered/sorted/paged).
   function psApiFetch(append){
-    if(psVisualActive && !append){ psVisualActive=false; psVisualChip(false); }   // a normal filter/search exits photo-search mode
+    if(psVisualActive && !append){ psVisualActive=false; psVisualChip(false); try{ psUpdateBack(); }catch(e){} }   // a normal filter/search exits photo-search mode
     const seq = ++psApiSeq;
     fetch(psSearchBase() + '?' + psApiParams(), { cache:'default' })
       .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
@@ -7213,6 +7272,7 @@
     try{ var r = document.querySelector('.ps-results'); if(r){ r.classList.remove('ps-coll-enter'); void r.offsetWidth; r.classList.add('ps-coll-enter'); } }catch(e){}
     try{ var u = new URL(location.href); u.searchParams.set('coll', id); history.replaceState(null,'',u.toString()); }catch(e){}
     try{ if(typeof psScrollToResults==='function') psScrollToResults(); else if(typeof psScrollGridUnderCarousel==='function') psScrollGridUnderCarousel(); }catch(e){}
+    try{ psUpdateBack(); }catch(e){}
   }
   function psClearColl(){
     _psActiveColl = '';
@@ -7222,6 +7282,7 @@
     try { psBuildCatFilter(); psBuildBrandFilter(); psBuildPriceFilter(); psBuildSort(); psApply(); } catch(e){}
     try{ var u = new URL(location.href); u.searchParams.delete('coll'); history.replaceState(null,'',u.toString()); }catch(e){}
     try{ psRenderColls(); }catch(e){}
+    try{ psUpdateBack(); }catch(e){}
   }
   // Legacy shim (any older inline onclicks): apply a kind/val filter directly.
   function psCollGo(kind, val){ _psCollApply({ kind:kind, val:val }); }
@@ -8825,7 +8886,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-01-filters';
+  const PSB_BUILD = '2026-07-01-back';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

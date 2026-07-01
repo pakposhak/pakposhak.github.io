@@ -77,8 +77,8 @@
 
 <header id="appHeader">
   <div class="hdr-inner">
-    <!-- Back arrow (shown only on Browse Brands) sits at the very start, before the logo. -->
-    <button class="hdr-back" id="hdrBack" onclick="switchBrowse('products')" aria-label="Back to products" title="Back to products" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <!-- Universal back arrow: steps ONE level back through the app (popup → step → bag → filter → tab → luxe). Shown whenever there's somewhere to go back to; wired to psGoBack(). -->
+    <button class="hdr-back" id="hdrBack" onclick="psGoBack()" aria-label="Go back" title="Go back" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
     <div class="hdr-logo">
       <img class="hdr-logo-img" src="pakposhak-icon-192.png" alt="PakPoshak" width="30" height="30"/>
       <div class="hdr-brand">PakPoshak</div>
