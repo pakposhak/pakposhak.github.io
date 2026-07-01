@@ -4618,8 +4618,9 @@
   function bottomNavGo(tab){
     try{ psThemeFlash(); }catch(e){}   // smooth any theme/Luxe colour flip this tap triggers (#3)
     // Bottom nav (redesign batch 2) = Home · Luxe · Bag(cart) · Price Check. Bag uses id bnav-bag.
-    var idmap = { home:'bnav-home', luxe:'bnav-luxe', cart:'bnav-bag', pricecheck:'bnav-pricecheck' };
-    Object.keys(idmap).forEach(function(t){ var b = document.getElementById(idmap[t]); if(b) b.classList.toggle('active', t === tab); });
+    // Desktop Studio/Luxe toggle (dtopStudioBtn/dtopLuxeBtn) mirrors home/luxe on the same map.
+    var idmap = { home:['bnav-home','dtopStudioBtn'], luxe:['bnav-luxe','dtopLuxeBtn'], cart:['bnav-bag'], pricecheck:['bnav-pricecheck'] };
+    Object.keys(idmap).forEach(function(t){ idmap[t].forEach(function(id){ var b = document.getElementById(id); if(b) b.classList.toggle('active', t === tab); }); });
     if(tab === 'home'){
       psLuxeMode(false);
       if(typeof switchBrowse === 'function') switchBrowse('products');
@@ -4708,9 +4709,9 @@
 
   // ── CART BADGE SYNC ──────────────────────────────────────────────────────
   function updateCartBadges(count){
-    // Header cart removed. Mobile shows the bottom-bar badge; desktop shows the
-    // badge on the Cart chip beside the stepper. Keep both in sync.
-    [['bnavBadge'], ['stepsCartBadge']].forEach(([elId]) => {
+    // Mobile shows the bottom-bar badge; desktop shows the badge on the header
+    // cart icon (+ the Cart chip beside the stepper during checkout). All in sync.
+    [['bnavBadge'], ['stepsCartBadge'], ['hdrCartBadge']].forEach(([elId]) => {
       const b = document.getElementById(elId);
       if(!b) return;
       if(count > 0){ b.textContent = count; b.style.display = ''; }
@@ -8212,6 +8213,19 @@
     }
     window.open('https://wa.me/?text=' + encodeURIComponent(text + '\n' + url.toString()), '_blank', 'noopener');
   }
+  // Share the APP itself (menu bar), not a product. Just the URL: the site's own Open Graph
+  // tags (og:image = og-image.png, already live) make WhatsApp/Facebook/iMessage etc. render a
+  // rich picture card automatically on the recipient's side — no editor, no separate image
+  // attach needed. Danish's explicit ask: keep this to URL (+picture via OG), nothing else.
+  function shareApp(){
+    const url = 'https://pakposhakonline.com';
+    const text = tr('tagline');
+    if(navigator.share){
+      navigator.share({ title: 'PakPoshak', text: text, url: url }).catch(function(){});
+      return;
+    }
+    window.open('https://wa.me/?text=' + encodeURIComponent(text + '\n' + url), '_blank', 'noopener');
+  }
   // Land straight on a shared product's popup. The product data rides in the URL itself, so
   // this needs no catalog search: wait for the FIRST page of results (psOnReady, works in both
   // classic and search-API mode), then use it as-is if already showing, otherwise pin it to the
@@ -8230,6 +8244,17 @@
     });
   }
   function psSwapMain(thumb, src){ const m = document.getElementById('psDMain'); if(m) m.src = src; document.querySelectorAll('.ps-d-thumb').forEach(t => t.classList.toggle('on', t === thumb)); }
+  // Desktop popup gallery arrows (req): step to the next/prev photo. Mobile has no visible arrows
+  // (pure touch-swipe), so this is reached only via the desktop-only .ps-d-arrow buttons.
+  function psDGalleryNav(dir){
+    const gal = document.getElementById('psDGallery'); if(!gal) return;
+    const shots = gal.querySelectorAll('.ps-d-shot'); if(shots.length < 2) return;
+    const w = gal.clientWidth;
+    let i = Math.round(gal.scrollLeft / w) + dir;
+    i = Math.max(0, Math.min(shots.length - 1, i));
+    gal.scrollTo({ left: i * w, behavior: 'smooth' });
+  }
+  window.psDGalleryNav = psDGalleryNav;
   function psDetail(idx){
     const p = psFiltered[idx]; if(!p) return;
     const bdt = (p._bdt != null) ? p._bdt : estLandedBdt(p.pkr, p.cat);
@@ -8241,7 +8266,10 @@
     // rounded sheet that scrolls over it (the whole .ps-detail-card is the scroller). The gallery is
     // seeded with the catalog thumb (instant) and upgraded to the brand's full-size gallery.
     document.getElementById('psDetailInner').innerHTML =
-        `<div class="ps-d-stage"><div class="ps-d-gallery" id="psDGallery"><img class="ps-d-shot" src="${esc(p.img)}" alt="${esc(p.t)}"></div></div>`
+        `<div class="ps-d-stage"><div class="ps-d-gallery" id="psDGallery"><img class="ps-d-shot" src="${esc(p.img)}" alt="${esc(p.t)}"></div>`
+      +   `<button type="button" class="ps-d-arrow ps-d-arrow-prev" onclick="psDGalleryNav(-1)" aria-label="${tr('ps_prev')}" title="${tr('ps_prev')}">‹</button>`
+      +   `<button type="button" class="ps-d-arrow ps-d-arrow-next" onclick="psDGalleryNav(1)" aria-label="${tr('ps_next')}" title="${tr('ps_next')}">›</button>`
+      + `</div>`
       + `<div class="ps-d-body">`
       +   `<div class="ps-d-grip" aria-hidden="true"></div>`
       +   `<div class="ps-d-brand">${esc(p.b)}</div>`
@@ -8968,7 +8996,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-01-pdp2';
+  const PSB_BUILD = '2026-07-02-desktop1';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
@@ -9022,9 +9050,8 @@
     try {
       if(psStore === 'premium'){
         psLuxeMode(true);
-        var _bh = document.getElementById('bnav-home'), _bl = document.getElementById('bnav-luxe');
-        if(_bh) _bh.classList.remove('active');
-        if(_bl) _bl.classList.add('active');
+        ['bnav-home','dtopStudioBtn'].forEach(function(id){ var el = document.getElementById(id); if(el) el.classList.remove('active'); });
+        ['bnav-luxe','dtopLuxeBtn'].forEach(function(id){ var el = document.getElementById(id); if(el) el.classList.add('active'); });
       }
     } catch(e){}
   });
