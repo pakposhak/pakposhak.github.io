@@ -56,7 +56,15 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
   // cleanup is convergent (≤2 passes); a few set/couture rules legitimately need a 2nd pass to settle, so
   // re-apply until a pass changes no category. Guarantees STABLE live categories on every rebuild (without
   // this, ~a couple of products' categories could differ between rebuilds). See _cat_audit/test-idempotent.js.
-  { const _mem = loadMembership(process.env.PSB_MEMBERSHIP || 'collection-membership.jsonl'); const _memArg = _mem.size ? _mem : null; if (_mem.size) console.log('search-db collection-membership:', _mem.size, 'products');
+  { let _mem = loadMembership(process.env.PSB_MEMBERSHIP || 'collection-membership.jsonl');
+    // If not found in our own dir, try the harvest dir — it always stages membership there.
+    // This keeps the rebuild's cleanup identical to the harvest's, preventing category flip-flops
+    // every 3h when the file is absent from /opt/psb-search.
+    if (!_mem.size) _mem = loadMembership('/opt/pakiposhak/collection-membership.jsonl');
+    // Still absent: abort rather than run title-only cleanup (which produces different categories:
+    // junkN:71, womenN:606 vs 0/367 with membership). Better to keep the last-good search.db.
+    if (!_mem.size) { console.error('BUILD ABORTED: collection-membership.jsonl missing from both /opt/psb-search and /opt/pakiposhak — keeping existing search.db unchanged'); process.exit(1); }
+    const _memArg = _mem; console.log('search-db collection-membership:', _mem.size, 'products');
     let _c = cleanupProducts(cat.products || [], _memArg); cat.products = _c.products; console.log('search-db cleanup:', JSON.stringify(_c.stats));
     for (let _i = 0; _i < 4; _i++) { const _sig = cat.products.map(p => p.u + '\t' + p.cat).join('\n'); cat.products = cleanupProducts(cat.products, _memArg).products; if (cat.products.map(p => p.u + '\t' + p.cat).join('\n') === _sig) break; } }
   const cfg = JSON.parse(cfgRaw) || {};
