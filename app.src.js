@@ -2486,7 +2486,7 @@
       intro_ios:"On iPhone: on a brand's product page, tap Share, then Add to PakPoshak. (One-time: add the PakPoshak shortcut.) Or copy the link and paste it here.",
       intro_android:"On Android: install PakPoshak, then on a brand's product page tap Share, then PakPoshak. Or copy the link and paste it here.",
       intro_desktop:"On desktop: paste a product link below, or add the Send-cart bookmark to grab a whole cart at once.",
-      ps_price:'Price (৳ delivered)', ps_price_short:'Price Filters', ps_category:'Product Category', ps_category_short:'Categories', ps_brands:'Brands', ps_clear:'Clear Filters', ps_valueprop:'Any Pakistani brand → delivered to Bangladesh 🇧🇩', ps_morebrands:"Can't find it? Browse all 155 brands →",
+      ps_price:'Price (৳ delivered)', ps_price_short:'Price Filters', ps_category:'Product Category', ps_category_short:'Categories', ps_brands:'Brands', ps_colour:'Colour', ps_clear:'Clear Filters', ps_valueprop:'Any Pakistani brand → delivered to Bangladesh 🇧🇩', ps_morebrands:"Can't find it? Browse all 155 brands →",
       ps_allcats:'All categories', ps_loading:'Loading products…', ps_loadfail:'Could not load products — please try again.',
       ps_results:'products', ps_add:'Add', ps_prev:'Prev', ps_next:'Next', ps_page:'Page',
       ps_feed_more:'Load more', ps_feed_end:'You have reached the end',
@@ -2559,7 +2559,7 @@
       intro_ios:'আইফোনে: ব্র্যান্ডের পণ্য পেজে Share চেপে Add to PakPoshak বেছে নিন। (একবার: PakPoshak শর্টকাট যোগ করুন।) অথবা লিংক কপি করে এখানে পেস্ট করুন।',
       intro_android:'অ্যান্ড্রয়েডে: PakPoshak ইনস্টল করুন, তারপর ব্র্যান্ডের পণ্য পেজে Share চেপে PakPoshak বেছে নিন। অথবা লিংক কপি করে এখানে পেস্ট করুন।',
       intro_desktop:'ডেস্কটপে: নিচে পণ্যের লিংক পেস্ট করুন, অথবা পুরো কার্ট একসাথে আনতে Send-cart বুকমার্ক যোগ করুন।',
-      ps_price:'দাম (৳, ডেলিভারিসহ)', ps_price_short:'দাম ফিল্টার', ps_category:'পণ্যের ক্যাটাগরি', ps_category_short:'ক্যাটাগরি', ps_brands:'ব্র্যান্ড', ps_clear:'ফিল্টার মুছুন', ps_valueprop:'যেকোনো পাকিস্তানি ব্র্যান্ড → বাংলাদেশে ডেলিভারি 🇧🇩', ps_morebrands:'খুঁজে পাচ্ছেন না? সব ১৫৫টি ব্র্যান্ড দেখুন →',
+      ps_price:'দাম (৳, ডেলিভারিসহ)', ps_price_short:'দাম ফিল্টার', ps_category:'পণ্যের ক্যাটাগরি', ps_category_short:'ক্যাটাগরি', ps_brands:'ব্র্যান্ড', ps_colour:'রঙ', ps_clear:'ফিল্টার মুছুন', ps_valueprop:'যেকোনো পাকিস্তানি ব্র্যান্ড → বাংলাদেশে ডেলিভারি 🇧🇩', ps_morebrands:'খুঁজে পাচ্ছেন না? সব ১৫৫টি ব্র্যান্ড দেখুন →',
       ps_allcats:'সব ক্যাটাগরি', ps_loading:'পণ্য আসছে…', ps_loadfail:'পণ্য আনা গেল না — আবার চেষ্টা করুন।',
       ps_results:'পণ্য', ps_add:'যোগ করুন', ps_prev:'আগের', ps_next:'পরের', ps_page:'পৃষ্ঠা',
       ps_feed_more:'আরও দেখুন', ps_feed_end:'আপনি শেষ পর্যন্ত দেখে ফেলেছেন',
@@ -4331,7 +4331,7 @@
   function renderBrandSteps(name){
     const bn = esc(name || 'the brand');
     const warn = document.getElementById('bsWarn');
-    if(warn) warn.innerHTML = `<span style="font-size:1rem;flex-shrink:0">💡</span><span><b>Be smart, compare the price here first.</b> Browse ${bn} for photos and sizes, then send the item back to PakPoshak to see its real PKR price and your all-in BDT total, and order here, not there.</span>`;
+    if(warn) warn.innerHTML = `<span style="font-size:1rem;flex-shrink:0">💡</span><span><b>Be smart, compare the price here first.</b> Browse there for photos and sizes, then send the item back to PakPoshak to see its real PKR price and your all-in BDT total, and order wisely.</span>`;
     const box = document.getElementById('bsSteps'); if(!box) return;
     const num = (n,h) => `<div class="bs-step"><span class="bs-num">${n}</span><span>${h}</span></div>`;
     if(psPlatform() === 'desktop'){
@@ -4786,7 +4786,7 @@
   function psLabel(cat){ return PS_CAT_LABELS[cat] || cat; }
 
   let PS_CATALOG = null, psLoaded = false, psLoading = false;
-  let psSel = { prices:new Set(), cats:new Set(), brands:new Set() };
+  let psSel = { prices:new Set(), cats:new Set(), brands:new Set(), colors:new Set() };
   let psFiltered = [], psPage = 0, psSort = '';   // '' | 'asc' | 'desc' — ৳ price sort (combines with the Sale/New filters)
   // ── Infinite scroll (Myntra-style, redesign P1) ──────────────────────────
   // The product feed grows by appending the next page as the buyer scrolls (replaces the old
@@ -4814,6 +4814,7 @@
   let psSizeQ = '';              // a bare age/size number typed ("boys 14") → boost that size to the top
   let psFacetBrands = null;      // brand names present (from /search/facets)
   let psFacetCats = null;        // Set of categories present (from /search/facets)
+  let psFacetColours = null;     // [{color, n}] present in catalog (from /search/facets)
 
   // ── Sold-out auto-hide ──────────────────────────────────────────────────
   // When the LIVE add pipeline finds a product fully sold out (it sold out AFTER
@@ -6404,6 +6405,7 @@
       p.set('cat', Array.from(new Set(ex)).join(','));
     }
     if(psSel.brands.size) p.set('brand', Array.from(psSel.brands).join(','));
+    if(psSel.colors.size) p.set('color', Array.from(psSel.colors).join(','));
     // Storefront band (batch 2): Home/Everyday = UNDER 15k (buckets 0-5, includes 10-15k), Premium/Luxe
     // = 10k+ (buckets 5-6). The 10-15k band (bucket 5) intentionally OVERLAPS both (req: Danish).
     // A manual price selection takes precedence over the storefront default.
@@ -6437,8 +6439,9 @@
         if(j.error) throw new Error(j.error);
         psFacetBrands = (j.brands || []).map(x => x.b);
         psFacetCats   = new Set((j.cats || []).map(x => x.cat));
+        psFacetColours = (j.colors || []).filter(x => x.color && x.n >= 5);
         psLoaded = true; psLoading = false;
-        psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort();
+        psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildColourFilter(); psBuildSort();
         psApply();                       // fetch the first page
         psFlushReady();
       })
@@ -6481,7 +6484,7 @@
     if(typeof psOnProductsTab === 'function' && !psOnProductsTab()) return false;
     if(psPage !== 0) return false;
     if((window.scrollY || window.pageYOffset || 0) > 600) return false;
-    return !psSel.cats.size && !psSel.brands.size && !psSel.prices.size && !psSaleOnly && !psNewOnly && !psSort && !psQuery && !psSizeQ;
+    return !psSel.cats.size && !psSel.brands.size && !psSel.prices.size && !psSel.colors.size && !psSaleOnly && !psNewOnly && !psSort && !psQuery && !psSizeQ;
   }
   setInterval(function(){ if(psLandingIsActive()){ psFeedSeed = Math.floor(Date.now() / 90000); psApiFetch(); } }, 90000);
   // Pager HTML — shared by the client-render and API-render paths.
@@ -6550,13 +6553,13 @@
   // Set a filter pill's open state: aria + caret glyph (▾ closed / ▴ open). A CSS transform on the
   // inline caret proved unreliable here, so we swap the glyph directly — always correct.
   function psFiltCaret(btn, open){ if(!btn) return; btn.setAttribute('aria-expanded', open ? 'true' : 'false'); const c = btn.querySelector('.ps-filtcar'); if(c) c.textContent = open ? '▴' : '▾'; }
+  const _FILT_POPS = { cat:['psCatPop','psCatBtn'], brand:['psBrandPop','psBrandBtn'], colour:['psColourPop','psColourBtn'] };
   function psToggleFiltPop(which){
-    const isCat = which === 'cat';
-    const pop = document.getElementById(isCat ? 'psCatPop' : 'psBrandPop'); if(!pop) return;
-    const other = document.getElementById(isCat ? 'psBrandPop' : 'psCatPop'); if(other) other.classList.remove('open');
-    psFiltCaret(document.getElementById(isCat ? 'psBrandBtn' : 'psCatBtn'), false);   // collapse the other pill
+    const me = _FILT_POPS[which]; if(!me) return;
+    const pop = document.getElementById(me[0]); if(!pop) return;
+    Object.entries(_FILT_POPS).forEach(([k,[pId,bId]]) => { if(k !== which){ const p=document.getElementById(pId); if(p) p.classList.remove('open'); psFiltCaret(document.getElementById(bId),false); } });
     const open = pop.classList.toggle('open');
-    psFiltCaret(document.getElementById(isCat ? 'psCatBtn' : 'psBrandBtn'), open);
+    psFiltCaret(document.getElementById(me[1]), open);
   }
   // Picking a category rebuilds the panel's innerHTML, which DETACHES the clicked element — so a
   // plain click-target test would then read the click as "outside" and wrongly collapse the panel.
@@ -6569,7 +6572,7 @@
   }, true);
   document.addEventListener('click', function(e){
     if(psFiltDownInRow) return;   // interaction began inside the filter row → keep the panel open
-    [['psCatPop','psCatBtn'], ['psBrandPop','psBrandBtn']].forEach(([popId, btnId]) => {
+    [['psCatPop','psCatBtn'], ['psBrandPop','psBrandBtn'], ['psColourPop','psColourBtn']].forEach(([popId, btnId]) => {
       const p = document.getElementById(popId);
       if(p && p.classList.contains('open')){ p.classList.remove('open'); psFiltCaret(document.getElementById(btnId), false); }
     });
@@ -6608,6 +6611,35 @@
     const bb = document.getElementById('psBrandBtn'); if(bb) bb.classList.toggle('on', psSel.brands.size > 0);
   }
   function psToggleBrand(name, on){ if(on) psSel.brands.add(name); else psSel.brands.delete(name); psApply(); }
+
+  const PS_COLOUR_PALETTE = [
+    ['White','#FFFFFF'],['Off White','#F5F0E4'],['Beige','#E8D5B0'],['Camel','#C9986A'],
+    ['Peach','#FFCBA4'],['Coral','#FF7F6A'],['Pink','#F7A8C4'],['Fuchsia','#E91E63'],
+    ['Red','#D32F2F'],['Maroon','#7B1F2C'],['Rust','#C0603A'],['Orange','#E65100'],
+    ['Mustard','#C49A00'],['Yellow','#FDD835'],['Dark Green','#1B5E20'],['Green','#43A047'],
+    ['Olive','#6D4C1B'],['Teal','#00897B'],['Blue','#2196F3'],['Royal Blue','#1565C0'],
+    ['Navy','#0D1B4B'],['Lavender','#CE93D8'],['Purple','#7B1FA2'],['Plum','#5D1049'],
+    ['Brown','#795548'],['Grey','#9E9E9E'],['Charcoal','#454545'],['Black','#111111'],
+    ['Silver','#C0C0C0'],['Multi',null],
+  ];
+  const _LIGHT_SWATCH = new Set(['White','Off White','Beige','Camel','Peach','Yellow','Silver']);
+  function psBuildColourFilter(){
+    const avail = psFacetColours ? new Set(psFacetColours.map(x => x.color)) : null;
+    const chips = PS_COLOUR_PALETTE
+      .filter(([n]) => !avail || avail.has(n))
+      .map(([n, hex]) => {
+        const on = psSel.colors.has(n);
+        const swatch = hex
+          ? `<span class="ps-cswatch" style="background:${hex};border-color:${_LIGHT_SWATCH.has(n)?'var(--bdr-med)':'transparent'}"></span>`
+          : `<span class="ps-cswatch ps-cswatch-multi"></span>`;
+        return `<button type="button" class="ps-clr-chip${on?' on':''}" onclick="psToggleColour(${JSON.stringify(n)})">${swatch}<span class="ps-cname">${esc(n)}</span></button>`;
+      }).join('');
+    const el = document.getElementById('psColours'); if(el) el.innerHTML = chips || '';
+    const cn = document.getElementById('psColourCount'); if(cn) cn.textContent = psSel.colors.size || '';
+    const cb = document.getElementById('psColourBtn'); if(cb) cb.classList.toggle('on', psSel.colors.size > 0);
+  }
+  function psToggleColour(name){ if(psSel.colors.has(name)) psSel.colors.delete(name); else psSel.colors.add(name); psBuildColourFilter(); psApply(); }
+  window.psToggleColour = psToggleColour;
 
   // Grouped category dropdown: Women's/Men's/Kids → subgroup → categories. Built
   // from the WHOLE catalog (independent of the brand filter) so the selection is
@@ -6664,7 +6696,7 @@
   }
 
   function psClearFilters(){
-    psSel = { prices:new Set(), cats:new Set(), brands:new Set() };
+    psSel = { prices:new Set(), cats:new Set(), brands:new Set(), colors:new Set() };
     psSort = '';
     psSaleOnly = false;
     psNewOnly = false;
@@ -6673,7 +6705,7 @@
     ['psSearchMobile','psSearchDesktop'].forEach(idd => { const e = document.getElementById(idd); if(e) e.value = ''; });
     psUpdateSearchClearBtn('');
     psSearchHint('', new Set(), new Set());
-    psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply();
+    psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildColourFilter(); psBuildSort(); psApply();
   }
 
   // ── "SHOP BY CATEGORY" landing strip (LAAM-style) ────────────────────────────
@@ -8790,7 +8822,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-01-payfix';
+  const PSB_BUILD = '2026-07-01-colour';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
