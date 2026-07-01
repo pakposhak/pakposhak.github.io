@@ -521,57 +521,12 @@
       </div>
     </div>
 
-    <!-- bKash Send Money -->
-    <div style="background:var(--raised);border:1px solid var(--gold-bdr);border-radius:12px;padding:14px 16px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-        <span style="font-size:1.4rem">🟣</span>
-        <div>
-          <div style="font-weight:700;color:var(--txt);font-size:0.95rem">bKash</div>
-          <div style="font-size:0.68rem;background:var(--gold-dim);color:var(--gold);border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">SEND MONEY</div>
-        </div>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;background:var(--gold-dim);border-radius:8px;padding:8px 12px">
-        <span style="font-size:1.1rem;font-weight:700;color:var(--txt);letter-spacing:1px">01851-948690</span>
-        <button onclick="copyNum('01851948690',this)" style="background:var(--gold);border:none;color:#1a1206;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
-      </div>
-    </div>
-
     <!-- Nagad -->
     <div style="background:var(--raised);border:1px solid var(--gold-bdr);border-radius:12px;padding:14px 16px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <span style="font-size:1.4rem">🟠</span>
         <div>
           <div style="font-weight:700;color:var(--txt);font-size:0.95rem">Nagad</div>
-          <div style="font-size:0.68rem;background:var(--gold-dim);color:var(--gold);border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">SEND MONEY</div>
-        </div>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;background:var(--gold-dim);border-radius:8px;padding:8px 12px">
-        <span style="font-size:1.1rem;font-weight:700;color:var(--txt);letter-spacing:1px">01851-948690</span>
-        <button onclick="copyNum('01851948690',this)" style="background:var(--gold);border:none;color:#1a1206;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
-      </div>
-    </div>
-
-    <!-- Upay -->
-    <div style="background:var(--raised);border:1px solid var(--gold-bdr);border-radius:12px;padding:14px 16px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-        <span style="font-size:1.4rem">🔵</span>
-        <div>
-          <div style="font-weight:700;color:var(--txt);font-size:0.95rem">Upay</div>
-          <div style="font-size:0.68rem;background:var(--gold-dim);color:var(--gold);border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">SEND MONEY</div>
-        </div>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;background:var(--gold-dim);border-radius:8px;padding:8px 12px">
-        <span style="font-size:1.1rem;font-weight:700;color:var(--txt);letter-spacing:1px">01851-948690</span>
-        <button onclick="copyNum('01851948690',this)" style="background:var(--gold);border:none;color:#1a1206;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
-      </div>
-    </div>
-
-    <!-- Rocket -->
-    <div style="background:var(--raised);border:1px solid var(--gold-bdr);border-radius:12px;padding:14px 16px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-        <span style="font-size:1.4rem">🚀</span>
-        <div>
-          <div style="font-weight:700;color:var(--txt);font-size:0.95rem">Rocket</div>
           <div style="font-size:0.68rem;background:var(--gold-dim);color:var(--gold);border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">SEND MONEY</div>
         </div>
       </div>
@@ -650,8 +605,6 @@
             <div class="pm-dd-panel" id="payMethodPanel" role="listbox" aria-label="How you paid">
               <div class="pm-dd-item" role="option" data-val="bKash" onclick="pmPick('bKash','bKash')">bKash</div>
               <div class="pm-dd-item" role="option" data-val="Nagad" onclick="pmPick('Nagad','Nagad')">Nagad</div>
-              <div class="pm-dd-item" role="option" data-val="Rocket" onclick="pmPick('Rocket','Rocket')">Rocket</div>
-              <div class="pm-dd-item" role="option" data-val="Upay" onclick="pmPick('Upay','Upay')">Upay</div>
               <div class="pm-dd-item" role="option" data-val="Bank" onclick="pmPick('Bank','Bank transfer')">Bank transfer</div>
             </div>
           </div>
@@ -1104,7 +1057,7 @@
   <input type="hidden" name="item_count" id="hf_count"/>
   <input type="hidden" name="order_items" id="hf_items"/>
   <input type="hidden" name="cart_links" id="hf_cart_links"/>
-  <input type="hidden" name="payment_info" value="bKash Payment: 01352018131 | bKash/Nagad/Upay/Rocket Send Money: 01851948690 | City Bank – Moors Attire A/C: 1324897775001 | UCBL – Moors Attire A/C: 7862141003465221"/>
+  <input type="hidden" name="payment_info" value="bKash Payment: 01352018131 | Nagad Send Money: 01851948690 | City Bank – Moors Attire A/C: 1324897775001 | UCBL – Moors Attire A/C: 7862141003465221"/>
 </form>
 
 <script src="app.js?b=__PSB_BUILD__" defer></script>

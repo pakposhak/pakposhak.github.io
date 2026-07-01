@@ -2476,7 +2476,7 @@
   // ── i18n: English / Bangla (customer-facing) ───────────────────────────────
   const I18N = {
     en: {
-      tagline:'Pakistani Fashion · Bangladesh Delivery',
+      tagline:'Pakistan Fashion. At Your Door.',
       hiw_browse:'Browse brands', hiw_paste:'Share or paste a link', hiw_confirm:'We confirm price',
       hiw_pay:'Pay via bKash/Nagad', hiw_delivery:'2–3 weeks to your door', hiw_video:'▶ Watch video guide', hiw_guide:'📖 How it works', introTitle:'New here? Watch a quick intro', introMore:'▶ See all video guides →',
       hiw_confirm_pay:'Confirm price & pay (bKash/Nagad)',
@@ -2507,7 +2507,7 @@
       dm_title:'Choose size & confirm price', dm_addbag:'Add to Bag', dm_addbag_n:'Add {n} items to Bag', dc_final:'Final price:',
       bag_proceed:'Proceed to My Details →', bag_empty:'Your bag is empty', bag_empty_sub:'Browse Pakistani brands and tap + Add to drop items here.', bag_browse:'🛍️ Browse products', bag_added:'Added to your bag', bag_view:'View Bag',
       co_bag:'Bag', co_details:'Details', co_review:'Review', co_pay:'Pay',
-      nav_home:'Studio', nav_brands:'Brands', nav_cart:'Cart', nav_how:'How To', nav_guide:'Guide', nav_wish:'Wishlist', nav_help:'Help',
+      nav_home:'Home', nav_brands:'Brands', nav_cart:'Cart', nav_how:'How To', nav_guide:'Guide', nav_wish:'Wishlist', nav_help:'Help',
       nav_luxe:'Luxe', nav_bag:'Bag', nav_pricecheck:'Price Check',
       tl_help:'New here? Start with these:', tl_faq:'❓ How it works & our promise', tl_track:'📦 Track an order', tl_weights:'⚖️ Shipping weights', tl_wa:'💬 Chat on WhatsApp',
       addmore_hint:'✓ Item saved! Add another product, or continue to your details.', addmore_btn:'➕ Add Another Product',
@@ -2528,11 +2528,12 @@
       s_stocktitle:'Stock Notice', s_stocktext:"Pakistani fashion items sell out fast. If anything goes out of stock before we place your order, we'll contact you on WhatsApp immediately and offer alternatives or a full refund.",
       s_orderid:'Your Order ID', s_track:'📦 Track My Order', s_howpay:'💳 How to Pay',
       s_payafter:'Pay the total shown above using any method below.',
+      s_moors_note:'Payments are collected by our partner Moors Attire, so seeing "Moors Attire" on your bKash, Nagad or bank receipt is correct and safe.',
       s_paid_title:'✅ Already Paid? Confirm Your Payment', s_paid_sub:"Enter your payment details below so we can match it to Order",
-      s_amt_label:'Amount you paid (৳) *', s_method_label:'How you paid *', s_method_pick:'Choose…', s_trx_label:'Transaction ID *', s_trx_hint:'Shown on your bKash / Nagad screen right after payment', s_pay_wa:'Confirm on WhatsApp', s_receipt_opt:'Attach receipt instead (optional)',
-      s_upload_main:'Tap to choose your payment screenshot', s_upload_sub:'bKash / Nagad / bank slip — JPG or PNG',
+      s_amt_label:'Amount you paid (৳) *', s_method_label:'How you paid *', s_method_pick:'Choose…', s_trx_label:'Transaction ID *', s_trx_hint:'Shown on your bKash / Nagad screen right after payment', s_pay_wa:'Send screenshot on WhatsApp', s_receipt_opt:'Attach receipt instead (optional)',
+      s_upload_title:'📷 Upload payment screenshot (optional)', s_upload_main:'Tap to choose your payment screenshot', s_upload_sub:'bKash / Nagad / bank slip, JPG or PNG',
       s_confirmpay:'✅ Confirm Payment',
-      s_footer1:"Submit your payment slip above — it's saved directly to your order, no need to message separately.",
+      s_footer1:"Submit your payment slip above. It's saved directly to your order, no need to message separately.",
       s_footer2:'Save your Order ID above to track your order status anytime.', s_another:'← Place Another Order',
       js_paste_first:'Please paste a product URL first.',
       js_invalid_url:"That doesn't look like a valid URL — please copy the full link from the brand's website.",
@@ -2549,7 +2550,7 @@
       js_paste_nocopy_d:'No product link copied yet. Copy the product’s web address (click the address bar, then Ctrl+C), then click <b>📋 Paste link</b>.'
     },
     bn: {
-      tagline:'পাকিস্তানি ফ্যাশন · বাংলাদেশে ডেলিভারি',
+      tagline:'পাকিস্তান ফ্যাশন। আপনার দরজায়।',
       hiw_browse:'ব্র্যান্ড দেখুন', hiw_paste:'Share বা লিংক পেস্ট করুন', hiw_confirm:'আমরা দাম যাচাই করি',
       hiw_pay:'বিকাশ/নগদে পেমেন্ট', hiw_delivery:'২–৩ সপ্তাহে আপনার দরজায়', hiw_video:'▶ ভিডিও গাইড দেখুন', hiw_guide:'📖 কীভাবে কাজ করে', introTitle:'নতুন? ছোট্ট একটি ইন্ট্রো দেখুন', introMore:'▶ সব ভিডিও গাইড দেখুন →',
       hiw_confirm_pay:'দাম নিশ্চিত করে পেমেন্ট (বিকাশ/নগদ)',
@@ -2581,7 +2582,7 @@
       dm_title:'সাইজ বেছে নিন ও দাম দেখুন', dm_addbag:'ব্যাগে যোগ করুন', dm_addbag_n:'{n}টি আইটেম ব্যাগে যোগ করুন', dc_final:'চূড়ান্ত দাম:',
       bag_proceed:'আমার তথ্যে এগিয়ে যান →', bag_empty:'আপনার ব্যাগ খালি', bag_empty_sub:'পাকিস্তানি ব্র্যান্ড দেখুন আর + Add চেপে পণ্য এখানে যোগ করুন।', bag_browse:'🛍️ পণ্য ব্রাউজ করুন', bag_added:'ব্যাগে যোগ হয়েছে', bag_view:'ব্যাগ দেখুন',
       co_bag:'ব্যাগ', co_details:'তথ্য', co_review:'রিভিউ', co_pay:'পেমেন্ট',
-      nav_home:'স্টুডিও', nav_brands:'ব্র্যান্ড', nav_cart:'কার্ট', nav_how:'গাইড', nav_guide:'গাইড', nav_wish:'পছন্দ', nav_help:'সাহায্য',
+      nav_home:'হোম', nav_brands:'ব্র্যান্ড', nav_cart:'কার্ট', nav_how:'গাইড', nav_guide:'গাইড', nav_wish:'পছন্দ', nav_help:'সাহায্য',
       nav_luxe:'লাক্স', nav_bag:'ব্যাগ', nav_pricecheck:'দাম যাচাই',
       tl_help:'নতুন? শুরুটা এখান থেকে করুন:', tl_faq:'❓ কীভাবে কাজ করে ও আমাদের প্রতিশ্রুতি', tl_track:'📦 অর্ডার ট্র্যাক করুন', tl_weights:'⚖️ শিপিং ওজন', tl_wa:'💬 হোয়াটসঅ্যাপে চ্যাট',
       addmore_hint:'✓ পণ্যটি সেভ হয়েছে! আরেকটি যোগ করুন, বা আপনার তথ্য দিতে এগিয়ে যান।', addmore_btn:'➕ আরেকটি পণ্য যোগ করুন',
@@ -2602,11 +2603,12 @@
       s_stocktitle:'স্টক নিয়ে একটু কথা', s_stocktext:'পাকিস্তানি ফ্যাশন খুব দ্রুত শেষ হয়ে যায়। অর্ডার দেওয়ার আগে কিছু শেষ হয়ে গেলে আমরা সঙ্গে সঙ্গে হোয়াটসঅ্যাপে জানাব, আর বিকল্প পণ্য বা পুরো টাকা ফেরত দেব।',
       s_orderid:'আপনার অর্ডার আইডি', s_track:'📦 অর্ডার ট্র্যাক করুন', s_howpay:'💳 যেভাবে পেমেন্ট করবেন',
       s_payafter:'উপরে দেখানো মোট টাকা নিচের যেকোনো মাধ্যমে দিন।',
+      s_moors_note:'পেমেন্ট গ্রহণ করে আমাদের পার্টনার Moors Attire, তাই আপনার বিকাশ, নগদ বা ব্যাংক রসিদে "Moors Attire" দেখা সঠিক ও নিরাপদ।',
       s_paid_title:'✅ পেমেন্ট করেছেন? সেটি নিশ্চিত করুন', s_paid_sub:'আপনার পেমেন্টের তথ্য দিন, যাতে আমরা সেটি আপনার অর্ডারের সাথে মিলিয়ে নিতে পারি — অর্ডার',
-      s_amt_label:'আপনি কত টাকা দিয়েছেন (৳) *', s_method_label:'কীভাবে দিয়েছেন *', s_method_pick:'বেছে নিন…', s_trx_label:'ট্রান্সঅ্যাকশন আইডি *', s_trx_hint:'আপনার bKash / Nagad রসিদে পাবেন', s_pay_wa:'WhatsApp-এ নিশ্চিত করুন', s_receipt_opt:'রসিদ যোগ করুন (ঐচ্ছিক)',
-      s_upload_main:'পেমেন্টের স্ক্রিনশট বেছে নিতে ট্যাপ করুন', s_upload_sub:'বিকাশ / নগদ / ব্যাংক স্লিপ — JPG বা PNG',
+      s_amt_label:'আপনি কত টাকা দিয়েছেন (৳) *', s_method_label:'কীভাবে দিয়েছেন *', s_method_pick:'বেছে নিন…', s_trx_label:'ট্রান্সঅ্যাকশন আইডি *', s_trx_hint:'আপনার bKash / Nagad রসিদে পাবেন', s_pay_wa:'স্ক্রিনশট WhatsApp-এ পাঠান', s_receipt_opt:'রসিদ যোগ করুন (ঐচ্ছিক)',
+      s_upload_title:'📷 পেমেন্টের স্ক্রিনশট আপলোড করুন (ঐচ্ছিক)', s_upload_main:'পেমেন্টের স্ক্রিনশট বেছে নিতে ট্যাপ করুন', s_upload_sub:'বিকাশ / নগদ / ব্যাংক স্লিপ, JPG বা PNG',
       s_confirmpay:'✅ পেমেন্ট নিশ্চিত করুন',
-      s_footer1:'উপরে পেমেন্ট স্লিপটি জমা দিন — এটি সরাসরি আপনার অর্ডারে যুক্ত হয়, আলাদা করে মেসেজ করতে হবে না।',
+      s_footer1:'উপরে পেমেন্ট স্লিপটি জমা দিন। এটি সরাসরি আপনার অর্ডারে যুক্ত হয়, আলাদা করে মেসেজ করতে হবে না।',
       s_footer2:'অর্ডারের অবস্থা যেকোনো সময় দেখতে উপরের অর্ডার আইডিটি সেভ করে রাখুন।', s_another:'← আরেকটি অর্ডার করুন',
       js_paste_first:'আগে একটি পণ্যের লিংক পেস্ট করুন।',
       js_invalid_url:'এটি ঠিক লিংক মনে হচ্ছে না — ব্র্যান্ডের ওয়েবসাইট থেকে পুরো লিংকটি কপি করুন।',
@@ -3968,7 +3970,7 @@
       return parts.join(' | ');
     }).join('\n');
 
-    const paymentInfo = 'bKash Payment: 01352018131 | bKash/Nagad/Upay/Rocket Send Money: 01851948690 | City Bank – Moors Attire A/C: 1324897775001 | UCBL – Moors Attire A/C: 7862141003465221';
+    const paymentInfo = 'bKash Payment: 01352018131 | Nagad Send Money: 01851948690 | City Bank – Moors Attire A/C: 1324897775001 | UCBL – Moors Attire A/C: 7862141003465221';
 
     // Shared order payload (used by every endpoint)
     const payload = {
@@ -4169,6 +4171,7 @@
     if(amount) msg += '\nAmount: ৳' + Number(amount).toLocaleString();
     if(method) msg += '\nMethod: ' + method;
     if(trxId)  msg += '\nTrxID: ' + trxId;
+    msg += '\n\nI am attaching my payment screenshot.';
     window.open('https://wa.me/' + SUPPORT_WA + '?text=' + encodeURIComponent(msg), '_blank');
   }
   window.openPayWa = openPayWa;
@@ -8822,7 +8825,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-01-studio2';
+  const PSB_BUILD = '2026-07-01-filters';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

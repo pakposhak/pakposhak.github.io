@@ -1,411 +1,509 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'"/>
-  <meta name="google" content="notranslate"/>
-  <title>PakPoshak — Poster Planner</title>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#EFE9DC;color:#1A1208;padding:16px 10px 110px}
-    h1{font-family:Georgia,serif;font-size:20px;font-weight:700;text-align:center;margin-bottom:4px}
-    .sub{text-align:center;color:#6B5A3E;font-size:12.5px;margin:0 auto 16px;max-width:800px;line-height:1.55}
-    .wrap{max-width:960px;margin:0 auto}
-    .secband{font-family:Georgia,serif;font-size:15px;font-weight:700;color:#0B261C;margin:22px 2px 9px;padding:6px 0 5px;border-bottom:2.5px solid #C9A96E}
-    .card{display:flex;gap:12px;align-items:flex-start;background:#FAF6EE;border:1.5px solid #E3D9C0;border-radius:13px;padding:10px 12px;margin:0 0 9px}
-    .card-num{flex:0 0 24px;font-weight:800;color:#A8842B;font-size:12px;padding-top:3px}
-    .card-svg{flex:0 0 190px}
-    .card-svg svg{width:100%;height:auto;display:block;border-radius:8px;box-shadow:0 2px 10px -3px rgba(0,0,0,.3)}
-    .card-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px}
-    .card-head{font-family:Georgia,serif;font-size:13px;font-weight:700;color:#0B261C}
-    .tag{display:inline-block;font-size:10px;background:#E7EFCB;color:#0B261C;border-radius:20px;padding:1px 8px;margin-left:5px;vertical-align:middle}
-    .tag-new{background:#C9A96E;color:#1A1208}
-    .frow{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-    .frow.w3{grid-template-columns:1fr 1fr 1fr}
-    .fgroup{display:flex;flex-direction:column;gap:3px}
-    .fgroup label{font-size:10px;font-weight:700;color:#5F5238;text-transform:uppercase;letter-spacing:.05em}
-    .fgroup input,.fgroup select{font-family:inherit;font-size:13px;padding:7px 9px;border:1.5px solid #D8CCAE;border-radius:8px;background:#fff;color:#1A1208;width:100%}
-    .fgroup input:focus,.fgroup select:focus{outline:none;border-color:#C9A96E;box-shadow:0 0 0 3px rgba(201,169,110,.15)}
-    .fgroup select{font-weight:700;cursor:pointer}
-    .fgroup select.set{border-color:#0A5230;background:#F3F9EE}
-    .fgroup .bn{font-size:12px;background:#F6F3EE}
-    .bar{position:fixed;left:0;right:0;bottom:0;background:#0B261C;padding:10px 14px;display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;box-shadow:0 -4px 16px rgba(0,0,0,.3);z-index:99}
-    .bar button{font-family:inherit;font-size:13.5px;font-weight:700;border:none;border-radius:9px;padding:9px 18px;cursor:pointer}
-    .btn-gold{background:#C9A96E;color:#1A1208}
-    .btn-grn{background:#0A5230;color:#F4ECD6}
-    .btn-ghost{background:transparent;color:#C9A96E;border:1.5px solid #6E5B33}
-    .bar .count{font-size:12px;color:#A9BBA0;margin-right:4px}
-    .out{max-width:960px;margin:14px auto}
-    .out textarea{width:100%;height:180px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;padding:11px;border:1px solid #D8CCAE;border-radius:11px;background:#FBF8F1;color:#1A1208;line-height:1.5}
-    .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#0A5230;color:#F4ECD6;font-size:13px;font-weight:700;padding:10px 22px;border-radius:30px;z-index:200;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.3)}
-    .toast.show{opacity:1}
-    .import-banner{background:#0A5230;color:#F4ECD6;text-align:center;padding:9px 14px;border-radius:10px;margin:0 0 14px;font-size:13px;font-weight:600}
-    @media(max-width:620px){
-      .card{flex-direction:column}
-      .card-svg{flex:none;width:100%}
-      .frow,.frow.w3{grid-template-columns:1fr}
-    }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="google" content="notranslate"/>
+<title>PakPoshak — Hero Posters</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#ECE6D8;color:#1A1208;padding-bottom:80px}
+.top{position:sticky;top:0;z-index:30;background:#0B261C;color:#F4ECD6;padding:9px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.top h1{font-family:Georgia,serif;font-size:16px;font-weight:700;color:#EDE7D2}
+.nav{display:flex;align-items:center;gap:7px}
+.nav button{width:36px;height:36px;border-radius:9px;border:1.5px solid #4A6B54;background:#123021;color:#EDE7D2;font-size:18px;cursor:pointer;line-height:1}
+.nav button:hover{background:#1A4030}
+.counter{font-size:12.5px;color:#CFC094;min-width:96px;text-align:center;line-height:1.25}
+.counter b{color:#E7CE97}
+.spacer{flex:1}
+.jump{background:#123021;color:#EDE7D2;border:1.5px solid #4A6B54;border-radius:9px;padding:8px 10px;font-size:12.5px;font-family:inherit;cursor:pointer;max-width:190px}
+.seg{display:flex;border:1.5px solid #4A6B54;border-radius:9px;overflow:hidden}
+.seg button{background:#0B261C;color:#AFC0A8;border:none;padding:8px 13px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit}
+.seg button.on{background:#E7CE97;color:#17130A}
+.btn-copy{background:#C9A96E;color:#1A1208;border:none;border-radius:9px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-copy:hover{opacity:.9}
+
+.wrap{max-width:1080px;margin:0 auto;padding:14px 14px 0;display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}
+.leftcol{flex:1 1 440px;min-width:300px;max-width:520px}
+.rightcol{flex:1 1 360px;min-width:300px}
+
+/* ── Big hero preview ── */
+.pageband{display:flex;align-items:center;gap:10px;margin:0 2px 10px}
+.pageband .emoji{font-size:22px}
+.pageband .pt{font-family:Georgia,serif;font-size:16px;font-weight:700;color:#0B261C}
+.pageband .rt{font-size:11px;font-family:ui-monospace,Consolas,monospace;background:#E1D7BF;color:#4A3F22;border-radius:5px;padding:2px 8px}
+.pageband .pd{font-size:11.5px;color:#6B5A3E}
+
+.hero{position:relative;width:100%;aspect-ratio:2.1/1;border-radius:14px;overflow:hidden;background:linear-gradient(135deg,#0b3a22,#0a5230);box-shadow:0 8px 26px -10px rgba(0,0,0,.45);container-type:inline-size}
+.hero-img{position:absolute;inset:0;background-size:cover;background-position:center 22%}
+.hero-ov{position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,18,10,.86) 0%,rgba(4,18,10,.56) 44%,rgba(4,18,10,.12) 100%)}
+.hero-tx{position:absolute;left:0;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;padding:0 6% ;max-width:80%}
+.hero-t{color:#fff;font-size:6cqw;font-weight:800;line-height:1.14;letter-spacing:.2px;text-shadow:0 2px 10px rgba(0,0,0,.55)}
+.hero-s{color:#F1E8CF;font-size:2.9cqw;font-weight:600;line-height:1.38;margin-top:1.6cqw;text-shadow:0 1px 6px rgba(0,0,0,.55);max-width:92%}
+.hero-badge{position:absolute;top:12px;left:14px;z-index:3;background:rgba(0,0,0,.5);color:#F4ECD6;font-size:11.5px;font-weight:700;border-radius:20px;padding:4px 12px;backdrop-filter:blur(4px)}
+.hero-dots{position:absolute;bottom:12px;right:16px;display:flex;gap:6px;z-index:3}
+.hdot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.45)}
+.hdot.on{background:#E7CE97;width:22px;border-radius:5px}
+
+.posnav{display:flex;align-items:center;justify-content:center;gap:14px;margin:9px 0 0}
+.posnav .arr{width:40px;height:40px;border-radius:10px;border:1.5px solid #C4AE80;background:#fff;color:#0B261C;font-size:20px;cursor:pointer}
+.posnav .arr:hover{background:#F5EEDD}
+.posnav .lab{font-size:13px;color:#6B5A3E;min-width:150px;text-align:center}
+
+/* ── Editable panel ── */
+.panel{background:#FBF7EE;border:1.5px solid #E3D9C0;border-radius:14px;padding:14px}
+.prow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #EBE1CB}
+.prow .grp{display:flex;align-items:center;gap:6px}
+.prow label{font-size:11px;font-weight:700;color:#5F5238;text-transform:uppercase;letter-spacing:.04em}
+.prow select{background:#fff;border:1.5px solid #D8CCAE;border-radius:8px;padding:7px 9px;font-size:12.5px;font-family:inherit;color:#1A1208;cursor:pointer}
+.ord{display:flex;gap:5px}
+.ord button{width:34px;height:34px;border:1.5px solid #D8CCAE;background:#fff;border-radius:8px;font-size:14px;cursor:pointer;color:#0B261C}
+.ord button:disabled{opacity:.3;cursor:default}
+.ord button:not(:disabled):hover{background:#F5EEDD}
+
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:560px){.f2{grid-template-columns:1fr}}
+.fg{margin-bottom:9px;display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:10.5px;font-weight:700;color:#5F5238;text-transform:uppercase;letter-spacing:.04em}
+.fg textarea{width:100%;background:#fff;border:1.5px solid #D8CCAE;border-radius:9px;color:#1A1208;font-family:inherit;font-size:13px;padding:7px 10px;line-height:1.35;resize:vertical;min-height:36px}
+.fg textarea:focus{outline:none;border-color:#A8842B;background:#fffdf7}
+.fg textarea.bn{font-size:14px}
+.fg textarea.remarks{background:#FFFCE6;border-color:#E8D888;font-style:italic;color:#5F5238}
+.fg textarea.remarks.has{border-color:#C9A96E;background:#FFFCE6}
+.actions{display:flex;gap:9px;margin-top:6px;flex-wrap:wrap}
+.actions button{font-family:inherit;font-size:12.5px;font-weight:700;border-radius:9px;padding:9px 14px;cursor:pointer;border:1.5px solid transparent}
+.b-add{background:#0A5230;color:#F4ECD6}
+.b-add:hover{background:#0C6038}
+.b-del{background:#FDECEA;border-color:#F5BEBA;color:#B71C1C}
+.b-del:hover{background:#FADADD}
+
+/* Output + bottom bar */
+.out-wrap{max-width:860px;margin:16px auto 0;padding:0 14px}
+.out-wrap textarea{width:100%;height:150px;font-family:ui-monospace,Consolas,monospace;font-size:11.5px;padding:11px;border:1px solid #D8CCAE;border-radius:11px;background:#FBF8F1;color:#1A1208;line-height:1.5;resize:vertical}
+.out-note{font-size:11.5px;color:#6B5A3E;margin-top:7px;line-height:1.55}
+.out-note code{background:#E8DFC9;border-radius:4px;padding:1px 5px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:#0B261C;color:#F4ECD6;padding:9px 14px;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;box-shadow:0 -4px 16px rgba(0,0,0,.3);z-index:20}
+.bar .info{font-size:12px;color:#8AB09A}
+.bar button{font-family:inherit;font-size:13.5px;font-weight:700;border:none;border-radius:9px;padding:9px 20px;cursor:pointer}
+.bar .cp{background:#C9A96E;color:#1A1208}
+.bar .rs{background:transparent;color:#C9A96E;border:1.5px solid #6E5B33}
+.share-btn{background:#2A6E48;color:#EDF6EE;border:none;border-radius:9px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.share-btn:hover{background:#33845A}
+.filters{max-width:860px;margin:0 auto;padding:14px 14px 0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.filters .flab{font-size:11px;font-weight:700;color:#5F5238;text-transform:uppercase;letter-spacing:.04em}
+.filters .fbtn{background:#F3ECDB;border:1.5px solid #D8CCAE;border-radius:20px;padding:7px 14px;font-size:12.5px;font-weight:700;color:#5F5238;cursor:pointer;font-family:inherit}
+.filters .fbtn.on{background:#0B261C;color:#E7CE97;border-color:#0B261C}
+.filters .fbtn b{font-weight:800}
+.chips{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:10px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1.5px solid #D8CCAE;border-radius:20px;padding:9px 15px;font-size:12.5px;font-weight:700;color:#6B5A3E;cursor:pointer;font-family:inherit}
+.chip.on.social{background:#E7F0FB;border-color:#2C6C9E;color:#1B4E77}
+.chip.on.later{background:#FBF0E0;border-color:#C9A96E;color:#8A6A1E}
+.toast{position:fixed;left:50%;bottom:72px;transform:translateX(-50%);background:#0A5230;color:#F4ECD6;font-size:12.5px;font-weight:700;padding:11px 20px;border-radius:24px;z-index:60;opacity:0;transition:opacity .25s;pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.35);max-width:92vw;text-align:center;line-height:1.4}
+.toast.show{opacity:1}
+</style>
 </head>
 <body>
-<h1>PakPoshak — Poster Planner</h1>
-<div class="sub">Edit any poster's copy directly. Assign each to its page. Tap <b>Share link</b> to get a URL you can open on any device or share with me — it encodes all your edits. Tap <b>Copy plan</b> to export a text summary for me to apply in the live app.</div>
-<div class="wrap" id="importBanner"></div>
-<div class="wrap" id="rows"></div>
-<div class="out"><textarea id="out" readonly placeholder="Your plan appears here after tapping Copy plan."></textarea></div>
-<div class="bar">
-  <span class="count" id="count"></span>
-  <button class="btn-gold" onclick="copyPlan()">Copy plan</button>
-  <button class="btn-grn" onclick="shareLink()">Share link</button>
-  <button class="btn-ghost" onclick="resetAll()">Reset all</button>
+<div class="top">
+  <h1>PakPoshak — Hero Posters</h1>
+  <div class="nav">
+    <button onclick="go(-1)" title="Previous poster">&lsaquo;</button>
+    <div class="counter" id="counter"></div>
+    <button onclick="go(1)" title="Next poster">&rsaquo;</button>
+  </div>
+  <div class="spacer"></div>
+  <select class="jump" id="jump" onchange="jumpPage(this.value)"></select>
+  <div class="seg" id="langSeg">
+    <button data-l="en" class="on">EN preview</button>
+    <button data-l="bn">BN preview</button>
+  </div>
+  <button class="share-btn" onclick="shareLink()">📤 Share link</button>
+  <button class="btn-copy" onclick="copyCode()">Copy code</button>
 </div>
-<div class="toast" id="toast"></div>
+
+<div class="filters">
+  <span class="flab">Show</span>
+  <button class="fbtn on" id="fAll" onclick="setFilter('all')">All</button>
+  <button class="fbtn" id="fSocial" onclick="setFilter('social')">📱 Social media</button>
+  <button class="fbtn" id="fLater" onclick="setFilter('later')">🔖 Saved for later</button>
+</div>
+
+<div class="wrap">
+  <div class="leftcol">
+    <div class="pageband" id="pageband"></div>
+    <div class="hero" id="hero"></div>
+    <div class="posnav">
+      <button class="arr" onclick="go(-1)">&lsaquo;</button>
+      <div class="lab" id="posLab"></div>
+      <button class="arr" onclick="go(1)">&rsaquo;</button>
+    </div>
+  </div>
+  <div class="rightcol">
+  <div class="panel">
+    <div class="prow">
+      <div class="grp">
+        <label>Order on page</label>
+        <div class="ord">
+          <button id="upBtn" onclick="reorder(-1)" title="Move earlier">&uarr;</button>
+          <button id="dnBtn" onclick="reorder(1)" title="Move later">&darr;</button>
+        </div>
+        <span style="font-size:12px;color:#6B5A3E" id="ordLab"></span>
+      </div>
+      <div class="grp" style="margin-left:auto">
+        <label>Move / add to</label>
+        <select id="moveSel" onchange="onMoveSel(this.value)"></select>
+      </div>
+    </div>
+
+    <div class="chips">
+      <button class="chip social" id="chSocial" onclick="toggleFlag('social')">📱 For social media</button>
+      <button class="chip later" id="chLater" onclick="toggleFlag('later')">🔖 Save for later</button>
+    </div>
+
+    <div class="f2">
+      <div class="fg"><label>EN Title</label><textarea id="f_en_t" rows="2" oninput="setField('en_t',this.value)"></textarea></div>
+      <div class="fg"><label>BN Title</label><textarea id="f_bn_t" rows="2" class="bn" oninput="setField('bn_t',this.value)"></textarea></div>
+      <div class="fg"><label>EN Subtitle</label><textarea id="f_en_s" rows="2" oninput="setField('en_s',this.value)"></textarea></div>
+      <div class="fg"><label>BN Subtitle</label><textarea id="f_bn_s" rows="2" class="bn" oninput="setField('bn_s',this.value)"></textarea></div>
+    </div>
+    <div class="fg"><label>📝 Remarks (notes to Claude)</label><textarea id="f_remarks" rows="2" class="remarks" placeholder="e.g. 'move to home-w', 'new title: X', 'use a brighter photo'…" oninput="setField('remarks',this.value)"></textarea></div>
+
+    <div class="actions">
+      <button class="b-add" onclick="duplicateHere()">⧉ Duplicate this poster</button>
+      <button class="b-del" onclick="delPoster()">✕ Delete this poster</button>
+    </div>
+  </div>
+  </div>
+</div>
+
+<div class="out-wrap">
+  <textarea id="out" readonly placeholder="Tap 'Copy code' — the complete PS_POSTERS block appears here and is copied to your clipboard."></textarea>
+  <div class="out-note">Paste into <code>app.src.js</code> → replace the entire <code>const PS_POSTERS = {…};</code> block → run terser → bump PSB_BUILD + CACHE_VERSION → commit. Remarks become <code>// comments</code>.</div>
+</div>
+
+<div class="bar">
+  <span class="info" id="barInfo"></span>
+  <button class="cp" onclick="copyCode()">Copy code</button>
+  <button class="rs" onclick="resetAll()">Reset to original</button>
+</div>
 
 <script>
-const PH = {
-  formal_a:'https://cdn.shopify.com/s/files/1/0620/8788/9062/files/SF_EF_23_27_R1_Front_A_529dc51b-c080-4f24-ace0-b53dd4db479d.jpg?v=1780569952',
-  formal_b:'https://cdn.shopify.com/s/files/1/0813/1179/3453/files/0000354_black-peplum.jpg?v=1694011257',
-  formal_c:'https://cdn.shopify.com/s/files/1/3006/7522/files/image00002_1a13f591-d000-495f-ab82-2c4d526c6450.jpg?v=1759496177',
-  formal_d:'https://cdn.shopify.com/s/files/1/2402/3147/files/D-10-1.jpg?v=1739367355',
-  pret_a:'https://cdn.shopify.com/s/files/1/0551/9487/8152/files/1_213e91e5-5f6c-49ca-a97f-d65d736d8bf1.jpg?v=1774813520',
-  pret_b:'https://cdn.shopify.com/s/files/1/0019/7217/4947/files/GreenLawnShirt-ChiffonDupatta-61.webp?v=1781341018',
-  maxi_a:'https://cdn.shopify.com/s/files/1/0515/4802/9092/files/DSCF9529.jpg?v=1768030391',
-  maxi_b:'https://cdn.shopify.com/s/files/1/0730/0972/5664/files/TYP00849.jpg?v=1762520712',
-  maxi_c:'https://cdn.shopify.com/s/files/1/0730/0972/5664/files/TYP01042.jpg?v=1762516865',
-  menshirt:'https://cdn.shopify.com/s/files/1/0283/5510/0758/files/DSC00802copy_de4091ee-ced4-4563-be10-9999bcbd43ef.jpg?v=1782716814',
-  saree_a:'https://cdn.shopify.com/s/files/1/0620/8788/9062/files/SFEF2656IceBlueFront_A.jpg?v=1778324569',
-  saree_b:'https://cdn.shopify.com/s/files/1/0650/8249/1105/files/S26B4566_JetBlack_Cover.jpg?v=1782739492',
-  coord_a:'https://cdn.shopify.com/s/files/1/0623/6481/1444/files/BP181-9-2P25_1.jpg?v=1782730607',
-  coord_b:'https://cdn.shopify.com/s/files/1/0717/3934/3066/files/Porcelain_Bloom_Tunic_1.png?v=1775576518',
-  bridal_a:'https://cdn.shopify.com/s/files/1/0740/1753/8280/files/B-384.jpg?v=1778772216',
-  bridal_b:'https://cdn.shopify.com/s/files/1/0316/1712/2442/products/1O9A7266.jpg?v=1647657403',
-  handmade:'https://cdn.shopify.com/s/files/1/0609/3475/0449/files/MWS-6295_2.jpg?v=1776332323',
-  lawn_a:'https://cdn.shopify.com/s/files/1/0356/0780/6090/files/35A8421_996aa73d-b61b-4fad-bd59-ad3fb8e0717b.jpg?v=1780917382',
-  lawn_b:'https://cdn.shopify.com/s/files/1/0740/1753/8280/files/LH261-016-AG.jpg?v=1778051058',
-  abaya:'https://cdn.shopify.com/s/files/1/0611/8585/1568/files/W.SS26.473.T-1.jpg?v=1781848988',
-  western_a:'https://cdn.shopify.com/s/files/1/0595/3260/7535/files/WWS251653_5.png?v=1778323190',
-  western_b:'https://pk.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw27b4af67/images/hi-res/3-26-201-a-h2_multi_1.jpg',
-  menssuit:'https://cdn.shopify.com/s/files/1/0841/3796/7889/files/ECMTCPT5-1016_5.jpg?v=1782302340',
-  lehenga:'https://cdn.shopify.com/s/files/1/0609/3475/0449/products/1_09787fba-6a27-46e7-9e5a-9d269fd788ba.jpg?v=1757135551',
-  couple:'https://cdn.shopify.com/s/files/1/0508/8994/9390/files/EDGE_02-06.jpg?v=1747412739',
-  teen:'https://cdn.shopify.com/s/files/1/2635/3244/files/W2175ST-607-565JerseyCoordSet01_1.jpg?v=1768563553',
-  babygirl:'https://cdn.shopify.com/s/files/1/0789/3588/4095/files/Kids-Danedar-Chiffon-3PC-_-1178-Sha-Posh-Textile-238089468.jpg?v=1779196268',
-  babyboy:'https://cdn.shopify.com/s/files/1/0752/0442/8072/files/DJKPC-1004-01_14f75813-30d2-4b62-b00e-a3c5920bc243.webp?v=1781936008'
+const PAGE_IMG = {
+  'home-all'    : 'https://cdn.shopify.com/s/files/1/0587/2913/6326/files/DSC03349_copy.jpg?v=1777231664',
+  'home-w'      : 'https://cdn.shopify.com/s/files/1/0841/3796/7889/files/86276-_7_-thumbnail.jpg?v=1781787354',
+  'home-m'      : 'https://cdn.shopify.com/s/files/1/0872/1278/5848/files/MP1PBS26BM3A15_2.jpg?v=1779178985',
+  'home-k'      : 'https://cdn.shopify.com/s/files/1/0752/0442/8072/files/KGKK1436-2PC_1.webp?v=1780481599',
+  'luxe-all'    : 'https://cdn.shopify.com/s/files/1/0524/3112/6721/files/10_9cfe7aed-1677-4419-a9d6-729355fda611.jpg?v=1764840701',
+  'luxe-w'      : 'https://cdn.shopify.com/s/files/1/0650/8249/1105/files/S26C5198_Ecru_Cover.jpg?v=1780498829',
+  'luxe-m'      : 'https://cdn.shopify.com/s/files/1/0555/3799/1852/files/arsalan-iqbal-jet-black-hand-embroidered-prince-jacket-kurta-pyjama-1.jpg?v=1779204948',
+  'luxe-k'      : 'https://cdn.shopify.com/s/files/1/0587/2913/6326/files/GulabiKids_close.jpg?v=1748186268',
+  'search-home' : 'https://cdn.shopify.com/s/files/1/0262/9058/5672/files/AL-LS-625_4_-Copy.jpg?v=1778675077',
+  'search-luxe' : 'https://cdn.shopify.com/s/files/1/2277/5269/files/110_edacbdbb-240c-447d-a54f-b850c3397501.jpg?v=1752064548',
+  'search-brand': 'https://cdn.shopify.com/s/files/1/0515/4802/9092/files/2C5A0656.jpg?v=1758976297'
 };
 
-const TH = {
-  ivory:{bg:'#FAF6EE',head:'#1A1208',acc:'#A8842B',sub:'#5F5238',cta:'#A8842B',ctaT:'#1A1208',fade:'#FAF6EE',fb1:'#0B261C',fb2:'#0A5230',mk:'#0B261C',ml:'#C9A96E',br:'#1A1208',tg:'#7A6A4A'},
-  luxe:{bg:'#03150A',head:'#F4ECD6',acc:'#DBB85E',sub:'#CFC094',cta:'#DBB85E',ctaT:'#03150A',fade:'#03150A',fb1:'#0A3A22',fb2:'#06210F',mk:'#DBB85E',ml:'#03150A',br:'#F4ECD6',tg:'#A9BBA0'},
-  forest:{bg:'#0B261C',head:'#F4ECD6',acc:'#DBB85E',sub:'#CFC094',cta:'#DBB85E',ctaT:'#0B261C',fade:'#0B261C',fb1:'#0A3A22',fb2:'#06210F',mk:'#DBB85E',ml:'#0B261C',br:'#F4ECD6',tg:'#A9BBA0'},
-  rose:{bg:'#FBF3F6',head:'#1A1208',acc:'#B14A63',sub:'#6B4150',cta:'#B14A63',ctaT:'#FFFFFF',fade:'#FBF3F6',fb1:'#7A2040',fb2:'#B14A63',mk:'#0B261C',ml:'#C9A96E',br:'#1A1208',tg:'#8A5A68'},
-  amber:{bg:'#FBF6E9',head:'#1A1208',acc:'#A85D10',sub:'#6B5226',cta:'#A85D10',ctaT:'#FFFFFF',fade:'#FBF6E9',fb1:'#7A4800',fb2:'#B98A2E',mk:'#0B261C',ml:'#C9A96E',br:'#1A1208',tg:'#8A6A3A'},
-  blue:{bg:'#EFF4FB',head:'#1A1208',acc:'#2C6C9E',sub:'#3A5266',cta:'#2C6C9E',ctaT:'#FFFFFF',fade:'#EFF4FB',fb1:'#0C3556',fb2:'#2C6C9E',mk:'#0B261C',ml:'#C9A96E',br:'#1A1208',tg:'#5A6E84'}
+const ORIG = {
+  'home-all': [
+    { en_t:'See the real PKR price.', en_s:'Paste any product link, get the honest BDT total.', bn_t:'আসল PKR দাম দেখুন।', bn_s:'যেকোনো প্রোডাক্ট লিংক পেস্ট করুন, সৎ BDT টোটাল পান।', remarks:'' },
+    { en_t:'150+ Pakistani brands. Women \xB7 Men \xB7 Kids.', en_s:'Real prices, delivered to your door in 2-3 weeks.', bn_t:'১৫০+ পাকিস্তানি ব্র্যান্ড। মেয়ে \xB7 ছেলে \xB7 বাচ্চা।', bn_s:'আসল দাম, ২-৩ সপ্তাহে আপনার দরজায় ডেলিভারি।', remarks:'' },
+    { en_t:'New, every single day. Latest collections.', en_s:'Fresh Pakistani arrivals added daily.', bn_t:'প্রতিদিন নতুন। সর্বশেষ কালেকশন।', bn_s:'প্রতিদিন নতুন পাকিস্তানি পণ্য যোগ হয়।', remarks:'' },
+    { en_t:'Most competitive prices in BD.', en_s:'Confirmed Pakistan price, full BDT total, no hidden charges.', bn_t:'বিডিতে সবচেয়ে সাশ্রয়ী দাম।', bn_s:'নিশ্চিত পাকিস্তানি দাম, পূর্ণ বিডিটি টোটাল, কোনো লুকানো চার্জ নেই।', remarks:'' },
+    { en_t:'Everyday to niche. Every Pakistani brand.', en_s:'From daily wear to the labels you love.', bn_t:'প্রতিদিন থেকে নিশ। প্রতিটি পাকিস্তানি ব্র্যান্ড।', bn_s:'প্রতিদিনের পোশাক থেকে প্রিয় ব্র্যান্ড।', remarks:'' },
+    { en_t:'Couple goals. His & hers, matched.', en_s:'Dress together for every occasion.', bn_t:'কাপল গোলস। হিজ ও হার্স, ম্যাচিং।', bn_s:'প্রতিটি অনুষ্ঠানে একসাথে সাজুন।', remarks:'' }
+  ],
+  'home-w': [
+    { en_t:'Modest wear. Covered, confident.', en_s:'Abayas, hijabs, full-cover styles.', bn_t:'মডেস্ট ওয়্যার। কভারড, কনফিডেন্ট।', bn_s:'আবায়া, হিজাব, ফুল-কভার স্টাইল।', remarks:'' },
+    { en_t:'Modern & western. Co-ords, dresses, tops.', en_s:'Pakistani brands, contemporary cuts.', bn_t:'মডার্ন ও ওয়েস্টার্ন। কো-অর্ড, ড্রেস, টপ।', bn_s:'পাকিস্তানি ব্র্যান্ড, সমকালীন কাট।', remarks:'' },
+    { en_t:'Gen Z, this is you. Trend-first fits.', en_s:'Bold, fresh, Pakistani, your vibe.', bn_t:'জেন জি, এটা আপনারই। ট্রেন্ড-ফার্স্ট ফিট।', bn_s:'বোল্ড, ফ্রেশ, পাকিস্তানি, আপনার ভাইব।', remarks:'' }
+  ],
+  'home-m': [
+    { en_t:'Pret & kurta. Men\'s everyday staples.', en_s:'Real prices from Pakistan, delivered to Bangladesh.', bn_t:'প্রেট ও কুর্তা। পুরুষের প্রতিদিনের পোশাক।', bn_s:'পাকিস্তান থেকে আসল দামে, বাংলাদেশে ডেলিভারি।', remarks:'' },
+    { en_t:'Eid kameez. Looking sharp this season.', en_s:'Embroidered kurtas to plain pret, all men\'s styles here.', bn_t:'ঈদ কামিজ। এই সিজনে দারুণ সাজুন।', bn_s:'এমব্রয়ডারি থেকে প্লেইন প্রেট, সব পুরুষের স্টাইল এখানে।', remarks:'' }
+  ],
+  'home-k': [
+    { en_t:'Teen styles. Cool, comfy, easy.', en_s:'Trendy looks for ages 10 to 16.', bn_t:'টিন স্টাইল। কুল, আরামদায়ক, সহজ।', bn_s:'১০ থেকে ১৬ বছরের ট্রেন্ডি লুক।', remarks:'' },
+    { en_t:'Baby girl. Tiny & precious.', en_s:'Newborn to 2 years, soft and sweet.', bn_t:'বেবি গার্ল। ছোট্ট ও আদুরে।', bn_s:'নবজাতক থেকে ২ বছর, নরম ও মিষ্টি।', remarks:'' },
+    { en_t:'Baby boy. Little gentleman.', en_s:'Newborn to 2 years, comfy and cute.', bn_t:'বেবি বয়। ছোট্ট জেন্টলম্যান।', bn_s:'নবজাতক থেকে ২ বছর, আরামদায়ক ও কিউট।', remarks:'' },
+    { en_t:'Boys kurta shalwar. Pakistani classics, little sizes.', en_s:'Traditional looks your little man will love.', bn_t:'বয়েজ কুর্তা সালোয়ার। পাকিস্তানি ক্লাসিক, ছোট সাইজে।', bn_s:'ঐতিহ্যবাহী লুক যা আপনার ছোট্ট মানুষটি ভালোবাসবে।', remarks:'' },
+    { en_t:'Toddler fashion. Ages 2 to 6.', en_s:'Soft, sweet, and stylishly Pakistani.', bn_t:'টডলার ফ্যাশন। ২ থেকে ৬ বছর।', bn_s:'নরম, মিষ্টি এবং পাকিস্তানি স্টাইলে।', remarks:'' }
+  ],
+  'luxe-all': [
+    { en_t:'Door to door. Genuine products.', en_s:'Straight from Pakistan to your door in Bangladesh.', bn_t:'ডোর টু ডোর। আসল পণ্য।', bn_s:'পাকিস্তান থেকে সরাসরি বাংলাদেশে আপনার দরজায়।', remarks:'' },
+    { en_t:'The Luxe Edit. Designer couture.', en_s:'Pakistan\'s finest designers, real prices.', bn_t:'দ্য লাক্স এডিট। ডিজাইনার কুতুর।', bn_s:'পাকিস্তানের সেরা ডিজাইনার, আসল দামে।', remarks:'' },
+    { en_t:'Hand embroidery, adda by adda.', en_s:'Real handwork, the honest Pakistan price.', bn_t:'হাতের এমব্রয়ডারি, আড্ডা বাই আড্ডা।', bn_s:'আসল হাতের কাজ, সৎ পাকিস্তানি দাম।', remarks:'' },
+    { en_t:'Designers, together. One luxe room.', en_s:'Sana Safinaz, Maria B, Elan and more.', bn_t:'ডিজাইনাররা, একসাথে। এক লাক্স রুম।', bn_s:'সানা সাফিনাজ, মারিয়া বি, এলান ও আরও।', remarks:'' },
+    { en_t:'Chikankari. Zardozi. Real craft.', en_s:'Pakistani heritage art, at the authentic PKR price.', bn_t:'চিকনকারি। জারদোজি। আসল কারুকাজ।', bn_s:'পাকিস্তানি ঐতিহ্যবাহী শিল্প, আসল PKR দামে।', remarks:'' },
+    { en_t:'Gift something unforgettable.', en_s:'A designer piece from Pakistan, delivered to Bangladesh.', bn_t:'অবিস্মরণীয় কিছু উপহার দিন।', bn_s:'পাকিস্তান থেকে একটি ডিজাইনার পিস, বাংলাদেশে ডেলিভারি।', remarks:'' }
+  ],
+  'luxe-w': [
+    { en_t:'Bridal & velvet. For the big day.', en_s:'Make your moment unforgettable.', bn_t:'ব্রাইডাল ও ভেলভেট। বিশেষ দিনের জন্য।', bn_s:'আপনার মুহূর্তকে অবিস্মরণীয় করুন।', remarks:'' },
+    { en_t:'Fine fabrics. Pure & premium.', en_s:'Lawn, silk, organza, chiffon.', bn_t:'ফাইন ফেব্রিক। বিশুদ্ধ ও প্রিমিয়াম।', bn_s:'লন, সিল্ক, অর্গানজা, শিফন।', remarks:'' },
+    { en_t:'Always transparent. No hidden charges.', en_s:'Confirmed PKR plus your full BDT total, upfront.', bn_t:'সবসময় স্বচ্ছ। কোনো লুকানো চার্জ নেই।', bn_s:'নিশ্চিত PKR সহ আপনার পূর্ণ BDT টোটাল, আগেই।', remarks:'' },
+    { en_t:'Going to a wedding? Let us prepare you.', en_s:'Guest looks, bridal, the whole edit.', bn_t:'বিয়েতে যাচ্ছেন? আমরা প্রস্তুত করি।', bn_s:'গেস্ট লুক, ব্রাইডাল, পুরো এডিট।', remarks:'' },
+    { en_t:'Opulent season. Velvet, brocade, silk.', en_s:'The richest fabrics in Pakistani fashion, now here.', bn_t:'অপুলেন্ট সিজন। ভেলভেট, ব্রোকেড, সিল্ক।', bn_s:'পাকিস্তানি ফ্যাশনের সবচেয়ে সমৃদ্ধ ফেব্রিক, এখন এখানে।', remarks:'' },
+    { en_t:'Embroidered formals. Statement dressing.', en_s:'Couture-level craft, at honest PK prices.', bn_t:'এমব্রয়ডারড ফরমাল। স্টেটমেন্ট ড্রেসিং।', bn_s:'কুতুর-মানের কারুকাজ, সৎ PK দামে।', remarks:'' }
+  ],
+  'luxe-m': [
+    { en_t:'Groom season. Your big day, perfectly dressed.', en_s:'Sherwani to prince coat, real PK prices.', bn_t:'বর সিজন। আপনার বিশেষ দিন, নিখুঁত সাজে।', bn_s:'শেরওয়ানি থেকে প্রিন্স কোট, আসল পিকে দামে।', remarks:'' },
+    { en_t:'Formal to festive. Every occasion sorted.', en_s:'Sherwani, suits and kurtas. Pakistan\'s finest.', bn_t:'ফর্মাল থেকে উৎসব। প্রতিটি অনুষ্ঠান সাজানো।', bn_s:'শেরওয়ানি, স্যুট ও কুর্তা। পাকিস্তানের সেরা।', remarks:'' },
+    { en_t:'Menswear, sorted. Eastern & western.', en_s:'Kurtas to suits, real prices, BD delivery.', bn_t:'মেনসওয়্যার, সব এক জায়গায়।', bn_s:'কুর্তা থেকে স্যুট, আসল দাম, বিডি ডেলিভারি।', remarks:'' },
+    { en_t:'Wedding & Festivals, sorted.', en_s:'Sharp formals for every ceremony in the family.', bn_t:'বিয়ে ও উৎসব, সব সাজানো।', bn_s:'পরিবারের প্রতিটি অনুষ্ঠানের জন্য পারফেক্ট ফরমাল।', remarks:'' }
+  ],
+  'luxe-k': [
+    { en_t:'Little VIPs. Dressed to impress.', en_s:'Premium party and formal wear for kids, from Pakistan\'s finest.', bn_t:'লিটল ভিআইপি। মুগ্ধ করার সাজ।', bn_s:'পাকিস্তানের সেরা থেকে বাচ্চাদের প্রিমিয়াম পার্টি ও ফরমাল ওয়্যার।', remarks:'' },
+    { en_t:'Dressed for the occasion. Little ones too.', en_s:'Festive sets that match the grown-ups, perfectly.', bn_t:'অনুষ্ঠানের সাজ। ছোটদের জন্যও।', bn_s:'বড়দের সাথে মানানসই উৎসবের সেট, নিখুঁতভাবে।', remarks:'' },
+    { en_t:'Tiny royals. Pakistan\'s finest, for the little ones.', en_s:'Because the best occasions deserve the best looks.', bn_t:'ছোট্ট রাজকীয়। ছোটদের জন্য পাকিস্তানের সেরা।', bn_s:'কারণ সেরা অনুষ্ঠান সেরা লুক দাবি করে।', remarks:'' }
+  ],
+  'search-home': [
+    { en_t:'Not sure of the size? We\'ll find it.', en_s:'Fit Assistant matches you to the right brand size.', bn_t:'সাইজ নিয়ে দ্বিধা? আমরা খুঁজে দেব।', bn_s:'ফিট অ্যাসিস্ট্যান্ট প্রতিটি ব্র্যান্ডের সঠিক সাইজ মেলায়।', remarks:'' },
+    { en_t:'Search by photo. Snap or upload.', en_s:'See a look you love? Find it by picture.', bn_t:'ছবি দিয়ে খুঁজুন। তুলুন বা আপলোড করুন।', bn_s:'পছন্দের লুক দেখেছেন? ছবি দিয়ে খুঁজুন।', remarks:'' }
+  ],
+  'search-luxe': [
+    { en_t:'Search the designer houses', en_s:'Elan, Sana Safinaz, Asim Jofa and more, with the real PKR price.', bn_t:'ডিজাইনার হাউস খুঁজুন', bn_s:'এলান, সানা সাফিনাজ, আসিম জোফা ও আরও, আসল পিকেআর দামে।', remarks:'' },
+    { en_t:'Snap it. Find it. Order it.', en_s:'Search by photo across Pakistan\'s premium labels.', bn_t:'ছবি তুলুন, খুঁজুন, অর্ডার করুন', bn_s:'ছবি দিয়ে পাকিস্তানের প্রিমিয়াম ব্র্যান্ডে খুঁজুন।', remarks:'' }
+  ],
+  'search-brand': [
+    { en_t:'Snap. Search. Order. Find it with a photo.', en_s:'See a style you love? Find it instantly.', bn_t:'ছবি তুলুন। খুঁজুন। অর্ডার করুন।', bn_s:'পছন্দের স্টাইল দেখেছেন? ছবি দিয়ে তাৎক্ষণিক খুঁজুন।', remarks:'' },
+    { en_t:'True Price. Paste, check, compare.', en_s:'Paste any brand\'s product page, get the real PKR and full BDT total.', bn_t:'সত্যিকারের দাম। পেস্ট, চেক, তুলনা।', bn_s:'যেকোনো ব্র্যান্ডের প্রোডাক্ট পেজ পেস্ট করুন, আসল PKR ও পূর্ণ BDT পান।', remarks:'' },
+    { en_t:'Any brand. Any link. One honest price.', en_s:'Paste a product link from anywhere, priced in PKR + BDT.', bn_t:'যেকোনো ব্র্যান্ড। যেকোনো লিংক। একটি সৎ দাম।', bn_s:'যেকোনো জায়গা থেকে প্রোডাক্ট লিংক পেস্ট করুন, PKR + BDT তে দাম পান।', remarks:'' },
+    { en_t:'Want to buy Pakistani clothing? Check here first.', en_s:'Same outfit, the real price, delivered to BD.', bn_t:'পাকিস্তানি পোশাক কিনতে চান? আগে এখানে চেক করুন।', bn_s:'একই পোশাক, আসল দামে, বিডিতে ডেলিভারি।', remarks:'' },
+    { en_t:'Confirmed PK prices. In BDT, before you buy.', en_s:'No dollar guesswork, the genuine local price.', bn_t:'নিশ্চিত PK দাম। BDT তে, কেনার আগে।', bn_s:'ডলারের অনুমান নয়, আসল স্থানীয় দাম।', remarks:'' }
+  ]
 };
 
-// id = stable localStorage key — never reuse even if poster is removed
-const P = [
-  // ─── Landing / Home ───────────────────────────────────────────────────────
-  {id:'p01',s:'Landing',t:'ivory',a:'See the real',b:'PKR price.',d:['Paste any product link, get the honest BDT total.'],c:'Check a price',ph:'formal_a'},
-  {id:'p02',s:'Landing',t:'forest',a:'150+ Pakistani brands.',b:'Women · Men · Kids.',d:['Real prices, delivered to your door in 2-3 weeks.'],c:'Browse now',ph:'pret_a'},
-  {id:'p03',s:'Landing',t:'ivory',a:'New, every single day.',b:'Latest collections.',d:['Fresh Pakistani arrivals added daily.'],c:"See what's new",ph:'maxi_a',coll:'Daily New'},
-  {id:'p04',s:'Landing',t:'amber',a:'Most competitive',b:'prices in BD.',d:['Confirmed Pakistan price, full BDT total, no hidden charges.'],c:'Compare now',ph:'menshirt'},
-  {id:'p05',s:'Landing',t:'ivory',a:'Door to door.',b:'Genuine products.',d:['Straight from Pakistan to your door in Bangladesh.'],c:'How it works',ph:'saree_a'},
-  {id:'p06',s:'Landing',t:'rose',a:'Everyday to niche.',b:'Every Pakistani brand.',d:['From daily wear to the labels you love.'],c:'Explore',ph:'coord_a'},
-  {id:'p29',s:'Landing',t:'forest',a:'Exclusively for Bangladesh.',b:'Pakistani brands, your way.',d:['PakPoshak — bridging your love for Pakistani fashion.'],c:'Start exploring',ph:'pret_a',isNew:true},
-  {id:'p31',s:'Landing',t:'amber',a:'Lawn season.',b:'Just arrived.',d:["Pakistan's best lawn, delivered fresh to Bangladesh."],c:'Shop lawn',ph:'lawn_b',coll:'Lawn',isNew:true},
-  {id:'p35',s:'Landing',t:'rose',a:'The Eid edit.',b:'Ready to celebrate?',d:['Festive looks from Pakistan, delivered in time.'],c:'Shop Eid',ph:'formal_b',coll:'Eid & Festive',isNew:true},
-  // ─── Luxury / Luxe room ───────────────────────────────────────────────────
-  {id:'p07',s:'Luxury',t:'luxe',a:'The Luxe Edit.',b:'Designer couture.',d:["Pakistan's finest designers, real prices."],c:'Enter Luxe',ph:'bridal_a',coll:'Designer Picks'},
-  {id:'p08',s:'Luxury',t:'luxe',a:'Hand embroidery,',b:'adda by adda.',d:['Real handwork, the honest Pakistan price.'],c:'Shop hand work',ph:'handmade',coll:'Hand Embroidery'},
-  {id:'p09',s:'Luxury',t:'luxe',a:'Bridal & velvet.',b:'For the big day.',d:['Make your moment unforgettable.'],c:'Shop bridal',ph:'bridal_b',coll:'Bridal & Velvet'},
-  {id:'p10',s:'Luxury',t:'luxe',a:'Fine fabrics.',b:'Pure & premium.',d:['Lawn, silk, organza, chiffon.'],c:'Shop fabrics',ph:'lawn_a',coll:'Fine Fabric'},
-  {id:'p11',s:'Luxury',t:'luxe',a:'Eid & festive.',b:'Dressed to celebrate.',d:['Make the occasion yours.'],c:'Shop festive',ph:'formal_b',coll:'Eid & Festive'},
-  {id:'p12',s:'Luxury',t:'forest',a:'Designers, together.',b:'One luxe room.',d:['Sana Safinaz, Maria B, Elan and more.'],c:'Shop designers',ph:'formal_c'},
-  {id:'p32',s:'Luxury',t:'luxe',a:'Groom season.',b:'Your big day, perfectly dressed.',d:['Sherwani to prince coat, real PK prices.'],c:'Shop groom',ph:'menssuit',coll:'Groom',defaultPage:'Luxe · Men',isNew:true},
-  {id:'p36',s:'Luxury',t:'luxe',a:'Pakistani tailoring.',b:'Timeless precision.',d:['Premium cuts for men who know quality.'],c:'Shop menswear',ph:'menssuit',defaultPage:'Luxe · Men',isNew:true},
-  {id:'p37',s:'Luxury',t:'luxe',a:'Formal to festive.',b:'Every occasion sorted.',d:["Sherwani, suits and kurtas. Pakistan's finest."],c:'Shop formal',ph:'menssuit',defaultPage:'Luxe · Men',isNew:true},
-  // ─── Search & filter features ─────────────────────────────────────────────
-  {id:'p13',s:'Filter',t:'ivory',a:'Not sure of the size?',b:"We'll find it.",d:['Fit Assistant matches you to the right brand size.'],c:'Try Fit Assistant',ph:'pret_b'},
-  {id:'p14',s:'Filter',t:'ivory',a:'Search by photo.',b:'Snap or upload.',d:['See a look you love? Find it by picture.'],c:'Visual Search',ph:'western_a'},
-  {id:'p33',s:'Filter',t:'blue',a:'Snap. Search. Order.',b:'Find it with a photo.',d:['See a style you love? Find it instantly.'],c:'Try visual search',ph:'western_b',isNew:true},
-  {id:'p15',s:'Filter',t:'amber',a:'Set your budget.',b:'Everyday to designer.',d:['Filter by price, find your perfect fit.'],c:'Filter by price',ph:'lawn_b',coll:'Budget Finds'},
-  {id:'p16',s:'Filter',t:'rose',a:'Modest wear.',b:'Covered, confident.',d:['Abayas, hijabs, full-cover styles.'],c:'Shop modest',ph:'abaya',coll:'Modest Wear'},
-  {id:'p17',s:'Filter',t:'blue',a:'Modern & western.',b:'Co-ords, dresses, tops.',d:['Pakistani brands, contemporary cuts.'],c:'Shop modern',ph:'coord_b',coll:'Modern Wear'},
-  {id:'p18',s:'Filter',t:'ivory',a:'Always transparent.',b:'No hidden charges.',d:['Confirmed PKR plus your full BDT total, upfront.'],c:'See the breakdown',ph:'maxi_b'},
-  // ─── Brand / Price-check page ─────────────────────────────────────────────
-  {id:'p30',s:'Brand',t:'ivory',a:'True Price.',b:'Paste, check, compare.',d:["Paste any brand's product page — get the real PKR + full BDT total."],c:'Check a price',ph:'formal_a',isNew:true},
-  {id:'p19',s:'Brand',t:'ivory',a:'Any brand. Any link.',b:'One honest price.',d:['Paste a product link from anywhere, priced in PKR + BDT.'],c:'Paste a link',ph:'maxi_c'},
-  {id:'p20',s:'Brand',t:'forest',a:"Don't buy.",b:'Check here first.',d:['Same outfit, the real price, delivered to BD.'],c:'Compare',ph:'saree_b'},
-  {id:'p21',s:'Brand',t:'ivory',a:'Confirmed PK prices.',b:'In BDT, before you buy.',d:['No dollar guesswork, the genuine local price.'],c:'Check a brand',ph:'formal_d'},
-  {id:'p22',s:'Brand',t:'blue',a:'Menswear, sorted.',b:'Eastern & western.',d:['Kurtas to suits, real prices, BD delivery.'],c:'Shop men',ph:'menssuit',coll:'Menswear'},
-  // ─── Audiences & collections ──────────────────────────────────────────────
-  {id:'p23',s:'Audiences',t:'rose',a:'Going to a wedding?',b:'Let us prepare you.',d:['Guest looks, bridal, the whole edit.'],c:'Shop the wedding edit',ph:'lehenga',coll:'Wedding Guest'},
-  {id:'p24',s:'Audiences',t:'amber',a:'Gen Z, this is you.',b:'Trend-first fits.',d:['Bold, fresh, Pakistani, your vibe.'],c:'Shop Gen Z',ph:'western_b',coll:'Gen Z'},
-  {id:'p25',s:'Audiences',t:'rose',a:'Couple goals.',b:'His & hers, matched.',d:['Dress together for every occasion.'],c:'Shop couple',ph:'couple',coll:'Couple'},
-  {id:'p34',s:'Audiences',t:'amber',a:'Pret & kurta.',b:"Men's everyday staples.",d:['Real prices from Pakistan, delivered to Bangladesh.'],c:'Shop men',ph:'menshirt',coll:'Menswear',defaultPage:'Home · Men',isNew:true},
-  {id:'p26',s:'Audiences',t:'blue',a:'Teen styles.',b:'Cool, comfy, easy.',d:['Trendy looks for ages 10 to 16.'],c:'Shop teens',ph:'teen',coll:'Teen'},
-  {id:'p27',s:'Audiences',t:'rose',a:'Baby girl.',b:'Tiny & precious.',d:['Newborn to 2 years, soft and sweet.'],c:'Shop baby girl',ph:'babygirl',coll:'Baby Girl'},
-  {id:'p28',s:'Audiences',t:'blue',a:'Baby boy.',b:'Little gentleman.',d:['Newborn to 2 years, comfy and cute.'],c:'Shop baby boy',ph:'babyboy',coll:'Baby Boy'},
-  {id:'p38',s:'Audiences',t:'luxe',a:'Little VIPs.',b:'Dressed to impress.',d:["Premium party and formal wear for kids, from Pakistan's finest."],c:'Shop kids luxe',ph:'formal_b',defaultPage:'Luxe · Kids',isNew:true},
-  {id:'p39',s:'Audiences',t:'rose',a:'Dressed for the occasion.',b:'Little ones too.',d:['Festive sets that match the grown-ups, perfectly.'],c:'Shop festive kids',ph:'formal_b',defaultPage:'Luxe · Kids',isNew:true},
-  {id:'p40',s:'Audiences',t:'forest',a:'Tiny royals.',b:"Pakistan's finest, for the little ones.",d:['Because the best occasions deserve the best looks.'],c:'Shop kids luxe',ph:'formal_c',defaultPage:'Luxe · Kids',isNew:true},
-  // ─── New Men additions ─────────────────────────────────────────────────────
-  {id:'p41',s:'Audiences',t:'amber',a:'Eid kameez.',b:'Looking sharp this season.',d:["Embroidered kurtas to plain pret, all men's styles here."],c:'Shop Eid men',ph:'menshirt',coll:'Eid & Festive',defaultPage:'Home · Men',isNew:true},
-  {id:'p42',s:'Audiences',t:'forest',a:'Wedding guest,',b:'sorted.',d:['Sharp formals for every ceremony in the family.'],c:'Shop formal men',ph:'menssuit',coll:'Wedding Guest',defaultPage:'Home · Men',isNew:true},
-  {id:'p43',s:'Audiences',t:'blue',a:'Traditional, done right.',b:'Kurta shalwar, elevated.',d:["The cuts Pakistan does best, in authentic brands."],c:'Shop eastern men',ph:'menshirt',coll:'Menswear',defaultPage:'Home · Men',isNew:true},
-  // ─── New Kids additions ────────────────────────────────────────────────────
-  {id:'p44',s:'Audiences',t:'rose',a:'Girls party wear.',b:'Frocks, lehengas, little stars.',d:['Cotton to chiffon, every occasion covered.'],c:'Shop girls',ph:'babygirl',coll:'Girls',defaultPage:'Home · Kids',isNew:true},
-  {id:'p45',s:'Audiences',t:'blue',a:'Boys kurta shalwar.',b:'Pakistani classics, little sizes.',d:["Traditional looks your little man will love."],c:'Shop boys',ph:'babyboy',coll:'Boys',defaultPage:'Home · Kids',isNew:true},
-  {id:'p46',s:'Audiences',t:'rose',a:'Toddler fashion.',b:'Ages 2 to 6.',d:['Soft, sweet, and stylishly Pakistani.'],c:'Shop toddlers',ph:'babygirl',coll:'Infant',defaultPage:'Home · Kids',isNew:true},
-  {id:'p47',s:'Audiences',t:'ivory',a:'Everyday kids.',b:'Play-ready, always stylish.',d:['Comfortable everyday looks for boys and girls.'],c:'Shop kids casual',ph:'teen',coll:'Kids',defaultPage:'Home · Kids',isNew:true},
-  // ─── New Luxe All additions ────────────────────────────────────────────────
-  {id:'p48',s:'Luxury',t:'luxe',a:'Chikankari. Zardozi.',b:'Real craft.',d:['Pakistani heritage art, at the authentic PKR price.'],c:'Shop craft luxe',ph:'handmade',coll:'Hand Embroidery',defaultPage:'Luxe · All',isNew:true},
-  {id:'p49',s:'Luxury',t:'forest',a:'Gift something',b:'unforgettable.',d:['A designer piece from Pakistan, delivered to Bangladesh.'],c:'Shop gifts',ph:'formal_c',defaultPage:'Luxe · All',isNew:true},
-  {id:'p50',s:'Luxury',t:'luxe',a:'Opulent season.',b:'Velvet, brocade, silk.',d:["The richest fabrics in Pakistani fashion, now here."],c:'Shop opulent',ph:'bridal_a',defaultPage:'Luxe · All',isNew:true},
-  {id:'p51',s:'Luxury',t:'luxe',a:'From the runway',b:'to your door.',d:["Pakistan's fashion week names, honest prices."],c:'Shop runway',ph:'formal_c',defaultPage:'Luxe · All',isNew:true},
-  // ─── New Luxe Women additions ──────────────────────────────────────────────
-  {id:'p52',s:'Luxury',t:'luxe',a:'Embroidered formals.',b:'Statement dressing.',d:['Couture-level craft, at honest PK prices.'],c:'Shop formals',ph:'bridal_b',defaultPage:'Luxe · Women',isNew:true},
-  {id:'p53',s:'Luxury',t:'amber',a:'Lawn couture.',b:'Everyday meets luxury.',d:["Designer lawn from Pakistan's finest houses."],c:'Shop lawn luxe',ph:'lawn_a',coll:'Fine Fabric',defaultPage:'Luxe · Women',isNew:true},
-  {id:'p54',s:'Luxury',t:'rose',a:'Wedding season,',b:'fully covered.',d:['Bridal, guest, mehendi. The complete edit.'],c:'Shop wedding',ph:'bridal_a',coll:'Bridal & Velvet',defaultPage:'Luxe · Women',isNew:true},
-  // ─── Unstitched / Fabric (Women) ──────────────────────────────────────────
-  {id:'p55',s:'Landing',t:'rose',a:'Unstitched luxury.',b:'Fabric, your way.',d:["Premium unstitched from Pakistan's finest, stitch it yourself."],c:'Shop unstitched',ph:'lawn_b',coll:'Unstitched',defaultPage:'Home · Women',isNew:true},
-  // ─── New Brand / Trust ────────────────────────────────────────────────────
-  {id:'p56',s:'Brand',t:'ivory',a:'Real brand.',b:'Real price.',d:['We fetch the original PK price directly. No resellers, no guesswork.'],c:'Check a price',ph:'formal_a',defaultPage:'Search (from Brand)',isNew:true},
-  // ─── Occasions / Home All ─────────────────────────────────────────────────
-  {id:'p57',s:'Landing',t:'forest',a:'Eid. Weddings. Dawats.',b:'Every occasion.',d:["Pakistan's brands for Bangladesh's biggest moments."],c:'Start shopping',ph:'formal_b',defaultPage:'Home · All',isNew:true},
-  {id:'p58',s:'Audiences',t:'rose',a:'The big family wedding.',b:'Every outfit sorted.',d:['Couple sets, kids looks, guest outfits. One place.'],c:'Plan the looks',ph:'couple',coll:'Wedding Guest',defaultPage:'Home · All',isNew:true},
-  {id:'p59',s:'Landing',t:'blue',a:'Style without borders.',b:'Pakistani fashion, delivered.',d:['Every brand, every category, everywhere in Bangladesh.'],c:'Start exploring',ph:'pret_a',defaultPage:'Home · All',isNew:true}
+const PAGE_META = [
+  { id:'home-all',    label:'Home · All',              emoji:'🏠', theme:'home', route:'home store, gender = all',              desc:'Landing page — all genders, first thing everyone sees' },
+  { id:'home-w',      label:'Home · Women',             emoji:'👗', theme:'home', route:'home store, gender = women',            desc:'Women\'s tab on the Home store' },
+  { id:'home-m',      label:'Home · Men',               emoji:'👔', theme:'home', route:'home store, gender = men',              desc:'Men\'s tab on the Home store' },
+  { id:'home-k',      label:'Home · Kids',              emoji:'🧒', theme:'home', route:'home store, gender = kids',             desc:'Kids\' tab on the Home store' },
+  { id:'luxe-all',    label:'Luxe · All',               emoji:'💎', theme:'luxe', route:'luxe store, gender = all',              desc:'Designer / Luxe store — all genders' },
+  { id:'luxe-w',      label:'Luxe · Women',             emoji:'👑', theme:'luxe', route:'luxe store, gender = women',            desc:'Women\'s tab on Luxe store' },
+  { id:'luxe-m',      label:'Luxe · Men',               emoji:'🎩', theme:'luxe', route:'luxe store, gender = men',              desc:'Men\'s tab on Luxe store' },
+  { id:'luxe-k',      label:'Luxe · Kids',              emoji:'🌟', theme:'luxe', route:'luxe store, gender = kids',             desc:'Kids\' tab on Luxe store' },
+  { id:'search-home', label:'Search · Home',            emoji:'🔍', theme:'srch', route:'search overlay, opened from Home',      desc:'Fit Assistant + Photo-search overlay (Home context)' },
+  { id:'search-luxe', label:'Search · Luxe',            emoji:'🔎', theme:'srch', route:'search overlay, opened from Luxe',      desc:'Fit Assistant + Photo-search overlay (Luxe context)' },
+  { id:'search-brand',label:'Brand page + its Search',  emoji:'🏷️', theme:'srch', route:'Brand/Price-Check page hero + search',  desc:'Used on Brand page hero AND its search overlay — double duty' }
 ];
 
-const PAGES = ['— unassigned —','Home · All','Home · Women','Home · Men','Home · Kids','Luxe · All','Luxe · Women','Luxe · Men','Luxe · Kids','Search (from Home)','Search (from Luxe)','Search (from Brand)','Brand / Price-Check','Social media'];
-const SEC = {Landing:'Landing / Home',Luxury:'Luxury / Luxe room',Filter:'Search & filter features',Brand:'Brand / Price-check page',Audiences:'Audiences & collections'};
-const NEW_IDS = new Set(['p29','p30','p31','p32','p33','p34','p35','p36','p37','p38','p39','p40','p41','p42','p43','p44','p45','p46','p47','p48','p49','p50','p51','p52','p53','p54','p55','p56','p57','p58','p59']);
+/* ─── State ─── */
+const LS_KEY = 'psb_posters_v3';
+let pages = loadState();
+let flat = 0;            // flat poster index across all pages
+let plang = 'en';        // preview language
+function loadState(){ try{var s=localStorage.getItem(LS_KEY); if(s) return JSON.parse(s);}catch(e){} return deep(ORIG); }
+function saveState(){ try{localStorage.setItem(LS_KEY, JSON.stringify(pages));}catch(e){} }
+function deep(o){ return JSON.parse(JSON.stringify(o)); }
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function metaOf(id){ return PAGE_META.find(function(m){return m.id===id;})||PAGE_META[0]; }
 
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function key(id){return 'pp3_'+id;}
-function load(id){try{var v=localStorage.getItem(key(id));if(v)return JSON.parse(v);}catch(e){}return {};}
-function save(id,obj){try{localStorage.setItem(key(id),JSON.stringify(obj));}catch(e){}updateCount();}
+/* Flatten all posters (in PAGE_META order) → [{pid,i}] */
+let filter='all';
+function flatten(){ var out=[]; PAGE_META.forEach(function(m){ (pages[m.id]||[]).forEach(function(p,i){ if(filter==='all'||(filter==='social'&&p.social)||(filter==='later'&&p.later)) out.push({pid:m.id,i:i}); }); }); return out; }
+function counts(){ var s=0,l=0,tt=0; PAGE_META.forEach(function(m){ (pages[m.id]||[]).forEach(function(p){ tt++; if(p.social)s++; if(p.later)l++; }); }); return {s:s,l:l,t:tt}; }
+function setFilter(f){ filter=f; flat=0; render(); }
+function toggleFlag(fl){ var ref=curRef(); if(!ref)return; var p=pages[ref.pid][ref.i]; p[fl]=!p[fl]; saveState(); render(); }
+function totalCount(){ return flatten().length; }
+function curRef(){ var f=flatten(); if(!f.length) return null; flat=Math.max(0,Math.min(flat,f.length-1)); return f[flat]; }
 
-function defPage(p){
-  if(p.defaultPage) return p.defaultPage;
-  if(p.s==='Landing') return 'Home · All';
-  if(p.s==='Luxury') return 'Luxe · All';
-  if(p.s==='Brand') return 'Brand / Price-Check';
-  if(p.s==='Filter') return 'Search (from Home)';
-  var a=(p.a+' '+p.b+' '+(p.d[0]||'')).toLowerCase();
-  if(a.indexOf('wedding')>=0) return 'Home · Women';
-  if(a.indexOf('gen z')>=0) return 'Home · Women';
-  if(a.indexOf('couple')>=0) return 'Home · All';
-  if(a.indexOf('baby')>=0||a.indexOf('teen')>=0) return 'Home · Kids';
-  if(a.indexOf('men')>=0||a.indexOf('kurta')>=0||a.indexOf('groom')>=0) return 'Home · Men';
-  return 'Home · All';
-}
-
-function getState(id, p){
-  var s=load(id);
-  return {
-    page: s.page!==undefined ? s.page : defPage(p),
-    notes: s.notes||'',
-    a: s.a!==undefined ? s.a : p.a,
-    b: s.b!==undefined ? s.b : p.b,
-    d0: s.d0!==undefined ? s.d0 : (p.d[0]||''),
-    cta: s.cta!==undefined ? s.cta : p.c,
-    bnT: s.bnT||'',
-    bnS: s.bnS||''
-  };
-}
-
-function svgFor(id, p, st){
-  var T=TH[p.t]||TH.ivory, photo=PH[p.ph]||'';
-  var a=st.a, b=st.b, sub=st.d0, cta=st.cta;
-  var cw=Math.max(160, Math.round(cta.length*8.2+58));
-  return '<svg viewBox="0 0 840 400" xmlns="http://www.w3.org/2000/svg">'
-    +'<defs>'
-    +'<linearGradient id="f'+id+'" x1="0" y1="0" x2="1" y2="0"><stop offset=".4" stop-color="'+T.fade+'"/><stop offset=".95" stop-color="'+T.fade+'" stop-opacity="0"/></linearGradient>'
-    +'<linearGradient id="g'+id+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+T.fb1+'"/><stop offset="1" stop-color="'+T.fb2+'"/></linearGradient>'
-    +'</defs>'
-    +'<rect width="840" height="400" fill="'+T.bg+'"/>'
-    +'<rect x="470" width="370" height="400" fill="url(#g'+id+')"/>'
-    +(photo?'<image href="'+photo+'" x="470" width="370" height="400" preserveAspectRatio="xMidYMin slice"/>':'')
-    +'<rect x="330" width="300" height="400" fill="url(#f'+id+')"/>'
-    +'<g transform="translate(46,40)">'
-    +'<rect width="40" height="40" rx="11" fill="'+T.mk+'"/>'
-    +'<polyline points="9,29 18,16 24,23 32,11" fill="none" stroke="'+T.ml+'" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>'
-    +'<text x="52" y="19" font-family="Georgia,serif" font-size="23" font-weight="700" fill="'+T.br+'">PakPoshak</text>'
-    +'<text x="52.5" y="35" font-family="Arial,sans-serif" font-size="10" letter-spacing="1.4" fill="'+T.tg+'">PAKISTANI FASHION · BD DELIVERY</text>'
-    +'</g>'
-    +'<text x="48" y="176" font-family="Georgia,serif" font-size="42" font-weight="700" fill="'+T.head+'">'+esc(a)+'</text>'
-    +'<text x="48" y="222" font-family="Georgia,serif" font-size="42" font-weight="700" fill="'+T.acc+'">'+esc(b)+'</text>'
-    +'<text x="48" y="264" font-family="Arial,sans-serif" font-size="16" fill="'+T.sub+'">'+esc(sub)+'</text>'
-    +'<g transform="translate(48,292)">'
-    +'<rect width="'+cw+'" height="46" rx="23" fill="'+T.cta+'"/>'
-    +'<text x="'+(cw/2)+'" y="29" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="700" fill="'+T.ctaT+'">'+esc(cta)+'  →</text>'
-    +'</g>'
-    +'</svg>';
-}
-
-function renderCard(p, idx){
-  var id=p.id;
-  var st=getState(id,p);
-  var pageOpts=PAGES.map(function(pg){return '<option'+(pg===st.page?' selected':'')+'>'+esc(pg)+'</option>';}).join('');
-  var isSet=st.page&&st.page!=='— unassigned —';
-  var collTag=p.coll?'<span class="tag">'+esc(p.coll)+'</span>':'';
-  var newTag=NEW_IDS.has(id)?'<span class="tag tag-new">NEW</span>':'';
-  return '<div class="card" id="card_'+id+'">'
-    +'<div class="card-num">'+String(idx+1).padStart(2,'0')+'</div>'
-    +'<div class="card-svg" id="svg_'+id+'">'+svgFor(id,p,st)+'</div>'
-    +'<div class="card-body">'
-    +'<div class="card-head">'+esc(SEC[p.s]||p.s)+collTag+newTag+'</div>'
-    +'<div class="frow">'
-    +'<div class="fgroup"><label>EN line 1 (dark)</label><input value="'+esc(st.a)+'" data-id="'+id+'" data-f="a" oninput="onEdit(this)"/></div>'
-    +'<div class="fgroup"><label>EN line 2 (accent colour)</label><input value="'+esc(st.b)+'" data-id="'+id+'" data-f="b" oninput="onEdit(this)"/></div>'
-    +'</div>'
-    +'<div class="frow">'
-    +'<div class="fgroup"><label>EN sub-line</label><input value="'+esc(st.d0)+'" data-id="'+id+'" data-f="d0" oninput="onEdit(this)"/></div>'
-    +'<div class="fgroup"><label>EN button</label><input value="'+esc(st.cta)+'" data-id="'+id+'" data-f="cta" oninput="onEdit(this)"/></div>'
-    +'</div>'
-    +'<div class="frow">'
-    +'<div class="fgroup"><label>BN title (optional)</label><input class="bn" value="'+esc(st.bnT)+'" placeholder="বাংলা শিরোনাম..." data-id="'+id+'" data-f="bnT" oninput="onEdit(this)"/></div>'
-    +'<div class="fgroup"><label>BN sub-line (optional)</label><input class="bn" value="'+esc(st.bnS)+'" placeholder="বাংলা সাব-লাইন..." data-id="'+id+'" data-f="bnS" oninput="onEdit(this)"/></div>'
-    +'</div>'
-    +'<div class="frow">'
-    +'<div class="fgroup"><label>Show on page</label>'
-    +'<select class="'+(isSet?'set':'')+'" data-id="'+id+'" onchange="onPage(this)">'+pageOpts+'</select>'
-    +'</div>'
-    +'<div class="fgroup"><label>Notes (optional)</label>'
-    +'<input value="'+esc(st.notes)+'" placeholder="e.g. Eid only, swap photo…" data-id="'+id+'" data-f="notes" oninput="onEdit(this)"/>'
-    +'</div>'
-    +'</div>'
-    +'</div>'
-    +'</div>';
-}
-
+/* ─── Render ─── */
 function render(){
-  var html='',curSec='';
-  P.forEach(function(p,i){
-    if(p.s!==curSec){curSec=p.s;html+='<div class="secband">'+esc(SEC[p.s]||p.s)+' <span style="font-size:12px;font-weight:400;color:#7A6A4A">('+P.filter(function(x){return x.s===p.s;}).length+' posters)</span></div>';}
-    html+=renderCard(p,i);
-  });
-  document.getElementById('rows').innerHTML=html;
-  updateCount();
+  var f=flatten(), tot=f.length;
+  var ref=curRef();
+  var c=counts();
+  document.getElementById('fSocial').innerHTML='📱 Social media <b>('+c.s+')</b>';
+  document.getElementById('fLater').innerHTML='🔖 Saved for later <b>('+c.l+')</b>';
+  ['fAll','fSocial','fLater'].forEach(function(id){ document.getElementById(id).classList.toggle('on', (id==='fAll'&&filter==='all')||(id==='fSocial'&&filter==='social')||(id==='fLater'&&filter==='later')); });
+  document.getElementById('barInfo').textContent = c.t+' posters · '+c.s+' 📱 social · '+c.l+' 🔖 later';
+  buildJump();
+  if(!ref){
+    document.getElementById('hero').innerHTML='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#F1E8CF;font-size:1rem;text-align:center;padding:24px;line-height:1.6">Nothing tagged '+(filter==='social'?'📱 for social media':'🔖 for later')+' yet.<br>Switch to <b>All</b> and use the buttons under a poster to tag it.</div>';
+    document.getElementById('counter').innerHTML='0 selected';
+    document.getElementById('posLab').textContent='—';
+    return;
+  }
+  var meta=metaOf(ref.pid), arr=pages[ref.pid], p=arr[ref.i];
+  var onPage = arr.length, posOnPage = ref.i+1;
+
+  // counter + labels
+  document.getElementById('counter').innerHTML = 'Poster <b>'+(flat+1)+'</b> of '+tot;
+  document.getElementById('posLab').innerHTML = meta.label+' &middot; poster '+posOnPage+' of '+onPage;
+  document.getElementById('ordLab').textContent = posOnPage+' / '+onPage;
+  document.getElementById('jump').value = ref.pid;
+
+  // page band
+  document.getElementById('pageband').innerHTML =
+    '<span class="emoji">'+meta.emoji+'</span>'
+    +'<span class="pt">'+meta.label+'</span>'
+    +'<span class="rt">'+meta.route+'</span>'
+    +'<span class="pd">'+meta.desc+'</span>';
+
+  // hero preview
+  renderHero(meta, p, arr, ref.i);
+
+  // fields
+  document.getElementById('f_en_t').value = p.en_t||'';
+  document.getElementById('f_bn_t').value = p.bn_t||'';
+  document.getElementById('f_en_s').value = p.en_s||'';
+  document.getElementById('f_bn_s').value = p.bn_s||'';
+  var rem=document.getElementById('f_remarks'); rem.value=p.remarks||''; rem.className='remarks'+(p.remarks?' has':'');
+  document.getElementById('chSocial').className='chip social'+(p.social?' on':'');
+  document.getElementById('chLater').className='chip later'+(p.later?' on':'');
+
+  document.getElementById('upBtn').disabled = ref.i===0;
+  document.getElementById('dnBtn').disabled = ref.i===onPage-1;
+
+  // move / add-to options (pages + collections)
+  var pageOpts = PAGE_META.filter(function(m){return m.id!==ref.pid;}).map(function(m){return '<option value="page:'+m.id+'">'+m.emoji+' '+m.label+'</option>';}).join('');
+  document.getElementById('moveSel').innerHTML =
+    '<option value="">Move / add to…</option>'
+    +'<optgroup label="Move to another page (removes it from here)">'+pageOpts+'</optgroup>'
+    +'<optgroup label="Add to collection (keeps it here)">'
+      +'<option value="tag:social"'+(p.social?' disabled':'')+'>📱 Social media'+(p.social?'  ✓ added':'')+'</option>'
+      +'<option value="tag:later"'+(p.later?' disabled':'')+'>🔖 Use later'+(p.later?'  ✓ added':'')+'</option>'
+    +'</optgroup>';
 }
 
-function onEdit(el){
-  var id=el.dataset.id, f=el.dataset.f;
-  var p=P.find(function(x){return x.id===id;});
-  if(!p) return;
-  var s=load(id); s[f]=el.value; save(id,s);
-  // live SVG update (only for visible EN fields)
-  if(['a','b','d0','cta'].indexOf(f)>=0){
-    var st=getState(id,p);
-    var el2=document.getElementById('svg_'+id);
-    if(el2) el2.innerHTML=svgFor(id,p,st);
+function renderHero(meta, p, arr, idx){
+  var img = PAGE_IMG[meta.id]||'';
+  var t = plang==='bn' ? p.bn_t : p.en_t;
+  var s = plang==='bn' ? p.bn_s : p.en_s;
+  var bg = img ? 'style="background-image:url(\''+img+(img.indexOf('?')>-1?'&':'?')+'width=1000\')"' : 'style="background:linear-gradient(135deg,#0b3a22,#0a5230)"';
+  var dots='';
+  for(var d=0; d<arr.length; d++){ dots += '<span class="hdot'+(d===idx?' on':'')+'"></span>'; }
+  document.getElementById('hero').innerHTML =
+    '<div class="hero-img" '+bg+'></div>'
+    +'<div class="hero-ov"></div>'
+    +'<div class="hero-badge">'+meta.emoji+' '+meta.label+'</div>'
+    +'<div class="hero-tx"><div class="hero-t">'+esc(t)+'</div><div class="hero-s">'+esc(s)+'</div></div>'
+    +'<div class="hero-dots">'+dots+'</div>';
+}
+
+function buildJump(){
+  var sel=document.getElementById('jump');
+  if(sel.options.length) return; // build once
+  sel.innerHTML = PAGE_META.map(function(m){ return '<option value="'+m.id+'">'+m.emoji+' '+m.label+' ('+(pages[m.id]||[]).length+')</option>'; }).join('');
+}
+
+/* ─── Nav ─── */
+function go(d){ var tot=totalCount(); if(!tot)return; flat=(flat+d+tot)%tot; render(); }
+function jumpPage(pid){ var f=flatten(); for(var k=0;k<f.length;k++){ if(f[k].pid===pid){ flat=k; break; } } render(); }
+
+/* language toggle */
+document.getElementById('langSeg').addEventListener('click',function(e){
+  if(e.target.dataset.l){ plang=e.target.dataset.l;
+    [].forEach.call(e.currentTarget.children,function(b){ b.classList.toggle('on', b.dataset.l===plang); });
+    var ref=curRef(); if(ref) renderHero(metaOf(ref.pid), pages[ref.pid][ref.i], pages[ref.pid], ref.i);
+  }
+});
+
+/* ─── Edit ─── */
+function setField(field,val){
+  var ref=curRef(); if(!ref)return;
+  pages[ref.pid][ref.i][field]=val; saveState();
+  if(field==='remarks'){ var r=document.getElementById('f_remarks'); r.className='remarks'+(val?' has':''); return; }
+  // live update the hero for title/subtitle in the active language
+  renderHero(metaOf(ref.pid), pages[ref.pid][ref.i], pages[ref.pid], ref.i);
+}
+
+function reorder(dir){
+  var ref=curRef(); if(!ref)return; var arr=pages[ref.pid], i=ref.i, j=i+dir;
+  if(j<0||j>=arr.length)return;
+  var tmp=arr[i]; arr[i]=arr[j]; arr[j]=tmp; saveState();
+  // follow the poster to its new flat index
+  flat += dir; render();
+}
+function onMoveSel(v){
+  if(!v) return;
+  if(v.indexOf('page:')===0){ moveToPage(v.slice(5)); return; }
+  if(v.indexOf('tag:')===0){
+    var fl=v.slice(4), ref=curRef(); if(!ref)return;
+    pages[ref.pid][ref.i][fl]=true; saveState(); render();
+    toast(fl==='social'?'📱 Added to Social media — use the “Show” filter above to view the collection.':'🔖 Saved for later — use the “Show” filter above to view the collection.');
   }
 }
-
-function onPage(el){
-  var id=el.dataset.id;
-  var s=load(id); s.page=el.value; save(id,s);
-  el.classList.toggle('set', el.value!=='— unassigned —');
-}
-
-function updateCount(){
-  var n=0;
-  P.forEach(function(p){
-    var s=load(p.id);
-    var pg=(s&&s.page!==undefined)?s.page:defPage(p);
-    if(pg&&pg!=='— unassigned —') n++;
-  });
-  document.getElementById('count').textContent=n+' / '+P.length+' assigned';
-}
-
-function copyPlan(){
-  var lines=['PakPoshak Poster Plan  ('+new Date().toLocaleDateString()+')',
-             '='.repeat(50),''];
-  var byPage={};
-  P.forEach(function(p){
-    var st=getState(p.id,p);
-    var pg=st.page||defPage(p);
-    (byPage[pg]=byPage[pg]||[]).push({p:p,st:st});
-  });
-  PAGES.forEach(function(pg){
-    if(!byPage[pg]||pg==='— unassigned —') return;
-    lines.push('');
-    lines.push('== '+pg+' ==');
-    byPage[pg].forEach(function(e){
-      lines.push('  ['+e.p.id+'] '+e.st.a+' '+e.st.b);
-      if(e.st.d0) lines.push('       Sub: '+e.st.d0);
-      if(e.st.cta) lines.push('       CTA: '+e.st.cta+' →');
-      if(e.st.bnT) lines.push('       BN:  '+e.st.bnT+(e.st.bnS?' / '+e.st.bnS:''));
-      if(e.p.coll) lines.push('       Coll: '+e.p.coll);
-      if(e.st.notes) lines.push('       Note: '+e.st.notes);
-    });
-  });
-  var txt=lines.join('\n');
-  var ta=document.getElementById('out');
-  ta.value=txt;
-  ta.scrollIntoView({behavior:'smooth',block:'center'});
-  try{navigator.clipboard.writeText(txt);}catch(e){}
-  try{ta.select();document.execCommand('copy');}catch(e){}
-  showToast('Plan copied to clipboard.');
-}
-
-function shareLink(){
-  var state={};
-  P.forEach(function(p){
-    var s=load(p.id);
-    if(s&&Object.keys(s).length>0) state[p.id]=s;
-  });
-  try{
-    var json=JSON.stringify(state);
-    var enc=btoa(unescape(encodeURIComponent(json)));
-    var url=location.origin+location.pathname+'#data='+enc;
-    history.replaceState(null,'','#data='+enc);
-    try{navigator.clipboard.writeText(url);}catch(e){}
-    showToast('Share link copied — paste it anywhere to restore your plan.');
-  }catch(e){showToast('Could not generate link.');}
-}
-
-function loadFromHash(){
-  var h=location.hash;
-  if(!h.startsWith('#data=')) return false;
-  try{
-    var raw=decodeURIComponent(escape(atob(h.slice(6))));
-    var state=JSON.parse(raw);
-    Object.keys(state).forEach(function(id){
-      try{localStorage.setItem(key(id),JSON.stringify(state[id]));}catch(e){}
-    });
-    return true;
-  }catch(e){return false;}
-}
-
-function resetAll(){
-  if(!confirm('Clear ALL edits and page assignments? This cannot be undone.')) return;
-  P.forEach(function(p){try{localStorage.removeItem(key(p.id));}catch(e){}});
-  history.replaceState(null,'',location.pathname);
-  document.getElementById('importBanner').innerHTML='';
+function moveToPage(toPid){
+  var ref=curRef(); if(!ref)return;
+  var p=pages[ref.pid].splice(ref.i,1)[0];
+  if(!pages[toPid]) pages[toPid]=[];
+  p.remarks=(p.remarks?p.remarks+' | ':'')+'moved from '+ref.pid;
+  pages[toPid].push(p); saveState();
+  // jump to it at its new location
+  var f=flatten(); for(var k=0;k<f.length;k++){ if(f[k].pid===toPid && pages[toPid][f[k].i]===p){ flat=k; break; } }
   render();
-  document.getElementById('out').value='';
-  showToast('All edits cleared.');
+}
+function duplicateHere(){
+  filter='all';                                   // ensure the new poster is visible (not hidden by a filter)
+  var ref=curRef();
+  var src = ref ? pages[ref.pid][ref.i] : null;
+  var pid = ref ? ref.pid : PAGE_META[0].id;
+  var np = src
+    ? { en_t:src.en_t, en_s:src.en_s, bn_t:src.bn_t, bn_s:src.bn_s, remarks:(src.remarks ? '(copy) '+src.remarks : '(copy)') }
+    : { en_t:'', en_s:'', bn_t:'', bn_s:'', remarks:'NEW — fill in EN + BN text' };
+  pages[pid].push(np); saveState();
+  var f=flatten(); for(var k=f.length-1;k>=0;k--){ if(f[k].pid===pid){ flat=k; break; } }   // land on the new copy
+  render();
+  toast(src ? '⧉ Copied — a duplicate was added to “'+metaOf(pid).label+'”. Your original poster is untouched.' : '➕ New blank poster added to “'+metaOf(pid).label+'”.');
+}
+function delPoster(){
+  var ref=curRef(); if(!ref)return; var arr=pages[ref.pid];
+  var t=(arr[ref.i].en_t||'(blank)').slice(0,60);
+  if(!confirm('Delete this poster from "'+metaOf(ref.pid).label+'"?\n\n"'+t+'"'))return;
+  arr.splice(ref.i,1); saveState();
+  if(flat>0) flat--; render();
 }
 
-var _toastT;
-function showToast(msg){
-  var t=document.getElementById('toast');
-  t.textContent=msg;
-  t.classList.add('show');
-  clearTimeout(_toastT);
-  _toastT=setTimeout(function(){t.classList.remove('show');},2800);
+/* ─── Code generation ─── */
+function copyCode(){
+  var out='// ── PASTE into app.src.js → replace the entire const PS_POSTERS = {…}; block ──\n';
+  out+='const PS_POSTERS = {\n';
+  PAGE_META.forEach(function(meta,pi){
+    var arr=pages[meta.id]||[];
+    out+='  \''+meta.id+'\': [\n';
+    arr.forEach(function(p,i){
+      if(p.remarks&&p.remarks.trim()) out+='    // '+p.remarks.trim()+'\n';
+      out+='    { en_t:'+jsStr(p.en_t)+', en_s:'+jsStr(p.en_s)+', bn_t:'+jsStr(p.bn_t)+', bn_s:'+jsStr(p.bn_s)+' }';
+      out+=i<arr.length-1?',\n':'\n';
+    });
+    out+='  ]'+(pi<PAGE_META.length-1?',':'')+'\n';
+  });
+  out+='};';
+  var ta=document.getElementById('out'); ta.value=out;
+  try{ ta.select(); document.execCommand('copy'); }catch(e){}
+  try{ navigator.clipboard.writeText(out); }catch(e){}
+  ta.scrollIntoView({behavior:'smooth',block:'center'});
+  var btns=document.querySelectorAll('.btn-copy,.cp');
+  btns.forEach(function(b){ var o=b.textContent; b.textContent='✅ Copied!'; setTimeout(function(){b.textContent=o;},1600); });
+}
+function jsStr(s){ return "'"+((s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"))+"'"; }
+function resetAll(){
+  if(!confirm('Reset ALL posters back to the original data? This clears your edits.'))return;
+  pages=deep(ORIG); try{localStorage.removeItem(LS_KEY);}catch(e){} flat=0; render();
 }
 
-// Init
-var imported=loadFromHash();
-render();
-if(imported){
-  document.getElementById('importBanner').innerHTML=
-    '<div class="import-banner">Shared plan imported — all edits and page assignments have been restored.</div>';
+/* ─── Share / save-state (works on the live URL) ─── */
+function toast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(function(){ t.classList.remove('show'); },3400); }
+function copyText(s){ try{ navigator.clipboard.writeText(s); }catch(e){ var ta=document.createElement('textarea'); ta.value=s; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); }catch(_){} ta.remove(); } }
+function b64u(bytes){ var s=''; for(var i=0;i<bytes.length;i++) s+=String.fromCharCode(bytes[i]); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+function unb64u(str){ str=str.replace(/-/g,'+').replace(/_/g,'/'); var bin=atob(str); var b=new Uint8Array(bin.length); for(var i=0;i<bin.length;i++) b[i]=bin.charCodeAt(i); return b; }
+async function gz(str){ var cs=new CompressionStream('gzip'); var w=cs.writable.getWriter(); w.write(new TextEncoder().encode(str)); w.close(); var buf=await new Response(cs.readable).arrayBuffer(); return b64u(new Uint8Array(buf)); }
+async function gunz(s){ var ds=new DecompressionStream('gzip'); var w=ds.writable.getWriter(); w.write(unb64u(s)); w.close(); var buf=await new Response(ds.readable).arrayBuffer(); return new TextDecoder().decode(buf); }
+async function shareLink(){
+  var json=JSON.stringify({v:1,pages:pages});
+  var payload;
+  try{ payload='g'+await gz(json); }catch(e){ payload='b'+btoa(unescape(encodeURIComponent(json))); }
+  var url=location.origin+location.pathname+'#s='+payload;
+  copyText(url);
+  toast('📤 Share link copied ('+(Math.round(url.length/102.4)/10)+' KB). Send it to anyone — they open it and see these exact posters + your 📱/🔖 tags.');
 }
+async function tryLoadHash(){
+  var m=(location.hash||'').match(/#s=(.+)$/); if(!m) return;
+  var payload=m[1], json=null;
+  try{ json = payload.charAt(0)==='g' ? await gunz(payload.slice(1)) : decodeURIComponent(escape(atob(payload.slice(1)))); }catch(e){ console.warn('share link decode failed', e); }
+  if(json){ try{ var obj=JSON.parse(json); if(obj&&obj.pages && confirm('This link contains a shared set of posters. Load it into this browser? (Replaces what is here now.)')){ pages=obj.pages; saveState(); } }catch(e){} }
+  try{ history.replaceState(null,'',location.pathname); }catch(e){}
+}
+
+(async function(){ await tryLoadHash(); render(); })();
 </script>
+<div class="toast" id="toast"></div>
 </body>
 </html>
