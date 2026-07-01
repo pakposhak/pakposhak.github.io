@@ -8212,6 +8212,19 @@
     }
     window.open('https://wa.me/?text=' + encodeURIComponent(text + '\n' + url.toString()), '_blank', 'noopener');
   }
+  // Share the APP itself (menu bar), not a product. Just the URL: the site's own Open Graph
+  // tags (og:image = og-image.png, already live) make WhatsApp/Facebook/iMessage etc. render a
+  // rich picture card automatically on the recipient's side — no editor, no separate image
+  // attach needed. Danish's explicit ask: keep this to URL (+picture via OG), nothing else.
+  function shareApp(){
+    const url = 'https://pakposhakonline.com';
+    const text = tr('tagline');
+    if(navigator.share){
+      navigator.share({ title: 'PakPoshak', text: text, url: url }).catch(function(){});
+      return;
+    }
+    window.open('https://wa.me/?text=' + encodeURIComponent(text + '\n' + url), '_blank', 'noopener');
+  }
   // Land straight on a shared product's popup. The product data rides in the URL itself, so
   // this needs no catalog search: wait for the FIRST page of results (psOnReady, works in both
   // classic and search-API mode), then use it as-is if already showing, otherwise pin it to the
@@ -8968,7 +8981,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-01-pdp2';
+  const PSB_BUILD = '2026-07-01-shareapp';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
