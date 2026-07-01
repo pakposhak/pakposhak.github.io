@@ -192,13 +192,15 @@
     </div>
   </div>
 
-  <!-- Myntra-style search bar — opens the full-screen search page (redesign Phase 1). -->
+  <!-- Myntra-style search bar — opens the full-screen search page (redesign Phase 1). Wrapper is a
+       div (not a button): it now hosts MULTIPLE independently-removable filter chips, each with its
+       own ✕ — nesting real controls inside a <button> is invalid and breaks keyboard activation. -->
   <div class="ps-searchbar">
-    <button type="button" class="ps-sb-main" id="psSearchBar" onclick="psSearchOpen()" aria-label="Search products and brands">
+    <div class="ps-sb-main" id="psSearchBar" role="button" tabindex="0" onclick="psSearchOpen()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();psSearchOpen();}" aria-label="Search products and brands">
       <svg class="ps-sb-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
       <span class="ps-sb-ph" data-i18n="search_bar_ph">Search products, brands…</span>
-      <span id="psSearchTag" class="ps-search-tag" hidden><span class="ps-search-tag-txt"></span><span class="ps-search-tag-clr" role="button" tabindex="0" onclick="psClearSearchTag(event)" aria-label="Clear search">&#x2715;</span></span>
-    </button>
+      <div id="psFilterChips" class="ps-filter-chips" hidden></div>
+    </div>
     <button type="button" class="ps-sb-cam" onclick="psVisualSearch()" aria-label="Search by photo" title="Search by photo">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V8a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.5"/></svg>
     </button>
@@ -381,8 +383,13 @@
     <!-- SUB-TAB 2: Product Category — which brands make what (Women/Men/Kids → subcategory → brands) -->
     <div id="bbProduct" style="display:none">
       <div class="brand-section">
-        <!-- (Second search bar + the "choose your brand…" line removed — the top search bar
-             handles brand search; from this price-check page it returns the brand's own site.) -->
+        <!-- Search FIRST so a buyer who knows the brand goes straight to it, without having to
+             pick a category first. Smart search = brands + product categories (req). -->
+        <div class="bb-prod-sub" data-i18n="bb_prod_sub_check">Search by brand or what it sells — tap a brand to check its price.</div>
+        <div class="bb-smartwrap">
+          <input id="bbSmartSearch" class="bb-smartsearch" type="text" autocomplete="off" oninput="bbSmartSearch(this.value)" data-i18n-ph="bb_smart_ph" placeholder="🔍 Search brands, e.g. Khaadi, lawn, casual"/>
+          <div class="bb-search-hint" id="bbSearchHint"></div>
+        </div>
         <div class="bb-gtabs" id="bbGtabs"></div>
         <div id="bbProdBody"></div>
       </div>
@@ -457,7 +464,7 @@
         </div>
         </div>
         <div class="ps-collhdr" id="psCollHdr" style="display:none"></div>
-        <div class="ps-colls-hd ps-products-hd" data-i18n="products_hd">Products</div>
+        <div class="ps-colls-hd ps-products-hd" id="psProductsHd" data-i18n="products_hd">Products</div>
         <div class="ps-grid" id="psGrid"></div>
         <div class="ps-empty" id="psEmpty" style="display:none" data-i18n="ps_empty">No products match these filters — try widening them.</div>
         <div class="ps-pager" id="psPager"></div>

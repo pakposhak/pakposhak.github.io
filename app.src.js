@@ -2493,7 +2493,7 @@
       ps_allw:"All Women's", ps_allm:"All Men's", ps_allk:'All Kids', ps_rail_head:'3 ways to search products', ps_sort_lh:'৳ Low→High', ps_sort_hl:'৳ High→Low', ps_sort_price:'Sort: Price', ps_shop_cat:'Shop by category', wish_save:'Save to wishlist', wish_title:'Wishlist', wish_empty:'No saved items yet. Tap ♥ on any product to save it here.', wish_remove:'Remove', ps_also_uns_short:'Unstitched available', ps_also_st_short:'Stitched available', ps_sale:'Sale', ps_new:'New', ps_lbl_sort:'Sort', ps_lbl_filter:'Filter', ps_search_ph:'Search 50,000+ products, 140+ Pakistani brands', ps_search_nomatch:'No brand or category matched', share_added:'Item added. Save it below before adding another.', share_review:'Save',
       bb_store:'Store Types', bb_product:'Product Category', bb_women:'👗 Women', bb_men:'👔 Men', bb_kids:'🧸 Kids', bb_md:'🏬 Multi-Dept', bb_premium:'💎 Premium',
       bb_ban1_t:'Check BDT & PKR price by pasting', bb_ban1_d:'Paste any product link, see the real price.', bb_ban2_t:"Don't buy, check here first", bb_ban2_d:'Just paste any product link, from any brand, to check its price.',
-      bb_more:'more', bb_less:'less', bb_all:'All', bb_two_ways:'Two ways to search brands', bb_pick_gender:'Pick women, men, or others above — or just type any brand name.', bb_pick_cat:'Pick a category above to see its brands.', bb_prod_sub:'Choose your brand by clicking a tab or typing its name, go to the product you like, and just share it back to us.', bb_loading:'Loading brands…', bb_prod_none:'No catalogued brands here yet.',
+      bb_more:'more', bb_less:'less', bb_all:'All', bb_two_ways:'Two ways to search brands', bb_pick_gender:'Pick women, men, or others above — or just type any brand name.', bb_pick_cat:'Pick a category above to see its brands.', bb_prod_sub:'Choose your brand by clicking a tab or typing its name, go to the product you like, and just share it back to us.', bb_prod_sub_check:'Search by brand name or what it sells — tap a brand to check its price.', bb_loading:'Loading brands…', bb_prod_none:'No catalogued brands here yet.',
       bb_smart_ph:'🔍 Search brands, e.g. Khaadi, lawn, casual', bb_search_lead:'🔎 Know the brand? Just type its name:',
       js_soldout_lead:'Some items appear SOLD OUT and can’t be saved — please remove them or pick another article:',
       js_soldout_all:'sold out on the brand site', js_soldout_size:'this size is sold out',
@@ -2564,7 +2564,7 @@
       ps_allw:'সব মেয়েদের', ps_allm:'সব ছেলেদের', ps_allk:'সব বাচ্চাদের', ps_rail_head:'পণ্য খোঁজার ৩টি উপায়', ps_sort_lh:'৳ কম→বেশি', ps_sort_hl:'৳ বেশি→কম', ps_sort_price:'দাম অনুসারে', ps_shop_cat:'ক্যাটাগরি অনুযায়ী দেখুন', wish_save:'পছন্দে সেভ করুন', wish_title:'পছন্দের তালিকা', wish_empty:'এখনো কিছু সেভ করা হয়নি। যেকোনো পণ্যে ♥ চাপ দিয়ে এখানে সেভ করুন।', wish_remove:'সরান', ps_also_uns_short:'আনস্টিচডও আছে', ps_also_st_short:'সেলাইও আছে', ps_sale:'সেল', ps_new:'নতুন', ps_lbl_sort:'সাজান', ps_lbl_filter:'ফিল্টার', ps_search_ph:'খুঁজুন: ৫০,০০০+ পণ্য, ১৪০+ পাকিস্তানি ব্র্যান্ড', ps_search_nomatch:'কোনো ব্র্যান্ড বা ক্যাটাগরি মেলেনি', share_added:'পণ্যটি যোগ হয়েছে। আরেকটি যোগ করার আগে নিচে সেভ করুন।', share_review:'সেভ করুন',
       bb_store:'স্টোরের ধরন', bb_product:'পণ্যের ক্যাটাগরি', bb_women:'👗 মেয়েদের', bb_men:'👔 ছেলেদের', bb_kids:'🧸 বাচ্চাদের', bb_md:'🏬 মাল্টি-ডিপ', bb_premium:'💎 প্রিমিয়াম',
       bb_ban1_t:'পেস্ট করে BDT ও PKR দাম যাচাই', bb_ban1_d:'যেকোনো পণ্যের লিংক পেস্ট করুন, আসল দাম দেখুন।', bb_ban2_t:'কেনার আগে এখানে যাচাই করুন', bb_ban2_d:'যেকোনো ব্র্যান্ডের যেকোনো পণ্যের লিংক পেস্ট করে দাম দেখুন।',
-      bb_more:'আরও', bb_less:'কম', bb_all:'সব', bb_two_ways:'ব্র্যান্ড খোঁজার দুটি উপায়', bb_pick_gender:'উপরে মেয়ে, ছেলে বা অন্যান্য বেছে নিন — অথবা যেকোনো ব্র্যান্ডের নাম লিখুন।', bb_pick_cat:'ব্র্যান্ড দেখতে উপরের একটি ক্যাটাগরিতে ট্যাপ করুন।', bb_prod_sub:'একটি ট্যাবে ক্লিক করে বা নাম টাইপ করে আপনার ব্র্যান্ড বেছে নিন, পছন্দের পণ্যে যান, আর সেটি আমাদের শেয়ার করুন।', bb_loading:'ব্র্যান্ড আসছে…', bb_prod_none:'এখানে এখনো কোনো ব্র্যান্ড নেই।',
+      bb_more:'আরও', bb_less:'কম', bb_all:'সব', bb_two_ways:'ব্র্যান্ড খোঁজার দুটি উপায়', bb_pick_gender:'উপরে মেয়ে, ছেলে বা অন্যান্য বেছে নিন — অথবা যেকোনো ব্র্যান্ডের নাম লিখুন।', bb_pick_cat:'ব্র্যান্ড দেখতে উপরের একটি ক্যাটাগরিতে ট্যাপ করুন।', bb_prod_sub:'একটি ট্যাবে ক্লিক করে বা নাম টাইপ করে আপনার ব্র্যান্ড বেছে নিন, পছন্দের পণ্যে যান, আর সেটি আমাদের শেয়ার করুন।', bb_prod_sub_check:'ব্র্যান্ডের নাম বা কী পণ্য বিক্রি হয় তা লিখে খুঁজুন — দাম যাচাই করতে যেকোনো ব্র্যান্ডে ট্যাপ করুন।', bb_loading:'ব্র্যান্ড আসছে…', bb_prod_none:'এখানে এখনো কোনো ব্র্যান্ড নেই।',
       bb_smart_ph:'🔍 ব্র্যান্ড খুঁজুন, যেমন Khaadi, lawn, casual', bb_search_lead:'🔎 ব্র্যান্ড জানা আছে? নাম দিয়ে খুঁজুন:',
       js_soldout_lead:'কিছু পণ্য স্টকে নেই, তাই সেভ করা যাচ্ছে না — সেগুলো সরিয়ে দিন বা অন্য পণ্য বেছে নিন:',
       js_soldout_all:'ব্র্যান্ডের সাইটে স্টকে নেই', js_soldout_size:'এই সাইজটি স্টকে নেই',
@@ -5533,41 +5533,64 @@
     clearTimeout(_psSearchT);
     psSmartSearch('');
   }
-  // Active-search chip on the landing-page search bar. Shows query/brand when a search is active;
-  // hides the placeholder. The ✕ clears the search (text + brand, keeps price filters).
-  function psRefreshSearchTag(){
-    var tag=document.getElementById('psSearchTag');
+  // Individual removable filter chips on the landing-page search bar. Price/colour are always
+  // their own chips (never resolved FROM typed text). Brand/category are shown individually
+  // ONLY when there's no active typed search — a manual pick (filter sheet, a Shop-by-category
+  // tile, a collection). While a search is active, one word can resolve to a dozen+ categories
+  // (e.g. "casual" → 19 via PS_CAT_SYNONYMS); exploding all of those into individual chips would
+  // bury the bar, and the user didn't consciously choose each one — so the whole search collapses
+  // into ONE query chip instead, matching what the buyer actually typed.
+  // Each chip carries its identity as data-kind/data-val (escaped; read back by psRemoveChip —
+  // same this.getAttribute(...) pattern used for brand/collection tiles elsewhere).
+  function psRenderFilterChips(){
+    var row=document.getElementById('psFilterChips');
     var ph=document.querySelector('#psSearchBar .ps-sb-ph');
-    if(!tag) return;
-    var parts=[];
-    if(typeof psSel!=='undefined'&&psSel.brands&&psSel.brands.size){
-      var bn=[...psSel.brands];
-      parts.push(bn.length===1?bn[0]:bn.length+' brands');
+    if(!row) return;
+    var chips=[];
+    var inp=document.getElementById('psSearchMobile')||document.getElementById('psSearchDesktop');
+    var qVal=(inp && inp.value.trim()) || (typeof psQuery==='string'?psQuery:'') || '';
+    if(typeof psSel!=='undefined'){
+      if(!qVal){
+        (psSel.brands||new Set()).forEach(function(b){ chips.push({kind:'brand',val:b,lbl:b}); });
+        (psSel.cats||new Set()).forEach(function(c){
+          var lbl = c.indexOf('all:')===0 ? tr(PS_GENDER_WORD[c.slice(4)]) : (PS_CAT_LABELS[c]||c);
+          chips.push({kind:'cat',val:c,lbl:lbl});
+        });
+      }
+      (psSel.prices||new Set()).forEach(function(i){ var b=PS_BUCKETS[i]; if(b) chips.push({kind:'price',val:String(i),lbl:b.lbl}); });
+      (psSel.colors||new Set()).forEach(function(cl){ chips.push({kind:'color',val:cl,lbl:cl}); });
     }
-    if(typeof psQuery==='string'&&psQuery) parts.push(psQuery);
-    if(!parts.length){
-      var inp=document.getElementById('psSearchMobile')||document.getElementById('psSearchDesktop');
-      var v=inp?inp.value.trim():'';
-      if(v) parts.push(v);
-    }
-    var label=parts.join(' \xB7 ');
-    var active=!!label;
-    tag.hidden=!active;
+    if(qVal) chips.push({kind:'query',val:qVal,lbl:qVal});
+    var active=chips.length>0;
+    row.hidden=!active;
     if(ph) ph.hidden=active;
-    if(active){var t=tag.querySelector('.ps-search-tag-txt');if(t)t.textContent=label;}
+    row.innerHTML = chips.map(function(ch){
+      return '<span class="ps-fchip" data-kind="'+ch.kind+'" data-val="'+esc(ch.val)+'"><span class="ps-fchip-txt">'+esc(ch.lbl)+'</span>'
+        + '<button type="button" class="ps-fchip-x" onclick="psRemoveChip(event,this)" aria-label="Remove '+esc(ch.lbl)+'">✕</button></span>';
+    }).join('');
   }
-  function psClearSearchTag(e){
+  // Remove ONE filter (reads which one from the chip's own data attributes) and re-applies.
+  // Price/colour chips are surgical — no effect on anything else. The query chip clears the
+  // cats/brands it resolved to as well (they were never shown as separate chips while it was
+  // active, so there's nothing else visible to leave behind — matches "undo this search").
+  function psRemoveChip(e, btn){
     if(e&&e.stopPropagation)e.stopPropagation();
-    if(typeof psQuery!=='undefined')psQuery='';
-    if(typeof psSizeQ!=='undefined')psSizeQ='';
-    if(typeof psSel!=='undefined')psSel={prices:new Set(psSel.prices),cats:new Set(),brands:new Set()};
-    ['psSearchMobile','psSearchDesktop'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
-    if(typeof psUpdateSearchClearBtn==='function')psUpdateSearchClearBtn('');
-    if(typeof psSearchHint==='function')psSearchHint('',new Set(),new Set());
-    try{psBuildCatFilter();psBuildBrandFilter();psApply();}catch(e2){}
-    psRefreshSearchTag();
+    var chip = btn&&btn.closest ? btn.closest('.ps-fchip') : null; if(!chip) return;
+    var kind = chip.getAttribute('data-kind'), value = chip.getAttribute('data-val');
+    if(kind==='brand') psSel.brands.delete(value);
+    else if(kind==='cat') psSel.cats.delete(value);
+    else if(kind==='price') psSel.prices.delete(parseInt(value,10));
+    else if(kind==='color') psSel.colors.delete(value);
+    else if(kind==='query'){
+      psQuery=''; psSizeQ='';
+      psSel.cats=new Set(); psSel.brands=new Set();
+      ['psSearchMobile','psSearchDesktop'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+      if(typeof psUpdateSearchClearBtn==='function')psUpdateSearchClearBtn('');
+      if(typeof psSearchHint==='function')psSearchHint('',new Set(),new Set());
+    }
+    try{ psBuildCatFilter(); psBuildBrandFilter(); psBuildPriceFilter(); psBuildColourFilter(); psApply(); psScrollToResults(); }catch(err){}
   }
-  window.psClearSearchTag=psClearSearchTag;
+  window.psRemoveChip=psRemoveChip;
   function psSearchInput(val){
     const a = document.getElementById('psSearchMobile'), b = document.getElementById('psSearchDesktop');
     if(a && a.value !== val) a.value = val;
@@ -5653,7 +5676,29 @@
     if(_psSearchMode==='brands'){
       // PRICE-CHECK mode (opened from Browse Brands): suggest BRANDS → tapping opens the brand's
       // OWN website to check the price (not a product grid). That's the claim of this page.
-      var bs=ALL.filter(function(b){ return psNorm(b.n).indexOf(n)>=0; }).slice(0,10);
+      var bs=ALL.filter(function(b){ return psNorm(b.n).indexOf(n)>=0; });
+      // Name matches came up short — also surface brands that STOCK what was typed ("boys kurta"),
+      // via the same category-synonym engine the Browse Products search uses, scored against the
+      // brand→category index the Product-Category tab already builds (bbLoadIndex).
+      if(bs.length<10 && typeof _bbIndex!=='undefined' && _bbIndex){
+        var present=new Set();
+        if(typeof PS_CATALOG!=='undefined' && PS_CATALOG) PS_CATALOG.forEach(function(p){ present.add(p.cat); });
+        else if(typeof _bbCatCnt!=='undefined' && _bbCatCnt) Object.keys(_bbCatCnt).forEach(function(bn){ Object.keys(_bbCatCnt[bn]).forEach(function(c){ present.add(c); }); });
+        // Tokenize the RAW (space-intact) value per-word — `n` above is already fully normalized
+        // (spaces stripped), so it's used separately below for a whole-phrase concept match only.
+        var rawQ=(val||'').trim().toLowerCase();
+        var tokens=rawQ.split(/[\s,]+/).map(psNorm).filter(function(t){ return t.length>=2 && !PS_STOP.has(t); });
+        var matchedCats=new Set();
+        tokens.forEach(function(t){ psMatchCatsToken(t,present).forEach(function(c){ matchedCats.add(c); }); });
+        if(n.length>=2) psMatchCatsToken(n,present).forEach(function(c){ matchedCats.add(c); });
+        if(matchedCats.size){
+          var have=new Set(bs.map(function(b){ return b.n; }));
+          ALL.forEach(function(b){
+            if(!have.has(b.n) && _bbIndex[b.n] && [...matchedCats].some(function(c){ return _bbIndex[b.n].has(c); })) bs.push(b);
+          });
+        }
+      }
+      bs=bs.slice(0,10);
       list.innerHTML = bs.length ? bs.map(function(b){
         var logo=psBrandLogo(b.u);
         var ic=logo?'<img class="sp-sug-logo" src="'+esc(logo)+'" alt="" onerror="this.style.visibility=\'hidden\'">':'<span class="sp-sug-logo sp-sug-logo-x" aria-hidden="true">🏷️</span>';
@@ -5682,7 +5727,7 @@
     }
     psSearchPageGo(v);
   }
-  function psSearchPageGo(term){ psSearchClose(); if(term && typeof psSearchInput==='function') psSearchInput(term); }
+  function psSearchPageGo(term){ psSearchClose(); if(term && typeof psSearchInput==='function') psSearchInput(term); try{ psScrollToResults(); }catch(e){} }
   // Brands/price-check: close the search page, then open the brand's own site (with the
   // "look there, order here" notice) so the buyer can check the real price.
   function psBrandSugGo(el){ psSearchClose(); try{ openBrandInApp(el); }catch(e){} }
@@ -6246,7 +6291,7 @@
     try{ psSaleOnly = !!c.sale; psNewOnly = !!c.new; psSort = c.sort || ''; }catch(e){}
     try{ psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildColourFilter(); psBuildSort(); }catch(e){}
     try{ psApply(); }catch(e){}
-    try{ psScrollGridUnderCarousel(); }catch(e){}
+    try{ psScrollToResults(); }catch(e){}
   }
   window.psSpPickColl=psSpPickColl;
   // Store-tier words → select every brand of that Browse-Brands directory tier.
@@ -6588,7 +6633,7 @@
     const pb = document.getElementById('psPriceBtn'); if(pb) pb.classList.toggle('on', psSel.prices.size > 0);
     try{ psBuildQuickBar(); }catch(e){}
   }
-  function psTogglePrice(i){ if(psSel.prices.has(i)) psSel.prices.delete(i); else psSel.prices.add(i); psBuildPriceFilter(); psApply(); }
+  function psTogglePrice(i){ if(psSel.prices.has(i)) psSel.prices.delete(i); else psSel.prices.add(i); psBuildPriceFilter(); psApply(); psScrollToResults(); }
   // Compact price filter: the 6 buckets live in a popover under the "Price ৳" chip on
   // the results bar (keeps the first view product-first). Toggle + click-away to close.
   function psTogglePricePop(){
@@ -6668,7 +6713,7 @@
     const bc = document.getElementById('psBrandCount'); if(bc) bc.textContent = psSel.brands.size || '';
     const bb = document.getElementById('psBrandBtn'); if(bb) bb.classList.toggle('on', psSel.brands.size > 0);
   }
-  function psToggleBrand(name, on){ if(on) psSel.brands.add(name); else psSel.brands.delete(name); psApply(); }
+  function psToggleBrand(name, on){ if(on) psSel.brands.add(name); else psSel.brands.delete(name); psApply(); psScrollToResults(); }
 
   const PS_COLOUR_PALETTE = [
     ['White','#FFFFFF'],['Off White','#F5F0E4'],['Beige','#E8D5B0'],['Camel','#C9986A'],
@@ -6696,7 +6741,7 @@
     const cn = document.getElementById('psColourCount'); if(cn) cn.textContent = psSel.colors.size || '';
     const cb = document.getElementById('psColourBtn'); if(cb) cb.classList.toggle('on', psSel.colors.size > 0);
   }
-  function psToggleColour(name){ if(psSel.colors.has(name)) psSel.colors.delete(name); else psSel.colors.add(name); psBuildColourFilter(); psApply(); }
+  function psToggleColour(name){ if(psSel.colors.has(name)) psSel.colors.delete(name); else psSel.colors.add(name); psBuildColourFilter(); psApply(); psScrollToResults(); }
   window.psToggleColour = psToggleColour;
 
   // Grouped category dropdown: Women's/Men's/Kids → subgroup → categories. Built
@@ -6741,7 +6786,7 @@
     if(v === '') psSel.cats.clear();                              // "All categories" → clear filter
     else if(psSel.cats.has(v)) psSel.cats.delete(v);             // re-tap clears just this one
     else psSel.cats.add(v);
-    psBuildCatFilter(); psApply();
+    psBuildCatFilter(); psApply(); psScrollToResults();
   }
   // True if p matches ANY selected category / gender (OR), or nothing is selected.
   function psCatMatch(p){
@@ -7302,7 +7347,7 @@
     try{ psRenderColls(); }catch(e){}
     try{ var r = document.querySelector('.ps-results'); if(r){ r.classList.remove('ps-coll-enter'); void r.offsetWidth; r.classList.add('ps-coll-enter'); } }catch(e){}
     try{ var u = new URL(location.href); u.searchParams.set('coll', id); history.replaceState(null,'',u.toString()); }catch(e){}
-    try{ if(typeof psScrollToResults==='function') psScrollToResults(); else if(typeof psScrollGridUnderCarousel==='function') psScrollGridUnderCarousel(); }catch(e){}
+    try{ psScrollToResults(); }catch(e){}
     try{ psUpdateBack(); }catch(e){}
   }
   function psClearColl(){
@@ -7641,7 +7686,7 @@
     const keepCats = (psSel.cats.size && !_psIsWholeDeptCats(psSel.cats)) ? psSel.cats : new Set(deptCats);
     psSel = { prices:new Set(psSel.prices), cats:new Set(keepCats), brands:new Set([name]), colors:new Set(psSel.colors||[]) };
     psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildColourFilter(); psBuildSort(); psApply();
-    psScrollGridUnderCarousel();
+    psScrollToResults();
   }
   function psPaintTile(key, url){
     if(!url) return;
@@ -7689,27 +7734,7 @@
     // search box + the brand / price / sort / sale / new state; only set the chosen category.
     psSel = { prices:new Set(psSel.prices), cats:new Set(cats), brands:new Set(psSel.brands), colors:new Set(psSel.colors||[]) };
     psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildColourFilter(); psBuildSort(); psApply();
-    psScrollGridUnderCarousel();
-  }
-  // Scroll the grid to the top, but offset by the pinned carousel's LIVE height (it varies with
-  // 1- vs 2-line labels and is taller on desktop) so the first product row isn't tucked behind it.
-  function psScrollGridUnderCarousel(){
-    const grid = document.getElementById('psGrid'); if(!grid) return;
-    let off = 0;
-    if(window.innerWidth < 820){
-      // Mobile (#8): the sticky top group (search + names bar) is what stays on screen — clear it.
-      const ts = document.querySelector('.ps-topstick'); if(ts) off = ts.offsetHeight + 8;
-    } else {
-      // Desktop: the fixed filter/carousel header — offset by its LIVE height.
-      const head = document.getElementById('psPinHead');
-      try { const pos = head ? getComputedStyle(head).position : ''; if(pos === 'sticky' || pos === 'fixed') off = head.offsetHeight + 8; } catch(e){}
-    }
-    if(off){
-      const y = grid.getBoundingClientRect().top + (window.scrollY || window.pageYOffset || 0) - off;
-      window.scrollTo({ top: Math.max(0, y), behavior:'smooth' });
-    } else {
-      grid.scrollIntoView({ behavior:'smooth', block:'start' });
-    }
+    psScrollToResults();
   }
   function psIsLanding(){ return !psSel.cats.size && !psSel.brands.size && !psSel.prices.size && !psSel.colors.size && !psSaleOnly && !psNewOnly && !psSort && !psQuery && !psSizeQ; }
   // Update which tile is highlighted as active (the single selected category OR brand) — no rebuild.
@@ -7805,7 +7830,7 @@
   }
   // All three filters combine with AND; price buckets OR within themselves.
   function psApply(){
-    try{psRefreshSearchTag();}catch(e){}
+    try{psRenderFilterChips();}catch(e){}
     psPage = 0;
     psFeedDone = false; psFeedLoading = false;        // infinite scroll: start a fresh feed
     psFeedSeed = Math.floor(Date.now() / 90000);      // freeze the shuffle for this feed's pages
@@ -7870,8 +7895,8 @@
     if(btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
   }
   // Select a sort option (re-tapping the active one clears it back to the curated default).
-  function psSetSortVal(s){ psSort = (psSort === s) ? '' : s; const p = document.getElementById('psSortPop'); if(p) p.classList.remove('open'); psBuildSort(); psApply(); }
-  function psSetSort(s){ psSort = (psSort === s) ? '' : s; psBuildSort(); psApply(); }   // legacy alias
+  function psSetSortVal(s){ psSort = (psSort === s) ? '' : s; const p = document.getElementById('psSortPop'); if(p) p.classList.remove('open'); psBuildSort(); psApply(); psScrollToResults(); }
+  function psSetSort(s){ psSort = (psSort === s) ? '' : s; psBuildSort(); psApply(); psScrollToResults(); }   // legacy alias
   // Sale and New are FILTERS (Sale ⇄ New mutually exclusive); the ৳ price sort orders WITHIN
   // whichever is active. Outside-click closes the sort popover (mirrors the price popover).
   document.addEventListener('click', function(e){
@@ -7881,8 +7906,8 @@
       const btn = document.getElementById('psSortBtn'); if(btn) btn.setAttribute('aria-expanded','false');
     }
   });
-  function psToggleSale(){ psSaleOnly = !psSaleOnly; if(psSaleOnly) psNewOnly = false; psBuildSort(); psApply(); }   // Sale ⇄ New
-  function psToggleNew(){ psNewOnly = !psNewOnly; if(psNewOnly) psSaleOnly = false; psBuildSort(); psApply(); }       // New = newest non-sale; price sorts within
+  function psToggleSale(){ psSaleOnly = !psSaleOnly; if(psSaleOnly) psNewOnly = false; psBuildSort(); psApply(); psScrollToResults(); }   // Sale ⇄ New
+  function psToggleNew(){ psNewOnly = !psNewOnly; if(psNewOnly) psSaleOnly = false; psBuildSort(); psApply(); psScrollToResults(); }       // New = newest non-sale; price sorts within
   // Dynamic "12,000+ products · 80+ brands — want more?" note; counts come from the
   // live catalogue (rounded down) so they grow/shrink with the listing automatically.
   function psUpdateNote(){
@@ -8135,7 +8160,22 @@
     psScrollToResults();
   }
   function psJump(v){ psPage = parseInt(v, 10) || 0; if(psApiMode) psApiFetch(); else psRender(); psScrollToResults(); }
-  function psScrollToResults(){ const g=document.getElementById('psCount'); if(g) window.scrollTo({top: g.getBoundingClientRect().top + window.scrollY - 64, behavior:'smooth'}); }
+  // Land on the "Products" heading — the hard rule: after ANY filter/category/brand/colour/
+  // collection selection, this is where the view must come to rest. Offset by whichever sticky
+  // header is live (mobile: the whole top-stick group; desktop: the pinned filter/carousel row)
+  // so the heading isn't tucked behind it.
+  function psScrollToResults(){
+    const g = document.getElementById('psProductsHd'); if(!g) return;
+    let off = 0;
+    if(window.innerWidth < 820){
+      const ts = document.querySelector('.ps-topstick'); if(ts) off = ts.offsetHeight + 8;
+    } else {
+      const head = document.getElementById('psPinHead');
+      try { const pos = head ? getComputedStyle(head).position : ''; if(pos === 'sticky' || pos === 'fixed') off = head.offsetHeight + 8; } catch(e){}
+    }
+    const y = g.getBoundingClientRect().top + (window.scrollY || window.pageYOffset || 0) - off;
+    window.scrollTo({ top: Math.max(0, y), behavior:'smooth' });
+  }
   // Swipe LEFT on the product grid → next page, swipe RIGHT → previous (alongside the
   // Prev/Next buttons). Guarded so it never pages past the ends.
   function psMaxPage(){
@@ -8994,7 +9034,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-02-popupui';
+  const PSB_BUILD = '2026-07-02-fchips4';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
