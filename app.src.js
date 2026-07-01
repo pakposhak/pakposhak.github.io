@@ -2529,8 +2529,7 @@
       s_orderid:'Your Order ID', s_track:'📦 Track My Order', s_howpay:'💳 How to Pay',
       s_payafter:'Pay the total shown above using any method below.',
       s_paid_title:'✅ Already Paid? Confirm Your Payment', s_paid_sub:"Enter your payment details below so we can match it to Order",
-      s_amt_label:'Amount you paid (৳) *', s_method_label:'How you paid *', s_method_pick:'Choose…', s_trx_label:'TrxID / sender no.', s_proof_label:'Add proof — Transaction ID above, or attach the receipt/message below:',
-      s_tab_receipt:'📷 Upload Receipt', s_tab_msg:'💬 Payment Message',
+      s_amt_label:'Amount you paid (৳) *', s_method_label:'How you paid *', s_method_pick:'Choose…', s_trx_label:'Transaction ID *', s_trx_hint:'Shown on your bKash / Nagad screen right after payment', s_pay_wa:'Confirm on WhatsApp', s_receipt_opt:'Attach receipt instead (optional)',
       s_upload_main:'Tap to choose your payment screenshot', s_upload_sub:'bKash / Nagad / bank slip — JPG or PNG',
       s_confirmpay:'✅ Confirm Payment',
       s_footer1:"Submit your payment slip above — it's saved directly to your order, no need to message separately.",
@@ -2604,8 +2603,7 @@
       s_orderid:'আপনার অর্ডার আইডি', s_track:'📦 অর্ডার ট্র্যাক করুন', s_howpay:'💳 যেভাবে পেমেন্ট করবেন',
       s_payafter:'উপরে দেখানো মোট টাকা নিচের যেকোনো মাধ্যমে দিন।',
       s_paid_title:'✅ পেমেন্ট করেছেন? সেটি নিশ্চিত করুন', s_paid_sub:'আপনার পেমেন্টের তথ্য দিন, যাতে আমরা সেটি আপনার অর্ডারের সাথে মিলিয়ে নিতে পারি — অর্ডার',
-      s_amt_label:'আপনি কত টাকা দিয়েছেন (৳) *', s_method_label:'কীভাবে দিয়েছেন *', s_method_pick:'বেছে নিন…', s_trx_label:'TrxID / প্রেরকের নম্বর', s_proof_label:'প্রমাণ দিন — উপরে ট্রান্সঅ্যাকশন আইডি, অথবা নিচে রসিদ/মেসেজ যোগ করুন:',
-      s_tab_receipt:'📷 রসিদ আপলোড', s_tab_msg:'💬 পেমেন্ট মেসেজ',
+      s_amt_label:'আপনি কত টাকা দিয়েছেন (৳) *', s_method_label:'কীভাবে দিয়েছেন *', s_method_pick:'বেছে নিন…', s_trx_label:'ট্রান্সঅ্যাকশন আইডি *', s_trx_hint:'আপনার bKash / Nagad রসিদে পাবেন', s_pay_wa:'WhatsApp-এ নিশ্চিত করুন', s_receipt_opt:'রসিদ যোগ করুন (ঐচ্ছিক)',
       s_upload_main:'পেমেন্টের স্ক্রিনশট বেছে নিতে ট্যাপ করুন', s_upload_sub:'বিকাশ / নগদ / ব্যাংক স্লিপ — JPG বা PNG',
       s_confirmpay:'✅ পেমেন্ট নিশ্চিত করুন',
       s_footer1:'উপরে পেমেন্ট স্লিপটি জমা দিন — এটি সরাসরি আপনার অর্ডারে যুক্ত হয়, আলাদা করে মেসেজ করতে হবে না।',
@@ -4070,18 +4068,7 @@
   }
 
   // ── PAYMENT CONFIRMATION (slip upload / message → saved to the order) ──────
-  function switchPayTab(which){
-    const onReceipt = which === 'receipt';
-    document.getElementById('payTabReceipt').style.display = onReceipt ? '' : 'none';
-    document.getElementById('payTabMsg').style.display     = onReceipt ? 'none' : '';
-    const rBtn = document.getElementById('payTabReceiptBtn');
-    const mBtn = document.getElementById('payTabMsgBtn');
-    // Selected tab = gold fill (highlighted); the other = dim/muted.
-    rBtn.style.background = onReceipt ? 'var(--gold)' : 'var(--gold-dim)';
-    rBtn.style.color      = onReceipt ? '#12122a' : 'var(--gold)';
-    mBtn.style.background = onReceipt ? 'var(--gold-dim)' : 'var(--gold)';
-    mBtn.style.color      = onReceipt ? 'var(--gold)' : '#12122a';
-  }
+  function switchPayTab(){}
 
   function previewReceipt(){
     const f = document.getElementById('payReceiptFile').files[0];
@@ -4130,7 +4117,6 @@
     const b = document.getElementById('payConfirmBtn');
     if(b){ b.disabled = false; b.textContent = '✅ Confirm Payment'; }
     window.__payOverride = false;
-    switchPayTab('receipt');
   }
 
   // ── PAYMENT-METHOD CUSTOM DROPDOWN ──────────────────────────────────────────
@@ -4174,6 +4160,19 @@
     window.__payOverride = false;
   }
 
+  function openPayWa(){
+    var orderId = (document.getElementById('orderRef')||{}).textContent || '—';
+    var amount  = (document.getElementById('payAmount')||{}).value || '';
+    var method  = (document.getElementById('payMethod')||{}).value || '';
+    var trxId   = ((document.getElementById('payTrxId')||{}).value || '').trim();
+    var msg = 'Hello PakPoshak! I have paid for my order.\n\nOrder ID: ' + orderId.trim();
+    if(amount) msg += '\nAmount: ৳' + Number(amount).toLocaleString();
+    if(method) msg += '\nMethod: ' + method;
+    if(trxId)  msg += '\nTrxID: ' + trxId;
+    window.open('https://wa.me/' + SUPPORT_WA + '?text=' + encodeURIComponent(msg), '_blank');
+  }
+  window.openPayWa = openPayWa;
+
   async function submitPaymentConfirmation(){
     const orderId = document.getElementById('orderRef').textContent.trim();
     const amount  = parseInt((document.getElementById('payAmount').value || '').replace(/[^\d]/g,''), 10) || 0;
@@ -4194,7 +4193,7 @@
     // Required: amount, method, and at least one proof (TrxID or receipt image).
     if(!amount){          showStatus('Please enter the amount you paid (৳).', false); return; }
     if(!method){          showStatus('Please choose how you paid (bKash, Nagad, …).', false); return; }
-    if(!trxId && !file){  showStatus('Please add your Transaction ID, or attach the receipt screenshot below.', false); return; }
+    if(!trxId && !file){  showStatus('Please enter your Transaction ID (found in your bKash / Nagad confirmation screen).', false); return; }
     if(!SHEET_SCRIPT_URL){
       showStatus('Payment confirmation isn’t configured yet. Please send your slip on WhatsApp for now.', false);
       return;
@@ -8791,7 +8790,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-01-fwfix';
+  const PSB_BUILD = '2026-07-01-payfix';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
