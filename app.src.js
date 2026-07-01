@@ -3812,6 +3812,26 @@
   function esc(s){
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
   }
+  // Scraped brand descriptions (body_html) sometimes carry raw HTML-entity text (esc() would
+  // otherwise double-escape "&amp;" into "&amp;amp;", showing literally on screen), adjacent
+  // text blocks glued together with no separator ("SuitShirt:"), and a trailing run of scraped
+  // page-widget text (a "Read more" toggle, or a whole share-button block: "Share/Link/Close
+  // share/Copy link"). Clean this up BEFORE esc() — never after, esc()'s output must stay HTML-safe.
+  const _DESC_JUNK_LINE = /^(read|show)\s+(more|less)\.?$|^(share|link|close share|copy link)$/i;
+  function cleanDesc(s){
+    let t = String(s || '');
+    const ta = document.createElement('textarea');
+    ta.innerHTML = t;
+    t = ta.value.replace(/\r\n?/g, '\n');
+    t = t.replace(/([a-z])([A-Z])/g, '$1 $2');       // "SuitShirt:" -> "Suit Shirt:"
+    t = t.replace(/([A-Z])([A-Z][a-z])/g, '$1 $2');  // "PLUMShipping" -> "PLUM Shipping"
+    // Strip a trailing run of scraped UI-widget lines (share buttons, read-more toggles).
+    const lines = t.split('\n');
+    while(lines.length && (lines[lines.length - 1].trim() === '' || _DESC_JUNK_LINE.test(lines[lines.length - 1].trim()))) lines.pop();
+    t = lines.join('\n');
+    t = t.replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+    return t;
+  }
 
   // ── SUMMARY MODAL ─────────────────────────────────────────────────────────
   // ── STEP NAVIGATION ──────────────────────────────────────────────────────
@@ -8339,13 +8359,8 @@
       +     `<button type="button" class="ps-d-add" onclick="psCloseDetail();psAdd(${idx})">+ ${tr('ps_add')}</button>`
       +     `<button type="button" class="ps-d-more" onclick="psMoreFromBrand(${idx})">${tr('ps_d_more')} ${esc(p.b)} →</button>`
       +   `</div>`
-      +   `<button type="button" class="ps-d-details-toggle" onclick="psToggleDetails(this)" aria-expanded="false">`
-      +     `<span>${tr('ps_d_details_h')}</span><span class="ps-d-details-chevron" aria-hidden="true">▾</span>`
-      +   `</button>`
-      +   `<div class="ps-d-details-body" id="psDDetailsBody" hidden>`
-      +     `<div class="ps-d-details" id="psDDetails"></div>`
-      +     `<div class="ps-d-loading" id="psDDesc">${tr('ps_d_loading')}</div>`
-      +   `</div>`
+      +   `<div class="ps-d-details" id="psDDetails"></div>`
+      +   `<div class="ps-d-loading" id="psDDesc">${tr('ps_d_loading')}</div>`
       +   `<button type="button" class="ps-d-open" onclick="psOpenFull(${idx})">${tr('ps_d_open')} ↗</button>`
       + `</div>`;
     document.getElementById('psDetail').style.display = 'flex';
@@ -8428,13 +8443,13 @@
     if(detEl){
       const rows = st.rows.slice().sort((a, b) => { const ia = PS_DET_ORDER.indexOf(a[0].toLowerCase()), ib = PS_DET_ORDER.indexOf(b[0].toLowerCase()); return (ia < 0 ? 50 : ia) - (ib < 0 ? 50 : ib); });
       detEl.innerHTML = rows.length
-        ? `<table class="ps-d-tbl"><tbody>`
+        ? `<div class="ps-d-details-h">${esc(tr('ps_d_details_h'))}</div><table class="ps-d-tbl"><tbody>`
           + rows.map(r => `<tr><td class="ps-d-k">${esc(r[0])}</td><td class="ps-d-v">${esc(r[1])}</td></tr>`).join('')
           + `</tbody></table>`
         : '';
     }
     if(descEl){
-      if(st.desc) descEl.innerHTML = `<div class="ps-d-desc-h">Description</div><div class="ps-d-desc">${esc(st.desc)}</div><div class="ps-d-disc">Actual colour may vary slightly from the image.</div>`;
+      if(st.desc) descEl.innerHTML = `<div class="ps-d-desc-h">Description</div><div class="ps-d-desc">${esc(cleanDesc(st.desc))}</div><div class="ps-d-disc">Actual colour may vary slightly from the image.</div>`;
       else if(st.done) descEl.innerHTML = (st.rows.length || st.imgs.length) ? '' : (st.any ? tr('ps_d_nodesc') : tr('ps_d_nofetch'));
     }
     // Size Chart button (only when this product/brand has a chart image) → opens the simple image
@@ -8449,14 +8464,6 @@
         }
       } else if(scEl.firstChild){ scEl.innerHTML = ''; }
     }
-  }
-  // Details/description starts collapsed (req: keep the popup's first view short, just the
-  // "Product Details" heading) — tap to reveal the Fabric/Care table + brand description.
-  function psToggleDetails(btn){
-    const body = document.getElementById('psDDetailsBody'); if(!body) return;
-    const open = body.hidden;
-    body.hidden = !open;
-    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
   }
   // First-ever popup gallery with more than one photo: nudge it sideways once so buyers
   // learn they can swipe (same cue already used on the product grid, ≤1× ever here since
@@ -9061,7 +9068,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-02-desktop4';
+  const PSB_BUILD = '2026-07-02-descfix5';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

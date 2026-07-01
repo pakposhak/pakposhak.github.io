@@ -1535,13 +1535,9 @@
     .ps-d-gallery{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
     .ps-d-gallery::-webkit-scrollbar{display:none}
     .ps-d-shot{flex:0 0 100%;width:100%;height:100%;display:block;object-fit:contain;scroll-snap-align:center;background:var(--raised)}
-    .ps-d-details{margin:0 0 2px}
-    .ps-d-desc-h{font-size:0.62rem;font-weight:800;letter-spacing:0.6px;text-transform:uppercase;color:var(--gold);margin:0 0 6px}
+    .ps-d-details{margin:14px 0 2px}
+    .ps-d-details-h,.ps-d-desc-h{font-size:0.62rem;font-weight:800;letter-spacing:0.6px;text-transform:uppercase;color:var(--gold);margin:0 0 6px}
     .ps-d-desc-h{margin-top:14px}
-    .ps-d-details-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:10px;padding:12px 0;background:none;border:none;border-top:1px solid var(--bdr-med);font-family:inherit;font-size:0.78rem;font-weight:800;letter-spacing:0.6px;text-transform:uppercase;color:var(--gold);cursor:pointer}
-    .ps-d-details-chevron{font-size:0.85rem;transition:transform 0.2s}
-    .ps-d-details-toggle[aria-expanded="true"] .ps-d-details-chevron{transform:rotate(180deg)}
-    .ps-d-details-body{padding-top:6px}
     .ps-d-tbl{width:100%;border-collapse:collapse;font-size:0.8rem}
     .ps-d-tbl td{padding:6px 2px;border-bottom:1px solid var(--bdr-med);vertical-align:top}
     .ps-d-tbl tr:last-child td{border-bottom:none}
