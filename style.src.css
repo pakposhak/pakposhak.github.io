@@ -456,7 +456,7 @@
     .hdr-back svg{width:24px;height:24px}
     .hdr-logo{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
     .hdr-logo-img{width:30px;height:30px;border-radius:8px;object-fit:cover;flex-shrink:0;border:1px solid var(--gold-bdr)}
-    .hdr-brand{font-size:1.05rem;font-weight:800;color:#000;letter-spacing:0.2px}
+    .hdr-brand{font-size:1.05rem;font-weight:800;color:#000;letter-spacing:0.2px;font-family:'Playfair Display',Georgia,'Times New Roman',serif}
     [data-theme="dark"] .hdr-brand{color:var(--txt)}
     .hdr-tagline{font-size:0.65rem;color:var(--gold);margin-top:1px;letter-spacing:0.3px}
     .hdr-right-slot{position:relative;display:flex;align-items:center;gap:2px}

@@ -2476,7 +2476,7 @@
   // ── i18n: English / Bangla (customer-facing) ───────────────────────────────
   const I18N = {
     en: {
-      tagline:'Pakistani Fashion · Bangladesh Delivery',
+      tagline:'Pakistan Fashion. At Your Door.',
       hiw_browse:'Browse brands', hiw_paste:'Share or paste a link', hiw_confirm:'We confirm price',
       hiw_pay:'Pay via bKash/Nagad', hiw_delivery:'2–3 weeks to your door', hiw_video:'▶ Watch video guide', hiw_guide:'📖 How it works', introTitle:'New here? Watch a quick intro', introMore:'▶ See all video guides →',
       hiw_confirm_pay:'Confirm price & pay (bKash/Nagad)',
@@ -2549,7 +2549,7 @@
       js_paste_nocopy_d:'No product link copied yet. Copy the product’s web address (click the address bar, then Ctrl+C), then click <b>📋 Paste link</b>.'
     },
     bn: {
-      tagline:'পাকিস্তানি ফ্যাশন · বাংলাদেশে ডেলিভারি',
+      tagline:'পাকিস্তান ফ্যাশন। আপনার দরজায়।',
       hiw_browse:'ব্র্যান্ড দেখুন', hiw_paste:'Share বা লিংক পেস্ট করুন', hiw_confirm:'আমরা দাম যাচাই করি',
       hiw_pay:'বিকাশ/নগদে পেমেন্ট', hiw_delivery:'২–৩ সপ্তাহে আপনার দরজায়', hiw_video:'▶ ভিডিও গাইড দেখুন', hiw_guide:'📖 কীভাবে কাজ করে', introTitle:'নতুন? ছোট্ট একটি ইন্ট্রো দেখুন', introMore:'▶ সব ভিডিও গাইড দেখুন →',
       hiw_confirm_pay:'দাম নিশ্চিত করে পেমেন্ট (বিকাশ/নগদ)',
@@ -8822,7 +8822,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-01-colour2';
+  const PSB_BUILD = '2026-07-01-iconfix';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
