@@ -6709,7 +6709,7 @@
         const swatch = hex
           ? `<span class="ps-cswatch" style="background:${hex};border-color:${_LIGHT_SWATCH.has(n)?'var(--bdr-med)':'transparent'}"></span>`
           : `<span class="ps-cswatch ps-cswatch-multi"></span>`;
-        return `<button type="button" class="ps-clr-chip${on?' on':''}" onclick="psToggleColour(${JSON.stringify(n)})">${swatch}<span class="ps-cname">${esc(n)}</span></button>`;
+        return `<button type="button" class="ps-clr-chip${on?' on':''}" onclick="psToggleColour('${esc(n)}')">${swatch}<span class="ps-cname">${esc(n)}</span></button>`;
       }).join('');
     const el = document.getElementById('psColours'); if(el) el.innerHTML = chips || '';
     const cn = document.getElementById('psColourCount'); if(cn) cn.textContent = psSel.colors.size || '';
@@ -7160,9 +7160,7 @@
     { en:'New IN.',          bn:'এই সপ্তাহের নতুন', se:'Daily Updates', sb:'গত ৭ দিন',   kind:'new' },
     { en:'On Sale',          bn:'সেল',             se:'Hurry-',      sb:'ছাড়',        kind:'sale' },
     { en:'Under 3000',       bn:'৩০০০ এর নিচে',    se:'Still Stylish', sb:'বাজেট',       kind:'price', val:'0' },
-    { en:'Eid edit',         bn:'ঈদ কালেকশন',      se:'Festive',     sb:'উৎসব',        kind:'cat', val:'heavy_formal_3pc,formal_emb_3pc' },
     { en:'Summer lawn',      bn:'সামার লন',        se:'Unstitched',  sb:'আনস্টিচড',     kind:'cat', val:'lawn_3pc_unstitch' },
-    { en:'Winter',           bn:'শীত',             se:'Khaddar & More', sb:'খদ্দর',       kind:'cat', val:'winter_3pc_stitch,winter_3pc_unstitch,winter_2pc_stitch,winter_2pc_unstitch' },
     { en:'Wedding',          bn:'ওয়েডিং',          se:'Bridal - Big Day', sb:'ব্রাইডাল',    kind:'cat', val:'bridal,lehenga' },
     { en:'Formal',           bn:'ফরমাল',           se:'Party Wear',  sb:'পার্টি',      kind:'cat', val:'formal_emb_3pc,formal_emb_2pc' }
   ];
@@ -7173,9 +7171,7 @@
     'New IN.':          { id:'new',     g:['home-all','home-w','home-m','home-k','luxe-all','luxe-w','luxe-m','luxe-k'], e:'🆕' },
     'On Sale':          { id:'sale',    g:['home-all','home-w','home-m','home-k','luxe-all','luxe-w','luxe-m','luxe-k'], e:'🏷️' },
     'Under 3000':       { id:'budget',  g:['home-all','home-w','home-m','home-k'], e:'💰' },
-    'Eid edit':         { id:'eid',     g:['home-all','home-w','luxe-all','luxe-w'], e:'✨' },
     'Summer lawn':      { id:'lawn',    g:['home-all','home-w'], e:'🌸' },
-    'Winter':           { id:'winter',  g:['home-all','home-w'], e:'🧣' },
     'Wedding':          { id:'wedding', g:['home-all','home-w','luxe-all','luxe-w'], e:'💍' },
     'Formal':           { id:'formal',  g:['home-w','luxe-w'], e:'👗' }
   };
@@ -7211,9 +7207,7 @@
     new: { all:'https://cdn.shopify.com/s/files/1/0587/2913/6326/files/DSC03349_copy.jpg?v=1777231664', w:'https://cdn.shopify.com/s/files/1/0841/3796/7889/files/86276-_7_-thumbnail.jpg?v=1781787354', m:'https://cdn.shopify.com/s/files/1/0508/8994/9390/files/Olive_green_kurta_set_for_father_and_son_matching_outfit.png?v=1777726593', k:'https://cdn.shopify.com/s/files/1/0752/0442/8072/files/KGKK1436-2PC_1.webp?v=1780481599' },
     sale: { all:'https://cdn.shopify.com/s/files/1/0623/6481/1444/files/BP181-9-2P25_1.jpg?v=1782730607', w:'https://cdn.shopify.com/s/files/1/0740/1753/8280/files/SS26SGE469P2T_1.jpg?v=1782709509', m:'https://cdn.shopify.com/s/files/1/0872/1278/5848/files/MP2PBBW25ADJ16_2.jpg?v=1778840041', k:'https://cdn.shopify.com/s/files/1/0488/9201/8848/files/BK12601BEWS29007_1.jpg?v=1782193509' },
     budget: { all:'https://cdn.shopify.com/s/files/1/0730/0972/5664/files/TYP00721.jpg?v=1762516781', w:'https://cdn.shopify.com/s/files/1/0660/4164/3225/files/DSC05376.jpg?v=1782555714', m:'https://cdn.shopify.com/s/files/1/0551/9763/0638/files/6F5A8695.jpg?v=1781533053', k:'https://cdn.shopify.com/s/files/1/0568/3308/1529/files/DSC00243copy2.jpg?v=1777128149' },
-    eid: { all:'https://cdn.shopify.com/s/files/1/0262/9058/5672/files/AL-LS-625_4_-Copy.jpg?v=1778675077', w:'https://cdn.shopify.com/s/files/1/0813/1179/3453/files/0000354_black-peplum.jpg?v=1694011257' },
     lawn: { all:'https://cdn.shopify.com/s/files/1/0740/1753/8280/files/LH261-016-AG.jpg?v=1778051058', w:'https://cdn.shopify.com/s/files/1/0740/1753/8280/files/LH261-015-AG.jpg?v=1778050917' },
-    winter: { all:'https://cdn.shopify.com/s/files/1/0620/8788/9062/files/MBK-2PW25-21UmberBrownFront_A.jpg?v=1764758027', w:'https://cdn.shopify.com/s/files/1/0620/8788/9062/files/MKDW2504Front_B.jpg?v=1757766130' },
     wedding: { all:'https://cdn.shopify.com/s/files/1/0730/0972/5664/files/EH5A1334.png?v=1758020713', w:'https://cdn.shopify.com/s/files/1/0660/4164/3225/products/2T9A5191_78f6abcd-14e2-4192-9554-d67325a5faa0.jpg?v=1749713727' },
     formal: { w:'https://cdn.shopify.com/s/files/1/0016/9476/1035/products/73_88050d03-c10d-4825-a233-ad26f2838582.jpg?v=1660810144' },
     couple: { all:'https://cdn.shopify.com/s/files/1/0508/8994/9390/files/111_f72fde77-5748-4b63-a44c-54f24de80244.png?v=1739807967', w:'https://cdn.shopify.com/s/files/1/0872/1278/5848/files/WP3PSFW25F9O3_5.jpg?v=1778494530', m:'https://cdn.shopify.com/s/files/1/0262/9058/5672/files/AL-K-1311-D_3.jpg?v=1782207840' },
@@ -8943,7 +8937,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-01-postersface';
+  const PSB_BUILD = '2026-07-01-colorfix3';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
