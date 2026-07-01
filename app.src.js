@@ -2507,7 +2507,7 @@
       dm_title:'Choose size & confirm price', dm_addbag:'Add to Bag', dm_addbag_n:'Add {n} items to Bag', dc_final:'Final price:',
       bag_proceed:'Proceed to My Details →', bag_empty:'Your bag is empty', bag_empty_sub:'Browse Pakistani brands and tap + Add to drop items here.', bag_browse:'🛍️ Browse products', bag_added:'Added to your bag', bag_view:'View Bag',
       co_bag:'Bag', co_details:'Details', co_review:'Review', co_pay:'Pay',
-      nav_home:'Home', nav_brands:'Brands', nav_cart:'Cart', nav_how:'How To', nav_guide:'Guide', nav_wish:'Wishlist', nav_help:'Help',
+      nav_home:'Studio', nav_brands:'Brands', nav_cart:'Cart', nav_how:'How To', nav_guide:'Guide', nav_wish:'Wishlist', nav_help:'Help',
       nav_luxe:'Luxe', nav_bag:'Bag', nav_pricecheck:'Price Check',
       tl_help:'New here? Start with these:', tl_faq:'❓ How it works & our promise', tl_track:'📦 Track an order', tl_weights:'⚖️ Shipping weights', tl_wa:'💬 Chat on WhatsApp',
       addmore_hint:'✓ Item saved! Add another product, or continue to your details.', addmore_btn:'➕ Add Another Product',
@@ -2581,7 +2581,7 @@
       dm_title:'সাইজ বেছে নিন ও দাম দেখুন', dm_addbag:'ব্যাগে যোগ করুন', dm_addbag_n:'{n}টি আইটেম ব্যাগে যোগ করুন', dc_final:'চূড়ান্ত দাম:',
       bag_proceed:'আমার তথ্যে এগিয়ে যান →', bag_empty:'আপনার ব্যাগ খালি', bag_empty_sub:'পাকিস্তানি ব্র্যান্ড দেখুন আর + Add চেপে পণ্য এখানে যোগ করুন।', bag_browse:'🛍️ পণ্য ব্রাউজ করুন', bag_added:'ব্যাগে যোগ হয়েছে', bag_view:'ব্যাগ দেখুন',
       co_bag:'ব্যাগ', co_details:'তথ্য', co_review:'রিভিউ', co_pay:'পেমেন্ট',
-      nav_home:'হোম', nav_brands:'ব্র্যান্ড', nav_cart:'কার্ট', nav_how:'গাইড', nav_guide:'গাইড', nav_wish:'পছন্দ', nav_help:'সাহায্য',
+      nav_home:'স্টুডিও', nav_brands:'ব্র্যান্ড', nav_cart:'কার্ট', nav_how:'গাইড', nav_guide:'গাইড', nav_wish:'পছন্দ', nav_help:'সাহায্য',
       nav_luxe:'লাক্স', nav_bag:'ব্যাগ', nav_pricecheck:'দাম যাচাই',
       tl_help:'নতুন? শুরুটা এখান থেকে করুন:', tl_faq:'❓ কীভাবে কাজ করে ও আমাদের প্রতিশ্রুতি', tl_track:'📦 অর্ডার ট্র্যাক করুন', tl_weights:'⚖️ শিপিং ওজন', tl_wa:'💬 হোয়াটসঅ্যাপে চ্যাট',
       addmore_hint:'✓ পণ্যটি সেভ হয়েছে! আরেকটি যোগ করুন, বা আপনার তথ্য দিতে এগিয়ে যান।', addmore_btn:'➕ আরেকটি পণ্য যোগ করুন',
@@ -8822,7 +8822,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-01-colour2';
+  const PSB_BUILD = '2026-07-01-studio';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
