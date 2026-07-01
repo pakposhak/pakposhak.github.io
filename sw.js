@@ -1,4 +1,4 @@
-/* PakPoshak service worker.
+﻿/* PakPoshak service worker.
  *
  * Goals:
  *  - Make the site an installable PWA (Android "Install app", iOS "Add to Home Screen").
@@ -6,11 +6,11 @@
  *  - NEVER serve a stale build of the page. The HTML changes often, so the page
  *    is always network-FIRST; the cached copy is only used when the network fails
  *    (offline). Static assets (icons/manifest) are cache-first since they rarely
- *    change — bump CACHE_VERSION below when an icon changes.
+ *    change â€” bump CACHE_VERSION below when an icon changes.
  *  - NEVER touch cross-origin requests (Shopify product fetches, Apps Script order
  *    submission, Formspree). Those must always hit the network untouched.
  */
-const CACHE_VERSION = 'psb-v160';
+const CACHE_VERSION = 'psb-v161';
 const APP_SHELL = [
   './',
   './index.html',
@@ -28,7 +28,7 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_VERSION).then((cache) =>
-      // Best-effort precache — don't fail install if one asset 404s.
+      // Best-effort precache â€” don't fail install if one asset 404s.
       Promise.allSettled(APP_SHELL.map((u) => cache.add(u)))
     )
   );
@@ -53,8 +53,8 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
 
-  // Cache-bust probes (?_v= / ?_fresh=) — used by the in-app auto-updater to read the
-  // live build tag and to force a fresh reload — are network-only: don't intercept,
+  // Cache-bust probes (?_v= / ?_fresh=) â€” used by the in-app auto-updater to read the
+  // live build tag and to force a fresh reload â€” are network-only: don't intercept,
   // cache, or risk serving a stale copy for them.
   if (url.searchParams.has('_v') || url.searchParams.has('_fresh')) return;
 
@@ -63,9 +63,9 @@ self.addEventListener('fetch', (event) => {
     req.destination === 'document' ||
     req.headers.get('accept')?.includes('text/html');
   // The MANIFEST decides PWA installability. Serve it network-FIRST too, so an
-  // updated manifest (e.g. display:"browser" → "standalone") reaches the browser
+  // updated manifest (e.g. display:"browser" â†’ "standalone") reaches the browser
   // immediately instead of a stale cache-first copy silently blocking the one-tap
-  // "Install app" prompt — which is exactly the bug that broke install.
+  // "Install app" prompt â€” which is exactly the bug that broke install.
   const isManifest = url.pathname.endsWith('manifest.json');
 
   if (isHTML || isManifest) {
@@ -75,7 +75,7 @@ self.addEventListener('fetch', (event) => {
     // CRITICAL: fetch with {cache: 'reload'} so this request BYPASSES the
     // browser's HTTP cache. GitHub Pages serves with Cache-Control: max-age=600
     // (10 min). Without 'reload', a plain fetch(req) is served from that 10-min-
-    // stale HTTP cache — so "network-first" silently returns an OLD build.
+    // stale HTTP cache â€” so "network-first" silently returns an OLD build.
     // 'reload' forces a real network round-trip to the CDN, then updates the cache.
     const cacheKey = isManifest ? './manifest.json' : './index.html';
     event.respondWith(
@@ -110,14 +110,14 @@ self.addEventListener('fetch', (event) => {
   }
 
   // app.js / style.css: STALE-WHILE-REVALIDATE. These minified artifacts change on
-  // EVERY deploy, but were previously cache-first — so their content only refreshed when
+  // EVERY deploy, but were previously cache-first â€” so their content only refreshed when
   // the service worker ITSELF reinstalled (a CACHE_VERSION bump), which is unreliable on
   // iOS and left users stuck on an OLD app.js: network-first HTML gave them the fresh page,
   // but the cache-first app.js stayed stale, so newly-added pages/posters silently fell
   // back and looked "missing". SWR serves the cached copy INSTANTLY (fast open) but ALWAYS
   // revalidates in the background ({cache:'reload'} bypasses GitHub Pages' 10-min HTTP
   // cache), so the NEXT load is fresh regardless of SW-version timing. Offline still works
-  // (falls back to the cached copy). The in-app updater's app.js?_v= probe is unaffected —
+  // (falls back to the cached copy). The in-app updater's app.js?_v= probe is unaffected â€”
   // it carries _v and is skipped above.
   if (url.pathname.endsWith('app.js') || url.pathname.endsWith('style.css')) {
     event.respondWith(

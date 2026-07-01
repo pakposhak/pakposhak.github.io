@@ -128,6 +128,10 @@ function _collBoys(h){  return !!(h && !_collNoise(h) && /(?:^|[-_])boys?(?:[-_]
 // Kameez" / "Kurta Shalwar" / "Kurta with Trouser" 2pc listing of these brands is their MENSWEAR.
 // (Azure shirt_trouser_2pc = 13 men's; Al-Deebaj = 27 men's "Kurta Shalwar".) Extend as found.
 const MENS_2PC_BRANDS = new Set(['Azure', 'Al-Deebaj']);
+// Brands that sell ONLY women's footwear (khussa / kolhapuri / chappal / sandal / mule).
+// ANY non-footwear item from these brands (clothing, clutch bags, accessories) is removed
+// at the end of the loop after all category rules have run.
+const FOOTWEAR_ONLY_BRANDS = new Set(['Khussa Corner', 'Khussa Master', 'ECS', 'Dazzle by Sarah', 'Stylo']);
 const MENS_2PC_TITLE = /shalwar kameez|kameez shalwar|kurta shalwar|kurta with[\s\S]*(trouser|shalwar)/i;
 const MENS_2PC_GUARD = /dupatta|chunri|3 ?pc|3 ?piece|2 ?piece\b|\bsuit\b|lehenga|saree|\bfrock\b|\bgown\b|\bmaxi\b|\babaya\b|co-?ord/i;   // women 3pc/suit/dupatta → NOT the men's 2pc line
 // GIRL-garment markers for kids items the harvester defaulted to BOYS (no gender word in title).
@@ -532,6 +536,10 @@ function cleanupProducts(ps, membership) {
     // bracelet, and bralette/bustier/corset stay as western_top via the rules below. Cougar + Eminent
     // sell standalone bras that defaulted into pret_3pc. Verified 0 false-positives on the live catalog.
     if (/\bbra\b|\bbras\b|\bbrassiere\b|sports\s*bra|\blingerie\b|\bpant(?:y|ies)\b|\bg-?string\b|\bthong\b|\bjock\s*strap\b/i.test(p.t || '')) { junkN++; continue; }
+    // Clutch bags: ACC (line above) has \bclutch\b but exempts p.cat='footwear'. Footwear-brand
+    // Shopify stores sometimes list clutch bags inside their footwear collection, which makes the
+    // harvest assign p.cat='footwear' — bypassing the ACC guard. Remove unconditionally here.
+    if (/\bclutch\b/i.test(p.t || '') && !GARMENT_NOUN.test(p.t || '')) { junkN++; continue; }
     // ── COUPLE COLLECTION (His + Hers sold as ONE set, single price, single weight) → its own
     // category; brand-agnostic and HIGH priority so it wins over the gender/men/women rules below.
     // Catches Edge Republic "CP … Couple/Couples" + any future his-&-her listing. Idempotent.
@@ -1161,6 +1169,8 @@ function cleanupProducts(ps, membership) {
       out.push(p); continue;
     }
     if (ONE.has(p.cat)) { const nc = pieceCat(p); if (nc && nc !== p.cat) { p.cat = nc; pieceN++; } }
+    // Footwear-only brands: after ALL other rules have run, any item still not in footwear → remove.
+    if (FOOTWEAR_ONLY_BRANDS.has(p.b || '') && p.cat !== 'footwear') { junkN++; continue; }
     out.push(p);
   }
   // ── DUAL-FORM post-pass: cross-mark the paired rows so the Browse card can badge "also available

@@ -5661,7 +5661,7 @@
   // full brand directory (BRANDS) so the buyer can type any brand and get live suggestions; an
   // empty selection means "All brands" (no brand filter). Shares the .ps-dd look with Fit Assistant.
   function _psVisBrandsAll(){
-    try{ if(typeof BRANDS!=='undefined' && BRANDS.length) return BRANDS.map(function(b){return b.n;}).sort(function(a,b){return a.localeCompare(b);}); }catch(e){}
+    try{ if(typeof BRANDS!=='undefined' && BRANDS.length) return BRANDS.filter(function(b){return !PS_FOOTWEAR_ONLY_BRANDS.has(b.n);}).map(function(b){return b.n;}).sort(function(a,b){return a.localeCompare(b);}); }catch(e){}
     return ['Khaadi','Sapphire','Zara Shahjahan','Maria B','Gul Ahmed','Sana Safinaz','Cross Stitch','Baroque','Nishat Linen','Alkaram Studio','Elan','Asim Jofa','Generation','Limelight','Bonanza Satrangi'];
   }
   function _psVisBrandLabel(){
@@ -5804,8 +5804,10 @@
   // saved to localStorage (by WhatsApp # if given). "Show what fits me" calls /search/fit and
   // renders the products available in your size, scoped to a brand or overall.
   // Covered reference brands per gender (brands whose chart can translate "I wear M in X").
+  // Footwear-only brands: excluded from Fit Assistant (no clothing sizes) and Visual Search brand filter.
+  var PS_FOOTWEAR_ONLY_BRANDS = new Set(['Khussa Corner','Khussa Master','ECS','Dazzle by Sarah','Stylo']);
   var PS_FIT_BRANDS = {
-    w:["Khaadi","Sapphire","Sana Safinaz","Generation","Cross Stitch","Sania Maskatiya","Bonanza Satrangi","Chinyere","Nishat Linen","Zellbury","Zara Shahjahan","Coco by Zara Shahjahan","Mina Hasan","Lulusar","Ego","Kross Kulture","Rang Rasiya","Republic Womenswear","Imrozia Premium","Iznik Fashions","Threads & Motifs","Edge Republic","Mausummery","Emaan Adeel","Khas Stores","Wear Ochre","Roheenaz","Armas","Sha Posh","Tassels","Akbar Aslam","Al-Deebaj","Black Camels","Dynasty Fabrics","ECS","Jeem","Kashee's Boutique","Lawrencepur","Silayi Pret","Sitara Studio","Stylo","Tawakkal Fabrics","The Hijab Company","Zuruj","One Kids"],
+    w:["Khaadi","Sapphire","Sana Safinaz","Generation","Cross Stitch","Sania Maskatiya","Bonanza Satrangi","Chinyere","Nishat Linen","Zellbury","Zara Shahjahan","Coco by Zara Shahjahan","Mina Hasan","Lulusar","Ego","Kross Kulture","Rang Rasiya","Republic Womenswear","Imrozia Premium","Iznik Fashions","Threads & Motifs","Edge Republic","Mausummery","Emaan Adeel","Khas Stores","Wear Ochre","Roheenaz","Armas","Sha Posh","Tassels","Akbar Aslam","Al-Deebaj","Black Camels","Dynasty Fabrics","Jeem","Kashee's Boutique","Lawrencepur","Silayi Pret","Sitara Studio","Tawakkal Fabrics","The Hijab Company","Zuruj","One Kids"],
     m:["Amir Adnan","Diners","CRUSH Menswear","Monark","Royal Tag","Shahzeb Saeed","Charcoal","Engine","Furor","Lawrencepur","Al-Deebaj","One Kids"]
   };
   // Real per-brand, per-gender size labels (Khaadi "12 / M", Bonanza 8/10/12, Furor 30/32/40, …),
@@ -8789,7 +8791,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-01-brafix';
+  const PSB_BUILD = '2026-07-01-fwfix';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
