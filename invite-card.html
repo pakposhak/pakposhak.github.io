@@ -32,8 +32,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
 .sw{padding:8px 14px;border-radius:9px;cursor:pointer;border:2px solid transparent;font-size:12.5px;font-weight:700;font-family:inherit}
 .sw.on{border-color:#D9B85E}
 .share-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
-.share-row a{flex:1;text-align:center;text-decoration:none;background:#123021;border:1.5px solid #4A6B54;color:#EDE7D2;border-radius:9px;padding:9px;font-size:12px;font-weight:700}
-.share-row a:hover{background:#1A4030}
+.share-row a,.share-row button{flex:1;text-align:center;text-decoration:none;background:#123021;border:1.5px solid #4A6B54;color:#EDE7D2;border-radius:9px;padding:10px 9px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer}
+.share-row a:hover,.share-row button:hover{background:#1A4030}
+.share-row a.wa{background:#128C4B;border-color:#128C4B;color:#eafff2}
+.share-row a.wa:hover{background:#15A055}
 </style>
 </head>
 <body>
@@ -77,12 +79,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
       <div class="themes" id="themeSw"></div>
     </div>
     <div class="fg">
-      <label>Share the app link</label>
+      <label>Share the TAPPABLE link</label>
       <div class="share-row">
-        <a id="waShare" target="_blank" rel="noopener">WhatsApp text</a>
-        <a href="https://pakposhakonline.com" target="_blank" rel="noopener">Open site</a>
+        <a id="waShare" class="wa" target="_blank" rel="noopener">📱 Share on WhatsApp</a>
+        <button type="button" id="copyLink" onclick="copyLink()">🔗 Copy link</button>
       </div>
-      <div class="tip">Tip: attach the downloaded card image to the WhatsApp message.</div>
+      <div class="tip"><b>The picture can't hold a tappable link</b> (it's an image). To let people tap through: send the <b>link</b> in the message text (it turns blue and shows a preview) or they scan the <b>QR</b> on the card. Attach the downloaded image for the full poster.</div>
     </div>
   </div>
 </div>
@@ -183,10 +185,15 @@ function render(){
     d.onclick=function(){ card.theme=k; save(); render(); };
     host.appendChild(d);
   });
-  var msg='PakPoshak — '+card.sent+' Order now: https://pakposhakonline.com';
+  var msg='PakPoshak\n'+card.sent+'\n\nShop now: https://pakposhakonline.com';
   document.getElementById('waShare').href='https://wa.me/?text='+encodeURIComponent(msg);
 }
 function setF(f,v){ card[f]=v; save(); document.getElementById('cardHost').innerHTML=buildSVG(); }
+function copyLink(){
+  var url='https://pakposhakonline.com';
+  try{ navigator.clipboard.writeText(url); }catch(e){ var ta=document.createElement('textarea'); ta.value=url; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(_){} ta.remove(); }
+  var b=document.getElementById('copyLink'), o=b.textContent; b.textContent='✅ Link copied'; setTimeout(function(){ b.textContent=o; },1600);
+}
 
 document.getElementById('sizeSeg').addEventListener('click',function(e){
   if(e.target.dataset.sz){ size=e.target.dataset.sz;
