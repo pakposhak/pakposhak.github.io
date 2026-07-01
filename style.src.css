@@ -1059,6 +1059,7 @@
     /* Fuller, rounded heart (SVG) for the wishlist — replaces the flat ♥ glyph (req) */
     .ps-heart-svg{width:1em;height:1em;fill:currentColor;display:inline-block;vertical-align:-0.14em}
     .bnav-btn .ps-heart-svg{width:1.5rem;height:1.5rem;vertical-align:middle}
+    .ps-share-svg{width:1.1em;height:1.1em;display:inline-block;vertical-align:-0.16em}
     /* Wishlist lives in the bottom nav on mobile — drop the duplicate header heart there (req) */
     /* redesign batch 2: wishlist now lives in the TOP row on mobile too (was bottom-only). */
     @media (max-width:819px){ #hdrWishBtn{display:flex} }
@@ -1521,18 +1522,22 @@
     .ps-warn-cancel{flex:1;background:var(--gold-dim);border:1px solid var(--gold-bdr);color:var(--gold);font-weight:700;border-radius:12px;padding:12px;font-size:0.92rem;font-family:inherit;cursor:pointer}
     .ps-warn-ok{flex:1;background:var(--gold);border:none;color:#12122a;font-weight:800;border-radius:12px;padding:12px;font-size:0.92rem;font-family:inherit;cursor:pointer}
     .ps-detail{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.62);align-items:center;justify-content:center;padding:14px}
-    .ps-detail-card{background:var(--surface);border:1px solid var(--bdr-med);border-radius:14px;max-width:560px;width:100%;max-height:92vh;overflow-y:auto;position:relative}
+    .ps-detail-card{background:var(--surface);border:1px solid var(--bdr-med);border-radius:14px;max-width:620px;width:100%;max-height:95vh;overflow-y:auto;position:relative}
     .ps-detail-x{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;background:var(--raised);border:1px solid var(--bdr-med);color:var(--txt);font-size:1.05rem;cursor:pointer;z-index:3;display:flex;align-items:center;justify-content:center}
     /* LAAM-style 3-layer popup: a sticky IMAGE "stage" (horizontal swipe gallery) with the details
        SHEET (.ps-d-body) scrolling UP over it and back down. The close-X rides a sticky 0-height bar. */
     .ps-d-topbar{position:sticky;top:0;z-index:6;height:0}
-    .ps-d-stage{position:sticky;top:0;z-index:0;height:60vh;background:var(--raised);border-radius:14px 14px 0 0;overflow:hidden}
+    .ps-d-stage{position:sticky;top:0;z-index:0;height:64vh;background:var(--raised);border-radius:14px 14px 0 0;overflow:hidden}
     .ps-d-gallery{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
     .ps-d-gallery::-webkit-scrollbar{display:none}
     .ps-d-shot{flex:0 0 100%;width:100%;height:100%;display:block;object-fit:contain;scroll-snap-align:center;background:var(--raised)}
-    .ps-d-details{margin:14px 0 2px}
-    .ps-d-details-h,.ps-d-desc-h{font-size:0.62rem;font-weight:800;letter-spacing:0.6px;text-transform:uppercase;color:var(--gold);margin:0 0 6px}
+    .ps-d-details{margin:0 0 2px}
+    .ps-d-desc-h{font-size:0.62rem;font-weight:800;letter-spacing:0.6px;text-transform:uppercase;color:var(--gold);margin:0 0 6px}
     .ps-d-desc-h{margin-top:14px}
+    .ps-d-details-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:10px;padding:12px 0;background:none;border:none;border-top:1px solid var(--bdr-med);font-family:inherit;font-size:0.78rem;font-weight:800;letter-spacing:0.6px;text-transform:uppercase;color:var(--gold);cursor:pointer}
+    .ps-d-details-chevron{font-size:0.85rem;transition:transform 0.2s}
+    .ps-d-details-toggle[aria-expanded="true"] .ps-d-details-chevron{transform:rotate(180deg)}
+    .ps-d-details-body{padding-top:6px}
     .ps-d-tbl{width:100%;border-collapse:collapse;font-size:0.8rem}
     .ps-d-tbl td{padding:6px 2px;border-bottom:1px solid var(--bdr-med);vertical-align:top}
     .ps-d-tbl tr:last-child td{border-bottom:none}
@@ -1549,7 +1554,7 @@
     .ps-d-iconrow{display:flex;gap:6px;flex-shrink:0;margin-top:1px}
     .ps-d-szrow{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}
     .ps-d-szchart-wrap:empty{display:none}
-    .ps-d-szchart{width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--gold);background:var(--gold-dim);border:1.5px solid var(--gold-bdr);border-radius:9px;padding:0;cursor:pointer}
+    .ps-d-szchart{height:38px;display:inline-flex;align-items:center;justify-content:center;padding:0 13px;font-family:inherit;font-size:0.78rem;font-weight:700;white-space:nowrap;color:var(--gold);background:var(--gold-dim);border:1.5px solid var(--gold-bdr);border-radius:9px;cursor:pointer}
     .ps-d-szchart:active{transform:scale(0.97)}
     .ps-d-sharebtn{width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--gold);background:var(--gold-dim);border:1.5px solid var(--gold-bdr);border-radius:9px;padding:0;cursor:pointer;font-family:inherit}
     .ps-d-sharebtn:active{transform:scale(0.97)}
