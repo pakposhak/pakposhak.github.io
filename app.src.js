@@ -2576,7 +2576,7 @@
       dm_title:'সাইজ বেছে নিন ও দাম দেখুন', dm_addbag:'ব্যাগে যোগ করুন', dm_addbag_n:'{n}টি আইটেম ব্যাগে যোগ করুন', dc_final:'চূড়ান্ত দাম:',
       bag_proceed:'আমার তথ্যে এগিয়ে যান →', bag_empty:'আপনার ব্যাগ খালি', bag_empty_sub:'পাকিস্তানি ব্র্যান্ড দেখুন আর + Add চেপে পণ্য এখানে যোগ করুন।', bag_browse:'🛍️ পণ্য ব্রাউজ করুন', bag_added:'ব্যাগে যোগ হয়েছে', bag_view:'ব্যাগ দেখুন',
       co_bag:'ব্যাগ', co_details:'তথ্য', co_review:'রিভিউ', co_pay:'পেমেন্ট',
-      nav_home:'হোম', nav_brands:'ব্র্যান্ড', nav_cart:'কার্ট', nav_how:'গাইড', nav_guide:'গাইড', nav_wish:'পছন্দ', nav_help:'সাহায্য',
+      nav_home:'স্টুডিও', nav_brands:'ব্র্যান্ড', nav_cart:'কার্ট', nav_how:'গাইড', nav_guide:'গাইড', nav_wish:'পছন্দ', nav_help:'সাহায্য',
       nav_luxe:'লাক্স', nav_bag:'ব্যাগ', nav_pricecheck:'দাম যাচাই',
       tl_help:'নতুন? শুরুটা এখান থেকে করুন:', tl_faq:'❓ কীভাবে কাজ করে ও আমাদের প্রতিশ্রুতি', tl_track:'📦 অর্ডার ট্র্যাক করুন', tl_weights:'⚖️ শিপিং ওজন', tl_wa:'💬 হোয়াটসঅ্যাপে চ্যাট',
       addmore_hint:'✓ পণ্যটি সেভ হয়েছে! আরেকটি যোগ করুন, বা আপনার তথ্য দিতে এগিয়ে যান।', addmore_btn:'➕ আরেকটি পণ্য যোগ করুন',
@@ -2609,8 +2609,8 @@
       js_not_brand:'❌ এটি ঠিক পণ্যের লিংক নয় — নিচের কোনো ব্র্যান্ড থেকে পণ্যের লিংক কপি করুন।',
       js_fill_required:'প্রতিটি পণ্যের লাল চিহ্নিত ঘরগুলো পূরণ করুন।',
       js_add_item_first:'আগে অন্তত একটি পণ্য অর্ডারে যোগ করুন।',
-      js_leave_confirm:'আপনার কার্টে পণ্য আছে। পাকিপোশাক ছেড়ে যাবেন? সেভ করা পণ্য এই ডিভাইসেই থাকবে।',
-      js_exit_confirm:'আপনি কি সত্যিই পাকিপোশাক থেকে বের হতে চান?',
+      js_leave_confirm:'আপনার কার্টে পণ্য আছে। PakPoshak ছেড়ে যাবেন? সেভ করা পণ্য এই ডিভাইসেই থাকবে।',
+      js_exit_confirm:'আপনি কি সত্যিই PakPoshak থেকে বের হতে চান?',
       js_details_required:'নাম, হোয়াটসঅ্যাপ নম্বর ও ডেলিভারির ঠিকানা — এই ঘরগুলো পূরণ করুন।',
       field_item:'এই পণ্যটি', field_category:'ক্যাটাগরি', field_price:'দাম', field_size:'সাইজ',
       js_missing_lead:'প্রায় হয়ে গেছে — শুধু দিন:',
@@ -6945,7 +6945,7 @@
     ],
     'home-w': [
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
-      { en_t:'Modest wear. Bold, confident.', en_s:'Abayas, hijabs, full-cover styles.', bn_t:'মডেস্ট ওয়্যার। কভারড, কনফিডেন্ট।', bn_s:'আবায়া, হিজাব, ফুল-কভার স্টাইল।' },
+      { en_t:'Modest wear. Bold, confident.', en_s:'Abayas, hijabs, full-cover styles.', bn_t:'মডেস্ট ওয়্যার। সাহসী, আত্মবিশ্বাসী।', bn_s:'আবায়া, হিজাব, ফুল-কভার স্টাইল।' },
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
       { en_t:'Modern & western. Co-ords, dresses, tops.', en_s:'Pakistani brands, contemporary cuts.', bn_t:'মডার্ন ও ওয়েস্টার্ন। কো-অর্ড, ড্রেস, টপ।', bn_s:'পাকিস্তানি ব্র্যান্ড, সমকালীন কাট।' },
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
@@ -6955,7 +6955,7 @@
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
       { en_t:'Pret & kurta. Men\'s everyday staples.', en_s:'Real prices from Pakistan, delivered to Bangladesh.', bn_t:'প্রেট ও কুর্তা। পুরুষের প্রতিদিনের পোশাক।', bn_s:'পাকিস্তান থেকে আসল দামে, বাংলাদেশে ডেলিভারি।' },
       // Change the background, keeping the model on the right side so that it is not blocked by texts.
-      { en_t:'Looking sharp this season.', en_s:'Embroidered kurtas to plain pret, all men\'s styles here.', bn_t:'ঈদ কামিজ। এই সিজনে দারুণ সাজুন।', bn_s:'এমব্রয়ডারি থেকে প্লেইন প্রেট, সব পুরুষের স্টাইল এখানে।' }
+      { en_t:'Looking sharp this season.', en_s:'Embroidered kurtas to plain pret, all men\'s styles here.', bn_t:'এই সিজনে দারুণ সাজুন।', bn_s:'এমব্রয়ডারি থেকে প্লেইন প্রেট, সব পুরুষের স্টাইল এখানে।' }
     ],
     'home-k': [
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital. "Cool, comfy, and easy." should be on the 2nd title line.
@@ -7019,7 +7019,7 @@
     ],
     'search-luxe': [
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
-      { en_t:'Search the designer houses', en_s:'Elan, Sana Safinaz, Asim Jofa and more. . ', bn_t:'ডিজাইনার হাউস খুঁজুন', bn_s:'এলান, সানা সাফিনাজ, আসিম জোফা ও আরও, আসল পিকেআর দামে।' },
+      { en_t:'Search the designer houses', en_s:'Elan, Sana Safinaz, Asim Jofa and more, with the real PKR price.', bn_t:'ডিজাইনার হাউস খুঁজুন', bn_s:'এলান, সানা সাফিনাজ, আসিম জোফা ও আরও, আসল পিকেআর দামে।' },
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
       { en_t:'Snap it. Find it. Order it.', en_s:'Search by photo across Pakistan\'s premium labels.', bn_t:'ছবি তুলুন, খুঁজুন, অর্ডার করুন', bn_s:'ছবি দিয়ে পাকিস্তানের প্রিমিয়াম ব্র্যান্ডে খুঁজুন।' }
     ],
@@ -8918,7 +8918,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-01-wa2';
+  const PSB_BUILD = '2026-07-01-bnfix';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
