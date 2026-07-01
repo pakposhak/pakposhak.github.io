@@ -2527,7 +2527,7 @@
       s_submitted:'Order Request Submitted!', s_confirm_wa:"Pay using the details below to complete your order. We'll only message you on WhatsApp if a product is unavailable or the weight is much higher than estimated.",
       s_stocktitle:'Stock Notice', s_stocktext:"Pakistani fashion items sell out fast. If anything goes out of stock before we place your order, we'll contact you on WhatsApp immediately and offer alternatives or a full refund.",
       s_orderid:'Your Order ID', s_track:'📦 Track My Order', s_howpay:'💳 How to Pay',
-      s_payafter:'Pay the total shown above using any method below.',
+      s_payafter:'Pay this exact amount using any method below.', s_amt_to_pay:'Amount to pay', s_amt_copy:'Copy amount', s_qr_title:'📱 Or scan to pay', s_qr_sub:'Bangla QR: works with bKash or any bank app', s_qr_hint:"Scan with your phone (easiest from a computer). On the same phone, screenshot it and scan from your app's gallery. Then enter the exact amount shown above.",
       s_moors_note:'Payments are collected by our partner Moors Attire, so seeing "Moors Attire" on your bKash, Nagad or bank receipt is correct and safe.',
       s_paid_title:'✅ Already Paid? Confirm Your Payment', s_paid_sub:"Enter your payment details below so we can match it to Order",
       s_amt_label:'Amount you paid (৳) *', s_method_label:'How you paid *', s_method_pick:'Choose…', s_trx_label:'Transaction ID *', s_trx_hint:'Shown on your bKash / Nagad screen right after payment', s_pay_wa:'Send screenshot on WhatsApp', s_receipt_opt:'Attach receipt instead (optional)',
@@ -2602,7 +2602,7 @@
       s_submitted:'অর্ডার রিকোয়েস্ট জমা হয়েছে!', s_confirm_wa:'অর্ডার শেষ করতে নিচের তথ্য দিয়ে পেমেন্ট করুন। কোনো পণ্য না থাকলে বা ওজন অনুমানের চেয়ে অনেক বেশি হলে কেবল তখনই আমরা হোয়াটসঅ্যাপে জানাব।',
       s_stocktitle:'স্টক নিয়ে একটু কথা', s_stocktext:'পাকিস্তানি ফ্যাশন খুব দ্রুত শেষ হয়ে যায়। অর্ডার দেওয়ার আগে কিছু শেষ হয়ে গেলে আমরা সঙ্গে সঙ্গে হোয়াটসঅ্যাপে জানাব, আর বিকল্প পণ্য বা পুরো টাকা ফেরত দেব।',
       s_orderid:'আপনার অর্ডার আইডি', s_track:'📦 অর্ডার ট্র্যাক করুন', s_howpay:'💳 যেভাবে পেমেন্ট করবেন',
-      s_payafter:'উপরে দেখানো মোট টাকা নিচের যেকোনো মাধ্যমে দিন।',
+      s_payafter:'নিচের যেকোনো মাধ্যমে ঠিক এই পরিমাণ টাকা দিন।', s_amt_to_pay:'যত টাকা দিতে হবে', s_amt_copy:'অংক কপি করুন', s_qr_title:'📱 অথবা স্ক্যান করে পেমেন্ট করুন', s_qr_sub:'বাংলা QR: বিকাশ বা যেকোনো ব্যাংক অ্যাপে চলে', s_qr_hint:'ফোন দিয়ে স্ক্যান করুন (কম্পিউটার থেকে সবচেয়ে সহজ)। একই ফোনে হলে স্ক্রিনশট নিয়ে অ্যাপের গ্যালারি থেকে স্ক্যান করুন। এরপর উপরে দেখানো সঠিক পরিমাণ টাকা দিন।',
       s_moors_note:'পেমেন্ট গ্রহণ করে আমাদের পার্টনার Moors Attire, তাই আপনার বিকাশ, নগদ বা ব্যাংক রসিদে "Moors Attire" দেখা সঠিক ও নিরাপদ।',
       s_paid_title:'✅ পেমেন্ট করেছেন? সেটি নিশ্চিত করুন', s_paid_sub:'আপনার পেমেন্টের তথ্য দিন, যাতে আমরা সেটি আপনার অর্ডারের সাথে মিলিয়ে নিতে পারি — অর্ডার',
       s_amt_label:'আপনি কত টাকা দিয়েছেন (৳) *', s_method_label:'কীভাবে দিয়েছেন *', s_method_pick:'বেছে নিন…', s_trx_label:'ট্রান্সঅ্যাকশন আইডি *', s_trx_hint:'আপনার bKash / Nagad রসিদে পাবেন', s_pay_wa:'স্ক্রিনশট WhatsApp-এ পাঠান', s_receipt_opt:'রসিদ যোগ করুন (ঐচ্ছিক)',
@@ -4217,6 +4217,8 @@
     if(amt && totalBdt) amt.value = totalBdt;
     const hint = document.getElementById('payExpectedHint');
     if(hint) hint.textContent = totalBdt ? ('Your order total: ৳' + Number(totalBdt).toLocaleString()) : '';
+    const totBar = document.getElementById('payTotalAmt');
+    if(totBar) totBar.textContent = totalBdt ? ('৳' + Number(totalBdt).toLocaleString()) : '৳0';
     window.__payOverride = false;
   }
 
@@ -4349,6 +4351,14 @@
       prompt('Copy this number:', num);
     });
   }
+  // Copy JUST the digits of the order total, so the buyer can paste it straight into the
+  // bKash / Nagad / bank amount field (no ৳ or commas). Reuses copyNum's clipboard + feedback.
+  function copyPayAmount(btn){
+    const box = document.getElementById('payConfirmBox');
+    const raw = String((box && box.dataset.total) || '').replace(/[^0-9]/g, '');
+    if(raw) copyNum(raw, btn);
+  }
+  window.copyPayAmount = copyPayAmount;
 
   function toggleWeightGuide(){
     const g = document.getElementById('weightGuide');
@@ -8893,7 +8903,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-01-back-genderfix';
+  const PSB_BUILD = '2026-07-01-payqr';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
