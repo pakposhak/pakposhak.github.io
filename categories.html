@@ -99,7 +99,7 @@
     .rail-divider { height: 1px; background: var(--border); margin: 4px 12px; }
 
     /* ── Right panel ── */
-    .cat-panel { flex: 1; overflow-y: auto; padding-bottom: 24px; }
+    .cat-panel { flex: 1; overflow-y: auto; padding-bottom: calc(24px + 68px + env(safe-area-inset-bottom)); }
 
     /* Category chips */
     .sec-title {
@@ -117,12 +117,30 @@
       gap: 10px; padding: 0 12px 14px;
     }
     .chip {
-      display: flex; flex-direction: column; cursor: pointer;
+      position: relative; display: flex; flex-direction: column; cursor: pointer;
       background: var(--surface); border: 1px solid var(--border);
       border-radius: 12px; overflow: hidden;
       transition: transform 0.12s, border-color 0.12s;
     }
     .chip:active { transform: scale(0.97); border-color: var(--gold); }
+    /* Picked state — multi-select before Apply (a category no longer navigates on tap). */
+    .chip.picked { border-color: var(--gold); border-width: 2px; }
+    .chip-check {
+      display: none; position: absolute; top: 6px; right: 6px; z-index: 2;
+      width: 22px; height: 22px; border-radius: 50%; background: var(--gold); color: #fff;
+      align-items: center; justify-content: center; font-size: 12px; font-weight: 700;
+      box-shadow: 0 2px 6px -1px rgba(0,0,0,.3);
+    }
+    .chip.picked .chip-check { display: flex; }
+    /* Floating "Apply" bar — hidden until at least one chip is picked. */
+    .apply-bar {
+      position: fixed; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom));
+      z-index: 20; padding: 14px; border: none; border-radius: 14px;
+      background: var(--gold); color: #fff; font-size: 15px; font-weight: 700;
+      font-family: inherit; cursor: pointer; box-shadow: 0 6px 20px -4px rgba(184,134,11,.5);
+    }
+    .apply-bar[hidden] { display: none; }
+    .apply-bar:active { opacity: 0.88; }
     /* Square image box: shows a coloured initials fallback, with the real product
        photo layered on top once it loads. */
     .chip-imgbox {
@@ -253,6 +271,9 @@
   <!-- Right panel -->
   <main class="cat-panel" id="catPanel" role="main"></main>
 </div>
+
+<!-- Floating Apply bar — hidden until at least one category chip is picked. -->
+<button type="button" class="apply-bar" id="applyBar" onclick="applyCats()" hidden>Apply<span id="applyCount"></span></button>
 
 <script>
 // ── Category tree ─────────────────────────────────────────────────────────────
@@ -465,6 +486,10 @@ function initials(name){ return name.split(/[\s\-\.&\/]+/).map(w=>w[0]||'').join
 let activeTab = 'w';
 let brandGender = 'all';
 let brandQuery  = '';
+// Multi-select for category chips (brand cards stay single-tap → straight to that brand's
+// page, unchanged). Picks reset on every tab switch — cross-department combos aren't
+// supported, so Apply always sends categories from ONE department at a time.
+let pickedCats = new Set();
 
 // ── Product-image thumbnails for category tiles ───────────────────────────────
 // Each category tile shows a real product photo, fetched once from the VPS search
@@ -532,9 +557,11 @@ function renderCats(g) {
       html += `<div class="chip-row">`;
       grp.items.forEach(([key, label]) => {
         const ini = label.split(/[\s\/\-–\(]+/).map(w=>w[0]||'').filter(Boolean).join('').slice(0,3).toUpperCase();
-        html += `<div class="chip" onclick="goProducts('${key}','${esc(label)}')" role="button" tabindex="0">
+        const on = pickedCats.has(key);
+        html += `<div class="chip${on?' picked':''}" data-key="${esc(key)}" onclick="toggleCatPick('${key}',this)" role="button" tabindex="0" aria-pressed="${on?'true':'false'}">
           <div class="chip-imgbox ${sec.cls}" data-cat="${esc(key)}">${esc(ini)}</div>
           <span class="chip-label">${esc(label)}</span>
+          <span class="chip-check" aria-hidden="true">&#10003;</span>
         </div>`;
       });
       html += `</div>`;
@@ -616,6 +643,8 @@ function switchTab(g, el) {
   document.querySelectorAll('.rail-item').forEach(i => i.classList.remove('active'));
   el.classList.add('active');
   activeTab = g;
+  pickedCats = new Set();   // switching departments resets the pick — no cross-department Apply
+  updateApplyBar();
   if (g === 'brands') renderBrands();
   else renderCats(g);
 }
@@ -625,9 +654,30 @@ function setBrandGender(v) {
   renderBrands();
 }
 
-// Tap a category chip → go to Browse Products with that category pre-filtered
-function goProducts(catKey, label) {
-  window.location.href = 'index.html?fromcat=' + encodeURIComponent(catKey);
+// Tap a category chip → toggle it picked (no navigation yet). Multiple chips can be picked
+// before tapping Apply, which sends them all together.
+function toggleCatPick(catKey, el) {
+  if (pickedCats.has(catKey)) pickedCats.delete(catKey); else pickedCats.add(catKey);
+  const on = pickedCats.has(catKey);
+  el.classList.toggle('picked', on);
+  el.setAttribute('aria-pressed', on ? 'true' : 'false');
+  updateApplyBar();
+}
+
+// Show/hide the floating Apply bar and keep its count current.
+function updateApplyBar() {
+  const bar = document.getElementById('applyBar');
+  if (!bar) return;
+  const n = pickedCats.size;
+  bar.hidden = n === 0;
+  const cnt = document.getElementById('applyCount');
+  if (cnt) cnt.textContent = n ? ' (' + n + ')' : '';
+}
+
+// Apply → go to Browse Products with every picked category applied together.
+function applyCats() {
+  if (!pickedCats.size) return;
+  window.location.href = 'index.html?fromcat=' + [...pickedCats].map(encodeURIComponent).join(',');
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
