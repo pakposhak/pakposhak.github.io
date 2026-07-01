@@ -2528,6 +2528,7 @@
       s_stocktitle:'Stock Notice', s_stocktext:"Pakistani fashion items sell out fast. If anything goes out of stock before we place your order, we'll contact you on WhatsApp immediately and offer alternatives or a full refund.",
       s_orderid:'Your Order ID', s_track:'📦 Track My Order', s_howpay:'💳 How to Pay',
       s_payafter:'Pay the total shown above using any method below.',
+      s_moors_note:'Payments are collected by our partner Moors Attire, so seeing "Moors Attire" on your bKash, Nagad or bank receipt is correct and safe.',
       s_paid_title:'✅ Already Paid? Confirm Your Payment', s_paid_sub:"Enter your payment details below so we can match it to Order",
       s_amt_label:'Amount you paid (৳) *', s_method_label:'How you paid *', s_method_pick:'Choose…', s_trx_label:'Transaction ID *', s_trx_hint:'Shown on your bKash / Nagad screen right after payment', s_pay_wa:'Send screenshot on WhatsApp', s_receipt_opt:'Attach receipt instead (optional)',
       s_upload_title:'📷 Upload payment screenshot (optional)', s_upload_main:'Tap to choose your payment screenshot', s_upload_sub:'bKash / Nagad / bank slip, JPG or PNG',
@@ -2602,6 +2603,7 @@
       s_stocktitle:'স্টক নিয়ে একটু কথা', s_stocktext:'পাকিস্তানি ফ্যাশন খুব দ্রুত শেষ হয়ে যায়। অর্ডার দেওয়ার আগে কিছু শেষ হয়ে গেলে আমরা সঙ্গে সঙ্গে হোয়াটসঅ্যাপে জানাব, আর বিকল্প পণ্য বা পুরো টাকা ফেরত দেব।',
       s_orderid:'আপনার অর্ডার আইডি', s_track:'📦 অর্ডার ট্র্যাক করুন', s_howpay:'💳 যেভাবে পেমেন্ট করবেন',
       s_payafter:'উপরে দেখানো মোট টাকা নিচের যেকোনো মাধ্যমে দিন।',
+      s_moors_note:'পেমেন্ট গ্রহণ করে আমাদের পার্টনার Moors Attire, তাই আপনার বিকাশ, নগদ বা ব্যাংক রসিদে "Moors Attire" দেখা সঠিক ও নিরাপদ।',
       s_paid_title:'✅ পেমেন্ট করেছেন? সেটি নিশ্চিত করুন', s_paid_sub:'আপনার পেমেন্টের তথ্য দিন, যাতে আমরা সেটি আপনার অর্ডারের সাথে মিলিয়ে নিতে পারি — অর্ডার',
       s_amt_label:'আপনি কত টাকা দিয়েছেন (৳) *', s_method_label:'কীভাবে দিয়েছেন *', s_method_pick:'বেছে নিন…', s_trx_label:'ট্রান্সঅ্যাকশন আইডি *', s_trx_hint:'আপনার bKash / Nagad রসিদে পাবেন', s_pay_wa:'স্ক্রিনশট WhatsApp-এ পাঠান', s_receipt_opt:'রসিদ যোগ করুন (ঐচ্ছিক)',
       s_upload_title:'📷 পেমেন্টের স্ক্রিনশট আপলোড করুন (ঐচ্ছিক)', s_upload_main:'পেমেন্টের স্ক্রিনশট বেছে নিতে ট্যাপ করুন', s_upload_sub:'বিকাশ / নগদ / ব্যাংক স্লিপ, JPG বা PNG',
@@ -8823,7 +8825,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-01-paymethods';
+  const PSB_BUILD = '2026-07-01-moors';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
