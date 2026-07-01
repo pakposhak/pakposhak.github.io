@@ -6524,6 +6524,10 @@
         const items = (j.products || []).filter(p => !psIsHidden(p));   // drop locally-known sold-outs
         psFiltered = append ? psFiltered.concat(items) : items;        // infinite scroll: accumulate loaded pages
         psHarvestThumbs(j.products);                                    // fill Shop-by-Category photos from this page
+        if(!append){
+          const _newFC = (_psActiveColl && psSel.cats.size) ? new Set(items.map(p=>p.cat).filter(Boolean)) : null;
+          if(_newFC !== psFacetCatsFiltered){ psFacetCatsFiltered = _newFC; psBuildCatFilter(); try{psBuildShopCat();}catch(e){} }
+        }
         psFeedLoading = false;
         if(append && !items.length){ psFeedDone = true; psFeedSetStatus(false); return; }   // server has no more → stop (guards against an over-counted total)
         psRender(append);
@@ -6715,7 +6719,7 @@
   // MULTI-SELECT (req): pick several categories — they combine as OR. Re-tapping a
   // category clears just that one; "All categories" clears the whole category filter.
   function psBuildCatFilter(){
-    const present = psApiMode ? (psFacetCats || new Set()) : (PS_CATALOG ? new Set(PS_CATALOG.map(p => p.cat)) : new Set());
+    const present = psApiMode ? (psFacetCatsFiltered || psFacetCats || new Set()) : (PS_CATALOG ? new Set(PS_CATALOG.map(p => p.cat)) : new Set());
     const sel = psSel.cats;
     let html = '';   // no "All categories" row (req) — open straight to the 3 majors; reset via re-tap or the resbar "Clear Filters"
     ['w','m','k'].forEach(g => {
@@ -6844,7 +6848,8 @@
       const own = PS_SHOP_TILES.filter(x => x.g === psShopGender);
       t = [...own.filter(x => !PS_WEST_KEYS.has(x.key)), ...own.filter(x => PS_WEST_KEYS.has(x.key))];   // western tiles LAST within Women/Men (req)
     }
-    if(psFacetCats && psFacetCats.size) t = t.filter(x => (x.cats || [x.key]).some(k => psFacetCats.has(k)));
+    const _fc = psFacetCatsFiltered || psFacetCats;
+    if(_fc && _fc.size) t = t.filter(x => (x.cats || [x.key]).some(k => _fc.has(k)));
     return t;
   }
   function psSetShopGender(g){
@@ -6853,8 +6858,8 @@
     // Women/Men/Kids → that dept's real categories; West → the cross-gender western keys. Preserves an
     // active price/brand selection; a later category-tile tap narrows from here.
     const deptCats = (g === 'x') ? [...PS_WEST_KEYS] : _psDeptCats(g);
-    psSel = { prices:new Set(psSel.prices), cats:new Set(deptCats), brands:new Set(psSel.brands) };
-    psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort();
+    psSel = { prices:new Set(psSel.prices), cats:new Set(deptCats), brands:new Set(psSel.brands), colors:new Set(psSel.colors||[]) };
+    psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildColourFilter(); psBuildSort();
     psBuildShopCat();
     psApply();
   }
@@ -6897,8 +6902,8 @@
     // All clears the department filter — full grid, carousel keeps its current gender's shortcuts.
     if(g === 'all'){
       if(typeof psSel !== 'undefined'){
-        psSel = { prices:new Set(psSel.prices), cats:new Set(), brands:new Set(psSel.brands) };
-        try { psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply(); } catch(e){}
+        psSel = { prices:new Set(psSel.prices), cats:new Set(), brands:new Set(psSel.brands), colors:new Set(psSel.colors||[]) };
+        try { psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildColourFilter(); psBuildSort(); psApply(); } catch(e){}
       }
     } else {
       try { psSetShopGender(g); } catch(e){}
@@ -7237,19 +7242,19 @@
     try { psSaleOnly = false; psNewOnly = false; psSort = ''; } catch(e){}
     try { psQuery=''; psSizeQ=''; var a=document.getElementById('psSearchMobile'), b=document.getElementById('psSearchDesktop'); if(a)a.value=''; if(b)b.value=''; } catch(e){}
     if(t.kind === 'q'){
-      psSel = { prices:new Set(), cats:new Set(), brands:new Set() };
+      psSel = { prices:new Set(), cats:new Set(), brands:new Set(), colors:new Set() };
       if(window.psSearchInput) psSearchInput(t.val); else { try { psApply(); } catch(e){} }
       return;
     }
     if(t.kind === 'cat'){
-      psSel = { prices:new Set(psSel.prices), cats:new Set(String(t.val).split(',')), brands:new Set() };
+      psSel = { prices:new Set(psSel.prices), cats:new Set(String(t.val).split(',')), brands:new Set(), colors:new Set(psSel.colors||[]) };
     } else {
-      psSel = { prices:new Set(), cats:new Set(), brands:new Set() };
+      psSel = { prices:new Set(), cats:new Set(), brands:new Set(), colors:new Set() };
       if(t.kind === 'new') psNewOnly = true;
       else if(t.kind === 'sale') psSaleOnly = true;
       else if(t.kind === 'price') psSel.prices = new Set([parseInt(t.val, 10)]);
     }
-    try { psBuildCatFilter(); psBuildBrandFilter(); psBuildPriceFilter(); psBuildSort(); psApply(); } catch(e){}
+    try { psBuildCatFilter(); psBuildBrandFilter(); psBuildPriceFilter(); psBuildColourFilter(); psBuildSort(); psApply(); } catch(e){}
   }
   function psShowCollHdr(t){
     var el = document.getElementById('psCollHdr'); if(!el) return;
@@ -7277,10 +7282,11 @@
   }
   function psClearColl(){
     _psActiveColl = '';
+    psFacetCatsFiltered = null;
     var el = document.getElementById('psCollHdr'); if(el) el.style.display = 'none';
     try { psSaleOnly=false; psNewOnly=false; psSort=''; psQuery=''; psSizeQ=''; } catch(e){}
-    psSel = { prices:new Set(), cats:new Set(), brands:new Set() };
-    try { psBuildCatFilter(); psBuildBrandFilter(); psBuildPriceFilter(); psBuildSort(); psApply(); } catch(e){}
+    psSel = { prices:new Set(), cats:new Set(), brands:new Set(), colors:new Set() };
+    try { psBuildCatFilter(); psBuildBrandFilter(); psBuildPriceFilter(); psBuildColourFilter(); psBuildSort(); psApply(); } catch(e){}
     try{ var u = new URL(location.href); u.searchParams.delete('coll'); history.replaceState(null,'',u.toString()); }catch(e){}
     try{ psRenderColls(); }catch(e){}
     try{ psUpdateBack(); }catch(e){}
@@ -7608,8 +7614,8 @@
     // psSizeQ + the search box + price/sort/sale/new. Also preserve an explicit faceted category
     // narrowing; only widen to the whole department's cats for a bare brand tap (no category yet).
     const keepCats = (psSel.cats.size && !_psIsWholeDeptCats(psSel.cats)) ? psSel.cats : new Set(deptCats);
-    psSel = { prices:new Set(psSel.prices), cats:new Set(keepCats), brands:new Set([name]) };
-    psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply();
+    psSel = { prices:new Set(psSel.prices), cats:new Set(keepCats), brands:new Set([name]), colors:new Set(psSel.colors||[]) };
+    psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildColourFilter(); psBuildSort(); psApply();
     psScrollGridUnderCarousel();
   }
   function psPaintTile(key, url){
@@ -7656,8 +7662,8 @@
     // that category, Agha Noor only"). A typed brand/keyword lives in psQuery (free-text FTS —
     // API mode can't always pre-resolve it to a brand chip), so PRESERVE psQuery + psSizeQ + the
     // search box + the brand / price / sort / sale / new state; only set the chosen category.
-    psSel = { prices:new Set(psSel.prices), cats:new Set(cats), brands:new Set(psSel.brands) };
-    psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply();
+    psSel = { prices:new Set(psSel.prices), cats:new Set(cats), brands:new Set(psSel.brands), colors:new Set(psSel.colors||[]) };
+    psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildColourFilter(); psBuildSort(); psApply();
     psScrollGridUnderCarousel();
   }
   // Scroll the grid to the top, but offset by the pinned carousel's LIVE height (it varies with
@@ -7680,7 +7686,7 @@
       grid.scrollIntoView({ behavior:'smooth', block:'start' });
     }
   }
-  function psIsLanding(){ return !psSel.cats.size && !psSel.brands.size && !psSel.prices.size && !psSaleOnly && !psNewOnly && !psSort && !psQuery && !psSizeQ; }
+  function psIsLanding(){ return !psSel.cats.size && !psSel.brands.size && !psSel.prices.size && !psSel.colors.size && !psSaleOnly && !psNewOnly && !psSort && !psQuery && !psSizeQ; }
   // Update which tile is highlighted as active (the single selected category OR brand) — no rebuild.
   function psSyncShopActive(){
     const sc = document.getElementById('psShopScroll'); if(!sc) return;
@@ -8870,11 +8876,11 @@
           for(var _i=0;_i<_gb.length;_i++){ var _on = _gb[_i].getAttribute('data-g')===g; _gb[_i].classList.toggle('on', _on); _gb[_i].setAttribute('aria-pressed', _on?'true':'false'); }
           if(typeof psMoveGenInd === 'function') psMoveGenInd();
         }catch(e){}
-        psSel = { prices:new Set(psSel.prices), cats:new Set([fromCat]), brands:new Set() };
-        try{ psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply(); }catch(e){}
+        psSel = { prices:new Set(psSel.prices), cats:new Set([fromCat]), brands:new Set(), colors:new Set(psSel.colors||[]) };
+        try{ psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildColourFilter(); psBuildSort(); psApply(); }catch(e){}
       } else if(fromBrand){
-        psSel = { prices:new Set(psSel.prices), cats:new Set(), brands:new Set([fromBrand]) };
-        try{ psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildSort(); psApply(); }catch(e){}
+        psSel = { prices:new Set(psSel.prices), cats:new Set(), brands:new Set([fromBrand]), colors:new Set(psSel.colors||[]) };
+        try{ psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildColourFilter(); psBuildSort(); psApply(); }catch(e){}
       }
       var clean = new URL(location.href);
       clean.searchParams.delete('fromcat'); clean.searchParams.delete('brand');
@@ -8887,7 +8893,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-01-back';
+  const PSB_BUILD = '2026-07-01-back-genderfix';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
