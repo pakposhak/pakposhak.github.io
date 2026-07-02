@@ -97,13 +97,29 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
 
   let products = (cat.products || []).filter(p => p && p.u && p.pkr && p.img);
 
+  // Brands most sought-after in Bangladesh (req 2026-07-02) — surfaced FIRST in the default
+  // Studio feed. Mirrors BD_FAMOUS in app.src.js (keep both lists in sync); a small quota of
+  // OTHER brands is still interleaved (OTHER_PER_PAGE below) so the feed isn't a wall of just
+  // these names. This file has no "store" concept — Luxe filtering happens client-side via
+  // price bucket, so this tier applies there too (no price-band exclusion — Danish 2026-07-02).
+  const BD_FAMOUS = new Set([
+    'Khaadi', 'Sana Safinaz', 'Maria B', 'Gul Ahmed', 'Sapphire', 'ETHNC', 'Asim Jofa', 'Bareeze', 'Alkaram Studio',
+    'Limelight', 'Bonanza Satrangi', 'J. Junaid Jamshed', 'Nishat Linen', 'Edenrobe', 'Outfitters', 'Elan',
+    'Zara Shahjahan', 'Sobia Nazir', 'Beechtree', 'Generation', 'Cross Stitch', 'Charizma', 'Baroque',
+    'Sania Maskatiya', 'Mushq', 'Afrozeh', 'Faiza Saqlain', 'Zainab Chottani', 'Maryum N Maria',
+  ]);
+
   // brand round-robin index, SCOPED PER CATEGORY (nth item of this brand WITHIN this category,
   // in source order). Category-scoped (not global) so any category filter OR keyword search
   // round-robins brands one-per-round instead of clustering the brand whose first catalog
   // items happen to match (req: "kids" returned 6/8 from one brand). Within a category tier in
   // qSort, _bi=0 items (one per brand) sort first, then _bi=1, etc.
   const seen = {};
-  products.forEach(p => { const k = (p.b || '') + '|' + (p.cat || ''); p._bi = (seen[k] = (seen[k] || 0) + 1) - 1; });
+  products.forEach(p => {
+    const k = (p.b || '') + '|' + (p.cat || '');
+    p._bi = (seen[k] = (seen[k] || 0) + 1) - 1;
+    p._bdt = landed(p.pkr, p.cat);   // precomputed once — reused by the DB insert below
+  });
   // ── Default landing order (req 2026-06-20): NO new-first. A WOMEN-PRET hero feed with a
   // light, EVERY-PAGE accent of a couple sale + one-two girls items; everything else trails.
   // Brand round-robin is a HIGH-priority sort key so every page / category / search shows
@@ -132,19 +148,24 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
     || (sizeOf(b) - sizeOf(a))                   // then best-stocked
     || ((b.pub || 0) - (a.pub || 0));            // then newer
   const isGirls = c => /^kids_girls_/.test(c || '');
-  const qMain  = products.filter(p => !p.sale && !isGirls(p.cat)).sort(qSort);   // women-pret-first hero feed
+  const qMainAll = products.filter(p => !p.sale && !isGirls(p.cat)).sort(qSort);
+  const qMain  = qMainAll.filter(p =>  BD_FAMOUS.has(p.b));   // Dhaka-famous-brand hero feed (req 2026-07-02)
+  const qOther = qMainAll.filter(p => !BD_FAMOUS.has(p.b));   // everyone else — a sprinkled accent, not excluded
   const qSale  = products.filter(p =>  p.sale).sort(qSort);
   const qGirls = products.filter(p => !p.sale && isGirls(p.cat)).sort(qSort);
-  const PAGE = 24, SALE_PER_PAGE = 3, GIRLS_PER_PAGE = 2;   // per page: a couple sale + one-two girls accents
+  // per page: a couple sale + one-two girls + a couple other-brand accents
+  const PAGE = 24, SALE_PER_PAGE = 3, GIRLS_PER_PAGE = 2, OTHER_PER_PAGE = 2;
   const ordered = [];
-  let iM = 0, iS = 0, iG = 0;
-  while (iM < qMain.length || iS < qSale.length || iG < qGirls.length) {
-    const start = ordered.length; let sale = 0, girls = 0;
+  let iM = 0, iS = 0, iG = 0, iO = 0;
+  while (iM < qMain.length || iS < qSale.length || iG < qGirls.length || iO < qOther.length) {
+    const start = ordered.length; let sale = 0, girls = 0, other = 0;
     while (ordered.length - start < PAGE) {
       const slot = ordered.length - start;
       if (iG < qGirls.length && girls < GIRLS_PER_PAGE && (slot === 8 || slot === 18)) { ordered.push(qGirls[iG++]); girls++; }
       else if (iS < qSale.length && sale < SALE_PER_PAGE && (slot === 4 || slot === 12 || slot === 20)) { ordered.push(qSale[iS++]); sale++; }
-      else if (iM < qMain.length) { ordered.push(qMain[iM++]); }     // women-pret hero fill
+      else if (iO < qOther.length && other < OTHER_PER_PAGE && (slot === 14 || slot === 22)) { ordered.push(qOther[iO++]); other++; }
+      else if (iM < qMain.length) { ordered.push(qMain[iM++]); }     // Dhaka-famous women-pret hero fill
+      else if (iO < qOther.length) { ordered.push(qOther[iO++]); }   // leftover other-brand
       else if (iG < qGirls.length) { ordered.push(qGirls[iG++]); }   // leftover girls
       else if (iS < qSale.length) { ordered.push(qSale[iS++]); }     // leftover sale
       else break;
@@ -185,7 +206,7 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
       b: p.b || '', t: p.t || '', u: p.u || '', img: p.img || '',
       pkr: p.pkr | 0, cat: p.cat || '', sz: JSON.stringify(p.sz || []),
       sale: p.sale ? 1 : 0, pub: p.pub | 0,
-      bdt: landed(p.pkr, p.cat), gender: genderOf(p.cat), ord: i,
+      bdt: p._bdt, gender: genderOf(p.cat), ord: i,
       dual: p.dual ? 1 : 0, altform: p.altform || '', altbdt: (p.dual ? landed(p.altpkr | 0, p.altcat || '') : 0),
     }));
   });

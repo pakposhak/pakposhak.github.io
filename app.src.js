@@ -2482,7 +2482,7 @@
       hiw_confirm_pay:'Confirm price & pay (bKash/Nagad)',
       step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search 150+ Pakistani brands…',
-      tab_brands:'Browse brands', tab_products:'Browse products', gen_all:'All', gen_women:'Women', gen_men:'Men', gen_kids:'Kids', menu_language:'Language', menu_theme:'Theme', menu_guide:'Guide', menu_share:'Share PakPoshak', search_bar_ph:'Search products, brands…', search_page_ph:'Search products and 150+ brands', sp_remind_t:"Check any product's price in PKR", sp_remind_d:"Found it on a brand's own site? Paste the link to see the real price of any listed brand in PKR.", sp_paste:'Paste a product link', sp_visual:'Visual search', sp_fit:'Fit assistant', sp_soon:'Coming soon', vis_title:'Search by photo', vis_sub:'Find pieces that look like your photo', vis_cam:'Camera', vis_up:'Gallery', vis_cancel:'Cancel', vis_loading:'Finding similar styles', vis_chip:'Items like your photo', vis_clear:'Clear photo search', vis_none:'No close matches. Try another photo.', vis_notapparel:'Please use a clothing photo.', vis_notcarried:"This type of item is not in our listing. Try a clothing photo.", vis_err:'Could not search just now. Please try again.', vis_slow:'Visual search is warming up. Please try again in a moment.', vis_badfile:'Please choose a photo.', vis_filter_brand:'Brands', vis_filter_type:'Type', vis_pret:'Pret', vis_unstitch:'Unstitched', vis_type_all:'All', vis_allbrands:'All brands', vis_brands_n:'brands', dd_search:'Type a brand…', dd_none:'No match', fit_title:'Fit Assistant', fit_sub:'Find your size in any brand', fit_wear:'I usually wear', fit_in:'in', fit_size_in:'size', fit_inches:'All measurements in inches', fit_length:'Length (most important)', fit_measlink:"Don't know? Enter measurements", fit_meashide:'Use my usual size instead', fit_chest:'Chest', fit_waist:'Waist', fit_hip:'Hip', fit_regular:'Regular', fit_slim:'Slim', fit_relaxed:'Relaxed', fit_scope:'Show fits in', fit_allbrands:'All brands', fit_go:'Show what fits me', fit_wa:'Save to my WhatsApp number (optional)', fit_chip:'Your size', fit_chip_collar:'Collar', fit_chip_waist:'Waist', fit_yoursize:'your size', fit_type_top:'Tops & Suits', fit_type_shirt:'Shirts', fit_type_bottom:'Bottoms', fit_needchest:'Enter at least your chest measurement.', fit_needref:'Choose your size and a brand.', fit_none:'Nothing in your size right now. Try another size or brand.', fit_err:'Could not check sizes just now. Please try again.', fit_loading:'Finding your size', fit_hdr:'Your size, every brand', fit_pieces:'pieces', fit_b_your:'✓ Your size', fit_b_likely:'≈ Likely fit', fit_b_closest:'≈ Closest size', fit_wear_collar:'My shirt collar', fit_wear_waist:'My waist (inches)', fit_chest_approx:'≈ your chest', wa_err_empty:'Please enter your WhatsApp number', wa_err_short:'WhatsApp number looks incomplete', wa_err_long:'WhatsApp number is too long', wa_err_prefix:'Please check your WhatsApp number', sp_brands:'Browse all 150+ brands ›', sp_colls_hd:'Curated collections', sp_checkprice:'check price ›', bb_back:'‹ Back to products', store_everyday:'Everyday', store_premium:'Premium', colls_hd:'Collections',prodcat_hd:'Product category',products_hd:'Products', filters_sort:'Filters & sort', filters_done:'Done', sort_hd:'Sort',
+      tab_brands:'Browse brands', tab_products:'Browse products', gen_all:'All', gen_women:'Women', gen_men:'Men', gen_kids:'Kids', menu_language:'Language', menu_theme:'Theme', menu_guide:'Guide', menu_share:'Share PakPoshak', search_bar_ph:'Search products, brands…', search_page_ph:'Search products and 150+ brands', sp_remind_t:"Check any product's price in PKR", sp_remind_d:"Found it on a brand's own site? Paste the link to see the real price of any listed brand in PKR.", sp_paste:'Paste a product link', sp_visual:'Visual search', sp_fit:'Fit assistant', sp_soon:'Coming soon', vis_title:'Search by photo', vis_sub:'Find pieces that look like your photo', vis_cam:'Camera', vis_up:'Gallery', vis_cancel:'Cancel', vis_loading:'Finding similar styles', vis_chip:'Items like your photo', vis_clear:'Clear photo search', vis_none:'No close matches. Try another photo.', vis_notapparel:'Please use a clothing photo.', vis_notcarried:"This type of item is not in our listing. Try a clothing photo.", vis_err:'Could not search just now. Please try again.', vis_slow:'Visual search is warming up. Please try again in a moment.', vis_badfile:'Please choose a photo.', vis_filter_brand:'Brands', vis_filter_type:'Type', vis_pret:'Pret', vis_unstitch:'Unstitched', vis_type_all:'All', vis_allbrands:'All brands', vis_brands_n:'brands', dd_search:'Type a brand…', dd_none:'No match', fit_title:'Fit Assistant', fit_sub:'Find your size in any brand', fit_wear:'I usually wear', fit_in:'in', fit_size_in:'size', fit_inches:'All measurements in inches', fit_length:'Length (most important)', fit_measlink:"Don't know? Enter measurements", fit_meashide:'Use my usual size instead', fit_chest:'Chest', fit_waist:'Waist', fit_hip:'Hip', fit_regular:'Regular', fit_slim:'Slim', fit_relaxed:'Relaxed', fit_scope:'Show fits in', fit_allbrands:'All brands', fit_go:'Show what fits me', fit_wa:'Save to my WhatsApp number (optional)', fit_chip:'Your size', fit_chip_collar:'Collar', fit_chip_waist:'Waist', fit_yoursize:'your size', fit_type_top:'Tops & Suits', fit_type_shirt:'Shirts', fit_type_bottom:'Bottoms', fit_needchest:'Enter at least your chest measurement.', fit_needref:'Choose your size and a brand.', fit_none:'Nothing in your size right now. Try another size or brand.', fit_err:'Could not check sizes just now. Please try again.', fit_loading:'Finding your size', fit_hdr:'Your size, every brand', fit_pieces:'pieces', fit_b_your:'✓ Your size', fit_b_likely:'≈ Likely fit', fit_b_closest:'≈ Closest size', fit_wear_collar:'My shirt collar', fit_wear_waist:'My waist (inches)', fit_chest_approx:'≈ your chest', wa_err_empty:'Please enter your WhatsApp number', wa_err_short:'WhatsApp number looks incomplete', wa_err_long:'WhatsApp number is too long', wa_err_prefix:'Please check your WhatsApp number', sp_brands:'Browse all 150+ brands ›', sp_colls_hd:'Curated collections', sp_checkprice:'check price ›', bb_back:'‹ Back to products', store_everyday:'Everyday', store_premium:'Premium', colls_hd:'Collections',prodcat_hd:'Product category',products_hd:'Products', filters_sort:'Filters & sort', filters_done:'Done', ps_fb_apply:'Apply', sort_hd:'Sort',
       ps_price:'Price (৳ delivered)', ps_price_short:'Price Filters', ps_category:'Product Category', ps_category_short:'Categories', ps_brands:'Brands', ps_colour:'Colour', ps_clear:'Clear Filters', ps_valueprop:'Any Pakistani brand → delivered to Bangladesh 🇧🇩', ps_morebrands:"Can't find it? Browse all 155 brands →",
       ps_allcats:'All categories', ps_loading:'Loading products…', ps_loadfail:'Could not load products — please try again.',
       ps_results:'products', ps_add:'Add', ps_prev:'Prev', ps_next:'Next', ps_page:'Page',
@@ -2553,7 +2553,7 @@
       hiw_confirm_pay:'দাম নিশ্চিত করে পেমেন্ট (বিকাশ/নগদ)',
       step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
       lbl_browse:'একটি ব্র্যান্ড দেখুন', search_ph:'🔍 ১৫০+ পাকিস্তানি ব্র্যান্ড খুঁজুন…',
-      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', gen_all:'সব', gen_women:'নারী', gen_men:'পুরুষ', gen_kids:'শিশু', menu_language:'ভাষা', menu_theme:'থিম', menu_guide:'গাইড', menu_share:'PakPoshak শেয়ার করুন', search_bar_ph:'পণ্য, ব্র্যান্ড খুঁজুন…', search_page_ph:'পণ্য ও ১৫০+ ব্র্যান্ড খুঁজুন', sp_remind_t:'যেকোনো পণ্যের দাম PKR-তে যাচাই করুন', sp_remind_d:'ব্র্যান্ডের নিজস্ব সাইটে পেয়েছেন? লিংক পেস্ট করে যেকোনো লিস্টেড ব্র্যান্ডের আসল দাম PKR-তে দেখুন।', sp_colls_hd:'কিউরেটেড কালেকশন', sp_paste:'পণ্যের লিংক পেস্ট করুন', sp_visual:'ভিজ্যুয়াল সার্চ', sp_fit:'ফিট অ্যাসিস্ট্যান্ট', sp_soon:'শীঘ্রই আসছে', vis_title:'ছবি দিয়ে খুঁজুন', vis_sub:'আপনার ছবির মতো পণ্য খুঁজুন', vis_cam:'ক্যামেরা', vis_up:'গ্যালারি', vis_cancel:'বাতিল', vis_loading:'মিল খুঁজছি', vis_chip:'আপনার ছবির মতো পণ্য', vis_clear:'ছবি সার্চ মুছুন', vis_none:'কাছাকাছি মিল নেই। অন্য ছবি দিন।', vis_notapparel:'অনুগ্রহ করে পোশাকের ছবি দিন।', vis_notcarried:'এই ধরনের পণ্য আমাদের লিস্টে নেই। পোশাকের ছবি দিয়ে খুঁজুন।', vis_err:'এখন খোঁজা গেল না। আবার চেষ্টা করুন।', vis_slow:'ভিজ্যুয়াল সার্চ প্রস্তুত হচ্ছে। একটু পরে আবার চেষ্টা করুন।', vis_badfile:'একটি ছবি নির্বাচন করুন।', vis_filter_brand:'ব্র্যান্ড', vis_filter_type:'ধরন', vis_pret:'প্রেট', vis_unstitch:'আনস্টিচড', vis_type_all:'সব', vis_allbrands:'সব ব্র্যান্ড', vis_brands_n:'ব্র্যান্ড', dd_search:'ব্র্যান্ড লিখুন…', dd_none:'মিল নেই', fit_title:'ফিট অ্যাসিস্ট্যান্ট', fit_sub:'যেকোনো ব্র্যান্ডে আপনার সাইজ খুঁজুন', fit_wear:'আমি সাধারণত পরি', fit_in:'এই ব্র্যান্ডে', fit_size_in:'সাইজ', fit_inches:'সব মাপ ইঞ্চিতে', fit_length:'লম্বা (সবচেয়ে জরুরি)', fit_measlink:'জানেন না? মাপ লিখুন', fit_meashide:'আমার সাধারণ সাইজ ব্যবহার করুন', fit_chest:'বুক', fit_waist:'কোমর', fit_hip:'হিপ', fit_regular:'রেগুলার', fit_slim:'স্লিম', fit_relaxed:'রিল্যাক্সড', fit_scope:'যেখানে দেখাবে', fit_allbrands:'সব ব্র্যান্ড', fit_go:'আমার মাপের পণ্য দেখান', fit_wa:'আমার WhatsApp নম্বরে সেভ করুন (ঐচ্ছিক)', fit_chip:'আপনার সাইজ', fit_chip_collar:'কলার', fit_chip_waist:'কোমর', fit_yoursize:'আপনার সাইজ', fit_type_top:'টপস ও স্যুট', fit_type_shirt:'শার্ট', fit_type_bottom:'বটমস', fit_needchest:'অন্তত আপনার বুকের মাপ লিখুন।', fit_needref:'আপনার সাইজ ও একটি ব্র্যান্ড বাছুন।', fit_none:'এখন আপনার সাইজে কিছু নেই। অন্য সাইজ বা ব্র্যান্ড দিন।', fit_err:'এখন সাইজ যাচাই করা গেল না। আবার চেষ্টা করুন।', fit_loading:'আপনার সাইজ খুঁজছি', fit_hdr:'আপনার মাপ, সব ব্র্যান্ডে', fit_pieces:'পিস', fit_b_your:'✓ আপনার মাপ', fit_b_likely:'≈ সম্ভাব্য মাপ', fit_b_closest:'≈ নিকটতম মাপ', fit_wear_collar:'আমার শার্টের কলার', fit_wear_waist:'আমার কোমর (ইঞ্চি)', fit_chest_approx:'≈ আপনার চেস্ট', wa_err_empty:'আপনার হোয়াটসঅ্যাপ নম্বর লিখুন', wa_err_short:'হোয়াটসঅ্যাপ নম্বরটি অসম্পূর্ণ মনে হচ্ছে', wa_err_long:'হোয়াটসঅ্যাপ নম্বরটি অনেক বড়', wa_err_prefix:'আপনার হোয়াটসঅ্যাপ নম্বর যাচাই করুন', sp_brands:'সব ১৫০+ ব্র্যান্ড দেখুন ›', sp_checkprice:'দাম দেখুন ›', bb_back:'‹ পণ্যে ফিরে যান', store_everyday:'এভরিডে', store_premium:'প্রিমিয়াম', colls_hd:'কালেকশন',prodcat_hd:'প্রোডাক্ট ক্যাটাগরি',products_hd:'পণ্য', filters_sort:'ফিল্টার ও সর্ট', filters_done:'সম্পন্ন', sort_hd:'সর্ট',
+      tab_brands:'ব্র্যান্ড দেখুন', tab_products:'পণ্য খুঁজুন', gen_all:'সব', gen_women:'নারী', gen_men:'পুরুষ', gen_kids:'শিশু', menu_language:'ভাষা', menu_theme:'থিম', menu_guide:'গাইড', menu_share:'PakPoshak শেয়ার করুন', search_bar_ph:'পণ্য, ব্র্যান্ড খুঁজুন…', search_page_ph:'পণ্য ও ১৫০+ ব্র্যান্ড খুঁজুন', sp_remind_t:'যেকোনো পণ্যের দাম PKR-তে যাচাই করুন', sp_remind_d:'ব্র্যান্ডের নিজস্ব সাইটে পেয়েছেন? লিংক পেস্ট করে যেকোনো লিস্টেড ব্র্যান্ডের আসল দাম PKR-তে দেখুন।', sp_colls_hd:'কিউরেটেড কালেকশন', sp_paste:'পণ্যের লিংক পেস্ট করুন', sp_visual:'ভিজ্যুয়াল সার্চ', sp_fit:'ফিট অ্যাসিস্ট্যান্ট', sp_soon:'শীঘ্রই আসছে', vis_title:'ছবি দিয়ে খুঁজুন', vis_sub:'আপনার ছবির মতো পণ্য খুঁজুন', vis_cam:'ক্যামেরা', vis_up:'গ্যালারি', vis_cancel:'বাতিল', vis_loading:'মিল খুঁজছি', vis_chip:'আপনার ছবির মতো পণ্য', vis_clear:'ছবি সার্চ মুছুন', vis_none:'কাছাকাছি মিল নেই। অন্য ছবি দিন।', vis_notapparel:'অনুগ্রহ করে পোশাকের ছবি দিন।', vis_notcarried:'এই ধরনের পণ্য আমাদের লিস্টে নেই। পোশাকের ছবি দিয়ে খুঁজুন।', vis_err:'এখন খোঁজা গেল না। আবার চেষ্টা করুন।', vis_slow:'ভিজ্যুয়াল সার্চ প্রস্তুত হচ্ছে। একটু পরে আবার চেষ্টা করুন।', vis_badfile:'একটি ছবি নির্বাচন করুন।', vis_filter_brand:'ব্র্যান্ড', vis_filter_type:'ধরন', vis_pret:'প্রেট', vis_unstitch:'আনস্টিচড', vis_type_all:'সব', vis_allbrands:'সব ব্র্যান্ড', vis_brands_n:'ব্র্যান্ড', dd_search:'ব্র্যান্ড লিখুন…', dd_none:'মিল নেই', fit_title:'ফিট অ্যাসিস্ট্যান্ট', fit_sub:'যেকোনো ব্র্যান্ডে আপনার সাইজ খুঁজুন', fit_wear:'আমি সাধারণত পরি', fit_in:'এই ব্র্যান্ডে', fit_size_in:'সাইজ', fit_inches:'সব মাপ ইঞ্চিতে', fit_length:'লম্বা (সবচেয়ে জরুরি)', fit_measlink:'জানেন না? মাপ লিখুন', fit_meashide:'আমার সাধারণ সাইজ ব্যবহার করুন', fit_chest:'বুক', fit_waist:'কোমর', fit_hip:'হিপ', fit_regular:'রেগুলার', fit_slim:'স্লিম', fit_relaxed:'রিল্যাক্সড', fit_scope:'যেখানে দেখাবে', fit_allbrands:'সব ব্র্যান্ড', fit_go:'আমার মাপের পণ্য দেখান', fit_wa:'আমার WhatsApp নম্বরে সেভ করুন (ঐচ্ছিক)', fit_chip:'আপনার সাইজ', fit_chip_collar:'কলার', fit_chip_waist:'কোমর', fit_yoursize:'আপনার সাইজ', fit_type_top:'টপস ও স্যুট', fit_type_shirt:'শার্ট', fit_type_bottom:'বটমস', fit_needchest:'অন্তত আপনার বুকের মাপ লিখুন।', fit_needref:'আপনার সাইজ ও একটি ব্র্যান্ড বাছুন।', fit_none:'এখন আপনার সাইজে কিছু নেই। অন্য সাইজ বা ব্র্যান্ড দিন।', fit_err:'এখন সাইজ যাচাই করা গেল না। আবার চেষ্টা করুন।', fit_loading:'আপনার সাইজ খুঁজছি', fit_hdr:'আপনার মাপ, সব ব্র্যান্ডে', fit_pieces:'পিস', fit_b_your:'✓ আপনার মাপ', fit_b_likely:'≈ সম্ভাব্য মাপ', fit_b_closest:'≈ নিকটতম মাপ', fit_wear_collar:'আমার শার্টের কলার', fit_wear_waist:'আমার কোমর (ইঞ্চি)', fit_chest_approx:'≈ আপনার চেস্ট', wa_err_empty:'আপনার হোয়াটসঅ্যাপ নম্বর লিখুন', wa_err_short:'হোয়াটসঅ্যাপ নম্বরটি অসম্পূর্ণ মনে হচ্ছে', wa_err_long:'হোয়াটসঅ্যাপ নম্বরটি অনেক বড়', wa_err_prefix:'আপনার হোয়াটসঅ্যাপ নম্বর যাচাই করুন', sp_brands:'সব ১৫০+ ব্র্যান্ড দেখুন ›', sp_checkprice:'দাম দেখুন ›', bb_back:'‹ পণ্যে ফিরে যান', store_everyday:'এভরিডে', store_premium:'প্রিমিয়াম', colls_hd:'কালেকশন',prodcat_hd:'প্রোডাক্ট ক্যাটাগরি',products_hd:'পণ্য', filters_sort:'ফিল্টার ও সর্ট', filters_done:'সম্পন্ন', ps_fb_apply:'প্রয়োগ করুন', sort_hd:'সর্ট',
       ps_price:'দাম (৳, ডেলিভারিসহ)', ps_price_short:'দাম ফিল্টার', ps_category:'পণ্যের ক্যাটাগরি', ps_category_short:'ক্যাটাগরি', ps_brands:'ব্র্যান্ড', ps_colour:'রঙ', ps_clear:'ফিল্টার মুছুন', ps_valueprop:'যেকোনো পাকিস্তানি ব্র্যান্ড → বাংলাদেশে ডেলিভারি 🇧🇩', ps_morebrands:'খুঁজে পাচ্ছেন না? সব ১৫৫টি ব্র্যান্ড দেখুন →',
       ps_allcats:'সব ক্যাটাগরি', ps_loading:'পণ্য আসছে…', ps_loadfail:'পণ্য আনা গেল না — আবার চেষ্টা করুন।',
       ps_results:'পণ্য', ps_add:'যোগ করুন', ps_prev:'আগের', ps_next:'পরের', ps_page:'পৃষ্ঠা',
@@ -3811,6 +3811,26 @@
 
   function esc(s){
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  // Scraped brand descriptions (body_html) sometimes carry raw HTML-entity text (esc() would
+  // otherwise double-escape "&amp;" into "&amp;amp;", showing literally on screen), adjacent
+  // text blocks glued together with no separator ("SuitShirt:"), and a trailing run of scraped
+  // page-widget text (a "Read more" toggle, or a whole share-button block: "Share/Link/Close
+  // share/Copy link"). Clean this up BEFORE esc() — never after, esc()'s output must stay HTML-safe.
+  const _DESC_JUNK_LINE = /^(read|show)\s+(more|less)\.?$|^(share|link|close share|copy link)$/i;
+  function cleanDesc(s){
+    let t = String(s || '');
+    const ta = document.createElement('textarea');
+    ta.innerHTML = t;
+    t = ta.value.replace(/\r\n?/g, '\n');
+    t = t.replace(/([a-z])([A-Z])/g, '$1 $2');       // "SuitShirt:" -> "Suit Shirt:"
+    t = t.replace(/([A-Z])([A-Z][a-z])/g, '$1 $2');  // "PLUMShipping" -> "PLUM Shipping"
+    // Strip a trailing run of scraped UI-widget lines (share buttons, read-more toggles).
+    const lines = t.split('\n');
+    while(lines.length && (lines[lines.length - 1].trim() === '' || _DESC_JUNK_LINE.test(lines[lines.length - 1].trim()))) lines.pop();
+    t = lines.join('\n');
+    t = t.replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+    return t;
   }
 
   // ── SUMMARY MODAL ─────────────────────────────────────────────────────────
@@ -5565,6 +5585,8 @@
       (psSel.prices||new Set()).forEach(function(i){ var b=PS_BUCKETS[i]; if(b) chips.push({kind:'price',val:String(i),lbl:b.lbl}); });
       (psSel.colors||new Set()).forEach(function(cl){ chips.push({kind:'color',val:cl,lbl:cl}); });
     }
+    if(typeof psSaleOnly!=='undefined' && psSaleOnly) chips.push({kind:'sale',val:'1',lbl:tr('ps_sale')});
+    if(typeof psNewOnly!=='undefined' && psNewOnly) chips.push({kind:'new',val:'1',lbl:tr('ps_new')});
     if(qVal) chips.push({kind:'query',val:qVal,lbl:qVal});
     var active=chips.length>0;
     row.hidden=!active;
@@ -5586,6 +5608,8 @@
     else if(kind==='cat') psSel.cats.delete(value);
     else if(kind==='price') psSel.prices.delete(parseInt(value,10));
     else if(kind==='color') psSel.colors.delete(value);
+    else if(kind==='sale') psSaleOnly=false;
+    else if(kind==='new') psNewOnly=false;
     else if(kind==='query'){
       psQuery=''; psSizeQ='';
       psSel.cats=new Set(); psSel.brands=new Set();
@@ -5593,7 +5617,7 @@
       if(typeof psUpdateSearchClearBtn==='function')psUpdateSearchClearBtn('');
       if(typeof psSearchHint==='function')psSearchHint('',new Set(),new Set());
     }
-    try{ psBuildCatFilter(); psBuildBrandFilter(); psBuildPriceFilter(); psBuildColourFilter(); psApply(); psScrollToResults(); }catch(err){}
+    try{ psBuildCatFilter(); psBuildBrandFilter(); psBuildPriceFilter(); psBuildColourFilter(); psBuildSort(); psApply(); psScrollToResults(); }catch(err){}
   }
   window.psRemoveChip=psRemoveChip;
   function psSearchInput(val){
@@ -6638,7 +6662,7 @@
     const pb = document.getElementById('psPriceBtn'); if(pb) pb.classList.toggle('on', psSel.prices.size > 0);
     try{ psBuildQuickBar(); }catch(e){}
   }
-  function psTogglePrice(i){ if(psSel.prices.has(i)) psSel.prices.delete(i); else psSel.prices.add(i); psBuildPriceFilter(); psApply(); psScrollToResults(); }
+  function psTogglePrice(i){ if(psSel.prices.has(i)) psSel.prices.delete(i); else psSel.prices.add(i); psBuildPriceFilter(); psApply(); }
   // Compact price filter: the 6 buckets live in a popover under the "Price ৳" chip on
   // the results bar (keeps the first view product-first). Toggle + click-away to close.
   function psTogglePricePop(){
@@ -6746,7 +6770,7 @@
     const cn = document.getElementById('psColourCount'); if(cn) cn.textContent = psSel.colors.size || '';
     const cb = document.getElementById('psColourBtn'); if(cb) cb.classList.toggle('on', psSel.colors.size > 0);
   }
-  function psToggleColour(name){ if(psSel.colors.has(name)) psSel.colors.delete(name); else psSel.colors.add(name); psBuildColourFilter(); psApply(); psScrollToResults(); }
+  function psToggleColour(name){ if(psSel.colors.has(name)) psSel.colors.delete(name); else psSel.colors.add(name); psBuildColourFilter(); psApply(); }
   window.psToggleColour = psToggleColour;
 
   // Grouped category dropdown: Women's/Men's/Kids → subgroup → categories. Built
@@ -7411,34 +7435,24 @@
       var src=document.getElementById(m[0]), dst=document.getElementById(m[1]);
       if(src && dst && src.parentNode!==dst) dst.appendChild(src);
     });
-    // Auto-close the bar a couple of seconds after the last filter tap so it doesn't
-    // linger over the products. Delegated (the sort/price buttons are re-rendered), and
-    // debounced — each new tap resets the timer, so multi-select stays open until done.
-    var bar = document.getElementById('psFilterBar');
-    if(bar && !bar._psAcWired){
-      bar._psAcWired = true;
-      bar.addEventListener('click', function(e){
-        if(e.target.closest('.ps-sortbtn, .ps-bucket, .ps-clr-chip, .ps-fb-clear')) psFilterBarAutoClose();
-      });
-    }
-  }
-  var _psFilterBarTimer = null;
-  function psFilterBarAutoClose(){
-    clearTimeout(_psFilterBarTimer);
-    _psFilterBarTimer = setTimeout(function(){
-      var bar = document.getElementById('psFilterBar');
-      if(bar && !bar.hasAttribute('hidden')) psFilters(false);
-    }, 2200);
   }
   // Toggle the inline, pinned filter bar (no separate page/sheet). Called with no
-  // argument from the funnel = toggle; a boolean forces open/closed.
+  // argument from the funnel = toggle; a boolean forces open/closed. Stays open across
+  // any number of taps — only Apply (psFbApply) or re-tapping the funnel closes it, so
+  // picking several filters in a row never gets cut short by a timer.
   function psFilters(open){
     var bar=document.getElementById('psFilterBar'); if(!bar) return;
-    clearTimeout(_psFilterBarTimer);   // cancel any pending auto-close on a manual toggle
     var show = (typeof open === 'boolean') ? open : bar.hasAttribute('hidden');
     if(show) bar.removeAttribute('hidden'); else bar.setAttribute('hidden','');
     var btn=document.getElementById('psFiltBtn'); if(btn) btn.setAttribute('aria-expanded', show?'true':'false');
   }
+  // The ONE deliberate "I'm done picking" action for the filter sheet: close it, then
+  // land on the Products heading — the hard rule applies once, on Apply, not per-tap.
+  function psFbApply(){
+    psFilters(false);
+    try{ psScrollToResults(); }catch(e){}
+  }
+  window.psFbApply = psFbApply;
   window.psFilters = psFilters; window.psFiltersInit = psFiltersInit;
   function psShopBrandsMode(){
     if(psShopMode === 'brand'){ psShopMode = 'cat'; }                 // re-tap Brands → back to categories
@@ -7908,8 +7922,8 @@
     if(btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
   }
   // Select a sort option (re-tapping the active one clears it back to the curated default).
-  function psSetSortVal(s){ psSort = (psSort === s) ? '' : s; const p = document.getElementById('psSortPop'); if(p) p.classList.remove('open'); psBuildSort(); psApply(); psScrollToResults(); }
-  function psSetSort(s){ psSort = (psSort === s) ? '' : s; psBuildSort(); psApply(); psScrollToResults(); }   // legacy alias
+  function psSetSortVal(s){ psSort = (psSort === s) ? '' : s; const p = document.getElementById('psSortPop'); if(p) p.classList.remove('open'); psBuildSort(); psApply(); }
+  function psSetSort(s){ psSort = (psSort === s) ? '' : s; psBuildSort(); psApply(); }   // legacy alias
   // Sale and New are FILTERS (Sale ⇄ New mutually exclusive); the ৳ price sort orders WITHIN
   // whichever is active. Outside-click closes the sort popover (mirrors the price popover).
   document.addEventListener('click', function(e){
@@ -7919,8 +7933,8 @@
       const btn = document.getElementById('psSortBtn'); if(btn) btn.setAttribute('aria-expanded','false');
     }
   });
-  function psToggleSale(){ psSaleOnly = !psSaleOnly; if(psSaleOnly) psNewOnly = false; psBuildSort(); psApply(); psScrollToResults(); }   // Sale ⇄ New
-  function psToggleNew(){ psNewOnly = !psNewOnly; if(psNewOnly) psSaleOnly = false; psBuildSort(); psApply(); psScrollToResults(); }       // New = newest non-sale; price sorts within
+  function psToggleSale(){ psSaleOnly = !psSaleOnly; if(psSaleOnly) psNewOnly = false; psBuildSort(); psApply(); }   // Sale ⇄ New
+  function psToggleNew(){ psNewOnly = !psNewOnly; if(psNewOnly) psSaleOnly = false; psBuildSort(); psApply(); }       // New = newest non-sale; price sorts within
   // Dynamic "12,000+ products · 80+ brands — want more?" note; counts come from the
   // live catalogue (rounded down) so they grow/shrink with the listing automatically.
   function psUpdateNote(){
@@ -8339,13 +8353,8 @@
       +     `<button type="button" class="ps-d-add" onclick="psCloseDetail();psAdd(${idx})">+ ${tr('ps_add')}</button>`
       +     `<button type="button" class="ps-d-more" onclick="psMoreFromBrand(${idx})">${tr('ps_d_more')} ${esc(p.b)} →</button>`
       +   `</div>`
-      +   `<button type="button" class="ps-d-details-toggle" onclick="psToggleDetails(this)" aria-expanded="false">`
-      +     `<span>${tr('ps_d_details_h')}</span><span class="ps-d-details-chevron" aria-hidden="true">▾</span>`
-      +   `</button>`
-      +   `<div class="ps-d-details-body" id="psDDetailsBody" hidden>`
-      +     `<div class="ps-d-details" id="psDDetails"></div>`
-      +     `<div class="ps-d-loading" id="psDDesc">${tr('ps_d_loading')}</div>`
-      +   `</div>`
+      +   `<div class="ps-d-details" id="psDDetails"></div>`
+      +   `<div class="ps-d-loading" id="psDDesc">${tr('ps_d_loading')}</div>`
       +   `<button type="button" class="ps-d-open" onclick="psOpenFull(${idx})">${tr('ps_d_open')} ↗</button>`
       + `</div>`;
     document.getElementById('psDetail').style.display = 'flex';
@@ -8428,13 +8437,13 @@
     if(detEl){
       const rows = st.rows.slice().sort((a, b) => { const ia = PS_DET_ORDER.indexOf(a[0].toLowerCase()), ib = PS_DET_ORDER.indexOf(b[0].toLowerCase()); return (ia < 0 ? 50 : ia) - (ib < 0 ? 50 : ib); });
       detEl.innerHTML = rows.length
-        ? `<table class="ps-d-tbl"><tbody>`
+        ? `<div class="ps-d-details-h">${esc(tr('ps_d_details_h'))}</div><table class="ps-d-tbl"><tbody>`
           + rows.map(r => `<tr><td class="ps-d-k">${esc(r[0])}</td><td class="ps-d-v">${esc(r[1])}</td></tr>`).join('')
           + `</tbody></table>`
         : '';
     }
     if(descEl){
-      if(st.desc) descEl.innerHTML = `<div class="ps-d-desc-h">Description</div><div class="ps-d-desc">${esc(st.desc)}</div><div class="ps-d-disc">Actual colour may vary slightly from the image.</div>`;
+      if(st.desc) descEl.innerHTML = `<div class="ps-d-desc-h">Description</div><div class="ps-d-desc">${esc(cleanDesc(st.desc))}</div><div class="ps-d-disc">Actual colour may vary slightly from the image.</div>`;
       else if(st.done) descEl.innerHTML = (st.rows.length || st.imgs.length) ? '' : (st.any ? tr('ps_d_nodesc') : tr('ps_d_nofetch'));
     }
     // Size Chart button (only when this product/brand has a chart image) → opens the simple image
@@ -8449,14 +8458,6 @@
         }
       } else if(scEl.firstChild){ scEl.innerHTML = ''; }
     }
-  }
-  // Details/description starts collapsed (req: keep the popup's first view short, just the
-  // "Product Details" heading) — tap to reveal the Fabric/Care table + brand description.
-  function psToggleDetails(btn){
-    const body = document.getElementById('psDDetailsBody'); if(!body) return;
-    const open = body.hidden;
-    body.hidden = !open;
-    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
   }
   // First-ever popup gallery with more than one photo: nudge it sideways once so buyers
   // learn they can swipe (same cue already used on the product grid, ≤1× ever here since
@@ -9024,27 +9025,31 @@
 
   // ── Deep-link from categories.html ──────────────────────────────────────────
   // The full categories page (categories.html, opened by the ▦ button on the gender
-  // rail) links back here with ?fromcat=<catKey> or ?brand=<name>. Apply that filter
-  // on load, sync the department rail to the category's gender, then clean the URL.
+  // rail) links back here with ?fromcat=<catKey>[,<catKey>...] (comma-joined when the
+  // buyer multi-picked several chips there before tapping Apply) or ?brand=<name>.
+  // Apply that filter on load, sync the department rail to the category's gender
+  // (categories.html resets the pick on every tab switch, so every key here is always
+  // from ONE department), then clean the URL.
   (function(){
     try{
       var q = new URLSearchParams(location.search);
-      var fromCat = q.get('fromcat');
+      var fromCatRaw = q.get('fromcat');
+      var fromCats = fromCatRaw ? fromCatRaw.split(',').map(function(s){ return s.trim(); }).filter(Boolean) : [];
       var fromBrand = q.get('brand');
-      if(!fromCat && !fromBrand) return;
+      if(!fromCats.length && !fromBrand) return;
       try{ switchBrowse('products'); }catch(e){}
-      if(fromCat){
-        var g = /^mens_/.test(fromCat) ? 'm' : /^kids_/.test(fromCat) ? 'k' : 'w';
+      if(fromCats.length){
+        var g = /^mens_/.test(fromCats[0]) ? 'm' : /^kids_/.test(fromCats[0]) ? 'k' : 'w';
         // Highlight the gender on the rail VISUALLY only. We deliberately do NOT call
         // psSetGender()/psSetShopGender() here: on a cold load those kick off an async
-        // department-index fetch whose callback would clobber our single-category filter.
+        // department-index fetch whose callback would clobber our category filter.
         try{
           var _root = document.documentElement; _root.setAttribute('data-gender', g);
           var _gb = document.querySelectorAll('#psGenRail .ps-gen');
           for(var _i=0;_i<_gb.length;_i++){ var _on = _gb[_i].getAttribute('data-g')===g; _gb[_i].classList.toggle('on', _on); _gb[_i].setAttribute('aria-pressed', _on?'true':'false'); }
           if(typeof psMoveGenInd === 'function') psMoveGenInd();
         }catch(e){}
-        psSel = { prices:new Set(psSel.prices), cats:new Set([fromCat]), brands:new Set(), colors:new Set(psSel.colors||[]) };
+        psSel = { prices:new Set(psSel.prices), cats:new Set(fromCats), brands:new Set(), colors:new Set(psSel.colors||[]) };
         try{ psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildColourFilter(); psBuildSort(); psApply(); }catch(e){}
       } else if(fromBrand){
         psSel = { prices:new Set(psSel.prices), cats:new Set(), brands:new Set([fromBrand]), colors:new Set(psSel.colors||[]) };
@@ -9061,7 +9066,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-02-desktop5';
+  const PSB_BUILD = '2026-07-02-desktop6';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),

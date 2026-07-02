@@ -99,6 +99,15 @@
     /* Clear filters: sits at the RIGHT of the price row (order pushes it last, margin pins it right). */
     .ps-fb-clear{order:99;margin-left:auto;font-size:0.72rem;font-weight:700;padding:5px 12px;border:1.5px solid var(--bdr-med);border-radius:14px;background:none;color:var(--txt-sec);cursor:pointer;font-family:inherit;white-space:nowrap}
     .ps-fb-clear:hover,.ps-fb-clear:active{border-color:var(--gold);color:var(--gold)}
+    /* Apply — a small chip right next to Clear filters in the SAME row (not its own row). The
+       one deliberate close action: closes the sheet AND lands on Products (psFbApply). */
+    .ps-fb-apply{order:100;font-size:0.72rem;font-weight:700;padding:5px 12px;border:none;border-radius:14px;background:var(--accent);color:#fff;cursor:pointer;font-family:inherit;white-space:nowrap}
+    .ps-fb-apply:active{opacity:0.85}
+    /* Filter section ends at Colour: hide the search bar + category-pills row + quick sort/price
+       row while the sheet is open, so nothing appears below Colour until it's closed. */
+    #psFilterBar:not([hidden]) ~ .ps-searchbar,
+    #psFilterBar:not([hidden]) ~ #psCatBar,
+    #psFilterBar:not([hidden]) ~ #psQuickBar{display:none}
     /* Myntra-style sliding underline (#2): one indicator slides + resizes under the active gender tab (psMoveGenInd). */
     .ps-gen-ind{position:absolute;bottom:-1px;left:0;width:0;height:2.5px;background:var(--accent);border-radius:2px;opacity:0;pointer-events:none;transition:left .3s cubic-bezier(.4,0,.2,1),width .3s cubic-bezier(.4,0,.2,1),opacity .2s ease,background-color .18s}
     /* #3 "every interaction transitions, never a hard refresh": grid cross-fade on reset, a view-swap
@@ -1540,13 +1549,9 @@
     .ps-d-gallery{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
     .ps-d-gallery::-webkit-scrollbar{display:none}
     .ps-d-shot{flex:0 0 100%;width:100%;height:100%;display:block;object-fit:contain;scroll-snap-align:center;background:var(--raised)}
-    .ps-d-details{margin:0 0 2px}
-    .ps-d-desc-h{font-size:0.62rem;font-weight:800;letter-spacing:0.6px;text-transform:uppercase;color:var(--gold);margin:0 0 6px}
+    .ps-d-details{margin:14px 0 2px}
+    .ps-d-details-h,.ps-d-desc-h{font-size:0.62rem;font-weight:800;letter-spacing:0.6px;text-transform:uppercase;color:var(--gold);margin:0 0 6px}
     .ps-d-desc-h{margin-top:14px}
-    .ps-d-details-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:10px;padding:12px 0;background:none;border:none;border-top:1px solid var(--bdr-med);font-family:inherit;font-size:0.78rem;font-weight:800;letter-spacing:0.6px;text-transform:uppercase;color:var(--gold);cursor:pointer}
-    .ps-d-details-chevron{font-size:0.85rem;transition:transform 0.2s}
-    .ps-d-details-toggle[aria-expanded="true"] .ps-d-details-chevron{transform:rotate(180deg)}
-    .ps-d-details-body{padding-top:6px}
     .ps-d-tbl{width:100%;border-collapse:collapse;font-size:0.8rem}
     .ps-d-tbl td{padding:6px 2px;border-bottom:1px solid var(--bdr-med);vertical-align:top}
     .ps-d-tbl tr:last-child td{border-bottom:none}
