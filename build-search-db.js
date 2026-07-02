@@ -107,6 +107,7 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
     'Limelight', 'Bonanza Satrangi', 'J. Junaid Jamshed', 'Nishat Linen', 'Edenrobe', 'Outfitters', 'Elan',
     'Zara Shahjahan', 'Sobia Nazir', 'Beechtree', 'Generation', 'Cross Stitch', 'Charizma', 'Baroque',
     'Sania Maskatiya', 'Mushq', 'Afrozeh', 'Faiza Saqlain', 'Zainab Chottani', 'Maryum N Maria',
+    'Agha Noor',
   ]);
 
   // brand round-robin index, SCOPED PER CATEGORY (nth item of this brand WITHIN this category,

@@ -755,7 +755,7 @@
        Moors Attire, so buyers aren't alarmed to see a different name on their receipt. -->
   <div style="display:flex;align-items:flex-start;gap:9px;background:var(--gold-dim);border:1px solid var(--gold-bdr);border-radius:10px;padding:10px 13px;margin-bottom:16px">
     <span style="font-size:1rem;line-height:1.35">🛡️</span>
-    <div style="font-size:0.76rem;line-height:1.5;color:var(--txt-sec)" data-i18n="s_moors_note">Payments are collected by our partner Moors Attire, so seeing "Moors Attire" on your bKash, Nagad or bank receipt is correct and safe.</div>
+    <div style="font-size:0.76rem;line-height:1.5;color:var(--txt-sec)" data-i18n="s_moors_note">Payments are collected by our partner Moors Attire, so seeing "Moors Attire" on your bank or wallet receipt is correct and safe.</div>
   </div>
 
   <!-- Payment grid — 2 columns on desktop, 1 on mobile -->
@@ -773,21 +773,6 @@
       <div style="display:flex;justify-content:space-between;align-items:center;background:var(--gold-dim);border-radius:8px;padding:8px 12px">
         <span style="font-size:1.1rem;font-weight:700;color:var(--txt);letter-spacing:1px">01352-018131</span>
         <button onclick="copyNum('01352018131',this)" style="background:var(--gold);border:none;color:#1a1206;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
-      </div>
-    </div>
-
-    <!-- Nagad -->
-    <div style="background:var(--raised);border:1px solid var(--gold-bdr);border-radius:12px;padding:14px 16px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-        <span style="font-size:1.4rem">🟠</span>
-        <div>
-          <div style="font-weight:700;color:var(--txt);font-size:0.95rem">Nagad</div>
-          <div style="font-size:0.68rem;background:var(--gold-dim);color:var(--gold);border-radius:8px;padding:1px 7px;display:inline-block;font-weight:700;margin-top:1px">SEND MONEY</div>
-        </div>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;background:var(--gold-dim);border-radius:8px;padding:8px 12px">
-        <span style="font-size:1.1rem;font-weight:700;color:var(--txt);letter-spacing:1px">01851-948690</span>
-        <button onclick="copyNum('01851948690',this)" style="background:var(--gold);border:none;color:#1a1206;border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:opacity 0.15s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">Copy</button>
       </div>
     </div>
 
@@ -831,15 +816,16 @@
 
   </div><!-- end payment grid -->
 
-  <!-- Scan-to-pay (Bangla QR) — ONE code works with bKash AND any bank app. Best from a computer
-       (scan the on-screen code with your phone); on the same phone, screenshot it and scan from the
-       app's gallery. The QR image is Danish's authoritative Bangla-QR card (merchant 01352018131),
-       used as-is so it stays scannable — do NOT regenerate it. -->
+  <!-- Scan-to-pay (unified Bangla QR) — ONE code, works with ANY Bangladeshi bank app, mobile wallet
+       (bKash, Nagad, Rocket …) or card app on the national Bangla-QR / NPSB network. Best from a
+       computer (scan the on-screen code with your phone); on the same phone, screenshot it and scan
+       from the app's gallery. The QR image is Danish's authoritative City Bank citypay Bangla-QR card
+       (merchant MOORS ATTIRE, QR ID 15053B52), used as-is so it stays scannable — do NOT regenerate it. -->
   <div style="background:var(--raised);border:1px solid var(--gold-bdr);border-radius:12px;padding:16px;margin-bottom:20px;text-align:center">
     <div style="font-weight:700;color:var(--txt);font-size:0.95rem;margin-bottom:2px" data-i18n="s_qr_title">📱 Or scan to pay</div>
-    <div style="font-size:0.74rem;color:var(--txt-sec);margin-bottom:12px" data-i18n="s_qr_sub">Bangla QR: works with bKash or any bank app</div>
-    <img src="bkash-qr.jpg" alt="bKash Bangla QR for Moors Attire" width="210" style="width:210px;max-width:78%;height:auto;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.12)"/>
-    <div style="font-size:0.72rem;color:var(--txt-muted);margin-top:10px;line-height:1.55" data-i18n="s_qr_hint">Scan with your phone (easiest from a computer). On the same phone, screenshot it and scan from your app's gallery. Then enter the exact amount shown above.</div>
+    <div style="font-size:0.74rem;color:var(--txt-sec);margin-bottom:12px" data-i18n="s_qr_sub">One Bangla QR for any bank or wallet: bKash, Nagad, Rocket and 46 banks.</div>
+    <img src="bangla-qr.jpg" alt="Bangla QR (City Bank citypay) for Moors Attire" width="250" style="width:250px;max-width:86%;height:auto;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.12)"/>
+    <div style="font-size:0.72rem;color:var(--txt-muted);margin-top:10px;line-height:1.55" data-i18n="s_qr_hint">Open any bank app, bKash, Nagad, Rocket or your card app, tap scan and point it here (easiest from a computer). On the same phone, screenshot this and scan it from your app's gallery. Then pay the exact amount shown above.</div>
   </div>
 
   <!-- ═══ PAYMENT CONFIRMATION — TrxID-first, WhatsApp fallback, receipt optional ═══ -->
@@ -1329,7 +1315,7 @@
   <input type="hidden" name="item_count" id="hf_count"/>
   <input type="hidden" name="order_items" id="hf_items"/>
   <input type="hidden" name="cart_links" id="hf_cart_links"/>
-  <input type="hidden" name="payment_info" value="bKash Payment: 01352018131 | Nagad Send Money: 01851948690 | City Bank – Moors Attire A/C: 1324897775001 | UCBL – Moors Attire A/C: 7862141003465221"/>
+  <input type="hidden" name="payment_info" value="bKash Payment: 01352018131 | City Bank – Moors Attire A/C: 1324897775001 | UCBL – Moors Attire A/C: 7862141003465221 | Bangla QR (City Bank citypay): MOORS ATTIRE, any bank or wallet"/>
 </form>
 
 <script src="app.js?b=__PSB_BUILD__" defer></script>

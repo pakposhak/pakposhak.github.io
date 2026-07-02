@@ -2551,8 +2551,8 @@
       s_submitted:'Order Request Submitted!', s_confirm_wa:"Pay using the details below to complete your order. We'll only message you on WhatsApp if a product is unavailable or the weight is much higher than estimated.",
       s_stocktitle:'Stock Notice', s_stocktext:"Pakistani fashion items sell out fast. If anything goes out of stock before we place your order, we'll contact you on WhatsApp immediately and offer alternatives or a full refund.",
       s_orderid:'Your Order ID', s_track:'📦 Track My Order', s_howpay:'💳 How to Pay',
-      s_payafter:'Pay this exact amount using any method below.', s_amt_to_pay:'Amount to pay', s_amt_copy:'Copy amount', s_qr_title:'📱 Or scan to pay', s_qr_sub:'Bangla QR: works with bKash or any bank app', s_qr_hint:"Scan with your phone (easiest from a computer). On the same phone, screenshot it and scan from your app's gallery. Then enter the exact amount shown above.",
-      s_moors_note:'Payments are collected by our partner Moors Attire, so seeing "Moors Attire" on your bKash, Nagad or bank receipt is correct and safe.',
+      s_payafter:'Pay this exact amount using any method below.', s_amt_to_pay:'Amount to pay', s_amt_copy:'Copy amount', s_qr_title:'📱 Or scan to pay', s_qr_sub:'One Bangla QR for any bank or wallet: bKash, Nagad, Rocket and 46 banks.', s_qr_hint:"Open any bank app, bKash, Nagad, Rocket or your card app, tap scan and point it here (easiest from a computer). On the same phone, screenshot this and scan it from your app's gallery. Then pay the exact amount shown above.",
+      s_moors_note:'Payments are collected by our partner Moors Attire, so seeing "Moors Attire" on your bank or wallet receipt is correct and safe.',
       s_paid_title:'✅ Already Paid? Confirm Your Payment', s_paid_sub:"Enter your payment details below so we can match it to Order",
       s_amt_label:'Amount you paid (৳) *', s_method_label:'How you paid *', s_method_pick:'Choose…', s_trx_label:'Transaction ID *', s_trx_hint:'Shown on your bKash / Nagad screen right after payment', s_pay_wa:'Send screenshot on WhatsApp', s_receipt_opt:'Attach receipt instead (optional)',
       s_upload_title:'📷 Upload payment screenshot (optional)', s_upload_main:'Tap to choose your payment screenshot', s_upload_sub:'bKash / Nagad / bank slip, JPG or PNG',
@@ -2623,8 +2623,8 @@
       s_submitted:'অর্ডার রিকোয়েস্ট জমা হয়েছে!', s_confirm_wa:'অর্ডার শেষ করতে নিচের তথ্য দিয়ে পেমেন্ট করুন। কোনো পণ্য না থাকলে বা ওজন অনুমানের চেয়ে অনেক বেশি হলে কেবল তখনই আমরা হোয়াটসঅ্যাপে জানাব।',
       s_stocktitle:'স্টক নিয়ে একটু কথা', s_stocktext:'পাকিস্তানি ফ্যাশন খুব দ্রুত শেষ হয়ে যায়। অর্ডার দেওয়ার আগে কিছু শেষ হয়ে গেলে আমরা সঙ্গে সঙ্গে হোয়াটসঅ্যাপে জানাব, আর বিকল্প পণ্য বা পুরো টাকা ফেরত দেব।',
       s_orderid:'আপনার অর্ডার আইডি', s_track:'📦 অর্ডার ট্র্যাক করুন', s_howpay:'💳 যেভাবে পেমেন্ট করবেন',
-      s_payafter:'নিচের যেকোনো মাধ্যমে ঠিক এই পরিমাণ টাকা দিন।', s_amt_to_pay:'যত টাকা দিতে হবে', s_amt_copy:'অংক কপি করুন', s_qr_title:'📱 অথবা স্ক্যান করে পেমেন্ট করুন', s_qr_sub:'বাংলা QR: বিকাশ বা যেকোনো ব্যাংক অ্যাপে চলে', s_qr_hint:'ফোন দিয়ে স্ক্যান করুন (কম্পিউটার থেকে সবচেয়ে সহজ)। একই ফোনে হলে স্ক্রিনশট নিয়ে অ্যাপের গ্যালারি থেকে স্ক্যান করুন। এরপর উপরে দেখানো সঠিক পরিমাণ টাকা দিন।',
-      s_moors_note:'পেমেন্ট গ্রহণ করে আমাদের পার্টনার Moors Attire, তাই আপনার বিকাশ, নগদ বা ব্যাংক রসিদে "Moors Attire" দেখা সঠিক ও নিরাপদ।',
+      s_payafter:'নিচের যেকোনো মাধ্যমে ঠিক এই পরিমাণ টাকা দিন।', s_amt_to_pay:'যত টাকা দিতে হবে', s_amt_copy:'অংক কপি করুন', s_qr_title:'📱 অথবা স্ক্যান করে পেমেন্ট করুন', s_qr_sub:'একটাই বাংলা QR, যেকোনো ব্যাংক বা ওয়ালেটে চলে: বিকাশ, নগদ, রকেট ও ৪৬টি ব্যাংক।', s_qr_hint:'যেকোনো ব্যাংক অ্যাপ, বিকাশ, নগদ, রকেট বা কার্ড অ্যাপ খুলে scan চাপুন আর এখানে ধরুন (কম্পিউটার থেকে সবচেয়ে সহজ)। একই ফোনে হলে এটির স্ক্রিনশট নিয়ে অ্যাপের গ্যালারি থেকে scan করুন। এরপর উপরে দেখানো সঠিক পরিমাণ টাকা দিন।',
+      s_moors_note:'পেমেন্ট গ্রহণ করে আমাদের পার্টনার Moors Attire, তাই আপনার ব্যাংক বা ওয়ালেট রসিদে "Moors Attire" দেখা সঠিক ও নিরাপদ।',
       s_paid_title:'✅ পেমেন্ট করেছেন? সেটি নিশ্চিত করুন', s_paid_sub:'আপনার পেমেন্টের তথ্য দিন, যাতে আমরা সেটি আপনার অর্ডারের সাথে মিলিয়ে নিতে পারি — অর্ডার',
       s_amt_label:'আপনি কত টাকা দিয়েছেন (৳) *', s_method_label:'কীভাবে দিয়েছেন *', s_method_pick:'বেছে নিন…', s_trx_label:'ট্রান্সঅ্যাকশন আইডি *', s_trx_hint:'আপনার bKash / Nagad রসিদে পাবেন', s_pay_wa:'স্ক্রিনশট WhatsApp-এ পাঠান', s_receipt_opt:'রসিদ যোগ করুন (ঐচ্ছিক)',
       s_upload_title:'📷 পেমেন্টের স্ক্রিনশট আপলোড করুন (ঐচ্ছিক)', s_upload_main:'পেমেন্টের স্ক্রিনশট বেছে নিতে ট্যাপ করুন', s_upload_sub:'বিকাশ / নগদ / ব্যাংক স্লিপ, JPG বা PNG',
@@ -2752,7 +2752,7 @@
     'Khaadi','Sana Safinaz','Maria B','Gul Ahmed','Sapphire','ETHNC','Asim Jofa','Bareeze','Alkaram Studio',
     'Limelight','Bonanza Satrangi','J. Junaid Jamshed','Nishat Linen','Edenrobe','Outfitters','Elan',
     'Zara Shahjahan','Sobia Nazir','Beechtree','Generation','Cross Stitch','Charizma','Baroque',
-    'Sania Maskatiya','Mushq','Afrozeh','Faiza Saqlain','Zainab Chottani','Maryum N Maria'
+    'Sania Maskatiya','Mushq','Afrozeh','Faiza Saqlain','Zainab Chottani','Maryum N Maria','Agha Noor'
   ];
   const _bdRankMap = {}; BD_FAMOUS.forEach((n,i) => { _bdRankMap[n] = i; });
   function bdRank(n){ return (n in _bdRankMap) ? _bdRankMap[n] : 999; }
@@ -4071,7 +4071,7 @@
       return parts.join(' | ');
     }).join('\n');
 
-    const paymentInfo = 'bKash Payment: 01352018131 | Nagad Send Money: 01851948690 | City Bank – Moors Attire A/C: 1324897775001 | UCBL – Moors Attire A/C: 7862141003465221';
+    const paymentInfo = 'bKash Payment: 01352018131 | City Bank – Moors Attire A/C: 1324897775001 | UCBL – Moors Attire A/C: 7862141003465221 | Bangla QR (City Bank citypay): MOORS ATTIRE, any bank or wallet';
 
     // Shared order payload (used by every endpoint)
     const payload = {
@@ -7087,7 +7087,7 @@
     ],
     'home-w': [
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
-      { en_t:'Modest wear. Bold, confident.', en_s:'Abayas, hijabs, full-cover styles.', bn_t:'মডেস্ট ওয়্যার। সাহসী, আত্মবিশ্বাসী।', bn_s:'আবায়া, হিজাব, ফুল-কভার স্টাইল।' },
+      { en_t:'Modest wear. Bold, confident.', en_s:'Abayas, hijabs, full-cover styles.', bn_t:'মডেস্ট ওয়্যার। কভারড, কনফিডেন্ট।', bn_s:'আবায়া, হিজাব, ফুল-কভার স্টাইল।' },
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
       { en_t:'Modern & western. Co-ords, dresses, tops.', en_s:'Pakistani brands, contemporary cuts.', bn_t:'মডার্ন ও ওয়েস্টার্ন। কো-অর্ড, ড্রেস, টপ।', bn_s:'পাকিস্তানি ব্র্যান্ড, সমকালীন কাট।' },
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
@@ -7097,7 +7097,7 @@
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
       { en_t:'Pret & kurta. Men\'s everyday staples.', en_s:'Real prices from Pakistan, delivered to Bangladesh.', bn_t:'প্রেট ও কুর্তা। পুরুষের প্রতিদিনের পোশাক।', bn_s:'পাকিস্তান থেকে আসল দামে, বাংলাদেশে ডেলিভারি।' },
       // Change the background, keeping the model on the right side so that it is not blocked by texts.
-      { en_t:'Looking sharp this season.', en_s:'Embroidered kurtas to plain pret, all men\'s styles here.', bn_t:'এই সিজনে দারুণ সাজুন।', bn_s:'এমব্রয়ডারি থেকে প্লেইন প্রেট, সব পুরুষের স্টাইল এখানে।' }
+      { en_t:'Looking sharp this season.', en_s:'Embroidered kurtas to plain pret, all men\'s styles here.', bn_t:'ঈদ কামিজ। এই সিজনে দারুণ সাজুন।', bn_s:'এমব্রয়ডারি থেকে প্লেইন প্রেট, সব পুরুষের স্টাইল এখানে।' }
     ],
     'home-k': [
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital. "Cool, comfy, and easy." should be on the 2nd title line.
@@ -7161,7 +7161,7 @@
     ],
     'search-luxe': [
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
-      { en_t:'Search the designer houses', en_s:'Elan, Sana Safinaz, Asim Jofa and more, with the real PKR price.', bn_t:'ডিজাইনার হাউস খুঁজুন', bn_s:'এলান, সানা সাফিনাজ, আসিম জোফা ও আরও, আসল পিকেআর দামে।' },
+      { en_t:'Search the designer houses', en_s:'Elan, Sana Safinaz, Asim Jofa and more.', bn_t:'ডিজাইনার হাউস খুঁজুন', bn_s:'এলান, সানা সাফিনাজ, আসিম জোফা ও আরও, আসল পিকেআর দামে।' },
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
       { en_t:'Snap it. Find it. Order it.', en_s:'Search by photo across Pakistan\'s premium labels.', bn_t:'ছবি তুলুন, খুঁজুন, অর্ডার করুন', bn_s:'ছবি দিয়ে পাকিস্তানের প্রিমিয়াম ব্র্যান্ডে খুঁজুন।' }
     ],
@@ -7169,13 +7169,13 @@
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
       { en_t:'Snap. Search. Order. Find it with a photo.', en_s:'See a style you love? Find it instantly.', bn_t:'ছবি তুলুন। খুঁজুন। অর্ডার করুন।', bn_s:'পছন্দের স্টাইল দেখেছেন? ছবি দিয়ে তাৎক্ষণিক খুঁজুন।' },
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital. Paste, check, compare. on the next title line.
-      { en_t:'True Price. Paste, check, compare.', en_s:'Paste any brand\'s product page, get the real PKR and full BDT total.', bn_t:'সত্যিকারের দাম। পেস্ট, চেক, তুলনা।', bn_s:'যেকোনো ব্র্যান্ডের প্রোডাক্ট পেজ পেস্ট করুন, আসল PKR ও পূর্ণ BDT পান।' },
+      { en_t:'True Price. Paste, check, compare.', en_s:'Paste any brand\'s product link, get the real PKR and door to door BDT price.', bn_t:'সত্যিকারের দাম। পেস্ট, চেক, তুলনা।', bn_s:'যেকোনো ব্র্যান্ডের প্রোডাক্ট পেজ পেস্ট করুন, আসল PKR ও পূর্ণ BDT পান।' },
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
-      { en_t:'Any brand. Any link. One honest price.', en_s:'Paste a product link from anywhere, priced in PKR + BDT.', bn_t:'যেকোনো ব্র্যান্ড। যেকোনো লিংক। একটি সৎ দাম।', bn_s:'যেকোনো জায়গা থেকে প্রোডাক্ট লিংক পেস্ট করুন, PKR + BDT তে দাম পান।' },
+      { en_t:'Any brand. Any link. One honest price.', en_s:'Paste a product link from anywhere, priced in PKR or BDT.', bn_t:'যেকোনো ব্র্যান্ড। যেকোনো লিংক। একটি সৎ দাম।', bn_s:'যেকোনো জায়গা থেকে প্রোডাক্ট লিংক পেস্ট করুন, PKR + BDT তে দাম পান।' },
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
       { en_t:'Want to buy Pakistani clothing? Check here first.', en_s:'Same outfit, the real price, delivered to BD.', bn_t:'পাকিস্তানি পোশাক কিনতে চান? আগে এখানে চেক করুন।', bn_s:'একই পোশাক, আসল দামে, বিডিতে ডেলিভারি।' },
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
-      { en_t:'Confirmed PK prices. In BDT, before you buy.', en_s:'No dollar guesswork, the genuine local price.', bn_t:'নিশ্চিত PK দাম। BDT তে, কেনার আগে।', bn_s:'ডলারের অনুমান নয়, আসল স্থানীয় দাম।' }
+      { en_t:'Confirm the PKR prices in BDT before making a purchase.', en_s:'No dollar guesswork, the genuine local price.', bn_t:'নিশ্চিত PK দাম। BDT তে, কেনার আগে।', bn_s:'ডলারের অনুমান নয়, আসল স্থানীয় দাম।' }
     ]
   };
   function _psPosterPage(){
@@ -9138,7 +9138,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-02-checkprice4';
+  const PSB_BUILD = '2026-07-02-checkprice5';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
