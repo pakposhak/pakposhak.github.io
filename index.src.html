@@ -216,6 +216,8 @@
     <div class="ps-sb-main" id="psSearchBar" role="button" tabindex="0" onclick="psSearchOpen()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();psSearchOpen();}" aria-label="Search products and brands">
       <svg class="ps-sb-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
       <span class="ps-sb-ph" data-i18n="search_bar_ph">Search products, brands…</span>
+      <!-- Mobile-only alt label shown on the Price-Check (brands) page: "Search brands only" (req). Toggled by body.psb-brands + CSS. -->
+      <span class="ps-sb-ph ps-sb-ph-brands" data-i18n="sb_ph_brands">Search brands only</span>
       <div id="psFilterChips" class="ps-filter-chips" hidden></div>
     </div>
     <button type="button" class="ps-sb-cam" onclick="psVisualSearch()" aria-label="Search by photo" title="Search by photo">
@@ -403,6 +405,12 @@
         <!-- Search FIRST so a buyer who knows the brand goes straight to it, without having to
              pick a category first. Smart search = brands + product categories (req). -->
         <div class="bb-prod-sub" data-i18n="bb_prod_sub_check">Search by brand or what it sells — tap a brand to check its price.</div>
+        <!-- Mobile-only check-price instruction (req): replaces the brand-search sub-line on phones. Bigger, centered. -->
+        <div class="bb-prod-sub-m">
+          <span data-i18n="bb_checkprice_m">To check a price, share the product's link with us, or copy and paste it here. You'll see the total landed price in BDT.</span>
+          <!-- TODO: replace href="#" with the video URL Danish will share (then drop onclick, add target/rel). -->
+          <a class="bb-checkvid" href="#" onclick="return false;" data-i18n="bb_checkvid">Unsure? Check video</a>
+        </div>
         <div class="bb-smartwrap">
           <input id="bbSmartSearch" class="bb-smartsearch" type="text" autocomplete="off" oninput="bbSmartSearch(this.value)" data-i18n-ph="bb_smart_ph" placeholder="🔍 Search brands, e.g. Khaadi, lawn, casual"/>
           <div class="bb-search-hint" id="bbSearchHint"></div>

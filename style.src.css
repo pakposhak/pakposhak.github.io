@@ -1342,6 +1342,22 @@
     .bb-search-hint{font-size:0.74rem;color:var(--txt-muted);margin-top:7px}
     .bb-search-hint:empty{display:none}
     .bb-search-hint b{color:var(--gold)}
+    /* ── Check-price (Browse Brands) page — MOBILE-ONLY (req). Desktop keeps its current layout. ──
+       Hidden by default so desktop never shows these; the phone view swaps in below. */
+    .bb-prod-sub-m{display:none}
+    .ps-sb-ph-brands{display:none}
+    @media (max-width:819px){
+      /* Mid sentence: replace the brand-search sub-line with the paste-link instruction, bigger and
+         centered, sized to the space available. */
+      #bbProduct .bb-prod-sub{display:none}
+      .bb-prod-sub-m{display:block;text-align:center;font-size:1.12rem;font-weight:700;color:var(--txt);line-height:1.5;margin:8px auto 15px;max-width:min(520px,94vw);padding:0 6px}
+      .bb-prod-sub-m .bb-checkvid{display:inline-block;margin-top:8px;font-size:0.92rem;font-weight:700;color:var(--gold);text-decoration:underline;cursor:pointer}
+      /* Only one search bar on this page: drop the central brand-search (the top bar covers it). */
+      #bbProduct .bb-smartwrap{display:none}
+      /* Top search bar reads "Search brands only" on the Price-Check page (this bar only). */
+      body.psb-brands .ps-sb-ph{display:none}
+      body.psb-brands .ps-sb-ph-brands{display:block}
+    }
     /* Browse Brands is ONE unified view on EVERY width now (Store Types retired from the
        page — its source is kept in-file + git-tagged `store-types-model-20260621` for a
        future restore). Hide the sub-tab toggle, the "two ways" line, the Store-Types
@@ -1594,6 +1610,9 @@
     .ps-sc-img{display:block;width:100%;height:auto;border-radius:10px;margin:0 0 10px;background:var(--raised)}
     .ps-sc-empty{color:var(--txt-muted);font-size:0.84rem;padding:10px 0}
     .ps-d-desc{font-size:0.82rem;color:var(--txt-sec);line-height:1.55;margin:4px 0 0;white-space:pre-line}
+    .ps-d-sec{margin:12px 0 0}
+    .ps-d-sec-h{font-size:0.62rem;font-weight:800;letter-spacing:0.6px;text-transform:uppercase;color:var(--gold);margin:0 0 4px}
+    .ps-d-sec-b{font-size:0.82rem;color:var(--txt-sec);line-height:1.55;white-space:pre-line}
     .ps-d-loading{font-size:0.76rem;color:var(--txt-muted);padding:4px 0}
     .ps-d-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
     .ps-d-open{display:block;width:100%;box-sizing:border-box;margin-top:8px;text-align:center;padding:11px;background:var(--gold-dim);border:1.5px solid var(--gold-bdr);color:var(--gold);border-radius:9px;font-weight:700;font-size:0.84rem;text-decoration:none;cursor:pointer;font-family:inherit;line-height:1.25}
