@@ -29,7 +29,11 @@ const PER_BRAND = parseInt(process.env.PER_BRAND || '700', 10);   // deep defaul
 const BRAND_CAP = {
   // ── priority women lawn / multi-department — harvest DEEP (2026-06-19 women expansion →
   //    70k-scale stress test). Caps are a MAX, not a target: brands with less just yield less. ──
-  'Khaadi':1500, 'Sapphire':1500, 'ETHNC':900, 'Nishat Linen':1000, 'Gul Ahmed':1200,
+  // Nishat Linen raised 1000->2000 (2026-07-02): its /products.json lists accessories/basics
+  // FIRST and its ~630 in-stock suits on pages 6-10, but maxPages (=ceil(cap/200)+1, capped 10)
+  // was only 6 at cap 1000 — so the harvest exhausted its page budget on scarves and never reached
+  // the suits (kept ~220 of ~850 valid). cap 2000 -> maxPages 10 -> full pagination.
+  'Khaadi':1500, 'Sapphire':1500, 'ETHNC':900, 'Nishat Linen':2000, 'Gul Ahmed':1200,
   'Alkaram Studio':1000, 'Maria B':900, 'Limelight':800, 'Edenrobe':700, 'Outfitters':600,
   'Bonanza Satrangi':700, 'Sana Safinaz':700, 'Asim Jofa':700, 'Cross Stitch':600,
   'Beechtree':600, 'Generation':600, 'Zellbury':600, 'Almirah':600, 'Eminent':500,

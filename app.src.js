@@ -2752,7 +2752,7 @@
     'Khaadi','Sana Safinaz','Maria B','Gul Ahmed','Sapphire','ETHNC','Asim Jofa','Bareeze','Alkaram Studio',
     'Limelight','Bonanza Satrangi','J. Junaid Jamshed','Nishat Linen','Edenrobe','Outfitters','Elan',
     'Zara Shahjahan','Sobia Nazir','Beechtree','Generation','Cross Stitch','Charizma','Baroque',
-    'Sania Maskatiya','Mushq','Afrozeh','Faiza Saqlain','Zainab Chottani','Maryum N Maria'
+    'Sania Maskatiya','Mushq','Afrozeh','Faiza Saqlain','Zainab Chottani','Maryum N Maria','Agha Noor'
   ];
   const _bdRankMap = {}; BD_FAMOUS.forEach((n,i) => { _bdRankMap[n] = i; });
   function bdRank(n){ return (n in _bdRankMap) ? _bdRankMap[n] : 999; }
@@ -9138,7 +9138,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-02-checkprice3';
+  const PSB_BUILD = '2026-07-02-aghafamous';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
