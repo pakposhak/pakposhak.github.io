@@ -80,6 +80,33 @@
   function itemPkrSubtotal(item){ return (item.sizes || [{qty:1}]).reduce(function(s, row){ return s + (_rowPkr(item, row) * (row.qty || 0)); }, 0); }
   function itemPriceVaries(item){ const real = (item.sizes || []).filter(function(r){ return r.size; }); return new Set(real.map(function(r){ return _rowPkr(item, r); })).size > 1; }
 
+  // Full landed ৳BDT for ONE cart item (product + its commission share + its logistics weight),
+  // BEFORE the ৳100/suit local delivery — same scope as estLandedBdt(), but using the CART-WIDE
+  // commission tier (bulk-quantity discount) instead of the single-piece browse-time tier, so
+  // summing every item's landed price here reproduces cartCommission()+the weight total EXACTLY.
+  // This is what the Bag price-per-item display must use — using a raw PKR*CONV_RATE conversion
+  // (no commission/logistics) was the bug: the "each" shown on the card never matched the basket
+  // total below it, which is confusing and looks broken to a first-time buyer.
+  function itemLandedBdtTotal(item, r, tier){
+    const LOW_PKR = r.PKR_LOW_THRESHOLD || 2100;
+    const LOW_BDT = r.COMM_LOW_BDT      || 200;
+    const rows = item.sizes || [{qty:1}];
+    const totalQty = rows.reduce(function(s,row){ return s + (row.qty||0); }, 0);
+    const weight = KIDS_CATS.has(item.cat)
+      ? rows.reduce(function(s,z){ return s + item.weight * kidsAgeMultiplier(z.size, r) * z.qty; }, 0)
+      : item.weight * totalQty;
+    let commission = 0;
+    rows.forEach(function(row){
+      const unitPkr = _rowPkr(item, row);
+      const units = row.qty || 0;
+      if(!units) return;
+      commission += unitPkr < LOW_PKR ? LOW_BDT * units : Math.round(unitPkr * r.CONV_RATE * tier) * units;
+    });
+    const productBdt = Math.round(itemPkrSubtotal(item) * r.CONV_RATE);
+    const logistics  = Math.round(weight * r.LOG_RATE);
+    return productBdt + commission + logistics;
+  }
+
   // Per-item, per-unit commission that respects the low-value rule:
   // items with unitPkr < PKR_LOW_THRESHOLD → flat COMM_LOW_BDT each;
   // items at/above threshold → percentage of converted BDT (tier = whole-cart qty).
@@ -3735,12 +3762,14 @@
     updateCartBadges(cart.length);
 
     const r = getRates();
+    const commTier = commRate(r, cartTotalQty());   // same bulk-quantity tier cartCommission() uses below
     let totalPkr = 0, totalWeight = 0;
     let html = '';
     cart.forEach((item, i) => {
       const totalQty = (item.sizes || [{qty:1}]).reduce((s,r) => s + r.qty, 0);
       const varies  = itemPriceVaries(item);
       const itemPkr = itemPkrSubtotal(item);   // Σ per-size price × qty
+      const itemLanded = itemLandedBdtTotal(item, r, commTier);   // full landed ৳ (product+commission+logistics) for THIS item
       totalPkr    += itemPkr;
       totalWeight += KIDS_CATS.has(item.cat)
         ? (item.sizes||[{size:'',qty:1}]).reduce((s,z)=>s+item.weight*kidsAgeMultiplier(z.size,r)*z.qty, 0)
@@ -3758,11 +3787,13 @@
             .join('');
 
       // Right price block: single-price → "PKR X each"; varies → item PKR subtotal + a "(by size)" note.
+      // The ৳ figure is the FULL landed price (commission + logistics included, matching estLandedBdt's
+      // documented invariant), not a raw currency conversion — so it actually adds up to the basket total.
       const priceBlock = varies
         ? `<div class="item-price">PKR ${itemPkr.toLocaleString()}</div>
-           <div class="item-bdt">≈ ৳${Math.round(itemPkr * r.CONV_RATE).toLocaleString()} <span style="font-size:0.62rem;color:var(--txt-muted)">(by size)</span></div>`
+           <div class="item-bdt">≈ ৳${itemLanded.toLocaleString()} <span style="font-size:0.62rem;color:var(--txt-muted)">(by size)</span></div>`
         : `<div class="item-price">PKR ${item.pkr.toLocaleString()} <span style="font-size:0.68rem;font-weight:400;color:var(--txt-muted)">each</span></div>
-           <div class="item-bdt">≈ ৳${Math.round(item.pkr * r.CONV_RATE).toLocaleString()} each</div>`;
+           <div class="item-bdt">≈ ৳${Math.round(itemLanded / (totalQty || 1)).toLocaleString()} each</div>`;
 
       const _cmono = esc(((item.brand||'?').trim()[0] || '?').toUpperCase());
       html += `<div class="cart-item">
@@ -3927,6 +3958,7 @@
 
   function buildReviewSummary(){
     const r = getRates();
+    const commTier = commRate(r, cartTotalQty());   // same bulk-quantity tier cartCommission() uses below
     let totalPkr = 0, totalWeight = 0;
     let siHtml = '';
     cart.forEach((item, i) => {
@@ -3937,7 +3969,9 @@
       totalWeight += KIDS_CATS.has(item.cat)
         ? (item.sizes||[{size:'',qty:1}]).reduce((s,z)=>s+item.weight*kidsAgeMultiplier(z.size,r)*z.qty, 0)
         : item.weight * totalQty;
-      const bdtTotal = Math.round(itemPkr * r.CONV_RATE);
+      // Full landed ৳ for this line (product+commission+logistics), matching estLandedBdt's invariant —
+      // NOT a raw PKR*CONV_RATE conversion, which never matched the order total shown just below it.
+      const bdtTotal = itemLandedBdtTotal(item, r, commTier);
       // Size summary — per-size price listed when sizes are priced differently.
       const sizeSummary = varies
         ? (item.sizes || []).filter(r => r.size).map(r => `${esc(r.size)}×${r.qty} (PKR ${_rowPkr(item,r).toLocaleString()})`).join(', ')
@@ -9072,7 +9106,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-02-desktop10';
+  const PSB_BUILD = '2026-07-02-pricefix';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
