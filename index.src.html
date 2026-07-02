@@ -408,8 +408,8 @@
         <!-- Mobile-only check-price instruction (req): replaces the brand-search sub-line on phones. Bigger, centered. -->
         <div class="bb-prod-sub-m">
           <span data-i18n="bb_checkprice_m">To check a price, share the product's link with us, or copy and paste it here. You'll see the total landed price in BDT.</span>
-          <!-- TODO: replace href="#" with the video URL Danish will share (then drop onclick, add target/rel). -->
-          <a class="bb-checkvid" href="#" onclick="return false;" data-i18n="bb_checkvid">Unsure? Check video</a>
+          <!-- Opens the burned-in captioned how-to video for the current language (EN/BN). -->
+          <a class="bb-checkvid" href="media/guide/check-price-en.mp4" target="_blank" rel="noopener" onclick="return psCheckVideo(event)" data-i18n="bb_checkvid">Unsure? Check video</a>
         </div>
         <div class="bb-smartwrap">
           <input id="bbSmartSearch" class="bb-smartsearch" type="text" autocomplete="off" oninput="bbSmartSearch(this.value)" data-i18n-ph="bb_smart_ph" placeholder="🔍 Search brands, e.g. Khaadi, lawn, casual"/>

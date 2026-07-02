@@ -4675,6 +4675,17 @@
   }
   window.psAddedToBagToast = psAddedToBagToast;
 
+  // "Unsure? Check video" on the Price-Check page → open the burned-in captioned how-to
+  // in the buyer's current language (EN/BN). Opens in a new tab so the app view is kept.
+  function psCheckVideo(e){
+    try{ if(e && e.preventDefault) e.preventDefault(); }catch(_){}
+    var bn = (typeof _lang !== 'undefined' && _lang === 'bn');
+    var url = bn ? 'media/guide/check-price-bn.mp4' : 'media/guide/check-price-en.mp4';
+    try{ window.open(url, '_blank', 'noopener'); }catch(_){ try{ location.href = url; }catch(__){} }
+    return false;
+  }
+  window.psCheckVideo = psCheckVideo;
+
   function bottomNavGo(tab){
     try{ psThemeFlash(); }catch(e){}   // smooth any theme/Luxe colour flip this tap triggers (#3)
     // Bottom nav (redesign batch 2) = Home · Luxe · Bag(cart) · Price Check. Bag uses id bnav-bag.
@@ -9119,7 +9130,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-02-checkprice1';
+  const PSB_BUILD = '2026-07-02-checkprice2';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
