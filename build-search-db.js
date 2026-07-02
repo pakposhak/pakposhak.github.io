@@ -207,11 +207,18 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
       b TEXT, t TEXT, u TEXT, img TEXT,
       pkr INTEGER, cat TEXT, sz TEXT, sale INTEGER, pub INTEGER,
       bdt INTEGER, gender TEXT, ord INTEGER,
-      dual INTEGER, altform TEXT, altbdt INTEGER
+      dual INTEGER, altform TEXT, altbdt INTEGER, pri INTEGER
     );
   `);
-  const ins = db.prepare(`INSERT INTO products (b,t,u,img,pkr,cat,sz,sale,pub,bdt,gender,ord,dual,altform,altbdt)
-    VALUES (@b,@t,@u,@img,@pkr,@cat,@sz,@sale,@pub,@bdt,@gender,@ord,@dual,@altform,@altbdt)`);
+  // `pri` = coarse 0-3 priority rank the search-server's 90s-rotation path sorts by BEFORE the
+  // hash shuffle, so famous women's-stitched leads EVERY seeded page yet still rotates within its
+  // tier (req 2026-07-02). p.ord (the fully-ordered index incl. girls/sale interleave) can't do
+  // this alone because the seed hash scrambles it. Tiers: 0 women-stitched+famous > 1 women-
+  // stitched+other > 2 rest+famous > 3 rest+other. womenPretRank/BD_FAMOUS defined above.
+  // (Named `pri`, not `lead` — LEAD is a SQL window-function keyword.)
+  const priRank = p => (womenPretRank(p.cat) * 2) + (BD_FAMOUS.has(p.b) ? 0 : 1);
+  const ins = db.prepare(`INSERT INTO products (b,t,u,img,pkr,cat,sz,sale,pub,bdt,gender,ord,dual,altform,altbdt,pri)
+    VALUES (@b,@t,@u,@img,@pkr,@cat,@sz,@sale,@pub,@bdt,@gender,@ord,@dual,@altform,@altbdt,@pri)`);
   const tx = db.transaction(list => {
     list.forEach((p, i) => ins.run({
       b: p.b || '', t: p.t || '', u: p.u || '', img: p.img || '',
@@ -219,6 +226,7 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
       sale: p.sale ? 1 : 0, pub: p.pub | 0,
       bdt: p._bdt, gender: genderOf(p.cat), ord: i,
       dual: p.dual ? 1 : 0, altform: p.altform || '', altbdt: (p.dual ? landed(p.altpkr | 0, p.altcat || '') : 0),
+      pri: priRank(p),
     }));
   });
   tx(products);
@@ -229,6 +237,7 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
     CREATE INDEX idx_pub   ON products(pub);
     CREATE INDEX idx_ord   ON products(ord);
     CREATE INDEX idx_sale  ON products(sale);
+    CREATE INDEX idx_pri   ON products(pri);
     CREATE VIRTUAL TABLE products_fts USING fts5(b, t, content='products', content_rowid='id');
     INSERT INTO products_fts(rowid, b, t) SELECT id, b, t FROM products;
   `);

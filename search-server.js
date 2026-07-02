@@ -29,6 +29,8 @@ const BUCKETS = [[0, 3000], [3000, 4500], [4500, 6000], [6000, 8000], [8000, 100
 let db = null;
 let ddb = null;  // product-detail DB (build-details-db.js); optional — absent ⇒ /search/details reports found:false
 let ORD_N = 0;   // MAX(ord)+1 — rotation modulus base; recomputed on each DB (re)open
+let HAS_PRI = false;   // does the open DB carry the `pri` priority column? (build-search-db.js 2026-07-02).
+                       // Detected per-open so a search.db built by an OLD builder still serves (falls back to PRETLEAD).
 function openDb(){
   try {
     const ndb = new Database(DB_PATH, { readonly: true, fileMustExist: true });
@@ -37,6 +39,7 @@ function openDb(){
     if (old) { try { old.close(); } catch (e) {} }
     console.log('opened', DB_PATH, '—', db.prepare('SELECT count(*) c FROM products').get().c, 'products');
     try { ORD_N = db.prepare('SELECT IFNULL(MAX(ord),0)+1 n FROM products').get().n; } catch (e) { ORD_N = 0; }
+    try { HAS_PRI = db.prepare("SELECT COUNT(*) c FROM pragma_table_info('products') WHERE name='pri'").get().c > 0; } catch (e) { HAS_PRI = false; }
   } catch (e) { console.error('openDb failed:', e.message); }
 }
 openDb();
@@ -202,16 +205,35 @@ function handleSearch(u, res){
   // 90s rotation: ?seed=N rotates WHICH curated products lead — not only on the plain landing but
   // WITHIN any active category / brand / price / sale / text-search filter too (req: "front-page
   // products keep changing within the selected category/brand", instead of the same first images
-  // every time). Women-pret still leads (PRETLEAD); a seeded multiplicative hash of p.ord shuffles
-  // the order so the page feels fresh ~every 90s without re-harvesting. The multiplier is always
-  // large so low-ord items actually rotate and consecutive seeds jump far apart. Skipped only when
-  // the buyer imposed their OWN order — an explicit ৳ price sort, the New filter, or an age/size
-  // boost — and when no seed is sent (then byte-identical to the default p.ord order).
+  // every time). p.pri leads (0-3 rank: famous women's-stitched first — built in build-search-db.js);
+  // a seeded multiplicative hash of p.ord shuffles WITHIN each pri tier so the page feels fresh
+  // ~every 90s without re-harvesting AND famous women's-stitched still leads every page (req
+  // 2026-07-02 — before this, the hash scrambled p.ord's brand priority, halving famous density in
+  // the live seeded view). The multiplier is always large so low-ord items actually rotate and
+  // consecutive seeds jump far apart. Skipped only when the buyer imposed their OWN order — an
+  // explicit ৳ price sort, the New filter, or an age/size boost — and when no seed is sent (then
+  // byte-identical to the default p.ord order). `pri` COALESCEs to PRETLEAD so an OLD search.db
+  // built before the column existed still serves (graceful during a staggered deploy).
+  // FAMOUS_GAP: within each women-stitched / rest tier, famous brands take every slot while
+  // non-famous take every Nth — so a famous-led feed still SPRINKLES in ~pageSize/N non-famous
+  // per page (req 2026-07-02: "few pictures of other non-famous brands as well"), instead of a
+  // pure famous wall. 12 ≈ two non-famous per 24-item page. Implemented via a windowed ROW_NUMBER
+  // interleave in the seeded branch below.
+  const FAMOUS_GAP = 12;
   const _seed = q.get('seed');
-  if (_seed != null && /^[0-9]{1,15}$/.test(_seed) && !sort && q.get('new') !== '1' && !/^[a-z0-9]{1,4}$/.test(sizeBoost) && ORD_N > 1) {
-    const _mult = 2000003 + ((parseInt(_seed, 10) * 524287) % 1000000);
-    orderBy = PRETLEAD + ' ASC, (((p.ord + 1) * ' + _mult + ') % 2147483647) ASC, p.ord ASC';
+  const seeded = _seed != null && /^[0-9]{1,15}$/.test(_seed) && !sort && q.get('new') !== '1' && !/^[a-z0-9]{1,4}$/.test(sizeBoost) && ORD_N > 1;
+  let _mult = 0;
+  if (seeded) {
+    _mult = 2000003 + ((parseInt(_seed, 10) * 524287) % 1000000);
+    // Fallback (no pri column, e.g. a search.db from an older builder mid-deploy): keep the old
+    // PRETLEAD-then-hash behaviour so the server still serves cleanly.
+    if (!HAS_PRI) orderBy = PRETLEAD + ' ASC, (((p.ord + 1) * ' + _mult + ') % 2147483647) ASC, p.ord ASC';
   }
+  // Seeded + pri available → windowed interleave (famous-first WITH sprinkle, rotating). Uses pri's
+  // two bits: women-stitched tier = pri/2 (0 leads), fame = pri%2 (0 = famous). ROW_NUMBER ranks each
+  // (tier,fame) group by the seed hash; multiplying the non-famous rank by FAMOUS_GAP threads them in
+  // sparsely. Non-seeded / sort / new / size-boost paths keep the plain ORDER BY.
+  const useInterleave = seeded && HAS_PRI;
 
   const whereSql = where.length ? ('WHERE ' + where.join(' AND ')) : '';
   let page = parseInt(q.get('page') || '0', 10); if (!(page >= 0)) page = 0;
@@ -219,8 +241,15 @@ function handleSearch(u, res){
 
   try {
     const total = db.prepare(`SELECT count(*) c FROM products p ${whereSql}`).get(...args).c;
-    const rows = db.prepare(
-      `SELECT p.b,p.t,p.u,p.img,p.pkr,p.cat,p.sz,p.sale,p.pub,p.bdt,p.dual,p.altform,p.altbdt FROM products p ${whereSql} ORDER BY ${orderBy} LIMIT ? OFFSET ?`
+    const COLS = 'p.b,p.t,p.u,p.img,p.pkr,p.cat,p.sz,p.sale,p.pub,p.bdt,p.dual,p.altform,p.altbdt';
+    const rowsSql = useInterleave
+      ? `SELECT b,t,u,img,pkr,cat,sz,sale,pub,bdt,dual,altform,altbdt FROM (
+           SELECT ${COLS}, (p.pri/2) AS _tier, (p.pri%2) AS _fame, p.ord AS _ord,
+             ROW_NUMBER() OVER (PARTITION BY (p.pri/2),(p.pri%2) ORDER BY (((p.ord+1)*${_mult})%2147483647), p.ord) AS _rk
+           FROM products p ${whereSql}
+         ) ORDER BY _tier ASC, (_rk * CASE WHEN _fame=0 THEN 1 ELSE ${FAMOUS_GAP} END) ASC, _ord ASC LIMIT ? OFFSET ?`
+      : `SELECT ${COLS} FROM products p ${whereSql} ORDER BY ${orderBy} LIMIT ? OFFSET ?`;
+    const rows = db.prepare(rowsSql
     ).all(...args, pageSize, page * pageSize);
     const products = rows.map(r => ({ b: r.b, t: r.t, u: r.u, img: r.img, pkr: r.pkr, cat: r.cat, sz: JSON.parse(r.sz || '[]'), sale: r.sale ? 1 : 0, pub: r.pub, bdt: r.bdt, dual: r.dual ? 1 : 0, altform: r.altform || '', altbdt: r.altbdt || 0 }));
     send(res, 200, { total, page, pageSize, pages: Math.ceil(total / pageSize), products });
