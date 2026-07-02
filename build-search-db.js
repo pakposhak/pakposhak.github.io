@@ -137,7 +137,18 @@ function genderRank(cat){ const g = genderOf(cat); return g === 'w' ? 0 : (g ===
     'kids_boys_western', 'kids_girls_western',
   ]);
   const eastRank = c => WESTERN.has(c || '') ? 1 : 0;   // eastern (0) before western (1), all genders
-  const WOMEN_PRET = new Set(['pret_3pc', 'pret_3pc_emb', 'pret_2pc_emb']);
+  // "Pret" = any STITCHED women's category (req 2026-07-02, widened from the original 3-key
+  // pret_3pc/pret_3pc_emb/pret_2pc_emb set) — every women's DEFAULT_WEIGHTS key EXCEPT the
+  // *_unstitch ones, abaya (hijab/modest wear stays out per Danish), and the non-apparel
+  // set already excluded by heroRank (dupatta_only/shawl/footwear/accessories).
+  const WOMEN_PRET = new Set([
+    'pret_3pc', 'pret_3pc_emb', 'pret_2pc_emb',
+    'kurti_1pc', 'western_top', 'womens_trouser', 'kaftan',
+    'shirt_dupatta_2pc', 'shirt_trouser_2pc', 'coord_western',
+    'winter_2pc_stitch', 'winter_3pc_stitch',
+    'formal_emb_2pc', 'formal_emb_3pc', 'heavy_formal_3pc', 'handmade_emb',
+    'bridal', 'saree', 'lehenga', 'maxi_dress', 'loungewear', 'couple_collection',
+  ]);
   const womenPretRank = c => (genderOf(c) === 'w' && WOMEN_PRET.has(c)) ? 0 : 1;
   const qSort = (a, b) =>
     (heroRank(a.cat) - heroRank(b.cat))          // apparel before footwear/accessories
