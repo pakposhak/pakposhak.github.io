@@ -488,9 +488,9 @@
     .hdr-lang:hover{background:rgba(201,169,110,0.28)}
 
     /* ── Desktop Studio/Luxe toggle (req): replaces rows 2-3 right after the branding header. */
-    .ps-dtop-toggle{justify-content:center;align-items:center;gap:10px;padding:10px 16px 12px;background:var(--bg)}
-    .ps-dtop-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 24px;border-radius:20px;border:1.5px solid var(--bdr-med);background:var(--surface);color:var(--txt-sec);font-weight:700;font-size:0.88rem;font-family:inherit;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
-    .ps-dtop-btn svg{width:17px;height:17px}
+    .ps-dtop-toggle{justify-content:center;align-items:center;gap:13px;padding:13px 16px 15px;background:var(--bg)}
+    .ps-dtop-btn{display:inline-flex;align-items:center;gap:9px;padding:13px 44px;border-radius:27px;border:1.5px solid var(--bdr-med);background:var(--surface);color:var(--txt-sec);font-weight:700;font-size:1.1rem;font-family:inherit;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+    .ps-dtop-btn svg{width:22px;height:22px}
     .ps-dtop-btn:hover{border-color:var(--gold-bdr)}
     .ps-dtop-btn.active{background:var(--gold);border-color:var(--gold);color:#12122a}
 
