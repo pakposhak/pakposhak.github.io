@@ -85,6 +85,8 @@
     </div>
     <!-- right slot: wishlist + overflow menu (language / theme / guide live inside the menu now) -->
     <div class="hdr-right-slot">
+      <!-- Desktop-only "Clear filters" pill (req: small, beside the bag). Browse view only; resets all active filters. -->
+      <button class="hdr-clearfilt" id="hdrClearFilt" onclick="psClearFilters()" aria-label="Clear filters" title="Clear filters"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h13l-5 6v6l-3 1.6V11z"/><path d="M16.5 15.5l4 4M20.5 15.5l-4 4"/></svg><span data-i18n="ps_clear">Clear Filters</span></button>
       <!-- Desktop-only cart icon (req: rows 2-3 removed on desktop, so Cart moves up here). Mobile keeps its own Bag tab in the bottom nav. -->
       <button class="hdr-icon-btn hdr-cart" id="hdrCartBtn" onclick="gotoCart()" aria-label="Cart" title="Cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8h12l-1 11.2a1 1 0 0 1-1 .8H8a1 1 0 0 1-1-.8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg><span class="hdr-cart-badge" id="hdrCartBadge" style="display:none">0</span></button>
       <button class="hdr-icon-btn hdr-wish" id="hdrWishBtn" onclick="psWishOpen()" aria-label="Wishlist" title="Wishlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.3 4.25 12.55a4.55 4.55 0 0 1 6.43-6.43L12 7.44l1.32-1.32a4.55 4.55 0 0 1 6.43 6.43z"/></svg><span class="hdr-wish-badge" id="hdrWishBadge" style="display:none">0</span></button>

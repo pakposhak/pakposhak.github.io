@@ -1074,6 +1074,13 @@
     .hdr-cart{display:none;position:relative}
     @media (min-width:820px){ .hdr-cart{display:flex} }
     .hdr-cart-badge{position:absolute;top:-3px;right:-3px;background:#c0392b;color:#fff;border-radius:9px;min-width:16px;height:16px;padding:0 4px;font-size:0.6rem;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1}
+    /* Desktop-only "Clear filters" pill in the header, beside the cart (req: small, not prominent).
+       Browse view only (filters live only there) and ≥820px only -- hidden by default so mobile and
+       the checkout steps never show it. Fires the same psClearFilters() as the in-page clear button. */
+    .hdr-clearfilt{display:none;align-items:center;gap:5px;padding:5px 11px;border:1.5px solid var(--bdr-med);border-radius:15px;background:none;color:var(--txt-sec);font-family:inherit;font-size:0.72rem;font-weight:700;white-space:nowrap;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+    .hdr-clearfilt svg{width:14px;height:14px}
+    .hdr-clearfilt:hover{border-color:var(--gold);color:var(--gold)}
+    @media (min-width:820px){ body.psb-browse .hdr-clearfilt{display:inline-flex} }
     /* Fuller, rounded heart (SVG) for the wishlist — replaces the flat ♥ glyph (req) */
     .ps-heart-svg{width:1em;height:1em;fill:currentColor;display:inline-block;vertical-align:-0.14em}
     .bnav-btn .ps-heart-svg{width:1.5rem;height:1.5rem;vertical-align:middle}
