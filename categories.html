@@ -213,6 +213,70 @@
       grid-column: 1/-1; text-align: center;
       color: var(--text3); font-size: 13px; padding: 32px 0;
     }
+
+    /* ── Filter sidebar (desktop only) — mirrors the mobile filter bar's
+       Sort/Sale/New/Price/Colour controls, shown open and inline instead of a
+       toggled sheet. Hidden by default here so mobile is untouched regardless
+       of rule order; shown only inside the desktop media query below. ── */
+    .cat-filters { display: none; }
+
+    /* ══ Desktop (≥820px): categories.html has no responsive handling at all
+       otherwise — the 2-column chip/brand grids stretch into two giant columns
+       on a wide screen. Wrap into a proper multi-column tile grid, cap the
+       overall width so it doesn't thin out on an ultra-wide monitor, and show
+       the filter sidebar (mobile's "categories" + "filter" sections, side by
+       side) between the gender rail and the tiles. ══ */
+    @media (min-width: 820px) {
+      .cat-body { width: 100%; max-width: min(1440px, 96vw); margin: 0 auto; }
+      .chip-row, .brand-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+
+      .cat-filters {
+        display: block; width: 220px; flex-shrink: 0;
+        background: var(--surface2); border-right: 1px solid var(--border);
+        overflow-y: auto; padding: 16px 14px;
+      }
+      .cat-filters[hidden] { display: none; }
+      .cf-hd {
+        font-size: 13px; font-weight: 700; color: var(--text);
+        display: flex; align-items: center; margin-bottom: 4px;
+      }
+      .cf-count {
+        display: inline-flex; align-items: center; justify-content: center;
+        min-width: 17px; height: 17px; padding: 0 4px; margin-left: 7px;
+        background: var(--gold); color: #fff; font-size: 10.5px; font-weight: 700;
+        border-radius: 9px;
+      }
+      .cf-title {
+        font-size: 10.5px; font-weight: 700; color: var(--text3);
+        text-transform: uppercase; letter-spacing: 0.06em;
+        margin: 16px 0 8px;
+      }
+      .cf-row { display: flex; flex-direction: column; gap: 6px; }
+      .cf-row-inline { flex-direction: row; flex-wrap: wrap; }
+      .cf-btn {
+        text-align: left; padding: 7px 10px; font-size: 12.5px; font-weight: 600;
+        color: var(--text2); background: var(--surface); border: 1px solid var(--border);
+        border-radius: 7px; cursor: pointer; transition: background .15s, border-color .15s, color .15s;
+        font-family: inherit;
+      }
+      .cf-btn:hover { border-color: var(--gold); }
+      .cf-btn.on { background: var(--gold); border-color: var(--gold); color: #fff; }
+      .cf-row-inline .cf-btn { flex: 0 0 auto; }
+      .cf-colors { display: flex; flex-wrap: wrap; gap: 7px; }
+      .cf-swatch {
+        width: 24px; height: 24px; border-radius: 50%; cursor: pointer;
+        border: 1.5px solid var(--border); flex-shrink: 0; position: relative;
+      }
+      .cf-swatch.on { border-color: var(--gold); box-shadow: 0 0 0 2px var(--surface2), 0 0 0 4px var(--gold); }
+      .cf-swatch-multi { background: conic-gradient(#E91E63 0deg,#FF9800 60deg,#FDD835 120deg,#43A047 180deg,#2196F3 240deg,#7B1FA2 300deg,#E91E63 360deg); }
+      .cf-clear {
+        width: 100%; margin-top: 18px; padding: 8px; font-size: 12px; font-weight: 600;
+        color: var(--text3); background: none; border: 1px solid var(--border);
+        border-radius: 7px; cursor: pointer; font-family: inherit;
+        transition: color .15s, border-color .15s;
+      }
+      .cf-clear:hover { color: var(--gold); border-color: var(--gold); }
+    }
   </style>
 </head>
 <body>
@@ -268,6 +332,9 @@
       <span class="rail-label" id="railApplyLabel">Apply</span>
     </div>
   </nav>
+
+  <!-- Filter sidebar (desktop only — mirrors the mobile filter bar; JS-rendered) -->
+  <aside class="cat-filters" id="catFilters" role="complementary" aria-label="Filters"></aside>
 
   <!-- Right panel -->
   <main class="cat-panel" id="catPanel" role="main"></main>
@@ -489,6 +556,31 @@ let brandQuery  = '';
 // supported, so Apply always sends categories from ONE department at a time.
 let pickedCats = new Set();
 
+// ── Filter sidebar (desktop only) — mirrors PS_BUCKETS/PS_COLOUR_PALETTE and the
+// Sort/Sale/New toggles from the mobile filter bar in app.src.js. Independent of
+// pickedCats/activeTab (like the mobile filter bar, filter picks persist across a
+// department switch); folded into the URL when Apply sends the picked categories.
+const CF_BUCKETS = [
+  { lbl: 'Under ৳3k' }, { lbl: '৳3–4.5k' }, { lbl: '৳4.5–6k' },
+  { lbl: '৳6–8k' }, { lbl: '৳8–10k' }, { lbl: '৳10k+' },
+];
+const CF_COLOURS = [
+  ['White','#FFFFFF'],['Off White','#F5F0E4'],['Beige','#E8D5B0'],['Camel','#C9986A'],
+  ['Peach','#FFCBA4'],['Coral','#FF7F6A'],['Pink','#F7A8C4'],['Fuchsia','#E91E63'],
+  ['Red','#D32F2F'],['Maroon','#7B1F2C'],['Rust','#C0603A'],['Orange','#E65100'],
+  ['Mustard','#C49A00'],['Yellow','#FDD835'],['Dark Green','#1B5E20'],['Green','#43A047'],
+  ['Olive','#6D4C1B'],['Teal','#00897B'],['Blue','#2196F3'],['Royal Blue','#1565C0'],
+  ['Navy','#0D1B4B'],['Lavender','#CE93D8'],['Purple','#7B1FA2'],['Plum','#5D1049'],
+  ['Brown','#795548'],['Grey','#9E9E9E'],['Charcoal','#454545'],['Black','#111111'],
+  ['Silver','#C0C0C0'],['Multi',null],
+];
+const CF_LIGHT_SWATCH = new Set(['White','Off White','Beige','Camel','Peach','Yellow','Silver']);
+let cfSort = '';            // '' | 'asc' | 'desc'
+let cfSale = false;
+let cfNew  = false;
+let cfPrices  = new Set();  // indexes into CF_BUCKETS
+let cfColours = new Set();  // colour names
+
 // ── Product-image thumbnails for category tiles ───────────────────────────────
 // Each category tile shows a real product photo, fetched once from the VPS search
 // API (?cat=<key>) and cached in localStorage so repeat visits are instant.
@@ -569,6 +661,46 @@ function renderCats(g) {
   loadCatThumbs();
 }
 
+// Desktop-only filter sidebar — no-ops harmlessly on mobile (element exists but is
+// display:none, so this just keeps hidden state in sync at zero visible cost).
+function renderFilters() {
+  const el = document.getElementById('catFilters');
+  if (!el) return;
+  const n = cfPrices.size + cfColours.size + (cfSort ? 1 : 0) + (cfSale ? 1 : 0) + (cfNew ? 1 : 0);
+  const priceRow = CF_BUCKETS.map((b, i) =>
+    `<button type="button" class="cf-btn${cfPrices.has(i) ? ' on' : ''}" onclick="cfTogglePrice(${i})">${esc(b.lbl)}</button>`
+  ).join('');
+  const colorRow = CF_COLOURS.map(([name, hex]) => {
+    const on = cfColours.has(name);
+    const style = hex ? `background:${hex};${CF_LIGHT_SWATCH.has(name) ? '' : 'border-color:transparent'}` : '';
+    return `<span class="cf-swatch${on ? ' on' : ''}${hex ? '' : ' cf-swatch-multi'}" style="${style}" title="${esc(name)}" role="button" tabindex="0" aria-pressed="${on ? 'true' : 'false'}" aria-label="${esc(name)}" onclick="cfToggleColour('${esc(name)}')"></span>`;
+  }).join('');
+  el.innerHTML = `
+    <div class="cf-hd">Filter${n ? `<span class="cf-count">${n}</span>` : ''}</div>
+    <div class="cf-title">Sort</div>
+    <div class="cf-row">
+      <button type="button" class="cf-btn${cfSort==='asc'?' on':''}" onclick="cfSetSort('asc')">Price: Low to High</button>
+      <button type="button" class="cf-btn${cfSort==='desc'?' on':''}" onclick="cfSetSort('desc')">Price: High to Low</button>
+    </div>
+    <div class="cf-title">Highlights</div>
+    <div class="cf-row cf-row-inline">
+      <button type="button" class="cf-btn${cfSale?' on':''}" onclick="cfToggleSale()">Sale</button>
+      <button type="button" class="cf-btn${cfNew?' on':''}" onclick="cfToggleNew()">New</button>
+    </div>
+    <div class="cf-title">Price</div>
+    <div class="cf-row cf-row-inline">${priceRow}</div>
+    <div class="cf-title">Colour</div>
+    <div class="cf-colors">${colorRow}</div>
+    ${n ? '<button type="button" class="cf-clear" onclick="cfClear()">Clear filters</button>' : ''}
+  `;
+}
+function cfSetSort(v) { cfSort = (cfSort === v) ? '' : v; renderFilters(); }
+function cfToggleSale() { cfSale = !cfSale; if (cfSale) cfNew = false; renderFilters(); }
+function cfToggleNew() { cfNew = !cfNew; if (cfNew) cfSale = false; renderFilters(); }
+function cfTogglePrice(i) { if (cfPrices.has(i)) cfPrices.delete(i); else cfPrices.add(i); renderFilters(); }
+function cfToggleColour(name) { if (cfColours.has(name)) cfColours.delete(name); else cfColours.add(name); renderFilters(); }
+function cfClear() { cfSort=''; cfSale=false; cfNew=false; cfPrices=new Set(); cfColours=new Set(); renderFilters(); }
+
 // Harvested brand logos (better quality than favicons); keyed by hostname (no www).
 let BRAND_LOGOS = {};
 try { BRAND_LOGOS = JSON.parse(localStorage.getItem('psb_brand_logos') || '{}') || {}; } catch(e){}
@@ -643,6 +775,10 @@ function switchTab(g, el) {
   activeTab = g;
   pickedCats = new Set();   // switching departments resets the pick — no cross-department Apply
   updateApplyBar();
+  // Filter sidebar (desktop only) applies to category picks, not the Browse Brands
+  // tab — brand cards stay a direct, unfiltered tap-through.
+  const cf = document.getElementById('catFilters');
+  if (cf) cf.hidden = (g === 'brands');
   if (g === 'brands') renderBrands();
   else renderCats(g);
 }
@@ -672,14 +808,25 @@ function updateApplyBar() {
   if (lbl) lbl.textContent = n ? 'Apply (' + n + ')' : 'Apply';
 }
 
-// Apply → go to Browse Products with every picked category applied together.
+// Apply → go to Browse Products with every picked category applied together, plus
+// whatever the filter sidebar has set (desktop only — the sidebar's picks stay at
+// their empty defaults on mobile since it's unreachable there, so this is a no-op
+// there beyond the existing fromcat).
 function applyCats() {
   if (!pickedCats.size) return;
-  window.location.href = 'index.html?fromcat=' + [...pickedCats].map(encodeURIComponent).join(',');
+  const p = new URLSearchParams();
+  p.set('fromcat', [...pickedCats].join(','));
+  if (cfPrices.size) p.set('price', [...cfPrices].join(','));
+  if (cfColours.size) p.set('color', [...cfColours].join(','));
+  if (cfSort) p.set('sort', cfSort);
+  if (cfSale) p.set('sale', '1');
+  if (cfNew) p.set('new', '1');
+  window.location.href = 'index.html?' + p.toString();
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 renderCats('w');
+renderFilters();
 </script>
 </body>
 </html>

@@ -9026,8 +9026,11 @@
   // ── Deep-link from categories.html ──────────────────────────────────────────
   // The full categories page (categories.html, opened by the ▦ button on the gender
   // rail) links back here with ?fromcat=<catKey>[,<catKey>...] (comma-joined when the
-  // buyer multi-picked several chips there before tapping Apply) or ?brand=<name>.
-  // Apply that filter on load, sync the department rail to the category's gender
+  // buyer multi-picked several chips there before tapping Apply) or ?brand=<name>,
+  // plus optionally ?price=<i>[,<i>...]/?color=<name>[,<name>...]/?sort=asc|desc/
+  // ?sale=1/?new=1 from the desktop filter sidebar (mobile never sends these — the
+  // sidebar is desktop-only, so on mobile these params are simply always absent).
+  // Apply everything on load, sync the department rail to the category's gender
   // (categories.html resets the pick on every tab switch, so every key here is always
   // from ONE department), then clean the URL.
   (function(){
@@ -9036,8 +9039,15 @@
       var fromCatRaw = q.get('fromcat');
       var fromCats = fromCatRaw ? fromCatRaw.split(',').map(function(s){ return s.trim(); }).filter(Boolean) : [];
       var fromBrand = q.get('brand');
-      if(!fromCats.length && !fromBrand) return;
+      var fromPrice = q.get('price');
+      var fromColor = q.get('color');
+      var fromSort = q.get('sort');
+      var fromSale = q.get('sale');
+      var fromNew = q.get('new');
+      if(!fromCats.length && !fromBrand && !fromPrice && !fromColor && !fromSort && !fromSale && !fromNew) return;
       try{ switchBrowse('products'); }catch(e){}
+      var _prices = fromPrice ? new Set(fromPrice.split(',').map(Number).filter(function(n){ return !isNaN(n); })) : new Set(psSel.prices);
+      var _colors = fromColor ? new Set(fromColor.split(',').filter(Boolean)) : new Set(psSel.colors||[]);
       if(fromCats.length){
         var g = /^mens_/.test(fromCats[0]) ? 'm' : /^kids_/.test(fromCats[0]) ? 'k' : 'w';
         // Highlight the gender on the rail VISUALLY only. We deliberately do NOT call
@@ -9049,14 +9059,20 @@
           for(var _i=0;_i<_gb.length;_i++){ var _on = _gb[_i].getAttribute('data-g')===g; _gb[_i].classList.toggle('on', _on); _gb[_i].setAttribute('aria-pressed', _on?'true':'false'); }
           if(typeof psMoveGenInd === 'function') psMoveGenInd();
         }catch(e){}
-        psSel = { prices:new Set(psSel.prices), cats:new Set(fromCats), brands:new Set(), colors:new Set(psSel.colors||[]) };
-        try{ psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildColourFilter(); psBuildSort(); psApply(); }catch(e){}
+        psSel = { prices:_prices, cats:new Set(fromCats), brands:new Set(), colors:_colors };
       } else if(fromBrand){
-        psSel = { prices:new Set(psSel.prices), cats:new Set(), brands:new Set([fromBrand]), colors:new Set(psSel.colors||[]) };
-        try{ psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildColourFilter(); psBuildSort(); psApply(); }catch(e){}
+        psSel = { prices:_prices, cats:new Set(), brands:new Set([fromBrand]), colors:_colors };
+      } else {
+        psSel = { prices:_prices, cats:new Set(), brands:new Set(), colors:_colors };
       }
+      if(fromSort === 'asc' || fromSort === 'desc') psSort = fromSort;
+      if(fromSale === '1'){ psSaleOnly = true; psNewOnly = false; }
+      else if(fromNew === '1'){ psNewOnly = true; psSaleOnly = false; }
+      try{ psBuildPriceFilter(); psBuildBrandFilter(); psBuildCatFilter(); psBuildColourFilter(); psBuildSort(); psApply(); }catch(e){}
       var clean = new URL(location.href);
       clean.searchParams.delete('fromcat'); clean.searchParams.delete('brand');
+      clean.searchParams.delete('price'); clean.searchParams.delete('color'); clean.searchParams.delete('sort');
+      clean.searchParams.delete('sale'); clean.searchParams.delete('new');
       history.replaceState(null, '', clean.toString());
       setTimeout(function(){ try{ psScrollToResults(); }catch(e){} }, 200);
     }catch(e){}
@@ -9066,7 +9082,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-02-desktop6';
+  const PSB_BUILD = '2026-07-02-desktop7';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
