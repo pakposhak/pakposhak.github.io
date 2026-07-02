@@ -1350,8 +1350,12 @@
       /* Mid sentence: replace the brand-search sub-line with the paste-link instruction, bigger and
          centered, sized to the space available. */
       #bbProduct .bb-prod-sub{display:none}
-      .bb-prod-sub-m{display:block;text-align:center;font-size:1.12rem;font-weight:700;color:var(--txt);line-height:1.5;margin:8px auto 15px;max-width:min(520px,94vw);padding:0 6px}
-      .bb-prod-sub-m .bb-checkvid{display:inline-block;margin-top:8px;font-size:0.92rem;font-weight:700;color:var(--gold);text-decoration:underline;cursor:pointer}
+      .bb-prod-sub-m{display:block;text-align:center;font-weight:700;color:var(--txt);margin:8px auto 15px;max-width:min(560px,96vw);padding:0 4px}
+      /* Sentence = exactly 3 rows: the i18n value carries two \n, pre-line renders them; font sized so each forced line fits without extra wrapping. */
+      .bb-prod-sub-m>span{display:block;white-space:pre-line;font-size:0.95rem;line-height:1.55}
+      html[lang="bn"] .bb-prod-sub-m>span{font-size:0.82rem}   /* Bangla runs wider; smaller so its 3 forced lines also fit on a phone */
+      /* The link sits on its own 4th row, centered under the sentence. */
+      .bb-prod-sub-m .bb-checkvid{display:block;margin-top:9px;font-size:0.9rem;font-weight:700;color:var(--gold);text-decoration:underline;cursor:pointer}
       /* Only one search bar on this page: drop the central brand-search (the top bar covers it). */
       #bbProduct .bb-smartwrap{display:none}
       /* Top search bar reads "Search brands only" on the Price-Check page (this bar only). */
