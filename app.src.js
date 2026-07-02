@@ -7087,7 +7087,7 @@
     ],
     'home-w': [
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
-      { en_t:'Modest wear. Bold, confident.', en_s:'Abayas, hijabs, full-cover styles.', bn_t:'মডেস্ট ওয়্যার। সাহসী, আত্মবিশ্বাসী।', bn_s:'আবায়া, হিজাব, ফুল-কভার স্টাইল।' },
+      { en_t:'Modest wear. Bold, confident.', en_s:'Abayas, hijabs, full-cover styles.', bn_t:'মডেস্ট ওয়্যার। কভারড, কনফিডেন্ট।', bn_s:'আবায়া, হিজাব, ফুল-কভার স্টাইল।' },
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
       { en_t:'Modern & western. Co-ords, dresses, tops.', en_s:'Pakistani brands, contemporary cuts.', bn_t:'মডার্ন ও ওয়েস্টার্ন। কো-অর্ড, ড্রেস, টপ।', bn_s:'পাকিস্তানি ব্র্যান্ড, সমকালীন কাট।' },
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
@@ -7097,7 +7097,7 @@
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
       { en_t:'Pret & kurta. Men\'s everyday staples.', en_s:'Real prices from Pakistan, delivered to Bangladesh.', bn_t:'প্রেট ও কুর্তা। পুরুষের প্রতিদিনের পোশাক।', bn_s:'পাকিস্তান থেকে আসল দামে, বাংলাদেশে ডেলিভারি।' },
       // Change the background, keeping the model on the right side so that it is not blocked by texts.
-      { en_t:'Looking sharp this season.', en_s:'Embroidered kurtas to plain pret, all men\'s styles here.', bn_t:'এই সিজনে দারুণ সাজুন।', bn_s:'এমব্রয়ডারি থেকে প্লেইন প্রেট, সব পুরুষের স্টাইল এখানে।' }
+      { en_t:'Looking sharp this season.', en_s:'Embroidered kurtas to plain pret, all men\'s styles here.', bn_t:'ঈদ কামিজ। এই সিজনে দারুণ সাজুন।', bn_s:'এমব্রয়ডারি থেকে প্লেইন প্রেট, সব পুরুষের স্টাইল এখানে।' }
     ],
     'home-k': [
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital. "Cool, comfy, and easy." should be on the 2nd title line.
@@ -7161,7 +7161,7 @@
     ],
     'search-luxe': [
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
-      { en_t:'Search the designer houses', en_s:'Elan, Sana Safinaz, Asim Jofa and more, with the real PKR price.', bn_t:'ডিজাইনার হাউস খুঁজুন', bn_s:'এলান, সানা সাফিনাজ, আসিম জোফা ও আরও, আসল পিকেআর দামে।' },
+      { en_t:'Search the designer houses', en_s:'Elan, Sana Safinaz, Asim Jofa and more.', bn_t:'ডিজাইনার হাউস খুঁজুন', bn_s:'এলান, সানা সাফিনাজ, আসিম জোফা ও আরও, আসল পিকেআর দামে।' },
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
       { en_t:'Snap it. Find it. Order it.', en_s:'Search by photo across Pakistan\'s premium labels.', bn_t:'ছবি তুলুন, খুঁজুন, অর্ডার করুন', bn_s:'ছবি দিয়ে পাকিস্তানের প্রিমিয়াম ব্র্যান্ডে খুঁজুন।' }
     ],
@@ -7169,13 +7169,13 @@
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
       { en_t:'Snap. Search. Order. Find it with a photo.', en_s:'See a style you love? Find it instantly.', bn_t:'ছবি তুলুন। খুঁজুন। অর্ডার করুন।', bn_s:'পছন্দের স্টাইল দেখেছেন? ছবি দিয়ে তাৎক্ষণিক খুঁজুন।' },
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital. Paste, check, compare. on the next title line.
-      { en_t:'True Price. Paste, check, compare.', en_s:'Paste any brand\'s product page, get the real PKR and full BDT total.', bn_t:'সত্যিকারের দাম। পেস্ট, চেক, তুলনা।', bn_s:'যেকোনো ব্র্যান্ডের প্রোডাক্ট পেজ পেস্ট করুন, আসল PKR ও পূর্ণ BDT পান।' },
+      { en_t:'True Price. Paste, check, compare.', en_s:'Paste any brand\'s product link, get the real PKR and door to door BDT price.', bn_t:'সত্যিকারের দাম। পেস্ট, চেক, তুলনা।', bn_s:'যেকোনো ব্র্যান্ডের প্রোডাক্ট পেজ পেস্ট করুন, আসল PKR ও পূর্ণ BDT পান।' },
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
-      { en_t:'Any brand. Any link. One honest price.', en_s:'Paste a product link from anywhere, priced in PKR + BDT.', bn_t:'যেকোনো ব্র্যান্ড। যেকোনো লিংক। একটি সৎ দাম।', bn_s:'যেকোনো জায়গা থেকে প্রোডাক্ট লিংক পেস্ট করুন, PKR + BDT তে দাম পান।' },
+      { en_t:'Any brand. Any link. One honest price.', en_s:'Paste a product link from anywhere, priced in PKR or BDT.', bn_t:'যেকোনো ব্র্যান্ড। যেকোনো লিংক। একটি সৎ দাম।', bn_s:'যেকোনো জায়গা থেকে প্রোডাক্ট লিংক পেস্ট করুন, PKR + BDT তে দাম পান।' },
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
       { en_t:'Want to buy Pakistani clothing? Check here first.', en_s:'Same outfit, the real price, delivered to BD.', bn_t:'পাকিস্তানি পোশাক কিনতে চান? আগে এখানে চেক করুন।', bn_s:'একই পোশাক, আসল দামে, বিডিতে ডেলিভারি।' },
       // Change the background, keeping the model on the right side so that it is not blocked by texts. Maintain Title style of keeping the first letter capital
-      { en_t:'Confirmed PK prices. In BDT, before you buy.', en_s:'No dollar guesswork, the genuine local price.', bn_t:'নিশ্চিত PK দাম। BDT তে, কেনার আগে।', bn_s:'ডলারের অনুমান নয়, আসল স্থানীয় দাম।' }
+      { en_t:'Confirm the PKR prices in BDT before making a purchase.', en_s:'No dollar guesswork, the genuine local price.', bn_t:'নিশ্চিত PK দাম। BDT তে, কেনার আগে।', bn_s:'ডলারের অনুমান নয়, আসল স্থানীয় দাম।' }
     ]
   };
   function _psPosterPage(){
@@ -9138,7 +9138,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-07-02-banglaqr';
+  const PSB_BUILD = '2026-07-02-posters1';
   // ── Auto-update on a stale build ───────────────────────────────────────────
   // Buyers were getting stuck on a cached OLDER build. A few seconds after load
   // (and whenever the tab regains focus), fetch the live page (cache-busted),
