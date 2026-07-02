@@ -718,7 +718,9 @@
       /* Desktop type: a touch larger + heavier body copy (headings keep their own weight) */
       html{font-size:17px}
       body{font-weight:600;padding-bottom:40px}
-      .hdr-inner{max-width:980px}
+      /* Header (req): match the wide browse container below instead of a narrow 980px band with
+         big empty gutters either side — the branding row should use the same space as the page. */
+      .hdr-inner{max-width:min(1440px,96vw)}
       .hiw-inner{max-width:980px}
       .container{max-width:980px;padding:30px 32px 44px}
       /* STEP 1 (Browse tabs + grid + Add-Products + Order-List + total) fills the desktop screen:
@@ -726,6 +728,9 @@
          the product pics share one full width. Steps 2/3/4 keep their own 980px container so the
          contact/review/payment forms stay readable. The product grid still shows 4 per row. */
       #step1 > .container{max-width:min(1440px,96vw)}
+      /* Browse view only (req): the Studio/Luxe toggle already separates the header from the page,
+         so drop the container's own top padding here -- checkout steps 2-4 keep the full 30px. */
+      body.psb-browse #step1 > .container{padding-top:6px}
       /* Browse-Brands search: centered + larger on desktop (req). ID/scoped selectors so these
          win over the base .bb-* rules that appear LATER in the stylesheet (equal specificity). */
       #bbProduct .bb-smartwrap, #bbProduct .bb-prod-sub{max-width:1040px;margin-left:auto;margin-right:auto}
@@ -1037,7 +1042,7 @@
     @media (min-width:820px){
       /* Shop-by-category tiles ~40% smaller on desktop (req): a full product card should still be
          visible without the carousel eating the whole first screen. Margins/padding tightened to match. */
-      .ps-shopcat{margin:2px 0 8px} .ps-shopcat-hd{margin:6px 0 4px} .ps-shopcat-tabs{margin:0 0 6px} .ps-shopcat-scroll{padding:1px 2px 2px}
+      .ps-shopcat{margin:2px 0 6px} .ps-shopcat-hd{margin:4px 0 1px} .ps-shopcat-tabs{margin:0 0 4px} .ps-shopcat-scroll{padding:1px 2px 0}
       .psc-gtab{font-size:0.8rem;padding:6px 16px} .psc-tile{width:94px;gap:4px} .psc-img{width:94px;height:112px;border-radius:13px} .psc-lbl{width:98px;font-size:0.7rem} .psc-tile.psc-noimg .psc-img::after{font-size:1.5rem}
       /* DESKTOP dual-cluster tab row (req): Brands cluster (left, teal-tinted) + Categories cluster
          (right, gold) BOTH visible at once — no toggle. Tiles fan outward from the centre labels. */
