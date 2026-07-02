@@ -227,10 +227,16 @@ function dec(s){ return (s||'').replace(/&amp;/g,'&').replace(/&quot;/g,'"').rep
 // strict list rejected those, so availSizes returned [] and EVERY kids product was
 // silently dropped as "all sold out". This is why Minnie/Hopscotch/Edenrobe-kids
 // yielded ~0. (Catalog sz is indicative; the live fetch on Add re-validates stock.)
+// FULL-WORD sizes (SMALL/MEDIUM/LARGE/X-SMALL/X-LARGE, "extra small", "2X large")
+// are also accepted (added 2026-07-02): brands like Agha Noor label variants with the
+// full word, which the abbreviation-only list rejected → availSizes returned [] → EVERY
+// women's suit was dropped as "sold out" (Agha Noor kept 58 kids/dupattas of 261 in-stock).
 function isSizeToken(s){
   s = String(s||'').trim().toLowerCase();
   if(!s || s.length > 16) return false;
   if(/^(xxs|xs|s|m|l|xl|xxl|xxxl|4xl|xs\/s|s\/m|m\/l|l\/xl|free\s*size|one\s*size|newborn|nb|standard)$/.test(s)) return true;
+  // full-word apparel sizes: small/medium/large + x-/xx-/extra- small|large variants
+  if(/^(?:small|medium|large|(?:x{1,3}|xx?\s*-?\s*|extra\s*-?\s*|[234]\s*x\s*-?\s*)(?:small|large))$/.test(s)) return true;
   if(/^\d{1,2}(\.5)?$/.test(s)) return true;                                                       // 28, 30, 5, 7.5
   if(/^\d{1,2}\s*[\/-]\s*\d{1,2}\s*-?\s*(y|yr|yrs|years?|m|mo|months?|t)?$/.test(s)) return true;   // 2-3, 4-5 Y, 12-18 M, 9/12-M, 3/4-Y, 24/36-M
   if(/^\d{1,2}\s*-?\s*(y|yr|yrs|years?|m|mo|months?|t)$/.test(s)) return true;                      // 5Y, 4-Y, 6 M, 2T
